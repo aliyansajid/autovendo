@@ -1,102 +1,199 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
+"use client";
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
+import { useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/components/card";
+import { Form } from "@repo/ui/src/components/form";
+import {
+  CustomFormField,
+  FormFieldType,
+} from "@repo/ui/src/components/custom-form-field";
+import {
+  SelectGroup,
+  SelectLabel,
+  SelectItem,
+} from "@repo/ui/src/components/select";
+import { Button } from "@repo/ui/src/components/button";
+import { makes, models, prices, getRegistrationYears, countries } from "@/data";
+import FeaturedListings from "@/components/featured-listings";
+import FeaturedGarage from "@/components/featured-garage";
+import About from "@/components/about";
 
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
+const formSchema = z.object({
+  make: z.string().optional(),
+  model: z.string().optional(),
+  price: z.string().optional(),
+  registration: z.string().optional(),
+  country: z.string().optional(),
+  zipcode: z.string().optional(),
+});
+
+const page = () => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      make: "",
+      model: "",
+      price: "",
+      registration: "",
+      country: "europe",
+      zipcode: "",
+    },
+  });
+
+  const selectedMake = form.watch("make");
+
+  useEffect(() => {
+    form.setValue("model", "");
+  }, [selectedMake, form]);
+
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    toast("You submitted the following values:");
+  }
 
   return (
     <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
+      <div className="bg-linear-to-r from-primary to-primary/80">
+        <div className="w-full max-w-[1140px] mx-auto py-20">
+          <Card className="shadow-2xl border-none">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-center">
+                Find used vehicles and new vehicles
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form
+                  className="flex flex-col gap-4"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex-1">
+                      <CustomFormField
+                        control={form.control}
+                        fieldType={FormFieldType.SELECT}
+                        name="make"
+                        className="w-full"
+                        placeholder="Make"
+                      >
+                        {makes.map((group) => (
+                          <SelectGroup key={group.label}>
+                            <SelectLabel>{group.label}</SelectLabel>
+                            {group.items.map((make) => (
+                              <SelectItem
+                                key={`${group.label}-${make.value}`}
+                                value={make.value}
+                              >
+                                {make.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        ))}
+                      </CustomFormField>
+                    </div>
+                    <div className="flex-1">
+                      <CustomFormField
+                        control={form.control}
+                        fieldType={FormFieldType.SELECT}
+                        name="model"
+                        className="w-full"
+                        placeholder="Model"
+                        disabled={!selectedMake}
+                      >
+                        {selectedMake &&
+                          models[selectedMake as keyof typeof models]?.map(
+                            (model: { value: string; label: string }) => (
+                              <SelectItem key={model.value} value={model.value}>
+                                {model.label}
+                              </SelectItem>
+                            ),
+                          )}
+                      </CustomFormField>
+                    </div>
+                    <div className="flex-1">
+                      <CustomFormField
+                        control={form.control}
+                        fieldType={FormFieldType.SELECT}
+                        name="price"
+                        className="w-full"
+                        placeholder="Price upto €"
+                      >
+                        {prices.map((price) => (
+                          <SelectItem key={price.value} value={price.value}>
+                            {price.label}
+                          </SelectItem>
+                        ))}
+                      </CustomFormField>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex-1">
+                      <CustomFormField
+                        control={form.control}
+                        fieldType={FormFieldType.SELECT}
+                        name="registration"
+                        className="w-full"
+                        placeholder="First registration from"
+                      >
+                        {getRegistrationYears().map((year) => (
+                          <SelectItem key={year.value} value={year.value}>
+                            {year.label}
+                          </SelectItem>
+                        ))}
+                      </CustomFormField>
+                    </div>
+                    <div className="flex flex-1 gap-4">
+                      <div className="flex-1">
+                        <CustomFormField
+                          control={form.control}
+                          fieldType={FormFieldType.SELECT}
+                          name="country"
+                          className="w-full"
+                          placeholder="Country"
+                        >
+                          {countries.map((country) => (
+                            <SelectItem
+                              key={country.value}
+                              value={country.value}
+                            >
+                              {country.flag} {country.label}
+                            </SelectItem>
+                          ))}
+                        </CustomFormField>
+                      </div>
+                      <div className="flex-1">
+                        <CustomFormField
+                          control={form.control}
+                          fieldType={FormFieldType.INPUT}
+                          name="zipcode"
+                          className="w-full"
+                          placeholder="ZIP"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <Button className="w-full">2,000,000 results</Button>
+                    </div>
+                  </div>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      <FeaturedListings />
+      <FeaturedGarage />
+      <About />
     </>
   );
 };
 
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.dev/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.dev?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.dev →
-        </a>
-      </footer>
-    </div>
-  );
-}
+export default page;
