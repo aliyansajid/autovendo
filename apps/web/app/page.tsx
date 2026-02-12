@@ -62,10 +62,10 @@ const page = () => {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
-        <div className="w-full max-w-[1140px] mx-auto py-20">
+        <div className="w-full max-w-[1140px] mx-auto py-12 md:py-20 px-4">
           <Card className="shadow-2xl border-none">
             <CardHeader>
-              <CardTitle className="text-3xl font-bold text-center">
+              <CardTitle className="text-2xl md:text-3xl font-bold text-center">
                 Find used vehicles and new vehicles
               </CardTitle>
             </CardHeader>

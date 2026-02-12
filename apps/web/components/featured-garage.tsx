@@ -34,38 +34,43 @@ const garages = [
 
 const FeaturedGarage = () => {
   return (
-    <section className="py-12 bg-gray-50">
-      <div className="max-w-285 mx-auto">
-        <h2 className="text-2xl font-bold mb-6 text-black">Featured Garages</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <section className="py-12 bg-secondary">
+      <div className="max-w-285 mx-auto px-4">
+        <h2 className="text-2xl font-bold mb-6">Featured Garages</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {garages.map((garage) => (
             <Card
               key={garage.id}
               className="overflow-hidden hover:shadow-lg transition-shadow duration-300 p-0"
             >
               <div className="flex flex-col sm:flex-row h-full">
-                <div className="relative w-full sm:w-2/5 h-48 sm:h-auto">
+                <div className="relative w-full sm:w-2/5 h-48 sm:h-auto shrink-0">
                   <Image
                     src={garage.image}
                     alt={garage.name}
                     fill
                     className="object-cover"
                   />
-                  <Badge className="absolute top-2 left-2 bg-white/90 text-black hover:bg-white/75 border-none shadow-sm">
+                  <Badge
+                    className="absolute top-2 left-2 shadow-sm"
+                    variant="secondary"
+                  >
                     Featured
                   </Badge>
                 </div>
-                <CardContent className="flex flex-col justify-center p-6 w-full sm:w-3/5">
-                  <h3 className="text-xl font-bold mb-2">{garage.name}</h3>
+                <CardContent className="flex flex-col justify-center p-4 sm:p-6 w-full sm:w-3/5">
+                  <h3 className="text-lg sm:text-xl font-bold mb-2">
+                    {garage.name}
+                  </h3>
                   <div className="flex items-center text-gray-600 mb-4">
                     <MapPin className="w-4 h-4 mr-1" />
                     <span className="text-sm">{garage.location}</span>
                   </div>
                   <Button
                     variant="link"
-                    className="p-0 h-auto text-primary hover:text-primary hover:no-underline font-medium text-sm self-start flex items-center gap-1"
+                    className="p-0 self-start h-auto has-[>svg]:px-0"
                   >
-                    View Inventory <ArrowRight className="w-4 h-4" />
+                    View Inventory <ArrowRight />
                   </Button>
                 </CardContent>
               </div>

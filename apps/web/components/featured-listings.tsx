@@ -181,14 +181,14 @@ const FeaturedListings = () => {
   };
 
   return (
-    <section className="py-12 bg-white">
-      <div className="max-w-[1140px] mx-auto">
+    <section className="py-12">
+      <div className="max-w-[1140px] mx-auto px-4">
         <h2 className="text-2xl font-bold mb-6">
           Latest results from your last search
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {listings.slice(0, visibleCount).map((item) => (
-            <Card key={item.id} className="pt-0 h-full flex flex-col">
+            <Card key={item.id} className="pt-0">
               <div className="relative h-48 w-full">
                 <Image
                   src={item.image}
@@ -196,7 +196,10 @@ const FeaturedListings = () => {
                   fill
                   className="object-cover rounded-t-xl"
                 />
-                <Badge className="absolute top-2 right-2 bg-white/90 text-black hover:bg-white/75 border-none shadow-sm">
+                <Badge
+                  className="absolute top-2 right-2 shadow-sm"
+                  variant="secondary"
+                >
                   {item.badge}
                 </Badge>
               </div>
@@ -204,41 +207,42 @@ const FeaturedListings = () => {
                 <h1 className="text-lg font-bold truncate" title={item.title}>
                   {item.title}
                 </h1>
-                <h3 className="font-bold text-lg text-primary">{item.price}</h3>
+                <h3 className="text-xl font-bold text-primary">{item.price}</h3>
                 <Separator />
                 <div className="flex items-center text-sm text-gray-600">
                   {item.details.map((detail, i) => (
                     <span key={i} className="flex items-center">
                       {detail}
                       {i < item.details.length - 1 && (
-                        <span className="mx-1.5 text-gray-300">|</span>
+                        <Separator
+                          orientation="vertical"
+                          className="h-10 mx-2"
+                        />
                       )}
                     </span>
                   ))}
                 </div>
               </CardContent>
               <CardFooter>
-                <div className="flex flex-col w-full">
-                  <div className="flex justify-between items-end w-full">
-                    <div className="flex flex-col">
-                      <span
-                        className="text-sm font-semibold truncate "
-                        title={item.dealer}
-                      >
-                        {item.dealer}
-                      </span>
+                <div className="flex justify-between items-end w-full">
+                  <div className="flex flex-col">
+                    <span
+                      className="text-sm font-semibold truncate"
+                      title={item.dealer}
+                    >
+                      {item.dealer}
+                    </span>
 
-                      <span
-                        className="text-xs text-gray-500 truncate"
-                        title={item.location}
-                      >
-                        {item.location}
-                      </span>
-                    </div>
-                    <Button variant="outline" size="icon">
-                      <Heart className="h-5 w-5 text-gray-400 hover:text-red-500 transition-colors" />
-                    </Button>
+                    <span
+                      className="text-xs text-gray-500 truncate"
+                      title={item.location}
+                    >
+                      {item.location}
+                    </span>
                   </div>
+                  <Button variant="outline" size="icon">
+                    <Heart className="text-gray-400" />
+                  </Button>
                 </div>
               </CardFooter>
             </Card>
@@ -249,7 +253,7 @@ const FeaturedListings = () => {
           <div className="flex justify-center mt-12">
             <Button
               onClick={handleLoadMore}
-              className="px-8 py-6 text-lg font-semibold bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              className="px-8 py-6 text-lg font-semibold rounded-full"
             >
               Load More listings
             </Button>
