@@ -43,7 +43,7 @@ const Header = () => {
         </div>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" className="text-white">
+            <Button variant="ghost" className="md:hidden text-white">
               <Menu />
             </Button>
           </SheetTrigger>
