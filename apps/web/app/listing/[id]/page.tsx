@@ -26,12 +26,6 @@ import {
   Disc,
 } from "lucide-react";
 import Image from "next/image";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/src/components/card";
 
 export default function ListingPage() {
   const {
@@ -186,18 +180,18 @@ export default function ListingPage() {
               {/* Desktop Price Card */}
               <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-gray-200">
                 <div className="p-6 space-y-4">
-                  <h1 className="text-2xl xl:text-3xl font-bold text-gray-900 leading-tight">
+                  <h1 className="text-2xl font-bold text-gray-900 leading-tight">
                     {title}
                   </h1>
-                  <div className="text-3xl xl:text-4xl font-bold text-primary">
+                  <div className="text-3xl font-bold text-primary">
                     € {price.toLocaleString()}
                   </div>
                   <div className="flex flex-wrap gap-2 pt-1">
-                    <Badge variant="secondary" className="px-3 py-1.5 text-xs">
+                    <Badge className="px-3 py-1.5 text-xs">
                       VAT deductible
                     </Badge>
                     <Badge
-                      variant="outline"
+                      variant="secondary"
                       className="px-3 py-1.5 text-xs border-gray-300"
                     >
                       Negotiable
