@@ -188,13 +188,21 @@ const FeaturedListings = () => {
           ))}
         </div>
 
-        {visibleCount < listings.length && (
+        {listings.length > 4 && (
           <div className="flex justify-center mt-12">
             <Button
-              onClick={handleLoadMore}
+              onClick={() => {
+                if (visibleCount >= listings.length) {
+                  setVisibleCount(4);
+                } else {
+                  setVisibleCount((prev) =>
+                    Math.min(prev + 4, listings.length),
+                  );
+                }
+              }}
               className="px-8 py-6 text-lg font-semibold rounded-full"
             >
-              Load More listings
+              {visibleCount >= listings.length ? "Show less" : "Load more"}
             </Button>
           </div>
         )}

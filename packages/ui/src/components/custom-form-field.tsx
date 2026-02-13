@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/components/select";
+import { Checkbox } from "@repo/ui/components/checkbox";
 
 enum FormFieldType {
   INPUT = "input",
@@ -66,6 +67,25 @@ const RenderField = ({
           </SelectTrigger>
           <SelectContent>{props.children}</SelectContent>
         </Select>
+      );
+
+    case FormFieldType.CHECKBOX:
+      return (
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            checked={field.value}
+            onCheckedChange={field.onChange}
+            disabled={props.disabled}
+            className={props.className}
+            id={props.name}
+          />
+          <label
+            htmlFor={props.name}
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            {props.label}
+          </label>
+        </div>
       );
 
     default:

@@ -105,8 +105,9 @@ export const sellerPageData = {
     id: "1",
     name: "Autovendo Dealer",
     slug: "autovendo-dealer",
-    logo: "/dealer-logo-placeholder.png", // We can use a placeholder or one of the car images for now if needed, but better to have a dedicated one or UI fallback
-    coverImage: "/media__1770816061522.png",
+    logo: "https://images.pexels.com/photos/269077/pexels-photo-269077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    coverImage:
+      "https://images.pexels.com/photos/3752194/pexels-photo-3752194.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
     address: "VIA NIZZA 149, TORINO, Italy",
     mapLocation: { lat: 45.06837, lng: 7.68307 },
     phones: ["3792796508"],
@@ -126,6 +127,19 @@ TUTTE CON GARANZIA
 SIAMO APERTI DALLE 9/12 ALLE 14:30/1830 ANCHE SABATO E DOMENICA
 
 Venite a trovarci nel nostro showroom a Torino!`,
+    services: [
+      "Vehicle Sales",
+      "Leasing & Financing",
+      "Trade-ins",
+      "Warranty Extensions",
+      "Insurance Services",
+      "Export Service",
+    ],
+    openingHours: [
+      { day: "Monday - Friday", hours: "09:00 - 18:30" },
+      { day: "Saturday", hours: "10:00 - 16:00" },
+      { day: "Sunday", hours: "Closed" },
+    ],
   },
   listings: [
     {

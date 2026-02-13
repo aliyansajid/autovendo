@@ -26,8 +26,10 @@ import { makes, models, prices, getRegistrationYears, countries } from "@/data";
 import FeaturedListings from "@/components/featured-listings";
 import FeaturedGarage from "@/components/featured-garage";
 import About from "@/components/about";
+import { AdvancedSearch } from "@/components/advanced-search";
 
 const formSchema = z.object({
+  query: z.string().optional(),
   make: z.string().optional(),
   model: z.string().optional(),
   price: z.string().optional(),
@@ -40,6 +42,7 @@ const page = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      query: "",
       make: "",
       model: "",
       price: "",
@@ -75,6 +78,18 @@ const page = () => {
                   className="flex flex-col gap-4"
                   onSubmit={form.handleSubmit(onSubmit)}
                 >
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="w-full">
+                      <CustomFormField
+                        control={form.control}
+                        fieldType={FormFieldType.INPUT}
+                        name="query"
+                        className="w-full"
+                        placeholder="Search"
+                      />
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex-1">
                       <CustomFormField
@@ -179,8 +194,13 @@ const page = () => {
                         />
                       </div>
                     </div>
-                    <div className="flex-1">
-                      <Button className="w-full">2,000,000 results</Button>
+                    <div className="flex-1 flex gap-4">
+                      <div className="flex-1">
+                        <AdvancedSearch />
+                      </div>
+                      <div className="flex-1">
+                        <Button className="w-full">2,029,498 results</Button>
+                      </div>
                     </div>
                   </div>
                 </form>

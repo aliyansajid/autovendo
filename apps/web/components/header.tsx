@@ -16,7 +16,7 @@ import {
   SheetDescription,
   SheetHeader,
 } from "@repo/ui/components/sheet";
-import { Menu } from "lucide-react";
+import { Menu, PlusCircle } from "lucide-react";
 
 const Header = () => {
   return (
@@ -38,7 +38,8 @@ const Header = () => {
             </SelectContent>
           </Select>
           <Button variant="secondary" className="bg-white">
-            Post free ad
+            <PlusCircle />
+            Subscribe
           </Button>
         </div>
         <Sheet>
