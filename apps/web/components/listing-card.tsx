@@ -21,7 +21,7 @@ export interface ListingProps {
 export const ListingCard = ({ item }: { item: ListingProps }) => {
   return (
     <Card className="pt-0 h-full flex flex-col">
-      <div className="relative h-48 w-full shrink-0">
+      <div className="relative h-48 w-full">
         <Image
           src={item.image}
           alt={item.title}
@@ -37,7 +37,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           </Badge>
         )}
       </div>
-      <CardContent className="space-y-3 grow pt-4">
+      <CardContent className="space-y-3">
         <h1 className="text-lg font-bold truncate" title={item.title}>
           {item.title}
         </h1>
@@ -54,9 +54,9 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           ))}
         </div>
       </CardContent>
-      <CardFooter className="mt-auto pt-0 pb-4">
+      <CardFooter>
         <div className="flex justify-between items-end w-full">
-          <div className="flex flex-col max-w-[80%]">
+          <div className="flex flex-col">
             <span
               className="text-sm font-semibold truncate"
               title={item.dealer}
@@ -71,8 +71,8 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
               {item.location}
             </span>
           </div>
-          <Button variant="outline" size="icon" className="shrink-0">
-            <Heart className="text-gray-400 w-4 h-4" />
+          <Button variant="outline" size="icon">
+            <Heart className="text-gray-400" />
           </Button>
         </div>
       </CardFooter>
