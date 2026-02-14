@@ -36,7 +36,7 @@ const FeaturedGarage = () => {
   return (
     <section className="py-12 bg-secondary">
       <div className="max-w-285 mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-6">Featured Garages</h2>
+        <h2 className="text-2xl font-bold mb-6">Ausgewählte Garagen</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {garages.map((garage) => (
             <Card

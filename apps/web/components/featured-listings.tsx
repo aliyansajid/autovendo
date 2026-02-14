@@ -178,11 +178,11 @@ const FeaturedListings = () => {
 
   return (
     <section className="py-12">
-      <div className="max-w-[1140px] mx-auto px-4">
+      <div className="max-w-285 mx-auto px-4">
         <h2 className="text-2xl font-bold mb-6">
-          Latest results from your last search
+          Neueste Ergebnisse Ihrer letzten Suche
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {listings.slice(0, visibleCount).map((item) => (
             <ListingCard key={item.id} item={item} />
           ))}
@@ -191,6 +191,7 @@ const FeaturedListings = () => {
         {listings.length > 4 && (
           <div className="flex justify-center mt-12">
             <Button
+              size="lg"
               onClick={() => {
                 if (visibleCount >= listings.length) {
                   setVisibleCount(4);
@@ -200,7 +201,6 @@ const FeaturedListings = () => {
                   );
                 }
               }}
-              className="px-8 py-6 text-lg font-semibold rounded-full"
             >
               {visibleCount >= listings.length ? "Show less" : "Load more"}
             </Button>

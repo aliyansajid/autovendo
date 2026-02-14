@@ -26,7 +26,13 @@ import { makes, models, prices, getRegistrationYears, countries } from "@/data";
 import FeaturedListings from "@/components/featured-listings";
 import FeaturedGarage from "@/components/featured-garage";
 import About from "@/components/about";
-import { AdvancedSearch } from "@/components/advanced-search";
+import Link from "next/link";
+import { Filter, SearchIcon } from "lucide-react";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+} from "@repo/ui/src/components/input-group";
 
 const formSchema = z.object({
   query: z.string().optional(),
@@ -65,11 +71,11 @@ const page = () => {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
-        <div className="w-full max-w-[1140px] mx-auto py-12 md:py-20 px-4">
-          <Card className="shadow-2xl border-none">
+        <div className="w-full max-w-285 mx-auto py-12 md:py-20 px-4">
+          <Card>
             <CardHeader>
               <CardTitle className="text-2xl md:text-3xl font-bold text-center">
-                Find used vehicles and new vehicles
+                Gebrauchte und neue Fahrzeuge finden
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -78,15 +84,14 @@ const page = () => {
                   className="flex flex-col gap-4"
                   onSubmit={form.handleSubmit(onSubmit)}
                 >
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="grid grid-cols-1">
                     <div className="w-full">
-                      <CustomFormField
-                        control={form.control}
-                        fieldType={FormFieldType.INPUT}
-                        name="query"
-                        className="w-full"
-                        placeholder="Search"
-                      />
+                      <InputGroup>
+                        <InputGroupInput placeholder="Suchen..." />
+                        <InputGroupAddon>
+                          <SearchIcon />
+                        </InputGroupAddon>
+                      </InputGroup>
                     </div>
                   </div>
 
@@ -97,7 +102,7 @@ const page = () => {
                         fieldType={FormFieldType.SELECT}
                         name="make"
                         className="w-full"
-                        placeholder="Make"
+                        placeholder="Marke"
                       >
                         {makes.map((group) => (
                           <SelectGroup key={group.label}>
@@ -120,7 +125,7 @@ const page = () => {
                         fieldType={FormFieldType.SELECT}
                         name="model"
                         className="w-full"
-                        placeholder="Model"
+                        placeholder="Modell"
                         disabled={!selectedMake}
                       >
                         {selectedMake &&
@@ -139,7 +144,7 @@ const page = () => {
                         fieldType={FormFieldType.SELECT}
                         name="price"
                         className="w-full"
-                        placeholder="Price upto €"
+                        placeholder="Preis €"
                       >
                         {prices.map((price) => (
                           <SelectItem key={price.value} value={price.value}>
@@ -156,7 +161,7 @@ const page = () => {
                         fieldType={FormFieldType.SELECT}
                         name="registration"
                         className="w-full"
-                        placeholder="First registration from"
+                        placeholder="Erstzulassung ab"
                       >
                         {getRegistrationYears().map((year) => (
                           <SelectItem key={year.value} value={year.value}>
@@ -172,7 +177,7 @@ const page = () => {
                           fieldType={FormFieldType.SELECT}
                           name="country"
                           className="w-full"
-                          placeholder="Country"
+                          placeholder="Land"
                         >
                           {countries.map((country) => (
                             <SelectItem
@@ -190,16 +195,24 @@ const page = () => {
                           fieldType={FormFieldType.INPUT}
                           name="zipcode"
                           className="w-full"
-                          placeholder="ZIP"
+                          placeholder="PLZ"
                         />
                       </div>
                     </div>
                     <div className="flex-1 flex gap-4">
                       <div className="flex-1">
-                        <AdvancedSearch />
+                        <Link href="/advanced-search" className="w-full">
+                          <Button
+                            variant="outline"
+                            type="button"
+                            className="w-full"
+                          >
+                            <Filter /> Erweiterte Suche
+                          </Button>
+                        </Link>
                       </div>
                       <div className="flex-1">
-                        <Button className="w-full">2,029,498 results</Button>
+                        <Button className="w-full">2.029.498 Ergebnisse</Button>
                       </div>
                     </div>
                   </div>

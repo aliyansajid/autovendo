@@ -1,9 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Car, Truck, Bike, Caravan, X } from "lucide-react";
+import {
+  Car,
+  Truck,
+  Bike,
+  Caravan,
+  X,
+  PlusCircle,
+  MinusCircle,
+} from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
-import { Input } from "@repo/ui/src/components/input";
 import { Label } from "@repo/ui/src/components/label";
 import { Checkbox } from "@repo/ui/src/components/checkbox";
 import {
@@ -75,7 +82,7 @@ export function AdvancedSearchForm() {
   ];
 
   return (
-    <div className="w-full max-w-285 mx-auto pb-8 px-4">
+    <div className="w-full max-w-285 mx-auto pb-16 px-4">
       <div className="flex items-center justify-between py-6 border-b">
         <h1 className="text-2xl font-bold">Filter</h1>
         <Button variant="ghost">
@@ -83,7 +90,7 @@ export function AdvancedSearchForm() {
         </Button>
       </div>
 
-      <div className="flex overflow-x-auto gap-8 mb-8 pt-8 no-scrollbar border-b">
+      <div className="flex overflow-x-auto gap-8 mb-8 pt-8 scrollbar-hide border-b">
         {[
           { id: "car", label: "Personenwagen", icon: Car },
           { id: "camper", label: "Wohnmobil", icon: Caravan },
@@ -121,24 +128,28 @@ export function AdvancedSearchForm() {
         className="w-full space-y-8"
       >
         <AccordionItem value="make" className="border-none">
-          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline">
+          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline flex items-center">
             Marke & Modell
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-row gap-4">
               <Button
+                size="lg"
                 variant="outline"
-                className="flex-1 h-12 text-base"
+                className="flex-1"
                 onClick={() => setIsMakeModalOpen(true)}
               >
-                + Hinzufügen
+                <PlusCircle />
+                Hinzufügen
               </Button>
               <Button
+                size="lg"
                 variant="outline"
-                className="flex-1 h-12 text-base"
+                className="flex-1"
                 onClick={() => setIsExclusionModalOpen(true)}
               >
-                - Ausschliessen
+                <MinusCircle />
+                Ausschliessen
               </Button>
             </div>
 
@@ -221,7 +232,7 @@ export function AdvancedSearchForm() {
         <Separator />
 
         <AccordionItem value="basic" className="border-none">
-          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline">
+          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline flex items-center">
             Basisdaten
           </AccordionTrigger>
           <AccordionContent className="pt-6 space-y-12">
@@ -342,7 +353,7 @@ export function AdvancedSearchForm() {
                 </RadioGroup>
 
                 {/* Histogram placeholder */}
-                <div className="h-9 flex items-end justify-between gap-1 px-2 pb-2 opacity-50">
+                <div className="h-10 flex items-end justify-between gap-1 px-2 pb-2 opacity-50">
                   {[20, 30, 50, 70, 90, 60, 40, 30, 20, 10, 10, 5].map(
                     (h, i) => (
                       <div
@@ -573,7 +584,7 @@ export function AdvancedSearchForm() {
         <Separator />
 
         <AccordionItem value="tech" className="border-none">
-          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline">
+          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline flex items-center">
             Technischen Daten
           </AccordionTrigger>
           <AccordionContent className="pt-6 space-y-12">
@@ -799,7 +810,7 @@ export function AdvancedSearchForm() {
         <Separator />
 
         <AccordionItem value="equipment" className="border-none">
-          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline">
+          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline flex items-center">
             Ausstattung
           </AccordionTrigger>
           <AccordionContent className="pt-6">
@@ -840,7 +851,7 @@ export function AdvancedSearchForm() {
         <Separator />
 
         <AccordionItem value="appearance" className="border-none">
-          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline">
+          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline flex items-center">
             Farbe
           </AccordionTrigger>
           <AccordionContent className="pt-6 space-y-8">
@@ -1119,9 +1130,8 @@ export function AdvancedSearchForm() {
 
         <Separator />
 
-        {/* Energy & Environment */}
         <AccordionItem value="energy" className="border-none">
-          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline">
+          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline flex items-center">
             Energie & Umwelt
           </AccordionTrigger>
           <AccordionContent className="pt-6 space-y-12">
@@ -1280,9 +1290,8 @@ export function AdvancedSearchForm() {
 
         <Separator />
 
-        {/* More Filters */}
         <AccordionItem value="more" className="border-none">
-          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline">
+          <AccordionTrigger className="text-xl font-bold text-blue-600 hover:no-underline flex items-center">
             Weitere Filter
           </AccordionTrigger>
           <AccordionContent className="pt-6">
@@ -1380,11 +1389,12 @@ export function AdvancedSearchForm() {
       </Accordion>
 
       <div className="fixed bottom-0 left-0 right-0 py-4 px-4 md:px-0 bg-background flex justify-center items-center z-50 shadow-2xl border-t">
-        <div className="w-full max-w-3xl">
-          <Button className="w-full h-12 text-lg font-bold bg-[#FFCE00] hover:bg-[#E6B800] text-black">
-            155'927 Fahrzeuge anzeigen
-          </Button>
-        </div>
+        <Button
+          size="lg"
+          className="w-full max-w-3xl bg-[#FFCE00] hover:bg-[#FFCE00]/90 text-black"
+        >
+          155'927 Fahrzeuge anzeigen
+        </Button>
       </div>
     </div>
   );

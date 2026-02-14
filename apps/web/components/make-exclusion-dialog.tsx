@@ -244,7 +244,7 @@ export function MakeExclusionDialog({
                   <h3 className="text-sm font-semibold text-foreground">
                     Popular makes
                   </h3>
-                  <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
                     {popularMakes.map((make) => (
                       <button
                         key={make.name}

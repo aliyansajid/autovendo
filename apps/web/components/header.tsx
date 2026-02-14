@@ -13,7 +13,6 @@ import {
   SheetContent,
   SheetTrigger,
   SheetTitle,
-  SheetDescription,
   SheetHeader,
 } from "@repo/ui/components/sheet";
 import { Menu, PlusCircle } from "lucide-react";
@@ -22,7 +21,7 @@ const Header = () => {
   return (
     <header className="bg-linear-to-r from-primary to-primary/80">
       <div className="flex items-center justify-between max-w-285 mx-auto h-16 px-4">
-        <div className="font-bold text-xl">Autovendo</div>
+        <div className="text-xl font-bold">Autovendo</div>
         <div className="hidden md:flex items-center gap-3">
           <Select defaultValue="english">
             <SelectTrigger className="w-32 bg-white">
@@ -37,7 +36,7 @@ const Header = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button variant="secondary" className="bg-white">
+          <Button className="bg-white hover:bg-white/90 text-black">
             <PlusCircle />
             Subscribe
           </Button>
@@ -52,7 +51,7 @@ const Header = () => {
             <SheetHeader>
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>
-            <div className="grid flex-1 auto-rows-min gap-6 px-4">
+            <div className="grid flex-1 auto-rows-min gap-4 px-4">
               <Select defaultValue="english">
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Language" />
@@ -66,7 +65,10 @@ const Header = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <Button className="w-full">Post free ad</Button>
+              <Button className="w-full">
+                <PlusCircle />
+                Subscribe
+              </Button>
             </div>
           </SheetContent>
         </Sheet>
