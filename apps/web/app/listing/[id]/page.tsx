@@ -24,8 +24,24 @@ import {
   Zap,
   Store,
   Disc,
+  BadgeCheck,
 } from "lucide-react";
 import Image from "next/image";
+import { EnergyLabel } from "@/components/energy-label";
+import { SimilarListings } from "@/components/similar-listings";
+import { ListingHeader } from "@/components/listing-header";
+import { SellerSection } from "@/components/seller-section";
+import { ReviewSection } from "@/components/review-section";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/src/components/card";
+import Link from "next/link";
+import { StickyActionBar } from "@/components/sticky-action-bar";
 
 export default function ListingPage() {
   const {
@@ -41,261 +57,249 @@ export default function ListingPage() {
     colourAndUpholstery,
     description,
     seller,
+    similarListings,
   } = carDetail;
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-16">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Mobile Header */}
-            <div className="lg:hidden space-y-3">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
-                {title}
-              </h1>
-              <div className="text-3xl sm:text-4xl font-bold text-primary">
-                € {price.toLocaleString()}
+    <div className="max-w-285 mx-auto px-4 py-12 pb-16">
+      <ListingHeader
+        make="Volkswagen"
+        model="T-Roc"
+        trim={title.replace("Volkswagen T-Roc ", "")}
+      />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="lg:hidden space-y-3">
+            <h1 className="text-2xl sm:text-3xl font-bold leading-tight">
+              {title}
+            </h1>
+            <div className="text-3xl sm:text-4xl font-bold text-primary">
+              € {price.toLocaleString()}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Badge className="px-3 py-1.5 text-xs">VAT deductible</Badge>
+              <Badge variant="secondary" className="px-3 py-1.5 text-xs ">
+                Negotiable
+              </Badge>
+            </div>
+          </div>
+
+          <div className="rounded-xl overflow-hidden shadow-sm border">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {images.map((src, index) => (
+                  <CarouselItem key={index}>
+                    <div className="relative aspect-video w-full">
+                      <Image
+                        src={src}
+                        alt={`${title} - Image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        priority={index === 0}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-4" />
+              <CarouselNext className="right-4" />
+            </Carousel>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            <KeyDetailCard
+              icon={<Gauge />}
+              label="Mileage"
+              value={keyDetails.mileage}
+            />
+            <KeyDetailCard
+              icon={<Disc />}
+              label="Transmission"
+              value={keyDetails.transmission}
+            />
+            <KeyDetailCard
+              icon={<Calendar />}
+              label="First Reg."
+              value={keyDetails.firstRegistration}
+            />
+            <KeyDetailCard
+              icon={<Fuel />}
+              label="Fuel Type"
+              value={keyDetails.fuelType}
+            />
+            <KeyDetailCard
+              icon={<Zap />}
+              label="Power"
+              value={keyDetails.power}
+            />
+            <KeyDetailCard
+              icon={<Store />}
+              label="Seller"
+              value={keyDetails.sellerType}
+            />
+          </div>
+
+          <div className="space-y-6">
+            <Section title="Basic Data">
+              <DataGrid data={basicData} />
+            </Section>
+
+            <Section title="Vehicle History">
+              <DataGrid data={vehicleHistory} />
+            </Section>
+
+            <Section title="Technical Data">
+              <DataGrid data={technicalData} />
+            </Section>
+
+            <Section title="Energy Consumption">
+              <div className="space-y-6">
+                <DataGrid
+                  data={Object.fromEntries(
+                    Object.entries(energyConsumption).filter(
+                      ([key]) => key !== "efficiencyClass",
+                    ),
+                  )}
+                />
+                {energyConsumption.efficiencyClass && (
+                  <>
+                    <Separator />
+                    <div>
+                      <h3 className="text-sm font-medium mb-4">
+                        Energy Efficiency Class
+                      </h3>
+                      <EnergyLabel
+                        efficiencyClass={energyConsumption.efficiencyClass}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
+            </Section>
+
+            <Section title="Colour and Upholstery">
+              <DataGrid data={colourAndUpholstery} />
+            </Section>
+
+            <Section title="Equipment">
+              <div className="space-y-6">
+                <EquipmentCategory
+                  title="Comfort & Convenience"
+                  items={equipment.comfort}
+                />
+                <EquipmentCategory
+                  title="Entertainment & Media"
+                  items={equipment.entertainment}
+                />
+                <EquipmentCategory
+                  title="Safety & Security"
+                  items={equipment.safety}
+                />
+              </div>
+            </Section>
+
+            <Section title="Vehicle Description">
+              <p className="whitespace-pre-line text-muted-foreground leading-relaxed">
+                {description}
+              </p>
+            </Section>
+
+            <SellerSection seller={seller} />
+
+            <ReviewSection
+              rating={seller.rating}
+              count={seller.reviewCount}
+              reviews={carDetail.reviews}
+            />
+
+            <Separator className="my-8" />
+
+            <SimilarListings listings={similarListings} />
+          </div>
+        </div>
+
+        <div className="space-y-6 sticky top-4 self-start">
+          <Card className="hidden lg:block">
+            <CardContent className="space-y-3">
+              <h1 className="text-2xl font-bold">{title}</h1>
+              <h2 className="text-3xl font-bold text-primary">
+                € {price.toLocaleString()}
+              </h2>
               <div className="flex flex-wrap gap-2">
+                <Badge className="px-3 py-1.5 text-xs">VAT deductible</Badge>
                 <Badge variant="secondary" className="px-3 py-1.5 text-xs">
-                  VAT deductible
-                </Badge>
-                <Badge
-                  variant="outline"
-                  className="px-3 py-1.5 text-xs border-gray-300"
-                >
                   Negotiable
                 </Badge>
               </div>
-            </div>
+            </CardContent>
+          </Card>
 
-            {/* Image Carousel */}
-            <div className="rounded-xl overflow-hidden shadow-sm border border-gray-200 bg-white">
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {images.map((src, index) => (
-                    <CarouselItem key={index}>
-                      <div className="relative aspect-video w-full bg-gray-100">
-                        <Image
-                          src={src}
-                          alt={`${title} - Image ${index + 1}`}
-                          fill
-                          className="object-cover"
-                          priority={index === 0}
-                        />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-4 bg-white/90 hover:bg-white shadow-md" />
-                <CarouselNext className="right-4 bg-white/90 hover:bg-white shadow-md" />
-              </Carousel>
-            </div>
-
-            {/* Key Details Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              <KeyDetailCard
-                icon={<Gauge className="w-5 h-5" />}
-                label="Mileage"
-                value={keyDetails.mileage}
-              />
-              <KeyDetailCard
-                icon={<Disc className="w-5 h-5" />}
-                label="Transmission"
-                value={keyDetails.transmission}
-              />
-              <KeyDetailCard
-                icon={<Calendar className="w-5 h-5" />}
-                label="First Reg."
-                value={keyDetails.firstRegistration}
-              />
-              <KeyDetailCard
-                icon={<Fuel className="w-5 h-5" />}
-                label="Fuel Type"
-                value={keyDetails.fuelType}
-              />
-              <KeyDetailCard
-                icon={<Zap className="w-5 h-5" />}
-                label="Power"
-                value={keyDetails.power}
-              />
-              <KeyDetailCard
-                icon={<Store className="w-5 h-5" />}
-                label="Seller"
-                value={keyDetails.sellerType}
-              />
-            </div>
-
-            {/* Data Sections */}
-            <div className="space-y-5">
-              <Section title="Basic Data">
-                <DataGrid data={basicData} />
-              </Section>
-
-              <Section title="Vehicle History">
-                <DataGrid data={vehicleHistory} />
-              </Section>
-
-              <Section title="Technical Data">
-                <DataGrid data={technicalData} />
-              </Section>
-
-              <Section title="Energy Consumption">
-                <DataGrid data={energyConsumption} />
-              </Section>
-
-              <Section title="Colour and Upholstery">
-                <DataGrid data={colourAndUpholstery} />
-              </Section>
-
-              <Section title="Equipment">
-                <div className="space-y-6">
-                  <EquipmentCategory
-                    title="Comfort & Convenience"
-                    items={equipment.comfort}
-                  />
-                  <EquipmentCategory
-                    title="Entertainment & Media"
-                    items={equipment.entertainment}
-                  />
-                  <EquipmentCategory
-                    title="Safety & Security"
-                    items={equipment.safety}
-                  />
+          <Card>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold">{seller.name}</h3>
+                <div className="flex items-center gap-2">
+                  <BadgeCheck className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">
+                    Verified Dealer
+                  </span>
                 </div>
-              </Section>
-
-              <Section title="Vehicle Description">
-                <p className="whitespace-pre-line text-gray-700 leading-relaxed text-[15px]">
-                  {description}
-                </p>
-              </Section>
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            <div className="sticky top-24 space-y-5">
-              {/* Desktop Price Card */}
-              <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-gray-200">
-                <div className="p-6 space-y-4">
-                  <h1 className="text-2xl font-bold text-gray-900 leading-tight">
-                    {title}
-                  </h1>
-                  <div className="text-3xl font-bold text-primary">
-                    € {price.toLocaleString()}
+                <div className="flex items-center gap-1.5 text-sm">
+                  <div className="flex text-yellow-400">
+                    {"★".repeat(Math.round(seller.rating))}
                   </div>
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    <Badge className="px-3 py-1.5 text-xs">
-                      VAT deductible
-                    </Badge>
-                    <Badge
-                      variant="secondary"
-                      className="px-3 py-1.5 text-xs border-gray-300"
-                    >
-                      Negotiable
-                    </Badge>
-                  </div>
+                  <span className="font-semibold">{seller.rating}</span>
+                  <span className="text-muted-foreground">
+                    ({seller.reviewCount} reviews)
+                  </span>
                 </div>
               </div>
 
-              {/* Seller Card */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-                <div className="p-6 space-y-5">
-                  {/* Seller Info */}
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-gray-900">
-                      {seller.name}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-medium text-primary">
-                        Verified Dealer
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-sm">
-                      <div className="flex text-yellow-400">
-                        {"★".repeat(Math.round(seller.rating))}
-                      </div>
-                      <span className="font-semibold text-gray-900 ml-0.5">
-                        {seller.rating}
-                      </span>
-                      <span className="text-gray-500">
-                        ({seller.reviewCount} reviews)
-                      </span>
-                    </div>
+              <Separator />
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="bg-muted p-2.5 rounded-lg">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
                   </div>
-
-                  <Separator />
-
-                  {/* Contact Details */}
-                  <div className="space-y-3.5">
-                    <div className="flex items-start gap-3">
-                      <div className="bg-gray-50 p-2.5 rounded-lg shrink-0 mt-0.5">
-                        <MapPin className="w-4 h-4 text-gray-600" />
-                      </div>
-                      <p className="text-sm text-gray-700 leading-relaxed pt-1">
-                        {seller.address}
-                      </p>
-                    </div>
-
-                    {seller.phones.slice(0, 1).map((phone, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <div className="bg-gray-50 p-2.5 rounded-lg shrink-0">
-                          <Phone className="w-4 h-4 text-gray-600" />
-                        </div>
-                        <a
-                          href={`tel:${phone}`}
-                          className="text-sm font-medium text-gray-900 hover:text-primary transition-colors"
-                        >
-                          {phone}
-                        </a>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="space-y-3">
-                    <Button className="w-full " size="lg">
-                      Contact Seller
-                    </Button>
-                    <Button variant="outline" className="w-full" size="lg">
-                      <Mail />
-                      Send Message
-                    </Button>
-                  </div>
-
-                  {/* Secondary Actions */}
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="lg"
-                      className="flex-1 text-gray-600 hover:text-red-500 hover:bg-red-50"
-                    >
-                      <Heart />
-                      Save
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="lg"
-                      className="flex-1 text-gray-600 hover:text-primary hover:bg-primary/5"
-                    >
-                      <Share2 />
-                      Share
-                    </Button>
-                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {seller.address}
+                  </p>
                 </div>
+
+                {seller.phones.slice(0, 1).map((phone, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="bg-muted p-2.5 rounded-lg">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <Link
+                      href={`tel:${phone}`}
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {phone}
+                    </Link>
+                  </div>
+                ))}
               </div>
-            </div>
-          </div>
+
+              <div className="space-y-3">
+                <Button className="w-full " size="lg">
+                  <Mail />
+                  Contact
+                </Button>
+                <Button variant="outline" className="w-full" size="lg">
+                  <Phone />
+                  Phone
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </main>
+      </div>
+      <StickyActionBar price={price} sellerPhone={seller.phones?.[0] || ""} />
     </div>
   );
 }
-
-// Helper Components
 
 function Section({
   title,
@@ -305,12 +309,12 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200 bg-linear-to-b from-gray-50 to-white">
-        <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-      </div>
-      <div className="p-6">{children}</div>
-    </div>
+    <Card>
+      <CardHeader className="border-b gap-0">
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
   );
 }
 
@@ -326,15 +330,13 @@ function DataGrid({ data }: { data: Record<string, string | number> }) {
           <div
             key={key}
             className={`flex justify-between items-center py-3.5 ${
-              shouldHideBorder ? "" : "border-b border-gray-100"
+              shouldHideBorder ? "border-b sm:border-b-0" : "border-b"
             } last:border-0`}
           >
-            <span className="text-[13px] text-gray-600 capitalize font-medium">
+            <span className="text-sm text-muted-foreground capitalize">
               {key.replace(/([A-Z])/g, " $1").trim()}
             </span>
-            <span className="font-semibold text-gray-900 text-sm text-right">
-              {value}
-            </span>
+            <span className="font-medium text-sm text-right">{value}</span>
           </div>
         );
       })}
@@ -352,17 +354,17 @@ function KeyDetailCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-gray-200 flex flex-col items-center justify-center text-center gap-2.5 hover:border-primary/30 hover:shadow-md transition-all duration-200">
-      <div className="text-primary bg-primary/8 p-2.5 rounded-full">{icon}</div>
-      <div className="space-y-1">
-        <div className="text-[11px] text-gray-500 uppercase tracking-wider font-semibold">
+    <Card>
+      <CardContent className="flex flex-col gap-3 items-center justify-center">
+        <div className="text-primary bg-primary/8 p-2.5 rounded-full">
+          {icon}
+        </div>
+        <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
           {label}
-        </div>
-        <div className="font-bold text-gray-900 text-sm md:text-base">
-          {value}
-        </div>
-      </div>
-    </div>
+        </p>
+        <p className="font-bold text-sm md:text-base">{value}</p>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -376,15 +378,15 @@ function EquipmentCategory({
   if (!items.length) return null;
   return (
     <div>
-      <h3 className="font-bold text-base text-gray-900 mb-3.5">{title}</h3>
+      <h3 className="font-bold text-base mb-3.5">{title}</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
         {items.map((item, i) => (
           <div
             key={i}
-            className="flex items-start gap-2.5 text-gray-700 text-[14px] group"
+            className="flex items-center gap-2 text-muted-foreground text-sm group"
           >
-            <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
-            <span className="leading-relaxed">{item}</span>
+            <CheckCircle2 className="w-4 h-4 text-green-500" />
+            <span>{item}</span>
           </div>
         ))}
       </div>

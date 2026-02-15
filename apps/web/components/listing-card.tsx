@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardFooter } from "@repo/ui/components/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@repo/ui/components/card";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import Image from "next/image";
@@ -20,8 +25,8 @@ export interface ListingProps {
 
 export const ListingCard = ({ item }: { item: ListingProps }) => {
   return (
-    <Card className="pt-0 h-full flex flex-col">
-      <div className="relative h-48 w-full">
+    <Card className="pt-0">
+      <CardHeader className="relative h-48">
         <Image
           src={item.image}
           alt={item.title}
@@ -36,45 +41,40 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
             {item.badge}
           </Badge>
         )}
-      </div>
+      </CardHeader>
       <CardContent className="space-y-3">
         <h1 className="text-lg font-bold truncate" title={item.title}>
           {item.title}
         </h1>
         <h3 className="text-xl font-bold text-primary">{item.price}</h3>
         <Separator />
-        <div className="flex items-center text-sm text-gray-600">
+        <div className="flex items-center text-sm text-muted-foreground">
           {item.details.map((detail, i) => (
             <span key={i} className="flex items-center">
               {detail}
               {i < item.details.length - 1 && (
-                <Separator orientation="vertical" className="h-10 mx-2" />
+                <Separator orientation="vertical" className="h-4! mx-2" />
               )}
             </span>
           ))}
         </div>
       </CardContent>
-      <CardFooter>
-        <div className="flex justify-between items-end w-full">
-          <div className="flex flex-col">
-            <span
-              className="text-sm font-semibold truncate"
-              title={item.dealer}
-            >
-              {item.dealer}
-            </span>
+      <CardFooter className="flex items-end justify-between">
+        <div className="flex flex-col">
+          <span className="text-sm font-semibold truncate" title={item.dealer}>
+            {item.dealer}
+          </span>
 
-            <span
-              className="text-xs text-gray-500 truncate"
-              title={item.location}
-            >
-              {item.location}
-            </span>
-          </div>
-          <Button variant="outline" size="icon">
-            <Heart className="text-gray-400" />
-          </Button>
+          <span
+            className="text-xs text-muted-foreground truncate"
+            title={item.location}
+          >
+            {item.location}
+          </span>
         </div>
+        <Button variant="outline" size="icon">
+          <Heart className="text-muted-foreground" />
+        </Button>
       </CardFooter>
     </Card>
   );

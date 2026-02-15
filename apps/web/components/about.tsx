@@ -7,7 +7,7 @@ const About = () => {
         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-black">
           Über Autovendo
         </h2>
-        <p className="text-lg text-gray-600 leading-relaxed mb-8">
+        <p className="text-lg text-muted-foreground leading-relaxed mb-8">
           Autovendo ist Ihre erste Anlaufstelle für die Suche nach dem perfekten
           Fahrzeug in der Schweiz und ganz Europa. Ob Sie einen zuverlässigen
           Alltagsbegleiter, eine luxuriöse Limousine oder einen leistungsstarken
@@ -24,7 +24,7 @@ const About = () => {
             <h3 className="text-xl font-bold mb-2 text-primary">
               Vertrauenswürdige Verkäufer
             </h3>
-            <p className="text-gray-500">
+            <p className="text-muted-foreground">
               Geprüfte Händler und private Angebote, auf die Sie sich verlassen
               können
             </p>
@@ -36,7 +36,7 @@ const About = () => {
             <h3 className="text-xl font-bold mb-2 text-primary">
               Große Auswahl
             </h3>
-            <p className="text-gray-500">
+            <p className="text-muted-foreground">
               Tausende Fahrzeuge von Top-Herstellern aus dem gesamten Kontinent
             </p>
           </div>
@@ -47,7 +47,7 @@ const About = () => {
             <h3 className="text-xl font-bold mb-2 text-primary">
               Einfache Suche
             </h3>
-            <p className="text-gray-500">
+            <p className="text-muted-foreground">
               Erweiterte Filter helfen Ihnen, genau das zu finden, wonach Sie
               suchen
             </p>

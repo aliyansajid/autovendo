@@ -62,7 +62,7 @@ const FeaturedGarage = () => {
                   <h3 className="text-lg sm:text-xl font-bold mb-2">
                     {garage.name}
                   </h3>
-                  <div className="flex items-center text-gray-600 mb-4">
+                  <div className="flex items-center text-muted-foreground mb-4">
                     <MapPin className="w-4 h-4 mr-1" />
                     <span className="text-sm">{garage.location}</span>
                   </div>
