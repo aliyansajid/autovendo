@@ -1,6 +1,6 @@
 "use client";
 
-import { carDetail } from "../../../lib/mock-data";
+import { carDetail } from "@/lib/mock-data";
 import { Button } from "@repo/ui/components/button";
 import { Badge } from "@repo/ui/components/badge";
 import { Separator } from "@repo/ui/components/separator";
@@ -15,8 +15,6 @@ import {
   MapPin,
   Phone,
   Mail,
-  Share2,
-  Heart,
   CheckCircle2,
   Calendar,
   Fuel,
@@ -34,9 +32,7 @@ import { SellerSection } from "@/components/seller-section";
 import { ReviewSection } from "@/components/review-section";
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@repo/ui/src/components/card";

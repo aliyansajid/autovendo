@@ -456,3 +456,65 @@ export const countries = [
   { value: "luxembourg", label: "Luxembourg", flag: "🇱🇺" },
   { value: "netherlands", label: "Netherlands", flag: "🇳🇱" },
 ];
+
+export const bodyTypes = [
+  { value: "compact", label: "Compact" },
+  { value: "sedan", label: "Sedan" },
+  { value: "convertible", label: "Convertible" },
+  { value: "coupe", label: "Coupe" },
+  { value: "suv", label: "SUV" },
+  { value: "station-wagon", label: "Station Wagon" },
+  { value: "van", label: "Van" },
+  { value: "transporter", label: "Transporter" },
+];
+
+export const fuelTypes = [
+  { value: "gasoline", label: "Gasoline" },
+  { value: "diesel", label: "Diesel" },
+  { value: "electric", label: "Electric" },
+  { value: "hybrid", label: "Hybrid" },
+  { value: "lpg", label: "LPG" },
+  { value: "natural-gas", label: "Natural Gas" },
+  { value: "hydrogen", label: "Hydrogen" },
+];
+
+export const transmissions = [
+  { value: "manual", label: "Manual" },
+  { value: "automatic", label: "Automatic" },
+  { value: "semi-automatic", label: "Semi-automatic" },
+];
+
+export const driveTypes = [
+  { value: "front", label: "Front-wheel drive" },
+  { value: "rear", label: "Rear-wheel drive" },
+  { value: "4x4", label: "4x4" },
+];
+
+export const colors = [
+  { value: "black", label: "Black" },
+  { value: "blue", label: "Blue" },
+  { value: "brown", label: "Brown" },
+  { value: "gold", label: "Gold" },
+  { value: "gray", label: "Gray" },
+  { value: "green", label: "Green" },
+  { value: "orange", label: "Orange" },
+  { value: "purple", label: "Purple" },
+  { value: "red", label: "Red" },
+  { value: "silver", label: "Silver" },
+  { value: "white", label: "White" },
+  { value: "yellow", label: "Yellow" },
+];
+
+export const seats = [
+  { value: "2", label: "2" },
+  { value: "4", label: "4" },
+  { value: "5", label: "5" },
+  { value: "7", label: "7" },
+  { value: "8", label: "8+" },
+];
+
+export const doors = [
+  { value: "2/3", label: "2/3" },
+  { value: "4/5", label: "4/5" },
+  { value: "6/7", label: "6/7" },
+];

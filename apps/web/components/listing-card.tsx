@@ -35,7 +35,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
         />
         {item.badge && (
           <Badge
-            className="absolute top-2 right-2 shadow-sm"
+            className="absolute top-2 right-2 shadow-sm bg-yellow-400"
             variant="secondary"
           >
             {item.badge}

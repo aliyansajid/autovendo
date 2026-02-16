@@ -4,6 +4,7 @@ import "@repo/ui/globals.css";
 import { TooltipProvider } from "@repo/ui/components/tooltip";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { Toaster } from "@repo/ui/src/components/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,12 +29,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <TooltipProvider>
           <Header />
           <main className="flex-1">{children}</main>
+          <Toaster richColors={true} position="top-center" />
           <Footer />
         </TooltipProvider>
       </body>

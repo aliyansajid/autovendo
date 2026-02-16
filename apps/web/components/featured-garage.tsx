@@ -52,7 +52,7 @@ const FeaturedGarage = () => {
                     className="object-cover"
                   />
                   <Badge
-                    className="absolute top-2 left-2 shadow-sm"
+                    className="absolute top-2 left-2 shadow-sm bg-yellow-400"
                     variant="secondary"
                   >
                     Featured

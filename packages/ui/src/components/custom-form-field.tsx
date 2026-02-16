@@ -15,11 +15,13 @@ import {
   SelectValue,
 } from "@repo/ui/components/select";
 import { Checkbox } from "@repo/ui/components/checkbox";
+import { Textarea } from "@repo/ui/components/textarea";
 
 enum FormFieldType {
   INPUT = "input",
   CHECKBOX = "checkbox",
   SELECT = "select",
+  TEXTAREA = "textarea",
 }
 
 interface CustomFormFieldProps {
@@ -48,6 +50,16 @@ const RenderField = ({
         <Input
           placeholder={props.placeholder}
           type={props.inputType}
+          className={cn(props.className)}
+          disabled={props.disabled}
+          {...field}
+        />
+      );
+
+    case FormFieldType.TEXTAREA:
+      return (
+        <Textarea
+          placeholder={props.placeholder}
           className={cn(props.className)}
           disabled={props.disabled}
           {...field}

@@ -704,13 +704,13 @@ export function AdvancedSearchForm() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-6">
               {/* Power */}
               <div className="space-y-4">
-                <div className="flex flex-col">
-                  <Label className="text-base font-semibold">Leistung</Label>
-                  <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
-                    Zurücksetzen
-                  </span>
-                </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <Label className="text-base font-semibold">Leistung</Label>
+                    <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+                      Zurücksetzen
+                    </span>
+                  </div>
                   <RadioGroup defaultValue="ps" className="flex gap-4">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="ps" id="p-ps" />
