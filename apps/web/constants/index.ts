@@ -1,3 +1,154 @@
+export const GearTransmissionEnum = [
+  { value: "automatic", label: "Automatikgetriebe" },
+  { value: "manual", label: "Schaltgetriebe" },
+];
+
+export const TransmissionTypeEnum = [
+  { value: "automatic", label: "Automat" },
+  { value: "automatic-stepless", label: "Stufenlos" },
+  { value: "semi-automatic", label: "Halbautomatisches Getriebe" },
+  { value: "manual", label: "Schaltgetriebe manuell" },
+];
+
+export const DriveTypeEnum = [
+  { value: "all", label: "Allrad" },
+  { value: "front", label: "Hinterradantrieb" },
+  { value: "rear", label: "Vorderradantrieb" },
+];
+
+export const BodyTypeEnum = [
+  { value: "estate", label: "Kombi" },
+  { value: "cabriolet", label: "Cabriolet" },
+  { value: "pickup", label: "Pick-up" },
+  { value: "suv", label: "SUV / Geländewagen" },
+  { value: "coupe", label: "Coupé" },
+  { value: "minivan", label: "Kompaktvan / Minivan" },
+  { value: "saloon", label: "Limousine" },
+  { value: "small-car", label: "Kleinwagen" },
+  { value: "bus", label: "Bus" },
+];
+
+export const FuelTypeEnum = [
+  { value: "petrol", label: "Benzin" },
+  { value: "diesel", label: "Diesel" },
+  { value: "electric", label: "Elektro" },
+  { value: "hev-diesel", label: "Voll-Hybrid Diesel/Elektro" },
+  { value: "hev-petrol", label: "Voll-Hybrid Benzin/Elektro" },
+  {
+    value: "mhev-diesel",
+    label: "Mild-Hybrid Diesel/Elektro",
+  },
+  {
+    value: "mhev-petrol",
+    label: "Mild-Hybrid Benzin/Elektro",
+  },
+  {
+    value: "phev-diesel",
+    label: "Plug-in hybrid Diesel/Elektro",
+  },
+  {
+    value: "phev-petrol",
+    label: "Plug-in hybrid Benzin/Elektro",
+  },
+  { value: "cng-petrol", label: "Erdgas (CNG) / Benzin" },
+  { value: "lpg-petrol", label: "Flüssiggas (LPG) / Benzin" },
+  { value: "ethanol-petrol", label: "Bioethanol" },
+  { value: "hydrogen", label: "Wasserstoff" },
+];
+
+export const ColorEnum = [
+  { value: "anthracite", label: "Anthrazit" },
+  { value: "beige", label: "Beige" },
+  { value: "black", label: "Schwarz" },
+  { value: "blue", label: "Blau" },
+  { value: "bordeaux", label: "Bordeaux" },
+  { value: "brown", label: "Braun" },
+  { value: "gold", label: "Gold" },
+  { value: "gray", label: "Grau" },
+  { value: "green", label: "Grün" },
+  { value: "multicoloured", label: "Mehrfarbig" },
+  { value: "orange", label: "Orange" },
+  { value: "pink", label: "Rosa" },
+  { value: "red", label: "Rot" },
+  { value: "silver", label: "Silber" },
+  { value: "turquoise", label: "Türkis" },
+  { value: "violet", label: "Violett" },
+  { value: "white", label: "Weiss" },
+  { value: "yellow", label: "Gelb" },
+  { value: "other", label: "Other" },
+];
+
+export const VehicleConditionEnum = [
+  { value: "new", label: "Neues Fahrzeug" },
+  {
+    value: "demonstration",
+    label: "Vorführmodell",
+  },
+  { value: "pre-registered", label: "Neues Fahrzeug mit Tageszulassung" },
+  { value: "used", label: "Occasion" },
+  { value: "oldtimer", label: "Oldtimer" },
+];
+
+export const WarrantyEnum = [
+  { value: "from_delivery", label: "From delivery" },
+  { value: "from_first_registration", label: "From first registration" },
+  { value: "from_date", label: "From date" },
+];
+
+export const EnergyLabelEnum = [
+  { value: "a", label: "A" },
+  { value: "b", label: "B" },
+  { value: "c", label: "C" },
+  { value: "d", label: "D" },
+  { value: "e", label: "E" },
+  { value: "f", label: "F" },
+  { value: "g", label: "G" },
+];
+
+export const EmissionStandardEnum = [
+  { value: "euro-1", label: "Euro 1" },
+  { value: "euro-2", label: "Euro 2" },
+  { value: "euro-3", label: "Euro 3" },
+  { value: "euro-4", label: "Euro 4" },
+  { value: "euro-5", label: "Euro 5" },
+  { value: "euro-5-plus", label: "Euro 5+" },
+  { value: "euro-6", label: "Euro 6" },
+  { value: "euro-6a", label: "Euro 6a" },
+  { value: "euro-6b", label: "Euro 6b" },
+  { value: "euro-6c", label: "Euro 6c" },
+  { value: "euro-6d", label: "Euro 6d" },
+  { value: "euro-6d-isc", label: "Euro 6d ISC" },
+  { value: "euro-6d-isc-fcm", label: "Euro 6d ISC FCM" },
+  { value: "euro-6d-temp", label: "Euro 6d Temp" },
+  { value: "euro-6d-temp-evap", label: "Euro 6d Temp EVAP" },
+  { value: "euro-6d-temp-evap-isc", label: "Euro 6d Temp EVAP ISC" },
+  { value: "euro-6d-temp-isc", label: "Euro 6d Temp ISC" },
+  { value: "euro-6e", label: "Euro 6e" },
+];
+
+export const ChargingPlugTypeStandardEnum = [
+  { value: "type_1", label: "Type 1" },
+  { value: "type_2", label: "Type 2" },
+];
+
+export const ChargingPlugTypeFastEnum = [
+  { value: "ccs", label: "Ccs" },
+  { value: "css_2", label: "Css-2" },
+  { value: "chademo", label: "Chademo" },
+  { value: "supercharger", label: "Supercharger" },
+];
+
+export const BatteryOwnershipEnum = [
+  {
+    value: "battery_included",
+    label: "Battery included in the purchase price",
+  },
+  {
+    value: "battery_rent_required",
+    label: "Battery requires an additional rent",
+  },
+];
+
 export const makes = [
   {
     label: "Top makes",
@@ -434,17 +585,6 @@ export const prices = [
   { value: "100000", label: "€100,000" },
 ];
 
-export const getRegistrationYears = () => {
-  const currentYear = new Date().getFullYear();
-  const years = [];
-
-  for (let year = currentYear; year >= 1900; year--) {
-    years.push({ value: year.toString(), label: year.toString() });
-  }
-
-  return years;
-};
-
 export const countries = [
   { value: "europe", label: "Europe", flag: "🇪🇺" },
   { value: "austria", label: "Austria", flag: "🇦🇹" },
@@ -455,27 +595,6 @@ export const countries = [
   { value: "italy", label: "Italy", flag: "🇮🇹" },
   { value: "luxembourg", label: "Luxembourg", flag: "🇱🇺" },
   { value: "netherlands", label: "Netherlands", flag: "🇳🇱" },
-];
-
-export const bodyTypes = [
-  { value: "compact", label: "Compact" },
-  { value: "sedan", label: "Sedan" },
-  { value: "convertible", label: "Convertible" },
-  { value: "coupe", label: "Coupe" },
-  { value: "suv", label: "SUV" },
-  { value: "station-wagon", label: "Station Wagon" },
-  { value: "van", label: "Van" },
-  { value: "transporter", label: "Transporter" },
-];
-
-export const fuelTypes = [
-  { value: "gasoline", label: "Gasoline" },
-  { value: "diesel", label: "Diesel" },
-  { value: "electric", label: "Electric" },
-  { value: "hybrid", label: "Hybrid" },
-  { value: "lpg", label: "LPG" },
-  { value: "natural-gas", label: "Natural Gas" },
-  { value: "hydrogen", label: "Hydrogen" },
 ];
 
 export const transmissions = [

@@ -22,7 +22,7 @@ import {
   SelectItem,
 } from "@repo/ui/src/components/select";
 import { Button } from "@repo/ui/src/components/button";
-import { makes, models, prices, getRegistrationYears, countries } from "@/data";
+import { makes, models, prices, countries } from "@/constants";
 import FeaturedListings from "@/components/featured-listings";
 import FeaturedGarage from "@/components/featured-garage";
 import About from "@/components/about";
@@ -33,6 +33,7 @@ import {
   InputGroupInput,
   InputGroupAddon,
 } from "@repo/ui/src/components/input-group";
+import { getRegistrationYears } from "@/lib/utils";
 
 const formSchema = z.object({
   query: z.string().optional(),

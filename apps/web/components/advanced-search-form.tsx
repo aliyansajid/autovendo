@@ -1370,7 +1370,7 @@ export function AdvancedSearchForm() {
                         <Checkbox id={`seal-${item.l}`} />
                         <Label
                           htmlFor={`seal-${item.l}`}
-                          className="font-normal truncate max-w-[200px]"
+                          className="font-normal truncate max-w-50"
                           title={item.l}
                         >
                           {item.l}
