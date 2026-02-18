@@ -90,9 +90,9 @@ export const VehicleConditionEnum = [
 ];
 
 export const WarrantyEnum = [
-  { value: "from_delivery", label: "From delivery" },
-  { value: "from_first_registration", label: "From first registration" },
-  { value: "from_date", label: "From date" },
+  { value: "from-delivery", label: "From delivery" },
+  { value: "from-first-registration", label: "From first registration" },
+  { value: "from-date", label: "From date" },
 ];
 
 export const EnergyLabelEnum = [
@@ -127,24 +127,24 @@ export const EmissionStandardEnum = [
 ];
 
 export const ChargingPlugTypeStandardEnum = [
-  { value: "type_1", label: "Type 1" },
-  { value: "type_2", label: "Type 2" },
+  { value: "type-1", label: "Type 1" },
+  { value: "type-2", label: "Type 2" },
 ];
 
 export const ChargingPlugTypeFastEnum = [
   { value: "ccs", label: "Ccs" },
-  { value: "css_2", label: "Css-2" },
+  { value: "css-2", label: "Css-2" },
   { value: "chademo", label: "Chademo" },
   { value: "supercharger", label: "Supercharger" },
 ];
 
 export const BatteryOwnershipEnum = [
   {
-    value: "battery_included",
+    value: "battery-included",
     label: "Battery included in the purchase price",
   },
   {
-    value: "battery_rent_required",
+    value: "battery-rent-required",
     label: "Battery requires an additional rent",
   },
 ];
@@ -597,43 +597,80 @@ export const countries = [
   { value: "netherlands", label: "Netherlands", flag: "🇳🇱" },
 ];
 
-export const transmissions = [
-  { value: "manual", label: "Manual" },
-  { value: "automatic", label: "Automatic" },
-  { value: "semi-automatic", label: "Semi-automatic" },
+export const EquipmentEnum = [
+  { value: "360-camera", label: "360°-Kamera" },
+  { value: "abs", label: "ABS" },
+  { value: "adaptive-headlights", label: "Adaptive Scheinwerfer" },
+  { value: "adaptive-cruise-control", label: "Adaptiver Tempomat" },
+  { value: "alarm-system", label: "Alarmanlage" },
+  { value: "alloy-wheels", label: "Aluminiumfelgen" },
+  { value: "android-auto", label: "Android Auto" },
+  { value: "tow-hitch", label: "Anhängerkupplung" },
+  { value: "tow-hitch-removable", label: "Anhängerkupplung abnehmbar" },
+  { value: "tow-hitch-swiveling", label: "Anhängerkupplung schwenkbar" },
+  { value: "tow-hitch-fixed", label: "Anhängerkupplung fix" },
+  { value: "apple-carplay", label: "Apple CarPlay" },
+  { value: "heated-seats", label: "Beheizbare Sitze" },
+  { value: "ventilated-seats", label: "Belüftete Sitze" },
+  { value: "bluetooth", label: "Bluetooth-Schnittstelle" },
+  { value: "brake-assist", label: "Bremsassistent" },
+  { value: "chrome-elements", label: "Chromelemente" },
+  { value: "dab-radio", label: "DAB-Radio" },
+  { value: "anti-theft", label: "Diebstahlsicherung" },
+  { value: "differential-lock", label: "Differenzialsperre" },
+  { value: "electric-windows", label: "Elektrische Fensterheber" },
+  { value: "electric-tailgate", label: "Elektrische Heckklappe" },
+  { value: "electric-seat-adjustment", label: "Elektrische Sitzverstellung" },
+  { value: "gull-wing-doors", label: "Flügeltüren" },
+  { value: "hands-free", label: "Freisprechanlage" },
+  { value: "floor", label: "Fussboden" },
+  { value: "roof-rack", label: "Gepäckträger" },
+  { value: "hardtop", label: "Hardtop" },
+  { value: "head-up-display", label: "Head-up-Display" },
+  { value: "custom-exhaust", label: "Individuelle Auspuffanlage" },
+  { value: "isofix", label: "Isofix" },
+  { value: "air-conditioning", label: "Klimaanlage" },
+  { value: "automatic-climate-control", label: "Automatische Klimaanlage" },
+  { value: "trunk", label: "Koffer" },
+  { value: "speakers", label: "Lautsprecher" },
+  { value: "air-suspension", label: "Luftfederung" },
+  { value: "navigation-system", label: "Navigationssystem" },
+  { value: "navigation", label: "Navigation" },
+  { value: "portable-navigation", label: "Tragbares Navigationssystem" },
+  { value: "panoramic-roof", label: "Panoramadach" },
+  { value: "parking-assist", label: "Parkhilfe" },
+  { value: "parking-sensors-rear", label: "Parksensoren hinten" },
+  { value: "parking-sensors-front", label: "Parksensoren vorne" },
+  { value: "backrest-protection", label: "Rückenlehnenschutz" },
+  { value: "backup-camera", label: "Rückfahrkamera" },
+  { value: "headlights", label: "Scheinwerfer" },
+  { value: "laser-headlights", label: "Laser Scheinwerfer" },
+  { value: "led-headlights", label: "LED-Scheinwerfer" },
+  { value: "xenon-headlights", label: "Xenonscheinwerfer" },
+  { value: "sunroof", label: "Schiebedach" },
+  { value: "sliding-door", label: "Schiebetür" },
+  { value: "keyless-entry-start", label: "Schlüsselloser Zugang/Start" },
+  { value: "fast-charging", label: "Schnellladen" },
+  { value: "seat-covers", label: "Sitzbezüge" },
+  { value: "alcantara", label: "Alcantara" },
+  { value: "fabric-seats", label: "Stoffsitze" },
+  { value: "leather", label: "Leder" },
+  { value: "partial-leather-seats", label: "Teil-Ledersitze" },
+  { value: "special-paint", label: "Sonderlackierung" },
+  { value: "sport-seats", label: "Sportsitze" },
+  { value: "lane-keep-assist", label: "Spurhalteassistent" },
+  { value: "esp", label: "Stabilitätskontrolle (ESP)" },
+  { value: "auxiliary-heating", label: "Standheizung" },
+  { value: "start-stop-system", label: "Start-Stopp-System" },
+  { value: "cruise-control", label: "Tempomat" },
+  { value: "blind-spot-assist", label: "Totwinkel-Assistent" },
+  { value: "reinforced-suspension", label: "Verstärkte Federung" },
+  { value: "additional-instruments", label: "Zusätzliche Instrumente" },
 ];
 
-export const driveTypes = [
-  { value: "front", label: "Front-wheel drive" },
-  { value: "rear", label: "Rear-wheel drive" },
-  { value: "4x4", label: "4x4" },
-];
-
-export const colors = [
-  { value: "black", label: "Black" },
-  { value: "blue", label: "Blue" },
-  { value: "brown", label: "Brown" },
-  { value: "gold", label: "Gold" },
-  { value: "gray", label: "Gray" },
-  { value: "green", label: "Green" },
-  { value: "orange", label: "Orange" },
-  { value: "purple", label: "Purple" },
-  { value: "red", label: "Red" },
-  { value: "silver", label: "Silver" },
-  { value: "white", label: "White" },
-  { value: "yellow", label: "Yellow" },
-];
-
-export const seats = [
-  { value: "2", label: "2" },
-  { value: "4", label: "4" },
-  { value: "5", label: "5" },
-  { value: "7", label: "7" },
-  { value: "8", label: "8+" },
-];
-
-export const doors = [
-  { value: "2/3", label: "2/3" },
-  { value: "4/5", label: "4/5" },
-  { value: "6/7", label: "6/7" },
+export const ExtrasEnum = [
+  { value: "8-tyres", label: "8-fach bereift" },
+  { value: "accessible-for-disabled", label: "Behindertengerecht" },
+  { value: "race-car", label: "Rennfahrzeug" },
+  { value: "tuning", label: "Tuning" },
 ];

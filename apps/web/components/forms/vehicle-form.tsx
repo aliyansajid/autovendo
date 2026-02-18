@@ -26,11 +26,12 @@ import {
   ColorEnum,
   VehicleConditionEnum,
   EnergyLabelEnum,
-  EmissionStandardEnum,
   ChargingPlugTypeStandardEnum,
   ChargingPlugTypeFastEnum,
   BatteryOwnershipEnum,
   WarrantyEnum,
+  EquipmentEnum,
+  ExtrasEnum,
 } from "@/constants";
 import {
   Accordion,
@@ -39,6 +40,7 @@ import {
   AccordionContent,
 } from "@repo/ui/src/components/accordion";
 import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
+import { Label } from "@repo/ui/src/components/label";
 
 export function VehicleForm() {
   const form = useForm<z.infer<typeof vehicleFormSchema>>({
@@ -143,31 +145,25 @@ export function VehicleForm() {
     alert(JSON.stringify(data, null, 2));
   };
 
-  const showCombustion = [
-    "Bioethanol/petrol",
-    "Diesel",
-    "Hybrid (diesel/electric)",
-    "Hybrid (petrol/electric)",
-    "Liquefied petroleum gas (LPG)/petrol",
-    "Mild hybrid (diesel/electric)",
-    "Mild hybrid (petrol/electric)",
-    "Natural gas (CNG)/petrol",
-    "Petrol",
-    "Plug-in hybrid (diesel/electric)",
-    "Plug-in hybrid (petrol/electric)",
+  const showCombustionOrMild = [
+    "petrol",
+    "diesel",
+    "lpg-petrol",
+    "mhev-diesel",
+    "mhev-petrol",
+    "cng-petrol",
+    "ethanol-petrol",
   ].includes(fuelType || "");
 
-  const showElectric = [
-    "Electric",
-    "Hybrid (diesel/electric)",
-    "Hybrid (petrol/electric)",
-    "Mild hybrid (diesel/electric)",
-    "Mild hybrid (petrol/electric)",
-    "Plug-in hybrid (diesel/electric)",
-    "Plug-in hybrid (petrol/electric)",
-  ].includes(fuelType || "");
+  const showElectric = fuelType === "electric";
 
-  const showHydrogen = fuelType === "Hydrogen";
+  const showFullHybrid = ["hev-diesel", "hev-petrol"].includes(fuelType || "");
+
+  const showHydrogen = fuelType === "hydrogen";
+
+  const showPluginHybrid = ["phev-diesel", "phev-petrol"].includes(
+    fuelType || "",
+  );
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) =>
@@ -196,7 +192,7 @@ export function VehicleForm() {
             <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
               Vehicle Features
             </AccordionTrigger>
-            <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 px-1">
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.SELECT}
@@ -240,8 +236,8 @@ export function VehicleForm() {
               </CustomFormField>
 
               <CustomFormField
-                fieldType={FormFieldType.SELECT}
                 control={control}
+                fieldType={FormFieldType.SELECT}
                 name="gearTransmission"
                 label="Gear Transmission"
                 placeholder="Select an option"
@@ -255,8 +251,8 @@ export function VehicleForm() {
               </CustomFormField>
 
               <CustomFormField
-                fieldType={FormFieldType.SELECT}
                 control={control}
+                fieldType={FormFieldType.SELECT}
                 name="transmissionType"
                 label="Transmission Type"
                 placeholder="Select an option"
@@ -284,8 +280,8 @@ export function VehicleForm() {
               </CustomFormField>
 
               <CustomFormField
-                fieldType={FormFieldType.INPUT}
                 control={control}
+                fieldType={FormFieldType.INPUT}
                 name="version"
                 label="Version"
                 placeholder="Enter a version"
@@ -293,8 +289,8 @@ export function VehicleForm() {
               />
 
               <CustomFormField
-                fieldType={FormFieldType.SELECT}
                 control={control}
+                fieldType={FormFieldType.SELECT}
                 name="driveType"
                 label="Drive Type"
                 placeholder="Select an option"
@@ -308,8 +304,8 @@ export function VehicleForm() {
               </CustomFormField>
 
               <CustomFormField
-                fieldType={FormFieldType.SELECT}
                 control={control}
+                fieldType={FormFieldType.SELECT}
                 name="bodyType"
                 label="Body Type"
                 placeholder="Select an option"
@@ -323,8 +319,8 @@ export function VehicleForm() {
               </CustomFormField>
 
               <CustomFormField
-                fieldType={FormFieldType.SELECT}
                 control={control}
+                fieldType={FormFieldType.SELECT}
                 name="fuelType"
                 label="Fuel Type"
                 placeholder="Select an option"
@@ -338,8 +334,8 @@ export function VehicleForm() {
               </CustomFormField>
 
               <CustomFormField
-                fieldType={FormFieldType.SELECT}
                 control={control}
+                fieldType={FormFieldType.SELECT}
                 name="interiorColor"
                 label="Interior Color"
                 placeholder="Select an option"
@@ -353,8 +349,8 @@ export function VehicleForm() {
               </CustomFormField>
 
               <CustomFormField
-                fieldType={FormFieldType.SELECT}
                 control={control}
+                fieldType={FormFieldType.SELECT}
                 name="exteriorColor"
                 label="Exterior Color"
                 placeholder="Select an option"
@@ -368,8 +364,8 @@ export function VehicleForm() {
               </CustomFormField>
 
               <CustomFormField
-                fieldType={FormFieldType.CHECKBOX}
                 control={control}
+                fieldType={FormFieldType.CHECKBOX}
                 name="metallic"
                 label="Metallic"
               />
@@ -384,10 +380,10 @@ export function VehicleForm() {
             <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
               State
             </AccordionTrigger>
-            <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 px-1">
               <CustomFormField
-                fieldType={FormFieldType.SELECT}
                 control={control}
+                fieldType={FormFieldType.SELECT}
                 name="vehicleCondition"
                 label="Vehicle Condition"
                 placeholder="Select an option"
@@ -401,8 +397,8 @@ export function VehicleForm() {
               </CustomFormField>
 
               <CustomFormField
-                fieldType={FormFieldType.DATE_PICKER}
                 control={control}
+                fieldType={FormFieldType.DATE_PICKER}
                 name="lastInspectionDate"
                 label="Last inspection at MFK"
                 placeholder="Select Date"
@@ -411,8 +407,8 @@ export function VehicleForm() {
 
               <div className="grid grid-cols-2 gap-6">
                 <CustomFormField
-                  fieldType={FormFieldType.SELECT}
                   control={control}
+                  fieldType={FormFieldType.SELECT}
                   name="registrationMonth"
                   label="Registration Month"
                   placeholder="Month"
@@ -425,8 +421,8 @@ export function VehicleForm() {
                   ))}
                 </CustomFormField>
                 <CustomFormField
-                  fieldType={FormFieldType.SELECT}
                   control={control}
+                  fieldType={FormFieldType.SELECT}
                   name="registrationYear"
                   label="Registration Year"
                   placeholder="Year"
@@ -441,9 +437,9 @@ export function VehicleForm() {
               </div>
 
               <CustomFormField
+                control={control}
                 fieldType={FormFieldType.INPUT}
                 inputType="number"
-                control={control}
                 name="mileage"
                 label="Mileage"
                 placeholder="0"
@@ -451,8 +447,8 @@ export function VehicleForm() {
               />
 
               <CustomFormField
-                fieldType={FormFieldType.SELECT}
                 control={control}
+                fieldType={FormFieldType.SELECT}
                 name="warranty"
                 label="Warranty"
                 placeholder="Select an option"
@@ -466,16 +462,8 @@ export function VehicleForm() {
               </CustomFormField>
 
               <CustomFormField
-                fieldType={FormFieldType.DATE_PICKER}
                 control={control}
-                name="firstDate"
-                label="First Date"
-                placeholder="Select Date"
-              />
-
-              <CustomFormField
                 fieldType={FormFieldType.CHECKBOX}
-                control={control}
                 name="inspectionPassed"
                 label="Inspection at MFK passed"
               />
@@ -490,21 +478,23 @@ export function VehicleForm() {
             <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
               Price
             </AccordionTrigger>
-            <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 px-1">
               <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
                 control={control}
-                name="priceChf"
-                label="Price (CHF)"
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="price"
+                label="Price"
+                inputGroupText="CHF"
                 placeholder="0"
               />
               <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
                 control={control}
-                name="newPriceChf"
-                label="New Price (CHF)"
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="newPrice"
+                label="New Price"
+                inputGroupText="CHF"
                 placeholder="0"
               />
             </AccordionContent>
@@ -518,22 +508,34 @@ export function VehicleForm() {
             <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
               Equipment
             </AccordionTrigger>
-            <AccordionContent className="grid grid-cols-1 md:grid-cols-3 gap-y-2 pt-4">
-              {Object.keys(form.getValues().equipment).map((key) => {
-                if (key === "extras8tyres") return null;
-                const label = key
-                  .replace(/([A-Z])/g, " $1")
-                  .replace(/^./, (str) => str.toUpperCase());
-                return (
+            <AccordionContent className="space-y-6 px-1">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-y-3 pt-6">
+                {EquipmentEnum.map((equipment) => (
                   <CustomFormField
-                    key={key}
-                    fieldType={FormFieldType.CHECKBOX}
+                    key={equipment.value}
                     control={control}
-                    name={`equipment.${key}`}
-                    label={label}
+                    fieldType={FormFieldType.CHECKBOX}
+                    name={`equipment.${equipment.value}`}
+                    label={equipment.label}
                   />
-                );
-              })}
+                ))}
+              </div>
+              <div className="space-y-4 pt-4">
+                <Label className="text-lg text-primary font-semibold">
+                  Extras
+                </Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-y-3">
+                  {ExtrasEnum.map((extra) => (
+                    <CustomFormField
+                      key={extra.value}
+                      control={control}
+                      fieldType={FormFieldType.CHECKBOX}
+                      name={`extras.${extra.value}`}
+                      label={extra.label}
+                    />
+                  ))}
+                </div>
+              </div>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -545,30 +547,110 @@ export function VehicleForm() {
             <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
               Technical Data
             </AccordionTrigger>
-            <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 px-1">
               <div className="grid grid-cols-2 gap-6">
                 <CustomFormField
+                  control={control}
                   fieldType={FormFieldType.INPUT}
                   inputType="number"
-                  control={control}
                   name="doors"
                   label="Doors"
                   placeholder="0"
                 />
 
                 <CustomFormField
+                  control={control}
                   fieldType={FormFieldType.INPUT}
                   inputType="number"
-                  control={control}
                   name="seats"
                   label="Seats"
                   placeholder="0"
                 />
               </div>
 
+              {(showCombustionOrMild || showFullHybrid || showPluginHybrid) && (
+                <div className="space-y-2">
+                  <Label>Consumption (l/100 km)</Label>
+                  <div className="grid grid-cols-3 gap-6">
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.INPUT}
+                      inputType="text"
+                      name="consumptionCity"
+                      placeholder="City"
+                    />
+
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.INPUT}
+                      inputType="text"
+                      name="consumptionCountry"
+                      placeholder="Country"
+                    />
+
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.INPUT}
+                      inputType="text"
+                      name="consumptionTotal"
+                      placeholder="Total"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {(showCombustionOrMild || showHydrogen) && (
+                <CustomFormField
+                  control={control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  inputType="number"
+                  name="cubicCapacity"
+                  label="Cubic capacity"
+                  inputGroupText="cm³"
+                  placeholder="0"
+                />
+              )}
+
+              {(showCombustionOrMild ||
+                showFullHybrid ||
+                showHydrogen ||
+                showPluginHybrid) && (
+                <CustomFormField
+                  control={control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  inputType="number"
+                  name="co2Emission"
+                  label="CO2 emission"
+                  inputGroupText="g/km"
+                  placeholder="0"
+                />
+              )}
+
+              {(showCombustionOrMild || showHydrogen) && (
+                <>
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.INPUT}
+                    inputType="number"
+                    name="cylinders"
+                    label="Cylinders"
+                    placeholder="0"
+                  />
+
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.INPUT}
+                    inputType="number"
+                    name="numberOfGears"
+                    label="Number of gears"
+                    placeholder="0"
+                  />
+                </>
+              )}
+
               <CustomFormField
-                fieldType={FormFieldType.SELECT}
                 control={control}
+                fieldType={FormFieldType.SELECT}
                 name="energyLabel"
                 label="Energy Label"
                 placeholder="Select an option"
@@ -583,18 +665,18 @@ export function VehicleForm() {
 
               <div className="grid grid-cols-2 gap-6">
                 <CustomFormField
+                  control={control}
                   fieldType={FormFieldType.INPUT}
                   inputType="number"
-                  control={control}
                   name="hp"
                   label="HP"
                   placeholder="0"
                 />
 
                 <CustomFormField
+                  control={control}
                   fieldType={FormFieldType.INPUT}
                   inputType="number"
-                  control={control}
                   name="kw"
                   label="kW"
                   placeholder="0"
@@ -602,8 +684,8 @@ export function VehicleForm() {
               </div>
 
               <CustomFormField
-                fieldType={FormFieldType.INPUT}
                 control={control}
+                fieldType={FormFieldType.INPUT}
                 name="typeApproval"
                 label="Type Approval"
                 placeholder="Enter type approval"
@@ -611,18 +693,19 @@ export function VehicleForm() {
               />
 
               <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
                 control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
                 name="wheelbase"
                 label="Wheelbase"
+                inputGroupText="mm"
                 placeholder="0"
                 className="w-full"
               />
 
               <CustomFormField
-                fieldType={FormFieldType.INPUT}
                 control={control}
+                fieldType={FormFieldType.INPUT}
                 name="vehicleIdentificationNumber"
                 label="Vehicle identification number"
                 placeholder="Enter vehicle identification number"
@@ -631,27 +714,29 @@ export function VehicleForm() {
 
               <div className="grid grid-cols-2 gap-6">
                 <CustomFormField
-                  fieldType={FormFieldType.INPUT}
-                  inputType="number"
                   control={control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  inputType="number"
                   name="emptyWeight"
                   label="Empty Weight"
+                  inputGroupText="kg"
                   placeholder="0"
                 />
 
                 <CustomFormField
-                  fieldType={FormFieldType.INPUT}
-                  inputType="number"
                   control={control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  inputType="number"
                   name="loadCapacity"
                   label="Load Capacity"
+                  inputGroupText="kg"
                   placeholder="0"
                 />
               </div>
 
               <CustomFormField
-                fieldType={FormFieldType.INPUT}
                 control={control}
+                fieldType={FormFieldType.INPUT}
                 name="serialNumber"
                 label="Serial Number"
                 placeholder="Enter serial number"
@@ -660,364 +745,238 @@ export function VehicleForm() {
 
               <div className="grid grid-cols-2 gap-6">
                 <CustomFormField
-                  fieldType={FormFieldType.INPUT}
-                  inputType="number"
                   control={control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  inputType="number"
                   name="height"
                   label="Height"
+                  inputGroupText="mm"
                   placeholder="0"
                 />
 
                 <CustomFormField
-                  fieldType={FormFieldType.INPUT}
-                  inputType="number"
                   control={control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  inputType="number"
                   name="width"
                   label="Width"
+                  inputGroupText="mm"
                   placeholder="0"
                 />
               </div>
 
               <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
                 control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
                 name="length"
                 label="Length"
+                inputGroupText="mm"
                 placeholder="0"
               />
 
               <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
                 control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
                 name="towingCapacityBraked"
                 label="Towing capacity"
+                inputGroupText="kg"
                 placeholder="0"
               />
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
 
-        {fuelType && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold">Technical Data</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="doors"
-                label="Doors"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="seats"
-                label="Seats"
-              />
-
-              {(showCombustion || showHydrogen) && (
+              {(showElectric || showFullHybrid || showPluginHybrid) && (
                 <>
                   <CustomFormField
-                    fieldType={FormFieldType.INPUT}
+                    control={control}
+                    fieldType={FormFieldType.INPUT_GROUP}
                     inputType="number"
-                    control={control}
-                    name="consumptionCity"
-                    label="Consumption City (l/100 km)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="consumptionCountry"
-                    label="Consumption Country (l/100 km)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="consumptionTotal"
-                    label="Consumption Total (l/100 km)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="cubicCapacity"
-                    label="Cubic Capacity (cm3)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="co2Emission"
-                    label="CO2 Emission (g/km)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.SELECT}
-                    control={control}
-                    name="emissionStandard"
-                    label="Emission Standard"
-                  >
-                    {EmissionStandardEnum.map((e) => (
-                      <SelectItem key={e.value} value={e.value}>
-                        {e.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="cylinders"
-                    label="Cylinders"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="numberOfGears"
-                    label="Number of Gears"
-                  />
-                </>
-              )}
-
-              <CustomFormField
-                fieldType={FormFieldType.SELECT}
-                control={control}
-                name="energyLabel"
-                label="Energy Label"
-              >
-                {EnergyLabelEnum.map((e) => (
-                  <SelectItem key={e.value} value={e.value}>
-                    {e.label}
-                  </SelectItem>
-                ))}
-              </CustomFormField>
-
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="hp"
-                label="HP"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="kw"
-                label="kW"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                control={control}
-                name="typeApproval"
-                label="Type Approval"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="wheelbase"
-                label="Wheelbase (mm)"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                control={control}
-                name="vehicleIdentificationNumber"
-                label="VIN"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="emptyWeight"
-                label="Empty Weight (kg)"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="loadCapacity"
-                label="Load Capacity (kg)"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                control={control}
-                name="serialNumber"
-                label="Serial Number"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="height"
-                label="Height (mm)"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="width"
-                label="Width (mm)"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="length"
-                label="Length (mm)"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                control={control}
-                name="towingCapacityBraked"
-                label="Towing Capacity (kg)"
-              />
-
-              {showElectric && (
-                <>
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
                     name="range"
-                    label="Range (km)"
+                    label="Range"
+                    inputGroupText="km"
+                    placeholder="0"
                   />
-                  <CustomFormField
-                    fieldType={FormFieldType.SELECT}
-                    control={control}
-                    name="batteryOwnership"
-                    label="Battery Ownership"
-                  >
-                    {BatteryOwnershipEnum.map((e) => (
-                      <SelectItem key={e.value} value={e.value}>
-                        {e.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
 
-                  {batteryOwnership === "battery_rent_required" && (
+                  {(showElectric || showPluginHybrid) && (
                     <CustomFormField
-                      fieldType={FormFieldType.INPUT}
-                      inputType="number"
                       control={control}
-                      name="batteryRentalMonth"
-                      label="Battery Rental (CHF/month)"
-                    />
+                      fieldType={FormFieldType.SELECT}
+                      name="batteryOwnership"
+                      label="Battery ownership model"
+                      placeholder="Select an option"
+                      className="w-full"
+                    >
+                      {BatteryOwnershipEnum.map((e) => (
+                        <SelectItem key={e.value} value={e.value}>
+                          {e.label}
+                        </SelectItem>
+                      ))}
+                    </CustomFormField>
                   )}
 
                   <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
                     control={control}
+                    fieldType={FormFieldType.INPUT_GROUP}
+                    inputType="number"
                     name="batteryCapacity"
-                    label="Battery Capacity (kWh)"
+                    label="Battery capacity"
+                    inputGroupText="kWh"
+                    placeholder="0"
                   />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="powerConsumption"
-                    label="Power Consumption (kWh/100 km)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="batterySoh"
-                    label="Battery SoH (%)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.SELECT}
-                    control={control}
-                    name="chargingPlugTypeStandard"
-                    label="Charging Plug (AC)"
-                  >
-                    {ChargingPlugTypeStandardEnum.map((e) => (
-                      <SelectItem key={e.value} value={e.value}>
-                        {e.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
-                  <CustomFormField
-                    fieldType={FormFieldType.SELECT}
-                    control={control}
-                    name="chargingPlugTypeFast"
-                    label="Charging Plug (DC)"
-                  >
-                    {ChargingPlugTypeFastEnum.map((e) => (
-                      <SelectItem key={e.value} value={e.value}>
-                        {e.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="chargingPower"
-                    label="Charging Power (kW)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="chargingTime80"
-                    label="Charging Time 0-80% (min)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="fastChargingTime80"
-                    label="Fast Charging Time 0-80% (min)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="chargingTime100"
-                    label="Charging Time 0-100% (min)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="fastChargingTime100"
-                    label="Fast Charging Time 0-100% (min)"
-                  />
-                  <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    control={control}
-                    name="electricMotorPowerHp"
-                    label="Electric Motor Power (HP)"
-                  />
+
+                  {(showElectric || showPluginHybrid) && (
+                    <>
+                      {batteryOwnership === "battery-rent-required" && (
+                        <CustomFormField
+                          control={control}
+                          fieldType={FormFieldType.INPUT_GROUP}
+                          inputType="number"
+                          name="batteryRentalMonth"
+                          label="Battery rental"
+                          inputGroupText="CHF/month"
+                          placeholder="0"
+                        />
+                      )}
+
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT_GROUP}
+                        inputType="number"
+                        name="powerConsumption"
+                        label="Power consumption"
+                        inputGroupText="kWh/100km"
+                        placeholder="0"
+                      />
+
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT_GROUP}
+                        inputType="number"
+                        name="batterySoh"
+                        label="Battery state of health"
+                        inputGroupText="0-100%"
+                        placeholder="0"
+                      />
+
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.SELECT}
+                        name="chargingPlugTypeStandard"
+                        label="Charging plug type - standard (AC)"
+                        placeholder="Select an option"
+                        className="w-full"
+                      >
+                        {ChargingPlugTypeStandardEnum.map((e) => (
+                          <SelectItem key={e.value} value={e.value}>
+                            {e.label}
+                          </SelectItem>
+                        ))}
+                      </CustomFormField>
+
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.SELECT}
+                        name="chargingPlugTypeFast"
+                        label="Charging plug type - fast charge (DC)"
+                        placeholder="Select an option"
+                        className="w-full"
+                      >
+                        {ChargingPlugTypeFastEnum.map((e) => (
+                          <SelectItem key={e.value} value={e.value}>
+                            {e.label}
+                          </SelectItem>
+                        ))}
+                      </CustomFormField>
+
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT_GROUP}
+                        inputType="number"
+                        name="chargingPower"
+                        label="Charging power"
+                        inputGroupText="kW"
+                        placeholder="0"
+                      />
+
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT_GROUP}
+                        inputType="number"
+                        name="chargingTime80"
+                        label="Charging time in minutes"
+                        inputGroupText="0-80%"
+                        placeholder="0"
+                      />
+
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT_GROUP}
+                        inputType="number"
+                        name="fastChargingTime80"
+                        label="Fast charging time in minutes"
+                        inputGroupText="0-80%"
+                        placeholder="0"
+                      />
+
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT_GROUP}
+                        inputType="number"
+                        name="chargingTime100"
+                        label="Charging time in minutes"
+                        inputGroupText="0-100%"
+                        placeholder="0"
+                      />
+
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT_GROUP}
+                        inputType="number"
+                        name="fastChargingTime100"
+                        label="Fast charging time in minutes"
+                        inputGroupText="0-100%"
+                        placeholder="0"
+                      />
+                    </>
+                  )}
+
+                  {showFullHybrid && (
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.INPUT_GROUP}
+                      inputType="number"
+                      name="powerConsumption"
+                      label="Power consumption"
+                      inputGroupText="kWh/100km"
+                      placeholder="0"
+                    />
+                  )}
                 </>
               )}
 
-              {[
-                "Hybrid (diesel/electric)",
-                "Hybrid (petrol/electric)",
-                "Plug-in hybrid (diesel/electric)",
-                "Plug-in hybrid (petrol/electric)",
-              ].includes(fuelType || "") && (
-                <CustomFormField
-                  fieldType={FormFieldType.INPUT}
-                  inputType="number"
-                  control={control}
-                  name="combustionEnginePowerHp"
-                  label="Combustion Engine Power (HP)"
-                />
+              {(showFullHybrid || showPluginHybrid) && (
+                <>
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.INPUT}
+                    inputType="number"
+                    name="combustionEnginePowerHp"
+                    label="Combustion Engine Power (HP)"
+                    placeholder="0"
+                  />
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.INPUT}
+                    inputType="number"
+                    name="electricMotorPowerHp"
+                    label="Electric Motor Power (HP)"
+                    placeholder="0"
+                  />
+                </>
               )}
-            </div>
-          </div>
-        )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         <Separator />
 
@@ -1026,61 +985,20 @@ export function VehicleForm() {
             <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
               Detailed Information
             </AccordionTrigger>
-            <AccordionContent className="grid grid-cols-1 gap-6 pt-4">
-              <div className="grid grid-cols-3 gap-6">
-                <CustomFormField
-                  fieldType={FormFieldType.CHECKBOX}
-                  control={control}
-                  name="accessibleForDisabledPeople"
-                  label="Accessible for disabled people"
-                />
-                <CustomFormField
-                  fieldType={FormFieldType.CHECKBOX}
-                  control={control}
-                  name="accidentVehicle"
-                  label="html accidentVehicle"
-                />
-                <CustomFormField
-                  fieldType={FormFieldType.CHECKBOX}
-                  control={control}
-                  name="directParallelImport"
-                  label="Direct/parallel import"
-                />
-                <CustomFormField
-                  fieldType={FormFieldType.CHECKBOX}
-                  control={control}
-                  name="raceCar"
-                  label="Race car"
-                />
-                <CustomFormField
-                  fieldType={FormFieldType.CHECKBOX}
-                  control={control}
-                  name="tuning"
-                  label="Tuning"
-                />
-              </div>
-
-              <CustomFormField
-                fieldType={FormFieldType.CHECKBOX}
-                control={control}
-                name="equipment.extras8tyres"
-                label="8 tyres"
-              />
-
+            <AccordionContent className="pt-6 px-1">
               <CustomFormField
                 fieldType={FormFieldType.TEXTAREA}
                 control={control}
                 name="vehicleDescription"
                 label="Description"
                 placeholder="Enter detailed description..."
+                className="h-32"
               />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
 
-        <Button type="submit" className="w-full">
-          Submit
-        </Button>
+        <Button type="submit">Submit</Button>
       </form>
     </Form>
   );

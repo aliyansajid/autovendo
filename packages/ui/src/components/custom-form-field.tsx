@@ -26,6 +26,12 @@ import { Label } from "@repo/ui/components/label";
 import { useState } from "react";
 import { Field, FieldGroup } from "@repo/ui/components/field";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@repo/ui/components/input-group";
 
 enum FormFieldType {
   INPUT = "input",
@@ -36,6 +42,7 @@ enum FormFieldType {
   SKELETON = "skeleton",
   RADIO_GROUP = "radiogroup",
   CHECKBOX_GROUP = "checkboxGroup",
+  INPUT_GROUP = "inputGroup",
 }
 
 interface CustomFormFieldProps {
@@ -59,6 +66,7 @@ interface CustomFormFieldProps {
   renderSkeleton?: (field: any) => React.ReactNode;
   dateFormat?: string;
   showTimeSelect?: boolean;
+  inputGroupText?: React.ReactNode;
 }
 
 const RenderField = ({
@@ -78,7 +86,11 @@ const RenderField = ({
           {...field}
           placeholder={props.placeholder}
           type={props.inputType}
-          className={cn(props.className)}
+          className={cn(
+            props.className,
+            props.inputType === "number" &&
+              "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+          )}
           disabled={props.disabled}
           onChange={(e) => {
             if (props.inputType === "number") {
@@ -91,6 +103,38 @@ const RenderField = ({
             }
           }}
         />
+      );
+
+    case FormFieldType.INPUT_GROUP:
+      return (
+        <InputGroup className={props.className}>
+          {props.inputGroupText && (
+            <InputGroupAddon>
+              <InputGroupText>{props.inputGroupText}</InputGroupText>
+            </InputGroupAddon>
+          )}
+          <InputGroupInput
+            {...field}
+            type={props.inputType}
+            className={cn(
+              "text-right",
+              props.className,
+              props.inputType === "number" &&
+                "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+            )}
+            placeholder={props.placeholder}
+            onChange={(e) => {
+              if (props.inputType === "number") {
+                const val = e.target.value;
+                try {
+                  field.onChange(val);
+                } catch {}
+              } else {
+                field.onChange(e);
+              }
+            }}
+          />
+        </InputGroup>
       );
 
     case FormFieldType.TEXTAREA:
