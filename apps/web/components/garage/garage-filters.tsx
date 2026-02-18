@@ -25,15 +25,13 @@ import {
   makes,
   models,
   prices,
-  getRegistrationYears,
-  bodyTypes,
-  fuelTypes,
-  transmissions,
-  driveTypes,
-  colors,
-  seats,
-  doors,
-} from "@/data";
+  BodyTypeEnum,
+  FuelTypeEnum,
+  TransmissionTypeEnum,
+  DriveTypeEnum,
+  ColorEnum,
+} from "@/constants";
+import { getRegistrationYears } from "@/lib/utils";
 import { Filter, ChevronDown, ChevronUp, X } from "lucide-react";
 
 const formSchema = z.object({
@@ -171,7 +169,7 @@ export default function GarageFilters() {
                 placeholder="Body Type"
                 className="w-full"
               >
-                {bodyTypes.map((type) => (
+                {BodyTypeEnum.map((type) => (
                   <SelectItem key={type.value} value={type.value}>
                     {type.label}
                   </SelectItem>
@@ -185,7 +183,7 @@ export default function GarageFilters() {
                 placeholder="Fuel Type"
                 className="w-full"
               >
-                {fuelTypes.map((type) => (
+                {FuelTypeEnum.map((type) => (
                   <SelectItem key={type.value} value={type.value}>
                     {type.label}
                   </SelectItem>
@@ -199,7 +197,7 @@ export default function GarageFilters() {
                 placeholder="Transmission"
                 className="w-full"
               >
-                {transmissions.map((type) => (
+                {TransmissionTypeEnum.map((type) => (
                   <SelectItem key={type.value} value={type.value}>
                     {type.label}
                   </SelectItem>
@@ -224,7 +222,7 @@ export default function GarageFilters() {
                   placeholder="Drive Type"
                   className="w-full"
                 >
-                  {driveTypes.map((type) => (
+                  {DriveTypeEnum.map((type) => (
                     <SelectItem key={type.value} value={type.value}>
                       {type.label}
                     </SelectItem>
@@ -238,14 +236,14 @@ export default function GarageFilters() {
                   placeholder="Color"
                   className="w-full"
                 >
-                  {colors.map((color) => (
+                  {ColorEnum.map((color) => (
                     <SelectItem key={color.value} value={color.value}>
                       {color.label}
                     </SelectItem>
                   ))}
                 </CustomFormField>
 
-                <CustomFormField
+                {/* <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.SELECT}
                   name="seats"
@@ -271,7 +269,7 @@ export default function GarageFilters() {
                       {door.label}
                     </SelectItem>
                   ))}
-                </CustomFormField>
+                </CustomFormField> */}
 
                 <CustomFormField
                   control={form.control}
