@@ -34,7 +34,7 @@ import {
 } from "@repo/ui/src/components/select";
 import { useState } from "react";
 import { Filter } from "lucide-react";
-import { makes, countries } from "@/data";
+import { makes, countries } from "@/constants";
 
 export function AdvancedSearch() {
   const [isOpen, setIsOpen] = useState(false);

@@ -22,7 +22,12 @@ import {
   InputGroupText,
   InputGroupInput,
 } from "@repo/ui/src/components/input-group";
-import { bodyTypes, fuelTypes, transmissions, driveTypes } from "@/data";
+import {
+  BodyTypeEnum,
+  FuelTypeEnum,
+  TransmissionTypeEnum,
+  DriveTypeEnum,
+} from "@/constants";
 
 // Utility for classes
 function cn(...inputs: (string | undefined | null | false)[]) {
@@ -421,7 +426,7 @@ export default function GarageRichFilters() {
           <PopoverContent className="w-auto p-0" align="start">
             <GridFilter
               title="Body Type"
-              items={bodyTypes.map((t) => ({ ...t, icon: Car }))}
+              items={BodyTypeEnum.map((t) => ({ ...t, icon: Car }))}
               selectedValues={selectedBodyTypes}
               onChange={setSelectedBodyTypes}
             />
@@ -444,7 +449,7 @@ export default function GarageRichFilters() {
           <PopoverContent className="w-auto p-0" align="start">
             <CheckboxListFilter
               title="Fuel Type"
-              items={fuelTypes.map((t) => ({
+              items={FuelTypeEnum.map((t) => ({
                 ...t,
                 count: Math.floor(Math.random() * 100),
               }))}
@@ -469,7 +474,7 @@ export default function GarageRichFilters() {
           <PopoverContent className="w-auto p-0" align="start">
             <CheckboxListFilter
               title="Transmission"
-              items={transmissions.map((t) => ({
+              items={TransmissionTypeEnum.map((t) => ({
                 ...t,
                 count: Math.floor(Math.random() * 50),
               }))}
@@ -494,7 +499,7 @@ export default function GarageRichFilters() {
           <PopoverContent className="w-auto p-0" align="end">
             <CheckboxListFilter
               title="Drive Type"
-              items={driveTypes.map((t) => ({
+              items={DriveTypeEnum.map((t) => ({
                 ...t,
                 count: Math.floor(Math.random() * 30),
               }))}
