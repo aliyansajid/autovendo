@@ -90,9 +90,9 @@ export const VehicleConditionEnum = [
 ];
 
 export const WarrantyEnum = [
-  { value: "from-delivery", label: "From delivery" },
-  { value: "from-first-registration", label: "From first registration" },
-  { value: "from-date", label: "From date" },
+  { value: "from-delivery", label: "Ab Übernahme" },
+  { value: "from-first-registration", label: "Ab 1. Inverkehrsetzung" },
+  { value: "from-date", label: "Ab Datum" },
 ];
 
 export const EnergyLabelEnum = [
@@ -671,6 +671,7 @@ export const EquipmentEnum = [
 export const ExtrasEnum = [
   { value: "8-tyres", label: "8-fach bereift" },
   { value: "accessible-for-disabled", label: "Behindertengerecht" },
-  { value: "race-car", label: "Rennfahrzeug" },
+  { value: "accident-vehicle", label: "Unfallfahrzeug" },
+  { value: "race-car", label: "Rennwagen" },
   { value: "tuning", label: "Tuning" },
 ];

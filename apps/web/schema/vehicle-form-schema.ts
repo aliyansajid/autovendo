@@ -214,4 +214,5 @@ export const vehicleFormSchema = z.object({
   fastChargingTime100: z.coerce.number().optional(),
   electricMotorPowerHp: z.coerce.number().optional(),
   combustionEnginePowerHp: z.coerce.number().optional(),
+  images: z.any().optional(),
 });
