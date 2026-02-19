@@ -122,7 +122,7 @@ export default function ContactPage() {
 
               <Separator />
 
-              <section className="bg-secondary p-6 rounded-xl">
+              <section className="bg-muted p-6 rounded-xl">
                 <h3 className="font-bold text-lg mb-3">Schnelle Antwort</h3>
                 <p className="text-muted-foreground text-sm">
                   Wir antworten in der Regel innerhalb von 24 Stunden auf alle
@@ -134,68 +134,62 @@ export default function ContactPage() {
 
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <section>
-                <h2 className="text-2xl font-bold mb-6">
-                  Senden Sie uns eine Nachricht
-                </h2>
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <CustomFormField
-                        control={form.control}
-                        fieldType={FormFieldType.INPUT}
-                        name="name"
-                        label="Name"
-                        placeholder="Ihr vollständiger Name"
-                      />
-                      <CustomFormField
-                        control={form.control}
-                        fieldType={FormFieldType.INPUT}
-                        name="email"
-                        label="E-Mail"
-                        placeholder="ihre.email@beispiel.com"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <CustomFormField
-                        control={form.control}
-                        fieldType={FormFieldType.INPUT}
-                        name="phone"
-                        label="Telefon (optional)"
-                        placeholder="+41 12 345 67 89"
-                      />
-                      <CustomFormField
-                        control={form.control}
-                        fieldType={FormFieldType.INPUT}
-                        name="subject"
-                        label="Betreff"
-                        placeholder="Worum geht es?"
-                      />
-                    </div>
-
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6"
+                >
+                  <h2 className="text-2xl font-bold">
+                    Senden Sie uns eine Nachricht
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <CustomFormField
                       control={form.control}
-                      fieldType={FormFieldType.TEXTAREA}
-                      name="message"
-                      label="Nachricht"
-                      placeholder="Schreiben Sie uns Ihre Nachricht..."
-                      className="h-32"
+                      fieldType={FormFieldType.INPUT}
+                      name="name"
+                      label="Name"
+                      placeholder="Ihr vollständiger Name"
                     />
+                    <CustomFormField
+                      control={form.control}
+                      fieldType={FormFieldType.INPUT}
+                      name="email"
+                      label="E-Mail"
+                      placeholder="ihre.email@beispiel.com"
+                    />
+                  </div>
 
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="w-full md:w-auto"
-                    >
-                      Nachricht senden
-                    </Button>
-                  </form>
-                </Form>
-              </section>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <CustomFormField
+                      control={form.control}
+                      fieldType={FormFieldType.INPUT}
+                      name="phone"
+                      label="Telefon (optional)"
+                      placeholder="+41 12 345 67 89"
+                    />
+                    <CustomFormField
+                      control={form.control}
+                      fieldType={FormFieldType.INPUT}
+                      name="subject"
+                      label="Betreff"
+                      placeholder="Worum geht es?"
+                    />
+                  </div>
+
+                  <CustomFormField
+                    control={form.control}
+                    fieldType={FormFieldType.TEXTAREA}
+                    name="message"
+                    label="Nachricht"
+                    placeholder="Schreiben Sie uns Ihre Nachricht..."
+                    className="h-32"
+                  />
+
+                  <Button type="submit" size="lg" className="w-full md:w-auto">
+                    Nachricht senden
+                  </Button>
+                </form>
+              </Form>
             </div>
           </div>
         </div>
