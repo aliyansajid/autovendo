@@ -1,20 +1,20 @@
 export const GearTransmissionEnum = [
   { value: "automatic", label: "Automatikgetriebe" },
   { value: "manual", label: "Schaltgetriebe" },
-];
+] as const;
 
 export const TransmissionTypeEnum = [
   { value: "automatic", label: "Automat" },
   { value: "automatic-stepless", label: "Stufenlos" },
   { value: "semi-automatic", label: "Halbautomatisches Getriebe" },
   { value: "manual", label: "Schaltgetriebe manuell" },
-];
+] as const;
 
 export const DriveTypeEnum = [
   { value: "all", label: "Allrad" },
   { value: "front", label: "Hinterradantrieb" },
   { value: "rear", label: "Vorderradantrieb" },
-];
+] as const;
 
 export const BodyTypeEnum = [
   { value: "estate", label: "Kombi" },
@@ -26,7 +26,7 @@ export const BodyTypeEnum = [
   { value: "saloon", label: "Limousine" },
   { value: "small-car", label: "Kleinwagen" },
   { value: "bus", label: "Bus" },
-];
+] as const;
 
 export const FuelTypeEnum = [
   { value: "petrol", label: "Benzin" },
@@ -54,7 +54,7 @@ export const FuelTypeEnum = [
   { value: "lpg-petrol", label: "Flüssiggas (LPG) / Benzin" },
   { value: "ethanol-petrol", label: "Bioethanol" },
   { value: "hydrogen", label: "Wasserstoff" },
-];
+] as const;
 
 export const ColorEnum = [
   { value: "anthracite", label: "Anthrazit" },
@@ -76,7 +76,7 @@ export const ColorEnum = [
   { value: "white", label: "Weiss" },
   { value: "yellow", label: "Gelb" },
   { value: "other", label: "Other" },
-];
+] as const;
 
 export const VehicleConditionEnum = [
   { value: "new", label: "Neues Fahrzeug" },
@@ -87,13 +87,13 @@ export const VehicleConditionEnum = [
   { value: "pre-registered", label: "Neues Fahrzeug mit Tageszulassung" },
   { value: "used", label: "Occasion" },
   { value: "oldtimer", label: "Oldtimer" },
-];
+] as const;
 
 export const WarrantyEnum = [
   { value: "from-delivery", label: "Ab Übernahme" },
   { value: "from-first-registration", label: "Ab 1. Inverkehrsetzung" },
   { value: "from-date", label: "Ab Datum" },
-];
+] as const;
 
 export const EnergyLabelEnum = [
   { value: "a", label: "A" },
@@ -103,7 +103,7 @@ export const EnergyLabelEnum = [
   { value: "e", label: "E" },
   { value: "f", label: "F" },
   { value: "g", label: "G" },
-];
+] as const;
 
 export const EmissionStandardEnum = [
   { value: "euro-1", label: "Euro 1" },
@@ -124,19 +124,19 @@ export const EmissionStandardEnum = [
   { value: "euro-6d-temp-evap-isc", label: "Euro 6d Temp EVAP ISC" },
   { value: "euro-6d-temp-isc", label: "Euro 6d Temp ISC" },
   { value: "euro-6e", label: "Euro 6e" },
-];
+] as const;
 
 export const ChargingPlugTypeStandardEnum = [
   { value: "type-1", label: "Type 1" },
   { value: "type-2", label: "Type 2" },
-];
+] as const;
 
 export const ChargingPlugTypeFastEnum = [
   { value: "ccs", label: "Ccs" },
   { value: "css-2", label: "Css-2" },
   { value: "chademo", label: "Chademo" },
   { value: "supercharger", label: "Supercharger" },
-];
+] as const;
 
 export const BatteryOwnershipEnum = [
   {
@@ -147,7 +147,7 @@ export const BatteryOwnershipEnum = [
     value: "battery-rent-required",
     label: "Battery requires an additional rent",
   },
-];
+] as const;
 
 export const makes = [
   {
@@ -450,7 +450,7 @@ export const makes = [
       { value: "others", label: "Others" },
     ],
   },
-];
+] as const;
 
 export const models: Record<string, { value: string; label: string }[]> = {
   audi: [
@@ -557,7 +557,7 @@ export const models: Record<string, { value: string; label: string }[]> = {
     { value: "kona", label: "Kona" },
     { value: "ioniq", label: "Ioniq" },
   ],
-};
+} as const;
 
 export const prices = [
   { value: "500", label: "€500" },
@@ -583,7 +583,7 @@ export const prices = [
   { value: "50000", label: "€50,000" },
   { value: "75000", label: "€75,000" },
   { value: "100000", label: "€100,000" },
-];
+] as const;
 
 export const countries = [
   { value: "europe", label: "Europe", flag: "🇪🇺" },
@@ -595,7 +595,7 @@ export const countries = [
   { value: "italy", label: "Italy", flag: "🇮🇹" },
   { value: "luxembourg", label: "Luxembourg", flag: "🇱🇺" },
   { value: "netherlands", label: "Netherlands", flag: "🇳🇱" },
-];
+] as const;
 
 export const EquipmentEnum = [
   { value: "360-camera", label: "360°-Kamera" },
@@ -666,7 +666,7 @@ export const EquipmentEnum = [
   { value: "blind-spot-assist", label: "Totwinkel-Assistent" },
   { value: "reinforced-suspension", label: "Verstärkte Federung" },
   { value: "additional-instruments", label: "Zusätzliche Instrumente" },
-];
+] as const;
 
 export const ExtrasEnum = [
   { value: "8-tyres", label: "8-fach bereift" },
@@ -674,4 +674,4 @@ export const ExtrasEnum = [
   { value: "accident-vehicle", label: "Unfallfahrzeug" },
   { value: "race-car", label: "Rennwagen" },
   { value: "tuning", label: "Tuning" },
-];
+] as const;

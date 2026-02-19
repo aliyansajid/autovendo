@@ -67,6 +67,7 @@ interface CustomFormFieldProps {
   dateFormat?: string;
   showTimeSelect?: boolean;
   inputGroupText?: React.ReactNode;
+  inputGroupTextPosition?: "left" | "right";
 }
 
 const RenderField = ({
@@ -86,12 +87,12 @@ const RenderField = ({
           {...field}
           placeholder={props.placeholder}
           type={props.inputType}
+          disabled={props.disabled}
           className={cn(
             props.className,
             props.inputType === "number" &&
               "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
           )}
-          disabled={props.disabled}
           onChange={(e) => {
             if (props.inputType === "number") {
               const val = e.target.value;
@@ -108,21 +109,24 @@ const RenderField = ({
     case FormFieldType.INPUT_GROUP:
       return (
         <InputGroup className={props.className}>
-          {props.inputGroupText && (
-            <InputGroupAddon>
-              <InputGroupText>{props.inputGroupText}</InputGroupText>
-            </InputGroupAddon>
-          )}
+          {props.inputGroupText &&
+            (!props.inputGroupTextPosition ||
+              props.inputGroupTextPosition === "left") && (
+              <InputGroupAddon>
+                <InputGroupText>{props.inputGroupText}</InputGroupText>
+              </InputGroupAddon>
+            )}
           <InputGroupInput
             {...field}
             type={props.inputType}
+            placeholder={props.placeholder}
+            disabled={props.disabled}
             className={cn(
               "text-right",
               props.className,
               props.inputType === "number" &&
                 "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
             )}
-            placeholder={props.placeholder}
             onChange={(e) => {
               if (props.inputType === "number") {
                 const val = e.target.value;
@@ -134,6 +138,11 @@ const RenderField = ({
               }
             }}
           />
+          {props.inputGroupText && props.inputGroupTextPosition === "right" && (
+            <InputGroupAddon>
+              <InputGroupText>{props.inputGroupText}</InputGroupText>
+            </InputGroupAddon>
+          )}
         </InputGroup>
       );
 
@@ -202,7 +211,7 @@ const RenderField = ({
               id="date"
               className="justify-start font-normal"
             >
-              {date ? date.toLocaleDateString() : "Select date"}
+              {date ? date.toLocaleDateString() : props.placeholder}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto overflow-hidden p-0" align="start">

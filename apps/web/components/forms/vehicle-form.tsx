@@ -153,22 +153,46 @@ export function VehicleForm() {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
-  const totalSteps = 2;
+  const totalSteps = 4;
   const progress = (currentStep / totalSteps) * 100;
 
   const handleNext = async () => {
-    const isStepValid = await trigger([
-      "make",
-      "model",
-      "gearTransmission",
-      "fuelType",
-      "bodyType",
-      "color",
-      "interiorColor",
-      "vehicleCondition",
-      "mileage",
-      "priceChf",
-    ]); // Add other required fields for step 1 validation if needed based on schema
+    let isStepValid = false;
+
+    if (currentStep === 1) {
+      isStepValid = await trigger([
+        "make",
+        "model",
+        "gearTransmission",
+        "fuelType",
+        "bodyType",
+        "color",
+        "interiorColor",
+        "vehicleCondition",
+        "mileage",
+        "priceChf",
+      ]); // Add other required fields for step 1 validation if needed based on schema
+    } else if (currentStep === 2) {
+      isStepValid = true; // Images are optional
+    } else if (currentStep === 3) {
+      isStepValid = await trigger([
+        "billingFirstName",
+        "billingLastName",
+        "billingStreet",
+        "billingZip",
+        "billingCity",
+        "billingCountry",
+        "billingPhone",
+        "sameAsBilling",
+        "ownerFirstName",
+        "ownerLastName",
+        "ownerStreet",
+        "ownerZip",
+        "ownerCity",
+        "ownerCountry",
+        "ownerPhone",
+      ]);
+    }
 
     if (isStepValid) {
       setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
@@ -208,6 +232,8 @@ export function VehicleForm() {
   const gearTransmission = useWatch({ control, name: "gearTransmission" });
   const fuelType = useWatch({ control, name: "fuelType" });
   const batteryOwnership = useWatch({ control, name: "batteryOwnership" });
+  const warranty = useWatch({ control, name: "warranty" });
+  const sameAsBilling = useWatch({ control, name: "sameAsBilling" });
 
   const onSubmit = (data: z.infer<typeof vehicleFormSchema>) => {
     console.log("Form Submitted:", data);
@@ -240,6 +266,14 @@ export function VehicleForm() {
     fuelType || "",
   );
 
+  const showWarrantyDetails = [
+    "from-delivery",
+    "from-first-registration",
+    "from-date",
+  ].includes(warranty || "");
+
+  const showWarrantyStartDate = warranty === "from-date";
+
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) =>
     (currentYear - i).toString(),
@@ -262,53 +296,57 @@ export function VehicleForm() {
   const steps = [
     { id: 1, label: "Vehicle Details" },
     { id: 2, label: "Photos" },
+    { id: 3, label: "Contact Details" },
+    { id: 4, label: "Review" },
   ];
+
+  const getLabel = (
+    value: string | undefined,
+    options: { value: string; label: string }[],
+  ) => {
+    if (!value) return "-";
+    return options.find((o) => o.value === value)?.label || value;
+  };
 
   return (
     <Form {...form}>
-      <div className="relative flex justify-between w-full max-w-2xl mx-auto mb-8 isolate">
-        <div className="absolute top-5 left-0 right-0 h-[2px] -translate-y-1/2 bg-muted" />
-        <div
-          className="absolute top-5 left-0 h-[2px] -translate-y-1/2 bg-primary transition-all duration-500"
-          style={{
-            width: `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - 10rem)`,
-          }}
-        />
-
-        {steps.map((step) => {
+      <div className="flex justify-between items-start w-full max-w-3xl mx-auto mb-8 isolate">
+        {steps.map((step, index) => {
           const isActive = currentStep >= step.id;
           const isCurrent = currentStep === step.id;
+          const isCompleted = currentStep > step.id;
 
           return (
-            <div
-              key={step.id}
-              className="flex flex-col items-center gap-2 bg-background w-40 z-10"
-            >
-              <div
-                className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 font-semibold",
-                  isActive
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border text-muted-foreground",
-                  isCurrent && "ring-4 ring-primary/20",
-                )}
-              >
-                {isActive && !isCurrent && step.id < currentStep ? (
-                  <span className="text-lg">
-                    <Check />
-                  </span>
-                ) : (
-                  step.id
-                )}
+            <div key={step.id} className="contents">
+              <div className="flex flex-col items-center gap-2 z-10 w-32">
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 font-semibold bg-background",
+                    isActive
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border text-muted-foreground",
+                    isCurrent && "ring-4 ring-primary/20",
+                  )}
+                >
+                  {isCompleted ? <Check /> : step.id}
+                </div>
+                <span
+                  className={cn(
+                    "text-xs font-medium",
+                    isActive ? "text-primary" : "text-muted-foreground",
+                  )}
+                >
+                  {step.label}
+                </span>
               </div>
-              <span
-                className={cn(
-                  "text-xs font-medium",
-                  isActive ? "text-primary" : "text-muted-foreground",
-                )}
-              >
-                {step.label}
-              </span>
+              {index < steps.length - 1 && (
+                <Separator
+                  className={cn(
+                    "flex-1 transition-colors duration-500 mt-5 -translate-y-1/2",
+                    currentStep > step.id ? "bg-primary" : "",
+                  )}
+                />
+              )}
             </div>
           );
         })}
@@ -595,43 +633,55 @@ export function VehicleForm() {
                     ))}
                   </CustomFormField>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.DATE_PICKER}
-                      name="warrantyStartDate"
-                      label="Start date"
-                      placeholder="0"
-                      className="w-full"
-                    />
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT_GROUP}
-                      inputType="number"
-                      name="duration"
-                      label="Dauer"
-                      inputGroupText="months"
-                      placeholder="0"
-                      className="w-full"
-                    />
+                  {(showWarrantyDetails || showWarrantyStartDate) && (
+                    <>
+                      {showWarrantyStartDate && (
+                        <CustomFormField
+                          control={control}
+                          fieldType={FormFieldType.DATE_PICKER}
+                          name="warrantyStartDate"
+                          label="Start date"
+                          placeholder="Select Date"
+                          className="w-full"
+                        />
+                      )}
 
+                      {showWarrantyDetails && (
+                        <div className="grid grid-cols-2 gap-3">
+                          <CustomFormField
+                            control={control}
+                            fieldType={FormFieldType.INPUT_GROUP}
+                            inputType="number"
+                            name="duration"
+                            label="Dauer"
+                            inputGroupText="months"
+                            inputGroupTextPosition="right"
+                            placeholder="0"
+                            className="w-full"
+                          />
+
+                          <CustomFormField
+                            control={control}
+                            fieldType={FormFieldType.INPUT}
+                            inputType="number"
+                            name="maxKm"
+                            label="Max km"
+                            placeholder="0"
+                            className="w-full"
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  <div className="col-span-1 md:col-span-2">
                     <CustomFormField
                       control={control}
-                      fieldType={FormFieldType.INPUT}
-                      inputType="number"
-                      name="maxKm"
-                      label="Max km"
-                      placeholder="0"
-                      className="w-full"
+                      fieldType={FormFieldType.CHECKBOX}
+                      name="inspectionPassed"
+                      label="MFK bestanden"
                     />
                   </div>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.CHECKBOX}
-                    name="inspectionPassed"
-                    label="MFK bestanden"
-                  />
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -774,6 +824,7 @@ export function VehicleForm() {
                       name="cubicCapacity"
                       label="Cubic capacity"
                       inputGroupText="cm³"
+                      inputGroupTextPosition="right"
                       placeholder="0"
                     />
                   )}
@@ -789,6 +840,7 @@ export function VehicleForm() {
                       name="co2Emission"
                       label="CO2 emission"
                       inputGroupText="g/km"
+                      inputGroupTextPosition="right"
                       placeholder="0"
                     />
                   )}
@@ -1229,6 +1281,319 @@ export function VehicleForm() {
               )}
             </CardContent>
           </Card>
+        )}
+
+        {currentStep === 3 && (
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Rechnungsadresse</CardTitle>
+                <CardDescription>
+                  Rechnungsadresse für das Inserat
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-6">
+                <div className="grid grid-cols-2 gap-3">
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.INPUT}
+                    name="billingFirstName"
+                    label="Vorname"
+                    placeholder="Vorname eingeben"
+                  />
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.INPUT}
+                    name="billingLastName"
+                    label="Nachname"
+                    placeholder="Nachname eingeben"
+                  />
+                </div>
+                <CustomFormField
+                  control={control}
+                  fieldType={FormFieldType.INPUT}
+                  name="billingStreet"
+                  label="Strasse und Nr"
+                  placeholder="Strasse und Nr eingeben"
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.INPUT}
+                    name="billingZip"
+                    label="PLZ"
+                    placeholder="PLZ"
+                  />
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.INPUT}
+                    name="billingCity"
+                    label="Ort"
+                    placeholder="Ort"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.INPUT}
+                    name="billingCountry"
+                    label="Land"
+                    placeholder="Switzerland"
+                    disabled={true}
+                  />
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.INPUT}
+                    name="billingPhone"
+                    label="Telefonnummer"
+                    placeholder="+41 XX XXX XX XX"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Standort des Fahrzeugs / Halter</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <CustomFormField
+                  control={control}
+                  fieldType={FormFieldType.CHECKBOX}
+                  name="sameAsBilling"
+                  label="Entspricht der Rechnungsadresse"
+                />
+
+                {!sameAsBilling && (
+                  <div className="grid gap-6 animate-in fade-in slide-in-from-top-2">
+                    <div className="grid grid-cols-2 gap-3">
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT}
+                        name="ownerFirstName"
+                        label="Vorname"
+                        placeholder="Vorname eingeben"
+                      />
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT}
+                        name="ownerLastName"
+                        label="Nachname"
+                        placeholder="Nachname eingeben"
+                      />
+                    </div>
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.INPUT}
+                      name="ownerStreet"
+                      label="Strasse und Nr"
+                      placeholder="Strasse und Nr eingeben"
+                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT}
+                        name="ownerZip"
+                        label="PLZ"
+                        placeholder="PLZ"
+                      />
+
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT}
+                        name="ownerCity"
+                        label="Ort"
+                        placeholder="Ort"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT}
+                        name="ownerCountry"
+                        label="Land"
+                        placeholder="Switzerland"
+                        disabled={true}
+                        defaultValue="Switzerland"
+                      />
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT}
+                        name="ownerPhone"
+                        label="Telefonnummer"
+                        placeholder="+41 XX XXX XX XX"
+                      />
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {currentStep === 4 && (
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Overblick</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentStep(1)}
+                  >
+                    Bearbeiten
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                  <div className="text-muted-foreground">Marke</div>
+                  <div className="font-medium">
+                    {
+                      makes
+                        .flatMap((g) => g.items)
+                        .find((m) => m.value === form.getValues("make"))?.label
+                    }
+                  </div>
+
+                  <div className="text-muted-foreground">Modell</div>
+                  <div className="font-medium">
+                    {models[
+                      form.getValues("make") as keyof typeof models
+                    ]?.find((m: any) => m.value === form.getValues("model"))
+                      ?.label || form.getValues("model")}
+                  </div>
+
+                  <div className="text-muted-foreground">Version</div>
+                  <div className="font-medium">
+                    {form.getValues("version") || "-"}
+                  </div>
+
+                  <div className="text-muted-foreground">Karosserie</div>
+                  <div className="font-medium">
+                    {getLabel(form.getValues("bodyType"), BodyTypeEnum)}
+                  </div>
+
+                  <div className="text-muted-foreground">Kraftstoff</div>
+                  <div className="font-medium">
+                    {getLabel(form.getValues("fuelType"), FuelTypeEnum)}
+                  </div>
+
+                  <div className="text-muted-foreground">Getriebe</div>
+                  <div className="font-medium">
+                    {getLabel(
+                      form.getValues("gearTransmission"),
+                      GearTransmissionEnum,
+                    )}
+                  </div>
+
+                  <div className="text-muted-foreground">Kilometer</div>
+                  <div className="font-medium">{form.getValues("mileage")}</div>
+
+                  <div className="text-muted-foreground">Jahrgang</div>
+                  <div className="font-medium">
+                    {form.getValues("registrationMonth")}/
+                    {form.getValues("registrationYear")}
+                  </div>
+
+                  <div className="text-muted-foreground">Preis</div>
+                  <div className="font-medium">
+                    CHF {form.getValues("priceChf")}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Fotos</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentStep(2)}
+                  >
+                    Bearbeiten
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {previewImages.length > 0 ? (
+                  <div className="grid grid-cols-4 gap-2">
+                    {previewImages.map((src, index) => (
+                      <div
+                        key={index}
+                        className="relative aspect-video rounded-md overflow-hidden border bg-muted"
+                      >
+                        <Image
+                          src={src}
+                          alt={`Review ${index}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-muted-foreground text-sm">
+                    Keine Fotos hochgeladen
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Kontakt</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentStep(3)}
+                  >
+                    Bearbeiten
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="grid gap-6">
+                <div>
+                  <h4 className="font-semibold mb-2">Rechnungsadresse</h4>
+                  <div className="text-sm text-muted-foreground">
+                    {form.getValues("billingFirstName")}{" "}
+                    {form.getValues("billingLastName")}
+                    <br />
+                    {form.getValues("billingStreet")}
+                    <br />
+                    {form.getValues("billingZip")}{" "}
+                    {form.getValues("billingCity")}
+                    <br />
+                    {form.getValues("billingCountry")}
+                    <br />
+                    {form.getValues("billingPhone")}
+                  </div>
+                </div>
+
+                {!form.getValues("sameAsBilling") && (
+                  <div>
+                    <h4 className="font-semibold mb-2">Halter</h4>
+                    <div className="text-sm text-muted-foreground">
+                      {form.getValues("ownerFirstName")}{" "}
+                      {form.getValues("ownerLastName")}
+                      <br />
+                      {form.getValues("ownerStreet")}
+                      <br />
+                      {form.getValues("ownerZip")} {form.getValues("ownerCity")}
+                      <br />
+                      {form.getValues("ownerCountry")}
+                      <br />
+                      {form.getValues("ownerPhone")}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         <div className="flex justify-between">
