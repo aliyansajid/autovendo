@@ -1,10 +1,9 @@
 {
-  "name": "web",
+  "name": "landing",
   "version": "0.1.0",
-  "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000",
+    "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --max-warnings 0",
@@ -13,9 +12,9 @@
   "dependencies": {
     "@repo/ui": "*",
     "lucide-react": "^0.563.0",
-    "next": "16.1.5",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
