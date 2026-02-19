@@ -302,7 +302,7 @@ export function VehicleForm() {
 
   const getLabel = (
     value: string | undefined,
-    options: { value: string; label: string }[],
+    options: readonly { value: string; label: string }[],
   ) => {
     if (!value) return "-";
     return options.find((o) => o.value === value)?.label || value;
@@ -1452,7 +1452,7 @@ export function VehicleForm() {
                   <div className="font-medium">
                     {
                       makes
-                        .flatMap((g) => g.items)
+                        .flatMap((g) => [...g.items])
                         .find((m) => m.value === form.getValues("make"))?.label
                     }
                   </div>
