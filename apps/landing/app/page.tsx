@@ -67,7 +67,7 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-dvh">
-      <header className="bg-linear-to-r from-primary to-primary/80">
+      <header className="sticky top-0 z-50 w-full bg-linear-to-r from-primary/95 to-primary/80 backdrop-blur supports-backdrop-filter:bg-primary/60 border-b-2 border-primary">
         <div className="flex items-center justify-between max-w-285 mx-auto h-16 px-4">
           <div className="text-xl font-bold text-white">Autovendo</div>
         </div>
