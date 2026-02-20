@@ -73,7 +73,7 @@ export default function LandingPage() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="container mx-auto px-4 py-12 md:py-20">
+        <section className="container mx-auto px-4 py-6 md:py-10">
           <div className="text-center space-y-6">
             <Badge
               variant="outline"
@@ -166,7 +166,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="bg-secondary border-y-2 border-primary py-16 md:py-24">
+        <section className="bg-secondary border-y-2 border-primary py-8 md:py-12">
           <div className="container mx-auto px-4 max-w-3xl text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold">
               Warum Autovendo.ch?
@@ -198,7 +198,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-16 md:py-24">
+        <section className="container mx-auto px-4 py-8 md:py-12">
           <div>
             <div className="text-center mb-8">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -291,7 +291,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="bg-secondary border-t-2 border-primary py-16 md:py-24">
+        <section className="bg-secondary border-t-2 border-primary py-8 md:py-12">
           <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold">
