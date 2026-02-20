@@ -205,7 +205,7 @@ export default function LandingPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+              <Card className="bg-secondary transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <Euro className="text-primary" />
@@ -218,7 +218,7 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+              <Card className="bg-secondary transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <Zap className="text-primary" />
@@ -231,7 +231,7 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+              <Card className="bg-secondary transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <MessageCircle className="text-primary" />
@@ -244,7 +244,7 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+              <Card className="bg-secondary transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <Clock className="text-primary" />
@@ -257,7 +257,7 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+              <Card className="bg-secondary transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <Shield className="text-primary" />
@@ -270,7 +270,7 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
 
-              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+              <Card className="bg-secondary transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <Heart className="text-primary" />
