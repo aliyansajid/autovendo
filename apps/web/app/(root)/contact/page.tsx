@@ -40,7 +40,6 @@ export default function ContactPage() {
 
   return (
     <>
-      {/* Hero Section */}
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto py-12 md:py-24 px-4">
           <div className="text-center text-white space-y-4">
@@ -53,11 +52,9 @@ export default function ContactPage() {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="w-full max-w-285 mx-auto py-12 md:py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Contact Information */}
             <div className="lg:col-span-1 space-y-8">
               <section>
                 <h2 className="text-2xl font-bold mb-6">
@@ -65,7 +62,7 @@ export default function ContactPage() {
                 </h2>
                 <div className="space-y-6">
                   <div className="flex gap-4">
-                    <Mail className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+                    <Mail className="h-6 w-6 text-primary shrink-0 mt-1" />
                     <div>
                       <h3 className="font-semibold mb-1">E-Mail</h3>
                       <a
@@ -78,7 +75,7 @@ export default function ContactPage() {
                   </div>
 
                   <div className="flex gap-4">
-                    <Phone className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+                    <Phone className="h-6 w-6 text-primary shrink-0 mt-1" />
                     <div>
                       <h3 className="font-semibold mb-1">Telefon</h3>
                       <a
@@ -91,7 +88,7 @@ export default function ContactPage() {
                   </div>
 
                   <div className="flex gap-4">
-                    <MapPin className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+                    <MapPin className="h-6 w-6 text-primary shrink-0 mt-1" />
                     <div>
                       <h3 className="font-semibold mb-1">Adresse</h3>
                       <p className="text-muted-foreground">
@@ -107,7 +104,7 @@ export default function ContactPage() {
                   </div>
 
                   <div className="flex gap-4">
-                    <Clock className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+                    <Clock className="h-6 w-6 text-primary shrink-0 mt-1" />
                     <div>
                       <h3 className="font-semibold mb-1">Öffnungszeiten</h3>
                       <div className="text-muted-foreground space-y-1">
