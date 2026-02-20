@@ -67,6 +67,13 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-dvh">
+      <header className="sticky top-0 z-50 w-full border-b-2 border-primary bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+        <div className="container flex h-14 items-center justify-center">
+          <Link href="/" className="flex items-center space-x-2">
+            <span className="font-bold sm:inline-block">Autovendo</span>
+          </Link>
+        </div>
+      </header>
       <main className="flex-1">
         <section className="container mx-auto px-4 py-12 md:py-20">
           <div className="text-center space-y-6">
