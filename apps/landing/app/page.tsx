@@ -67,9 +67,9 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-dvh">
-      <header className="sticky top-0 z-50 w-full border-b-2 border-primary bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-        <div className="flex h-14 items-center justify-center">
-          <span className="text-2xl font-bold sm:inline-block">Autovendo</span>
+      <header className="bg-linear-to-r from-primary to-primary/80">
+        <div className="flex items-center justify-between max-w-285 mx-auto h-16 px-4">
+          <div className="text-xl font-bold text-white">Autovendo</div>
         </div>
       </header>
       <main className="flex-1">
@@ -291,7 +291,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="bg-secondary border-y-2 border-primary py-16 md:py-24">
+        <section className="bg-secondary border-t-2 border-primary py-16 md:py-24">
           <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold">
@@ -375,18 +375,18 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t bg-background">
+      <footer className="bg-linear-to-r from-primary to-primary/80">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>
+            <p className="text-white">
               &copy; {new Date().getFullYear()} Autovendo.ch. Alle Rechte
               vorbehalten.
             </p>
-            <p>
+            <p className="text-white">
               Fragen? Schreiben Sie uns:&nbsp;
               <Link
                 href="mailto:info@autovendo.ch"
-                className="text-primary hover:underline"
+                className="text-white hover:underline"
               >
                 info@autovendo.ch
               </Link>
