@@ -1,7 +1,8 @@
 "use client";
 
 import { z } from "zod";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { Form } from "@repo/ui/src/components/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/ui/src/components/button";
 import {
@@ -13,7 +14,7 @@ import { Mail, Phone, MapPin, Clock } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name muss mindestens 2 Zeichen lang sein"),
-  email: z.string().email("Ungültige E-Mail-Adresse"),
+  email: z.email("Ungültige E-Mail-Adresse"),
   phone: z.string().optional(),
   subject: z.string().min(3, "Betreff muss mindestens 3 Zeichen lang sein"),
   message: z.string().min(10, "Nachricht muss mindestens 10 Zeichen lang sein"),
