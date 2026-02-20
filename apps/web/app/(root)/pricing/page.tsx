@@ -1,17 +1,17 @@
 import { pricingTiers } from "@/constants/pricing-tiers";
-import { Badge } from "@repo/ui/src/components/badge";
 import { Button } from "@repo/ui/src/components/button";
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
 } from "@repo/ui/src/components/card";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { Badge, CheckCircle2, XCircle } from "lucide-react";
+import React from "react";
 
-export default function PricingPage() {
+const PricingPage = () => {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
@@ -86,4 +86,6 @@ export default function PricingPage() {
       </div>
     </>
   );
-}
+};
+
+export default PricingPage;

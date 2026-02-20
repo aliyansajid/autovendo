@@ -1,7 +1,8 @@
-import { Separator } from "@repo/ui/components/separator";
+import { Separator } from "@repo/ui/src/components/separator";
 import { CheckCircle2 } from "lucide-react";
+import React from "react";
 
-export default function AboutPage() {
+const AboutPage = () => {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
@@ -37,7 +38,7 @@ export default function AboutPage() {
               </p>
               <p>
                 Inserieren darf nicht teuer, sondern muss wirksam sein. Zeit ist
-                knapp, Kosten steigen – umso wichtiger ist eine Plattform, die
+                knapp, Kosten steigen - umso wichtiger ist eine Plattform, die
                 mitdenkt, zuhört und unterstützt.
               </p>
             </div>
@@ -99,15 +100,15 @@ export default function AboutPage() {
                 <p className="font-semibold mb-4">Unsere Preise sind:</p>
                 <div className="grid gap-3">
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="text-primary flex-shrink-0" />
+                    <CheckCircle2 className="text-primary shrink-0" />
                     <span>klar und transparent</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="text-primary flex-shrink-0" />
+                    <CheckCircle2 className="text-primary shrink-0" />
                     <span>wettbewerbsfähig</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="text-primary flex-shrink-0" />
+                    <CheckCircle2 className="text-primary shrink-0" />
                     <span>einfach kalkulierbar</span>
                   </div>
                 </div>
@@ -186,4 +187,6 @@ export default function AboutPage() {
       </div>
     </>
   );
-}
+};
+
+export default AboutPage;

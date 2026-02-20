@@ -1,16 +1,14 @@
 "use client";
 
+import { z } from "zod";
+import { Form, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import z from "zod";
-import { Form } from "@repo/ui/src/components/form";
+import { Button } from "@repo/ui/src/components/button";
 import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { Button } from "@repo/ui/src/components/button";
-import { Separator } from "@repo/ui/components/separator";
+import { Separator } from "@repo/ui/src/components/separator";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 
 const formSchema = z.object({
@@ -21,7 +19,7 @@ const formSchema = z.object({
   message: z.string().min(10, "Nachricht muss mindestens 10 Zeichen lang sein"),
 });
 
-export default function ContactPage() {
+const ContactPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,10 +31,7 @@ export default function ContactPage() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    toast.success("Vielen Dank für Ihre Nachricht! Wir melden uns bald.");
-    form.reset();
-  }
+  function onSubmit(data: z.infer<typeof formSchema>) {}
 
   return (
     <>
@@ -45,7 +40,7 @@ export default function ContactPage() {
           <div className="text-center text-white space-y-4">
             <h1 className="text-3xl md:text-5xl font-bold">Kontakt</h1>
             <p className="text-lg md:text-xl max-w-3xl mx-auto">
-              Wir sind für Sie da. Nehmen Sie Kontakt mit uns auf – wir freuen
+              Wir sind für Sie da. Nehmen Sie Kontakt mit uns auf - wir freuen
               uns auf Ihre Nachricht.
             </p>
           </div>
@@ -129,7 +124,6 @@ export default function ContactPage() {
               </section>
             </div>
 
-            {/* Contact Form */}
             <div className="lg:col-span-2">
               <Form {...form}>
                 <form
@@ -193,4 +187,6 @@ export default function ContactPage() {
       </div>
     </>
   );
-}
+};
+
+export default ContactPage;
