@@ -66,9 +66,9 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-dvh">
       <main className="flex-1">
-        <div className="container mx-auto px-4 py-12 md:py-20">
+        <section className="container mx-auto px-4 py-12 md:py-20">
           <div className="text-center space-y-6">
             <Badge
               variant="secondary"
@@ -159,8 +159,10 @@ export default function LandingPage() {
               </p>
             </div>
           </div>
+        </section>
 
-          <div className="max-w-3xl mx-auto mt-16 text-center space-y-4">
+        <section className="bg-secondary/60 py-16 md:py-24">
+          <div className="container mx-auto px-4 max-w-3xl text-center space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold">
               Warum Autovendo.ch?
             </h2>
@@ -189,9 +191,9 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+        </section>
 
-          <Separator className="my-16" />
-
+        <section className="container mx-auto px-4 py-16 md:py-24">
           <div>
             <div className="text-center mb-8">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -203,7 +205,7 @@ export default function LandingPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card>
+              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <Euro className="text-primary" />
@@ -216,7 +218,7 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <Zap className="text-primary" />
@@ -229,7 +231,7 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <MessageCircle className="text-primary" />
@@ -242,7 +244,7 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <Clock className="text-primary" />
@@ -255,7 +257,7 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <Shield className="text-primary" />
@@ -268,7 +270,7 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="transition-all duration-300 hover:shadow-md hover:-translate-y-1">
                 <CardContent className="space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
                     <Heart className="text-primary" />
@@ -282,10 +284,10 @@ export default function LandingPage() {
               </Card>
             </div>
           </div>
+        </section>
 
-          <Separator className="my-16" />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <section className="bg-secondary/60 py-16 md:py-24">
+          <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold">
                 Der Unterschied zu anderen Plattformen
@@ -341,7 +343,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="bg-secondary p-8 md:p-12 rounded-xl space-y-6">
+            <div className="bg-background border p-8 md:p-12 rounded-2xl space-y-6 shadow-sm">
               <h3 className="text-2xl font-bold">Für wen ist Autovendo?</h3>
               <div className="space-y-4 text-muted-foreground">
                 <p>
@@ -365,10 +367,10 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </main>
 
-      <footer className="border-t">
+      <footer className="border-t bg-background">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
             <p>
