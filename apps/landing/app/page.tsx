@@ -88,7 +88,7 @@ export default function LandingPage() {
               <span className="text-primary">Autohändler</span> in der Schweiz
             </h1>
 
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl font-bold text-muted-foreground max-w-3xl mx-auto">
               Fair. Transparent. Unkompliziert. Menschlich.
             </p>
 
@@ -204,7 +204,7 @@ export default function LandingPage() {
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Was Sie erwarten können
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg font-bold text-muted-foreground">
                 Eine Plattform, die auf Ihre Bedürfnisse zugeschnitten ist
               </p>
             </div>
