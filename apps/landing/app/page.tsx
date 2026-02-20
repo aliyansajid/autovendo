@@ -343,7 +343,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="bg-background border p-8 md:p-12 rounded-2xl space-y-6 shadow-sm">
+            <div className="bg-background border border-primary p-8 md:p-12 rounded-2xl space-y-6 shadow-sm">
               <h3 className="text-2xl font-bold">Für wen ist Autovendo?</h3>
               <div className="space-y-4 text-muted-foreground">
                 <p>
