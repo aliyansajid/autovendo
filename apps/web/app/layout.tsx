@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "@repo/ui/globals.css";
-import { TooltipProvider } from "@repo/ui/components/tooltip";
+
+import { Toaster } from "@repo/ui/src/components/sonner";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { Toaster } from "@repo/ui/src/components/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,14 +30,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <TooltipProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Toaster richColors={true} position="top-center" />
-          <Footer />
-        </TooltipProvider>
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );
