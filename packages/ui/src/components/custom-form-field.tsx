@@ -1,10 +1,4 @@
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@repo/ui/components/form";
-import { Control } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 import { Input } from "@repo/ui/components/input";
 import { cn } from "@repo/ui/lib/utils";
 import {
@@ -24,7 +18,12 @@ import {
 import { Button } from "@repo/ui/components/button";
 import { Label } from "@repo/ui/components/label";
 import { useState } from "react";
-import { Field, FieldGroup } from "@repo/ui/components/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@repo/ui/components/field";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import {
   InputGroup,
@@ -41,7 +40,6 @@ enum FormFieldType {
   DATE_PICKER = "datePicker",
   SKELETON = "skeleton",
   RADIO_GROUP = "radiogroup",
-  CHECKBOX_GROUP = "checkboxGroup",
   INPUT_GROUP = "inputGroup",
 }
 
@@ -85,8 +83,8 @@ const RenderField = ({
       return (
         <Input
           {...field}
-          placeholder={props.placeholder}
           type={props.inputType}
+          placeholder={props.placeholder}
           disabled={props.disabled}
           className={cn(
             props.className,
@@ -95,7 +93,6 @@ const RenderField = ({
           )}
           onChange={(e) => {
             if (props.inputType === "number") {
-              const val = e.target.value;
               try {
                 field.onChange(e.target.value);
               } catch {}
@@ -108,7 +105,7 @@ const RenderField = ({
 
     case FormFieldType.INPUT_GROUP:
       return (
-        <InputGroup className={props.className}>
+        <InputGroup className={cn(props.className)}>
           {props.inputGroupText &&
             (!props.inputGroupTextPosition ||
               props.inputGroupTextPosition === "left") && (
@@ -129,9 +126,8 @@ const RenderField = ({
             )}
             onChange={(e) => {
               if (props.inputType === "number") {
-                const val = e.target.value;
                 try {
-                  field.onChange(val);
+                  field.onChange(e.target.value);
                 } catch {}
               } else {
                 field.onChange(e);
@@ -159,12 +155,12 @@ const RenderField = ({
     case FormFieldType.SELECT:
       return (
         <Select
-          onValueChange={field.onChange}
           value={field.value}
-          disabled={props.disabled}
           defaultValue={props.defaultValue}
+          onValueChange={field.onChange}
+          disabled={props.disabled}
         >
-          <SelectTrigger className={props.className}>
+          <SelectTrigger className={cn(props.className)}>
             <SelectValue placeholder={props.placeholder} />
           </SelectTrigger>
           <SelectContent>{props.children}</SelectContent>
@@ -183,7 +179,7 @@ const RenderField = ({
               disabled={props.disabled}
               className={cn(props.className)}
             />
-            <Label htmlFor={props.name}>{props.label}</Label>
+            <FieldLabel htmlFor={props.name}>{props.label}</FieldLabel>
           </Field>
         </FieldGroup>
       );
@@ -229,9 +225,6 @@ const RenderField = ({
         </Popover>
       );
 
-    case FormFieldType.SKELETON:
-      return props.renderSkeleton ? props.renderSkeleton(field) : null;
-
     default:
       return null;
   }
@@ -239,17 +232,17 @@ const RenderField = ({
 
 const CustomFormField = (props: CustomFormFieldProps) => {
   return (
-    <FormField
-      control={props.control}
+    <Controller
       name={props.name}
-      render={({ field }) => (
-        <FormItem>
+      control={props.control}
+      render={({ field, fieldState }) => (
+        <Field data-invalid={fieldState.invalid}>
           {props.fieldType !== FormFieldType.CHECKBOX && props.label && (
-            <FormLabel>{props.label}</FormLabel>
+            <FieldLabel htmlFor={field.name}>{props.label}</FieldLabel>
           )}
           <RenderField props={props} field={field} />
-          <FormMessage />
-        </FormItem>
+          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+        </Field>
       )}
     />
   );

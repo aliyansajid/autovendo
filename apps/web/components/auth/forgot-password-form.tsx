@@ -1,25 +1,32 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import { Form } from "@repo/ui/components/form";
+import { useForm } from "react-hook-form";
 import { Button } from "@repo/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/src/components/card";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+} from "@repo/ui/src/components/field";
 import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { Card, CardContent } from "@repo/ui/src/components/card";
 
 const formSchema = z.object({
-  email: z.email({
-    message: "Please enter a valid email address.",
-  }),
+  email: z.email("Invalid email address"),
 });
 
-export function ForgotPasswordForm() {
+const ForgotPasswordForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,39 +34,41 @@ export function ForgotPasswordForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    // Handle forgot password logic here
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log(data);
   }
 
   return (
     <Card>
-      <CardContent className="grid gap-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl">Welcome back</CardTitle>
+        <CardDescription>
+          Login with your Apple or Google account
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <FieldGroup>
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
+              inputType="email"
               name="email"
               label="Email"
               placeholder="m@example.com"
-              inputType="email"
             />
-            <Button type="submit" className="w-full">
-              Send Reset Link
-            </Button>
-          </form>
-        </Form>
-        <div className="text-center text-sm">
-          <Link
-            href="/login"
-            className="flex items-center justify-center gap-2 text-muted-foreground hover:text-primary"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to login
-          </Link>
-        </div>
+
+            <Field>
+              <Button type="submit">Login</Button>
+              <FieldDescription className="text-center">
+                Don&apos;t have an account? <Link href="/signup">Sign up</Link>
+              </FieldDescription>
+            </Field>
+          </FieldGroup>
+        </form>
       </CardContent>
     </Card>
   );
-}
+};
+
+export default ForgotPasswordForm;
