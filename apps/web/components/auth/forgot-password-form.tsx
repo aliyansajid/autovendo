@@ -1,26 +1,26 @@
 "use client";
 
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@repo/ui/components/button";
+import { Button } from "@repo/ui/src/components/button";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
+  CardContent,
 } from "@repo/ui/src/components/card";
 import {
+  FieldGroup,
   Field,
   FieldDescription,
-  FieldGroup,
 } from "@repo/ui/src/components/field";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import Link from "next/link";
 
 const formSchema = z.object({
   email: z.email("Invalid email address"),
@@ -41,9 +41,10 @@ const ForgotPasswordForm = () => {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Welcome back</CardTitle>
+        <CardTitle className="text-xl">Forgot Password</CardTitle>
         <CardDescription>
-          Login with your Apple or Google account
+          Enter your email address and we will send you a link to reset your
+          password
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -59,9 +60,9 @@ const ForgotPasswordForm = () => {
             />
 
             <Field>
-              <Button type="submit">Login</Button>
+              <Button type="submit">Send Reset Link</Button>
               <FieldDescription className="text-center">
-                Don&apos;t have an account? <Link href="/signup">Sign up</Link>
+                Remember your password? <Link href="login">Login</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>
