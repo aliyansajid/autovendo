@@ -43,10 +43,10 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
         )}
       </CardHeader>
       <CardContent className="space-y-3">
-        <h1 className="text-lg font-bold truncate" title={item.title}>
+        <h2 className="text-lg font-bold truncate" title={item.title}>
           {item.title}
-        </h1>
-        <h3 className="text-xl font-bold text-primary">{item.price}</h3>
+        </h2>
+        <p className="text-xl font-bold text-primary">{item.price}</p>
         <Separator />
         <div className="flex items-center text-sm text-muted-foreground">
           {item.details.map((detail, i) => (
