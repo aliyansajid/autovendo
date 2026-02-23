@@ -72,7 +72,7 @@ const page = () => {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
-        <div className="w-full max-w-285 mx-auto py-12 md:py-20 px-4">
+        <div className="w-full max-w-285 mx-auto py-12 px-4">
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl md:text-3xl font-bold text-center">

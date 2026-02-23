@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from "@repo/ui/src/components/accordion";
 import { Button } from "@repo/ui/src/components/button";
-import { Link } from "lucide-react";
+import Link from "next/link";
 
 const FaqPage = () => {
   return (
@@ -15,7 +15,6 @@ const FaqPage = () => {
         <div className="w-full max-w-285 mx-auto py-12 md:py-24 px-4">
           <div className="text-center text-white space-y-4">
             <h1 className="text-3xl md:text-5xl font-bold">
-              {" "}
               Häufig gestellte Fragen
             </h1>
             <p className="text-lg md:text-xl max-w-3xl mx-auto">

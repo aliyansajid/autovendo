@@ -46,14 +46,8 @@ enum FormFieldType {
 interface CustomFormFieldProps {
   control: Control<any>;
   fieldType: FormFieldType;
-  inputType?:
-    | "text"
-    | "email"
-    | "password"
-    | "number"
-    | "url"
-    | "color"
-    | "date";
+  inputType?: "text" | "email" | "tel" | "password" | "number";
+
   name: string;
   label?: string;
   placeholder?: string;
@@ -105,21 +99,18 @@ const RenderField = ({
 
     case FormFieldType.INPUT_GROUP:
       return (
-        <InputGroup className={cn(props.className)}>
-          {props.inputGroupText &&
-            (!props.inputGroupTextPosition ||
-              props.inputGroupTextPosition === "left") && (
-              <InputGroupAddon>
-                <InputGroupText>{props.inputGroupText}</InputGroupText>
-              </InputGroupAddon>
-            )}
+        <InputGroup>
+          {props.inputGroupText && props.inputGroupTextPosition === "left" && (
+            <InputGroupAddon>
+              <InputGroupText>{props.inputGroupText}</InputGroupText>
+            </InputGroupAddon>
+          )}
           <InputGroupInput
             {...field}
             type={props.inputType}
             placeholder={props.placeholder}
             disabled={props.disabled}
             className={cn(
-              "text-right",
               props.className,
               props.inputType === "number" &&
                 "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
@@ -135,7 +126,7 @@ const RenderField = ({
             }}
           />
           {props.inputGroupText && props.inputGroupTextPosition === "right" && (
-            <InputGroupAddon>
+            <InputGroupAddon align="inline-end">
               <InputGroupText>{props.inputGroupText}</InputGroupText>
             </InputGroupAddon>
           )}
