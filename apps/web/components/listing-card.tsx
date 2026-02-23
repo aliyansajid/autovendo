@@ -33,6 +33,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           fill
           className="object-cover rounded-t-xl"
           priority={true}
+          fetchPriority="high"
         />
         {item.badge && (
           <Badge
