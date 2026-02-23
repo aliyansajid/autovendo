@@ -26,5 +26,13 @@
     "@types/react-dom": "19.2.2",
     "eslint": "^9.17.0",
     "typescript": "5.9.2"
-  }
+  },
+  "browserslist": [
+    "chrome >= 94",
+    "edge >= 94",
+    "firefox >= 93",
+    "safari >= 15.4",
+    "ios >= 15.4",
+    "opera >= 80"
+  ]
 }
