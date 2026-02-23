@@ -12,12 +12,12 @@ const FaqPage = () => {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
-        <div className="w-full max-w-285 mx-auto py-12 md:py-24 px-4">
-          <div className="text-center text-white space-y-4">
-            <h1 className="text-3xl md:text-5xl font-bold">
+        <div className="w-full max-w-285 mx-auto px-4 py-12">
+          <div className="text-center text-white space-y-3">
+            <h1 className="text-2xl md:text-4xl font-bold">
               Häufig gestellte Fragen
             </h1>
-            <p className="text-lg md:text-xl max-w-3xl mx-auto">
+            <p className="text-base md:text-lg max-w-3xl mx-auto">
               Finden Sie schnelle Antworten auf die wichtigsten Fragen rund um
               Autovendo.ch.
             </p>
@@ -25,7 +25,7 @@ const FaqPage = () => {
         </div>
       </div>
 
-      <div className="w-full max-w-4xl mx-auto py-12 md:py-16 px-4">
+      <div className="w-full max-w-4xl mx-auto px-4 py-12">
         <div className="space-y-12">
           {faqData.map((categoryGroup, index) => (
             <div key={index} className="space-y-6">
@@ -49,15 +49,15 @@ const FaqPage = () => {
           ))}
         </div>
 
-        <div className="mt-16 bg-secondary p-8 rounded-xl text-center space-y-4">
+        <div className="mt-12 bg-secondary p-8 rounded-xl text-center space-y-4">
           <h3 className="text-xl font-bold">Ihre Frage war nicht dabei?</h3>
           <p className="text-muted-foreground">
             Unser Support-Team hilft Ihnen gerne weiter. Kontaktieren Sie uns
             jederzeit!
           </p>
-          <Link href="/contact">
-            <Button>Kontakt aufnehmen</Button>
-          </Link>
+          <Button asChild>
+            <Link href="/contact">Kontakt aufnehmen</Link>
+          </Button>
         </div>
       </div>
     </>
