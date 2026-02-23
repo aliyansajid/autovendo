@@ -12,8 +12,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@repo/ui/src/components/tabs";
-import { Input } from "@repo/ui/src/components/input";
-import { Textarea } from "@repo/ui/src/components/textarea";
 import {
   Select,
   SelectContent,
@@ -69,9 +67,9 @@ export default function GaragePage() {
   }
 
   return (
-    <div className="pb-16">
+    <div className="pb-12">
       <div className="bg-white">
-        <div className="h-40 md:h-64 lg:h-80 w-full relative">
+        <div className="h-40 md:h-56 lg:h-64 w-full relative">
           <Image
             src={garage.coverImage}
             alt="Cover"
@@ -142,8 +140,8 @@ export default function GaragePage() {
         </div>
       </div>
 
-      <div className="max-w-285 mx-auto px-4 pt-8">
-        <Tabs defaultValue="about" className="space-y-8">
+      <div className="max-w-285 mx-auto px-4 pt-6">
+        <Tabs defaultValue="about" className="space-y-6">
           <TabsList className="w-full overflow-x-auto scrollbar-hide">
             <TabsTrigger value="about">About Us</TabsTrigger>
             <TabsTrigger value="cars">
@@ -153,7 +151,7 @@ export default function GaragePage() {
             <TabsTrigger value="ratings">Ratings</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="about" className="space-y-8 mb-0">
+          <TabsContent value="about" className="space-y-6 mb-0">
             <Card>
               <CardHeader className="border-b gap-0">
                 <CardTitle>About {garage.name}</CardTitle>
@@ -212,8 +210,8 @@ export default function GaragePage() {
 
             <Separator />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-6">
                 <section>
                   <h2 className="text-xl font-bold mb-6">Services We Offer</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -299,7 +297,7 @@ export default function GaragePage() {
                       onSubmit={form.handleSubmit(onSubmit)}
                       className="space-y-6"
                     >
-                      <h3 className="font-semibold">Send a message</h3>
+                      <h3 className="font-semibold text-lg">Send a message</h3>
                       <CustomFormField
                         control={form.control}
                         fieldType={FormFieldType.INPUT}
@@ -336,7 +334,7 @@ export default function GaragePage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="cars" className="space-y-8 mb-0">
+          <TabsContent value="cars" className="space-y-6 mb-0">
             <GarageFilters />
 
             <div className="space-y-6">
@@ -383,8 +381,8 @@ export default function GaragePage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="ratings" className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <TabsContent value="ratings" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-1">
                 <Card>
                   <CardHeader>

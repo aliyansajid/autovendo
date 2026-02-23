@@ -410,3 +410,199 @@ Visit our showroom in the heart of Zurich to experience our exceptional service.
     },
   ],
 };
+
+export const listings = [
+  {
+    id: 1,
+    title: "Volkswagen T-Roc 1.5 TSI",
+    price: "€ 30,490",
+    details: ["02/2026", "20 km", "Gasoline"],
+    dealer: "Bierschneider",
+    location: "DE 94315 Straubing",
+    badge: "New",
+    image: "/suv_side_view_1770816147177.png", // SUV image
+  },
+  {
+    id: 2,
+    title: "Peugeot 5008 N GT HDI 130",
+    price: "€ 29,790",
+    details: ["12/2023", "47,850 km", "Diesel"],
+    dealer: "GROMES",
+    location: "DE 85456 Wartenberg",
+    badge: "New",
+    image: "/hatchback_red_1770816163420.png", // Using hatchback as placeholder for now or rotate
+  },
+  {
+    id: 3,
+    title: "Nissan Ariya 87kWh",
+    price: "€ 44,890",
+    details: ["01/2024", "3,645 km", "Electric"],
+    dealer: "Auto Schmid",
+    location: "DE 85635 Höhenkirchen",
+    badge: "New",
+    image: "/sport_car_blue_1770816178212.png", // Using sport car
+  },
+  {
+    id: 4,
+    title: "DR Automobiles DR6.0 1.5",
+    price: "€ 19,800",
+    details: ["11/2022", "82,373 km", "LPG"],
+    dealer: "DR Roma",
+    location: "IT 00137 Roma",
+    badge: "New",
+    image: "/sedan_white_v2_1770816230304.png", // Will be replaced by actual generated filename if successful, otherwise I'll need to check the output
+  },
+  // Repeat similar data to fill 16 slots
+  {
+    id: 5,
+    title: "Audi A4 Avant",
+    price: "€ 35,900",
+    details: ["05/2023", "15,000 km", "Diesel"],
+    dealer: "Audi Zentrum",
+    location: "DE 10115 Berlin",
+    badge: "Used",
+    image: "/suv_side_view_1770816147177.png",
+  },
+  {
+    id: 6,
+    title: "BMW 320i",
+    price: "€ 42,500",
+    details: ["09/2024", "10 km", "Gasoline"],
+    dealer: "BMW Niederlassung",
+    location: "DE 80331 München",
+    badge: "New",
+    image: "/sedan_white_v2_1770816230304.png",
+  },
+  {
+    id: 7,
+    title: "Mercedes-Benz C 220 d",
+    price: "€ 48,900",
+    details: ["01/2024", "5,000 km", "Diesel"],
+    dealer: "Mercedes-Benz Berlin",
+    location: "DE 10117 Berlin",
+    badge: "Demonstration",
+    image: "/sedan_white_v2_1770816230304.png",
+  },
+  {
+    id: 8,
+    title: "Ford Focus ST-Line",
+    price: "€ 25,490",
+    details: ["03/2023", "25,000 km", "Gasoline"],
+    dealer: "Ford Store",
+    location: "DE 50667 Köln",
+    badge: "Used",
+    image: "/hatchback_red_1770816163420.png",
+  },
+  {
+    id: 9,
+    title: "Renault Clio",
+    price: "€ 18,900",
+    details: ["06/2024", "100 km", "Gasoline"],
+    dealer: "Renault Retail",
+    location: "FR 75001 Paris",
+    badge: "New",
+    image: "/hatchback_red_1770816163420.png",
+  },
+  {
+    id: 10,
+    title: "Opel Astra",
+    price: "€ 22,500",
+    details: ["11/2023", "12,000 km", "Gasoline"],
+    dealer: "Opel Handler",
+    location: "DE 60311 Frankfurt",
+    badge: "Used",
+    image: "/hatchback_red_1770816163420.png",
+  },
+  {
+    id: 11,
+    title: "Tesla Model 3",
+    price: "€ 41,990",
+    details: ["02/2024", "1,000 km", "Electric"],
+    dealer: "Tesla Store",
+    location: "NL 1012 Amsterdam",
+    badge: "New",
+    image: "/sport_car_blue_1770816178212.png",
+  },
+  {
+    id: 12,
+    title: "Porsche 911 Carrera",
+    price: "€ 115,000",
+    details: ["07/2022", "8,000 km", "Gasoline"],
+    dealer: "Porsche Zentrum",
+    location: "DE 70173 Stuttgart",
+    badge: "Used",
+    image: "/sport_car_blue_1770816178212.png",
+  },
+  {
+    id: 13,
+    title: "Volvo XC60",
+    price: "€ 55,000",
+    details: ["04/2024", "500 km", "Hybrid"],
+    dealer: "Volvo Car",
+    location: "SE 40531 Gothenburg",
+    badge: "New",
+    image: "/suv_side_view_1770816147177.png",
+  },
+  {
+    id: 14,
+    title: "Land Rover Defender",
+    price: "€ 85,000",
+    details: ["01/2024", "1,500 km", "Diesel"],
+    dealer: "Land Rover UK",
+    location: "UK SW1A 1AA London",
+    badge: "Demonstration",
+    image: "/suv_side_view_1770816147177.png",
+  },
+  {
+    id: 15,
+    title: "Fiat 500e",
+    price: "€ 28,500",
+    details: ["03/2024", "200 km", "Electric"],
+    dealer: "Fiat Torino",
+    location: "IT 10121 Torino",
+    badge: "New",
+    image: "/hatchback_red_1770816163420.png",
+  },
+  {
+    id: 16,
+    title: "Toyota RAV4",
+    price: "€ 38,900",
+    details: ["10/2023", "18,000 km", "Hybrid"],
+    dealer: "Toyota City",
+    location: "JP 100-0001 Tokyo", // Just kidding, let's keep it Europe
+    badge: "Used",
+    image: "/suv_side_view_1770816147177.png",
+  },
+];
+
+const baseGarages = [
+  {
+    name: "Elite Motors Zurich",
+    location: "Zurich, Switzerland",
+    image: "/suv_side_view_1770816147177.png",
+  },
+  {
+    name: "Alpine Auto Group",
+    location: "Geneva, Switzerland",
+    image: "/sport_car_blue_1770816178212.png",
+  },
+  {
+    name: "Prestige Cars Bern",
+    location: "Bern, Switzerland",
+    image: "/sedan_white_v2_1770816230304.png",
+  },
+  {
+    name: "Lakeside Classics",
+    location: "Lucerne, Switzerland",
+    image: "/hatchback_red_1770816163420.png",
+  },
+];
+
+export const garages = Array.from({ length: 10 }).map((_, i) => {
+  const base = baseGarages[i % 4] as (typeof baseGarages)[0];
+  return {
+    ...base,
+    id: i + 1,
+    name: i > 3 ? `${base.name} V${Math.floor(i / 4) + 1}` : base.name,
+  };
+});

@@ -10,10 +10,10 @@ import { Button } from "@repo/ui/src/components/button";
 import { PlusCircle, CarFront } from "lucide-react";
 import Link from "next/link";
 
-const Header = () => {
+export const Header = () => {
   return (
     <header className="sticky top-0 z-50 bg-linear-to-r from-primary to-primary/80">
-      <div className="flex items-center justify-between container mx-auto py-3 px-4">
+      <div className="flex items-center justify-between max-w-285 mx-auto py-3 px-4">
         <Link
           href="/"
           className="flex items-center gap-2 group transition-opacity hover:opacity-90"
@@ -51,5 +51,3 @@ const Header = () => {
     </header>
   );
 };
-
-export default Header;

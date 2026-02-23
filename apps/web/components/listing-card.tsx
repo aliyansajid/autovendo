@@ -14,18 +14,18 @@ import { Separator } from "@repo/ui/components/separator";
 
 export interface ListingProps {
   id: number | string;
+  image: string;
+  badge: string;
   title: string;
   price: string;
   details: string[];
   dealer: string;
   location: string;
-  badge: string;
-  image: string;
 }
 
 export const ListingCard = ({ item }: { item: ListingProps }) => {
   return (
-    <Card className="pt-0">
+    <Card className="pt-0" key={item.id}>
       <CardHeader className="relative h-48">
         <Image
           src={item.image}
@@ -36,18 +36,14 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           fetchPriority="high"
         />
         {item.badge && (
-          <Badge
-            className="absolute top-2 right-2 shadow-sm bg-yellow-400"
-            variant="secondary"
-          >
+          <Badge className="absolute top-2 right-2 bg-yellow-400 text-foreground">
             {item.badge}
           </Badge>
         )}
       </CardHeader>
+
       <CardContent className="space-y-3">
-        <h2 className="text-lg font-bold truncate" title={item.title}>
-          {item.title}
-        </h2>
+        <h2 className="text-lg font-bold truncate">{item.title}</h2>
         <p className="text-xl font-bold text-primary">{item.price}</p>
         <Separator />
         <div className="flex items-center text-sm text-muted-foreground">
@@ -61,8 +57,9 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           ))}
         </div>
       </CardContent>
-      <CardFooter className="flex items-end justify-between">
-        <div className="flex flex-col">
+
+      <CardFooter className="flex items-center justify-between">
+        <div className="flex flex-col gap-0.5">
           <span className="text-sm font-semibold truncate" title={item.dealer}>
             {item.dealer}
           </span>
@@ -74,7 +71,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
             {item.location}
           </span>
         </div>
-        <Button variant="outline" size="icon" aria-label="Favorit hinzufügen">
+        <Button variant="outline" size="icon-sm">
           <Heart className="text-muted-foreground" />
         </Button>
       </CardFooter>

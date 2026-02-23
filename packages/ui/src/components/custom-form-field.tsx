@@ -47,7 +47,6 @@ interface CustomFormFieldProps {
   control: Control<any>;
   fieldType: FormFieldType;
   inputType?: "text" | "email" | "tel" | "password" | "number";
-
   name: string;
   label?: string;
   placeholder?: string;
@@ -55,10 +54,8 @@ interface CustomFormFieldProps {
   disabled?: boolean;
   defaultValue?: string;
   children?: React.ReactNode;
-  renderSkeleton?: (field: any) => React.ReactNode;
-  dateFormat?: string;
-  showTimeSelect?: boolean;
-  inputGroupText?: React.ReactNode;
+  inputGroupIcon?: React.ReactNode;
+  inputGroupText?: string;
   inputGroupTextPosition?: "left" | "right";
   ariaLabel?: string;
 }
@@ -101,11 +98,6 @@ const RenderField = ({
     case FormFieldType.INPUT_GROUP:
       return (
         <InputGroup>
-          {props.inputGroupText && props.inputGroupTextPosition === "left" && (
-            <InputGroupAddon>
-              <InputGroupText>{props.inputGroupText}</InputGroupText>
-            </InputGroupAddon>
-          )}
           <InputGroupInput
             {...field}
             type={props.inputType}
@@ -126,7 +118,10 @@ const RenderField = ({
               }
             }}
           />
-          {props.inputGroupText && props.inputGroupTextPosition === "right" && (
+          {props.inputGroupIcon && (
+            <InputGroupAddon>{props.inputGroupIcon}</InputGroupAddon>
+          )}
+          {props.inputGroupText && (
             <InputGroupAddon align="inline-end">
               <InputGroupText>{props.inputGroupText}</InputGroupText>
             </InputGroupAddon>
