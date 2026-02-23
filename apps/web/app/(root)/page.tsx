@@ -22,12 +22,11 @@ import {
   SelectItem,
 } from "@repo/ui/src/components/select";
 import { Button } from "@repo/ui/src/components/button";
-import { makes, models, prices, countries } from "@/constants";
+import { makes, models, prices } from "@/constants";
 import FeaturedListings from "@/components/featured-listings";
 import FeaturedGarage from "@/components/featured-garage";
 import About from "@/components/about";
-import Link from "next/link";
-import { Filter, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import {
   InputGroup,
   InputGroupInput,
@@ -96,7 +95,7 @@ const page = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div className="flex-1">
                       <CustomFormField
                         control={form.control}
@@ -104,6 +103,7 @@ const page = () => {
                         name="make"
                         className="w-full"
                         placeholder="Marke"
+                        ariaLabel="Marke"
                       >
                         {makes.map((group) => (
                           <SelectGroup key={group.label}>
@@ -127,6 +127,7 @@ const page = () => {
                         name="model"
                         className="w-full"
                         placeholder="Modell"
+                        ariaLabel="Modell"
                         disabled={!selectedMake}
                       >
                         {selectedMake &&
@@ -146,6 +147,7 @@ const page = () => {
                         name="price"
                         className="w-full"
                         placeholder="Preis €"
+                        ariaLabel="Preis €"
                       >
                         {prices.map((price) => (
                           <SelectItem key={price.value} value={price.value}>
@@ -154,8 +156,6 @@ const page = () => {
                         ))}
                       </CustomFormField>
                     </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex-1">
                       <CustomFormField
                         control={form.control}
@@ -163,6 +163,7 @@ const page = () => {
                         name="registration"
                         className="w-full"
                         placeholder="Erstzulassung ab"
+                        ariaLabel="Erstzulassung ab"
                       >
                         {getRegistrationYears().map((year) => (
                           <SelectItem key={year.value} value={year.value}>
@@ -171,50 +172,8 @@ const page = () => {
                         ))}
                       </CustomFormField>
                     </div>
-                    <div className="flex flex-1 gap-4">
-                      <div className="flex-1">
-                        <CustomFormField
-                          control={form.control}
-                          fieldType={FormFieldType.SELECT}
-                          name="country"
-                          className="w-full"
-                          placeholder="Land"
-                        >
-                          {countries.map((country) => (
-                            <SelectItem
-                              key={country.value}
-                              value={country.value}
-                            >
-                              {country.flag} {country.label}
-                            </SelectItem>
-                          ))}
-                        </CustomFormField>
-                      </div>
-                      <div className="flex-1">
-                        <CustomFormField
-                          control={form.control}
-                          fieldType={FormFieldType.INPUT}
-                          name="zipcode"
-                          className="w-full"
-                          placeholder="PLZ"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex-1 flex gap-4">
-                      <div className="flex-1">
-                        <Link href="/advanced-search" className="w-full">
-                          <Button
-                            variant="outline"
-                            type="button"
-                            className="w-full"
-                          >
-                            <Filter /> Erweiterte Suche
-                          </Button>
-                        </Link>
-                      </div>
-                      <div className="flex-1">
-                        <Button className="w-full">2.029.498 Ergebnisse</Button>
-                      </div>
+                    <div className="flex-1">
+                      <Button className="w-full">2.029.498 Ergebnisse</Button>
                     </div>
                   </div>
                 </form>

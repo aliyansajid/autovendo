@@ -26,7 +26,10 @@ const Header = () => {
 
         <div className="flex items-center gap-2 sm:gap-3">
           <Select defaultValue="german">
-            <SelectTrigger className="w-24 bg-white/10 border-white/20 text-white hover:bg-white/20 transition-colors [&_svg]:text-white!">
+            <SelectTrigger
+              aria-label="Sprache"
+              className="w-24 bg-white/10 border-white/20 text-white hover:bg-white/20 transition-colors [&_svg]:text-white!"
+            >
               <SelectValue placeholder="Sprache" />
             </SelectTrigger>
             <SelectContent>

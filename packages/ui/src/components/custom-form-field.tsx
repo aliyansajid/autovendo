@@ -60,6 +60,7 @@ interface CustomFormFieldProps {
   showTimeSelect?: boolean;
   inputGroupText?: React.ReactNode;
   inputGroupTextPosition?: "left" | "right";
+  ariaLabel?: string;
 }
 
 const RenderField = ({
@@ -151,7 +152,10 @@ const RenderField = ({
           onValueChange={field.onChange}
           disabled={props.disabled}
         >
-          <SelectTrigger className={cn(props.className)}>
+          <SelectTrigger
+            className={cn(props.className)}
+            aria-label={props.ariaLabel}
+          >
             <SelectValue placeholder={props.placeholder} />
           </SelectTrigger>
           <SelectContent>{props.children}</SelectContent>

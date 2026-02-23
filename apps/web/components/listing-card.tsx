@@ -72,7 +72,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
             {item.location}
           </span>
         </div>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" aria-label="Favorit hinzufügen">
           <Heart className="text-muted-foreground" />
         </Button>
       </CardFooter>
