@@ -9,7 +9,7 @@ const nextConfig = {
     ],
   },
   experimental: {
-    optimizeCss: true,
+    inlineCss: true,
   },
 };
 
