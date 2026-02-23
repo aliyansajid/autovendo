@@ -32,6 +32,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           alt={item.title}
           fill
           className="object-cover rounded-t-xl"
+          priority={true}
         />
         {item.badge && (
           <Badge
