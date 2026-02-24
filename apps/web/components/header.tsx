@@ -40,10 +40,6 @@ const components: { title: string; href: string }[] = [
     href: "/advanced-search",
   },
   {
-    title: "Vergleichstool",
-    href: "/compare",
-  },
-  {
     title: "Händler suchen",
     href: "/dealer-search",
   },
@@ -83,7 +79,7 @@ export const Header = () => {
               <NavigationMenuItem className="hidden md:flex">
                 <NavigationMenuTrigger>Suchen</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                  <ul className="flex flex-col w-max">
                     {components.map((component) => (
                       <ListItem
                         key={component.title}
@@ -108,6 +104,10 @@ export const Header = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-2 sm:gap-3">
+          <Button className="bg-white hover:bg-white/90 text-primary">
+            <PlusCircle />
+            <Link href="/signup">Registrieren</Link>
+          </Button>
           <Select defaultValue="german">
             <SelectTrigger
               aria-label="Sprache"
@@ -124,11 +124,6 @@ export const Header = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
-
-          <Button className="bg-white hover:bg-white/90 text-primary">
-            <PlusCircle />
-            Abonnieren
-          </Button>
         </div>
 
         <div className="md:hidden">
@@ -183,7 +178,7 @@ export const Header = () => {
 
                   <Button className="w-full">
                     <PlusCircle />
-                    Abonnieren
+                    Registrieren
                   </Button>
                 </div>
               </div>
@@ -204,7 +199,10 @@ function ListItem({
   return (
     <li {...props}>
       <NavigationMenuLink asChild>
-        <Link href={href} className="leading-none text-sm font-medium">
+        <Link
+          href={href}
+          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground text-sm font-medium whitespace-nowrap w-full"
+        >
           {title}
         </Link>
       </NavigationMenuLink>

@@ -152,12 +152,14 @@ export const SearchForm = () => {
               </Field>
             </div>
 
-            <Field>
-              <Button variant="link">
-                <Settings2 />
-                <Link href="/advanced-search">Erweiterte Suche</Link>
+            <div className="flex justify-end w-full">
+              <Button variant="link" asChild>
+                <Link href="/advanced-search">
+                  <Settings2 />
+                  Erweiterte Suche
+                </Link>
               </Button>
-            </Field>
+            </div>
           </FieldGroup>
         </form>
       </CardContent>
