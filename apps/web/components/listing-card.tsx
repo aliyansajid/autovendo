@@ -36,7 +36,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           fetchPriority="high"
         />
         {item.badge && (
-          <Badge className="absolute top-2 right-2 bg-yellow-400 text-foreground">
+          <Badge className="absolute top-2 right-2 bg-yellow-400 text-foreground font-semibold">
             {item.badge}
           </Badge>
         )}
@@ -60,14 +60,8 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
 
       <CardFooter className="flex items-center justify-between">
         <div className="flex flex-col gap-0.5">
-          <span className="text-sm font-semibold truncate" title={item.dealer}>
-            {item.dealer}
-          </span>
-
-          <span
-            className="text-xs text-muted-foreground truncate"
-            title={item.location}
-          >
+          <span className="text-sm font-semibold truncate">{item.dealer}</span>
+          <span className="text-xs text-muted-foreground truncate">
             {item.location}
           </span>
         </div>

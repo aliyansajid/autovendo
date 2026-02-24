@@ -1,9 +1,9 @@
-import { About } from "./_components/about";
-import { FeaturedGarage } from "./_components/featured-garage";
-import { FeaturedListings } from "./_components/featured-listings";
 import { SearchForm } from "./_components/search-form";
+import { FeaturedListings } from "./_components/featured-listings";
+import { FeaturedGarage } from "./_components/featured-garage";
+import { About } from "./_components/about";
 
-const page = () => {
+const HomePage = () => {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
@@ -18,4 +18,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default HomePage;

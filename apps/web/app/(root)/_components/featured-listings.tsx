@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
-import { useState } from "react";
 import { ListingCard } from "@/components/listing-card";
 import { listings } from "@/lib/mock-data";
+import { Button } from "@repo/ui/src/components/button";
+import { useState } from "react";
 
 export const FeaturedListings = () => {
   const [visibleCount, setVisibleCount] = useState(4);

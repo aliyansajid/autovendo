@@ -40,7 +40,7 @@ export const FeaturedGarage = () => {
                       priority={true}
                       fetchPriority="high"
                     />
-                    <Badge className="absolute top-2 right-2 bg-yellow-400 text-foreground">
+                    <Badge className="absolute top-2 right-2 bg-yellow-400 text-foreground font-semibold">
                       Featured
                     </Badge>
                   </CardHeader>
@@ -65,8 +65,8 @@ export const FeaturedGarage = () => {
             ))}
           </CarouselContent>
           <div className="hidden sm:block">
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="bg-primary text-white size-10" />
+            <CarouselNext className="bg-primary text-white size-10" />
           </div>
         </Carousel>
       </div>
