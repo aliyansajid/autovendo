@@ -29,7 +29,7 @@ const formSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-const SignupForm = () => {
+export const SignupForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -136,5 +136,3 @@ const SignupForm = () => {
     </div>
   );
 };
-
-export default SignupForm;

@@ -26,7 +26,7 @@ const formSchema = z.object({
   email: z.email("Invalid email address"),
 });
 
-const ForgotPasswordForm = () => {
+export const ForgotPasswordForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -71,5 +71,3 @@ const ForgotPasswordForm = () => {
     </Card>
   );
 };
-
-export default ForgotPasswordForm;

@@ -23,7 +23,8 @@ import { Button } from "@repo/ui/src/components/button";
 import { makes, models, prices } from "@/constants";
 import { getRegistrationYears } from "@/lib/utils";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
-import { Search } from "lucide-react";
+import { Search, Settings2 } from "lucide-react";
+import Link from "next/link";
 
 const formSchema = z.object({
   query: z.string().optional(),
@@ -150,6 +151,13 @@ export const SearchForm = () => {
                 <Button>2.029.498 Ergebnisse</Button>
               </Field>
             </div>
+
+            <Field>
+              <Button variant="link">
+                <Settings2 />
+                <Link href="/advanced-search">Erweiterte Suche</Link>
+              </Button>
+            </Field>
           </FieldGroup>
         </form>
       </CardContent>

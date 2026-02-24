@@ -1,5 +1,16 @@
-import { Handshake, Zap, ShieldCheck, CircleDollarSign } from "lucide-react";
-import { FeatureItem } from "./feature-item";
+import {
+  Handshake,
+  Zap,
+  ShieldCheck,
+  CircleDollarSign,
+  LucideIcon,
+} from "lucide-react";
+
+interface FeatureItemProps {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
 
 export const About = () => {
   return (
@@ -44,5 +55,17 @@ export const About = () => {
         </div>
       </div>
     </section>
+  );
+};
+
+const FeatureItem = ({ icon: Icon, title, description }: FeatureItemProps) => {
+  return (
+    <div className="flex flex-col items-center text-center space-y-4">
+      <div className="bg-primary/10 p-4 rounded-full">
+        <Icon className="size-8 text-primary" />
+      </div>
+      <h3 className="text-lg font-bold">{title}</h3>
+      <p className="text-muted-foreground">{description}</p>
+    </div>
   );
 };

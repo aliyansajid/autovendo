@@ -19,32 +19,10 @@ interface SocialLinkProps {
   label: string;
 }
 
-const SocialLink = ({ href, icon: Icon, label }: SocialLinkProps) => (
-  <Link
-    href={href}
-    aria-label={label}
-    className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white hover:bg-white hover:text-primary transition-all duration-300"
-  >
-    <Icon size={16} />
-  </Link>
-);
-
 interface FooterLinkProps {
   href: string;
   children: React.ReactNode;
 }
-
-const FooterLink = ({ href, children }: FooterLinkProps) => (
-  <li>
-    <Link
-      href={href}
-      className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group"
-    >
-      <span className="w-1 h-1 rounded-full bg-muted-foreground group-hover:bg-primary transition-colors"></span>
-      {children}
-    </Link>
-  </li>
-);
 
 export const Footer = () => {
   return (
@@ -141,11 +119,13 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-2 text-muted-foreground">
                 <Phone className="w-4 h-4 text-muted-foreground shrink-0" />
-                <span>+49 (0) 30 1234 5678</span>
+                <Link href="tel:+41793223520">+41 79 322 35 20</Link>
               </li>
               <li className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="w-4 h-4 text-muted-foreground shrink-0" />
-                <span>support@autovendo.com</span>
+                <Link href="mailto:support@autovendo.com">
+                  support@autovendo.com
+                </Link>
               </li>
             </ul>
           </div>
@@ -161,3 +141,25 @@ export const Footer = () => {
     </footer>
   );
 };
+
+const SocialLink = ({ href, icon: Icon, label }: SocialLinkProps) => (
+  <Link
+    href={href}
+    aria-label={label}
+    className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white hover:bg-white hover:text-primary transition-all duration-300"
+  >
+    <Icon size={16} />
+  </Link>
+);
+
+const FooterLink = ({ href, children }: FooterLinkProps) => (
+  <li>
+    <Link
+      href={href}
+      className="flex items-center gap-2 group text-muted-foreground hover:text-primary transition-colors"
+    >
+      <span className="w-1 h-1 rounded-full bg-muted-foreground group-hover:bg-primary transition-colors" />
+      {children}
+    </Link>
+  </li>
+);
