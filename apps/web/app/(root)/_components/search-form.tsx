@@ -59,7 +59,7 @@ export const SearchForm = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-center text-2xl font-bold">
+        <CardTitle className="text-2xl text-center font-bold">
           Gebrauchte und neue Fahrzeuge finden
         </CardTitle>
       </CardHeader>
@@ -152,7 +152,7 @@ export const SearchForm = () => {
               </Field>
             </div>
 
-            <div className="flex justify-end w-full">
+            <div className="flex justify-end">
               <Button variant="link" asChild>
                 <Link href="/advanced-search">
                   <Settings2 />

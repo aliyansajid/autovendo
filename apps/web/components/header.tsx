@@ -45,12 +45,19 @@ const components: { title: string; href: string }[] = [
   },
 ];
 
+const languages: { label: string; value: string }[] = [
+  { label: "Deutsch", value: "de" },
+  { label: "English", value: "en" },
+  { label: "Français", value: "fr" },
+  { label: "Italiano", value: "it" },
+];
+
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      setIsScrolled(window.scrollY > 20);
     };
 
     handleScroll();
@@ -59,10 +66,19 @@ export const Header = () => {
   }, []);
 
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-primary" : "bg-linear-to-r from-primary to-primary/80"}`}
-    >
-      <div className="flex items-center justify-between max-w-285 mx-auto py-3 px-4">
+    <header className="sticky top-0 z-50 w-full">
+      <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 w-full h-full bg-linear-to-r from-primary to-primary/80" />
+        <div
+          className={`absolute inset-0 w-full h-full bg-primary shadow-lg transition-all duration-500 ease-in-out ${
+            isScrolled
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 -translate-y-2"
+          }`}
+        />
+      </div>
+
+      <div className="relative flex items-center justify-between max-w-285 mx-auto py-3 px-4">
         <div className="flex items-center gap-8">
           <Link
             href="/"
@@ -103,12 +119,13 @@ export const Header = () => {
           </NavigationMenu>
         </div>
 
-        <div className="hidden md:flex items-center gap-2 sm:gap-3">
+        <div className="hidden md:flex items-center gap-3">
           <Button className="bg-white hover:bg-white/90 text-primary">
             <PlusCircle />
             <Link href="/signup">Registrieren</Link>
           </Button>
-          <Select defaultValue="german">
+
+          <Select defaultValue="de">
             <SelectTrigger
               aria-label="Sprache"
               className="w-32 bg-white/10 border-white/20 text-white hover:bg-white/20 transition-colors [&_svg]:text-white!"
@@ -117,10 +134,11 @@ export const Header = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="german">Deutsch</SelectItem>
-                <SelectItem value="english">English</SelectItem>
-                <SelectItem value="french">Français</SelectItem>
-                <SelectItem value="italian">Italiano</SelectItem>
+                {languages.map((language) => (
+                  <SelectItem key={language.value} value={language.value}>
+                    {language.label}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -160,18 +178,24 @@ export const Header = () => {
                     Verkaufen
                   </Link>
                 </nav>
+
                 <Separator />
+
                 <div className="grid gap-4">
-                  <Select defaultValue="german">
+                  <Select defaultValue="de">
                     <SelectTrigger aria-label="Sprache" className="w-full">
                       <SelectValue placeholder="Sprache" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="german">Deutsch</SelectItem>
-                        <SelectItem value="english">English</SelectItem>
-                        <SelectItem value="french">Français</SelectItem>
-                        <SelectItem value="italian">Italiano</SelectItem>
+                        {languages.map((language) => (
+                          <SelectItem
+                            key={language.value}
+                            value={language.value}
+                          >
+                            {language.label}
+                          </SelectItem>
+                        ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>

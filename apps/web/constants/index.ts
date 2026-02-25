@@ -151,19 +151,22 @@ export const BatteryOwnershipEnum = [
 
 export const makes = [
   {
-    label: "Top makes",
+    label: "Top-Marken",
     items: [
-      { value: "audi", label: "Audi" },
-      { value: "bmw", label: "BMW" },
-      { value: "ford", label: "Ford" },
       { value: "mercedes", label: "Mercedes-Benz" },
-      { value: "opel", label: "Opel" },
-      { value: "renault", label: "Renault" },
+      { value: "bmw", label: "BMW" },
+      { value: "audi", label: "Audi" },
       { value: "volkswagen", label: "Volkswagen" },
+      { value: "porsche", label: "Porsche" },
+      { value: "ford", label: "Ford" },
+      { value: "skoda", label: "Skoda" },
+      { value: "opel", label: "Opel" },
+      { value: "toyota", label: "Toyota" },
+      { value: "volvo", label: "Volvo" },
     ],
   },
   {
-    label: "Other makes",
+    label: "Alle Marken",
     items: [
       { value: "9ff", label: "9ff" },
       { value: "abarth", label: "Abarth" },
@@ -371,7 +374,6 @@ export const makes = [
       { value: "plymouth", label: "Plymouth" },
       { value: "polestar", label: "Polestar" },
       { value: "pontiac", label: "Pontiac" },
-      { value: "porsche", label: "Porsche" },
       { value: "proton", label: "Proton" },
       { value: "puch", label: "Puch" },
       { value: "ram", label: "RAM" },
@@ -395,7 +397,6 @@ export const makes = [
       { value: "silence", label: "Silence" },
       { value: "simplici", label: "Simplici" },
       { value: "singer", label: "Singer" },
-      { value: "skoda", label: "Skoda" },
       { value: "skywell", label: "Skywell" },
       { value: "smart", label: "smart" },
       { value: "speedart", label: "SpeedArt" },
@@ -417,7 +418,6 @@ export const makes = [
       { value: "tiger", label: "Tiger" },
       { value: "togg", label: "Togg" },
       { value: "town-life", label: "Town Life" },
-      { value: "toyota", label: "Toyota" },
       { value: "trabant", label: "Trabant" },
       { value: "trailer-anhanger", label: "Trailer-Anhänger" },
       { value: "triumph", label: "Triumph" },
@@ -430,7 +430,6 @@ export const makes = [
       { value: "vem", label: "VEM" },
       { value: "vinfast", label: "VinFast" },
 
-      { value: "volvo", label: "Volvo" },
       { value: "voyah", label: "Voyah" },
       { value: "wartburg", label: "Wartburg" },
       { value: "weltmeister", label: "Weltmeister" },
