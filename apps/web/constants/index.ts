@@ -57,25 +57,34 @@ export const FuelTypeEnum = [
 ] as const;
 
 export const ColorEnum = [
-  { value: "anthracite", label: "Anthrazit" },
-  { value: "beige", label: "Beige" },
-  { value: "black", label: "Schwarz" },
-  { value: "blue", label: "Blau" },
-  { value: "bordeaux", label: "Bordeaux" },
-  { value: "brown", label: "Braun" },
-  { value: "gold", label: "Gold" },
-  { value: "gray", label: "Grau" },
-  { value: "green", label: "Grün" },
-  { value: "multicoloured", label: "Mehrfarbig" },
-  { value: "orange", label: "Orange" },
-  { value: "pink", label: "Rosa" },
-  { value: "red", label: "Rot" },
-  { value: "silver", label: "Silber" },
-  { value: "turquoise", label: "Türkis" },
-  { value: "violet", label: "Violett" },
-  { value: "white", label: "Weiss" },
-  { value: "yellow", label: "Gelb" },
-  { value: "other", label: "Other" },
+  { value: "anthracite", label: "Anthrazit", hex: "#383E42" },
+  { value: "beige", label: "Beige", hex: "#F5F5DC" },
+  { value: "black", label: "Schwarz", hex: "#000000" },
+  { value: "blue", label: "Blau", hex: "#0000FF" },
+  { value: "bordeaux", label: "Bordeaux", hex: "#800020" },
+  { value: "brown", label: "Braun", hex: "#964B00" },
+  { value: "gold", label: "Gold", hex: "#FFD700" },
+  { value: "gray", label: "Grau", hex: "#808080" },
+  { value: "green", label: "Grün", hex: "#008000" },
+  {
+    value: "multicoloured",
+    label: "Mehrfarbig",
+    gradient: "linear-gradient(135deg, #FF0000 0%, #00FF00 50%, #0000FF 100%)",
+  },
+  { value: "orange", label: "Orange", hex: "#FFA500" },
+  { value: "pink", label: "Rosa", hex: "#FFC0CB" },
+  { value: "red", label: "Rot", hex: "#FF0000" },
+  { value: "silver", label: "Silber", hex: "#C0C0C0" },
+  { value: "turquoise", label: "Türkis", hex: "#40E0D0" },
+  { value: "violet", label: "Violett", hex: "#EE82EE" },
+  { value: "white", label: "Weiss", hex: "#FFFFFF", border: true },
+  { value: "yellow", label: "Gelb", hex: "#FFFF00" },
+  {
+    value: "other",
+    label: "Other",
+    gradient:
+      "repeating-linear-gradient(45deg, #ccc, #ccc 10px, #eee 10px, #eee 20px)",
+  },
 ] as const;
 
 export const VehicleConditionEnum = [

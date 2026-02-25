@@ -8,7 +8,7 @@ import {
 import { Button } from "@repo/ui/src/components/button";
 import Link from "next/link";
 
-const FaqPage = () => {
+export default function FaqPage() {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
@@ -36,7 +36,7 @@ const FaqPage = () => {
                     key={faqIndex}
                     value={`item-${index}-${faqIndex}`}
                   >
-                    <AccordionTrigger className="text-base lg:text-lg font-semibold hover:no-underline hover:text-primary transition-colors">
+                    <AccordionTrigger className="flex items-center text-base lg:text-lg font-semibold hover:no-underline hover:text-primary transition-colors">
                       {faq.question}
                     </AccordionTrigger>
                     <AccordionContent className="text-base text-muted-foreground leading-relaxed">
@@ -62,6 +62,4 @@ const FaqPage = () => {
       </div>
     </>
   );
-};
-
-export default FaqPage;
+}

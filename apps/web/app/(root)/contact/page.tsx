@@ -32,7 +32,7 @@ const formSchema = z.object({
     .max(1000, "Nachricht darf maximal 1000 Zeichen lang sein"),
 });
 
-const ContactPage = () => {
+export default function ContactPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -201,6 +201,4 @@ const ContactPage = () => {
       </div>
     </>
   );
-};
-
-export default ContactPage;
+}

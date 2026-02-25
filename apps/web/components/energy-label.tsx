@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "@repo/ui/lib/utils";
 
 interface EnergyLabelProps {
-  efficiencyClass: string; // "A", "B", "C", "D", "E", "F", "G"
+  efficiencyClass: string;
 }
 
 const energyClasses = [
@@ -44,11 +44,10 @@ export const EnergyLabel = ({ efficiencyClass }: EnergyLabelProps) => {
                 {item.label}
               </div>
 
-              {/* Arrow indicator for current class */}
               {isCurrent && (
                 <div className="flex-1 flex items-center animate-in fade-in slide-in-from-left-2 duration-500 delay-100">
-                  <div className="h-[1px] bg-black flex-1 mx-2 relative">
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-black border-b-[6px] border-b-transparent"></div>
+                  <div className="h-px bg-black flex-1 mx-2 relative">
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-l-10 border-l-black border-b-[6px] border-b-transparent"></div>
                   </div>
                   <div className="text-xl font-bold text-black border-2 border-black rounded px-2 py-0.5">
                     {currentClass}

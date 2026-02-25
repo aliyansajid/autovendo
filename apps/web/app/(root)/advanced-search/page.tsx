@@ -1,4 +1,4 @@
-import { AdvancedSearchForm } from "@/components/advanced-search-form";
+import { AdvancedSearchForm } from "./_components/advanced-search-form";
 
 export default function AdvancedSearchPage() {
   return <AdvancedSearchForm />;

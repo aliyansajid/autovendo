@@ -11,7 +11,7 @@ import {
 } from "@repo/ui/src/components/card";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-const PricingPage = () => {
+export default function PricingPage() {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
@@ -59,9 +59,9 @@ const PricingPage = () => {
                   {tier.features.map((feature) => (
                     <div key={feature.name} className="flex items-center gap-3">
                       {feature.included ? (
-                        <CheckCircle2 className="size-5 text-primary shrink-0" />
+                        <CheckCircle2 className="size-5 text-primary" />
                       ) : (
-                        <XCircle className="size-5 text-muted-foreground shrink-0" />
+                        <XCircle className="size-5 text-muted-foreground" />
                       )}
                       <span
                         className={
@@ -90,6 +90,4 @@ const PricingPage = () => {
       </div>
     </>
   );
-};
-
-export default PricingPage;
+}

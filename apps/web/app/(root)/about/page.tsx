@@ -1,7 +1,7 @@
 import { Separator } from "@repo/ui/src/components/separator";
 import { CheckCircle2 } from "lucide-react";
 
-const AboutPage = () => {
+export default function AboutPage() {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
@@ -184,6 +184,4 @@ const AboutPage = () => {
       </div>
     </>
   );
-};
-
-export default AboutPage;
+}

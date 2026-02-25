@@ -16,15 +16,15 @@ import {
 export default function SellPage() {
   return (
     <>
-      <section className="relative w-full bg-[url('/sell_bg.jpg')] bg-cover bg-center">
-        <div className="absolute inset-0 bg-black/50" />
+      <section className="relative w-full bg-[url('https://images.pexels.com/photos/7144172/pexels-photo-7144172.jpeg')] bg-cover bg-position-[80%_20%]">
+        <div className="absolute inset-0 bg-black/40" />
 
-        <div className="relative z-10 max-w-285 mx-auto px-4 py-24 sm:py-32">
-          <h1 className="text-3xl sm:text-5xl font-bold text-white mb-4">
+        <div className="relative z-10 max-w-285 mx-auto px-4 py-12 sm:py-16">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">
             Want to sell your vehicle?
           </h1>
 
-          <p className="text-lg sm:text-xl text-white/90 mb-8 font-medium">
+          <p className="text-lg text-white/90 mb-8 font-medium">
             Autovendo — the largest Swiss marketplace for vehicles.
           </p>
 
@@ -36,7 +36,7 @@ export default function SellPage() {
       </section>
 
       <section className="max-w-285 mx-auto px-4 py-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-16">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12">
           <span className="inline-block border-b-4 border-primary pb-1">
             How
           </span>
@@ -109,7 +109,7 @@ export default function SellPage() {
       <section className="bg-secondary">
         <div className="max-w-285 mx-auto px-4 py-12">
           <div className="bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-16">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12">
               Compare and&nbsp;
               <span className="inline-block border-b-4 border-primary pb-1">
                 decide
@@ -186,7 +186,7 @@ export default function SellPage() {
       </section>
 
       <section className="max-w-285 mx-auto px-4 py-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-16">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12">
           We take care of the&nbsp;
           <span className="inline-block border-b-4 border-primary pb-1">
             details
@@ -222,7 +222,7 @@ export default function SellPage() {
 
       <section className="bg-secondary px-4 py-12">
         <div className="max-w-285 mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-16">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12">
             High-quality photos&nbsp;
             <span className="inline-block border-b-4 border-primary pb-1">
               improve
@@ -262,7 +262,7 @@ export default function SellPage() {
       </section>
 
       <section className="max-w-285 mx-auto px-4 py-12 text-center">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-16">
+        <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-12">
           What fits&nbsp;
           <span className="inline-block border-b-4 border-primary pb-1">
             best
@@ -270,7 +270,7 @@ export default function SellPage() {
           &nbsp;for you?
         </h2>
 
-        <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 md:gap-16 text-left">
+        <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 md:gap-12 text-left">
           <div className="flex flex-col gap-6">
             <div className="space-y-1">
               <h3 className="text-xl md:text-2xl font-bold">

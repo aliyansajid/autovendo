@@ -3,7 +3,7 @@ import { FeaturedListings } from "./_components/featured-listings";
 import { FeaturedGarage } from "./_components/featured-garage";
 import { About } from "./_components/about";
 
-const HomePage = () => {
+export default function HomePage() {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
@@ -16,6 +16,4 @@ const HomePage = () => {
       <About />
     </>
   );
-};
-
-export default HomePage;
+}
