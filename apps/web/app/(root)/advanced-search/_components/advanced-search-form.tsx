@@ -1296,7 +1296,7 @@ export const AdvancedSearchForm = () => {
         <div className="fixed bottom-0 left-0 right-0 py-4 px-4 md:px-0 bg-background flex justify-center items-center z-50 shadow-2xl border-t">
           <Button
             size="lg"
-            className="w-full max-w-3xl bg-[#FFCE00] hover:bg-[#FFCE00]/90 text-black"
+            className="w-full max-w-xl bg-[#FFCE00] hover:bg-[#FFCE00]/90 text-black"
           >
             155'927 Fahrzeuge anzeigen
           </Button>
