@@ -683,3 +683,18 @@ export const ExtrasEnum = [
   { value: "race-car", label: "Rennwagen" },
   { value: "tuning", label: "Tuning" },
 ] as const;
+
+export const powerOptions = [
+  { value: "50", label: "ab 50 PS" },
+  { value: "100", label: "ab 100 PS" },
+  { value: "150", label: "ab 150 PS" },
+  { value: "200", label: "ab 200 PS" },
+  { value: "250", label: "ab 250 PS" },
+  { value: "300", label: "ab 300 PS" },
+  { value: "400", label: "ab 400 PS" },
+] as const;
+
+export const evOptions = [
+  { value: "only_ev", label: "Nur E-Autos" },
+  { value: "no_ev", label: "Keine E-Autos" },
+] as const;
