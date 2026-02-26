@@ -76,6 +76,7 @@ export const Footer = () => {
             <ul className="space-y-2 text-sm">
               <FooterLink href="/about">Über uns</FooterLink>
               <FooterLink href="/how-it-works">So funktioniert's</FooterLink>
+              <FooterLink href="/insertionsregeln">Insertionsregeln</FooterLink>
               <FooterLink href="/pricing">Preise</FooterLink>
             </ul>
           </div>
@@ -87,7 +88,9 @@ export const Footer = () => {
             <ul className="space-y-2 text-sm">
               <FooterLink href="/faq">FAQ</FooterLink>
               <FooterLink href="/help">Hilfe-Center</FooterLink>
-              <FooterLink href="/safety">Sicherheitstipps</FooterLink>
+              <FooterLink href="/sicherheitshinweise">
+                Sicherheitshinweise
+              </FooterLink>
               <FooterLink href="/feedback">Feedback</FooterLink>
             </ul>
           </div>
@@ -97,10 +100,12 @@ export const Footer = () => {
               Rechtliches
             </h4>
             <ul className="space-y-2 text-sm">
-              <FooterLink href="/privacy">Datenschutz</FooterLink>
-              <FooterLink href="/terms">AGB</FooterLink>
-              <FooterLink href="/cookies">Cookie-Richtlinien</FooterLink>
-              <FooterLink href="/disclaimer">Impressum</FooterLink>
+              <FooterLink href="/datenschutz">Datenschutz</FooterLink>
+              <FooterLink href="/agb">AGB</FooterLink>
+              <FooterLink href="/privatsphaere">
+                Privatsphäre-Einstellungen
+              </FooterLink>
+              <FooterLink href="/impressum">Impressum</FooterLink>
             </ul>
           </div>
 
@@ -131,7 +136,13 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center pt-6 border-t border-border text-xs text-muted-foreground">
+        <div className="flex flex-col items-center justify-center pt-6 border-t border-border text-xs text-muted-foreground text-center space-y-4">
+          <p className="max-w-3xl">
+            Autovendo.ch unterstützt Käufer und Verkäufer mit klaren
+            Sicherheitshinweisen. Dennoch liegt die Verantwortung für Vorsicht
+            und sorgfältige Prüfung bei der direkten Abwicklung beim jeweiligen
+            Nutzer.
+          </p>
           <p>
             &copy; {new Date().getFullYear()} Autovendo. Alle Rechte
             vorbehalten.
