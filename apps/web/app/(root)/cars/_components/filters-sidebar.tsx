@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,14 +24,19 @@ import {
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import { Separator } from "@repo/ui/components/separator";
 import { getRegistrationYears, mileages } from "@/lib/utils";
-import { GenericFilterDialog } from "./generic-filter-dialog";
-import { MakeSelectorDialog } from "@/components/make-selector-dialog";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@repo/ui/src/components/card";
+import { ConditionDialog } from "./condition-dialog";
+import { FuelTypeDialog } from "./fuel-type-dialog";
+import { VehicleTypeDialog } from "./vehicle-type-dialog";
+import { TransmissionDialog } from "./transmission-dialog";
+import { PowerDialog } from "./power-dialog";
+import { EvDialog } from "./ev-dialog";
+import { MakeModelDialog } from "./make-model-dialog";
 
 const formSchema = z.object({
   paymentType: z.string().optional(),
@@ -71,8 +75,6 @@ export const FiltersSidebar = ({
     },
   });
 
-  const [activeDialog, setActiveDialog] = useState<string | null>(null);
-
   const watchCondition = form.watch("condition");
   const watchMake = form.watch("make");
   const watchFuel = form.watch("fuel");
@@ -98,10 +100,10 @@ export const FiltersSidebar = ({
         <CardTitle>Weitere Filter</CardTitle>
       </CardHeader>
       <CardContent>
-        <form>
+        <div className="flex flex-col">
           <FieldGroup className="gap-6">
             <Button asChild variant="outline">
-              <Link href="/advance-search">Mehr Filter</Link>
+              <Link href="/advanced-search">Mehr Filter</Link>
             </Button>
 
             <Separator />
@@ -110,12 +112,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Fahrzeugzustand</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchCondition, VehicleConditionEnum)}
-                <span
-                  className="text-primary cursor-pointer hover:underline"
-                  onClick={() => setActiveDialog("condition")}
-                >
-                  ändern
-                </span>
+                <ConditionDialog />
               </div>
             </div>
 
@@ -125,12 +122,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Marke, Modell</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {watchMake || "Beliebig"}
-                <span
-                  className="text-primary cursor-pointer hover:underline"
-                  onClick={() => setActiveDialog("make")}
-                >
-                  ändern
-                </span>
+                <MakeModelDialog />
               </div>
             </div>
 
@@ -138,7 +130,7 @@ export const FiltersSidebar = ({
 
             <div className="space-y-3">
               <FieldLabel>Preis</FieldLabel>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2">
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.SELECT}
@@ -204,7 +196,7 @@ export const FiltersSidebar = ({
 
             <div className="space-y-3">
               <FieldLabel>Kilometerstand</FieldLabel>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2">
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.SELECT}
@@ -240,12 +232,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Kraftstoffart</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchFuel, FuelTypeEnum)}
-                <span
-                  className="text-primary cursor-pointer hover:underline"
-                  onClick={() => setActiveDialog("fuel")}
-                >
-                  ändern
-                </span>
+                <FuelTypeDialog />
               </div>
             </div>
 
@@ -253,12 +240,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Leistung</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchPower, powerOptions)}
-                <span
-                  className="text-primary cursor-pointer hover:underline"
-                  onClick={() => setActiveDialog("power")}
-                >
-                  ändern
-                </span>
+                <PowerDialog />
               </div>
             </div>
 
@@ -266,12 +248,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Fahrzeugtyp</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchVehicleType, BodyTypeEnum)}
-                <span
-                  className="text-primary cursor-pointer hover:underline"
-                  onClick={() => setActiveDialog("vehicleType")}
-                >
-                  ändern
-                </span>
+                <VehicleTypeDialog />
               </div>
             </div>
 
@@ -279,12 +256,7 @@ export const FiltersSidebar = ({
               <FieldLabel>E-Autos</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchEvs, evOptions)}
-                <span
-                  className="text-primary cursor-pointer hover:underline"
-                  onClick={() => setActiveDialog("evs")}
-                >
-                  ändern
-                </span>
+                <EvDialog />
               </div>
             </div>
 
@@ -292,12 +264,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Getriebe</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchTransmission, TransmissionTypeEnum)}
-                <span
-                  className="text-primary cursor-pointer hover:underline"
-                  onClick={() => setActiveDialog("transmission")}
-                >
-                  ändern
-                </span>
+                <TransmissionDialog />
               </div>
             </div>
 
@@ -342,73 +309,14 @@ export const FiltersSidebar = ({
                 ))}
               </div>
               <Link
-                href={"/advance-search"}
+                href={"/advanced-search"}
                 className="text-primary cursor-pointer text-sm font-medium hover:underline"
               >
                 Mehr...
               </Link>
             </div>
           </FieldGroup>
-        </form>
-
-        <GenericFilterDialog
-          open={activeDialog === "condition"}
-          onOpenChange={(val) => !val && setActiveDialog(null)}
-          title="Fahrzeugzustand"
-          options={VehicleConditionEnum}
-          selectedValues={watchCondition || []}
-          onApply={(vals) => form.setValue("condition", vals)}
-        />
-        <GenericFilterDialog
-          open={activeDialog === "fuel"}
-          onOpenChange={(val) => !val && setActiveDialog(null)}
-          title="Kraftstoffart"
-          options={FuelTypeEnum}
-          selectedValues={watchFuel || []}
-          onApply={(vals) => form.setValue("fuel", vals)}
-        />
-        <GenericFilterDialog
-          open={activeDialog === "power"}
-          onOpenChange={(val) => !val && setActiveDialog(null)}
-          title="Leistung"
-          options={powerOptions}
-          selectedValues={watchPower || []}
-          onApply={(vals) => form.setValue("power", vals)}
-        />
-        <GenericFilterDialog
-          open={activeDialog === "vehicleType"}
-          onOpenChange={(val) => !val && setActiveDialog(null)}
-          title="Fahrzeugtyp"
-          options={BodyTypeEnum}
-          selectedValues={watchVehicleType || []}
-          onApply={(vals) => form.setValue("vehicleType", vals)}
-        />
-        <GenericFilterDialog
-          open={activeDialog === "evs"}
-          onOpenChange={(val) => !val && setActiveDialog(null)}
-          title="E-Autos"
-          options={evOptions}
-          selectedValues={watchEvs || []}
-          maxSelections={1}
-          onApply={(vals) => form.setValue("evs", vals)}
-        />
-        <GenericFilterDialog
-          open={activeDialog === "transmission"}
-          onOpenChange={(val) => !val && setActiveDialog(null)}
-          title="Getriebe"
-          options={TransmissionTypeEnum}
-          selectedValues={watchTransmission || []}
-          onApply={(vals) => form.setValue("transmission", vals)}
-        />
-
-        <MakeSelectorDialog
-          open={activeDialog === "make"}
-          onOpenChange={(val) => !val && setActiveDialog(null)}
-          onSelect={(make) => {
-            form.setValue("make", make);
-            setActiveDialog(null);
-          }}
-        />
+        </div>
       </CardContent>
     </Card>
   );

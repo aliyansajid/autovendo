@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.pexels.com",
       },
+      {
+        protocol: "https",
+        hostname: "assets.autoscout24.ch",
+      },
     ],
   },
   experimental: {

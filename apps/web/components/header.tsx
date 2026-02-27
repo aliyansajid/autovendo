@@ -202,7 +202,7 @@ export const Header = () => {
 
                   <Button className="w-full">
                     <PlusCircle />
-                    Registrieren
+                    Anmelden
                   </Button>
                 </div>
               </div>

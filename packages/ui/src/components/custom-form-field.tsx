@@ -17,14 +17,12 @@ import {
   PopoverTrigger,
 } from "@repo/ui/components/popover";
 import { Button } from "@repo/ui/components/button";
-import { Label } from "@repo/ui/components/label";
 import React, { useState } from "react";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldSet,
 } from "@repo/ui/components/field";
 import { RadioGroup, RadioGroupItem } from "@repo/ui/components/radio-group";
 import {
@@ -37,6 +35,7 @@ import {
 enum FormFieldType {
   INPUT = "input",
   CHECKBOX = "checkbox",
+  CHECKBOX_GROUP = "checkboxGroup",
   SELECT = "select",
   TEXTAREA = "textarea",
   DATE_PICKER = "datePicker",
@@ -179,6 +178,34 @@ const RenderField = ({
             <FieldLabel htmlFor={props.name}>{props.label}</FieldLabel>
           </Field>
         </FieldGroup>
+      );
+
+    case FormFieldType.CHECKBOX_GROUP:
+      return (
+        <div className={cn(props.className)}>
+          {props.options?.map((option) => (
+            <Field key={option.value} orientation="horizontal">
+              <Checkbox
+                id={option.value}
+                checked={field.value?.includes(option.value)}
+                onCheckedChange={(checked) => {
+                  const currentValue = field.value || [];
+                  if (checked) {
+                    field.onChange([...currentValue, option.value]);
+                  } else {
+                    field.onChange(
+                      currentValue.filter(
+                        (val: string) => val !== option.value,
+                      ),
+                    );
+                  }
+                }}
+                disabled={props.disabled}
+              />
+              <FieldLabel htmlFor={option.value}>{option.label}</FieldLabel>
+            </Field>
+          ))}
+        </div>
       );
 
     case FormFieldType.RADIO_GROUP:
