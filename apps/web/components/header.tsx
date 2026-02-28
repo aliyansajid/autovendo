@@ -41,7 +41,7 @@ const components: { title: string; href: string }[] = [
   },
   {
     title: "Händler suchen",
-    href: "/dealer-search",
+    href: "/showrooms",
   },
 ];
 
