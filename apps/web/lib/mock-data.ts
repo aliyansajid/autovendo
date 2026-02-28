@@ -305,7 +305,7 @@ Venite a trovarci nel nostro showroom a Torino!`,
   ],
 };
 
-export const garagePageData = {
+export const showroomPageData = {
   garage: {
     id: "1",
     name: "Elite Motors Zurich",
@@ -575,7 +575,7 @@ export const listings = [
   },
 ];
 
-const baseGarages = [
+const baseShowrooms = [
   {
     name: "Elite Motors Zurich",
     location: "Zurich, Switzerland",
@@ -598,8 +598,8 @@ const baseGarages = [
   },
 ];
 
-export const garages = Array.from({ length: 10 }).map((_, i) => {
-  const base = baseGarages[i % 4] as (typeof baseGarages)[0];
+export const showrooms = Array.from({ length: 10 }).map((_, i) => {
+  const base = baseShowrooms[i % 4] as (typeof baseShowrooms)[0];
   return {
     ...base,
     id: i + 1,

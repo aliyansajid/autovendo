@@ -122,7 +122,7 @@ export const Header = () => {
         <div className="hidden md:flex items-center gap-3">
           <Button className="bg-white hover:bg-white/90 text-primary">
             <PlusCircle />
-            <Link href="/signup">Registrieren</Link>
+            <Link href="/signup"> Anmelden</Link>
           </Button>
 
           <Select defaultValue="de">

@@ -1,16 +1,11 @@
 "use client";
 
+import * as React from "react";
 import { carDetail } from "@/lib/mock-data";
 import { Button } from "@repo/ui/components/button";
 import { Badge } from "@repo/ui/components/badge";
 import { Separator } from "@repo/ui/components/separator";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@repo/ui/components/carousel";
+import { ImageGallery } from "@/components/image-gallery";
 import {
   MapPin,
   Phone,
@@ -80,60 +75,74 @@ export default function ListingPage() {
             </div>
           </div>
 
-          <div className="rounded-xl overflow-hidden shadow-sm border">
-            <Carousel className="w-full">
-              <CarouselContent>
-                {images.map((src, index) => (
-                  <CarouselItem key={index}>
-                    <div className="relative aspect-video w-full">
-                      <Image
-                        src={src}
-                        alt={`${title} - Image ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        priority={index === 0}
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="left-4" />
-              <CarouselNext className="right-4" />
-            </Carousel>
-          </div>
+          <ImageGallery images={images} title={title} />
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-            <KeyDetailCard
-              icon={<Gauge />}
-              label="Mileage"
-              value={keyDetails.mileage}
-            />
-            <KeyDetailCard
-              icon={<Disc />}
-              label="Transmission"
-              value={keyDetails.transmission}
-            />
-            <KeyDetailCard
-              icon={<Calendar />}
-              label="First Reg."
-              value={keyDetails.firstRegistration}
-            />
-            <KeyDetailCard
-              icon={<Fuel />}
-              label="Fuel Type"
-              value={keyDetails.fuelType}
-            />
-            <KeyDetailCard
-              icon={<Zap />}
-              label="Power"
-              value={keyDetails.power}
-            />
-            <KeyDetailCard
-              icon={<Store />}
-              label="Seller"
-              value={keyDetails.sellerType}
-            />
-          </div>
+          <Card>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-4">
+                <KeyDetailCard
+                  icon={
+                    <Gauge
+                      className="text-muted-foreground w-6 h-6"
+                      strokeWidth={1.5}
+                    />
+                  }
+                  label="Mileage"
+                  value={keyDetails.mileage}
+                />
+                <KeyDetailCard
+                  icon={
+                    <Zap
+                      className="text-muted-foreground w-6 h-6"
+                      strokeWidth={1.5}
+                    />
+                  }
+                  label="Power"
+                  value={keyDetails.power}
+                />
+                <KeyDetailCard
+                  icon={
+                    <Fuel
+                      className="text-muted-foreground w-6 h-6"
+                      strokeWidth={1.5}
+                    />
+                  }
+                  label="Fuel Type"
+                  value={keyDetails.fuelType}
+                />
+                <KeyDetailCard
+                  icon={
+                    <Disc
+                      className="text-muted-foreground w-6 h-6"
+                      strokeWidth={1.5}
+                    />
+                  }
+                  label="Transmission"
+                  value={keyDetails.transmission}
+                />
+                <KeyDetailCard
+                  icon={
+                    <Calendar
+                      className="text-muted-foreground w-6 h-6"
+                      strokeWidth={1.5}
+                    />
+                  }
+                  label="First Reg."
+                  value={keyDetails.firstRegistration}
+                />
+                <KeyDetailCard
+                  icon={
+                    <Store
+                      className="text-muted-foreground w-6 h-6"
+                      strokeWidth={1.5}
+                    />
+                  }
+                  label="Seller"
+                  value={keyDetails.sellerType}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
           <div className="space-y-6">
             <Section title="Basic Data">
@@ -217,8 +226,8 @@ export default function ListingPage() {
         <div className="space-y-6 sticky top-4 self-start">
           <Card className="hidden lg:block">
             <CardContent className="space-y-3">
-              <h1 className="text-2xl font-bold">{title}</h1>
-              <h2 className="text-3xl font-bold text-primary">
+              <h1 className="text-xl font-bold">{title}</h1>
+              <h2 className="text-2xl font-bold text-primary">
                 € {price.toLocaleString()}
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -350,17 +359,15 @@ function KeyDetailCard({
   icon: React.ReactNode;
 }) {
   return (
-    <Card>
-      <CardContent className="flex flex-col gap-3 items-center justify-center">
-        <div className="text-primary bg-primary/8 p-2.5 rounded-full">
-          {icon}
-        </div>
-        <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+    <div className="flex items-center gap-4">
+      <div className="shrink-0 flex items-center justify-center">{icon}</div>
+      <div className="flex flex-col min-w-0">
+        <p className="text-xs text-muted-foreground font-medium truncate">
           {label}
         </p>
-        <p className="font-bold text-sm md:text-base">{value}</p>
-      </CardContent>
-    </Card>
+        <p className="font-bold text-sm truncate">{value}</p>
+      </div>
+    </div>
   );
 }
 

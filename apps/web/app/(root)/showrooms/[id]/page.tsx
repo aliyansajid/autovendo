@@ -1,6 +1,6 @@
 "use client";
 
-import { garagePageData } from "@/lib/mock-data";
+import { showroomPageData } from "@/lib/mock-data";
 import { ListingCard } from "@/components/listing-card";
 import { Button } from "@repo/ui/src/components/button";
 import { Badge } from "@repo/ui/src/components/badge";
@@ -53,8 +53,8 @@ import {
 
 const formSchema = z.object({});
 
-export default function GaragePage() {
-  const { garage, listings } = garagePageData;
+export default function ShowroomPage() {
+  const { garage, listings } = showroomPageData;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
