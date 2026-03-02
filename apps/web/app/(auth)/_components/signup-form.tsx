@@ -33,6 +33,7 @@ export const SignupForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
@@ -88,7 +89,7 @@ export const SignupForm = () => {
               </Field>
 
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-                Or continue with
+                or continue with
               </FieldSeparator>
 
               <CustomFormField
@@ -121,7 +122,7 @@ export const SignupForm = () => {
               <Field>
                 <Button type="submit">Create Account</Button>
                 <FieldDescription className="text-center">
-                  Already have an account? <Link href="/login">Login</Link>
+                  Already have an account?&nbsp;<Link href="login">Login</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
@@ -130,8 +131,8 @@ export const SignupForm = () => {
       </Card>
       <FieldDescription className="px-6 text-center">
         By clicking continue, you agree to our&nbsp;
-        <Link href="#">Terms of Service</Link>&nbsp;and&nbsp;
-        <Link href="#">Privacy Policy</Link>.
+        <Link href="agb">AGB</Link>&nbsp;and&nbsp;
+        <Link href="datenschutz">Datenschutz</Link>.
       </FieldDescription>
     </div>
   );

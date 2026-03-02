@@ -62,7 +62,7 @@ export const ForgotPasswordForm = () => {
             <Field>
               <Button type="submit">Send Reset Link</Button>
               <FieldDescription className="text-center">
-                Remember your password? <Link href="login">Login</Link>
+                Remember your password?&nbsp;<Link href="login">Login</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>

@@ -86,7 +86,7 @@ export const LoginForm = () => {
             </Field>
 
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-              Or continue with
+              or continue with
             </FieldSeparator>
 
             <CustomFormField
@@ -111,12 +111,12 @@ export const LoginForm = () => {
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.CHECKBOX}
-                name="remember-me"
+                name="rememberme"
                 label="Remember Me"
               />
               <Link
                 href="/forgot-password"
-                className="text-sm underline-offset-4 hover:underline whitespace-nowrap"
+                className="text-sm underline-offset-4 hover:text-primary hover:underline whitespace-nowrap"
               >
                 Forgot your password?
               </Link>
@@ -125,7 +125,8 @@ export const LoginForm = () => {
             <Field>
               <Button type="submit">Login</Button>
               <FieldDescription className="text-center">
-                Don&apos;t have an account? <Link href="signup">Sign up</Link>
+                Don&apos;t have an account?&nbsp;
+                <Link href="signup">Sign up</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>
