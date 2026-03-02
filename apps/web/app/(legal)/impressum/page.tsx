@@ -43,30 +43,38 @@ export default function ImpressumPage() {
                 <p>
                   <span className="font-semibold text-foreground">
                     Telefon:
-                  </span>{" "}
-                  [Telefonnummer]
-                </p>
-                <p>
-                  <span className="font-semibold text-foreground">E-Mail:</span>{" "}
-                  <a
-                    href="mailto:[E-Mail-Adresse]"
+                  </span>
+                  &nbsp;
+                  <Link
+                    href="tel:+41793223520"
                     className="text-primary hover:underline"
                   >
-                    [E-Mail-Adresse]
-                  </a>
+                    +41 79 322 35 20
+                  </Link>
+                </p>
+                <p>
+                  <span className="font-semibold text-foreground">E-Mail:</span>
+                  &nbsp;
+                  <Link
+                    href="mailto:info@autovendo.com"
+                    className="text-primary hover:underline"
+                  >
+                    info@autovendo.com
+                  </Link>
                 </p>
                 <p>
                   <span className="font-semibold text-foreground">
                     Website:
-                  </span>{" "}
-                  <a
+                  </span>
+                  &nbsp;
+                  <Link
                     href="https://www.autovendo.ch"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary hover:underline"
                   >
                     www.autovendo.ch
-                  </a>
+                  </Link>
                 </p>
               </div>
             </section>
@@ -93,14 +101,14 @@ export default function ImpressumPage() {
                 <p>
                   <span className="font-semibold text-foreground">
                     Handelsregisteramt:
-                  </span>{" "}
-                  [Kanton]
+                  </span>
+                  &nbsp; [Kanton]
                 </p>
                 <p>
                   <span className="font-semibold text-foreground">
                     Firmennummer (UID):
-                  </span>{" "}
-                  [UID-Nummer]
+                  </span>
+                  &nbsp; [UID-Nummer]
                 </p>
               </div>
             </section>
@@ -111,8 +119,8 @@ export default function ImpressumPage() {
                 <p>
                   <span className="font-semibold text-foreground">
                     MWST-Nummer:
-                  </span>{" "}
-                  [CHE-xxx.xxx.xxx MWST]
+                  </span>
+                  &nbsp; [CHE-xxx.xxx.xxx MWST]
                 </p>
               </div>
             </section>
@@ -187,7 +195,7 @@ export default function ImpressumPage() {
           <Separator />
 
           <section className="bg-secondary p-8 rounded-xl text-center space-y-4">
-            <h3 className="text-xl font-bold"> Kontakt aufnehmen</h3>
+            <h3 className="text-xl font-bold">Kontakt aufnehmen</h3>
             <p className="text-muted-foreground">
               Haben Sie noch weitere Fragen? Wir sind gerne für Sie da.
             </p>

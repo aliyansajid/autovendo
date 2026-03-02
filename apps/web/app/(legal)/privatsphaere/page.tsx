@@ -2,6 +2,7 @@ import { Separator } from "@repo/ui/src/components/separator";
 import { Button } from "@repo/ui/src/components/button";
 import Link from "next/link";
 import { CheckCircle2, Info } from "lucide-react";
+import { Badge } from "@repo/ui/src/components/badge";
 
 export default function PrivatsphaereEinstellungenPage() {
   return (
@@ -36,17 +37,16 @@ export default function PrivatsphaereEinstellungenPage() {
 
           <Separator />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Notwendige Cookies */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <section className="space-y-4 bg-muted/50 p-6 rounded-xl border">
               <div className="flex items-start justify-between">
                 <h2 className="text-xl font-bold flex items-center gap-2">
                   <CheckCircle2 className="text-primary size-5" />
                   Notwendige Cookies
                 </h2>
-                <span className="text-sm font-semibold bg-primary/10 text-primary px-3 py-1 rounded-full">
+                <Badge className="bg-primary/10 text-primary font-semibold">
                   immer aktiv
-                </span>
+                </Badge>
               </div>
               <div className="space-y-4 text-muted-foreground">
                 <p>
@@ -70,7 +70,6 @@ export default function PrivatsphaereEinstellungenPage() {
               </div>
             </section>
 
-            {/* Funktionale Cookies */}
             <section className="space-y-4 p-6 rounded-xl border">
               <div className="flex items-start justify-between">
                 <h2 className="text-xl font-bold">Funktionale Cookies</h2>
@@ -91,7 +90,6 @@ export default function PrivatsphaereEinstellungenPage() {
               </div>
             </section>
 
-            {/* Analyse & Statistik */}
             <section className="space-y-4 p-6 rounded-xl border">
               <div className="flex items-start justify-between">
                 <h2 className="text-xl font-bold">Analyse & Statistik</h2>
@@ -116,15 +114,14 @@ export default function PrivatsphaereEinstellungenPage() {
               </div>
             </section>
 
-            {/* Marketing */}
             <section className="space-y-4 p-6 rounded-xl border">
               <div className="flex items-start justify-between">
                 <h2 className="text-xl font-bold">
                   Marketing & externe Inhalte
                 </h2>
-                <span className="text-sm font-medium text-muted-foreground px-3 py-1 bg-secondary rounded-full">
+                <Badge variant="secondary" className="font-semibold">
                   optional
-                </span>
+                </Badge>
               </div>
               <div className="space-y-4 text-muted-foreground">
                 <p>
@@ -142,7 +139,6 @@ export default function PrivatsphaereEinstellungenPage() {
 
           <Separator />
 
-          {/* Deine Wahl */}
           <section className="space-y-6 text-center">
             <h2 className="text-xl md:text-2xl font-bold">Deine Wahl</h2>
             <div className="space-y-2 text-muted-foreground text-lg mb-8">

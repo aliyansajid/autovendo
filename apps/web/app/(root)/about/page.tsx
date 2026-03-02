@@ -24,7 +24,7 @@ export default function AboutPage() {
       <div className="w-full max-w-285 mx-auto py-12 px-4">
         <div className="max-w-4xl mx-auto space-y-12">
           <section className="space-y-6">
-            <h2 className="text-2xl md:text-3xl font-bold">Unsere Mission</h2>
+            <h2 className="text-2xl font-bold">Unsere Mission</h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
                 Wir haben Autovendo mit einem klaren Ziel entwickelt: Den
@@ -47,7 +47,7 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <section className="space-y-4">
-              <h2 className="text-xl md:text-2xl font-bold">
+              <h2 className="text-xl font-bold">
                 Mehr als Technik – es geht um Menschen
               </h2>
               <div className="space-y-4 text-muted-foreground">
@@ -67,7 +67,7 @@ export default function AboutPage() {
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-xl md:text-2xl font-bold">
+              <h2 className="text-xl font-bold">
                 Persönlich erreichbar – ohne Umwege
               </h2>
               <div className="space-y-4 text-muted-foreground">
@@ -85,7 +85,7 @@ export default function AboutPage() {
           <Separator />
 
           <section className="space-y-6">
-            <h2 className="text-2xl md:text-3xl font-bold">
+            <h2 className="text-2xl font-bold">
               Fair, wettbewerbsfähig und transparent
             </h2>
             <div className="space-y-6 text-lg">
@@ -121,9 +121,7 @@ export default function AboutPage() {
 
           <section className="space-y-6 bg-secondary p-8 rounded-xl">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                Warum Autovendo.ch?
-              </h2>
+              <h2 className="text-2xl font-bold mb-3">Warum Autovendo.ch?</h2>
               <p className="text-muted-foreground text-lg">
                 Weil wir verstehen, was Autohändler heute wirklich brauchen.
               </p>
@@ -133,7 +131,7 @@ export default function AboutPage() {
               <p className="font-semibold text-lg">Autovendo.ch verbindet:</p>
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-bold text-xl mb-2 text-primary">
+                  <h3 className="font-bold text-lg mb-2 text-primary">
                     Effizienz & Struktur
                   </h3>
                   <p className="text-muted-foreground">
@@ -142,7 +140,7 @@ export default function AboutPage() {
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-xl mb-2 text-primary">
+                  <h3 className="font-bold text-lg mb-2 text-primary">
                     Menschlichkeit
                   </h3>
                   <p className="text-muted-foreground">
@@ -151,7 +149,7 @@ export default function AboutPage() {
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-xl mb-2 text-primary">
+                  <h3 className="font-bold text-lg mb-2 text-primary">
                     Zuverlässigkeit
                   </h3>
                   <p className="text-muted-foreground">
@@ -171,7 +169,7 @@ export default function AboutPage() {
           </section>
 
           <section className="bg-linear-to-r from-primary to-primary/80 text-white p-8 rounded-xl space-y-4">
-            <h2 className="text-2xl md:text-3xl font-bold">Kurz gesagt</h2>
+            <h2 className="text-2xl font-bold">Kurz gesagt</h2>
             <p className="text-xl font-semibold">
               Autovendo.ch macht Verkauf einfach, fair und menschlich.
             </p>

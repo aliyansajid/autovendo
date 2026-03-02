@@ -79,6 +79,7 @@ export const Footer = () => {
               <FooterLink href="about">Über uns</FooterLink>
               <FooterLink href="insertionsregeln">Insertionsregeln</FooterLink>
               <FooterLink href="pricing">Preise</FooterLink>
+              <FooterLink href="contact">Kontakt</FooterLink>
             </ul>
           </div>
 

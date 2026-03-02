@@ -1,4 +1,3 @@
-import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
 import Link from "next/link";
 
@@ -20,7 +19,6 @@ export default function AGBPage() {
 
       <div className="w-full max-w-285 mx-auto py-12 px-4">
         <div className="max-w-4xl mx-auto space-y-12">
-          {/* 1. Geltungsbereich */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               1. Geltungsbereich
@@ -44,7 +42,6 @@ export default function AGBPage() {
 
           <Separator />
 
-          {/* 2. Leistungsbeschreibung */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               2. Leistungsbeschreibung
@@ -78,7 +75,6 @@ export default function AGBPage() {
 
           <Separator />
 
-          {/* 3. Registrierung und Nutzerkonto */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               3. Registrierung und Nutzerkonto
@@ -105,7 +101,6 @@ export default function AGBPage() {
 
           <Separator />
 
-          {/* 4. Inserate und Inhalte */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               4. Inserate und Inhalte
@@ -134,7 +129,6 @@ export default function AGBPage() {
 
           <Separator />
 
-          {/* 5. Preise und Zahlungsbedingungen */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               5. Preise und Zahlungsbedingungen
@@ -161,7 +155,6 @@ export default function AGBPage() {
 
           <Separator />
 
-          {/* 6. Pflichten der Anbieter */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               6. Pflichten der Anbieter
@@ -192,7 +185,6 @@ export default function AGBPage() {
 
           <Separator />
 
-          {/* 7. Haftungsausschluss */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               7. Haftungsausschluss
@@ -220,7 +212,6 @@ export default function AGBPage() {
 
           <Separator />
 
-          {/* 8. Sperrung und Kündigung */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               8. Sperrung und Kündigung
@@ -245,7 +236,6 @@ export default function AGBPage() {
 
           <Separator />
 
-          {/* 9. Datenschutz */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">9. Datenschutz</h2>
             <div className="space-y-4 text-muted-foreground text-lg">
@@ -258,7 +248,6 @@ export default function AGBPage() {
 
           <Separator />
 
-          {/* 10. Änderungen der AGB */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               10. Änderungen der AGB
@@ -277,7 +266,6 @@ export default function AGBPage() {
 
           <Separator />
 
-          {/* 11. Anwendbares Recht und Gerichtsstand */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               11. Anwendbares Recht und Gerichtsstand
@@ -297,11 +285,12 @@ export default function AGBPage() {
             <h2 className="text-xl md:text-2xl font-bold">12. Kontakt</h2>
             <p className="text-muted-foreground text-lg">
               Bei Fragen zu diesen AGB oder zur Plattform kannst du uns
-              jederzeit kontaktieren.
+              jederzeit&nbsp;
+              <Link href="contact" className="text-primary hover:underline">
+                kontaktieren
+              </Link>
+              .
             </p>
-            <Button asChild>
-              <Link href="contact">Kontakt</Link>
-            </Button>
           </section>
         </div>
       </div>

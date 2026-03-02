@@ -1,4 +1,3 @@
-import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
 import Link from "next/link";
 
@@ -38,7 +37,6 @@ export default function PrivacyPage() {
 
           <Separator />
 
-          {/* 1. Verantwortliche Stelle */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               1. Verantwortliche Stelle
@@ -54,7 +52,6 @@ export default function PrivacyPage() {
 
           <Separator />
 
-          {/* 2. Welche Daten wir erheben */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               2. Welche Daten wir erheben
@@ -89,7 +86,6 @@ export default function PrivacyPage() {
 
           <Separator />
 
-          {/* 3. Zweck der Datenbearbeitung */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               3. Zweck der Datenbearbeitung
@@ -120,7 +116,6 @@ export default function PrivacyPage() {
 
           <Separator />
 
-          {/* 4. Weitergabe von Daten */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               4. Weitergabe von Daten
@@ -146,7 +141,6 @@ export default function PrivacyPage() {
 
           <Separator />
 
-          {/* 5. Speicherung und Aufbewahrung */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               5. Speicherung und Aufbewahrung
@@ -166,7 +160,6 @@ export default function PrivacyPage() {
 
           <Separator />
 
-          {/* 6. Cookies und Tracking */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               6. Cookies und Tracking
@@ -194,7 +187,6 @@ export default function PrivacyPage() {
 
           <Separator />
 
-          {/* 7. Datensicherheit */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               7. Datensicherheit
@@ -222,7 +214,6 @@ export default function PrivacyPage() {
 
           <Separator />
 
-          {/* 8. Rechte der betroffenen Personen */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               8. Rechte der betroffenen Personen
@@ -251,7 +242,6 @@ export default function PrivacyPage() {
 
           <Separator />
 
-          {/* 9. Änderungen der Datenschutzerklärung */}
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">
               9. Änderungen der Datenschutzerklärung
@@ -274,11 +264,12 @@ export default function PrivacyPage() {
             <h2 className="text-xl md:text-2xl font-bold">10. Kontakt</h2>
             <p className="text-muted-foreground text-lg">
               Bei Fragen zum Datenschutz oder zur Bearbeitung deiner
-              personenbezogenen Daten kontaktiere uns bitte direkt.
+              personenbezogenen Daten&nbsp;
+              <Link href="contact" className="text-primary hover:underline">
+                kontaktiere uns
+              </Link>
+              &nbsp;bitte direkt.
             </p>
-            <Button asChild>
-              <Link href="contact">Kontakt</Link>
-            </Button>
           </section>
         </div>
       </div>
