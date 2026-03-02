@@ -148,13 +148,16 @@ export const SearchForm = () => {
               </CustomFormField>
 
               <Field>
-                <Button>2.029.498 Ergebnisse</Button>
+                <Button>
+                  <Search />
+                  2.029.498 Ergebnisse
+                </Button>
               </Field>
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-center md:justify-end">
               <Button variant="link" asChild>
-                <Link href="/advanced-search">
+                <Link href="advanced-search">
                   <Settings2 />
                   Erweiterte Suche
                 </Link>

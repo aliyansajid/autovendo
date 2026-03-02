@@ -15,8 +15,8 @@ import Link from "next/link";
 
 export const FeaturedGarage = () => {
   return (
-    <section className="py-12 bg-secondary">
-      <div className="w-full max-w-285 mx-auto px-4">
+    <section className="bg-secondary">
+      <div className="w-full max-w-285 mx-auto px-4 py-12">
         <h2 className="text-2xl font-bold mb-6">Ausgewählte Garagen</h2>
         <Carousel
           opts={{
@@ -62,11 +62,9 @@ export const FeaturedGarage = () => {
                         </div>
                       </div>
 
-                      <Button variant="secondary" className="w-full" asChild>
-                        <div>
-                          Zum Showroom
-                          <ArrowRight />
-                        </div>
+                      <Button variant="secondary" className="w-full">
+                        Zum Showroom
+                        <ArrowRight />
                       </Button>
                     </CardContent>
                   </Card>

@@ -1,17 +1,11 @@
 import Link from "next/link";
 import { Button } from "@repo/ui/src/components/button";
-import { Input } from "@repo/ui/src/components/input";
+import { Mail, MapPin, Phone, CarFront, Send, MailIcon } from "lucide-react";
 import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Mail,
-  MapPin,
-  Phone,
-  CarFront,
-  Send,
-} from "lucide-react";
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+} from "@repo/ui/src/components/input-group";
 
 interface SocialLinkProps {
   href: string;
@@ -26,9 +20,9 @@ interface FooterLinkProps {
 
 export const Footer = () => {
   return (
-    <footer className="bg-secondary">
-      <div className="max-w-285 mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 border-b border-white/20 pb-6 mb-6">
+    <footer className="bg-muted">
+      <div className="max-w-285 mx-auto px-4 pt-8 pb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <div className="bg-primary p-1.5 rounded-lg">
@@ -36,18 +30,18 @@ export const Footer = () => {
               </div>
               <h3 className="font-bold text-2xl tracking-tight">Autovendo</h3>
             </div>
-            <p className="max-w-md text-muted-foreground leading-relaxed text-sm">
+            <p className="max-w-md text-sm text-muted-foreground leading-relaxed">
               Entdecken Sie Ihr perfektes Fahrzeug in unserer Premium-Auswahl.
               Wir bieten Tausende von zertifizierten Gebraucht- und Neuwagen von
               europäischen Top-Marken zu unschlagbaren Preisen und mit
               transparenter Historie.
             </p>
-            <div className="flex gap-3 pt-1">
+            {/* <div className="flex gap-3 pt-1">
               <SocialLink href="#" icon={Facebook} label="Facebook" />
               <SocialLink href="#" icon={Twitter} label="Twitter" />
               <SocialLink href="#" icon={Instagram} label="Instagram" />
               <SocialLink href="#" icon={Linkedin} label="LinkedIn" />
-            </div>
+            </div> */}
           </div>
 
           <div className="flex flex-col lg:items-end justify-center space-y-3">
@@ -58,8 +52,16 @@ export const Footer = () => {
               Abonnieren Sie unseren Newsletter für die neuesten Angebote,
               Fahrzeug-News und exklusive Aktionen.
             </p>
-            <form className="flex w-full max-w-sm items-center gap-2 mt-1">
-              <Input type="email" placeholder="Ihre E-Mail-Adresse" />
+            <form className="flex items-center w-full max-w-sm gap-3">
+              <InputGroup>
+                <InputGroupInput
+                  type="email"
+                  placeholder="Ihre E-Mail-Adresse"
+                />
+                <InputGroupAddon>
+                  <MailIcon />
+                </InputGroupAddon>
+              </InputGroup>
               <Button type="submit">
                 <Send />
                 Abonnieren
@@ -74,10 +76,9 @@ export const Footer = () => {
               Entdecken
             </h4>
             <ul className="space-y-2 text-sm">
-              <FooterLink href="/about">Über uns</FooterLink>
-              <FooterLink href="/how-it-works">So funktioniert's</FooterLink>
-              <FooterLink href="/insertionsregeln">Insertionsregeln</FooterLink>
-              <FooterLink href="/pricing">Preise</FooterLink>
+              <FooterLink href="about">Über uns</FooterLink>
+              <FooterLink href="insertionsregeln">Insertionsregeln</FooterLink>
+              <FooterLink href="pricing">Preise</FooterLink>
             </ul>
           </div>
 
@@ -86,12 +87,10 @@ export const Footer = () => {
               Support
             </h4>
             <ul className="space-y-2 text-sm">
-              <FooterLink href="/faq">FAQ</FooterLink>
-              <FooterLink href="/help">Hilfe-Center</FooterLink>
-              <FooterLink href="/sicherheitshinweise">
+              <FooterLink href="faq">FAQ</FooterLink>
+              <FooterLink href="sicherheitshinweise">
                 Sicherheitshinweise
               </FooterLink>
-              <FooterLink href="/feedback">Feedback</FooterLink>
             </ul>
           </div>
 
@@ -100,12 +99,12 @@ export const Footer = () => {
               Rechtliches
             </h4>
             <ul className="space-y-2 text-sm">
-              <FooterLink href="/datenschutz">Datenschutz</FooterLink>
-              <FooterLink href="/agb">AGB</FooterLink>
-              <FooterLink href="/privatsphaere">
+              <FooterLink href="datenschutz">Datenschutz</FooterLink>
+              <FooterLink href="agb">AGB</FooterLink>
+              <FooterLink href="privatsphaere">
                 Privatsphäre-Einstellungen
               </FooterLink>
-              <FooterLink href="/impressum">Impressum</FooterLink>
+              <FooterLink href="impressum">Impressum</FooterLink>
             </ul>
           </div>
 
@@ -115,35 +114,27 @@ export const Footer = () => {
             </h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-muted-foreground">
-                <MapPin className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                <MapPin className="size-4 text-muted-foreground mt-0.5" />
                 <span>
                   Autobahnstr. 123,
                   <br />
                   10115 Berlin, Deutschland
                 </span>
               </li>
-              <li className="flex items-center gap-2 text-muted-foreground">
-                <Phone className="w-4 h-4 text-muted-foreground shrink-0" />
+              <li className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                <Phone className="size-4 text-muted-foreground" />
                 <Link href="tel:+41793223520">+41 79 322 35 20</Link>
               </li>
-              <li className="flex items-center gap-2 text-muted-foreground">
-                <Mail className="w-4 h-4 text-muted-foreground shrink-0" />
-                <Link href="mailto:support@autovendo.com">
-                  support@autovendo.com
-                </Link>
+              <li className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                <Mail className="size-4 text-muted-foreground" />
+                <Link href="mailto:info@autovendo.com">info@autovendo.com</Link>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center pt-6 border-t border-border text-xs text-muted-foreground text-center space-y-4">
-          <p className="max-w-3xl">
-            Autovendo.ch unterstützt Käufer und Verkäufer mit klaren
-            Sicherheitshinweisen. Dennoch liegt die Verantwortung für Vorsicht
-            und sorgfältige Prüfung bei der direkten Abwicklung beim jeweiligen
-            Nutzer.
-          </p>
-          <p>
+        <div className="flex items-center justify-center pt-6 border-t border-border">
+          <p className="text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} Autovendo. Alle Rechte
             vorbehalten.
           </p>
