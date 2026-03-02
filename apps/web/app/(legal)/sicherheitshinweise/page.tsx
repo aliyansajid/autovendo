@@ -1,3 +1,4 @@
+import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
 import { AlertCircle, ShieldAlert, ShieldCheck } from "lucide-react";
 import Link from "next/link";
@@ -7,45 +8,41 @@ export default function SicherheitshinweisePage() {
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto py-12 px-4">
-          <div className="text-center text-white space-y-3">
+          <div className="text-center text-white space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold">
               Sicherheitshinweise
             </h1>
-            <p className="text-lg md:text-xl font-semibold">
+            <p className="text-base md:text-lg max-w-3xl mx-auto">
               Sicher Handeln auf Autovendo.ch
             </p>
           </div>
         </div>
       </div>
 
-      <div className="w-full max-w-285 mx-auto py-12 px-4">
+      <div className="w-full max-w-285 mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto space-y-12">
-          <section className="space-y-4">
-            <div className="space-y-4 text-muted-foreground text-lg">
-              <p>
-                Der Schutz unserer Nutzerinnen und Nutzer hat für Autovendo.ch
-                höchste Priorität. Mit den folgenden Sicherheitshinweisen
-                unterstützen wir Sie dabei, Risiken zu erkennen und sich wirksam
-                vor Betrugsversuchen zu schützen.
-              </p>
-              <p>
-                Wie alle Online-Marktplätze kann auch Autovendo.ch vereinzelt
-                Ziel von missbräuchlicher Nutzung werden. Deshalb ist es uns
-                wichtig, Sie transparent zu informieren und Ihnen konkrete
-                Empfehlungen an die Hand zu geben, wie Sie selbst aktiv zu Ihrer
-                Sicherheit beitragen können – beim Kauf wie auch beim Verkauf
-                von Fahrzeugen.
-              </p>
-            </div>
+          <section className="space-y-4 text-muted-foreground text-lg">
+            <p>
+              Der Schutz unserer Nutzerinnen und Nutzer hat für Autovendo.ch
+              höchste Priorität. Mit den folgenden Sicherheitshinweisen
+              unterstützen wir Sie dabei, Risiken zu erkennen und sich wirksam
+              vor Betrugsversuchen zu schützen.
+            </p>
+            <p>
+              Wie alle Online-Marktplätze kann auch Autovendo.ch vereinzelt Ziel
+              von missbräuchlicher Nutzung werden. Deshalb ist es uns wichtig,
+              Sie transparent zu informieren und Ihnen konkrete Empfehlungen an
+              die Hand zu geben, wie Sie selbst aktiv zu Ihrer Sicherheit
+              beitragen können – beim Kauf wie auch beim Verkauf von Fahrzeugen.
+            </p>
           </section>
 
-          {/* Wichtig Alert */}
           <section className="bg-destructive/10 border-l-4 border-destructive p-6 rounded-r-xl space-y-3">
             <div className="flex items-center gap-2 text-destructive font-bold text-xl">
               <AlertCircle className="size-6" />
               Wichtig
             </div>
-            <div className="space-y-2 text-foreground/90">
+            <div className="space-y-3 text-foreground/90">
               <p>
                 In den vergangenen Monaten ist die Anzahl von
                 Online-Betrugsfällen in der Schweiz deutlich gestiegen. Bitte
@@ -62,7 +59,6 @@ export default function SicherheitshinweisePage() {
 
           <Separator />
 
-          {/* Hinweise für Kaufinteressierte */}
           <section className="space-y-6">
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <ShieldCheck className="text-primary size-6" />
@@ -130,7 +126,6 @@ export default function SicherheitshinweisePage() {
 
           <Separator />
 
-          {/* Hinweise für Verkaufende */}
           <section className="space-y-6">
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <ShieldAlert className="text-primary size-6" />
@@ -191,7 +186,6 @@ export default function SicherheitshinweisePage() {
 
           <Separator />
 
-          {/* Speziell für Händler */}
           <section className="bg-primary/10 border border-primary/20 p-8 rounded-xl space-y-4">
             <h2 className="text-2xl font-bold text-primary">
               Speziell für Fahrzeughändler und Garagen
@@ -212,17 +206,15 @@ export default function SicherheitshinweisePage() {
 
           <Separator />
 
-          <section className="text-center space-y-6">
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Haben Sie Fragen oder möchten Sie einen Vorfall melden? Unser Team
-              ist für Sie da.
+          <section className="bg-secondary p-8 rounded-xl text-center space-y-4">
+            <h3 className="text-xl font-bold">Noch Fragen?</h3>
+            <p className="text-muted-foreground">
+              Unser Support-Team unterstützt Sie gerne. Melden Sie sich, wenn
+              Sie unsicher sind oder weitere Informationen benötigen.
             </p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6 py-2"
-            >
-              Kontakt aufnehmen
-            </Link>
+            <Button asChild>
+              <Link href="contact">Kontakt</Link>
+            </Button>
           </section>
         </div>
       </div>

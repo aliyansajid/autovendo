@@ -13,7 +13,7 @@ export default function FaqPage() {
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto px-4 py-12">
-          <div className="text-center text-white space-y-3">
+          <div className="text-center text-white space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold">
               Häufig gestellte Fragen
             </h1>
@@ -56,7 +56,7 @@ export default function FaqPage() {
             jederzeit!
           </p>
           <Button asChild>
-            <Link href="/contact">Kontakt aufnehmen</Link>
+            <Link href="contact">Kontakt</Link>
           </Button>
         </div>
       </div>

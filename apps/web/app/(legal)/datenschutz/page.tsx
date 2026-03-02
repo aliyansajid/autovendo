@@ -1,3 +1,4 @@
+import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
 import Link from "next/link";
 
@@ -6,11 +7,11 @@ export default function PrivacyPage() {
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto py-12 px-4">
-          <div className="text-center text-white space-y-3">
+          <div className="text-center text-white space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold">
               Datenschutzerklärung
             </h1>
-            <p className="text-lg md:text-xl font-semibold">
+            <p className="text-base md:text-lg max-w-3xl mx-auto">
               Informationen zum Schutz deiner persönlichen Daten
             </p>
           </div>
@@ -269,21 +270,15 @@ export default function PrivacyPage() {
 
           <Separator />
 
-          {/* 10. Kontakt */}
-          <section className="space-y-6 bg-secondary p-8 rounded-xl text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">10. Kontakt</h2>
-            <div className="space-y-4 text-muted-foreground text-lg mb-6">
-              <p>
-                Bei Fragen zum Datenschutz oder zur Bearbeitung deiner
-                personenbezogenen Daten kontaktiere uns bitte direkt.
-              </p>
-            </div>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-            >
-              Kontakt aufnehmen
-            </Link>
+          <section className="space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold">10. Kontakt</h2>
+            <p className="text-muted-foreground text-lg">
+              Bei Fragen zum Datenschutz oder zur Bearbeitung deiner
+              personenbezogenen Daten kontaktiere uns bitte direkt.
+            </p>
+            <Button asChild>
+              <Link href="contact">Kontakt</Link>
+            </Button>
           </section>
         </div>
       </div>

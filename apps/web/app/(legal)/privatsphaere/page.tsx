@@ -8,11 +8,11 @@ export default function PrivatsphaereEinstellungenPage() {
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto py-12 px-4">
-          <div className="text-center text-white space-y-3">
+          <div className="text-center text-white space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold">
               Privatsphäre-Einstellungen
             </h1>
-            <p className="text-lg md:text-xl font-semibold">
+            <p className="text-base md:text-lg max-w-3xl mx-auto">
               Deine Privatsphäre ist uns wichtig
             </p>
           </div>
@@ -171,21 +171,15 @@ export default function PrivatsphaereEinstellungenPage() {
 
           <Separator />
 
-          {/* Datenschutz Link */}
-          <section className="space-y-6 bg-secondary p-8 rounded-xl text-center">
-            <h2 className="text-2xl font-bold mb-3">Datenschutz</h2>
-            <div className="space-y-4 text-muted-foreground text-lg mb-6 max-w-2xl mx-auto">
-              <p>
-                Weitere Informationen zur Verarbeitung personenbezogener Daten
-                findest du in unserer Datenschutzerklärung.
-              </p>
-            </div>
-            <Link
-              href="/datenschutz"
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary underline-offset-4 hover:underline h-10 px-4 py-2"
-            >
-              👉 Zur Datenschutzerklärung
-            </Link>
+          <section className="bg-secondary p-8 rounded-xl text-center space-y-4">
+            <h3 className="text-xl font-bold">Datenschutz</h3>
+            <p className="text-muted-foreground">
+              Weitere Informationen zur Verarbeitung personenbezogener Daten
+              findest du in unserer Datenschutzerklärung.
+            </p>
+            <Button asChild>
+              <Link href="datenschutz">Zur Datenschutzerklärung</Link>
+            </Button>
           </section>
         </div>
       </div>
