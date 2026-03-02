@@ -10,7 +10,7 @@ import {
 } from "@repo/ui/components/carousel";
 import Image from "next/image";
 import { MapPin, ArrowRight } from "lucide-react";
-import { showrooms } from "@/lib/mock-data";
+import { dealers } from "@/lib/mock-data";
 import Link from "next/link";
 
 export const FeaturedGarage = () => {
@@ -25,26 +25,26 @@ export const FeaturedGarage = () => {
           className="w-full"
         >
           <CarouselContent>
-            {showrooms.map((showroom) => (
+            {dealers.map((garage) => (
               <CarouselItem
-                key={showroom.id}
+                key={garage.id}
                 className="basis-full sm:basis-1/2 lg:basis-1/4"
               >
                 <Link
-                  key={showroom.id}
-                  href={`/showrooms/${showroom.id}`}
+                  key={garage.id}
+                  href={`/dealers/${garage.id}`}
                   className="group"
                 >
                   <Card className="pt-0 transition-shadow hover:shadow-lg cursor-pointer">
                     <CardHeader className="relative h-48 overflow-hidden rounded-t-xl">
                       <Image
-                        src={showroom.image}
-                        alt={showroom.name}
+                        src={garage.image}
+                        alt={garage.name}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
-                        priority={showroom.id <= 4}
+                        priority={garage.id <= 4}
                       />
-                      {(showroom.id === 1 || showroom.id === 2) && (
+                      {(garage.id === 1 || garage.id === 2) && (
                         <Badge className="absolute top-2 right-2 bg-yellow-400 text-foreground font-semibold z-10">
                           Premium Partner
                         </Badge>
@@ -53,17 +53,17 @@ export const FeaturedGarage = () => {
 
                     <CardContent className="space-y-6">
                       <div className="space-y-2">
-                        <h2 className="text-lg font-bold">{showroom.name}</h2>
+                        <h2 className="text-lg font-bold">{garage.name}</h2>
                         <div className="flex items-center text-muted-foreground gap-1">
                           <MapPin className="size-4" />
                           <span className="text-sm truncate">
-                            {showroom.location}
+                            {garage.location}
                           </span>
                         </div>
                       </div>
 
                       <Button variant="secondary" className="w-full">
-                        Zum Showroom
+                        Zum garage
                         <ArrowRight />
                       </Button>
                     </CardContent>

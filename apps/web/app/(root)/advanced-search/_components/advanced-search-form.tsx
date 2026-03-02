@@ -947,6 +947,7 @@ export const AdvancedSearchForm = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
                 {EquipmentEnum.map((equipment) => (
                   <CustomFormField
+                    key={equipment.value}
                     control={form.control}
                     fieldType={FormFieldType.CHECKBOX}
                     name={equipment.value}

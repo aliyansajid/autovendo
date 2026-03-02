@@ -1,4 +1,4 @@
-import { VehicleForm } from "@/components/forms/vehicle-form";
+import { VehicleForm } from "./_components/vehicle-form";
 
 export default function VehicleFormPage() {
   return (

@@ -50,7 +50,7 @@ export default function ContactPage() {
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto px-4 py-12">
-          <div className="text-center text-white space-y-3">
+          <div className="text-center text-white space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold">Kontakt</h1>
             <p className="text-base md:text-lg max-w-3xl mx-auto">
               Wir sind für Sie da. Nehmen Sie Kontakt mit uns auf - wir freuen

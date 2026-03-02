@@ -35,7 +35,7 @@ const languages = [
 
 const navLinks = [
   { href: "/advanced-search", label: "Erweiterte Suche" },
-  { href: "/showrooms", label: "Händler suchen" },
+  { href: "/dealers", label: "Händler suchen" },
   { href: "/sell", label: "Verkaufen" },
 ];
 

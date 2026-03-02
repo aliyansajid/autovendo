@@ -11,14 +11,13 @@ import {
 } from "@repo/ui/src/components/card";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { Separator } from "@repo/ui/src/components/separator";
-import Link from "next/link";
 
 export default function PricingPage() {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto py-12 px-4">
-          <div className="text-center text-white space-y-3">
+          <div className="text-center text-white space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold">Unsere Preise</h1>
             <p className="text-lg md:text-xl font-semibold">
               Fair. Transparent. Bis zu 40 % günstiger.
@@ -230,17 +229,6 @@ export default function PricingPage() {
               </CardFooter>
             </Card>
           ))}
-        </div>
-
-        <Separator />
-
-        <div className="text-center space-y-4">
-          <Button asChild>
-            <Link href="/register">Jetzt Händlerkonto erstellen</Link>
-          </Button>
-          <p className="text-muted-foreground">
-            Pakete vergleichen und wechseln - in wenigen Minuten.
-          </p>
         </div>
       </div>
     </>

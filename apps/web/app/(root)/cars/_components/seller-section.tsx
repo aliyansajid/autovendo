@@ -1,8 +1,6 @@
 "use client";
 
-import { LocationMap } from "./location-map";
 import { Phone, ExternalLink, MapPin, ArrowRight, Printer } from "lucide-react";
-import { Button } from "@repo/ui/components/button";
 import Image from "next/image";
 import {
   Card,
@@ -11,6 +9,7 @@ import {
   CardTitle,
 } from "@repo/ui/src/components/card";
 import Link from "next/link";
+import { LocationMap } from "./location-map";
 
 interface SellerSectionProps {
   seller: {

@@ -1,6 +1,6 @@
 "use client";
 
-import { ListingCard } from "./listing-card";
+import { ListingCard } from "@/components/listing-card";
 import {
   Carousel,
   CarouselContent,

@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { Car, ChevronDown, CircleEllipsis, X } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
-import { Label } from "@repo/ui/src/components/label";
 import { Checkbox } from "@repo/ui/src/components/checkbox";
 import { Slider } from "@repo/ui/src/components/slider";
 import { MakeSelectorDialog } from "@/components/make-selector-dialog";
@@ -28,6 +27,7 @@ import {
   TransmissionTypeEnum,
   DriveTypeEnum,
 } from "@/constants";
+import { FieldLabel } from "@repo/ui/src/components/field";
 
 // Utility for classes
 function cn(...inputs: (string | undefined | null | false)[]) {
@@ -58,7 +58,7 @@ function RangeFilter({
   histogramData = mockHistogram,
 }: RangeFilterProps) {
   return (
-    <div className="space-y-4 min-w-[300px] p-4">
+    <div className="space-y-4">
       <PopoverHeader>
         <PopoverTitle className="text-base font-semibold">{label}</PopoverTitle>
         <PopoverDescription
@@ -69,7 +69,6 @@ function RangeFilter({
         </PopoverDescription>
       </PopoverHeader>
 
-      {/* Histogram */}
       <div className="h-16 flex items-end justify-between gap-1 px-2 pb-2 opacity-50">
         {histogramData.map((h, i) => (
           <div
@@ -156,7 +155,7 @@ function CheckboxListFilter({
   };
 
   return (
-    <div className="space-y-4 min-w-[300px] p-4">
+    <div className="space-y-4">
       <PopoverHeader>
         <PopoverTitle className="text-base font-semibold">{title}</PopoverTitle>
         <PopoverDescription
@@ -176,12 +175,9 @@ function CheckboxListFilter({
                 checked={selectedValues.includes(item.value)}
                 onCheckedChange={() => toggle(item.value)}
               />
-              <Label
-                htmlFor={`${title}-${item.value}`}
-                className="font-normal cursor-pointer"
-              >
+              <FieldLabel htmlFor={`${title}-${item.value}`}>
                 {item.label}
-              </Label>
+              </FieldLabel>
             </div>
             {item.count !== undefined && (
               <span className="text-sm text-muted-foreground">
@@ -216,7 +212,7 @@ function GridFilter({
   };
 
   return (
-    <div className="space-y-4 min-w-[300px] p-4">
+    <div className="space-y-4">
       <PopoverHeader>
         <PopoverTitle className="text-base font-semibold">{title}</PopoverTitle>
         <PopoverDescription
@@ -238,12 +234,9 @@ function GridFilter({
             {item.icon && (
               <item.icon className="w-4 h-4 text-muted-foreground" />
             )}
-            <Label
-              htmlFor={`grid-${title}-${item.value}`}
-              className="font-normal cursor-pointer"
-            >
+            <FieldLabel htmlFor={`grid-${title}-${item.value}`}>
               {item.label}
-            </Label>
+            </FieldLabel>
           </div>
         ))}
       </div>
@@ -350,7 +343,7 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent align="start">
             <RangeFilter
               label="Year"
               min={1990}
@@ -373,7 +366,7 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent align="start">
             <RangeFilter
               label="Mileage"
               min={0}
@@ -398,7 +391,7 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
+          <PopoverContent align="end">
             <RangeFilter
               label="Price"
               min={0}
@@ -423,7 +416,7 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent className="w-auto" align="start">
             <GridFilter
               title="Body Type"
               items={BodyTypeEnum.map((t) => ({ ...t, icon: Car }))}
@@ -433,7 +426,6 @@ export default function GarageRichFilters() {
           </PopoverContent>
         </Popover>
 
-        {/* Fuel */}
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -446,7 +438,7 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent align="start">
             <CheckboxListFilter
               title="Fuel Type"
               items={FuelTypeEnum.map((t) => ({
@@ -471,7 +463,7 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent align="start">
             <CheckboxListFilter
               title="Transmission"
               items={TransmissionTypeEnum.map((t) => ({
@@ -496,7 +488,7 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
+          <PopoverContent align="end">
             <CheckboxListFilter
               title="Drive Type"
               items={DriveTypeEnum.map((t) => ({

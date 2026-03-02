@@ -39,7 +39,7 @@ export default function SicherheitshinweisePage() {
 
           <section className="bg-destructive/10 border-l-4 border-destructive p-6 rounded-r-xl space-y-3">
             <div className="flex items-center gap-2 text-destructive font-bold text-xl">
-              <AlertCircle className="size-6" />
+              <AlertCircle />
               Wichtig
             </div>
             <div className="space-y-3 text-foreground/90">
@@ -61,7 +61,7 @@ export default function SicherheitshinweisePage() {
 
           <section className="space-y-6">
             <h2 className="text-2xl font-bold flex items-center gap-2">
-              <ShieldCheck className="text-primary size-6" />
+              <ShieldCheck className="text-primary" />
               Hinweise für Kaufinteressierte
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -128,7 +128,7 @@ export default function SicherheitshinweisePage() {
 
           <section className="space-y-6">
             <h2 className="text-2xl font-bold flex items-center gap-2">
-              <ShieldAlert className="text-primary size-6" />
+              <ShieldAlert className="text-primary" />
               Hinweise für Verkaufende
             </h2>
             <p className="text-lg text-muted-foreground">

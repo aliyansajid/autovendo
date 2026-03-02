@@ -226,7 +226,7 @@ LE VETTURE SONO CIRCA 200 DI TUTTE LE MARCHE E MODELLI
 TUTTE CON GARANZIA
 SIAMO APERTI DALLE 9/12 ALLE 14:30/1830 ANCHE SABATO E DOMENICA
 
-Venite a trovarci nel nostro showroom a Torino!`,
+Venite a trovarci nel nostro garage a Torino!`,
     services: [
       "Vehicle Sales",
       "Leasing & Financing",
@@ -305,7 +305,7 @@ Venite a trovarci nel nostro showroom a Torino!`,
   ],
 };
 
-export const showroomPageData = {
+export const dealerPageData = {
   garage: {
     id: "1",
     name: "Elite Motors Zurich",
@@ -332,7 +332,7 @@ We offer:
 - Financing and leasing options
 - Worldwide shipping
 
-Visit our showroom in the heart of Zurich to experience our exceptional service.`,
+Visit our garage in the heart of Zurich to experience our exceptional service.`,
     services: [
       "Vehicle Sales",
       "Leasing & Financing",
@@ -575,7 +575,7 @@ export const listings = [
   },
 ];
 
-const baseShowrooms = [
+const baseDealers = [
   {
     name: "Elite Motors Zurich",
     location: "Zurich, Switzerland",
@@ -598,8 +598,8 @@ const baseShowrooms = [
   },
 ];
 
-export const showrooms = Array.from({ length: 10 }).map((_, i) => {
-  const base = baseShowrooms[i % 4] as (typeof baseShowrooms)[0];
+export const dealers = Array.from({ length: 10 }).map((_, i) => {
+  const base = baseDealers[i % 4] as (typeof baseDealers)[0];
   return {
     ...base,
     id: i + 1,

@@ -48,7 +48,9 @@ export function ConditionDialog() {
     <Dialog>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <DialogTrigger asChild>
-          <Button variant="link">ändern</Button>
+          <span className="text-primary font-medium hover:underline cursor-pointer">
+            ändern
+          </span>
         </DialogTrigger>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>

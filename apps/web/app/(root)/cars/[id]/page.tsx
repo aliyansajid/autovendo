@@ -1,11 +1,10 @@
 "use client";
 
-import * as React from "react";
 import { carDetail } from "@/lib/mock-data";
 import { Button } from "@repo/ui/components/button";
 import { Badge } from "@repo/ui/components/badge";
 import { Separator } from "@repo/ui/components/separator";
-import { ImageGallery } from "@/components/image-gallery";
+import { ImageGallery } from "../_components/image-gallery";
 import {
   MapPin,
   Phone,
@@ -19,12 +18,10 @@ import {
   Disc,
   BadgeCheck,
 } from "lucide-react";
-import Image from "next/image";
-import { EnergyLabel } from "@/components/energy-label";
-import { SimilarListings } from "@/components/similar-listings";
-import { ListingHeader } from "@/components/listing-header";
-import { SellerSection } from "@/components/seller-section";
-import { ReviewSection } from "@/components/review-section";
+import { SimilarListings } from "../_components/similar-listings";
+import { ListingHeader } from "../_components/listing-header";
+import { SellerSection } from "../_components/seller-section";
+import { ReviewSection } from "../_components/review-section";
 import {
   Card,
   CardContent,
@@ -32,7 +29,8 @@ import {
   CardTitle,
 } from "@repo/ui/src/components/card";
 import Link from "next/link";
-import { StickyActionBar } from "@/components/sticky-action-bar";
+import { StickyActionBar } from "../_components/sticky-action-bar";
+import { EnergyLabel } from "../_components/energy-label";
 
 export default function ListingPage() {
   const {
@@ -78,7 +76,7 @@ export default function ListingPage() {
           <ImageGallery images={images} title={title} />
 
           <Card>
-            <CardContent className="p-6">
+            <CardContent>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-4">
                 <KeyDetailCard
                   icon={

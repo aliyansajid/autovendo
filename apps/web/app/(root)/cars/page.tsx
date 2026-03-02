@@ -26,7 +26,7 @@ export default function CarsPage() {
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto py-12 px-4">
-          <div className="text-center text-white space-y-3">
+          <div className="text-center text-white space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold">Fahrzeuge finden</h1>
             <p className="text-base md:text-lg max-w-3xl mx-auto">
               Entdecken Sie unser breites Angebot an Fahrzeugen
@@ -90,7 +90,7 @@ export default function CarsPage() {
               </CardContent>
             </Card>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-6">
               {listings.map((item) => (
                 <ListingListCard key={item.id} item={item} />
               ))}

@@ -44,7 +44,9 @@ export function PowerDialog() {
     <Dialog>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <DialogTrigger asChild>
-          <Button variant="link">ändern</Button>
+          <span className="text-primary font-medium hover:underline cursor-pointer">
+            ändern
+          </span>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -54,40 +56,40 @@ export function PowerDialog() {
               done.
             </DialogDescription>
           </DialogHeader>
-          <FieldGroup>
+
+          <CustomFormField
+            control={form.control}
+            fieldType={FormFieldType.RADIO_GROUP}
+            wrapperClassName="w-fit"
+            name="power"
+            options={[
+              {
+                label: "hp",
+                value: "hp",
+              },
+              {
+                label: "kW",
+                value: "kW",
+              },
+            ]}
+          />
+          <div className="flex gap-2">
             <CustomFormField
               control={form.control}
-              fieldType={FormFieldType.RADIO_GROUP}
-              wrapperClassName="w-fit"
-              name="power"
-              options={[
-                {
-                  label: "hp",
-                  value: "hp",
-                },
-                {
-                  label: "kW",
-                  value: "kW",
-                },
-              ]}
+              fieldType={FormFieldType.INPUT_GROUP}
+              name="powerFrom"
+              placeholder="from"
+              inputGroupText={selectedPowerUnit}
             />
-            <div className="flex gap-2">
-              <CustomFormField
-                control={form.control}
-                fieldType={FormFieldType.INPUT_GROUP}
-                name="powerFrom"
-                placeholder="from"
-                inputGroupText={selectedPowerUnit}
-              />
-              <CustomFormField
-                control={form.control}
-                fieldType={FormFieldType.INPUT_GROUP}
-                name="powerTo"
-                placeholder="to"
-                inputGroupText={selectedPowerUnit}
-              />
-            </div>
-          </FieldGroup>
+            <CustomFormField
+              control={form.control}
+              fieldType={FormFieldType.INPUT_GROUP}
+              name="powerTo"
+              placeholder="to"
+              inputGroupText={selectedPowerUnit}
+            />
+          </div>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Abbrechen</Button>

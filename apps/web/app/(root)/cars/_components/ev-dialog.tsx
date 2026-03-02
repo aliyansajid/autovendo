@@ -62,7 +62,9 @@ export function EvDialog() {
     <Dialog>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <DialogTrigger asChild>
-          <Button variant="link">ändern</Button>
+          <span className="text-primary font-medium hover:underline cursor-pointer">
+            ändern
+          </span>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -74,11 +76,11 @@ export function EvDialog() {
           <FieldGroup>
             <div className="space-y-4">
               <div className="space-y-2">
-                <div className="text-sm font-medium">Reichweite</div>
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.SELECT}
                   name="rangeFrom"
+                  label="Reichweite"
                   placeholder="Beliebig"
                   className="w-full"
                 >
@@ -91,64 +93,57 @@ export function EvDialog() {
                 </CustomFormField>
               </div>
 
-              <div className="space-y-2">
-                <div className="text-sm font-medium">Batteriekapazität</div>
-                <div className="flex gap-2">
-                  <CustomFormField
-                    control={form.control}
-                    fieldType={FormFieldType.SELECT}
-                    name="batteryCapacityFrom"
-                    placeholder="von"
-                    className="w-full"
-                  >
-                    <SelectItem value="any">Beliebig</SelectItem>
-                    {batteryCapacityOptions.map((opt) => (
-                      <SelectItem key={`from-${opt.value}`} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
-                  <CustomFormField
-                    control={form.control}
-                    fieldType={FormFieldType.SELECT}
-                    name="batteryCapacityTo"
-                    placeholder="bis"
-                    className="w-full"
-                  >
-                    <SelectItem value="any">Beliebig</SelectItem>
-                    {batteryCapacityOptions.map((opt) => (
-                      <SelectItem key={`to-${opt.value}`} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
-                </div>
+              <div className="flex items-end gap-3">
+                <CustomFormField
+                  control={form.control}
+                  fieldType={FormFieldType.SELECT}
+                  name="batteryCapacityFrom"
+                  label="Batteriekapazität"
+                  placeholder="von"
+                  className="w-full"
+                >
+                  <SelectItem value="any">Beliebig</SelectItem>
+                  {batteryCapacityOptions.map((opt) => (
+                    <SelectItem key={`from-${opt.value}`} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </CustomFormField>
+
+                <CustomFormField
+                  control={form.control}
+                  fieldType={FormFieldType.SELECT}
+                  name="batteryCapacityTo"
+                  placeholder="bis"
+                  className="w-full"
+                >
+                  <SelectItem value="any">Beliebig</SelectItem>
+                  {batteryCapacityOptions.map((opt) => (
+                    <SelectItem key={`to-${opt.value}`} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </CustomFormField>
               </div>
 
-              <div className="flex gap-2">
-                <div className="w-1/2 space-y-2">
-                  <div className="text-sm font-medium">Ladezeit (bis)</div>
-                  <CustomFormField
-                    control={form.control}
-                    fieldType={FormFieldType.INPUT_GROUP}
-                    name="chargeTime"
-                    placeholder="Minuten"
-                    inputGroupText="min"
-                  />
-                </div>
+              <div className="flex gap-3">
+                <CustomFormField
+                  control={form.control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  name="chargeTime"
+                  label="Ladezeit (bis)"
+                  placeholder="Minuten"
+                  inputGroupText="min"
+                />
 
-                <div className="w-1/2 space-y-2">
-                  <div className="text-sm font-medium text-nowrap overflow-hidden text-ellipsis">
-                    Schnellladezeit (bis)
-                  </div>
-                  <CustomFormField
-                    control={form.control}
-                    fieldType={FormFieldType.INPUT_GROUP}
-                    name="fastChargeTime"
-                    placeholder="Minuten"
-                    inputGroupText="min"
-                  />
-                </div>
+                <CustomFormField
+                  control={form.control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  name="fastChargeTime"
+                  label="Schnellladezeit (bis)"
+                  placeholder="Minuten"
+                  inputGroupText="min"
+                />
               </div>
             </div>
           </FieldGroup>

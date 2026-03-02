@@ -1,10 +1,10 @@
 "use client";
 
-import { showroomPageData } from "@/lib/mock-data";
+import { dealerPageData } from "@/lib/mock-data";
 import { ListingCard } from "@/components/listing-card";
 import { Button } from "@repo/ui/src/components/button";
 import { Badge } from "@repo/ui/src/components/badge";
-import GarageFilters from "@/components/garage/garage-rich-filters";
+import GarageFilters from "../_components/garage-rich-filters";
 import { Separator } from "@repo/ui/src/components/separator";
 import {
   Tabs,
@@ -42,7 +42,6 @@ import {
   AvatarFallback,
 } from "@repo/ui/src/components/avatar";
 import Link from "next/link";
-import { Form } from "@repo/ui/src/components/form";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,11 +49,12 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
+import { Field, FieldGroup } from "@repo/ui/src/components/field";
 
 const formSchema = z.object({});
 
-export default function ShowroomPage() {
-  const { garage, listings } = showroomPageData;
+export default function DealerPage() {
+  const { garage, listings } = dealerPageData;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -92,7 +92,7 @@ export default function ShowroomPage() {
                 <div className="space-y-2 w-full text-center md:text-left">
                   <div className="flex flex-col md:flex-row items-center gap-2 justify-center md:justify-start">
                     <div className="flex items-center gap-2">
-                      <h1 className="text-xl md:text-3xl font-bold">
+                      <h1 className="text-xl md:text-2xl font-bold">
                         {garage.name}
                       </h1>
                       {garage.isVerified && (
@@ -151,7 +151,7 @@ export default function ShowroomPage() {
             <TabsTrigger value="ratings">Ratings</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="about" className="space-y-6 mb-0">
+          <TabsContent value="about" className="space-y-12 mb-0">
             <Card>
               <CardHeader className="border-b gap-0">
                 <CardTitle>About {garage.name}</CardTitle>
@@ -183,9 +183,9 @@ export default function ShowroomPage() {
               </div>
               <Card>
                 <CardContent className="flex items-center gap-6">
-                  <div className="text-center">
+                  <div className="text-center space-y-2">
                     <div className="text-4xl font-bold">{garage.rating}</div>
-                    <div className="flex text-yellow-400 justify-center my-2">
+                    <div className="flex text-yellow-400 justify-center">
                       {"★".repeat(Math.round(garage.rating))}
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -210,8 +210,8 @@ export default function ShowroomPage() {
 
             <Separator />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+              <div className="lg:col-span-2 space-y-12">
                 <section>
                   <h2 className="text-xl font-bold mb-6">Services We Offer</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -220,7 +220,7 @@ export default function ShowroomPage() {
                         key={i}
                         className="flex items-center gap-2 p-4 bg-white rounded-lg border"
                       >
-                        <CheckCircle2 className="w-5 h-5 text-green-500" />
+                        <CheckCircle2 className="size-5 text-green-500" />
                         <span className="font-medium">{service}</span>
                       </div>
                     ))}
@@ -250,57 +250,55 @@ export default function ShowroomPage() {
                   <CardTitle>Contact Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="space-y-3 text-sm">
-                      {garage.phones.map((phone, i) => (
-                        <div key={i} className="flex items-center gap-3">
-                          <Phone className="w-4 h-4 text-muted-foreground" />
-                          <Link
-                            href={`tel:${phone}`}
-                            className="hover:underline text-primary"
-                          >
-                            {phone}
-                          </Link>
-                        </div>
-                      ))}
-                      <div className="flex items-center gap-3">
-                        <Mail className="w-4 h-4 text-muted-foreground" />
+                  <div className="space-y-4 text-sm">
+                    {garage.phones.map((phone, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <Phone className="size-4 text-muted-foreground" />
                         <Link
-                          href={`mailto:${garage.email}`}
-                          className="hover:underline text-primary"
+                          href={`tel:${phone}`}
+                          className="text-primary hover:underline"
                         >
-                          {garage.email}
+                          {phone}
                         </Link>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <MapPin className="w-4 h-4 text-muted-foreground" />
-                        <span>{garage.address}</span>
-                      </div>
-                      {garage.website && (
-                        <div className="flex items-center gap-3">
-                          <Globe className="w-4 h-4 text-muted-foreground" />
-                          <Link
-                            href={`https://${garage.website}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:underline text-primary"
-                          >
-                            {garage.website}
-                          </Link>
-                        </div>
-                      )}
+                    ))}
+                    <div className="flex items-center gap-3">
+                      <Mail className="size-4 text-muted-foreground" />
+                      <Link
+                        href={`mailto:${garage.email}`}
+                        className="text-primary hover:underline"
+                      >
+                        {garage.email}
+                      </Link>
                     </div>
+                    <div className="flex items-center gap-3">
+                      <MapPin className="size-4 text-muted-foreground" />
+                      <span>{garage.address}</span>
+                    </div>
+                    {garage.website && (
+                      <div className="flex items-center gap-3">
+                        <Globe className="size-4 text-muted-foreground" />
+                        <Link
+                          href={`https://${garage.website}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        >
+                          {garage.website}
+                        </Link>
+                      </div>
+                    )}
                   </div>
+
                   <Separator />
-                  <Form {...form}>
-                    <form
-                      onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-6"
-                    >
+
+                  <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <FieldGroup>
                       <h3 className="font-semibold text-lg">Send a message</h3>
                       <CustomFormField
                         control={form.control}
                         fieldType={FormFieldType.INPUT}
+                        inputType="text"
                         name="name"
                         label="Name"
                         placeholder="John Doe"
@@ -308,6 +306,7 @@ export default function ShowroomPage() {
                       <CustomFormField
                         control={form.control}
                         fieldType={FormFieldType.INPUT}
+                        inputType="tel"
                         name="phone"
                         label="Phone"
                         placeholder="+1 (555) 123-4567"
@@ -315,6 +314,7 @@ export default function ShowroomPage() {
                       <CustomFormField
                         control={form.control}
                         fieldType={FormFieldType.INPUT}
+                        inputType="email"
                         name="email"
                         label="Email"
                         placeholder="m@example.com"
@@ -326,18 +326,20 @@ export default function ShowroomPage() {
                         label="Message"
                         placeholder="I'm interested in..."
                       />
-                      <Button className="w-full">Send Message</Button>
-                    </form>
-                  </Form>
+                      <Field>
+                        <Button className="w-full">Send Message</Button>
+                      </Field>
+                    </FieldGroup>
+                  </form>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
-          <TabsContent value="cars" className="space-y-6 mb-0">
+          <TabsContent value="cars" className="space-y-12 mb-0">
             <GarageFilters />
 
-            <div className="space-y-6">
+            <div className="space-y-12">
               <div className="flex flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border">
                 <p className="font-semibold text-foreground">
                   {listings.length} Results
@@ -374,15 +376,13 @@ export default function ShowroomPage() {
               </div>
 
               <div className="flex justify-center pt-12">
-                <Button variant="outline" size="lg">
-                  Load More Vehicles
-                </Button>
+                <Button variant="outline">Load More Vehicles</Button>
               </div>
             </div>
           </TabsContent>
 
-          <TabsContent value="ratings" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <TabsContent value="ratings">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               <div className="md:col-span-1">
                 <Card>
                   <CardHeader>
@@ -398,9 +398,11 @@ export default function ShowroomPage() {
                         </span>
                       </div>
                     </div>
+
                     <div className="flex justify-center text-yellow-400 gap-1">
                       {"★".repeat(Math.round(garage.rating))}
                     </div>
+
                     <p className="text-muted-foreground text-center text-sm">
                       Based on {garage.reviewCount} customer reviews
                     </p>
@@ -457,11 +459,13 @@ export default function ShowroomPage() {
                           Verified Purchase
                         </Badge>
                       </div>
+
                       <p className="text-muted-foreground text-sm">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                         Sed do eiusmod tempor incididunt ut labore et dolore
                         magna aliqua. Ut enim ad minim veniam.
                       </p>
+
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <span>By John Doe</span>
                         <span>•</span>
