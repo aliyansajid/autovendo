@@ -5,12 +5,28 @@ export const faqData = [
       {
         question: "Was ist Autovendo.ch?",
         answer:
-          "Autovendo.ch ist eine Verkaufsplattform speziell für Autohändler in der Schweiz. Wir bieten eine einfache, effiziente und faire Möglichkeit, Fahrzeuge zu inserieren und zu verkaufen.",
+          "Autovendo.ch ist eine spezialisierte Online-Verkaufsplattform für alle Autohändler in der Schweiz. Händler können ihre Fahrzeuge einfach inserieren und potenzielle Käufer direkt erreichen.",
       },
       {
-        question: "Wie kann ich mich auf Autovendo anmelden?",
+        question: "Wer kann Autovendo.ch nutzen?",
         answer:
-          "Sie können sich ganz einfach über den Button 'Registrieren' auf unserer Startseite anmelden. Nach einer kurzen Überprüfung Ihrer Händlerdaten wird Ihr Konto freigeschaltet.",
+          "Autovendo.ch richtet sich ausschliesslich an gewerbliche Autohändler und Garagen. Private Verkäufer sind auf dieser Plattform nicht zugelassen.",
+      },
+      {
+        question: "In welchen Regionen ist Autovendo.ch verfügbar?",
+        answer:
+          "Autovendo.ch ist auf den Schweizer Markt ausgerichtet. Inserierte Fahrzeuge müssen sich in der Schweiz oder im Fürstentum Liechtenstein befinden.",
+      },
+      {
+        question: "Ist Autovendo.ch auch für kleine Händler geeignet?",
+        answer:
+          "Ja. Autovendo.ch ist bewusst so aufgebaut, dass alle Händler – unabhängig von Grösse oder Standort – die gleichen fairen Möglichkeiten erhalten.",
+      },
+      {
+        question:
+          "Wie unterscheidet sich Autovendo.ch von anderen Plattformen?",
+        answer:
+          "Wir setzen auf faire Preise, einfache Prozesse und persönlichen Support statt komplizierter Pakete, anonymer Hotlines oder langfristiger Verpflichtungen.",
       },
     ],
   },
@@ -18,19 +34,29 @@ export const faqData = [
     category: "Inserate & Fahrzeuge",
     items: [
       {
-        question: "Wie viele Fahrzeuge kann ich inserieren?",
+        question: "Welche Fahrzeuge dürfen inseriert werden?",
         answer:
-          "Das hängt von Ihrem gewählten Paket ab. Unser Starter-Paket erlaubt bis zu 5 Inserate, während das Pro-Paket unbegrenzte Inserate ermöglicht. Details finden Sie auf unserer Preise-Seite.",
+          "Es dürfen ausschliesslich fahrbereite, korrekt beschriebene Fahrzeuge inseriert werden, die den geltenden gesetzlichen Vorschriften entsprechen.",
+      },
+      {
+        question: "Können mehrere Fahrzeuge gleichzeitig inseriert werden?",
+        answer:
+          "Ja. Händler können mehrere Fahrzeuge gleichzeitig veröffentlichen – abhängig vom gewählten Paket.",
       },
       {
         question: "Wie lange bleibt ein Inserat online?",
         answer:
-          "Inserate bleiben solange online, bis Sie diese löschen oder deaktivieren, sofern Ihr Abonnement aktiv ist.",
+          "Die Laufzeit richtet sich nach dem gebuchten Paket. Details dazu findest du in der jeweiligen Paketbeschreibung.",
       },
       {
-        question: "Kann ich meine Inserate bearbeiten?",
+        question: "Kann ich mein Inserat nachträglich bearbeiten?",
         answer:
-          "Ja, Sie können Ihre Inserate jederzeit über Ihr Händler-Dashboard bearbeiten, pausieren oder löschen.",
+          "Ja. Inserate können jederzeit aktualisiert, angepasst oder deaktiviert werden.",
+      },
+      {
+        question: "Werden Inserate geprüft?",
+        answer:
+          "Ja. Zur Qualitätssicherung behalten wir uns vor, Inserate stichprobenartig zu prüfen oder bei Unklarheiten Rückfragen zu stellen.",
       },
     ],
   },
@@ -38,14 +64,28 @@ export const faqData = [
     category: "Kosten & Pakete",
     items: [
       {
-        question: "Gibt es versteckte Kosten?",
+        question: "Was kostet die Nutzung von Autovendo.ch?",
         answer:
-          "Nein, Autovendo.ch steht für Transparenz. Alle Kosten sind in unseren Paketpreisen klar ausgewiesen. Es gibt keine versteckten Gebühren oder Provisionen pro verkauftem Fahrzeug.",
+          "Autovendo.ch bietet klare, transparente und wettbewerbsfähige Preise – ohne versteckte Gebühren.",
       },
       {
-        question: "Wie kann ich mein Paket ändern?",
+        question: "Gibt es langfristige Vertragsbindungen?",
         answer:
-          "Sie können Ihr Paket jederzeit in Ihren Kontoeinstellungen upgraden oder downgraden. Die Änderung wird sofort für den nächsten Abrechnungszeitraum wirksam.",
+          "Nein. Unsere Pakete sind flexibel und können je nach Bedarf angepasst oder beendet werden.",
+      },
+      {
+        question: "Fallen zusätzliche Gebühren pro verkauftem Fahrzeug an?",
+        answer: "Nein. Autovendo.ch erhebt keine Verkaufsprovisionen.",
+      },
+      {
+        question: "Sind Preisänderungen möglich?",
+        answer:
+          "Ja. Händler können ihr Paket jederzeit wechseln, wenn sich der Bedarf ändert.",
+      },
+      {
+        question: "Erhalte ich eine Rechnung?",
+        answer:
+          "Ja. Alle Zahlungen werden korrekt dokumentiert und transparent abgerechnet.",
       },
     ],
   },
@@ -53,14 +93,30 @@ export const faqData = [
     category: "Support & Sicherheit",
     items: [
       {
-        question: "Wie erreiche ich den Support?",
+        question: "Wie erreiche ich den Support von Autovendo.ch?",
         answer:
-          "Sie können uns per E-Mail unter info@autovendo.ch, telefonisch über unsere Hotline oder direkt über das Kontaktformular auf unserer Website erreichen.",
+          "Du erreichst uns direkt und persönlich per Telefon oder E-Mail – ohne Warteschleifen oder anonyme Ticketsysteme.",
+      },
+      {
+        question: "Wie schützt Autovendo.ch vor Betrug?",
+        answer:
+          "Wir setzen auf technische Schutzmassnahmen, klare Insertionsregeln und informieren aktiv über sichere Kauf- und Verkaufspraktiken.",
+      },
+      {
+        question:
+          "Was soll ich tun, wenn ich ein verdächtiges Inserat entdecke?",
+        answer:
+          "Bitte melde uns das Inserat umgehend. Wir prüfen den Fall schnell und sorgfältig.",
       },
       {
         question: "Sind meine Daten sicher?",
         answer:
-          "Ja, wir legen höchsten Wert auf Datensicherheit. Ihre Daten werden verschlüsselt übertragen und gemäss den geltenden Datenschutzrichtlinien sicher auf Servern in Europa gespeichert.",
+          "Ja. Der Schutz deiner Daten hat für uns höchste Priorität. Alle Daten werden gemäss den geltenden Datenschutzbestimmungen verarbeitet.",
+      },
+      {
+        question: "Gibt es zusätzliche Sicherheitsfunktionen für Händler?",
+        answer:
+          "Ja. Für Händler empfehlen wir u. a. die Hinterlegung einer Mobilnummer zur zusätzlichen Kontosicherheit.",
       },
     ],
   },

@@ -39,10 +39,6 @@ const components: { title: string; href: string }[] = [
     title: "Erweiterte Suche",
     href: "/advanced-search",
   },
-  {
-    title: "Händler suchen",
-    href: "/showrooms",
-  },
 ];
 
 const languages: { label: string; value: string }[] = [
@@ -105,6 +101,15 @@ export const Header = () => {
                     ))}
                   </ul>
                 </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  asChild
+                  className={navigationMenuTriggerStyle()}
+                >
+                  <Link href="/showrooms">Händler suchen</Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
 
               <NavigationMenuItem>
