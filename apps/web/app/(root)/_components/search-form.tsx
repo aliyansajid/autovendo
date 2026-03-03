@@ -107,11 +107,11 @@ export const SearchForm = () => {
                 ariaLabel="Modell"
                 disabled={
                   !selectedMake ||
-                  !carModels[selectedMake as keyof typeof models]
+                  !carModels[selectedMake as keyof typeof carModels]
                 }
               >
                 {selectedMake &&
-                  carModels[selectedMake as keyof typeof models]?.map(
+                  carModels[selectedMake as keyof typeof carModels]?.map(
                     (model) => (
                       <SelectItem
                         key={`${selectedMake}-${model.value}`}
