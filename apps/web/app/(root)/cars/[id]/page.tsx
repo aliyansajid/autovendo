@@ -273,6 +273,12 @@ export default function ListingPage() {
                   <Mail />
                   Contact
                 </Button>
+                <Link
+                  href={`/dealers/${seller.id}`}
+                  className="block text-center text-sm text-primary font-medium hover:underline pt-2"
+                >
+                  All vehicles from this dealer
+                </Link>
               </div>
             </CardContent>
           </Card>

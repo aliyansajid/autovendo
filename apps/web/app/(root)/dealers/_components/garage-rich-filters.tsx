@@ -291,7 +291,7 @@ export default function GarageRichFilters() {
   const getTriggerClass = (isActive: boolean) =>
     cn(
       "w-full justify-between font-normal text-muted-foreground",
-      isActive && "text-primary border-blue-200 bg-blue-50",
+      isActive && "text-primary border-primary/10 bg-primary/10",
     );
 
   return (
@@ -414,7 +414,7 @@ export default function GarageRichFilters() {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto" align="start">
-            <GridFilter
+            <CheckboxListFilter
               title="Body Type"
               items={carBodyTypeEnum.map(
                 (t: { value: string; label: string }) => ({ ...t, icon: Car }),
@@ -505,11 +505,13 @@ export default function GarageRichFilters() {
 
       <div className="flex items-center justify-end gap-3">
         <Button variant="secondary" onClick={resetAll}>
-          <X /> Reset filters
+          <X />
+          Reset filters
         </Button>
         <Link href="/advanced-search">
           <Button>
-            <CircleEllipsis /> More filters
+            <CircleEllipsis />
+            More filters
           </Button>
         </Link>
       </div>

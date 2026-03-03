@@ -65,24 +65,24 @@ export const DealersList = () => {
               href={`/dealers/${garage.id}`}
               className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-muted/50 transition-colors group"
             >
-              <div className="min-w-0 space-y-1 flex-1">
+              <div className="min-w-0 space-y-2 flex-1">
                 <div className="flex items-center gap-2">
                   <h2 className="font-semibold text-base truncate">
                     {garage.name}
                   </h2>
                   {(garage.id === 1 || garage.id === 2) && (
-                    <Badge className="bg-[#f9a602] text-foreground font-semibold shrink-0">
+                    <Badge className="bg-[#f9a602] text-foreground font-semibold">
                       Premium Partner
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center text-muted-foreground gap-1 pt-0.5">
-                  <MapPin className="size-3.5 shrink-0" />
+                <div className="flex items-center text-muted-foreground gap-1">
+                  <MapPin className="size-3.5" />
                   <span className="text-xs">{garage.location}</span>
                 </div>
               </div>
 
-              <ArrowRight className="size-4 text-muted-foreground shrink-0 -translate-x-1 group-hover:translate-x-0 transition-transform" />
+              <ArrowRight className="size-4 text-muted-foreground -translate-x-1 group-hover:translate-x-0 transition-transform" />
             </Link>
           ))}
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { dealerPageData } from "@/lib/mock-data";
-import { ListingCard } from "@/components/listing-card";
+import { ListingListCard } from "@/app/(root)/cars/_components/listing-list-card";
 import { Button } from "@repo/ui/src/components/button";
 import { Badge } from "@repo/ui/src/components/badge";
 import GarageFilters from "../_components/garage-rich-filters";
@@ -63,7 +63,6 @@ export default function DealerPage() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    // Handle login logic here
   }
 
   return (
@@ -163,11 +162,13 @@ export default function DealerPage() {
 
             <section>
               <h2 className="text-xl font-bold mb-6">New Offers</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex flex-col gap-6">
                 {listings.slice(0, 3).map((item) => (
-                  <div key={item.id}>
-                    <ListingCard item={item} />
-                  </div>
+                  <ListingListCard
+                    key={item.id}
+                    item={item}
+                    showDealerLink={false}
+                  />
                 ))}
               </div>
             </section>
@@ -175,12 +176,7 @@ export default function DealerPage() {
             <Separator />
 
             <section>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold">Reviews</h2>
-                <Button variant="link" className="text-primary">
-                  See all reviews
-                </Button>
-              </div>
+              <h2 className="text-xl font-bold mb-6">Reviews</h2>
               <Card>
                 <CardContent className="flex items-center gap-6">
                   <div className="text-center space-y-2">
@@ -366,17 +362,18 @@ export default function DealerPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-0">
+              <div className="flex flex-col gap-6">
                 {listings.map((item) => (
-                  <div key={item.id}>
-                    {/* @ts-ignore */}
-                    <ListingCard item={item} />
-                  </div>
+                  <ListingListCard
+                    key={item.id}
+                    item={item}
+                    showDealerLink={false}
+                  />
                 ))}
               </div>
 
-              <div className="flex justify-center pt-12">
-                <Button variant="outline">Load More Vehicles</Button>
+              <div className="flex justify-center">
+                <Button variant="outline">Load More</Button>
               </div>
             </div>
           </TabsContent>

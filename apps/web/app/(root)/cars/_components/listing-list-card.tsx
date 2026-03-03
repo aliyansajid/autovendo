@@ -8,7 +8,15 @@ import { Heart, Mail, Check, Star } from "lucide-react";
 import { ListingProps } from "@/components/listing-card";
 import Link from "next/link";
 
-export const ListingListCard = ({ item }: { item: ListingProps }) => {
+export interface ListingListCardProps {
+  item: ListingProps;
+  showDealerLink?: boolean;
+}
+
+export function ListingListCard({
+  item,
+  showDealerLink = true,
+}: ListingListCardProps) {
   return (
     <Link key={item.id} href={`/cars/${item.id}`} className="group">
       <Card
@@ -33,30 +41,19 @@ export const ListingListCard = ({ item }: { item: ListingProps }) => {
             </div>
 
             <div className="grid grid-cols-3 gap-2">
-              <div className="relative w-full aspect-4/3 rounded-md overflow-hidden bg-muted">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
-                />
-              </div>
-              <div className="relative w-full aspect-4/3 rounded-md overflow-hidden bg-muted">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
-                />
-              </div>
-              <div className="relative w-full aspect-4/3 rounded-md overflow-hidden bg-muted">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
-                />
-              </div>
+              {[1, 2, 3].map((_, i) => (
+                <div
+                  key={i}
+                  className="relative w-full aspect-4/3 rounded-md overflow-hidden bg-muted"
+                >
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
@@ -129,7 +126,7 @@ export const ListingListCard = ({ item }: { item: ListingProps }) => {
                   <span className="text-sm font-bold truncate">
                     {item.dealer}
                   </span>
-                  <div className="flex items-center text-yellow-400">
+                  <div className="flex items-center text-[#f9a602]">
                     <Star className="w-3 h-3 fill-current" />
                     <Star className="w-3 h-3 fill-current" />
                     <Star className="w-3 h-3 fill-current" />
@@ -154,9 +151,18 @@ export const ListingListCard = ({ item }: { item: ListingProps }) => {
                 </Button>
               </div>
             </div>
+
+            {showDealerLink && (
+              <Link
+                href={`/dealers/${item.dealerId}`}
+                className="mt-3 pt-3 border-t text-sm text-primary hover:underline cursor-pointer"
+              >
+                Alle Fahrzeuge von diesem Händler
+              </Link>
+            )}
           </div>
         </CardContent>
       </Card>
     </Link>
   );
-};
+}

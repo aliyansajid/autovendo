@@ -56,10 +56,10 @@ export default function ImpressumPage() {
                   <span className="font-semibold text-foreground">E-Mail:</span>
                   &nbsp;
                   <Link
-                    href="mailto:info@autovendo.com"
+                    href="mailto:info@autovendo.ch"
                     className="text-primary hover:underline"
                   >
-                    info@autovendo.com
+                    info@autovendo.ch
                   </Link>
                 </p>
                 <p>

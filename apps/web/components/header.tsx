@@ -45,19 +45,14 @@ export const Header = () => {
     <header className="sticky top-0 z-50 w-full bg-linear-to-r from-primary to-primary/80">
       <div className="flex items-center justify-between mx-auto max-w-285 px-4 py-3">
         <div className="flex items-center gap-8">
-          <Link
-            href="/"
-            className="flex items-center transition-opacity hover:opacity-90"
-          >
-            <div className="bg-white rounded-lg p-1.5">
-              <Image
-                src="/logo.png"
-                alt="Autovendo"
-                width={48}
-                height={40}
-                className="h-10 w-auto object-contain"
-              />
-            </div>
+          <Link href="/" className="block">
+            <Image
+              src="/logo-header.svg"
+              alt="Autovendo"
+              width={48}
+              height={40}
+              className="h-8 w-auto"
+            />
           </Link>
 
           <NavigationMenu className="hidden md:flex">

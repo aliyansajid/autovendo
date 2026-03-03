@@ -84,10 +84,10 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold mb-1">Telefon</h3>
                     <Link
-                      href="tel:+41123456789"
+                      href="tel:+41793223520"
                       className="text-muted-foreground hover:text-primary hover:underline transition-colors"
                     >
-                      +41 12 345 67 89
+                      +41 79 322 35 20
                     </Link>
                   </div>
                 </div>
@@ -97,13 +97,9 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold mb-1">Adresse</h3>
                     <p className="text-muted-foreground">
-                      Autovendo AG
+                      Riehenstrasse 157,
                       <br />
-                      Musterstrasse 123
-                      <br />
-                      8000 Zürich
-                      <br />
-                      Schweiz
+                      4058 Basel, Switzerland
                     </p>
                   </div>
                 </div>

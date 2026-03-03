@@ -23,6 +23,7 @@ export const FeaturedListings = () => {
       {listings.length > 4 && (
         <div className="flex justify-center mt-12">
           <Button
+            variant="outline"
             onClick={() =>
               setVisibleCount((prev) =>
                 prev >= listings.length

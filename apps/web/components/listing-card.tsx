@@ -21,6 +21,7 @@ export interface ListingProps {
   price: string;
   details: string[];
   dealer: string;
+  dealerId: number | string;
   location: string;
 }
 

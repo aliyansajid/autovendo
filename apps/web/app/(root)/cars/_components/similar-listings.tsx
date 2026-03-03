@@ -45,6 +45,7 @@ export const SimilarListings = ({ listings }: SimilarListingsProps) => {
                   price: item.price,
                   details: item.details,
                   dealer: item.dealer,
+                  dealerId: item.dealerId,
                   location: item.location,
                   badge: item.badge,
                   image: item.image,
