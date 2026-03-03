@@ -9,6 +9,7 @@ import {
   CarouselPrevious,
 } from "@repo/ui/components/carousel";
 import { Button } from "@repo/ui/components/button";
+import Link from "next/link";
 
 interface SimilarListingsProps {
   listings: any[];
@@ -23,15 +24,14 @@ export const SimilarListings = ({ listings }: SimilarListingsProps) => {
         <h2 className="text-2xl font-bold">
           Das könnte Sie auch interessieren
         </h2>
-        <Button variant="link" className="text-primary hidden sm:block">
-          Alle anzeigen
+        <Button variant="link" asChild>
+          <Link href="/cars">Alle anzeigen</Link>
         </Button>
       </div>
 
       <Carousel
         opts={{
           align: "start",
-          loop: true,
         }}
         className="w-full"
       >
@@ -54,8 +54,8 @@ export const SimilarListings = ({ listings }: SimilarListingsProps) => {
           ))}
         </CarouselContent>
         <div className="hidden sm:block">
-          <CarouselPrevious className="-left-4 shadow-md" />
-          <CarouselNext className="-right-4 shadow-md" />
+          <CarouselPrevious className="-left-4 bg-primary text-white size-10" />
+          <CarouselNext className="-right-4 bg-primary text-white size-10" />
         </div>
       </Carousel>
     </section>

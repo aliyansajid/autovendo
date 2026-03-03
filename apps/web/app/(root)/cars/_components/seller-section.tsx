@@ -34,7 +34,7 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
       <CardContent>
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div className="space-y-2">
                 <div className="relative w-32 h-32 mb-2">
                   <Image
@@ -61,7 +61,7 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                     rel="noreferrer"
                     className="text-primary text-sm hover:underline flex items-center gap-1"
                   >
-                    {seller.website} <ExternalLink className="w-3 h-3" />
+                    {seller.website} <ExternalLink className="size-4" />
                   </Link>
                 )}
               </div>
@@ -72,22 +72,22 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                     key={i}
                     className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors cursor-pointer"
                   >
-                    <Phone className="w-4 h-4" />
+                    <Phone className="size-4" />
                     <span className="font-medium">{phone}</span>
                   </div>
                 ))}
                 {seller.fax && (
                   <div className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors cursor-pointer">
-                    <Printer className="w-4 h-4" />
+                    <Printer className="size-4" />
                     <span className="font-medium">{seller.fax}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors cursor-pointer">
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="size-4" />
                   <span className="font-medium">{seller.address}</span>
                 </div>
                 <div className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors cursor-pointer">
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="size-4" />
                   <span className="font-medium">
                     All vehicles from this dealer
                   </span>

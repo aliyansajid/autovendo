@@ -18,14 +18,17 @@ export const StickyActionBar = ({
       <div className="flex items-center gap-3 max-w-285 mx-auto">
         <p className="flex-1 font-bold text-xl">€ {price.toLocaleString()}</p>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" asChild>
-            <Link href={`tel:${sellerPhone}`}>
-              <Phone />
+          <Button variant="outline" className="w-full flex-1" asChild>
+            <Link href={`mailto:${sellerPhone}`}>
+              <Mail />
+              Contact
             </Link>
           </Button>
-          <Button className="w-full flex-1" size="default">
-            <Mail />
-            Contact
+          <Button className="w-full flex-1" asChild>
+            <Link href={`tel:${sellerPhone}`}>
+              <Phone />
+              Phone
+            </Link>
           </Button>
         </div>
       </div>

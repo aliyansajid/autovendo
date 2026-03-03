@@ -15,7 +15,7 @@ export const LocationMap = ({ address }: LocationMapProps) => {
       <div className="flex flex-col gap-1">
         <h3 className="text-lg font-bold">Standort</h3>
         <p className="text-muted-foreground flex items-center gap-2">
-          <MapPin className="w-4 h-4" />
+          <MapPin className="size-4" />
           {address}
         </p>
       </div>

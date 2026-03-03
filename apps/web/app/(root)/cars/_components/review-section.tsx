@@ -1,12 +1,13 @@
 "use client";
 
-import { Button } from "@repo/ui/components/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@repo/ui/src/components/card";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 interface Review {
   id: string;
@@ -20,12 +21,14 @@ interface ReviewSectionProps {
   rating: number;
   count: number;
   reviews?: Review[];
+  dealerId: string | number;
 }
 
 export const ReviewSection = ({
   rating,
   count,
   reviews = [],
+  dealerId,
 }: ReviewSectionProps) => {
   return (
     <Card>
@@ -68,9 +71,12 @@ export const ReviewSection = ({
         </div>
 
         {reviews.length > 0 && (
-          <Button variant="link" className="text-primary p-0 font-medium">
-            Show all reviews &rarr;
-          </Button>
+          <Link
+            href={`/dealers/${dealerId}/reviews`}
+            className="flex items-center gap-2 text-primary text-sm font-medium hover:underline"
+          >
+            Show all reviews <ArrowRight className="size-4" />
+          </Link>
         )}
       </CardContent>
     </Card>

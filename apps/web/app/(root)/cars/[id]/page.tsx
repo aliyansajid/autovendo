@@ -50,95 +50,90 @@ export default function ListingPage() {
   } = carDetail;
 
   return (
-    <div className="max-w-285 mx-auto px-4 py-12 pb-16">
+    <div className="max-w-285 mx-auto px-4 py-12">
       <ListingHeader
         make="Volkswagen"
         model="T-Roc"
         trim={title.replace("Volkswagen T-Roc ", "")}
       />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <div className="lg:hidden space-y-3">
-            <h1 className="text-2xl sm:text-3xl font-bold leading-tight">
-              {title}
-            </h1>
-            <div className="text-3xl sm:text-4xl font-bold text-primary">
+            <h1 className="text-2xl font-bold leading-tight">{title}</h1>
+            <div className="text-3xl font-bold text-primary">
               € {price.toLocaleString()}
             </div>
             <div className="flex flex-wrap gap-2">
-              <Badge className="px-3 py-1.5 text-xs">VAT deductible</Badge>
-              <Badge variant="secondary" className="px-3 py-1.5 text-xs ">
-                Negotiable
-              </Badge>
+              <Badge>VAT deductible</Badge>
+              <Badge variant="secondary">Negotiable</Badge>
             </div>
           </div>
 
           <ImageGallery images={images} title={title} />
 
           <Card>
-            <CardContent>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-4">
-                <KeyDetailCard
-                  icon={
-                    <Gauge
-                      className="text-muted-foreground w-6 h-6"
-                      strokeWidth={1.5}
-                    />
-                  }
-                  label="Mileage"
-                  value={keyDetails.mileage}
-                />
-                <KeyDetailCard
-                  icon={
-                    <Zap
-                      className="text-muted-foreground w-6 h-6"
-                      strokeWidth={1.5}
-                    />
-                  }
-                  label="Power"
-                  value={keyDetails.power}
-                />
-                <KeyDetailCard
-                  icon={
-                    <Fuel
-                      className="text-muted-foreground w-6 h-6"
-                      strokeWidth={1.5}
-                    />
-                  }
-                  label="Fuel Type"
-                  value={keyDetails.fuelType}
-                />
-                <KeyDetailCard
-                  icon={
-                    <Disc
-                      className="text-muted-foreground w-6 h-6"
-                      strokeWidth={1.5}
-                    />
-                  }
-                  label="Transmission"
-                  value={keyDetails.transmission}
-                />
-                <KeyDetailCard
-                  icon={
-                    <Calendar
-                      className="text-muted-foreground w-6 h-6"
-                      strokeWidth={1.5}
-                    />
-                  }
-                  label="First Reg."
-                  value={keyDetails.firstRegistration}
-                />
-                <KeyDetailCard
-                  icon={
-                    <Store
-                      className="text-muted-foreground w-6 h-6"
-                      strokeWidth={1.5}
-                    />
-                  }
-                  label="Seller"
-                  value={keyDetails.sellerType}
-                />
-              </div>
+            <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+              <KeyDetailCard
+                icon={
+                  <Gauge
+                    className="text-muted-foreground w-6 h-6"
+                    strokeWidth={1.5}
+                  />
+                }
+                label="Mileage"
+                value={keyDetails.mileage}
+              />
+              <KeyDetailCard
+                icon={
+                  <Zap
+                    className="text-muted-foreground w-6 h-6"
+                    strokeWidth={1.5}
+                  />
+                }
+                label="Power"
+                value={keyDetails.power}
+              />
+              <KeyDetailCard
+                icon={
+                  <Fuel
+                    className="text-muted-foreground w-6 h-6"
+                    strokeWidth={1.5}
+                  />
+                }
+                label="Fuel Type"
+                value={keyDetails.fuelType}
+              />
+              <KeyDetailCard
+                icon={
+                  <Disc
+                    className="text-muted-foreground w-6 h-6"
+                    strokeWidth={1.5}
+                  />
+                }
+                label="Transmission"
+                value={keyDetails.transmission}
+              />
+              <KeyDetailCard
+                icon={
+                  <Calendar
+                    className="text-muted-foreground w-6 h-6"
+                    strokeWidth={1.5}
+                  />
+                }
+                label="First Reg."
+                value={keyDetails.firstRegistration}
+              />
+              <KeyDetailCard
+                icon={
+                  <Store
+                    className="text-muted-foreground w-6 h-6"
+                    strokeWidth={1.5}
+                  />
+                }
+                label="Seller"
+                value={keyDetails.sellerType}
+              />
             </CardContent>
           </Card>
 
@@ -156,28 +151,26 @@ export default function ListingPage() {
             </Section>
 
             <Section title="Energy Consumption">
-              <div className="space-y-6">
-                <DataGrid
-                  data={Object.fromEntries(
-                    Object.entries(energyConsumption).filter(
-                      ([key]) => key !== "efficiencyClass",
-                    ),
-                  )}
-                />
-                {energyConsumption.efficiencyClass && (
-                  <>
-                    <Separator />
-                    <div>
-                      <h3 className="text-sm font-medium mb-4">
-                        Energy Efficiency Class
-                      </h3>
-                      <EnergyLabel
-                        efficiencyClass={energyConsumption.efficiencyClass}
-                      />
-                    </div>
-                  </>
+              <DataGrid
+                data={Object.fromEntries(
+                  Object.entries(energyConsumption).filter(
+                    ([key]) => key !== "efficiencyClass",
+                  ),
                 )}
-              </div>
+              />
+              {energyConsumption.efficiencyClass && (
+                <>
+                  <Separator />
+                  <div className="mt-6">
+                    <h3 className="text-sm font-medium mb-4">
+                      Energy Efficiency Class
+                    </h3>
+                    <EnergyLabel
+                      efficiencyClass={energyConsumption.efficiencyClass}
+                    />
+                  </div>
+                </>
+              )}
             </Section>
 
             <Section title="Colour and Upholstery">
@@ -185,20 +178,7 @@ export default function ListingPage() {
             </Section>
 
             <Section title="Equipment">
-              <div className="space-y-6">
-                <EquipmentCategory
-                  title="Comfort & Convenience"
-                  items={equipment.comfort}
-                />
-                <EquipmentCategory
-                  title="Entertainment & Media"
-                  items={equipment.entertainment}
-                />
-                <EquipmentCategory
-                  title="Safety & Security"
-                  items={equipment.safety}
-                />
-              </div>
+              <EquipmentCategory items={equipment.comfort} />
             </Section>
 
             <Section title="Vehicle Description">
@@ -213,15 +193,16 @@ export default function ListingPage() {
               rating={seller.rating}
               count={seller.reviewCount}
               reviews={carDetail.reviews}
+              dealerId={seller.id}
             />
 
-            <Separator className="my-8" />
+            <Separator className="my-12" />
 
             <SimilarListings listings={similarListings} />
           </div>
         </div>
 
-        <div className="space-y-6 sticky top-4 self-start">
+        <div className="space-y-6 sticky top-20 self-start">
           <Card className="hidden lg:block">
             <CardContent className="space-y-3">
               <h1 className="text-xl font-bold">{title}</h1>
@@ -229,10 +210,8 @@ export default function ListingPage() {
                 € {price.toLocaleString()}
               </h2>
               <div className="flex flex-wrap gap-2">
-                <Badge className="px-3 py-1.5 text-xs">VAT deductible</Badge>
-                <Badge variant="secondary" className="px-3 py-1.5 text-xs">
-                  Negotiable
-                </Badge>
+                <Badge>VAT deductible</Badge>
+                <Badge variant="secondary">Negotiable</Badge>
               </div>
             </CardContent>
           </Card>
@@ -242,7 +221,7 @@ export default function ListingPage() {
               <div className="space-y-2">
                 <h3 className="text-xl font-bold">{seller.name}</h3>
                 <div className="flex items-center gap-2">
-                  <BadgeCheck className="w-4 h-4 text-primary" />
+                  <BadgeCheck className="size-4 text-primary" />
                   <span className="text-sm font-medium text-primary">
                     Verified Dealer
                   </span>
@@ -263,7 +242,7 @@ export default function ListingPage() {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="bg-muted p-2.5 rounded-lg">
-                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    <MapPin className="size-4 text-muted-foreground" />
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {seller.address}
@@ -273,7 +252,7 @@ export default function ListingPage() {
                 {seller.phones.slice(0, 1).map((phone, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <div className="bg-muted p-2.5 rounded-lg">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      <Phone className="size-4 text-muted-foreground" />
                     </div>
                     <Link
                       href={`tel:${phone}`}
@@ -286,13 +265,13 @@ export default function ListingPage() {
               </div>
 
               <div className="space-y-3">
-                <Button className="w-full " size="lg">
-                  <Mail />
-                  Contact
-                </Button>
-                <Button variant="outline" className="w-full" size="lg">
+                <Button className="w-full">
                   <Phone />
                   Phone
+                </Button>
+                <Button variant="outline" className="w-full">
+                  <Mail />
+                  Contact
                 </Button>
               </div>
             </CardContent>
@@ -369,28 +348,19 @@ function KeyDetailCard({
   );
 }
 
-function EquipmentCategory({
-  title,
-  items,
-}: {
-  title: string;
-  items: string[];
-}) {
+function EquipmentCategory({ items }: { items: string[] }) {
   if (!items.length) return null;
   return (
-    <div>
-      <h3 className="font-bold text-base mb-3.5">{title}</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
-        {items.map((item, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-2 text-muted-foreground text-sm group"
-          >
-            <CheckCircle2 className="w-4 h-4 text-green-500" />
-            <span>{item}</span>
-          </div>
-        ))}
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
+      {items.map((item, i) => (
+        <div
+          key={i}
+          className="flex items-center gap-2 text-muted-foreground text-sm"
+        >
+          <CheckCircle2 className="size-4 text-green-500" />
+          <span>{item}</span>
+        </div>
+      ))}
     </div>
   );
 }

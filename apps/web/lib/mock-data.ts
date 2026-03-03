@@ -87,6 +87,7 @@ GRANDE PROMOZIONE SU TUTTI VEICOLI TASSI AGEVOLATI
 SI RITIRANO PERMUTE DI QUALSIASI MARCA E MODELLI.
 IMMAGINI CASUALI`,
   seller: {
+    id: "1",
     name: "Autovendo Dealer",
     address: "VIA NIZZA 149, TORINO",
     phones: [

@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
 import { cn } from "@repo/ui/lib/utils";
 import {
@@ -14,10 +13,12 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
+  DialogClose,
   DialogTitle,
 } from "@repo/ui/components/dialog";
-import { Maximize2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Button } from "@repo/ui/src/components/button";
 
 interface ImageGalleryProps {
   images: string[];
@@ -25,14 +26,14 @@ interface ImageGalleryProps {
 }
 
 export function ImageGallery({ images, title }: ImageGalleryProps) {
-  const [mainApi, setMainApi] = React.useState<CarouselApi>();
-  const [thumbApi, setThumbApi] = React.useState<CarouselApi>();
-  const [lightboxApi, setLightboxApi] = React.useState<CarouselApi>();
-  const [activeIndex, setActiveIndex] = React.useState(0);
-  const [isLightboxOpen, setIsLightboxOpen] = React.useState(false);
+  const [mainApi, setMainApi] = useState<CarouselApi>();
+  const [thumbApi, setThumbApi] = useState<CarouselApi>();
+  const [lightboxApi, setLightboxApi] = useState<CarouselApi>();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   // Sync main carousel to thumbnail, and update active index
-  React.useEffect(() => {
+  useEffect(() => {
     if (!mainApi) return;
 
     const onSelect = () => {
@@ -50,14 +51,14 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
   }, [mainApi, thumbApi]);
 
   // Sync lightly when opening lightbox
-  React.useEffect(() => {
+  useEffect(() => {
     if (isLightboxOpen && lightboxApi) {
       lightboxApi.scrollTo(activeIndex, true); // jump to current active index without animation
     }
   }, [isLightboxOpen, lightboxApi, activeIndex]);
 
   // Sync main when lightbox changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (!lightboxApi) return;
 
     const onLightboxSelect = () => {
@@ -73,7 +74,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
     };
   }, [lightboxApi, mainApi]);
 
-  const onThumbClick = React.useCallback(
+  const onThumbClick = useCallback(
     (index: number) => {
       if (!mainApi) return;
       mainApi.scrollTo(index);
@@ -84,107 +85,120 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
   if (!images?.length) return null;
 
   return (
-    <div className="space-y-4">
-      <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
-        <div className="rounded-xl overflow-hidden shadow-sm border bg-background group relative">
-          <Carousel setApi={setMainApi} className="w-full">
-            <CarouselContent>
-              {images.map((src, index) => (
-                <CarouselItem key={index}>
-                  <div
-                    className="relative aspect-video w-full cursor-zoom-in"
-                    onClick={() => setIsLightboxOpen(true)}
-                  >
-                    <Image
-                      src={src}
-                      alt={`${title} - Image ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      priority={index === 0}
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
+    <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
+      <div className="rounded-xl overflow-hidden shadow-sm border bg-background group relative">
+        <Carousel setApi={setMainApi} className="w-full">
+          <CarouselContent>
+            {images.map((src, index) => (
+              <CarouselItem key={index}>
+                <div
+                  className="relative aspect-video w-full cursor-zoom-in"
+                  onClick={() => setIsLightboxOpen(true)}
+                >
+                  <Image
+                    src={src}
+                    alt={`${title} - Image ${index + 1}`}
+                    fill
+                    className="object-cover"
+                    priority={index === 0}
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
 
-            <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-              <DialogTrigger asChild>
+          <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button
+              variant="secondary"
+              className="rounded-full size-10"
+              aria-label="Open fullscreen"
+              onClick={() => setIsLightboxOpen(true)}
+            >
+              <Maximize />
+            </Button>
+          </div>
+
+          <CarouselPrevious className="left-4 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-white size-10" />
+          <CarouselNext className="right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-primary text-white size-10" />
+        </Carousel>
+      </div>
+
+      {images.length > 1 && (
+        <Carousel
+          setApi={setThumbApi}
+          opts={{
+            align: "start",
+            dragFree: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-3">
+            {images.map((src, index) => (
+              <CarouselItem
+                key={index}
+                className="pl-3 basis-1/4 sm:basis-1/5 lg:basis-1/6"
+              >
                 <button
                   type="button"
-                  className="bg-black/50 hover:bg-black/70 text-white p-2 rounded-full backdrop-blur-sm transition-colors"
-                  aria-label="Open fullscreen"
+                  onClick={() => onThumbClick(index)}
+                  className={cn(
+                    "relative aspect-video w-full rounded-lg overflow-hidden transition-all duration-200 border-2",
+                    activeIndex === index
+                      ? "border-primary shadow-sm"
+                      : "border-transparent opacity-60 hover:opacity-100",
+                  )}
                 >
-                  <Maximize2 className="w-4 h-4" />
+                  <Image
+                    src={src}
+                    alt={`Thumbnail ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
                 </button>
-              </DialogTrigger>
-            </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      )}
 
-            <CarouselPrevious className="left-4 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white border-none shadow-md hidden sm:flex" />
-            <CarouselNext className="right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white border-none shadow-md hidden sm:flex" />
-          </Carousel>
+      <DialogContent
+        className="w-screen! h-screen! max-w-none! max-h-none! translate-x-0! translate-y-0! top-0! left-0! rounded-none! p-0 border-none bg-black flex flex-col"
+        showCloseButton={false}
+      >
+        <div className="flex items-center justify-between px-6 py-4 shrink-0">
+          <DialogTitle className="text-white text-sm font-semibold opacity-90 truncate max-w-[50%]">
+            {title}
+          </DialogTitle>
+          <span className="text-white/60 text-sm font-medium">
+            {activeIndex + 1} / {images.length}
+          </span>
+          <DialogClose asChild>
+            <Button variant="ghost" className="text-white">
+              <X />
+            </Button>
+          </DialogClose>
         </div>
 
-        {images.length > 1 && (
-          <Carousel
-            setApi={setThumbApi}
-            opts={{
-              align: "start",
-              dragFree: true,
-            }}
-            className="w-full"
+        <div className="flex-1 relative flex items-center min-h-0">
+          <button
+            onClick={() => lightboxApi?.scrollPrev()}
+            className="absolute left-4 z-10 p-2 text-white/50 hover:text-white transition-colors"
+            aria-label="Previous image"
           >
-            <CarouselContent className="-ml-3">
-              {images.map((src, index) => (
-                <CarouselItem
-                  key={index}
-                  className="pl-3 basis-1/4 sm:basis-1/5 lg:basis-1/6"
-                >
-                  <button
-                    type="button"
-                    onClick={() => onThumbClick(index)}
-                    className={cn(
-                      "relative aspect-video w-full rounded-lg overflow-hidden transition-all duration-200 border-2",
-                      activeIndex === index
-                        ? "border-primary shadow-sm"
-                        : "border-transparent opacity-60 hover:opacity-100",
-                    )}
-                  >
-                    <Image
-                      src={src}
-                      alt={`Thumbnail ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </button>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        )}
+            <ChevronLeft className="size-12" />
+          </button>
 
-        <DialogContent
-          className="max-w-7xl w-[95vw] h-[90vh] p-0 border-none bg-black/95 flex flex-col justify-center gap-0 overflow-hidden sm:rounded-2xl"
-          showCloseButton={true}
-        >
-          <div className="absolute top-4 left-4 z-50">
-            <DialogTitle className="text-white text-lg font-medium opacity-80">
-              {activeIndex + 1} / {images.length}
-            </DialogTitle>
-          </div>
           <Carousel
             setApi={setLightboxApi}
-            className="w-full h-full flex-1 flex flex-col items-center justify-center min-h-0"
+            className="w-full h-full [&>div]:h-full [&>div]:w-full"
           >
-            <CarouselContent className="h-full flex-1">
+            <CarouselContent className="h-full w-full">
               {images.map((src, index) => (
-                <CarouselItem
-                  key={index}
-                  className="flex items-center justify-center p-2 sm:p-12 relative w-full h-full"
-                >
+                <CarouselItem key={index} className="relative h-full p-0">
                   <div className="relative w-full h-full">
                     <Image
                       src={src}
-                      alt={`${title} - Fullscreen Image ${index + 1}`}
+                      alt={`${title} - Image ${index + 1}`}
                       fill
                       className="object-contain"
                     />
@@ -192,17 +206,41 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious
-              className="left-2 sm:left-4 bg-white/10 text-white border-none hover:bg-white/20 hover:text-white"
-              variant="ghost"
-            />
-            <CarouselNext
-              className="right-2 sm:right-4 bg-white/10 text-white border-none hover:bg-white/20 hover:text-white"
-              variant="ghost"
-            />
           </Carousel>
-        </DialogContent>
-      </Dialog>
-    </div>
+
+          <button
+            onClick={() => lightboxApi?.scrollNext()}
+            className="absolute right-4 z-10 p-2 text-white/50 hover:text-white transition-colors"
+            aria-label="Next image"
+          >
+            <ChevronRight className="size-12" />
+          </button>
+        </div>
+
+        {images.length > 1 && (
+          <div className="shrink-0 px-6 py-4 flex gap-2 overflow-x-auto scrollbar-hide">
+            {images.map((src, index) => (
+              <button
+                key={index}
+                onClick={() => lightboxApi?.scrollTo(index)}
+                className={cn(
+                  "shrink-0 w-24 aspect-video relative rounded overflow-hidden border-2 transition-all",
+                  activeIndex === index
+                    ? "border-white opacity-100"
+                    : "border-transparent opacity-40 hover:opacity-70",
+                )}
+              >
+                <Image
+                  src={src}
+                  alt={`Thumbnail ${index + 1}`}
+                  fill
+                  className="object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
