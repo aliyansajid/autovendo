@@ -20,11 +20,12 @@ import {
   SelectItem,
 } from "@repo/ui/src/components/select";
 import { Button } from "@repo/ui/src/components/button";
-import { makes, models, prices } from "@/constants";
+import { carMakes, carModels } from "@/constants/cars";
 import { getRegistrationYears } from "@/lib/utils";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
 import { Search, Settings2 } from "lucide-react";
 import Link from "next/link";
+import { prices } from "@/constants";
 
 const formSchema = z.object({
   query: z.string().optional(),
@@ -83,7 +84,7 @@ export const SearchForm = () => {
                 placeholder="Marke"
                 ariaLabel="Marke"
               >
-                {makes.map((group) => (
+                {carMakes.map((group) => (
                   <SelectGroup key={group.label}>
                     <SelectLabel>{group.label}</SelectLabel>
                     {group.items.map((make) => (
@@ -105,18 +106,21 @@ export const SearchForm = () => {
                 placeholder="Modell"
                 ariaLabel="Modell"
                 disabled={
-                  !selectedMake || !models[selectedMake as keyof typeof models]
+                  !selectedMake ||
+                  !carModels[selectedMake as keyof typeof models]
                 }
               >
                 {selectedMake &&
-                  models[selectedMake as keyof typeof models]?.map((model) => (
-                    <SelectItem
-                      key={`${selectedMake}-${model.value}`}
-                      value={model.value}
-                    >
-                      {model.label}
-                    </SelectItem>
-                  ))}
+                  carModels[selectedMake as keyof typeof models]?.map(
+                    (model) => (
+                      <SelectItem
+                        key={`${selectedMake}-${model.value}`}
+                        value={model.value}
+                      >
+                        {model.label}
+                      </SelectItem>
+                    ),
+                  )}
               </CustomFormField>
 
               <CustomFormField

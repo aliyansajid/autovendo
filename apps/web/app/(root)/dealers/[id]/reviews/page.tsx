@@ -172,7 +172,7 @@ export default function DealerReviewsPage({
               {/* Big score */}
               <div className="flex flex-col items-center gap-2 py-2">
                 <span className="text-6xl font-bold">{garage.rating}</span>
-                <div className="flex text-yellow-400 text-xl gap-0.5">
+                <div className="flex text-[#F9A602] text-xl gap-0.5">
                   {"★".repeat(Math.round(garage.rating))}
                   {"☆".repeat(5 - Math.round(garage.rating))}
                 </div>
@@ -188,10 +188,10 @@ export default function DealerReviewsPage({
                 {ratingBreakdown.map(({ stars, count, pct }) => (
                   <div key={stars} className="flex items-center gap-3 text-sm">
                     <span className="w-3 text-right shrink-0">{stars}</span>
-                    <Star className="size-3 text-yellow-400 fill-yellow-400 shrink-0" />
+                    <Star className="size-3 text-[#F9A602] fill-[#F9A602] shrink-0" />
                     <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-yellow-400 rounded-full transition-all"
+                        className="h-full bg-[#f9a602] rounded-full transition-all"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -258,7 +258,7 @@ export default function DealerReviewsPage({
 
                 {/* Stars + title */}
                 <div className="space-y-1">
-                  <div className="flex text-yellow-400 text-sm gap-0.5">
+                  <div className="flex text-[#F9A602] text-sm gap-0.5">
                     {"★".repeat(review.rating)}
                     {"☆".repeat(5 - review.rating)}
                   </div>

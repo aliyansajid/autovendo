@@ -1,6 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@repo/ui/src/components/button";
-import { Mail, MapPin, Phone, CarFront, Send, MailIcon } from "lucide-react";
+import { Mail, MapPin, Phone, Send, MailIcon } from "lucide-react";
 import {
   InputGroup,
   InputGroupInput,
@@ -24,11 +25,14 @@ export const Footer = () => {
       <div className="max-w-285 mx-auto px-4 pt-8 pb-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="bg-primary p-1.5 rounded-lg">
-                <CarFront className="text-white" />
-              </div>
-              <h3 className="font-bold text-2xl tracking-tight">Autovendo</h3>
+            <div className="flex items-center">
+              <Image
+                src="/logo-2.png"
+                alt="Autovendo"
+                width={320}
+                height={96}
+                className="h-24 w-auto object-contain"
+              />
             </div>
             <p className="max-w-md text-sm text-muted-foreground leading-relaxed">
               Entdecken Sie Ihr perfektes Fahrzeug in unserer Premium-Auswahl.
@@ -42,6 +46,13 @@ export const Footer = () => {
               <SocialLink href="#" icon={Instagram} label="Instagram" />
               <SocialLink href="#" icon={Linkedin} label="LinkedIn" />
             </div> */}
+            <p className="text-xs text-muted-foreground leading-relaxed italic">
+              Autovendo.ch verzichtet bewusst auf Social Media.
+              <br />
+              Bei uns stehen direkter Kontakt, persönliche Erreichbarkeit und
+              echte Gespräche im Mittelpunkt – von Mensch zu Mensch, nicht über
+              Likes oder Algorithmen.
+            </p>
           </div>
 
           <div className="flex flex-col lg:items-end justify-center space-y-3">

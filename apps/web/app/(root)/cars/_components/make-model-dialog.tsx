@@ -18,7 +18,7 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { ChevronRight, Search, ChevronLeft } from "lucide-react";
 import { ScrollArea } from "@repo/ui/src/components/scroll-area";
-import { makes, popularMakes, models } from "@/constants";
+import { carMakes, popularCarMakes, carModels } from "@/constants/cars";
 import Image from "next/image";
 
 const formSchema = z.object({
@@ -85,13 +85,17 @@ export function MakeModelDialog() {
                     </h3>
                   </div>
                   <div className="divide-y divide-border">
-                    {models[selectedMake.value as keyof typeof models]
+                    {carModels[selectedMake.value as keyof typeof carModels]
                       ?.length ? (
-                      (models[selectedMake.value as keyof typeof models] ?? [])
-                        .filter((model) =>
+                      (
+                        carModels[
+                          selectedMake.value as keyof typeof carModels
+                        ] ?? []
+                      )
+                        .filter((model: { value: string; label: string }) =>
                           model.label.toLowerCase().includes(searchQuery),
                         )
-                        .map((model) => (
+                        .map((model: { value: string; label: string }) => (
                           <Button
                             key={model.value}
                             variant="ghost"
@@ -109,14 +113,15 @@ export function MakeModelDialog() {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {popularMakes.filter((make) =>
-                    make.name.toLowerCase().includes(searchQuery),
+                  {popularCarMakes.filter(
+                    (make: { name: string; logo: string }) =>
+                      make.name.toLowerCase().includes(searchQuery),
                   ).length > 0 && (
                     <div className="space-y-3">
                       <FieldLabel>Meistgesuchte marken</FieldLabel>
                       <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-                        {popularMakes
-                          .filter((make) =>
+                        {popularCarMakes
+                          .filter((make: { name: string; logo: string }) =>
                             make.name.toLowerCase().includes(searchQuery),
                           )
                           .map((make: { name: string; logo: string }) => (
@@ -159,7 +164,7 @@ export function MakeModelDialog() {
                       {Array.from(
                         new Map(
                           (
-                            makes as unknown as {
+                            carMakes as unknown as {
                               items: readonly {
                                 value: string;
                                 label: string;
@@ -176,8 +181,8 @@ export function MakeModelDialog() {
                         .filter(
                           (make: any) =>
                             make.label.toLowerCase().includes(searchQuery) &&
-                            !popularMakes.some(
-                              (pm) =>
+                            !popularCarMakes.some(
+                              (pm: { name: string; logo: string }) =>
                                 pm.name.toLowerCase() ===
                                   make.label.toLowerCase() ||
                                 (pm.name === "VW" &&

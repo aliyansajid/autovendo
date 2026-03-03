@@ -26,7 +26,7 @@ export const ListingListCard = ({ item }: { item: ListingProps }) => {
                 sizes="(max-width: 640px) 100vw, 320px"
               />
               {item.badge && (
-                <Badge className="absolute top-2 left-2 bg-yellow-400 text-foreground font-semibold">
+                <Badge className="absolute top-2 left-2 bg-[#f9a602] text-foreground font-semibold">
                   {item.badge}
                 </Badge>
               )}

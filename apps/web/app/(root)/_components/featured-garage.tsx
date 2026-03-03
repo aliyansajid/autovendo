@@ -45,7 +45,7 @@ export const FeaturedGarage = () => {
                         priority={garage.id <= 4}
                       />
                       {(garage.id === 1 || garage.id === 2) && (
-                        <Badge className="absolute top-2 right-2 bg-yellow-400 text-foreground font-semibold z-10">
+                        <Badge className="absolute top-2 right-2 bg-[#f9a602] text-foreground font-semibold z-10">
                           Premium Partner
                         </Badge>
                       )}

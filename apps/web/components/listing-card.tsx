@@ -41,7 +41,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
             fetchPriority="high"
           />
           {item.badge && (
-            <Badge className="absolute top-2 right-2 bg-yellow-400 text-foreground font-semibold">
+            <Badge className="absolute top-2 right-2 bg-[#f9a602] text-foreground font-semibold">
               {item.badge}
             </Badge>
           )}

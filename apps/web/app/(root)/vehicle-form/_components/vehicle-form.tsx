@@ -3,7 +3,6 @@
 import { z } from "zod";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "@repo/ui/components/form";
 import { cn } from "@repo/ui/lib/utils";
 import { Button } from "@repo/ui/components/button";
 import {
@@ -17,13 +16,9 @@ import {
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
 import {
-  makes,
-  models,
   GearTransmissionEnum,
   TransmissionTypeEnum,
   DriveTypeEnum,
-  BodyTypeEnum,
-  FuelTypeEnum,
   ColorEnum,
   VehicleConditionEnum,
   EnergyLabelEnum,
@@ -32,8 +27,34 @@ import {
   BatteryOwnershipEnum,
   WarrantyEnum,
   EquipmentEnum,
-  ExtrasEnum,
+  VehicleTypeEnum,
 } from "@/constants";
+import {
+  carMakes,
+  carModels,
+  carBodyTypeEnum,
+  carExtrasEnum,
+  carFuelTypeEnum,
+} from "@/constants/cars";
+import {
+  utilityMakes,
+  utilityModels,
+  utilityBodyTypeEnum,
+  utilityExtrasEnum,
+} from "@/constants/commercial-vehicles";
+import {
+  truckMakes,
+  truckModels,
+  truckBodyTypeEnum,
+  truckFuelTypeEnum,
+  truckExtrasEnum,
+} from "@/constants/truck";
+import {
+  camperMakes,
+  camperBodyTypeEnum,
+  camperFuelTypeEnum,
+  camperExtrasEnum,
+} from "@/constants/camper";
 import {
   Accordion,
   AccordionItem,
@@ -58,77 +79,12 @@ export function VehicleForm() {
   const form = useForm<z.infer<typeof vehicleFormSchema>>({
     resolver: zodResolver(vehicleFormSchema) as any,
     defaultValues: {
+      vehicleType: "car",
       make: "",
       model: "",
       metallic: false,
       inspectionPassed: false,
-      equipment: {
-        camera360: false,
-        abs: false,
-        adaptiveCruiseControl: false,
-        adaptiveForwardLighting: false,
-        additionalInstrumentation: false,
-        airSuspension: false,
-        alarmSystem: false,
-        alcantaraSeats: false,
-        alloyWheels: false,
-        androidAuto: false,
-        antiTheftDevice: false,
-        appleCarplay: false,
-        automaticAirConditioning: false,
-        backrestProtection: false,
-        blindSpotAssist: false,
-        bluetoothInterface: false,
-        brakeAssist: false,
-        cargoBox: false,
-        chromeParts: false,
-        clothSeats: false,
-        cruiseControl: false,
-        dabRadio: false,
-        detachableTowBar: false,
-        differentialLocking: false,
-        electricTailgate: false,
-        electricWindows: false,
-        electricallyAdjustableSeat: false,
-        esp: false,
-        fastCharge: false,
-        fixedTowBar: false,
-        flooring: false,
-        handsFreeKit: false,
-        hardtop: false,
-        headUpDisplay: false,
-        heatedSeats: false,
-        isofix: false,
-        keylessAccess: false,
-        laneKeepingAssist: false,
-        laserHeadlights: false,
-        leatherSeats: false,
-        ledHeadlights: false,
-        luggageRack: false,
-        manualAirConditioning: false,
-        navigationSystem: false,
-        panoramicRoof: false,
-        parkAssist: false,
-        parkingSensorFront: false,
-        parkingSensorRear: false,
-        partialLeatherSeats: false,
-        portableNavigationSystem: false,
-        rearViewCamera: false,
-        reinforcedSuspension: false,
-        slidingDoor: false,
-        speaker: false,
-        specialPaint: false,
-        sportExhaust: false,
-        sportSeats: false,
-        startStopSystem: false,
-        stationaryHeating: false,
-        sunroof: false,
-        swivellingTowBar: false,
-        ventilatedSeats: false,
-        wingDoors: false,
-        xenonHeadlights: false,
-        extras8tyres: false,
-      },
+      equipment: {},
       accessibleForDisabledPeople: false,
       accidentVehicle: false,
       directParallelImport: false,
@@ -148,7 +104,7 @@ export function VehicleForm() {
     },
   });
 
-  const { control, handleSubmit, trigger, setValue, watch } = form; // Added trigger, setValue, watch
+  const { control, handleSubmit, trigger, setValue, watch } = form;
   const selectedMake = form.watch("make");
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -171,9 +127,9 @@ export function VehicleForm() {
         "vehicleCondition",
         "mileage",
         "priceChf",
-      ]); // Add other required fields for step 1 validation if needed based on schema
+      ]);
     } else if (currentStep === 2) {
-      isStepValid = true; // Images are optional
+      isStepValid = true;
     } else if (currentStep === 3) {
       isStepValid = await trigger([
         "billingFirstName",
@@ -229,11 +185,52 @@ export function VehicleForm() {
     }
   };
 
+  const vehicleType = useWatch({ control, name: "vehicleType" });
   const gearTransmission = useWatch({ control, name: "gearTransmission" });
   const fuelType = useWatch({ control, name: "fuelType" });
   const batteryOwnership = useWatch({ control, name: "batteryOwnership" });
   const warranty = useWatch({ control, name: "warranty" });
   const sameAsBilling = useWatch({ control, name: "sameAsBilling" });
+
+  const isCommercial = vehicleType === "utility";
+  const isTruck = vehicleType === "truck";
+  const isCamper = vehicleType === "camper";
+
+  const activeMakes = (
+    isTruck
+      ? truckMakes
+      : isCamper
+        ? camperMakes
+        : isCommercial
+          ? utilityMakes
+          : carMakes
+  ) as ReadonlyArray<{
+    label: string;
+    items: ReadonlyArray<{ value: string; label: string }>;
+  }>;
+  const activeModels: Record<string, { value: string; label: string }[]> =
+    isTruck ? truckModels : isCommercial ? utilityModels : carModels;
+  const activeBodyTypeEnum = isTruck
+    ? truckBodyTypeEnum
+    : isCamper
+      ? camperBodyTypeEnum
+      : isCommercial
+        ? utilityBodyTypeEnum
+        : carBodyTypeEnum;
+  const activeExtrasEnum = isTruck
+    ? truckExtrasEnum
+    : isCamper
+      ? camperExtrasEnum
+      : isCommercial
+        ? utilityExtrasEnum
+        : carExtrasEnum;
+  const activeFuelTypeEnum = isTruck
+    ? truckFuelTypeEnum
+    : isCamper
+      ? camperFuelTypeEnum
+      : carFuelTypeEnum;
+  const activeEquipmentEnum = EquipmentEnum;
+  const activeVehicleConditionEnum = VehicleConditionEnum;
 
   const onSubmit = (data: z.infer<typeof vehicleFormSchema>) => {
     console.log("Form Submitted:", data);
@@ -309,7 +306,7 @@ export function VehicleForm() {
   };
 
   return (
-    <Form {...form}>
+    <>
       <div className="flex justify-between items-start w-full max-w-3xl mx-auto mb-8 isolate">
         {steps.map((step, index) => {
           const isActive = currentStep >= step.id;
@@ -352,7 +349,10 @@ export function VehicleForm() {
         })}
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6 max-w-3xl mx-auto"
+      >
         {currentStep === 1 && (
           <div className="space-y-6">
             <Accordion type="single" collapsible defaultValue="item-1">
@@ -361,6 +361,23 @@ export function VehicleForm() {
                   Fahrzeug-Merkmale
                 </AccordionTrigger>
                 <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 px-1">
+                  <div className="col-span-1 md:col-span-2">
+                    <CustomFormField
+                      control={form.control}
+                      fieldType={FormFieldType.SELECT}
+                      name="vehicleType"
+                      label="Fahrzeugtyp"
+                      placeholder="Select vehicle type"
+                      className="w-full"
+                    >
+                      {VehicleTypeEnum.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </CustomFormField>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-3">
                     <CustomFormField
                       control={form.control}
@@ -370,19 +387,26 @@ export function VehicleForm() {
                       placeholder="Select an option"
                       className="w-full"
                     >
-                      {makes.map((group) => (
-                        <SelectGroup key={group.label}>
-                          <SelectLabel>{group.label}</SelectLabel>
-                          {group.items.map((make) => (
-                            <SelectItem
-                              key={`${group.label}-${make.value}`}
-                              value={make.value}
-                            >
-                              {make.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      ))}
+                      {(() => {
+                        const seen = new Set<string>();
+                        return activeMakes.map((group) => {
+                          const uniqueItems = group.items.filter(
+                            (make) => !seen.has(make.value),
+                          );
+                          uniqueItems.forEach((make) => seen.add(make.value));
+                          if (uniqueItems.length === 0) return null;
+                          return (
+                            <SelectGroup key={group.label}>
+                              <SelectLabel>{group.label}</SelectLabel>
+                              {uniqueItems.map((make) => (
+                                <SelectItem key={make.value} value={make.value}>
+                                  {make.label}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          );
+                        });
+                      })()}
                     </CustomFormField>
 
                     <CustomFormField
@@ -395,7 +419,7 @@ export function VehicleForm() {
                       disabled={!selectedMake}
                     >
                       {selectedMake &&
-                        models[selectedMake as keyof typeof models]?.map(
+                        activeModels[selectedMake]?.map(
                           (model: { value: string; label: string }) => (
                             <SelectItem key={model.value} value={model.value}>
                               {model.label}
@@ -483,11 +507,13 @@ export function VehicleForm() {
                     placeholder="Select an option"
                     className="w-full"
                   >
-                    {BodyTypeEnum.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
+                    {activeBodyTypeEnum.map(
+                      (type: { value: string; label: string }) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ),
+                    )}
                   </CustomFormField>
 
                   <CustomFormField
@@ -498,11 +524,13 @@ export function VehicleForm() {
                     placeholder="Select an option"
                     className="w-full"
                   >
-                    {FuelTypeEnum.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
+                    {activeFuelTypeEnum.map(
+                      (type: { value: string; label: string }) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ),
+                    )}
                   </CustomFormField>
 
                   <CustomFormField
@@ -561,11 +589,13 @@ export function VehicleForm() {
                     placeholder="Select an option"
                     className="w-full"
                   >
-                    {VehicleConditionEnum.map((c) => (
-                      <SelectItem key={c.value} value={c.value}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
+                    {activeVehicleConditionEnum.map(
+                      (c: { value: string; label: string }) => (
+                        <SelectItem key={c.value} value={c.value}>
+                          {c.label}
+                        </SelectItem>
+                      ),
+                    )}
                   </CustomFormField>
 
                   <CustomFormField
@@ -725,30 +755,34 @@ export function VehicleForm() {
                 </AccordionTrigger>
                 <AccordionContent className="space-y-6 px-1">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-y-3 pt-6">
-                    {EquipmentEnum.map((equipment) => (
-                      <CustomFormField
-                        key={equipment.value}
-                        control={control}
-                        fieldType={FormFieldType.CHECKBOX}
-                        name={`equipment.${equipment.value}`}
-                        label={equipment.label}
-                      />
-                    ))}
+                    {activeEquipmentEnum.map(
+                      (equipment: { value: string; label: string }) => (
+                        <CustomFormField
+                          key={equipment.value}
+                          control={control}
+                          fieldType={FormFieldType.CHECKBOX}
+                          name={`equipment.${equipment.value}`}
+                          label={equipment.label}
+                        />
+                      ),
+                    )}
                   </div>
                   <div className="space-y-4 pt-4">
                     <Label className="text-lg text-primary font-semibold">
                       Extras
                     </Label>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-y-3">
-                      {ExtrasEnum.map((extra) => (
-                        <CustomFormField
-                          key={extra.value}
-                          control={control}
-                          fieldType={FormFieldType.CHECKBOX}
-                          name={`extras.${extra.value}`}
-                          label={extra.label}
-                        />
-                      ))}
+                      {activeExtrasEnum.map(
+                        (extra: { value: string; label: string }) => (
+                          <CustomFormField
+                            key={extra.value}
+                            control={control}
+                            fieldType={FormFieldType.CHECKBOX}
+                            name={`extras.${extra.value}`}
+                            label={extra.label}
+                          />
+                        ),
+                      )}
                     </div>
                   </div>
                 </AccordionContent>
@@ -1451,18 +1485,28 @@ export function VehicleForm() {
                   <div className="text-muted-foreground">Marke</div>
                   <div className="font-medium">
                     {
-                      makes
-                        .flatMap((g) => [...g.items])
-                        .find((m) => m.value === form.getValues("make"))?.label
+                      activeMakes
+                        .flatMap(
+                          (g: {
+                            label: string;
+                            items: ReadonlyArray<{
+                              value: string;
+                              label: string;
+                            }>;
+                          }) => [...g.items],
+                        )
+                        .find(
+                          (m: { value: string; label: string }) =>
+                            m.value === form.getValues("make"),
+                        )?.label
                     }
                   </div>
 
                   <div className="text-muted-foreground">Modell</div>
                   <div className="font-medium">
-                    {models[
-                      form.getValues("make") as keyof typeof models
-                    ]?.find((m: any) => m.value === form.getValues("model"))
-                      ?.label || form.getValues("model")}
+                    {activeModels[form.getValues("make")]?.find(
+                      (m: any) => m.value === form.getValues("model"),
+                    )?.label || form.getValues("model")}
                   </div>
 
                   <div className="text-muted-foreground">Version</div>
@@ -1472,12 +1516,12 @@ export function VehicleForm() {
 
                   <div className="text-muted-foreground">Karosserie</div>
                   <div className="font-medium">
-                    {getLabel(form.getValues("bodyType"), BodyTypeEnum)}
+                    {getLabel(form.getValues("bodyType"), activeBodyTypeEnum)}
                   </div>
 
                   <div className="text-muted-foreground">Kraftstoff</div>
                   <div className="font-medium">
-                    {getLabel(form.getValues("fuelType"), FuelTypeEnum)}
+                    {getLabel(form.getValues("fuelType"), activeFuelTypeEnum)}
                   </div>
 
                   <div className="text-muted-foreground">Getriebe</div>
@@ -1613,6 +1657,6 @@ export function VehicleForm() {
           )}
         </div>
       </form>
-    </Form>
+    </>
   );
 }

@@ -227,7 +227,7 @@ export default function ListingPage() {
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 text-sm">
-                  <div className="flex text-yellow-400">
+                  <div className="flex text-[#F9A602]">
                     {"★".repeat(Math.round(seller.rating))}
                   </div>
                   <span className="font-semibold">{seller.rating}</span>

@@ -37,7 +37,7 @@ export const ReviewSection = ({
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center gap-1.5 text-sm">
-          <div className="flex text-yellow-400">
+          <div className="flex text-[#F9A602]">
             {"★".repeat(Math.round(rating))}
           </div>
           <span className="font-semibold">{rating}</span>
@@ -54,7 +54,7 @@ export const ReviewSection = ({
                     {review.date}
                   </span>
                 </div>
-                <div className="flex text-yellow-400 text-xs">
+                <div className="flex text-[#F9A602] text-xs">
                   {"★".repeat(review.rating)}
                   {"☆".repeat(5 - review.rating)}
                 </div>

@@ -17,7 +17,7 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { FuelTypeEnum } from "@/constants";
+import { carFuelTypeEnum } from "@/constants/cars";
 
 const formSchema = z.object({
   fuelType: z.array(z.string()),
@@ -57,10 +57,12 @@ export function FuelTypeDialog() {
               fieldType={FormFieldType.CHECKBOX_GROUP}
               name="fuelType"
               className="grid grid-cols-2 gap-3"
-              options={FuelTypeEnum.map((fuel) => ({
-                label: fuel.label,
-                value: fuel.value,
-              }))}
+              options={carFuelTypeEnum.map(
+                (fuel: { value: string; label: string }) => ({
+                  label: fuel.label,
+                  value: fuel.value,
+                }),
+              )}
             />
           </FieldGroup>
           <DialogFooter>

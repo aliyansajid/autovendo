@@ -17,7 +17,7 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { BodyTypeEnum } from "@/constants";
+import { carBodyTypeEnum } from "@/constants/cars";
 
 const formSchema = z.object({
   vehicleType: z.array(z.string()),
@@ -57,10 +57,12 @@ export function VehicleTypeDialog() {
               fieldType={FormFieldType.CHECKBOX_GROUP}
               name="vehicleType"
               className="grid grid-cols-2 gap-3"
-              options={BodyTypeEnum.map((body) => ({
-                label: body.label,
-                value: body.value,
-              }))}
+              options={carBodyTypeEnum.map(
+                (body: { value: string; label: string }) => ({
+                  label: body.label,
+                  value: body.value,
+                }),
+              )}
             />
           </FieldGroup>
           <DialogFooter>

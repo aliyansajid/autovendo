@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { PlusCircle, CarFront, Menu } from "lucide-react";
+import Image from "next/image";
+import { PlusCircle, Menu } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -46,12 +47,17 @@ export const Header = () => {
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="flex items-center gap-2 transition-opacity hover:opacity-90"
+            className="flex items-center transition-opacity hover:opacity-90"
           >
-            <div className="rounded-lg bg-white/20 p-1.5">
-              <CarFront className="text-white" size={20} />
+            <div className="bg-white rounded-lg p-1.5">
+              <Image
+                src="/logo.png"
+                alt="Autovendo"
+                width={48}
+                height={40}
+                className="h-10 w-auto object-contain"
+              />
             </div>
-            <span className="text-xl font-bold text-white">Autovendo</span>
           </Link>
 
           <NavigationMenu className="hidden md:flex">
@@ -96,6 +102,7 @@ export const Header = () => {
               <Button
                 variant="outline"
                 size="icon"
+                aria-label="Open menu"
                 className="bg-white/10 border-white/20 text-white hover:bg-white/20"
               >
                 <Menu />

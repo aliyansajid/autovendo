@@ -99,8 +99,8 @@ export default function DealerPage() {
                         <BadgeCheck className="text-primary" size={20} />
                       )}
                     </div>
-                    <Badge className="bg-yellow-50">
-                      <div className="flex text-yellow-400">
+                    <Badge className="bg-[#F9A602]/10">
+                      <div className="flex text-[#F9A602]">
                         {"★".repeat(Math.round(garage.rating))}
                       </div>
                       <span className="font-semibold text-foreground">
@@ -185,7 +185,7 @@ export default function DealerPage() {
                 <CardContent className="flex items-center gap-6">
                   <div className="text-center space-y-2">
                     <div className="text-4xl font-bold">{garage.rating}</div>
-                    <div className="flex text-yellow-400 justify-center">
+                    <div className="flex text-[#F9A602] justify-center">
                       {"★".repeat(Math.round(garage.rating))}
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -392,14 +392,14 @@ export default function DealerPage() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-center">
-                      <div className="relative w-32 h-32 flex items-center justify-center rounded-full border-8 border-yellow-400">
+                      <div className="relative w-32 h-32 flex items-center justify-center rounded-full border-8 border-[#F9A602]">
                         <span className="text-4xl font-bold">
                           {garage.rating}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex justify-center text-yellow-400 gap-1">
+                    <div className="flex justify-center text-[#F9A602] gap-1">
                       {"★".repeat(Math.round(garage.rating))}
                     </div>
 
@@ -414,10 +414,10 @@ export default function DealerPage() {
                           className="flex items-center gap-2 text-sm"
                         >
                           <span className="w-3">{star}</span>
-                          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                          <Star className="w-3 h-3 text-[#F9A602] fill-[#F9A602]" />
                           <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-yellow-400"
+                              className="h-full bg-[#F9A602]"
                               style={{
                                 width:
                                   star === 5
@@ -444,7 +444,7 @@ export default function DealerPage() {
                         <div className="space-y-1">
                           <h4 className="font-bold">Excellent Service!</h4>
                           <div className="flex items-center gap-2">
-                            <div className="flex text-yellow-400 text-xs">
+                            <div className="flex text-[#F9A602] text-xs">
                               {"★".repeat(5)}
                             </div>
                             <span className="text-xs text-muted-foreground">

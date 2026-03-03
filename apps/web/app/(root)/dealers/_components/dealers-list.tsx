@@ -1,14 +1,8 @@
 "use client";
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Card, CardContent, CardHeader } from "@repo/ui/components/card";
 import { Button } from "@repo/ui/components/button";
-import { FieldGroup } from "@repo/ui/src/components/field";
 import { Badge } from "@repo/ui/components/badge";
-import Image from "next/image";
 import { MapPin, ArrowRight, Search } from "lucide-react";
 import Link from "next/link";
 import { dealers } from "@/lib/mock-data";
@@ -18,23 +12,8 @@ import {
   InputGroupInput,
 } from "@repo/ui/src/components/input-group";
 
-const formSchema = z.object({
-  searchQuery: z
-    .string()
-    .min(3, "Search query must be at least 3 characters long")
-    .max(50, "Search query must be at most 50 characters long"),
-});
-
 export const DealersList = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      searchQuery: "",
-    },
-  });
-
-  function onSubmit(data: z.infer<typeof formSchema>) {}
 
   const filteredDealers = dealers.filter(
     (garage) =>
@@ -46,27 +25,27 @@ export const DealersList = () => {
     <div className="w-full max-w-285 mx-auto px-4 py-12 space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold">Unsere Dealers</h1>
+          <h1 className="text-2xl font-bold">Unsere Händler</h1>
           <p className="text-muted-foreground text-sm">
             Finden Sie den passenden Händler in Ihrer Nähe.
           </p>
         </div>
 
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <FieldGroup className="w-full md:w-96">
-            <InputGroup>
-              <InputGroupInput placeholder="Search..." />
-              <InputGroupAddon>
-                <Search />
-              </InputGroupAddon>
-            </InputGroup>
-          </FieldGroup>
-        </form>
+        <InputGroup className="w-full md:w-96">
+          <InputGroupInput
+            placeholder="Händler suchen..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <InputGroupAddon>
+            <Search />
+          </InputGroupAddon>
+        </InputGroup>
       </div>
 
       {filteredDealers.length === 0 ? (
-        <div className="py-20 text-center bg-secondary/30 rounded-xl border border-border mt-8">
-          <h3 className="text-xl font-semibold mb-2">Keine garage gefunden</h3>
+        <div className="py-20 text-center bg-secondary/30 rounded-xl border border-border">
+          <h3 className="text-xl font-semibold mb-2">Kein Händler gefunden</h3>
           <p className="text-muted-foreground">
             Versuchen Sie es mit einem anderen Suchbegriff.
           </p>
@@ -79,46 +58,31 @@ export const DealersList = () => {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="divide-y divide-border border border-border rounded-xl overflow-hidden">
           {filteredDealers.map((garage) => (
             <Link
               key={garage.id}
               href={`/dealers/${garage.id}`}
-              className="group"
+              className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-muted/50 transition-colors group"
             >
-              <Card className="pt-0 transition-shadow hover:shadow-md cursor-pointer">
-                <CardHeader className="relative h-48 overflow-hidden rounded-t-xl">
-                  <Image
-                    src={garage.image}
-                    alt={garage.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    priority={garage.id <= 4}
-                  />
+              <div className="min-w-0 space-y-1 flex-1">
+                <div className="flex items-center gap-2">
+                  <h2 className="font-semibold text-base truncate">
+                    {garage.name}
+                  </h2>
                   {(garage.id === 1 || garage.id === 2) && (
-                    <Badge className="absolute top-2 right-2 bg-yellow-400 text-foreground font-semibold z-10">
+                    <Badge className="bg-[#f9a602] text-foreground font-semibold shrink-0">
                       Premium Partner
                     </Badge>
                   )}
-                </CardHeader>
+                </div>
+                <div className="flex items-center text-muted-foreground gap-1 pt-0.5">
+                  <MapPin className="size-3.5 shrink-0" />
+                  <span className="text-xs">{garage.location}</span>
+                </div>
+              </div>
 
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <h2 className="text-lg font-bold">{garage.name}</h2>
-                    <div className="flex items-center text-muted-foreground gap-1">
-                      <MapPin className="size-4" />
-                      <span className="text-sm truncate">
-                        {garage.location}
-                      </span>
-                    </div>
-                  </div>
-
-                  <Button variant="secondary" className="w-full">
-                    Zum garage
-                    <ArrowRight />
-                  </Button>
-                </CardContent>
-              </Card>
+              <ArrowRight className="size-4 text-muted-foreground shrink-0 -translate-x-1 group-hover:translate-x-0 transition-transform" />
             </Link>
           ))}
         </div>

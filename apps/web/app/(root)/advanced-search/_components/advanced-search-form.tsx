@@ -22,105 +22,89 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import {
-  BodyTypeEnum,
   DriveTypeEnum,
   EquipmentEnum,
-  FuelTypeEnum,
   TransmissionTypeEnum,
   VehicleConditionEnum,
   ColorEnum,
   EnergyLabelEnum,
   EmissionStandardEnum,
+  daysListedOptions,
+  qualityLabels,
+  yearHistogram,
+  mileageHistogram,
+  priceHistogram,
 } from "@/constants";
+import {
+  carBodyTypeEnum,
+  carFuelTypeEnum,
+  carExtrasEnum,
+} from "@/constants/cars";
+import {
+  utilityBodyTypeEnum,
+  utilityFuelTypeEnum,
+  utilityExtrasEnum,
+} from "@/constants/commercial-vehicles";
+import {
+  truckBodyTypeEnum,
+  truckFuelTypeEnum,
+  truckExtrasEnum,
+} from "@/constants/truck";
+import {
+  camperBodyTypeEnum,
+  camperFuelTypeEnum,
+  camperExtrasEnum,
+} from "@/constants/camper";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
+const positiveNum = z.number({
+  error: "Bitte geben Sie eine positive Zahl ein",
+});
+const nonnegativeRange = z.array(positiveNum.nonnegative());
+const positiveRange = z.array(positiveNum.positive());
+const optionalStr = z.string().optional();
+
 const formSchema = z.object({
-  title: z
-    .string()
-    .min(5, "Bug title must be at least 5 characters.")
-    .max(32, "Bug title must be at most 32 characters.")
-    .optional(),
-  description: z
-    .string()
-    .min(20, "Description must be at least 20 characters.")
-    .max(100, "Description must be at most 100 characters.")
-    .optional(),
-  year: z.array(z.number()),
-  "year-from": z.string().optional(),
-  "year-to": z.string().optional(),
-  mileage: z.array(z.number()),
-  "mileage-from": z.string().optional(),
-  "mileage-to": z.string().optional(),
-  price: z.array(z.number()),
-  "price-from": z.string().optional(),
-  "price-to": z.string().optional(),
-  priceType: z.string().optional(),
-  power: z.array(z.number()),
-  "power-from": z.string().optional(),
-  "power-to": z.string().optional(),
-  powerType: z.string().optional(),
-  capacity: z.array(z.number()),
-  "capacity-from": z.string().optional(),
-  "capacity-to": z.string().optional(),
-  cylinder: z.array(z.number()),
-  "cylinder-from": z.string().optional(),
-  "cylinder-to": z.string().optional(),
-  consumption: z.array(z.number()),
-  "consumption-from": z.string().optional(),
-  "consumption-to": z.string().optional(),
-  emissions: z.array(z.number()),
-  "emissions-from": z.string().optional(),
-  "emissions-to": z.string().optional(),
-  daysListed: z.string().optional(),
+  year: nonnegativeRange,
+  "year-from": optionalStr,
+  "year-to": optionalStr,
+  mileage: nonnegativeRange,
+  "mileage-from": optionalStr,
+  "mileage-to": optionalStr,
+  price: nonnegativeRange,
+  "price-from": optionalStr,
+  "price-to": optionalStr,
+  priceType: optionalStr,
+  power: nonnegativeRange,
+  "power-from": optionalStr,
+  "power-to": optionalStr,
+  powerType: optionalStr,
+  capacity: positiveRange,
+  "capacity-from": optionalStr,
+  "capacity-to": optionalStr,
+  cylinder: positiveRange,
+  "cylinder-from": optionalStr,
+  "cylinder-to": optionalStr,
+  consumption: nonnegativeRange,
+  "consumption-from": optionalStr,
+  "consumption-to": optionalStr,
+  emissions: nonnegativeRange,
+  "emissions-from": optionalStr,
+  "emissions-to": optionalStr,
+  daysListed: optionalStr,
   conditions: z.array(z.string()).optional(),
 });
 
 export const AdvancedSearchForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      year: [1900, CURRENT_YEAR],
-      "year-from": "1900",
-      "year-to": CURRENT_YEAR.toString(),
-      mileage: [0, 400000],
-      "mileage-from": "0",
-      "mileage-to": "400000",
-      price: [0, 1000000],
-      "price-from": "0",
-      "price-to": "1000000+",
-      priceType: "price",
-      power: [0, 1500],
-      "power-from": "0",
-      "power-to": "1500",
-      powerType: "ps",
-      capacity: [1, 8000],
-      "capacity-from": "1",
-      "capacity-to": "8000+",
-      cylinder: [1, 16],
-      "cylinder-from": "1",
-      "cylinder-to": "16",
-      consumption: [0, 30],
-      "consumption-from": "0",
-      "consumption-to": "30+",
-      emissions: [0, 560],
-      "emissions-from": "0",
-      "emissions-to": "560+",
-      daysListed: "any",
-      conditions: [],
-    },
+    defaultValues: { powerType: "ps", daysListed: "any" },
   });
 
   const yearRange = form.watch("year") || [1900, CURRENT_YEAR];
   const mileageRange = form.watch("mileage") || [0, 400000];
   const priceRange = form.watch("price") || [0, 1000000];
-  const powerRange = form.watch("power") || [0, 1500];
-  const capacityRange = form.watch("capacity") || [1, 8000];
-  const cylinderRange = form.watch("cylinder") || [1, 16];
-  const consumptionRange = form.watch("consumption") || [0, 30];
-  const emissionsRange = form.watch("emissions") || [0, 560];
 
   useEffect(() => {
     form.setValue("year-from", yearRange[0]?.toString() || "1900");
@@ -129,115 +113,6 @@ export const AdvancedSearchForm = () => {
       yearRange[1]?.toString() || CURRENT_YEAR.toString(),
     );
   }, [yearRange, form]);
-
-  useEffect(() => {
-    form.setValue("mileage-from", mileageRange[0]?.toString() || "0");
-    addCommas("mileage-to", mileageRange[1], "400000+", form);
-  }, [mileageRange, form]);
-
-  useEffect(() => {
-    form.setValue("price-from", priceRange[0]?.toString() || "0");
-    addCommas("price-to", priceRange[1], "1000000+", form);
-  }, [priceRange, form]);
-
-  useEffect(() => {
-    form.setValue("power-from", powerRange[0]?.toString() || "0");
-    addCommas("power-to", powerRange[1], "1500+", form);
-  }, [powerRange, form]);
-
-  useEffect(() => {
-    form.setValue("capacity-from", capacityRange[0]?.toString() || "1");
-    addCommas("capacity-to", capacityRange[1], "8000+", form);
-  }, [capacityRange, form]);
-
-  useEffect(() => {
-    form.setValue("cylinder-from", cylinderRange[0]?.toString() || "1");
-    addCommas("cylinder-to", cylinderRange[1], "16", form);
-  }, [cylinderRange, form]);
-
-  useEffect(() => {
-    form.setValue("consumption-from", consumptionRange[0]?.toString() || "0");
-    addCommas("consumption-to", consumptionRange[1], "30+", form);
-  }, [consumptionRange, form]);
-
-  useEffect(() => {
-    form.setValue("emissions-from", emissionsRange[0]?.toString() || "0");
-    addCommas("emissions-to", emissionsRange[1], "560+", form);
-  }, [emissionsRange, form]);
-
-  function addCommas(
-    field: any,
-    val: number | undefined,
-    maxString: string,
-    f: any,
-  ) {
-    if (val === undefined) {
-      f.setValue(field, maxString);
-    } else if (field === "price-to" && val >= 1000000) {
-      f.setValue(field, "1'000'000+");
-    } else if (field === "mileage-to" && val >= 400000) {
-      f.setValue(field, "400'000+");
-    } else if (field === "power-to" && val >= 1500) {
-      f.setValue(field, "1'500+");
-    } else if (field === "capacity-to" && val >= 8000) {
-      f.setValue(field, "8'000+");
-    } else if (field === "consumption-to" && val >= 30) {
-      f.setValue(field, "30+");
-    } else if (field === "emissions-to" && val >= 560) {
-      f.setValue(field, "560+");
-    } else {
-      f.setValue(field, val.toString());
-    }
-  }
-
-  const yearHistogram = [
-    { year: 1910, h: 10 },
-    { year: 1920, h: 20 },
-    { year: 1930, h: 30 },
-    { year: 1940, h: 45 },
-    { year: 1950, h: 60 },
-    { year: 1960, h: 80 },
-    { year: 1970, h: 60 },
-    { year: 1980, h: 40 },
-    { year: 1990, h: 20 },
-    { year: 2000, h: 10 },
-    { year: 2010, h: 50 },
-    { year: 2015, h: 90 },
-    { year: 2020, h: 100 },
-    { year: CURRENT_YEAR, h: 30 },
-  ];
-
-  const mileageHistogram = [
-    { value: 0, h: 100 },
-    { value: 30000, h: 80 },
-    { value: 60000, h: 60 },
-    { value: 90000, h: 40 },
-    { value: 120000, h: 20 },
-    { value: 150000, h: 10 },
-    { value: 180000, h: 5 },
-    { value: 210000, h: 5 },
-    { value: 240000, h: 20 },
-    { value: 270000, h: 40 },
-    { value: 300000, h: 60 },
-    { value: 330000, h: 30 },
-    { value: 360000, h: 10 },
-    { value: 400000, h: 5 },
-  ];
-
-  const priceHistogram = [
-    { value: 0, h: 20 },
-    { value: 20000, h: 30 },
-    { value: 40000, h: 50 },
-    { value: 60000, h: 70 },
-    { value: 80000, h: 90 },
-    { value: 100000, h: 60 },
-    { value: 120000, h: 40 },
-    { value: 140000, h: 30 },
-    { value: 160000, h: 20 },
-    { value: 180000, h: 10 },
-    { value: 200000, h: 10 },
-    { value: 1000000, h: 5 },
-  ];
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     console.log(data);
@@ -275,10 +150,10 @@ export const AdvancedSearchForm = () => {
             { id: "camper", label: "Wohnmobil", icon: Caravan },
             { id: "utility", label: "Nutzfahrzeug", icon: Truck },
             { id: "truck", label: "Lastwagen", icon: Truck },
-            { id: "trailer", label: "Anhänger", icon: Truck },
           ].map((type) => (
             <button
               key={type.id}
+              type="button"
               onClick={() => setVehicleType(type.id)}
               className={`flex items-center gap-3 pb-4 min-w-max transition-all ${
                 vehicleType === type.id
@@ -299,6 +174,7 @@ export const AdvancedSearchForm = () => {
             "basic",
             "tech",
             "equipment",
+            "extras",
             "appearance",
             "energy",
             "more",
@@ -511,28 +387,14 @@ export const AdvancedSearchForm = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <Label className="text-base font-semibold">Preis</Label>
-                      <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
-                        Zurücksetzen
-                      </span>
-                    </div>
-
-                    <CustomFormField
-                      control={form.control}
-                      fieldType={FormFieldType.RADIO_GROUP}
-                      name="priceType"
-                      className="flex-row gap-4 mb-0"
-                      wrapperClassName="w-fit"
-                      options={[
-                        { label: "Kaufpreis", value: "price" },
-                        { label: "Leasingrate", value: "leasing" },
-                      ]}
-                    />
+                  <div className="flex flex-col">
+                    <Label className="text-base font-semibold">Preis</Label>
+                    <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+                      Zurücksetzen
+                    </span>
                   </div>
 
-                  <div className="h-16 flex items-end justify-between gap-1 px-2 pb-2">
+                  <div className="h-16 flex items-end justify-between gap-1">
                     {priceHistogram.map(
                       (item: { value: number; h: number }, i: number) => {
                         const pStart = priceRange?.[0] ?? 0;
@@ -695,26 +557,31 @@ export const AdvancedSearchForm = () => {
                   </span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
-                  {BodyTypeEnum.map(
-                    (type: { value: string; label: string }) => (
-                      <div
-                        key={type.value}
-                        className="flex items-center justify-between"
-                      >
-                        <CustomFormField
-                          control={form.control}
-                          fieldType={FormFieldType.CHECKBOX}
-                          name={`bodyType-${type.value}`}
-                          label={type.label}
-                        />
-                        <span className="text-sm text-muted-foreground">
-                          {Math.floor(Math.random() * 50000).toLocaleString(
-                            "de-CH",
-                          )}
-                        </span>
-                      </div>
-                    ),
-                  )}
+                  {(vehicleType === "utility"
+                    ? utilityBodyTypeEnum
+                    : vehicleType === "truck"
+                      ? truckBodyTypeEnum
+                      : vehicleType === "camper"
+                        ? camperBodyTypeEnum
+                        : carBodyTypeEnum
+                  ).map((type: { value: string; label: string }) => (
+                    <div
+                      key={type.value}
+                      className="flex items-center justify-between"
+                    >
+                      <CustomFormField
+                        control={form.control}
+                        fieldType={FormFieldType.CHECKBOX}
+                        name={`bodyType-${type.value}`}
+                        label={type.label}
+                      />
+                      <span className="text-sm text-muted-foreground">
+                        {Math.floor(Math.random() * 50000).toLocaleString(
+                          "de-CH",
+                        )}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </AccordionContent>
@@ -738,7 +605,14 @@ export const AdvancedSearchForm = () => {
                     </span>
                   </div>
                   <div className="space-y-3">
-                    {FuelTypeEnum.map((type) => (
+                    {(vehicleType === "utility"
+                      ? utilityFuelTypeEnum
+                      : vehicleType === "truck"
+                        ? truckFuelTypeEnum
+                        : vehicleType === "camper"
+                          ? camperFuelTypeEnum
+                          : carFuelTypeEnum
+                    ).map((type: { value: string; label: string }) => (
                       <div
                         key={type.value}
                         className="flex items-center justify-between"
@@ -952,6 +826,34 @@ export const AdvancedSearchForm = () => {
                     fieldType={FormFieldType.CHECKBOX}
                     name={equipment.value}
                     label={equipment.label}
+                  />
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <Separator />
+
+          <AccordionItem value="extras" className="border-none">
+            <AccordionTrigger className="flex items-center text-xl font-bold text-primary hover:no-underline">
+              Extras
+            </AccordionTrigger>
+            <AccordionContent className="pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
+                {(vehicleType === "utility"
+                  ? utilityExtrasEnum
+                  : vehicleType === "truck"
+                    ? truckExtrasEnum
+                    : vehicleType === "camper"
+                      ? camperExtrasEnum
+                      : carExtrasEnum
+                ).map((extra: { value: string; label: string }) => (
+                  <CustomFormField
+                    key={extra.value}
+                    control={form.control}
+                    fieldType={FormFieldType.CHECKBOX}
+                    name={extra.value}
+                    label={extra.label}
                   />
                 ))}
               </div>
@@ -1228,16 +1130,12 @@ export const AdvancedSearchForm = () => {
                     fieldType={FormFieldType.RADIO_GROUP}
                     name="daysListed"
                     className="flex-col"
-                    options={[
-                      { label: "Beliebig", value: "any" },
-                      { label: "1 Tag", value: "1 tag" },
-                      { label: "2 Tage", value: "2 tage" },
-                      { label: "3 Tage", value: "3 tage" },
-                      { label: "5 Tage", value: "5 tage" },
-                      { label: "7 Tage", value: "7 tage" },
-                      { label: "14 Tage", value: "14 tage" },
-                      { label: "28 Tage", value: "28 tage" },
-                    ]}
+                    options={
+                      daysListedOptions as unknown as {
+                        label: string;
+                        value: string;
+                      }[]
+                    }
                   />
                 </div>
 
@@ -1251,39 +1149,19 @@ export const AdvancedSearchForm = () => {
                     </span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
-                    {[
-                      { l: "AMAG", c: "7'967" },
-                      { l: "Audi Occasion :plus", c: "768" },
-                      { l: "Auto Welt von Rotz AG", c: "902" },
-                      { l: "BMW", c: "1'873" },
-                      { l: "BMW Premium Selection", c: "2'725" },
-                      { l: "BYD Official Partner", c: "145" },
-                      { l: "CUPRA Approved", c: "153" },
-                      { l: "Jaguar Approved", c: "2" },
-                      { l: "Land Rover Approved", c: "37" },
-                      { l: "Merbag", c: "1'601" },
-                      { l: "Mercedes-Benz Certified", c: "2'899" },
-                      { l: "Mini", c: "133" },
-                      { l: "Occasionen MINI NEXT", c: "227" },
-                      { l: "Quality1", c: "30'309" },
-                      { l: "SEAT Occasion Plus", c: "145" },
-                      { l: "Skoda Occasion Plus", c: "424" },
-                      { l: "VFAS", c: "2'046" },
-                      { l: "Volvo Selekt", c: "1'581" },
-                      { l: "VW Occasion Plus", c: "770" },
-                    ].map((item) => (
+                    {qualityLabels.map((item) => (
                       <div
-                        key={item.l}
+                        key={item.label}
                         className="flex items-center justify-between"
                       >
                         <CustomFormField
                           control={form.control}
                           fieldType={FormFieldType.CHECKBOX}
-                          name={`seal-${item.l.toLowerCase().replace(/[^a-z0-9]/g, "-")}`}
-                          label={item.l}
+                          name={`seal-${item.label.toLowerCase().replace(/[^a-z0-9]/g, "-")}`}
+                          label={item.label}
                         />
                         <span className="text-sm text-muted-foreground">
-                          {item.c}
+                          {item.count}
                         </span>
                       </div>
                     ))}
@@ -1297,7 +1175,7 @@ export const AdvancedSearchForm = () => {
         <div className="fixed bottom-0 left-0 right-0 py-4 px-4 md:px-0 bg-background flex justify-center items-center z-50 shadow-2xl border-t">
           <Button
             size="lg"
-            className="w-full max-w-xl bg-[#FFCE00] hover:bg-[#FFCE00]/90 text-black"
+            className="w-full max-w-xl bg-[#F9A602] hover:bg-[#F9A602]/90 text-black"
           >
             155'927 Fahrzeuge anzeigen
           </Button>

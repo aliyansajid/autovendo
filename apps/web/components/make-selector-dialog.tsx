@@ -215,7 +215,7 @@ export function MakeSelectorDialog({
             </Label>
             <Badge
               variant="secondary"
-              className="bg-yellow-400 text-black hover:bg-yellow-500 text-[10px] h-4 px-1 rounded-sm"
+              className="bg-[#f9a602] text-black hover:bg-yellow-500 text-[10px] h-4 px-1 rounded-sm"
             >
               NEW
             </Badge>

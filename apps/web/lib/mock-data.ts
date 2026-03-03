@@ -581,21 +581,29 @@ const baseDealers = [
     name: "Elite Motors Zurich",
     location: "Zurich, Switzerland",
     image: "/suv_side_view_1770816147177.png",
+    description:
+      "Ihr Premiumpartner für Luxus- und Sportfahrzeuge in Zürich. Kuratiertes Angebot renommierter Marken mit persönlicher Beratung und transparenten Preisen.",
   },
   {
     name: "Alpine Auto Group",
     location: "Geneva, Switzerland",
     image: "/sport_car_blue_1770816178212.png",
+    description:
+      "Spezialist für Sportwagen und Cabrios in Genf. Hervorragende Serviceleistungen, Finanzierungsoptionen und ein erfahrenes Team stehen Ihnen zur Seite.",
   },
   {
     name: "Prestige Cars Bern",
     location: "Bern, Switzerland",
     image: "/sedan_white_v2_1770816230304.png",
+    description:
+      "Breites Sortiment an geprüften Gebrauch- und Neuwagen in der Bundeshauptstadt. Alle Fahrzeuge mit Garantie und detaillierter Fahrzeughistorie.",
   },
   {
     name: "Lakeside Classics",
     location: "Lucerne, Switzerland",
     image: "/hatchback_red_1770816163420.png",
+    description:
+      "Klassische und moderne Fahrzeuge am Vierwaldstättersee. Wir bieten Inzahlungnahme, Leasing und eine exklusive Auswahl für anspruchsvolle Käufer.",
   },
 ];
 

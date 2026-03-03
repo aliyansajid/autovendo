@@ -14,13 +14,12 @@ import {
   ColorEnum,
   EquipmentEnum,
   VehicleConditionEnum,
-  FuelTypeEnum,
-  BodyTypeEnum,
   TransmissionTypeEnum,
   prices,
   powerOptions,
   evOptions,
 } from "@/constants";
+import { carBodyTypeEnum, carFuelTypeEnum } from "@/constants/cars";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import { Separator } from "@repo/ui/components/separator";
 import { getRegistrationYears, mileages } from "@/lib/utils";
@@ -231,7 +230,7 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>Kraftstoffart</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchFuel, FuelTypeEnum)}
+                {renderSelectedText(watchFuel, carFuelTypeEnum)}
                 <FuelTypeDialog />
               </div>
             </div>
@@ -247,7 +246,7 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>Fahrzeugtyp</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchVehicleType, BodyTypeEnum)}
+                {renderSelectedText(watchVehicleType, carBodyTypeEnum)}
                 <VehicleTypeDialog />
               </div>
             </div>

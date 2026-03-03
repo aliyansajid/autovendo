@@ -1,22 +1,29 @@
 import { z } from "zod";
 import {
   BatteryOwnershipEnum,
-  BodyTypeEnum,
   ChargingPlugTypeFastEnum,
   ChargingPlugTypeStandardEnum,
   ColorEnum,
   DriveTypeEnum,
   EmissionStandardEnum,
   EnergyLabelEnum,
-  FuelTypeEnum,
   GearTransmissionEnum,
   TransmissionTypeEnum,
   VehicleConditionEnum,
   WarrantyEnum,
 } from "@/constants";
+import { carBodyTypeEnum, carFuelTypeEnum } from "@/constants/cars";
+import { utilityBodyTypeEnum } from "@/constants/commercial-vehicles";
+import { truckBodyTypeEnum, truckFuelTypeEnum } from "@/constants/truck";
+import { camperBodyTypeEnum, camperFuelTypeEnum } from "@/constants/camper";
 
 export const vehicleFormSchema = z
   .object({
+    // Vehicle Type
+    vehicleType: z.enum(["car", "utility", "truck", "camper"], {
+      error: "Bitte wählen Sie einen Fahrzeugtyp.",
+    }),
+
     // Vehicle Features
     make: z.string().min(1, "Bitte wählen Sie eine Marke."),
     model: z.string().min(1, "Bitte wählen Sie ein Modell."),
@@ -33,14 +40,23 @@ export const vehicleFormSchema = z
       DriveTypeEnum.map((item) => item.value) as [string, ...string[]],
     ),
     bodyType: z.enum(
-      BodyTypeEnum.map((item) => item.value) as [string, ...string[]],
+      [
+        ...carBodyTypeEnum.map((item) => item.value),
+        ...utilityBodyTypeEnum.map((item) => item.value),
+        ...truckBodyTypeEnum.map((item) => item.value),
+        ...camperBodyTypeEnum.map((item) => item.value),
+      ] as [string, ...string[]],
       {
         error: "Bitte wählen Sie ein Fahrzeugtyp.",
       },
     ),
-    fuelType: z.enum(
-      FuelTypeEnum.map((item) => item.value) as [string, ...string[]],
-    ),
+    fuelType: z.enum([
+      ...new Set([
+        ...carFuelTypeEnum.map((item) => item.value),
+        ...truckFuelTypeEnum.map((item) => item.value),
+        ...camperFuelTypeEnum.map((item) => item.value),
+      ]),
+    ] as [string, ...string[]]),
     color: z.enum(
       ColorEnum.map((item) => item.value) as [string, ...string[]],
       {

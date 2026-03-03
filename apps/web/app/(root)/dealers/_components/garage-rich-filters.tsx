@@ -21,12 +21,9 @@ import {
   InputGroupText,
   InputGroupInput,
 } from "@repo/ui/src/components/input-group";
-import {
-  BodyTypeEnum,
-  FuelTypeEnum,
-  TransmissionTypeEnum,
-  DriveTypeEnum,
-} from "@/constants";
+import { TransmissionTypeEnum, DriveTypeEnum } from "@/constants";
+import { carBodyTypeEnum, carFuelTypeEnum } from "@/constants/cars";
+
 import { FieldLabel } from "@repo/ui/src/components/field";
 
 // Utility for classes
@@ -419,7 +416,9 @@ export default function GarageRichFilters() {
           <PopoverContent className="w-auto" align="start">
             <GridFilter
               title="Body Type"
-              items={BodyTypeEnum.map((t) => ({ ...t, icon: Car }))}
+              items={carBodyTypeEnum.map(
+                (t: { value: string; label: string }) => ({ ...t, icon: Car }),
+              )}
               selectedValues={selectedBodyTypes}
               onChange={setSelectedBodyTypes}
             />
@@ -441,10 +440,12 @@ export default function GarageRichFilters() {
           <PopoverContent align="start">
             <CheckboxListFilter
               title="Fuel Type"
-              items={FuelTypeEnum.map((t) => ({
-                ...t,
-                count: Math.floor(Math.random() * 100),
-              }))}
+              items={carFuelTypeEnum.map(
+                (t: { value: string; label: string }) => ({
+                  ...t,
+                  count: Math.floor(Math.random() * 100),
+                }),
+              )}
               selectedValues={selectedFuels}
               onChange={setSelectedFuels}
             />

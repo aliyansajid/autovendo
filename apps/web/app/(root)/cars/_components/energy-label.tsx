@@ -8,7 +8,7 @@ interface EnergyLabelProps {
 const energyClasses = [
   { label: "A", color: "bg-green-600" },
   { label: "B", color: "bg-green-500" },
-  { label: "C", color: "bg-yellow-400" },
+  { label: "C", color: "bg-[#f9a602]" },
   { label: "D", color: "bg-yellow-500" },
   { label: "E", color: "bg-orange-500" },
   { label: "F", color: "bg-orange-600" },
