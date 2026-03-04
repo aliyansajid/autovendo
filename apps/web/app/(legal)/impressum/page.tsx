@@ -1,5 +1,6 @@
 import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function ImpressumPage() {
@@ -200,7 +201,10 @@ export default function ImpressumPage() {
               Haben Sie noch weitere Fragen? Wir sind gerne für Sie da.
             </p>
             <Button asChild>
-              <Link href="contact">Kontakt</Link>
+              <Link href="contact">
+                Kontaktieren Sie uns
+                <ArrowRight />
+              </Link>
             </Button>
           </section>
         </div>

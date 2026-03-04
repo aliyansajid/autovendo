@@ -28,6 +28,8 @@ import {
   Globe,
   Calendar,
   BadgeCheck,
+  Send,
+  PlusCircle,
 } from "lucide-react";
 import Image from "next/image";
 import {
@@ -337,7 +339,10 @@ export default function DealerPage() {
                         placeholder="Ich interessiere mich für..."
                       />
                       <Field>
-                        <Button className="w-full">Nachricht senden</Button>
+                        <Button className="w-full">
+                          Nachricht senden
+                          <Send />
+                        </Button>
                       </Field>
                     </FieldGroup>
                   </form>
@@ -387,7 +392,10 @@ export default function DealerPage() {
               </div>
 
               <div className="flex justify-center">
-                <Button variant="outline">Mehr laden</Button>
+                <Button variant="outline">
+                  <PlusCircle />
+                  Mehr laden
+                </Button>
               </div>
             </div>
           </TabsContent>

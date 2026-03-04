@@ -1,5 +1,6 @@
 import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function InsertionsregelnPage() {
@@ -267,7 +268,10 @@ export default function InsertionsregelnPage() {
               Informationen benötigen, stehen wir Ihnen gerne zur Verfügung.
             </p>
             <Button asChild>
-              <Link href="contact">Kontakt</Link>
+              <Link href="contact">
+                Kontaktieren Sie uns
+                <ArrowRight />
+              </Link>
             </Button>
           </section>
         </div>

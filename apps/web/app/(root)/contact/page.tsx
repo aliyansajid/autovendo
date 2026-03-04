@@ -9,7 +9,7 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Separator } from "@repo/ui/src/components/separator";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 import Link from "next/link";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
 
@@ -188,6 +188,7 @@ export default function ContactPage() {
                   <div className="flex w-full justify-end">
                     <Button type="submit" className="w-full md:w-auto">
                       Nachricht senden
+                      <Send />
                     </Button>
                   </div>
                 </Field>

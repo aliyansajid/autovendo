@@ -13,6 +13,7 @@ import {
   BarChart3,
   Users,
   type LucideIcon,
+  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -82,10 +83,14 @@ export default function SellPage() {
               <Button asChild>
                 <Link href="/vehicle-form">
                   Erstellen Sie Ihr erstes Inserat
+                  <ArrowRight />
                 </Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link href="/pricing">So funktioniert&apos;s</Link>
+                <Link href="/pricing">
+                  So funktioniert&apos;s
+                  <ArrowRight />
+                </Link>
               </Button>
             </div>
           </CardContent>
@@ -270,12 +275,18 @@ export default function SellPage() {
             Autohändlern. Unsere Pakete sind darauf zugeschnitten, Autohäusern
             jeder Grösse zum Erfolg im digitalen Markt zu verhelfen.
           </p>
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <Button asChild>
-              <Link href="/vehicle-form">Jetzt starten</Link>
+              <Link href="/vehicle-form">
+                Jetzt starten
+                <ArrowRight />
+              </Link>
             </Button>
-            <Button variant="outline" asChild>
-              <Link href="/contact">Verkaufsteam kontaktieren</Link>
+            <Button variant="secondary" asChild>
+              <Link href="/contact">
+                Verkaufsteam kontaktieren
+                <ArrowRight />
+              </Link>
             </Button>
           </div>
         </div>

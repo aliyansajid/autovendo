@@ -1,6 +1,11 @@
 import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
-import { AlertCircle, ShieldAlert, ShieldCheck } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowRight,
+  ShieldAlert,
+  ShieldCheck,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function SicherheitshinweisePage() {
@@ -213,7 +218,10 @@ export default function SicherheitshinweisePage() {
               Sie unsicher sind oder weitere Informationen benötigen.
             </p>
             <Button asChild>
-              <Link href="contact">Kontakt</Link>
+              <Link href="contact">
+                Kontaktieren Sie uns
+                <ArrowRight />
+              </Link>
             </Button>
           </section>
         </div>

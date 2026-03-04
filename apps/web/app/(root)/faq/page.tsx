@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@repo/ui/src/components/accordion";
 import { Button } from "@repo/ui/src/components/button";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function FaqPage() {
@@ -56,7 +57,10 @@ export default function FaqPage() {
             jederzeit!
           </p>
           <Button asChild>
-            <Link href="contact">Kontakt</Link>
+            <Link href="contact">
+              Kontaktieren Sie uns
+              <ArrowRight />
+            </Link>
           </Button>
         </div>
       </div>
