@@ -1,5 +1,5 @@
 import { Separator } from "@repo/ui/src/components/separator";
-import { CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Mail, Phone } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
 import Link from "next/link";
 import {
@@ -42,7 +42,7 @@ export default function PricingPage() {
       <div className="w-full max-w-285 mx-auto py-12 px-4 space-y-12">
         <div className="max-w-4xl mx-auto space-y-12">
           <section className="space-y-6">
-            <h2 className="text-2xl font-bold text-red-500">
+            <h2 className="text-2xl font-bold">
               Schluss mit überteuerten Plattformen.
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
@@ -51,14 +51,12 @@ export default function PricingPage() {
                   autovendo.ch
                 </span>
                 &nbsp;gibt Händlern Kontrolle, Fairness und echten persönlichen
-                Support – zu deutlich besseren Konditionen.
+                Support – zu deutlich besseren Konditionen. Der Fahrzeughandel
+                ist anspruchsvoll genug. Ihre Inserate-Plattform sollte Sie
+                unterstützen – nicht Ihre Marge belasten.
               </p>
-              <p>
-                Der Fahrzeughandel ist anspruchsvoll genug. Ihre
-                Inserate-Plattform sollte Sie unterstützen – nicht Ihre Marge
-                belasten.
-              </p>
-              <p>
+
+              <p className="font-semibold">
                 autovendo.ch bietet faire Preise, direkte Ansprechpartner und
                 volle Transparenz. Keine versteckten Kosten. Kein
                 Konzern-Denken. Sondern echte Partnerschaft.
@@ -92,7 +90,7 @@ export default function PricingPage() {
                 </TableHeader>
                 <TableBody>
                   <TableRow>
-                    <TableCell className="font-semibold">Basic 5</TableCell>
+                    <TableCell className="font-semibold">Bronze</TableCell>
                     <TableCell>Bis zu 5 Fahrzeuge</TableCell>
                     <TableCell className="font-bold text-primary">
                       CHF 180.–
@@ -103,7 +101,7 @@ export default function PricingPage() {
                     <TableCell>ca. CHF 75.–</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-semibold">Basic 10</TableCell>
+                    <TableCell className="font-semibold">Silver</TableCell>
                     <TableCell>Bis zu 10 Fahrzeuge</TableCell>
                     <TableCell className="font-bold text-primary">
                       CHF 280.–
@@ -114,7 +112,7 @@ export default function PricingPage() {
                     <TableCell>ca. CHF 120.–</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-semibold">Basic 15</TableCell>
+                    <TableCell className="font-semibold">Gold</TableCell>
                     <TableCell>Bis zu 15 Fahrzeuge</TableCell>
                     <TableCell className="font-bold text-primary">
                       CHF 325.–
@@ -125,7 +123,7 @@ export default function PricingPage() {
                     <TableCell>ca. CHF 175.–</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-semibold">Basic 25</TableCell>
+                    <TableCell className="font-semibold">Diamond</TableCell>
                     <TableCell>Bis zu 25 Fahrzeuge</TableCell>
                     <TableCell className="font-bold text-primary">
                       CHF 408.–
@@ -192,10 +190,16 @@ export default function PricingPage() {
                 </div>
                 <div className="pt-4 flex flex-col sm:flex-row gap-3">
                   <Button asChild>
-                    <Link href="/contact">Telefontermin vereinbaren</Link>
+                    <Link href="tel:+41793223520">
+                      <Phone />
+                      Telefontermin vereinbaren
+                    </Link>
                   </Button>
                   <Button variant="outline" asChild>
-                    <Link href="/contact">E-Mail schreiben</Link>
+                    <Link href="mailto:info@autovendo.ch">
+                      <Mail />
+                      E-Mail schreiben
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -281,20 +285,16 @@ export default function PricingPage() {
           <h2 className="text-2xl font-bold text-center">
             Wählen Sie Ihr passendes Paket
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {pricingTiers.map((tier) => (
               <Card
                 key={tier.name}
-                className={`${
-                  tier.popular
-                    ? "border-primary shadow-lg scale-100 lg:scale-105 z-10"
-                    : "opacity-90 hover:opacity-100"
-                }`}
+                className={`${tier.popular ? "border-primary" : ""}`}
               >
                 <CardHeader>
                   {tier.popular ? (
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-2xl font-bold">
+                      <CardTitle className="text-xl font-bold">
                         {tier.name}
                       </CardTitle>
                       <Badge>Beliebt</Badge>
@@ -331,8 +331,8 @@ export default function PricingPage() {
                         <span
                           className={
                             feature.included
-                              ? "text-foreground leading-snug"
-                              : "text-muted-foreground leading-snug"
+                              ? "text-foreground"
+                              : "text-muted-foreground"
                           }
                         >
                           {feature.name}
@@ -343,11 +343,14 @@ export default function PricingPage() {
                 </CardContent>
                 <CardFooter>
                   <Button
-                    className="w-full font-semibold"
+                    className="w-full"
                     variant={tier.popular ? "default" : "outline"}
                     asChild
                   >
-                    <Link href="/contact">{tier.buttonText}</Link>
+                    <Link href="/contact" className="gap-2">
+                      {tier.buttonText}
+                      <ArrowRight className="size-4" />
+                    </Link>
                   </Button>
                 </CardFooter>
               </Card>
@@ -383,6 +386,7 @@ export default function PricingPage() {
               <Button variant="secondary" asChild>
                 <Link href="/contact">
                   Jetzt unverbindlich Kontakt aufnehmen
+                  <ArrowRight />
                 </Link>
               </Button>
             </div>

@@ -1,6 +1,6 @@
 export const pricingTiers = [
   {
-    name: "Basic 5",
+    name: "Bronze",
     price: "180.–",
     period: "/ monat",
     description: "Ideal für kleinere Bestände.",
@@ -15,7 +15,7 @@ export const pricingTiers = [
     popular: false,
   },
   {
-    name: "Basic 10",
+    name: "Silver",
     price: "280.–",
     period: "/ monat",
     description: "Perfekt für wachsende Händler.",
@@ -27,10 +27,10 @@ export const pricingTiers = [
       { name: "Laufzeit flexibel", included: true },
     ],
     buttonText: "Paket wählen",
-    popular: true,
+    popular: false,
   },
   {
-    name: "Basic 15",
+    name: "Gold",
     price: "325.–",
     period: "/ monat",
     description: "Für etablierte Händler.",
@@ -42,10 +42,10 @@ export const pricingTiers = [
       { name: "Laufzeit flexibel", included: true },
     ],
     buttonText: "Paket wählen",
-    popular: false,
+    popular: true,
   },
   {
-    name: "Basic 25",
+    name: "Diamond",
     price: "408.–",
     period: "/ monat",
     description: "Für Händler mit höherem Volumen.",
