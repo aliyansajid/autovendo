@@ -1,6 +1,13 @@
 "use client";
 
-import { Phone, ExternalLink, MapPin, ArrowRight, Printer } from "lucide-react";
+import {
+  Phone,
+  ExternalLink,
+  MapPin,
+  ArrowRight,
+  Printer,
+  Star,
+} from "lucide-react";
 import Image from "next/image";
 import {
   Card,
@@ -46,8 +53,13 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                 </div>
                 <h3 className="font-bold text-lg">{seller.name}</h3>
                 <div className="flex items-center gap-1.5 text-sm">
-                  <div className="flex text-[#F9A602]">
-                    {"★".repeat(Math.round(seller.rating))}
+                  <div className="flex text-rating">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`size-4 ${i < Math.round(seller.rating) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+                      />
+                    ))}
                   </div>
                   <span className="font-semibold">{seller.rating}</span>
                   <span className="text-muted-foreground">

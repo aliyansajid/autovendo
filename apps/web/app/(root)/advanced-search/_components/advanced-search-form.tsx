@@ -495,7 +495,7 @@ export const AdvancedSearchForm = () => {
                         label="Ab MFK"
                       />
                       <span className="text-sm text-muted-foreground">
-                        112'484
+                        112&apos;484
                       </span>
                     </div>
 
@@ -507,7 +507,7 @@ export const AdvancedSearchForm = () => {
                         label="Mit Garantie"
                       />
                       <span className="text-sm text-muted-foreground">
-                        107'688
+                        107&apos;688
                       </span>
                     </div>
                   </div>
@@ -540,7 +540,7 @@ export const AdvancedSearchForm = () => {
                         label="Kein Unfallfahrzeug"
                       />
                       <span className="text-sm text-muted-foreground">
-                        155'177
+                        155&apos;177
                       </span>
                     </div>
                   </div>
@@ -882,7 +882,9 @@ export const AdvancedSearchForm = () => {
                     name="metallic"
                     label="Metallic"
                   />
-                  <span className="text-sm text-muted-foreground">86'371</span>
+                  <span className="text-sm text-muted-foreground">
+                    86&apos;371
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
@@ -1175,9 +1177,9 @@ export const AdvancedSearchForm = () => {
         <div className="fixed bottom-0 left-0 right-0 py-4 px-4 md:px-0 bg-background flex justify-center items-center z-50 shadow-2xl border-t">
           <Button
             size="lg"
-            className="w-full max-w-xl bg-[#F9A602] hover:bg-[#F9A602]/90 text-black"
+            className="w-full max-w-xl bg-rating hover:bg-rating/90 text-black"
           >
-            155'927 Fahrzeuge anzeigen
+            155&apos;927 Fahrzeuge anzeigen
           </Button>
         </div>
       </form>

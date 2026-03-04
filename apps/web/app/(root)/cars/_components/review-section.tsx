@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/src/components/card";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 
 interface Review {
@@ -37,8 +37,13 @@ export const ReviewSection = ({
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center gap-1.5 text-sm">
-          <div className="flex text-[#F9A602]">
-            {"★".repeat(Math.round(rating))}
+          <div className="flex text-rating">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`size-4 ${i < Math.round(rating) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+              />
+            ))}
           </div>
           <span className="font-semibold">{rating}</span>
           <span className="text-muted-foreground">({count} reviews)</span>
@@ -54,9 +59,13 @@ export const ReviewSection = ({
                     {review.date}
                   </span>
                 </div>
-                <div className="flex text-[#F9A602] text-xs">
-                  {"★".repeat(review.rating)}
-                  {"☆".repeat(5 - review.rating)}
+                <div className="flex text-rating text-xs">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`size-3 ${i < review.rating ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+                    />
+                  ))}
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {review.content}
@@ -72,7 +81,7 @@ export const ReviewSection = ({
 
         {reviews.length > 0 && (
           <Link
-            href={`/dealers/${dealerId}/reviews`}
+            href={`/dealers/${dealerId}`}
             className="flex items-center gap-2 text-primary text-sm font-medium hover:underline"
           >
             Show all reviews <ArrowRight className="size-4" />

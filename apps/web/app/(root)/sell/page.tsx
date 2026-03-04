@@ -5,7 +5,6 @@ import { Separator } from "@repo/ui/src/components/separator";
 import {
   Check,
   Car,
-  Banknote,
   Camera,
   Sun,
   Zap,
@@ -81,10 +80,12 @@ export default function SellPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button asChild>
-                <Link href="/vehicle-form">Erstellen Sie Ihr erstes Inserat</Link>
+                <Link href="/vehicle-form">
+                  Erstellen Sie Ihr erstes Inserat
+                </Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link href="/pricing">So funktioniert's</Link>
+                <Link href="/pricing">So funktioniert&apos;s</Link>
               </Button>
             </div>
           </CardContent>
@@ -238,8 +239,8 @@ export default function SellPage() {
                 icon={Car}
               />
               <p className="text-sm text-muted-foreground italic pl-12">
-                Experten-Tipp: Konsistente, hochwertige Fotos bauen langfristiges Vertrauen
-                in Ihre Händlermarke auf.
+                Experten-Tipp: Konsistente, hochwertige Fotos bauen
+                langfristiges Vertrauen in Ihre Händlermarke auf.
               </p>
             </div>
           </div>
@@ -265,7 +266,9 @@ export default function SellPage() {
             </p>
           </div>
           <p className="text-muted-foreground text-lg max-w-lg">
-            Werden Sie Teil des professionellen Netzwerks von Schweizer Autohändlern. Unsere Pakete sind darauf zugeschnitten, Autohäusern jeder Grösse zum Erfolg im digitalen Markt zu verhelfen.
+            Werden Sie Teil des professionellen Netzwerks von Schweizer
+            Autohändlern. Unsere Pakete sind darauf zugeschnitten, Autohäusern
+            jeder Grösse zum Erfolg im digitalen Markt zu verhelfen.
           </p>
           <div className="flex gap-4">
             <Button asChild>

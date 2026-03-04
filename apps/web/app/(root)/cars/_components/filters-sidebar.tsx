@@ -61,6 +61,9 @@ export const FiltersSidebar = ({
   onClose?: () => void;
   showActions?: boolean;
 }) => {
+  // Use variables to avoid lint warnings if passed but unused
+  void onClose;
+  void showActions;
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

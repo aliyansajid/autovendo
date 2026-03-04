@@ -98,9 +98,14 @@ export default function DealerPage() {
                         <BadgeCheck className="text-primary" size={20} />
                       )}
                     </div>
-                    <Badge className="bg-[#F9A602]/10">
-                      <div className="flex text-[#F9A602]">
-                        {"★".repeat(Math.round(garage.rating))}
+                    <Badge className="bg-rating/10">
+                      <div className="flex text-rating">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`size-3 ${i < Math.round(garage.rating) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+                          />
+                        ))}
                       </div>
                       <span className="font-semibold text-foreground">
                         {garage.rating}
@@ -181,8 +186,13 @@ export default function DealerPage() {
                 <CardContent className="flex items-center gap-6">
                   <div className="text-center space-y-2">
                     <div className="text-4xl font-bold">{garage.rating}</div>
-                    <div className="flex text-[#F9A602] justify-center">
-                      {"★".repeat(Math.round(garage.rating))}
+                    <div className="flex text-rating justify-center">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`size-4 ${i < Math.round(garage.rating) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+                        />
+                      ))}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       ({garage.reviewCount}) reviews
@@ -389,15 +399,20 @@ export default function DealerPage() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-center">
-                      <div className="relative w-32 h-32 flex items-center justify-center rounded-full border-8 border-[#F9A602]">
+                      <div className="relative w-32 h-32 flex items-center justify-center rounded-full border-8 border-rating">
                         <span className="text-4xl font-bold">
                           {garage.rating}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex justify-center text-[#F9A602] gap-1">
-                      {"★".repeat(Math.round(garage.rating))}
+                    <div className="flex justify-center text-rating gap-1">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`size-5 ${i < Math.round(garage.rating) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+                        />
+                      ))}
                     </div>
 
                     <p className="text-muted-foreground text-center text-sm">
@@ -411,10 +426,10 @@ export default function DealerPage() {
                           className="flex items-center gap-2 text-sm"
                         >
                           <span className="w-3">{star}</span>
-                          <Star className="w-3 h-3 text-[#F9A602] fill-[#F9A602]" />
+                          <Star className="size-3 text-rating fill-rating" />
                           <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-[#F9A602]"
+                              className="h-full bg-rating"
                               style={{
                                 width:
                                   star === 5
@@ -441,8 +456,13 @@ export default function DealerPage() {
                         <div className="space-y-1">
                           <h4 className="font-bold">Excellent Service!</h4>
                           <div className="flex items-center gap-2">
-                            <div className="flex text-[#F9A602] text-xs">
-                              {"★".repeat(5)}
+                            <div className="flex text-rating text-xs">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`size-3 ${i < 5 ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+                                />
+                              ))}
                             </div>
                             <span className="text-xs text-muted-foreground">
                               2 days ago

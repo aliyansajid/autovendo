@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@repo/ui/src/components/button";
-import { Input } from "@repo/ui/src/components/input";
 import { Label } from "@repo/ui/src/components/label";
 import { Switch } from "@repo/ui/src/components/switch";
 import { Badge } from "@repo/ui/src/components/badge";
@@ -13,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/src/components/dialog";
-import { Search, ChevronRight, ArrowLeft, SearchIcon } from "lucide-react";
+import { ChevronRight, ArrowLeft, SearchIcon } from "lucide-react";
 import {
   InputGroup,
   InputGroupInput,
@@ -215,7 +214,7 @@ export function MakeSelectorDialog({
             </Label>
             <Badge
               variant="secondary"
-              className="bg-[#f9a602] text-black hover:bg-yellow-500 text-[10px] h-4 px-1 rounded-sm"
+              className="bg-rating text-black hover:bg-yellow-500 text-[10px] h-4 px-1 rounded-sm"
             >
               NEW
             </Badge>
