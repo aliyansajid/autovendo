@@ -3,6 +3,7 @@
 import { ListingCard } from "@/components/listing-card";
 import { listings } from "@/lib/mock-data";
 import { Button } from "@repo/ui/src/components/button";
+import { MinusCircle, PlusCircle } from "lucide-react";
 import { useState } from "react";
 
 export const FeaturedListings = () => {
@@ -32,7 +33,17 @@ export const FeaturedListings = () => {
               )
             }
           >
-            {visibleCount >= listings.length ? "Show less" : "Load more"}
+            {visibleCount >= listings.length ? (
+              <>
+                <MinusCircle />
+                Weniger anzeigen
+              </>
+            ) : (
+              <>
+                <PlusCircle />
+                Mehr anzeigen
+              </>
+            )}
           </Button>
         </div>
       )}

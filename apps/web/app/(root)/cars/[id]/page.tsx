@@ -63,7 +63,7 @@ export default function ListingPage() {
           <div className="lg:hidden space-y-3">
             <h1 className="text-2xl font-bold leading-tight">{title}</h1>
             <div className="text-3xl font-bold text-primary">
-              € {price.toLocaleString()}
+              CHF {price.toLocaleString()}
             </div>
             <div className="flex flex-wrap gap-2">
               <Badge>VAT deductible</Badge>
@@ -208,7 +208,7 @@ export default function ListingPage() {
             <CardContent className="space-y-3">
               <h1 className="text-xl font-bold">{title}</h1>
               <h2 className="text-2xl font-bold text-primary">
-                € {price.toLocaleString()}
+                CHF {price.toLocaleString()}
               </h2>
               <div className="flex flex-wrap gap-2">
                 <Badge>VAT deductible</Badge>
