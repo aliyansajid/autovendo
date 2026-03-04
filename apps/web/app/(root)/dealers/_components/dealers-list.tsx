@@ -5,7 +5,7 @@ import { Button } from "@repo/ui/components/button";
 import { Badge } from "@repo/ui/components/badge";
 import { MapPin, ArrowRight, Search } from "lucide-react";
 import Link from "next/link";
-import { dealers } from "@/lib/mock-data";
+import { garages } from "@/lib/mock-data";
 import {
   InputGroup,
   InputGroupAddon,
@@ -15,10 +15,10 @@ import {
 export const DealersList = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredDealers = dealers.filter(
+  const filteredGarages = garages.filter(
     (garage) =>
       garage.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      garage.location.toLowerCase().includes(searchQuery.toLowerCase()),
+      garage.garageLocation.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -43,7 +43,7 @@ export const DealersList = () => {
         </InputGroup>
       </div>
 
-      {filteredDealers.length === 0 ? (
+      {filteredGarages.length === 0 ? (
         <div className="py-20 text-center bg-secondary/30 rounded-xl border border-border">
           <h3 className="text-xl font-semibold mb-2">Kein Händler gefunden</h3>
           <p className="text-muted-foreground">
@@ -59,7 +59,7 @@ export const DealersList = () => {
         </div>
       ) : (
         <div className="divide-y divide-border border border-border rounded-xl overflow-hidden">
-          {filteredDealers.map((garage) => (
+          {filteredGarages.map((garage) => (
             <Link
               key={garage.id}
               href={`/dealers/${garage.id}`}
@@ -78,7 +78,7 @@ export const DealersList = () => {
                 </div>
                 <div className="flex items-center text-muted-foreground gap-1">
                   <MapPin className="size-3.5" />
-                  <span className="text-xs">{garage.location}</span>
+                  <span className="text-xs">{garage.garageLocation}</span>
                 </div>
               </div>
 

@@ -106,7 +106,7 @@ export default function SellPage() {
               <div className="space-y-6">
                 <div className="flex flex-col gap-3">
                   <h3 className="text-xl font-bold flex items-center gap-2 text-primary">
-                    <Check className="size-6" />
+                    <Check />
                     Performance & Wachstum
                   </h3>
                 </div>
@@ -136,7 +136,7 @@ export default function SellPage() {
               <div className="space-y-6">
                 <div className="flex flex-col gap-3">
                   <h3 className="text-xl font-bold flex items-center gap-2 text-primary">
-                    <Check className="size-6" />
+                    <Check />
                     Effizienz & Tools
                   </h3>
                 </div>

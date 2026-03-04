@@ -16,13 +16,13 @@ import Link from "next/link";
 export interface ListingProps {
   id: number | string;
   image: string;
-  badge: string;
+  badge?: string;
   title: string;
   price: string;
   details: string[];
-  dealer: string;
-  dealerId: number | string;
-  location: string;
+  garageName: string;
+  garageId: number | string;
+  garageLocation: string;
 }
 
 export const ListingCard = ({ item }: { item: ListingProps }) => {
@@ -67,10 +67,10 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
         <CardFooter className="flex items-center justify-between">
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-semibold truncate">
-              {item.dealer}
+              {item.garageName}
             </span>
             <span className="text-xs text-muted-foreground truncate">
-              {item.location}
+              {item.garageLocation}
             </span>
           </div>
           <Button

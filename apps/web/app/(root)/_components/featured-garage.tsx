@@ -10,7 +10,7 @@ import {
 } from "@repo/ui/components/carousel";
 import Image from "next/image";
 import { MapPin, ArrowRight } from "lucide-react";
-import { dealers } from "@/lib/mock-data";
+import { garages } from "@/lib/mock-data";
 import Link from "next/link";
 
 export const FeaturedGarage = () => {
@@ -25,7 +25,7 @@ export const FeaturedGarage = () => {
           className="w-full"
         >
           <CarouselContent>
-            {dealers.map((garage) => (
+            {garages.map((garage) => (
               <CarouselItem
                 key={garage.id}
                 className="basis-full sm:basis-1/2 lg:basis-1/4"
@@ -57,7 +57,7 @@ export const FeaturedGarage = () => {
                         <div className="flex items-center text-muted-foreground gap-1">
                           <MapPin className="size-4" />
                           <span className="text-sm truncate">
-                            {garage.location}
+                            {garage.garageLocation}
                           </span>
                         </div>
                       </div>

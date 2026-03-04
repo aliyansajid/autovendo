@@ -130,9 +130,9 @@ export function ListingListCard({
           <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Link href={`/dealers/${item.dealerId}`}>
+                <Link href={`/dealers/${item.garageId}`}>
                   <span className="text-sm font-bold truncate hover:underline cursor-pointer">
-                    {item.dealer}
+                    {item.garageName}
                   </span>
                 </Link>
                 <div className="flex items-center text-rating">
@@ -145,7 +145,7 @@ export function ListingListCard({
                 <span className="text-muted-foreground text-xs">(71)</span>
               </div>
               <span className="text-xs text-muted-foreground truncate">
-                {item.location}
+                {item.garageLocation}
               </span>
             </div>
 
@@ -163,7 +163,7 @@ export function ListingListCard({
 
           {showDealerLink && (
             <Link
-              href={`/dealers/${item.dealerId}`}
+              href={`/dealers/${item.garageId}`}
               className="mt-3 pt-3 border-t text-sm text-primary hover:underline cursor-pointer block"
             >
               Alle Fahrzeuge von diesem Händler

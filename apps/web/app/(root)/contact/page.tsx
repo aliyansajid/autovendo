@@ -21,15 +21,16 @@ const formSchema = z.object({
   email: z.email("Ungültige E-Mail-Adresse"),
   phone: z
     .string()
+    .min(1, "Telefonnummer ist erforderlich")
     .regex(/^(\+41|0041|0)[0-9\s.-]{8,}$/, "Ungültige Schweizer Telefonnummer"),
   subject: z
     .string()
-    .min(3, "Betreff muss mindestens 3 Zeichen lang sein")
-    .max(100, "Betreff darf maximal 100 Zeichen lang sein"),
+    .max(100, "Betreff darf maximal 100 Zeichen lang sein")
+    .optional(),
   message: z
     .string()
-    .min(10, "Nachricht muss mindestens 10 Zeichen lang sein")
-    .max(1000, "Nachricht darf maximal 1000 Zeichen lang sein"),
+    .max(1000, "Nachricht darf maximal 1000 Zeichen lang sein")
+    .optional(),
 });
 
 export default function ContactPage() {

@@ -1,79 +1,49 @@
 "use client";
 
 import { z } from "zod";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@repo/ui/lib/utils";
 import { Button } from "@repo/ui/components/button";
-import {
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-} from "@repo/ui/components/select";
 import { Separator } from "@repo/ui/components/separator";
-import {
-  CustomFormField,
-  FormFieldType,
-} from "@repo/ui/components/custom-form-field";
-import {
-  GearTransmissionEnum,
-  TransmissionTypeEnum,
-  DriveTypeEnum,
-  ColorEnum,
-  VehicleConditionEnum,
-  EnergyLabelEnum,
-  ChargingPlugTypeStandardEnum,
-  ChargingPlugTypeFastEnum,
-  BatteryOwnershipEnum,
-  WarrantyEnum,
-  EquipmentEnum,
-  VehicleTypeEnum,
-} from "@/constants";
+import { GearTransmissionEnum } from "@/constants";
 import {
   carMakes,
   carModels,
   carBodyTypeEnum,
-  carExtrasEnum,
   carFuelTypeEnum,
 } from "@/constants/cars";
 import {
   utilityMakes,
   utilityModels,
   utilityBodyTypeEnum,
-  utilityExtrasEnum,
 } from "@/constants/commercial-vehicles";
 import {
   truckMakes,
   truckModels,
   truckBodyTypeEnum,
   truckFuelTypeEnum,
-  truckExtrasEnum,
 } from "@/constants/truck";
 import {
   camperMakes,
   camperBodyTypeEnum,
   camperFuelTypeEnum,
-  camperExtrasEnum,
 } from "@/constants/camper";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@repo/ui/src/components/accordion";
 import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
-import { Label } from "@repo/ui/src/components/label";
+import { BasicDataSection } from "./form-sections/basic-data-section";
+import { EquipmentSection } from "./form-sections/equipment-section";
+import { TechnicalDataSection } from "./form-sections/technical-data-section";
+import { MediaSection } from "./form-sections/media-section";
+import { ContactSection } from "./form-sections/contact-section";
 import { useState } from "react";
-import { Check, UploadCloud, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
 import Image from "next/image";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@repo/ui/src/components/card";
-import { Input } from "@repo/ui/src/components/input";
 
 export function VehicleForm() {
   const form = useForm<z.infer<typeof vehicleFormSchema>>({
@@ -82,35 +52,48 @@ export function VehicleForm() {
       vehicleType: "car",
       make: "",
       model: "",
-      metallic: false,
-      inspectionPassed: false,
-      equipment: {},
-      accessibleForDisabledPeople: false,
-      accidentVehicle: false,
-      directParallelImport: false,
-      raceCar: false,
-      tuning: false,
       version: "",
-      vehicleDescription: "",
-      typeApproval: "",
-      vehicleIdentificationNumber: "",
-      serialNumber: "",
-      warranty: "",
-      registrationMonth: undefined,
-      registrationYear: undefined,
-      priceChf: 0,
-      newPriceChf: 0,
-      images: [],
+      mileage: "" as any,
+      priceChf: "" as any,
+      newPriceChf: "" as any,
+      doors: "" as any,
+      seats: "" as any,
+      hp: "" as any,
+      kw: "" as any,
+      consumptionCity: "" as any,
+      consumptionCountry: "" as any,
+      consumptionTotal: "" as any,
+      cubicCapacity: "" as any,
+      co2Emission: "" as any,
+      cylinders: "" as any,
+      numberOfGears: "" as any,
+      emptyWeight: "" as any,
+      loadCapacity: "" as any,
+      towingCapacityBraked: "" as any,
+      range: "" as any,
+      batteryCapacity: "" as any,
+      powerConsumption: "" as any,
+      chargingPower: "" as any,
+      billingFirstName: "",
+      billingLastName: "",
+      billingStreet: "",
+      billingZip: "",
+      billingCity: "",
+      billingPhone: "",
+      ownerFirstName: "",
+      ownerLastName: "",
+      ownerStreet: "",
+      ownerZip: "",
+      ownerCity: "",
+      ownerPhone: "",
     },
   });
 
-  const { control, handleSubmit, trigger, setValue, watch } = form;
-  const selectedMake = form.watch("make");
+  const { control, handleSubmit, trigger } = form;
 
   const [currentStep, setCurrentStep] = useState(1);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const totalSteps = 4;
-  const progress = (currentStep / totalSteps) * 100;
 
   const handleNext = async () => {
     let isStepValid = false;
@@ -127,6 +110,8 @@ export function VehicleForm() {
         "vehicleCondition",
         "mileage",
         "priceChf",
+        "registrationMonth",
+        "registrationYear",
       ]);
     } else if (currentStep === 2) {
       isStepValid = true;
@@ -161,37 +146,7 @@ export function VehicleForm() {
     window.scrollTo(0, 0);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length > 0) {
-      const newPreviews = files.map((file) => URL.createObjectURL(file));
-      setPreviewImages((prev) => [...prev, ...newPreviews]);
-
-      // Update form data - in a real app you might want to handle File objects
-      // For now we just store the file objects in the form state
-      const currentImages = watch("images") || [];
-      setValue("images", [...currentImages, ...files]);
-    }
-  };
-
-  const removeImage = (index: number) => {
-    setPreviewImages((prev) => prev.filter((_, i) => i !== index));
-    const currentImages = watch("images") || [];
-    if (Array.isArray(currentImages)) {
-      setValue(
-        "images",
-        currentImages.filter((_, i) => i !== index),
-      );
-    }
-  };
-
   const vehicleType = useWatch({ control, name: "vehicleType" });
-  const gearTransmission = useWatch({ control, name: "gearTransmission" });
-  const fuelType = useWatch({ control, name: "fuelType" });
-  const batteryOwnership = useWatch({ control, name: "batteryOwnership" });
-  const warranty = useWatch({ control, name: "warranty" });
-  const sameAsBilling = useWatch({ control, name: "sameAsBilling" });
-
   const isCommercial = vehicleType === "utility";
   const isTruck = vehicleType === "truck";
   const isCamper = vehicleType === "camper";
@@ -210,6 +165,7 @@ export function VehicleForm() {
   }>;
   const activeModels: Record<string, { value: string; label: string }[]> =
     isTruck ? truckModels : isCommercial ? utilityModels : carModels;
+
   const activeBodyTypeEnum = isTruck
     ? truckBodyTypeEnum
     : isCamper
@@ -217,20 +173,12 @@ export function VehicleForm() {
       : isCommercial
         ? utilityBodyTypeEnum
         : carBodyTypeEnum;
-  const activeExtrasEnum = isTruck
-    ? truckExtrasEnum
-    : isCamper
-      ? camperExtrasEnum
-      : isCommercial
-        ? utilityExtrasEnum
-        : carExtrasEnum;
+
   const activeFuelTypeEnum = isTruck
     ? truckFuelTypeEnum
     : isCamper
       ? camperFuelTypeEnum
       : carFuelTypeEnum;
-  const activeEquipmentEnum = EquipmentEnum;
-  const activeVehicleConditionEnum = VehicleConditionEnum;
 
   const onSubmit = (data: z.infer<typeof vehicleFormSchema>) => {
     console.log("Form Submitted:", data);
@@ -242,53 +190,6 @@ export function VehicleForm() {
       ),
     );
   };
-
-  const showCombustionOrMild = [
-    "petrol",
-    "diesel",
-    "lpg-petrol",
-    "mhev-diesel",
-    "mhev-petrol",
-    "cng-petrol",
-    "ethanol-petrol",
-  ].includes(fuelType || "");
-
-  const showElectric = fuelType === "electric";
-
-  const showFullHybrid = ["hev-diesel", "hev-petrol"].includes(fuelType || "");
-
-  const showHydrogen = fuelType === "hydrogen";
-
-  const showPluginHybrid = ["phev-diesel", "phev-petrol"].includes(
-    fuelType || "",
-  );
-
-  const showWarrantyDetails = [
-    "from-delivery",
-    "from-first-registration",
-    "from-date",
-  ].includes(warranty || "");
-
-  const showWarrantyStartDate = warranty === "from-date";
-
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) =>
-    (currentYear - i).toString(),
-  );
-  const months = [
-    { value: "1", label: "January" },
-    { value: "2", label: "February" },
-    { value: "3", label: "March" },
-    { value: "4", label: "April" },
-    { value: "5", label: "May" },
-    { value: "6", label: "June" },
-    { value: "7", label: "July" },
-    { value: "8", label: "August" },
-    { value: "9", label: "September" },
-    { value: "10", label: "October" },
-    { value: "11", label: "November" },
-    { value: "12", label: "December" },
-  ];
 
   const steps = [
     { id: 1, label: "Vehicle Details" },
@@ -349,1314 +250,217 @@ export function VehicleForm() {
         })}
       </div>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6 max-w-3xl mx-auto"
-      >
-        {currentStep === 1 && (
-          <div className="space-y-6">
-            <Accordion type="single" collapsible defaultValue="item-1">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
-                  Fahrzeug-Merkmale
-                </AccordionTrigger>
-                <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 px-1">
-                  <div className="col-span-1 md:col-span-2">
-                    <CustomFormField
-                      control={form.control}
-                      fieldType={FormFieldType.SELECT}
-                      name="vehicleType"
-                      label="Fahrzeugtyp"
-                      placeholder="Select vehicle type"
-                      className="w-full"
-                    >
-                      {VehicleTypeEnum.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </CustomFormField>
+      <FormProvider {...form}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6 max-w-3xl mx-auto"
+        >
+          {currentStep === 1 && (
+            <div className="space-y-6">
+              <BasicDataSection />
+              <Separator />
+              <EquipmentSection />
+              <Separator />
+              <TechnicalDataSection />
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <MediaSection
+              previewImages={previewImages}
+              setPreviewImages={setPreviewImages}
+            />
+          )}
+
+          {currentStep === 3 && <ContactSection />}
+
+          {currentStep === 4 && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <CardTitle>Overblick</CardTitle>
+                    <Button variant="link" onClick={() => setCurrentStep(1)}>
+                      Bearbeiten
+                    </Button>
                   </div>
+                </CardHeader>
+                <CardContent className="grid gap-4">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div className="text-muted-foreground">Marke</div>
+                    <div className="font-medium">
+                      {
+                        activeMakes
+                          .flatMap(
+                            (g: {
+                              label: string;
+                              items: ReadonlyArray<{
+                                value: string;
+                                label: string;
+                              }>;
+                            }) => [...g.items],
+                          )
+                          .find(
+                            (m: { value: string; label: string }) =>
+                              m.value === form.getValues("make"),
+                          )?.label
+                      }
+                    </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <CustomFormField
-                      control={form.control}
-                      fieldType={FormFieldType.SELECT}
-                      name="make"
-                      label="Marke"
-                      placeholder="Select an option"
-                      className="w-full"
-                    >
-                      {(() => {
-                        const seen = new Set<string>();
-                        return activeMakes.map((group) => {
-                          const uniqueItems = group.items.filter(
-                            (make) => !seen.has(make.value),
-                          );
-                          uniqueItems.forEach((make) => seen.add(make.value));
-                          if (uniqueItems.length === 0) return null;
-                          return (
-                            <SelectGroup key={group.label}>
-                              <SelectLabel>{group.label}</SelectLabel>
-                              {uniqueItems.map((make) => (
-                                <SelectItem key={make.value} value={make.value}>
-                                  {make.label}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          );
-                        });
-                      })()}
-                    </CustomFormField>
+                    <div className="text-muted-foreground">Modell</div>
+                    <div className="font-medium">
+                      {activeModels[form.getValues("make")]?.find(
+                        (m: any) => m.value === form.getValues("model"),
+                      )?.label || form.getValues("model")}
+                    </div>
 
-                    <CustomFormField
-                      control={form.control}
-                      fieldType={FormFieldType.SELECT}
-                      name="model"
-                      label="Modell"
-                      placeholder="Select an option"
-                      className="w-full"
-                      disabled={!selectedMake}
-                    >
-                      {selectedMake &&
-                        activeModels[selectedMake]?.map(
-                          (model: { value: string; label: string }) => (
-                            <SelectItem key={model.value} value={model.value}>
-                              {model.label}
-                            </SelectItem>
-                          ),
-                        )}
-                    </CustomFormField>
-                  </div>
+                    <div className="text-muted-foreground">Version</div>
+                    <div className="font-medium">
+                      {form.getValues("version") || "-"}
+                    </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.SELECT}
-                      name="gearTransmission"
-                      label="Getriebe"
-                      placeholder="Select an option"
-                      className="w-full"
-                    >
-                      {GearTransmissionEnum.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </CustomFormField>
+                    <div className="text-muted-foreground">Karosserie</div>
+                    <div className="font-medium">
+                      {getLabel(form.getValues("bodyType"), activeBodyTypeEnum)}
+                    </div>
 
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.SELECT}
-                      name="transmissionType"
-                      label="Getriebe Typ"
-                      placeholder="Select an option"
-                      className="w-full"
-                      disabled={!gearTransmission}
-                    >
-                      {TransmissionTypeEnum.filter((t) => {
-                        if (!gearTransmission) return true;
-                        if (gearTransmission === "automatic") {
-                          return [
-                            "automatic",
-                            "automatic-stepless",
-                            "semi-automatic",
-                          ].includes(t.value);
-                        }
-                        if (gearTransmission === "manual") {
-                          return t.value === "manual";
-                        }
-                        return true;
-                      }).map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </CustomFormField>
-                  </div>
+                    <div className="text-muted-foreground">Kraftstoff</div>
+                    <div className="font-medium">
+                      {getLabel(form.getValues("fuelType"), activeFuelTypeEnum)}
+                    </div>
 
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    name="version"
-                    label="Version"
-                    placeholder="Enter a version"
-                    className="w-full"
-                  />
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.SELECT}
-                    name="driveType"
-                    label="Antrieb"
-                    placeholder="Select an option"
-                    className="w-full"
-                  >
-                    {DriveTypeEnum.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.SELECT}
-                    name="bodyType"
-                    label="Karosserie"
-                    placeholder="Select an option"
-                    className="w-full"
-                  >
-                    {activeBodyTypeEnum.map(
-                      (type: { value: string; label: string }) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ),
-                    )}
-                  </CustomFormField>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.SELECT}
-                    name="fuelType"
-                    label="Kraftstoff"
-                    placeholder="Select an option"
-                    className="w-full"
-                  >
-                    {activeFuelTypeEnum.map(
-                      (type: { value: string; label: string }) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ),
-                    )}
-                  </CustomFormField>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.SELECT}
-                    name="interiorColor"
-                    label="Innenraumfarbe"
-                    placeholder="Select an option"
-                    className="w-full"
-                  >
-                    {ColorEnum.map((color) => (
-                      <SelectItem key={color.value} value={color.value}>
-                        {color.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.SELECT}
-                    name="color"
-                    label="Farbe"
-                    placeholder="Select an option"
-                    className="w-full"
-                  >
-                    {ColorEnum.map((color) => (
-                      <SelectItem key={color.value} value={color.value}>
-                        {color.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.CHECKBOX}
-                    name="metallic"
-                    label="Métalisé"
-                  />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <Separator />
-
-            <Accordion type="single" collapsible defaultValue="item-1">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
-                  Zustand
-                </AccordionTrigger>
-                <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 px-1">
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.SELECT}
-                    name="vehicleCondition"
-                    label="Zustand"
-                    placeholder="Select an option"
-                    className="w-full"
-                  >
-                    {activeVehicleConditionEnum.map(
-                      (c: { value: string; label: string }) => (
-                        <SelectItem key={c.value} value={c.value}>
-                          {c.label}
-                        </SelectItem>
-                      ),
-                    )}
-                  </CustomFormField>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.DATE_PICKER}
-                    name="lastInspectionDate"
-                    label="Letzte MFK"
-                    placeholder="Select Date"
-                    className="w-full"
-                  />
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.SELECT}
-                      name="registrationMonth"
-                      label="Monat"
-                      placeholder="Month"
-                      className="w-full"
-                    >
-                      {months.map((m) => (
-                        <SelectItem key={m.value} value={m.value}>
-                          {m.label}
-                        </SelectItem>
-                      ))}
-                    </CustomFormField>
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.SELECT}
-                      name="registrationYear"
-                      label="Jahr"
-                      placeholder="Year"
-                      className="w-full"
-                    >
-                      {years.map((y) => (
-                        <SelectItem key={y} value={y}>
-                          {y}
-                        </SelectItem>
-                      ))}
-                    </CustomFormField>
-                  </div>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    inputType="number"
-                    name="mileage"
-                    label="Kilometer"
-                    placeholder="0"
-                    className="w-full"
-                  />
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.SELECT}
-                    name="warranty"
-                    label="Garantie"
-                    placeholder="Select an option"
-                    className="w-full"
-                  >
-                    {WarrantyEnum.map((warranty) => (
-                      <SelectItem key={warranty.value} value={warranty.value}>
-                        {warranty.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
-
-                  {(showWarrantyDetails || showWarrantyStartDate) && (
-                    <>
-                      {showWarrantyStartDate && (
-                        <CustomFormField
-                          control={control}
-                          fieldType={FormFieldType.DATE_PICKER}
-                          name="warrantyStartDate"
-                          label="Start date"
-                          placeholder="Select Date"
-                          className="w-full"
-                        />
+                    <div className="text-muted-foreground">Getriebe</div>
+                    <div className="font-medium">
+                      {getLabel(
+                        form.getValues("gearTransmission"),
+                        GearTransmissionEnum,
                       )}
+                    </div>
 
-                      {showWarrantyDetails && (
-                        <div className="grid grid-cols-2 gap-3">
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.INPUT_GROUP}
-                            inputType="number"
-                            name="duration"
-                            label="Dauer"
-                            inputGroupText="months"
-                            inputGroupTextPosition="right"
-                            placeholder="0"
-                            className="w-full"
-                          />
+                    <div className="text-muted-foreground">Kilometer</div>
+                    <div className="font-medium">
+                      {form.getValues("mileage")}
+                    </div>
 
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.INPUT}
-                            inputType="number"
-                            name="maxKm"
-                            label="Max km"
-                            placeholder="0"
-                            className="w-full"
+                    <div className="text-muted-foreground">Jahrgang</div>
+                    <div className="font-medium">
+                      {form.getValues("registrationMonth")}/
+                      {form.getValues("registrationYear")}
+                    </div>
+
+                    <div className="text-muted-foreground">Preis</div>
+                    <div className="font-medium">
+                      CHF {form.getValues("priceChf")}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <CardTitle>Fotos</CardTitle>
+                    <Button variant="link" onClick={() => setCurrentStep(2)}>
+                      Bearbeiten
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {previewImages.length > 0 ? (
+                    <div className="grid grid-cols-4 gap-2">
+                      {previewImages.map((src, index) => (
+                        <div
+                          key={index}
+                          className="relative aspect-video rounded-md overflow-hidden border bg-muted"
+                        >
+                          <Image
+                            src={src}
+                            alt={`Review ${index}`}
+                            fill
+                            className="object-cover"
                           />
                         </div>
-                      )}
-                    </>
-                  )}
-
-                  <div className="col-span-1 md:col-span-2">
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.CHECKBOX}
-                      name="inspectionPassed"
-                      label="MFK bestanden"
-                    />
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <Separator />
-
-            <Accordion type="single" collapsible defaultValue="item-1">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
-                  Price
-                </AccordionTrigger>
-                <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 px-1">
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT_GROUP}
-                    inputType="number"
-                    name="priceChf"
-                    label="Price"
-                    inputGroupText="CHF"
-                    placeholder="0"
-                  />
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT_GROUP}
-                    inputType="number"
-                    name="newPriceChf"
-                    label="New Price"
-                    inputGroupText="CHF"
-                    placeholder="0"
-                  />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <Separator />
-
-            <Accordion type="single" collapsible defaultValue="item-1">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
-                  Equipment
-                </AccordionTrigger>
-                <AccordionContent className="space-y-6 px-1">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-y-3 pt-6">
-                    {activeEquipmentEnum.map(
-                      (equipment: { value: string; label: string }) => (
-                        <CustomFormField
-                          key={equipment.value}
-                          control={control}
-                          fieldType={FormFieldType.CHECKBOX}
-                          name={`equipment.${equipment.value}`}
-                          label={equipment.label}
-                        />
-                      ),
-                    )}
-                  </div>
-                  <div className="space-y-4 pt-4">
-                    <Label className="text-lg text-primary font-semibold">
-                      Extras
-                    </Label>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-y-3">
-                      {activeExtrasEnum.map(
-                        (extra: { value: string; label: string }) => (
-                          <CustomFormField
-                            key={extra.value}
-                            control={control}
-                            fieldType={FormFieldType.CHECKBOX}
-                            name={`extras.${extra.value}`}
-                            label={extra.label}
-                          />
-                        ),
-                      )}
+                      ))}
                     </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <Separator />
-
-            <Accordion type="single" collapsible defaultValue="item-1">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
-                  Technical Data
-                </AccordionTrigger>
-                <AccordionContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 px-1">
-                  <div className="grid grid-cols-2 gap-3">
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT}
-                      inputType="number"
-                      name="doors"
-                      label="Doors"
-                      placeholder="0"
-                    />
-
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT}
-                      inputType="number"
-                      name="seats"
-                      label="Seats"
-                      placeholder="0"
-                    />
-                  </div>
-
-                  {(showCombustionOrMild ||
-                    showFullHybrid ||
-                    showPluginHybrid) && (
-                    <div className="space-y-2">
-                      <Label>Consumption (l/100 km)</Label>
-                      <div className="grid grid-cols-3 gap-3">
-                        <CustomFormField
-                          control={control}
-                          fieldType={FormFieldType.INPUT}
-                          inputType="text"
-                          name="consumptionCity"
-                          placeholder="City"
-                        />
-
-                        <CustomFormField
-                          control={control}
-                          fieldType={FormFieldType.INPUT}
-                          inputType="text"
-                          name="consumptionCountry"
-                          placeholder="Country"
-                        />
-
-                        <CustomFormField
-                          control={control}
-                          fieldType={FormFieldType.INPUT}
-                          inputType="text"
-                          name="consumptionTotal"
-                          placeholder="Total"
-                        />
-                      </div>
+                  ) : (
+                    <div className="text-muted-foreground text-sm">
+                      Keine Fotos hochgeladen
                     </div>
                   )}
+                </CardContent>
+              </Card>
 
-                  {(showCombustionOrMild || showHydrogen) && (
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT_GROUP}
-                      inputType="number"
-                      name="cubicCapacity"
-                      label="Cubic capacity"
-                      inputGroupText="cm³"
-                      inputGroupTextPosition="right"
-                      placeholder="0"
-                    />
-                  )}
-
-                  {(showCombustionOrMild ||
-                    showFullHybrid ||
-                    showHydrogen ||
-                    showPluginHybrid) && (
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT_GROUP}
-                      inputType="number"
-                      name="co2Emission"
-                      label="CO2 emission"
-                      inputGroupText="g/km"
-                      inputGroupTextPosition="right"
-                      placeholder="0"
-                    />
-                  )}
-
-                  {(showCombustionOrMild || showHydrogen) && (
-                    <>
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT}
-                        inputType="number"
-                        name="cylinders"
-                        label="Cylinders"
-                        placeholder="0"
-                      />
-
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT}
-                        inputType="number"
-                        name="numberOfGears"
-                        label="Number of gears"
-                        placeholder="0"
-                      />
-                    </>
-                  )}
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.SELECT}
-                    name="energyLabel"
-                    label="Energy Label"
-                    placeholder="Select an option"
-                    className="w-full"
-                  >
-                    {EnergyLabelEnum.map((e) => (
-                      <SelectItem key={e.value} value={e.value}>
-                        {e.label}
-                      </SelectItem>
-                    ))}
-                  </CustomFormField>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT}
-                      inputType="number"
-                      name="hp"
-                      label="HP"
-                      placeholder="0"
-                    />
-
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT}
-                      inputType="number"
-                      name="kw"
-                      label="kW"
-                      placeholder="0"
-                    />
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <CardTitle>Kontakt</CardTitle>
+                    <Button variant="link" onClick={() => setCurrentStep(3)}>
+                      Bearbeiten
+                    </Button>
                   </div>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    name="typeApproval"
-                    label="Type Approval"
-                    placeholder="Enter type approval"
-                    className="w-full"
-                  />
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT_GROUP}
-                    inputType="number"
-                    name="wheelbase"
-                    label="Wheelbase"
-                    inputGroupText="mm"
-                    placeholder="0"
-                    className="w-full"
-                  />
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    name="vehicleIdentificationNumber"
-                    label="Vehicle identification number"
-                    placeholder="Enter vehicle identification number"
-                    className="w-full"
-                  />
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT_GROUP}
-                      inputType="number"
-                      name="emptyWeight"
-                      label="Empty Weight"
-                      inputGroupText="kg"
-                      placeholder="0"
-                    />
-
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT_GROUP}
-                      inputType="number"
-                      name="loadCapacity"
-                      label="Load Capacity"
-                      inputGroupText="kg"
-                      placeholder="0"
-                    />
-                  </div>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    name="serialNumber"
-                    label="Serial Number"
-                    placeholder="Enter serial number"
-                    className="w-full"
-                  />
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT_GROUP}
-                      inputType="number"
-                      name="height"
-                      label="Height"
-                      inputGroupText="mm"
-                      placeholder="0"
-                    />
-
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT_GROUP}
-                      inputType="number"
-                      name="width"
-                      label="Width"
-                      inputGroupText="mm"
-                      placeholder="0"
-                    />
-                  </div>
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT_GROUP}
-                    inputType="number"
-                    name="length"
-                    label="Length"
-                    inputGroupText="mm"
-                    placeholder="0"
-                  />
-
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT_GROUP}
-                    inputType="number"
-                    name="towingCapacityBraked"
-                    label="Towing capacity"
-                    inputGroupText="kg"
-                    placeholder="0"
-                  />
-
-                  {(showElectric || showFullHybrid || showPluginHybrid) && (
-                    <>
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT_GROUP}
-                        inputType="number"
-                        name="range"
-                        label="Range"
-                        inputGroupText="km"
-                        placeholder="0"
-                      />
-
-                      {(showElectric || showPluginHybrid) && (
-                        <CustomFormField
-                          control={control}
-                          fieldType={FormFieldType.SELECT}
-                          name="batteryOwnership"
-                          label="Battery ownership model"
-                          placeholder="Select an option"
-                          className="w-full"
-                        >
-                          {BatteryOwnershipEnum.map((e) => (
-                            <SelectItem key={e.value} value={e.value}>
-                              {e.label}
-                            </SelectItem>
-                          ))}
-                        </CustomFormField>
-                      )}
-
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT_GROUP}
-                        inputType="number"
-                        name="batteryCapacity"
-                        label="Battery capacity"
-                        inputGroupText="kWh"
-                        placeholder="0"
-                      />
-
-                      {(showElectric || showPluginHybrid) && (
-                        <>
-                          {batteryOwnership === "battery-rent-required" && (
-                            <CustomFormField
-                              control={control}
-                              fieldType={FormFieldType.INPUT_GROUP}
-                              inputType="number"
-                              name="batteryRentalMonth"
-                              label="Battery rental"
-                              inputGroupText="CHF/month"
-                              placeholder="0"
-                            />
-                          )}
-
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.INPUT_GROUP}
-                            inputType="number"
-                            name="powerConsumption"
-                            label="Power consumption"
-                            inputGroupText="kWh/100km"
-                            placeholder="0"
-                          />
-
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.INPUT_GROUP}
-                            inputType="number"
-                            name="batterySoh"
-                            label="Battery state of health"
-                            inputGroupText="0-100%"
-                            placeholder="0"
-                          />
-
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.SELECT}
-                            name="chargingPlugTypeStandard"
-                            label="Charging plug type - standard (AC)"
-                            placeholder="Select an option"
-                            className="w-full"
-                          >
-                            {ChargingPlugTypeStandardEnum.map((e) => (
-                              <SelectItem key={e.value} value={e.value}>
-                                {e.label}
-                              </SelectItem>
-                            ))}
-                          </CustomFormField>
-
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.SELECT}
-                            name="chargingPlugTypeFast"
-                            label="Charging plug type - fast charge (DC)"
-                            placeholder="Select an option"
-                            className="w-full"
-                          >
-                            {ChargingPlugTypeFastEnum.map((e) => (
-                              <SelectItem key={e.value} value={e.value}>
-                                {e.label}
-                              </SelectItem>
-                            ))}
-                          </CustomFormField>
-
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.INPUT_GROUP}
-                            inputType="number"
-                            name="chargingPower"
-                            label="Charging power"
-                            inputGroupText="kW"
-                            placeholder="0"
-                          />
-
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.INPUT_GROUP}
-                            inputType="number"
-                            name="chargingTime80"
-                            label="Charging time in minutes"
-                            inputGroupText="0-80%"
-                            placeholder="0"
-                          />
-
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.INPUT_GROUP}
-                            inputType="number"
-                            name="fastChargingTime80"
-                            label="Fast charging time in minutes"
-                            inputGroupText="0-80%"
-                            placeholder="0"
-                          />
-
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.INPUT_GROUP}
-                            inputType="number"
-                            name="chargingTime100"
-                            label="Charging time in minutes"
-                            inputGroupText="0-100%"
-                            placeholder="0"
-                          />
-
-                          <CustomFormField
-                            control={control}
-                            fieldType={FormFieldType.INPUT_GROUP}
-                            inputType="number"
-                            name="fastChargingTime100"
-                            label="Fast charging time in minutes"
-                            inputGroupText="0-100%"
-                            placeholder="0"
-                          />
-                        </>
-                      )}
-
-                      {showFullHybrid && (
-                        <CustomFormField
-                          control={control}
-                          fieldType={FormFieldType.INPUT_GROUP}
-                          inputType="number"
-                          name="powerConsumption"
-                          label="Power consumption"
-                          inputGroupText="kWh/100km"
-                          placeholder="0"
-                        />
-                      )}
-                    </>
-                  )}
-
-                  {(showFullHybrid || showPluginHybrid) && (
-                    <>
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT}
-                        inputType="number"
-                        name="combustionEnginePowerHp"
-                        label="Combustion Engine Power (HP)"
-                        placeholder="0"
-                      />
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT}
-                        inputType="number"
-                        name="electricMotorPowerHp"
-                        label="Electric Motor Power (HP)"
-                        placeholder="0"
-                      />
-                    </>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <Separator />
-
-            <Accordion type="single" collapsible defaultValue="item-1">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
-                  Detailed Information
-                </AccordionTrigger>
-                <AccordionContent className="pt-6 px-1">
-                  <CustomFormField
-                    fieldType={FormFieldType.TEXTAREA}
-                    control={control}
-                    name="vehicleDescription"
-                    label="Description"
-                    placeholder="Enter detailed description..."
-                    className="h-32"
-                  />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-        )}
-
-        {currentStep === 2 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Vehicle Images</CardTitle>
-              <CardDescription>
-                Add photos of your vehicle. High quality photos increase your
-                chances of selling.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="border-2 border-dashed rounded-lg h-60 w-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors hover:border-primary/50">
-                <div className="flex flex-col items-center gap-4 text-center">
-                  <div className="p-4 rounded-full bg-primary/10">
-                    <UploadCloud className="h-8 w-8 text-primary" />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-lg font-semibold">
-                      Click to upload photos
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      WEBP, PNG, JPG, JPEG
-                    </p>
-                  </div>
-                </div>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleImageUpload}
-                />
-              </div>
-
-              {previewImages.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-2">
-                  {previewImages.map((src, index) => (
-                    <div
-                      key={index}
-                      className="relative aspect-video group rounded-lg overflow-hidden border bg-muted"
-                    >
-                      <Image
-                        src={src}
-                        alt={`Vehicle preview ${index + 1}`}
-                        fill
-                        className="object-cover transition-transform group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Button
-                          variant="destructive"
-                          type="button"
-                          onClick={() => removeImage(index)}
-                          className="rounded-full"
-                        >
-                          <X />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {currentStep === 3 && (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Rechnungsadresse</CardTitle>
-                <CardDescription>
-                  Rechnungsadresse für das Inserat
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-6">
-                <div className="grid grid-cols-2 gap-3">
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    name="billingFirstName"
-                    label="Vorname"
-                    placeholder="Vorname eingeben"
-                  />
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    name="billingLastName"
-                    label="Nachname"
-                    placeholder="Nachname eingeben"
-                  />
-                </div>
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT}
-                  name="billingStreet"
-                  label="Strasse und Nr"
-                  placeholder="Strasse und Nr eingeben"
-                />
-                <div className="grid grid-cols-2 gap-3">
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    name="billingZip"
-                    label="PLZ"
-                    placeholder="PLZ"
-                  />
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    name="billingCity"
-                    label="Ort"
-                    placeholder="Ort"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    name="billingCountry"
-                    label="Land"
-                    placeholder="Switzerland"
-                    disabled={true}
-                  />
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.INPUT}
-                    name="billingPhone"
-                    label="Telefonnummer"
-                    placeholder="+41 XX XXX XX XX"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Standort des Fahrzeugs / Halter</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.CHECKBOX}
-                  name="sameAsBilling"
-                  label="Entspricht der Rechnungsadresse"
-                />
-
-                {!sameAsBilling && (
-                  <div className="grid gap-6 animate-in fade-in slide-in-from-top-2">
-                    <div className="grid grid-cols-2 gap-3">
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT}
-                        name="ownerFirstName"
-                        label="Vorname"
-                        placeholder="Vorname eingeben"
-                      />
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT}
-                        name="ownerLastName"
-                        label="Nachname"
-                        placeholder="Nachname eingeben"
-                      />
-                    </div>
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT}
-                      name="ownerStreet"
-                      label="Strasse und Nr"
-                      placeholder="Strasse und Nr eingeben"
-                    />
-                    <div className="grid grid-cols-2 gap-3">
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT}
-                        name="ownerZip"
-                        label="PLZ"
-                        placeholder="PLZ"
-                      />
-
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT}
-                        name="ownerCity"
-                        label="Ort"
-                        placeholder="Ort"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT}
-                        name="ownerCountry"
-                        label="Land"
-                        placeholder="Switzerland"
-                        disabled={true}
-                        defaultValue="Switzerland"
-                      />
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT}
-                        name="ownerPhone"
-                        label="Telefonnummer"
-                        placeholder="+41 XX XXX XX XX"
-                      />
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {currentStep === 4 && (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle>Overblick</CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setCurrentStep(1)}
-                  >
-                    Bearbeiten
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="grid gap-4">
-                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                  <div className="text-muted-foreground">Marke</div>
-                  <div className="font-medium">
-                    {
-                      activeMakes
-                        .flatMap(
-                          (g: {
-                            label: string;
-                            items: ReadonlyArray<{
-                              value: string;
-                              label: string;
-                            }>;
-                          }) => [...g.items],
-                        )
-                        .find(
-                          (m: { value: string; label: string }) =>
-                            m.value === form.getValues("make"),
-                        )?.label
-                    }
-                  </div>
-
-                  <div className="text-muted-foreground">Modell</div>
-                  <div className="font-medium">
-                    {activeModels[form.getValues("make")]?.find(
-                      (m: any) => m.value === form.getValues("model"),
-                    )?.label || form.getValues("model")}
-                  </div>
-
-                  <div className="text-muted-foreground">Version</div>
-                  <div className="font-medium">
-                    {form.getValues("version") || "-"}
-                  </div>
-
-                  <div className="text-muted-foreground">Karosserie</div>
-                  <div className="font-medium">
-                    {getLabel(form.getValues("bodyType"), activeBodyTypeEnum)}
-                  </div>
-
-                  <div className="text-muted-foreground">Kraftstoff</div>
-                  <div className="font-medium">
-                    {getLabel(form.getValues("fuelType"), activeFuelTypeEnum)}
-                  </div>
-
-                  <div className="text-muted-foreground">Getriebe</div>
-                  <div className="font-medium">
-                    {getLabel(
-                      form.getValues("gearTransmission"),
-                      GearTransmissionEnum,
-                    )}
-                  </div>
-
-                  <div className="text-muted-foreground">Kilometer</div>
-                  <div className="font-medium">{form.getValues("mileage")}</div>
-
-                  <div className="text-muted-foreground">Jahrgang</div>
-                  <div className="font-medium">
-                    {form.getValues("registrationMonth")}/
-                    {form.getValues("registrationYear")}
-                  </div>
-
-                  <div className="text-muted-foreground">Preis</div>
-                  <div className="font-medium">
-                    CHF {form.getValues("priceChf")}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle>Fotos</CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setCurrentStep(2)}
-                  >
-                    Bearbeiten
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {previewImages.length > 0 ? (
-                  <div className="grid grid-cols-4 gap-2">
-                    {previewImages.map((src, index) => (
-                      <div
-                        key={index}
-                        className="relative aspect-video rounded-md overflow-hidden border bg-muted"
-                      >
-                        <Image
-                          src={src}
-                          alt={`Review ${index}`}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-muted-foreground text-sm">
-                    Keine Fotos hochgeladen
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle>Kontakt</CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setCurrentStep(3)}
-                  >
-                    Bearbeiten
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="grid gap-6">
-                <div>
-                  <h4 className="font-semibold mb-2">Rechnungsadresse</h4>
-                  <div className="text-sm text-muted-foreground">
-                    {form.getValues("billingFirstName")}{" "}
-                    {form.getValues("billingLastName")}
-                    <br />
-                    {form.getValues("billingStreet")}
-                    <br />
-                    {form.getValues("billingZip")}{" "}
-                    {form.getValues("billingCity")}
-                    <br />
-                    {form.getValues("billingCountry")}
-                    <br />
-                    {form.getValues("billingPhone")}
-                  </div>
-                </div>
-
-                {!form.getValues("sameAsBilling") && (
+                </CardHeader>
+                <CardContent className="grid gap-6">
                   <div>
-                    <h4 className="font-semibold mb-2">Halter</h4>
+                    <h4 className="font-semibold mb-2">Rechnungsadresse</h4>
                     <div className="text-sm text-muted-foreground">
-                      {form.getValues("ownerFirstName")}{" "}
-                      {form.getValues("ownerLastName")}
+                      {form.getValues("billingFirstName")}{" "}
+                      {form.getValues("billingLastName")}
                       <br />
-                      {form.getValues("ownerStreet")}
+                      {form.getValues("billingStreet")}
                       <br />
-                      {form.getValues("ownerZip")} {form.getValues("ownerCity")}
+                      {form.getValues("billingZip")}{" "}
+                      {form.getValues("billingCity")}
                       <br />
-                      {form.getValues("ownerCountry")}
+                      {form.getValues("billingCountry")}
                       <br />
-                      {form.getValues("ownerPhone")}
+                      {form.getValues("billingPhone")}
                     </div>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
 
-        <div className="flex justify-between">
-          {currentStep > 1 && (
-            <Button type="button" variant="outline" onClick={handleBack}>
-              Back
-            </Button>
+                  {!form.getValues("sameAsBilling") && (
+                    <div>
+                      <h4 className="font-semibold mb-2">Halter</h4>
+                      <div className="text-sm text-muted-foreground">
+                        {form.getValues("ownerFirstName")}{" "}
+                        {form.getValues("ownerLastName")}
+                        <br />
+                        {form.getValues("ownerStreet")}
+                        <br />
+                        {form.getValues("ownerZip")}{" "}
+                        {form.getValues("ownerCity")}
+                        <br />
+                        {form.getValues("ownerCountry")}
+                        <br />
+                        {form.getValues("ownerPhone")}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           )}
-          {currentStep < totalSteps ? (
-            <Button type="button" onClick={handleNext} className="ml-auto">
-              Next
-            </Button>
-          ) : (
-            <Button type="submit" className="ml-auto">
-              Submit
-            </Button>
-          )}
-        </div>
-      </form>
+
+          <div className="flex justify-between">
+            {currentStep > 1 && (
+              <Button type="button" variant="outline" onClick={handleBack}>
+                <ArrowLeft />
+                Back
+              </Button>
+            )}
+            {currentStep < totalSteps ? (
+              <Button type="button" onClick={handleNext} className="ml-auto">
+                Next
+                <ArrowRight />
+              </Button>
+            ) : (
+              <Button type="submit" className="ml-auto">
+                Submit
+                <Send />
+              </Button>
+            )}
+          </div>
+        </form>
+      </FormProvider>
     </>
   );
 }

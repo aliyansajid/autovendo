@@ -25,16 +25,22 @@ export const vehicleFormSchema = z
     }),
 
     // Vehicle Features
-    make: z.string().min(1, "Bitte wählen Sie eine Marke."),
-    model: z.string().min(1, "Bitte wählen Sie ein Modell."),
-    gearTransmission: z.enum(
-      GearTransmissionEnum.map((item) => item.value) as [string, ...string[]],
-    ),
+    make: z
+      .string({ error: "Bitte wählen Sie eine Marke." })
+      .min(1, "Bitte wählen Sie eine Marke."),
+    model: z.string().optional(),
+    gearTransmission: z
+      .enum(
+        GearTransmissionEnum.map((item) => item.value) as [string, ...string[]],
+      )
+      .optional()
+      .or(z.literal("")),
     transmissionType: z
       .enum(
         TransmissionTypeEnum.map((item) => item.value) as [string, ...string[]],
       )
-      .optional(), // Dependent on gearTransmission
+      .optional()
+      .or(z.literal("")), // Dependent on gearTransmission
     version: z.string().optional(), // If Manual
     driveType: z.enum(
       DriveTypeEnum.map((item) => item.value) as [string, ...string[]],
@@ -47,48 +53,79 @@ export const vehicleFormSchema = z
         ...camperBodyTypeEnum.map((item) => item.value),
       ] as [string, ...string[]],
       {
-        error: "Bitte wählen Sie ein Fahrzeugtyp.",
+        error: "Bitte wählen Sie eine Karosserie.",
       },
     ),
-    fuelType: z.enum([
-      ...new Set([
-        ...carFuelTypeEnum.map((item) => item.value),
-        ...truckFuelTypeEnum.map((item) => item.value),
-        ...camperFuelTypeEnum.map((item) => item.value),
-      ]),
-    ] as [string, ...string[]]),
+    fuelType: z
+      .enum([
+        ...new Set([
+          ...carFuelTypeEnum.map((item) => item.value),
+          ...truckFuelTypeEnum.map((item) => item.value),
+          ...camperFuelTypeEnum.map((item) => item.value),
+        ]),
+      ] as [string, ...string[]])
+      .optional()
+      .or(z.literal("")),
     color: z.enum(
       ColorEnum.map((item) => item.value) as [string, ...string[]],
       {
         error: "Bitte wählen Sie eine Farbe.",
       },
     ),
-    interiorColor: z.enum(
-      ColorEnum.map((item) => item.value) as [string, ...string[]],
-    ),
+    interiorColor: z
+      .enum(ColorEnum.map((item) => item.value) as [string, ...string[]])
+      .optional()
+      .or(z.literal("")),
     metallic: z.boolean().default(false),
 
     // State
     vehicleCondition: z.enum(
       VehicleConditionEnum.map((item) => item.value) as [string, ...string[]],
+      {
+        error: "Bitte wählen Sie einen Zustand.",
+      },
     ),
     lastInspectionDate: z.date().optional(),
-    registrationMonth: z.coerce.number().min(1).max(12).optional(),
+    registrationMonth: z.coerce
+      .number({
+        error: "Monat ist erforderlich",
+      })
+      .min(1, "Monat ist erforderlich")
+      .max(12),
     registrationYear: z.coerce
-      .number()
-      .min(1900)
-      .max(new Date().getFullYear())
-      .optional(),
+      .number({
+        error: "Jahr ist erforderlich",
+      })
+      .min(1900, "Jahr ist erforderlich")
+      .max(new Date().getFullYear()),
     inspectionPassed: z.boolean().default(false),
-    mileage: z.coerce.number().min(0, "Mileage must be positive"),
+    mileage: z.preprocess(
+      (val) => (val === "" || val === undefined ? undefined : Number(val)),
+      z
+        .number({
+          error: "Kilometerstand ist erforderlich",
+        })
+        .min(0, "Kilometerstand darf nicht negativ sein"),
+    ),
     warranty: z
       .enum(WarrantyEnum.map((item) => item.value) as [string, ...string[]])
-      .optional(),
+      .optional()
+      .or(z.literal("")),
     firstDate: z.date().optional(),
 
     // Price
-    priceChf: z.coerce.number().min(0),
-    newPriceChf: z.coerce.number().optional(),
+    priceChf: z.preprocess(
+      (val) => (val === "" || val === undefined ? undefined : Number(val)),
+      z
+        .number({
+          error: "Preis ist erforderlich",
+        })
+        .min(0, "Preis darf nicht negativ sein"),
+    ),
+    newPriceChf: z.coerce
+      .number()
+      .min(0, "Neupreis darf nicht negativ sein")
+      .optional(),
 
     // Equipment (Booleans)
     equipment: z.object({
@@ -168,48 +205,49 @@ export const vehicleFormSchema = z
     vehicleDescription: z.string().optional(),
 
     // Technical Data (Shared & Specific)
-    doors: z.coerce.number().optional(),
-    seats: z.coerce.number().optional(),
+    doors: z.coerce.number().min(0, "Wert darf nicht negativ sein").optional(),
+    seats: z.coerce.number().min(0, "Wert darf nicht negativ sein").optional(),
     energyLabel: z
       .enum(EnergyLabelEnum.map((item) => item.value) as [string, ...string[]])
-      .optional(),
+      .optional()
+      .or(z.literal("")),
     hp: z.coerce.number().optional(),
     kw: z.coerce.number().optional(),
     typeApproval: z.string().optional(),
     wheelbase: z.coerce.number().optional(),
     vehicleIdentificationNumber: z.string().optional(),
-    emptyWeight: z.coerce.number().optional(),
-    loadCapacity: z.coerce.number().optional(),
+    emptyWeight: z.coerce.number().min(0).optional(),
+    loadCapacity: z.coerce.number().min(0).optional(),
     serialNumber: z.string().optional(),
     height: z.coerce.number().optional(),
     width: z.coerce.number().optional(),
     length: z.coerce.number().optional(),
-    towingCapacityBraked: z.coerce.number().optional(),
+    towingCapacityBraked: z.coerce.number().min(0).optional(),
 
     // Combustion / Hybrid specific
-    consumptionCity: z.coerce.number().optional(),
-    consumptionCountry: z.coerce.number().optional(),
-    consumptionTotal: z.coerce.number().optional(),
-    cubicCapacity: z.coerce.number().optional(),
-    co2Emission: z.coerce.number().optional(),
+    consumptionCity: z.coerce.number().min(0).optional(),
+    consumptionCountry: z.coerce.number().min(0).optional(),
+    consumptionTotal: z.coerce.number().min(0).optional(),
+    cubicCapacity: z.coerce.number().min(0).optional(),
+    co2Emission: z.coerce.number().min(0).optional(),
     emissionStandard: z
       .enum(
         EmissionStandardEnum.map((item) => item.value) as [string, ...string[]],
       )
       .optional(),
-    cylinders: z.coerce.number().optional(),
-    numberOfGears: z.coerce.number().optional(),
+    cylinders: z.coerce.number().min(0).optional(),
+    numberOfGears: z.coerce.number().min(0).optional(),
 
     // Electric / Hybrid specific
-    range: z.coerce.number().optional(),
+    range: z.coerce.number().min(0).optional(),
     batteryOwnership: z
       .enum(
         BatteryOwnershipEnum.map((item) => item.value) as [string, ...string[]],
       )
       .optional(),
-    batteryCapacity: z.coerce.number().optional(),
-    batteryRentalMonth: z.coerce.number().optional(),
-    powerConsumption: z.coerce.number().optional(),
+    batteryCapacity: z.coerce.number().min(0).optional(),
+    batteryRentalMonth: z.coerce.number().min(0).optional(),
+    powerConsumption: z.coerce.number().min(0).optional(),
     batterySoh: z.coerce.number().min(0).max(100).optional(),
     chargingPlugTypeStandard: z
       .enum(
@@ -218,7 +256,8 @@ export const vehicleFormSchema = z
           ...string[],
         ],
       )
-      .optional(),
+      .optional()
+      .or(z.literal("")),
     chargingPlugTypeFast: z
       .enum(
         ChargingPlugTypeFastEnum.map((item) => item.value) as [
@@ -226,14 +265,15 @@ export const vehicleFormSchema = z
           ...string[],
         ],
       )
-      .optional(),
-    chargingPower: z.coerce.number().optional(), // kW
-    chargingTime80: z.coerce.number().optional(), // minutes
-    fastChargingTime80: z.coerce.number().optional(), // minutes
-    chargingTime100: z.coerce.number().optional(),
-    fastChargingTime100: z.coerce.number().optional(),
-    electricMotorPowerHp: z.coerce.number().optional(),
-    combustionEnginePowerHp: z.coerce.number().optional(),
+      .optional()
+      .or(z.literal("")),
+    chargingPower: z.coerce.number().min(0).optional(), // kW
+    chargingTime80: z.coerce.number().min(0).optional(), // minutes
+    fastChargingTime80: z.coerce.number().min(0).optional(), // minutes
+    chargingTime100: z.coerce.number().min(0).optional(),
+    fastChargingTime100: z.coerce.number().min(0).optional(),
+    electricMotorPowerHp: z.coerce.number().min(0).optional(),
+    combustionEnginePowerHp: z.coerce.number().min(0).optional(),
     images: z.any().optional(),
 
     // Contact Details
