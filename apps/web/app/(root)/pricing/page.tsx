@@ -56,7 +56,7 @@ export default function PricingPage() {
                 unterstützen – nicht Ihre Marge belasten.
               </p>
 
-              <p className="font-semibold">
+              <p className="font-semibold text-center">
                 autovendo.ch bietet faire Preise, direkte Ansprechpartner und
                 volle Transparenz. Keine versteckten Kosten. Kein
                 Konzern-Denken. Sondern echte Partnerschaft.
@@ -136,9 +136,6 @@ export default function PricingPage() {
                 </TableBody>
               </Table>
             </div>
-            <p className="text-sm text-muted-foreground">
-              *Vergleich basiert auf marktüblichen Händlerpreisen.
-            </p>
           </section>
 
           <Separator />
@@ -147,7 +144,7 @@ export default function PricingPage() {
             <h2 className="text-2xl font-bold">Mehr als 25 Fahrzeuge</h2>
             <div className="bg-primary/5 border border-primary/20 p-8 rounded-xl space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-primary mb-2">
+                <h3 className="text-xl font-bold mb-2">
                   Für größere Händler ab 25 Fahrzeugen
                 </h3>
                 <p className="text-lg font-medium">
@@ -208,74 +205,73 @@ export default function PricingPage() {
 
           <Separator />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <section className="space-y-6">
-              <h2 className="text-xl font-bold">Warum mehr bezahlen?</h2>
-              <div className="space-y-3 text-lg text-muted-foreground">
-                <ul className="space-y-3">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <section className="space-y-6">
+                <h2 className="text-xl font-bold">Warum mehr bezahlen?</h2>
+                <div className="space-y-3 text-lg text-muted-foreground">
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      Gleiche Reichweite.
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      Persönlicher Ansprechpartner.
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      Schnellere Reaktionszeiten.
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      Flexible Lösungen für Händler.
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      Keine Konzern-Strukturen.
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      Faire Preisgestaltung.
+                    </li>
+                  </ul>
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <h2 className="text-xl font-bold">Wir sind:</h2>
+                <ul className="space-y-3 text-lg">
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="size-5 text-primary shrink-0" />
-                    Gleiche Reichweite.
+                    Effizienter
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="size-5 text-primary shrink-0" />
-                    Persönlicher Ansprechpartner.
+                    Händlerorientiert
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="size-5 text-primary shrink-0" />
-                    Schnellere Reaktionszeiten.
+                    Persönlich
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="size-5 text-primary shrink-0" />
-                    Flexible Lösungen für Händler.
+                    Transparent
                   </li>
                   <li className="flex items-center gap-3">
                     <CheckCircle2 className="size-5 text-primary shrink-0" />
-                    Keine Konzern-Strukturen.
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <CheckCircle2 className="size-5 text-primary shrink-0" />
-                    Faire Preisgestaltung.
+                    Schweizerisch direkt
                   </li>
                 </ul>
-              </div>
-              <p className="font-semibold text-foreground text-lg leading-relaxed">
-                Mit autovendo.ch investieren Sie nicht in Werbung.
-                <br />
-                Sie investieren in eine Partnerschaft.
-              </p>
-            </section>
+              </section>
+            </div>
 
-            <section className="space-y-6 bg-secondary p-8 rounded-xl h-fit">
-              <h2 className="text-xl font-bold">Wir sind:</h2>
-              <ul className="space-y-3 text-lg">
-                <li className="flex items-center gap-3">
-                  <CheckCircle2 className="size-5 text-primary shrink-0" />
-                  Effizienter
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle2 className="size-5 text-primary shrink-0" />
-                  Händlerorientiert
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle2 className="size-5 text-primary shrink-0" />
-                  Persönlich
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle2 className="size-5 text-primary shrink-0" />
-                  Transparent
-                </li>
-                <li className="flex items-center gap-3">
-                  <CheckCircle2 className="size-5 text-primary shrink-0" />
-                  Schweizerisch direkt
-                </li>
-              </ul>
-              <div className="pt-6 border-t border-border">
-                <p className="font-bold text-primary text-lg">
-                  Ihre Marge gehört Ihnen – nicht der Plattform.
-                </p>
-              </div>
-            </section>
+            <p className="font-semibold text-foreground text-lg text-center leading-relaxed">
+              Mit autovendo.ch investieren Sie nicht in Werbung. Sie investieren
+              in eine Partnerschaft.
+              <br />
+              Ihre Marge gehört Ihnen – nicht der Plattform.
+            </p>
           </div>
         </div>
 

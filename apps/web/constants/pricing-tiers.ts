@@ -5,7 +5,7 @@ export const pricingTiers = [
     period: "/ monat",
     description: "Ideal für kleinere Bestände.",
     features: [
-      { name: "Bis zu 5 Inserate", included: true },
+      { name: "Bis zu 5 Fahrzeuge", included: true },
       { name: "Volle Sichtbarkeit", included: true },
       { name: "Persönlicher Support", included: true },
       { name: "Keine versteckten Kosten", included: true },
@@ -20,7 +20,7 @@ export const pricingTiers = [
     period: "/ monat",
     description: "Perfekt für wachsende Händler.",
     features: [
-      { name: "Bis zu 10 Inserate", included: true },
+      { name: "Bis zu 10 Fahrzeuge", included: true },
       { name: "Volle Sichtbarkeit", included: true },
       { name: "Persönlicher Support", included: true },
       { name: "Keine versteckten Kosten", included: true },
@@ -35,7 +35,7 @@ export const pricingTiers = [
     period: "/ monat",
     description: "Für etablierte Händler.",
     features: [
-      { name: "Bis zu 15 Inserate", included: true },
+      { name: "Bis zu 15 Fahrzeuge", included: true },
       { name: "Volle Sichtbarkeit", included: true },
       { name: "Persönlicher Support", included: true },
       { name: "Keine versteckten Kosten", included: true },
@@ -50,7 +50,7 @@ export const pricingTiers = [
     period: "/ monat",
     description: "Für Händler mit höherem Volumen.",
     features: [
-      { name: "Bis zu 25 Inserate", included: true },
+      { name: "Bis zu 25 Fahrzeuge", included: true },
       { name: "Volle Sichtbarkeit", included: true },
       { name: "Persönlicher Support", included: true },
       { name: "Keine versteckten Kosten", included: true },
