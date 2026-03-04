@@ -21,13 +21,13 @@ export const StickyActionBar = ({
           <Button variant="outline" className="w-full flex-1" asChild>
             <Link href={`mailto:${sellerPhone}`}>
               <Mail />
-              Contact
+              Kontaktieren
             </Link>
           </Button>
           <Button className="w-full flex-1" asChild>
             <Link href={`tel:${sellerPhone}`}>
               <Phone />
-              Phone
+              Telefon
             </Link>
           </Button>
         </div>

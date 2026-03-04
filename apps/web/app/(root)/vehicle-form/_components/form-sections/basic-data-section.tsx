@@ -409,8 +409,8 @@ export function BasicDataSection() {
               control={control}
               fieldType={FormFieldType.INPUT}
               inputType="number"
-              name="mileage"
-              label="Kilometer"
+              name="kilometer"
+              label="Kilometerstand"
               placeholder="0"
               className="w-full"
             />

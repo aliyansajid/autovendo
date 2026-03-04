@@ -289,7 +289,7 @@ export const yearHistogram = [
   { year: _CURRENT_YEAR, h: 30 },
 ];
 
-export const mileageHistogram = [
+export const kilometerHistogram = [
   { value: 0, h: 100 },
   { value: 30000, h: 80 },
   { value: 60000, h: 60 },

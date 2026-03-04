@@ -8,7 +8,7 @@ export const carDetail = {
     "/hatchback_red_1770816163420.png",
   ],
   keyDetails: {
-    mileage: "7 km",
+    kilometer: "7 km",
     transmission: "Manual",
     firstRegistration: "01/2026",
     fuelType: "Gasoline",
@@ -26,7 +26,7 @@ export const carDetail = {
     offerNumber: "23344147",
   },
   vehicleHistory: {
-    mileage: "7 km",
+    kilometer: "7 km",
     firstRegistration: "01/2026",
   },
   technicalData: {

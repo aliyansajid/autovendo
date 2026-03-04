@@ -22,7 +22,7 @@ import {
 import { carBodyTypeEnum, carFuelTypeEnum } from "@/constants/cars";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import { Separator } from "@repo/ui/components/separator";
-import { getRegistrationYears, mileages } from "@/lib/utils";
+import { getRegistrationYears, kilometers } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -43,8 +43,8 @@ const formSchema = z.object({
   priceTo: z.string().optional(),
   registrationFrom: z.string().optional(),
   registrationTo: z.string().optional(),
-  mileageFrom: z.string().optional(),
-  mileageTo: z.string().optional(),
+  kilometerFrom: z.string().optional(),
+  kilometerTo: z.string().optional(),
   condition: z.array(z.string()).optional(),
   make: z.string().optional(),
   fuel: z.array(z.string()).optional(),
@@ -202,11 +202,11 @@ export const FiltersSidebar = ({
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.SELECT}
-                  name="mileageFrom"
+                  name="kilometerFrom"
                   placeholder="von"
                 >
                   <SelectItem value="any">Beliebig</SelectItem>
-                  {mileages.map((m) => (
+                  {kilometers.map((m) => (
                     <SelectItem key={m.value} value={m.value}>
                       {m.label}
                     </SelectItem>
@@ -215,11 +215,11 @@ export const FiltersSidebar = ({
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.SELECT}
-                  name="mileageTo"
+                  name="kilometerTo"
                   placeholder="bis"
                 >
                   <SelectItem value="any">Beliebig</SelectItem>
-                  {mileages.map((m) => (
+                  {kilometers.map((m) => (
                     <SelectItem key={m.value} value={m.value}>
                       {m.label}
                     </SelectItem>

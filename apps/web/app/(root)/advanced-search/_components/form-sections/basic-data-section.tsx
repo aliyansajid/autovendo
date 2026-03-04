@@ -16,7 +16,7 @@ import { Separator } from "@repo/ui/src/components/separator";
 import {
   VehicleConditionEnum,
   yearHistogram,
-  mileageHistogram,
+  kilometerHistogram,
   priceHistogram,
 } from "@/constants";
 import { carBodyTypeEnum } from "@/constants/cars";
@@ -30,7 +30,7 @@ export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
   const { control, watch, setValue } = useFormContext();
 
   const yearRange = watch("year") || [1900, CURRENT_YEAR];
-  const mileageRange = watch("mileage") || [0, 400000];
+  const kilometerRange = watch("kilometer") || [0, 400000];
   const priceRange = watch("price") || [0, 1000000];
 
   useEffect(() => {
@@ -106,10 +106,10 @@ export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
               </span>
             </div>
             <div className="h-16 flex items-end justify-between gap-1">
-              {mileageHistogram.map(
+              {kilometerHistogram.map(
                 (item: { value: number; h: number }, i: number) => {
-                  const mStart = mileageRange?.[0] ?? 0;
-                  const mEnd = mileageRange?.[1] ?? 400000;
+                  const mStart = kilometerRange?.[0] ?? 0;
+                  const mEnd = kilometerRange?.[1] ?? 400000;
                   const isActive = item.value >= mStart && item.value <= mEnd;
                   return (
                     <div
@@ -128,7 +128,7 @@ export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
             <CustomFormField
               control={control}
               fieldType={FormFieldType.SLIDER}
-              name="mileage"
+              name="kilometer"
               min={0}
               max={400000}
               step={1000}
@@ -137,14 +137,14 @@ export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
                 <CustomFormField
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
-                  name="mileage-from"
+                  name="kilometer-from"
                   placeholder="0"
                   inputGroupText="km"
                 />
                 <CustomFormField
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
-                  name="mileage-to"
+                  name="kilometer-to"
                   placeholder="400'000+"
                   inputGroupText="km"
                 />

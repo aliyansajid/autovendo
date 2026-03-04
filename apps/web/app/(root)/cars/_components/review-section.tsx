@@ -33,7 +33,7 @@ export const ReviewSection = ({
   return (
     <Card>
       <CardHeader className="border-b gap-0">
-        <CardTitle>Reviews</CardTitle>
+        <CardTitle>Bewertungen</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center gap-1.5 text-sm">
@@ -46,7 +46,7 @@ export const ReviewSection = ({
             ))}
           </div>
           <span className="font-semibold">{rating}</span>
-          <span className="text-muted-foreground">({count} reviews)</span>
+          <span className="text-muted-foreground">({count} Bewertungen)</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -74,7 +74,7 @@ export const ReviewSection = ({
             ))
           ) : (
             <p className="text-muted-foreground italic text-sm">
-              No reviews yet.
+              Noch keine Bewertungen.
             </p>
           )}
         </div>
@@ -84,7 +84,7 @@ export const ReviewSection = ({
             href={`/dealers/${dealerId}`}
             className="flex items-center gap-2 text-primary text-sm font-medium hover:underline"
           >
-            Show all reviews <ArrowRight className="size-4" />
+            Alle Bewertungen anzeigen <ArrowRight className="size-4" />
           </Link>
         )}
       </CardContent>

@@ -32,9 +32,9 @@ export const advancedSearchFormSchema = z
     "year-from": optionalNonNegativeNumberString,
     "year-to": optionalNonNegativeNumberString,
 
-    mileage: optionalNonNegativeNumberArray,
-    "mileage-from": optionalNonNegativeNumberString,
-    "mileage-to": optionalNonNegativeNumberString,
+    kilometer: optionalNonNegativeNumberArray,
+    "kilometer-from": optionalNonNegativeNumberString,
+    "kilometer-to": optionalNonNegativeNumberString,
 
     price: optionalNonNegativeNumberArray,
     "price-from": optionalNonNegativeNumberString,

@@ -53,7 +53,7 @@ export function VehicleForm() {
       make: "",
       model: "",
       version: "",
-      mileage: "" as any,
+      kilometer: "" as any,
       priceChf: "" as any,
       newPriceChf: "" as any,
       doors: "" as any,
@@ -108,7 +108,7 @@ export function VehicleForm() {
         "color",
         "interiorColor",
         "vehicleCondition",
-        "mileage",
+        "kilometer",
         "priceChf",
         "registrationMonth",
         "registrationYear",
@@ -337,9 +337,9 @@ export function VehicleForm() {
                       )}
                     </div>
 
-                    <div className="text-muted-foreground">Kilometer</div>
+                    <div className="text-muted-foreground">Kilometerstand</div>
                     <div className="font-medium">
-                      {form.getValues("mileage")}
+                      {form.getValues("kilometer")}
                     </div>
 
                     <div className="text-muted-foreground">Jahrgang</div>

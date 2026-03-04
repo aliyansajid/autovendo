@@ -66,8 +66,8 @@ export default function ListingPage() {
               CHF {price.toLocaleString()}
             </div>
             <div className="flex flex-wrap gap-2">
-              <Badge>VAT deductible</Badge>
-              <Badge variant="secondary">Negotiable</Badge>
+              <Badge>MwSt. ausweisbar</Badge>
+              <Badge variant="secondary">Verhandelbar</Badge>
             </div>
           </div>
 
@@ -82,8 +82,8 @@ export default function ListingPage() {
                     strokeWidth={1.5}
                   />
                 }
-                label="Mileage"
-                value={keyDetails.mileage}
+                label="Kilometerstand"
+                value={keyDetails.kilometer}
               />
               <KeyDetailCard
                 icon={
@@ -92,7 +92,7 @@ export default function ListingPage() {
                     strokeWidth={1.5}
                   />
                 }
-                label="Power"
+                label="Leistung"
                 value={keyDetails.power}
               />
               <KeyDetailCard
@@ -102,7 +102,7 @@ export default function ListingPage() {
                     strokeWidth={1.5}
                   />
                 }
-                label="Fuel Type"
+                label="Treibstoff"
                 value={keyDetails.fuelType}
               />
               <KeyDetailCard
@@ -112,7 +112,7 @@ export default function ListingPage() {
                     strokeWidth={1.5}
                   />
                 }
-                label="Transmission"
+                label="Getriebe"
                 value={keyDetails.transmission}
               />
               <KeyDetailCard
@@ -122,7 +122,7 @@ export default function ListingPage() {
                     strokeWidth={1.5}
                   />
                 }
-                label="First Reg."
+                label="Erstzulassung"
                 value={keyDetails.firstRegistration}
               />
               <KeyDetailCard
@@ -132,26 +132,26 @@ export default function ListingPage() {
                     strokeWidth={1.5}
                   />
                 }
-                label="Seller"
+                label="Verkäufer"
                 value={keyDetails.sellerType}
               />
             </CardContent>
           </Card>
 
           <div className="space-y-6">
-            <Section title="Basic Data">
+            <Section title="Basisdaten">
               <DataGrid data={basicData} />
             </Section>
 
-            <Section title="Vehicle History">
+            <Section title="Fahrzeughistorie">
               <DataGrid data={vehicleHistory} />
             </Section>
 
-            <Section title="Technical Data">
+            <Section title="Technische Daten">
               <DataGrid data={technicalData} />
             </Section>
 
-            <Section title="Energy Consumption">
+            <Section title="Energieverbrauch">
               <DataGrid
                 data={Object.fromEntries(
                   Object.entries(energyConsumption).filter(
@@ -164,7 +164,7 @@ export default function ListingPage() {
                   <Separator />
                   <div className="mt-6">
                     <h3 className="text-sm font-medium mb-4">
-                      Energy Efficiency Class
+                      Energieeffizienzklasse
                     </h3>
                     <EnergyLabel
                       efficiencyClass={energyConsumption.efficiencyClass}
@@ -174,15 +174,15 @@ export default function ListingPage() {
               )}
             </Section>
 
-            <Section title="Colour and Upholstery">
+            <Section title="Farbe und Polsterung">
               <DataGrid data={colourAndUpholstery} />
             </Section>
 
-            <Section title="Equipment">
+            <Section title="Ausstattung">
               <EquipmentCategory items={equipment.comfort} />
             </Section>
 
-            <Section title="Vehicle Description">
+            <Section title="Fahrzeugbeschreibung">
               <p className="whitespace-pre-line text-muted-foreground leading-relaxed">
                 {description}
               </p>
@@ -211,8 +211,8 @@ export default function ListingPage() {
                 CHF {price.toLocaleString()}
               </h2>
               <div className="flex flex-wrap gap-2">
-                <Badge>VAT deductible</Badge>
-                <Badge variant="secondary">Negotiable</Badge>
+                <Badge>MwSt. ausweisbar</Badge>
+                <Badge variant="secondary">Verhandelbar</Badge>
               </div>
             </CardContent>
           </Card>
@@ -224,7 +224,7 @@ export default function ListingPage() {
                 <div className="flex items-center gap-2">
                   <BadgeCheck className="size-4 text-primary" />
                   <span className="text-sm font-medium text-primary">
-                    Verified Dealer
+                    Verifizierter Händler
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 text-sm">
@@ -238,7 +238,7 @@ export default function ListingPage() {
                   </div>
                   <span className="font-semibold">{seller.rating}</span>
                   <span className="text-muted-foreground">
-                    ({seller.reviewCount} reviews)
+                    ({seller.reviewCount} Bewertungen)
                   </span>
                 </div>
               </div>
@@ -273,17 +273,17 @@ export default function ListingPage() {
               <div className="space-y-3">
                 <Button className="w-full">
                   <Phone />
-                  Phone
+                  Telefon
                 </Button>
                 <Button variant="outline" className="w-full">
                   <Mail />
-                  Contact
+                  Kontaktieren
                 </Button>
                 <Link
                   href={`/dealers/${seller.id}`}
                   className="block text-center text-sm text-primary font-medium hover:underline pt-2"
                 >
-                  All vehicles from this dealer
+                  Alle Fahrzeuge dieses Händlers
                 </Link>
               </div>
             </CardContent>
@@ -313,7 +313,7 @@ function Section({
 }
 
 function DataGrid({ data }: { data: Record<string, string | number> }) {
-  const noBorderKeys = ["doors", "mileage", "cylinders"];
+  const noBorderKeys = ["doors", "kilometer", "cylinders"];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1">

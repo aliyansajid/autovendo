@@ -36,7 +36,7 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
   return (
     <Card>
       <CardHeader className="border-b gap-0">
-        <CardTitle>Seller</CardTitle>
+        <CardTitle>Verkäufer</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
@@ -63,7 +63,7 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                   </div>
                   <span className="font-semibold">{seller.rating}</span>
                   <span className="text-muted-foreground">
-                    ({seller.reviewCount} reviews)
+                    ({seller.reviewCount} Bewertungen)
                   </span>
                 </div>
                 {seller.website && (
@@ -101,14 +101,14 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                 <div className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors cursor-pointer">
                   <ArrowRight className="size-4" />
                   <span className="font-medium">
-                    All vehicles from this dealer
+                    Alle Fahrzeuge dieses Händlers
                   </span>
                 </div>
               </div>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-bold mb-3">Opening hours</h4>
+              <h4 className="font-bold mb-3">Öffnungszeiten</h4>
               {seller.openingHours ? (
                 <div className="space-y-2 text-sm">
                   {seller.openingHours.map((item, i) => (
@@ -124,7 +124,7 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground italic">
-                  No opening hours available.
+                  Keine Öffnungszeiten verfügbar.
                 </p>
               )}
             </div>

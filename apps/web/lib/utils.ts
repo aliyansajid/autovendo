@@ -9,7 +9,7 @@ export const getRegistrationYears = () => {
   return years;
 };
 
-export const mileages = [
+export const kilometers = [
   ...Array.from({ length: 11 }, (_, i) => (i === 0 ? 5000 : i * 10000)),
   125000,
   150000,

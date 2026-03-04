@@ -99,7 +99,7 @@ export const vehicleFormSchema = z
       .min(1900, "Jahr ist erforderlich")
       .max(new Date().getFullYear()),
     inspectionPassed: z.boolean().default(false),
-    mileage: z.preprocess(
+    kilometer: z.preprocess(
       (val) => (val === "" || val === undefined ? undefined : Number(val)),
       z
         .number({
