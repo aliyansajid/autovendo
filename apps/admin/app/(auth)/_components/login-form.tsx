@@ -1,21 +1,26 @@
 "use client";
 
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "@repo/ui/components/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { createAuthClient } from "@repo/auth/client";
+import { Button } from "@repo/ui/src/components/button";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from "@repo/ui/components/card";
-import { Field, FieldGroup } from "@repo/ui/components/field";
+  CardDescription,
+  CardContent,
+} from "@repo/ui/src/components/card";
 import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
+import { FieldGroup, Field } from "@repo/ui/src/components/field";
+import { Spinner } from "@repo/ui/src/components/spinner";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.email({ error: "Please enter a valid email address" }),
@@ -23,6 +28,9 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
+  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,16 +39,28 @@ export function LoginForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    setIsPending(true);
+
+    const res = await createAuthClient().signIn.email({
+      email: data.email,
+      password: data.password,
+    });
+
+    setIsPending(false);
+    if (res.error) {
+      toast.error(res.error.message || "Failed to login");
+    } else {
+      router.push("/");
+    }
   }
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl">Welcome back</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account
+          Enter your email to login to your account
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -53,6 +73,7 @@ export function LoginForm() {
               name="email"
               label="Email"
               placeholder="m@example.com"
+              disabled={isPending}
             />
 
             <CustomFormField
@@ -62,10 +83,20 @@ export function LoginForm() {
               name="password"
               label="Password"
               placeholder="********"
+              disabled={isPending}
             />
 
             <Field>
-              <Button type="submit">Login</Button>
+              <Button type="submit" disabled={isPending} className="w-full">
+                {isPending ? (
+                  <>
+                    <Spinner />
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
+              </Button>
             </Field>
           </FieldGroup>
         </form>
