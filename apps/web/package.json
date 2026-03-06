@@ -11,7 +11,7 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@repo/auth": "*",
+    "@repo/db": "*",
     "@repo/ui": "*",
     "lucide-react": "^0.563.0",
     "next": "16.1.5",
