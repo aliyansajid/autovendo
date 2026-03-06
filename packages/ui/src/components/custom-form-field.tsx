@@ -48,7 +48,7 @@ enum FormFieldType {
 interface CustomFormFieldProps {
   control: Control<any>;
   fieldType: FormFieldType;
-  inputType?: "text" | "email" | "tel" | "password" | "number";
+  inputType?: "text" | "email" | "tel" | "password" | "number" | "url";
   name: string;
   label?: React.ReactNode;
   placeholder?: string;
