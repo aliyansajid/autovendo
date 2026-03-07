@@ -10,7 +10,11 @@
     "STRIPE_BRONZE_PRICE_ID",
     "STRIPE_SILVER_PRICE_ID",
     "STRIPE_GOLD_PRICE_ID",
-    "STRIPE_DIAMOND_PRICE_ID"
+    "STRIPE_DIAMOND_PRICE_ID",
+    "EMAIL_HOST",
+    "EMAIL_PORT",
+    "EMAIL_USER",
+    "EMAIL_PASS"
   ],
   "tasks": {
     "build": {
