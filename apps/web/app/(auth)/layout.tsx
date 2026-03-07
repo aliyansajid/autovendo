@@ -1,4 +1,4 @@
-import { Car } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function AuthLayout({
@@ -9,14 +9,13 @@ export default function AuthLayout({
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
       <div className="flex flex-col w-full max-w-sm gap-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2 self-center font-medium"
-        >
-          <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <Car className="size-4" />
-          </div>
-          Autovendo
+        <Link href="/" className="flex  self-center">
+          <Image
+            src="/logo.svg"
+            alt="AutoVendo Logo"
+            width={200}
+            height={200}
+          />
         </Link>
         {children}
       </div>

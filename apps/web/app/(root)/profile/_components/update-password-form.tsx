@@ -12,54 +12,64 @@ import { FieldGroup, Field } from "@repo/ui/src/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
+import { authClient } from "@repo/auth/client";
+import { toast } from "sonner";
+import { useTransition } from "react";
+import { Spinner } from "@repo/ui/src/components/spinner";
 import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { Spinner } from "@repo/ui/src/components/spinner";
-import { authClient } from "@repo/auth/client";
-import { toast } from "sonner";
-import { useTransition } from "react";
 
-const formSchema = z.object({
-  email: z.email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
-});
+const formSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "New password must be at least 8 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
-export const LoginForm = () => {
+export const UpdatePasswordForm = () => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
     },
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     startTransition(async () => {
-      const result = await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
-        rememberMe: true,
-        callbackURL: "/",
+      const result = await authClient.changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+        revokeOtherSessions: true,
       });
 
       if (result.error) {
-        toast.error(result.error.message);
+        toast.error(result.error.message || "Failed to update password");
         return;
       }
+
+      toast.success("Password updated successfully");
+      form.reset();
     });
   }
 
   return (
     <Card>
-      <CardHeader className="text-center">
-        <CardTitle className="text-xl">Welcome back</CardTitle>
+      <CardHeader>
+        <CardTitle>Update Password</CardTitle>
         <CardDescription>
-          Login with your Apple or Google account
+          Change your password to keep your account secure.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -68,10 +78,10 @@ export const LoginForm = () => {
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
-              inputType="email"
-              name="email"
-              label="Email"
-              placeholder="m@example.com"
+              inputType="password"
+              name="currentPassword"
+              label="Current Password"
+              placeholder="********"
               disabled={isPending}
             />
 
@@ -79,37 +89,31 @@ export const LoginForm = () => {
               control={form.control}
               fieldType={FormFieldType.INPUT}
               inputType="password"
-              name="password"
-              label="Password"
+              name="newPassword"
+              label="New Password"
               placeholder="********"
               disabled={isPending}
             />
 
-            <div className="flex items-center justify-between">
-              <CustomFormField
-                control={form.control}
-                fieldType={FormFieldType.CHECKBOX}
-                name="rememberme"
-                label="Remember Me"
-                disabled={isPending}
-              />
-              <Link
-                href="/forgot-password"
-                className="text-sm underline-offset-4 hover:text-primary hover:underline whitespace-nowrap"
-              >
-                Forgot your password?
-              </Link>
-            </div>
+            <CustomFormField
+              control={form.control}
+              fieldType={FormFieldType.INPUT}
+              inputType="password"
+              name="confirmPassword"
+              label="Confirm Password"
+              placeholder="********"
+              disabled={isPending}
+            />
 
             <Field>
               <Button type="submit" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Spinner />
-                    Logging in...
+                    Updating...
                   </>
                 ) : (
-                  "Login"
+                  "Update Password"
                 )}
               </Button>
             </Field>
