@@ -32,6 +32,12 @@ export const auth = betterAuth({
     },
   },
 
+  trustedOrigins: [
+    "https://autovendo.ch",
+    "https://www.autovendo.ch",
+    "http://localhost:3000",
+  ],
+
   plugins: [
     admin(),
     stripe({
