@@ -1,8 +1,8 @@
 import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
+import { prismaAdapter } from "@better-auth/prisma-adapter";
+import { prisma } from "@repo/db";
 import { admin } from "better-auth/plugins";
 import { stripe } from "@better-auth/stripe";
-import { prisma } from "@repo/db";
 import Stripe from "stripe";
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -16,7 +16,6 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
-    disableSignUp: true,
   },
 
   plugins: [

@@ -24,6 +24,7 @@ model User {
   banExpires DateTime? @db.Timestamptz(3)
 
   stripeCustomerId String?
+  dealer           Dealer?
 
   @@unique([email])
   @@map("user")
@@ -96,4 +97,22 @@ model Subscription {
   stripeScheduleId     String?
 
   @@map("subscription")
+}
+
+model Dealer {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName   String
+  address       String
+  zipCode       String
+  city          String
+  uidNumber     String   @unique // UID-Nr. (Tax ID)
+  contactPerson String
+  phoneNumber   String
+  businessEmail String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("dealer")
 }
