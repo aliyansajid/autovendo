@@ -46,16 +46,16 @@ export const UpdatePasswordForm = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     startTransition(async () => {
-      const result = await authClient.changePassword({
-        currentPassword: data.currentPassword,
-        newPassword: data.newPassword,
+      const { data, error } = await authClient.changePassword({
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
         revokeOtherSessions: true,
       });
 
-      if (result.error) {
-        toast.error(result.error.message || "Failed to update password");
+      if (error) {
+        toast.error(error.message || "Failed to update password");
         return;
       }
 

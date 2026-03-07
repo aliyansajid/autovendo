@@ -47,20 +47,20 @@ export const ResetPasswordForm = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     if (!token) {
       toast.error("Invalid or missing reset token");
       return;
     }
 
     startTransition(async () => {
-      const result = await authClient.resetPassword({
-        newPassword: data.password,
+      const { error } = await authClient.resetPassword({
+        newPassword: values.password,
         token: token,
       });
 
-      if (result.error) {
-        toast.error(result.error.message || "Failed to reset password");
+      if (error) {
+        toast.error(error.message || "Failed to reset password");
         return;
       }
 

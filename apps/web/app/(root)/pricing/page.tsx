@@ -21,6 +21,7 @@ import {
   CardFooter,
 } from "@repo/ui/src/components/card";
 import { XCircle } from "lucide-react";
+import { SubscribeButton } from "./_components/subscribe-button";
 
 export default function PricingPage() {
   return (
@@ -338,16 +339,10 @@ export default function PricingPage() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button
-                    className="w-full"
+                  <SubscribeButton
+                    planName={tier.name}
                     variant={tier.popular ? "default" : "outline"}
-                    asChild
-                  >
-                    <Link href="/contact" className="gap-2">
-                      {tier.buttonText}
-                      <ArrowRight className="size-4" />
-                    </Link>
-                  </Button>
+                  />
                 </CardFooter>
               </Card>
             ))}

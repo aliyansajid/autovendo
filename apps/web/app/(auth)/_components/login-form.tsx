@@ -21,13 +21,17 @@ import { Spinner } from "@repo/ui/src/components/spinner";
 import { authClient } from "@repo/auth/client";
 import { toast } from "sonner";
 import { useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   email: z.email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
+  rememberme: z.boolean(),
 });
 
 export const LoginForm = () => {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -35,20 +39,21 @@ export const LoginForm = () => {
     defaultValues: {
       email: "",
       password: "",
+      rememberme: false,
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     startTransition(async () => {
-      const result = await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
-        rememberMe: true,
-        callbackURL: "/",
+      const { error } = await authClient.signIn.email({
+        email: values.email,
+        password: values.password,
+        rememberMe: values.rememberme,
+        callbackURL: callbackUrl,
       });
 
-      if (result.error) {
-        toast.error(result.error.message);
+      if (error) {
+        toast.error(error.message);
         return;
       }
     });
