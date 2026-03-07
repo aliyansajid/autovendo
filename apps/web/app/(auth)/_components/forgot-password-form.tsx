@@ -40,19 +40,19 @@ export const ForgotPasswordForm = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     startTransition(async () => {
-      const result = await authClient.requestPasswordReset({
-        email: data.email,
+      const { data, error } = await authClient.requestPasswordReset({
+        email: values.email,
         redirectTo: "/reset-password",
       });
 
-      if (result.error) {
-        toast.error(result.error.message || "Failed to send reset link");
+      if (error) {
+        toast.error(error.message || "Failed to send reset link");
         return;
       }
 
-      toast.success(result.data.message);
+      toast.success(data.message);
     });
   }
 
