@@ -16,6 +16,20 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
+    disableSignUp: true,
+    sendResetPassword: async ({ user, url }) => {
+      const { sendEmail } = await import("@repo/transactional");
+      const { ResetPasswordEmail } =
+        await import("@repo/transactional/emails/reset-password");
+      await sendEmail({
+        to: user.email,
+        subject: "Reset your Autovendo password",
+        template: ResetPasswordEmail({
+          userEmail: user.email,
+          resetPasswordUrl: url,
+        }),
+      });
+    },
   },
 
   plugins: [
