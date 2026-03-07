@@ -13,14 +13,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@repo/ui/components/sidebar";
+import { Skeleton } from "@repo/ui/components/skeleton";
+import { authClient } from "@repo/auth/client";
 import Link from "next/link";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dealers",
@@ -31,6 +28,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session, isPending } = authClient.useSession();
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -48,7 +47,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {isPending ? (
+          <div className="flex items-center gap-2 p-2">
+            <Skeleton className="h-8 w-8 rounded-lg" />
+            <div className="space-y-1">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+          </div>
+        ) : (
+          <NavUser
+            user={
+              session?.user ?? {
+                name: "Guest",
+                email: "m@example.com",
+              }
+            }
+          />
+        )}
       </SidebarFooter>
     </Sidebar>
   );

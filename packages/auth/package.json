@@ -2,15 +2,15 @@
   "name": "@repo/auth",
   "version": "0.0.0",
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
   "dependencies": {
     "@better-auth/prisma-adapter": "^1.5.4",
     "@better-auth/stripe": "^1.5.4",
     "@repo/db": "*",
     "better-auth": "^1.5.4",
     "stripe": "^20.4.1"
-  },
-  "exports": {
-    ".": "./src/index.ts",
-    "./client": "./src/client.ts"
   }
 }

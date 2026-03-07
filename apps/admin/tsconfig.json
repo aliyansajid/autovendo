@@ -4,6 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
+      "@repo/transactional/*": ["../../packages/transactional/*"],
       "@repo/ui/*": ["../../packages/ui/*"]
     },
     "plugins": [

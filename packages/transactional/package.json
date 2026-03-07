@@ -1,0 +1,24 @@
+{
+  "name": "@repo/transactional",
+  "version": "1.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./emails/*": "./emails/*.tsx"
+  },
+  "scripts": {
+    "dev": "email dev -p 3002",
+    "export": "email export"
+  },
+  "dependencies": {
+    "@react-email/components": "^1.0.0",
+    "nodemailer": "^8.0.1",
+    "react": "^19.2.0"
+  },
+  "devDependencies": {
+    "@react-email/preview-server": "^5.0.1",
+    "@types/nodemailer": "^7.0.11",
+    "@types/react": "^19.2.3",
+    "react-email": "^5.0.1"
+  }
+}

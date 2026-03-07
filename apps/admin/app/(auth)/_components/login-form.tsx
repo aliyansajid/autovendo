@@ -21,25 +21,21 @@ import { authClient } from "@repo/auth/client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Spinner } from "@repo/ui/src/components/spinner";
+import { loginSchema } from "@/schema";
 
-const formSchema = z.object({
-  email: z.email({ error: "Please enter a valid email" }),
-  password: z.string().min(1, "Password is required"),
-});
-
-export function LoginForm() {
+export const LoginForm = () => {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const router = useRouter();
-
-  async function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof loginSchema>) {
     startTransition(async () => {
       const result = await authClient.signIn.email({
         email: data.email,
@@ -104,4 +100,4 @@ export function LoginForm() {
       </CardContent>
     </Card>
   );
-}
+};
