@@ -18,12 +18,12 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role        String?
-  banned      Boolean?
-  banReason   String?
-  banExpires  DateTime? @db.Timestamptz(3)
+  role       String?
+  banned     Boolean?
+  banReason  String?
+  banExpires DateTime? @db.Timestamptz(3)
 
-  	stripeCustomerId String?
+  stripeCustomerId String?
 
   @@unique([email])
   @@map("user")
@@ -77,23 +77,23 @@ model Verification {
 }
 
 model Subscription {
-	id String @id @default(cuid())
-	plan String
-	referenceId String
-	stripeCustomerId String?
-	stripeSubscriptionId String?
-	status String
-	periodStart DateTime? @db.Timestamptz(3)
-	periodEnd DateTime? @db.Timestamptz(3)
-	cancelAtPeriodEnd Boolean?
-	cancelAt DateTime? @db.Timestamptz(3)
-	canceledAt DateTime? @db.Timestamptz(3)
-	endedAt DateTime? @db.Timestamptz(3)
-	seats Int?
-	trialStart DateTime? @db.Timestamptz(3)
-	trialEnd DateTime? @db.Timestamptz(3)
-	billingInterval String?
-	stripeScheduleId String?
-	
+  id                   String    @id @default(cuid())
+  plan                 String
+  referenceId          String
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  status               String
+  periodStart          DateTime? @db.Timestamptz(3)
+  periodEnd            DateTime? @db.Timestamptz(3)
+  cancelAtPeriodEnd    Boolean?
+  cancelAt             DateTime? @db.Timestamptz(3)
+  canceledAt           DateTime? @db.Timestamptz(3)
+  endedAt              DateTime? @db.Timestamptz(3)
+  seats                Int?
+  trialStart           DateTime? @db.Timestamptz(3)
+  trialEnd             DateTime? @db.Timestamptz(3)
+  billingInterval      String?
+  stripeScheduleId     String?
+
   @@map("subscription")
 }
