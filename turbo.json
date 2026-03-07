@@ -1,7 +1,17 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
-  "globalEnv": ["DATABASE_URL"],
+  "globalEnv": [
+    "DATABASE_URL",
+    "BETTER_AUTH_SECRET",
+    "BETTER_AUTH_URL",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "STRIPE_BRONZE_PRICE_ID",
+    "STRIPE_SILVER_PRICE_ID",
+    "STRIPE_GOLD_PRICE_ID",
+    "STRIPE_DIAMOND_PRICE_ID"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],
