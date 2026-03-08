@@ -54,8 +54,8 @@ export const UpdatePasswordForm = () => {
 
   return (
     <Card>
-      <CardHeader className="text-center">
-        <CardTitle className="text-xl">Update Password</CardTitle>
+      <CardHeader>
+        <CardTitle>Update Password</CardTitle>
         <CardDescription>
           Change your password to keep your account secure.
         </CardDescription>

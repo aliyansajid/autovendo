@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { PlusCircle, Menu } from "lucide-react";
+import { PlusCircle, Menu, LayoutDashboard, Settings } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -40,7 +40,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/src/components/dropdown-menu";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@repo/ui/src/components/skeleton";
 
@@ -119,29 +119,43 @@ export const Header = () => {
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="end">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Billing</DropdownMenuItem>
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center w-full"
+                    >
+                      <LayoutDashboard />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/dashboard/settings"
+                      className="flex items-center w-full"
+                    >
+                      <Settings />
+                      <span>Einstellungen</span>
+                    </Link>
+                  </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <DropdownMenuItem
                     variant="destructive"
                     onClick={handleLogout}
+                    className="flex items-center w-full"
                   >
-                    Log out
+                    <LogOut />
+                    <span>Abmelden</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Button asChild className="bg-white text-primary hover:bg-white/90">
-              <Link href="/login">
-                <PlusCircle />
-                Login
-              </Link>
+              <Link href="/login">Login</Link>
             </Button>
           )}
 
@@ -224,9 +238,9 @@ export const Header = () => {
                       asChild
                       className="w-full justify-start text-left"
                     >
-                      <Link href="/profile">
-                        <User />
-                        Profil
+                      <Link href="/dashboard">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        Dashboard
                       </Link>
                     </Button>
                     <Button
