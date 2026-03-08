@@ -78,7 +78,7 @@ export const Header = () => {
           <Link href="/" className="block">
             <Image
               src="/logo-header.svg"
-              alt="Autovendo"
+              alt="AutoVendo Logo"
               width={48}
               height={40}
               className="h-8 w-auto"

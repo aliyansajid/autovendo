@@ -22,32 +22,23 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import Link from "next/link";
-
-const formSchema = z
-  .object({
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+import { resetPasswordSchema } from "@/schema/auth-schema";
 
 export const ResetPasswordForm = () => {
-  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       password: "",
       confirmPassword: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof resetPasswordSchema>) {
     if (!token) {
       toast.error("Invalid or missing reset token");
       return;
