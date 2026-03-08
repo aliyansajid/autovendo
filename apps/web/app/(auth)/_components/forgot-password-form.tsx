@@ -25,22 +25,19 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-
-const formSchema = z.object({
-  email: z.email("Invalid email address"),
-});
+import { forgotPasswordSchema } from "@/schema/auth-schema";
 
 export const ForgotPasswordForm = () => {
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof forgotPasswordSchema>>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof forgotPasswordSchema>) {
     startTransition(async () => {
       const { data, error } = await authClient.requestPasswordReset({
         email: values.email,

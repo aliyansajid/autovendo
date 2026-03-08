@@ -79,7 +79,7 @@ export const SubscriptionCard = () => {
         {activeSubscription ? (
           <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/30">
             <div>
-              <p className="font-semibold capitalize text-lg">
+              <p className="font-semibold capitalize">
                 {activeSubscription.plan} Plan
               </p>
               <p className="text-sm text-muted-foreground">
@@ -107,7 +107,7 @@ export const SubscriptionCard = () => {
         <CardFooter>
           <Button
             variant="outline"
-            className="w-full gap-2"
+            className="w-full"
             disabled={isPending}
             onClick={handleManageBilling}
           >
@@ -116,7 +116,7 @@ export const SubscriptionCard = () => {
             ) : (
               <>
                 Manage Billing
-                <ExternalLink className="size-4" />
+                <ExternalLink />
               </>
             )}
           </Button>

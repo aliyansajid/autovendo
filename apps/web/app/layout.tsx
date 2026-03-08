@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://autovendo.ch"),
-  title: "Autovendo - Find Your Perfect Vehicle",
+  title: "AutoVendo - Find Your Perfect Vehicle",
   description:
     "Discover used and new vehicles across Europe. Search thousands of cars from top brands including Audi, BMW, Mercedes-Benz, and more. Find your dream car today.",
   keywords: [
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     "Europe",
   ],
   openGraph: {
-    title: "Autovendo - Find Your Perfect Vehicle",
+    title: "AutoVendo - Find Your Perfect Vehicle",
     description:
       "Discover used and new vehicles across Europe. Search thousands of cars from top brands including Audi, BMW, Mercedes-Benz, and more.",
     url: "https://autovendo.ch",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Autovendo - Find Your Perfect Vehicle",
+    title: "AutoVendo - Find Your Perfect Vehicle",
     description:
       "Discover used and new vehicles across Europe. Search thousands of cars from top brands including Audi, BMW, Mercedes-Benz, and more.",
     images: ["/web-app-manifest-512x512.png"],

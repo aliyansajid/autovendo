@@ -22,20 +22,15 @@ import { authClient } from "@repo/auth/client";
 import { toast } from "sonner";
 import { useTransition } from "react";
 import { useSearchParams } from "next/navigation";
-
-const formSchema = z.object({
-  email: z.email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
-  rememberme: z.boolean(),
-});
+import { loginSchema } from "@/schema/auth-schema";
 
 export const LoginForm = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -43,7 +38,7 @@ export const LoginForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof loginSchema>) {
     startTransition(async () => {
       const { error } = await authClient.signIn.email({
         email: values.email,
@@ -64,7 +59,7 @@ export const LoginForm = () => {
       <CardHeader className="text-center">
         <CardTitle className="text-xl">Welcome back</CardTitle>
         <CardDescription>
-          Login with your Apple or Google account
+          Enter your email below to login to your account
         </CardDescription>
       </CardHeader>
       <CardContent>

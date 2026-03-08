@@ -1,4 +1,4 @@
-import { UpdatePasswordForm } from "./_components/update-password-form";
+import { UpdatePasswordForm } from "../../(auth)/_components/update-password-form";
 import { SubscriptionCard } from "./_components/subscription-card";
 
 export default function ProfilePage() {

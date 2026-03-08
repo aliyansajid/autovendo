@@ -20,25 +20,13 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-
-const formSchema = z
-  .object({
-    currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z
-      .string()
-      .min(8, "New password must be at least 8 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+import { updatePasswordSchema } from "@/schema/auth-schema";
 
 export const UpdatePasswordForm = () => {
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof updatePasswordSchema>>({
+    resolver: zodResolver(updatePasswordSchema),
     defaultValues: {
       currentPassword: "",
       newPassword: "",
@@ -46,9 +34,9 @@ export const UpdatePasswordForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof updatePasswordSchema>) {
     startTransition(async () => {
-      const { data, error } = await authClient.changePassword({
+      const { error } = await authClient.changePassword({
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
         revokeOtherSessions: true,
@@ -66,8 +54,8 @@ export const UpdatePasswordForm = () => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Update Password</CardTitle>
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl">Update Password</CardTitle>
         <CardDescription>
           Change your password to keep your account secure.
         </CardDescription>
