@@ -32,6 +32,42 @@ export const auth = betterAuth({
     },
   },
 
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      const { sendEmail } = await import("@repo/transactional");
+      const { VerifyEmail } =
+        await import("@repo/transactional/emails/verify-email");
+      await sendEmail({
+        to: user.email,
+        subject: "Verify your Autovendo email address",
+        template: VerifyEmail({
+          userEmail: user.email,
+          verificationUrl: url,
+        }),
+      });
+    },
+  },
+
+  user: {
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+        const { sendEmail } = await import("@repo/transactional");
+        const { ConfirmEmailChangeEmail } =
+          await import("@repo/transactional/emails/confirm-email-change");
+        await sendEmail({
+          to: user.email,
+          subject: "Approve your Autovendo email change",
+          template: ConfirmEmailChangeEmail({
+            currentEmail: user.email,
+            newEmail: newEmail,
+            confirmUrl: url,
+          }),
+        });
+      },
+    },
+  },
+
   trustedOrigins: [
     "https://autovendo.ch",
     "https://www.autovendo.ch",

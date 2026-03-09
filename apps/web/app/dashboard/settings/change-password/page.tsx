@@ -2,16 +2,15 @@
 
 import { UpdatePasswordForm } from "../../_components/update-password-form";
 
-export default function SettingsPage() {
+export default function ChangePasswordPage() {
   return (
-    <div className="max-w-4xl space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">Einstellungen</h1>
-        <p className="text-muted-foreground">
-          Verwalten Sie Ihr Profil und Ihre Sicherheitseinstellungen.
+    <div className="max-w-2xl space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-bold">Change Password</h1>
+        <p className="text-sm text-muted-foreground">
+          Update your password for security purposes.
         </p>
       </div>
-
       <UpdatePasswordForm />
     </div>
   );

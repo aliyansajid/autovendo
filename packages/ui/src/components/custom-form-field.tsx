@@ -48,7 +48,7 @@ enum FormFieldType {
 interface CustomFormFieldProps {
   control: Control<any>;
   fieldType: FormFieldType;
-  inputType?: "text" | "email" | "tel" | "password" | "number" | "url";
+  inputType?: "text" | "email" | "tel" | "password" | "number" | "url" | "file";
   name: string;
   label?: React.ReactNode;
   placeholder?: string;
@@ -79,10 +79,16 @@ const RenderField = ({
 
   switch (props.fieldType) {
     case FormFieldType.INPUT:
+      const { value, ...fieldWithoutValue } = field;
       return (
         <Input
-          {...field}
+          {...(props.inputType === "file" ? fieldWithoutValue : field)}
           type={props.inputType}
+          accept={
+            props.inputType === "file"
+              ? "image/png,image/jpeg,image/jpg,image/webp"
+              : undefined
+          }
           placeholder={props.placeholder}
           disabled={props.disabled}
           className={cn(
@@ -95,6 +101,8 @@ const RenderField = ({
               try {
                 field.onChange(e.target.value);
               } catch {}
+            } else if (props.inputType === "file") {
+              field.onChange(e.target.files?.[0]);
             } else {
               field.onChange(e);
             }

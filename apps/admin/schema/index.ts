@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  email: z.email({ error: "Please enter a valid email" }),
+  email: z.email("Please enter a valid email"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -10,7 +10,7 @@ export const dealerSchema = z.object({
     .string()
     .min(3, "Name must be at least 3 characters")
     .max(50, "Name must be at most 50 characters"),
-  email: z.email({ error: "Please enter a valid email" }),
+  email: z.email("Please enter a valid email"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   companyName: z
     .string()
@@ -40,5 +40,5 @@ export const dealerSchema = z.object({
     .string()
     .min(1, "Phone number is required")
     .regex(/^(\+41|0041|0)[0-9\s.-]{8,}$/, "Invalid phone number"),
-  businessEmail: z.email({ error: "Please enter a valid email" }),
+  businessEmail: z.email("Please enter a valid email"),
 });

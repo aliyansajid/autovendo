@@ -39,3 +39,31 @@ export interface Listing {
   garageId: string | number;
   garage?: Pick<Garage, "id" | "name" | "address" | "rating" | "reviewCount">;
 }
+
+export interface DealerProfile {
+  id: string;
+  userId: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    image: string | null;
+  };
+  companyName: string;
+  description: string | null;
+  website: string | null;
+  logo: string | null;
+  address: string;
+  zipCode: string;
+  city: string;
+  uidNumber: string;
+  contactPerson: string;
+  phoneNumber: string;
+  businessEmail: string;
+  openingHours: {
+    day: string;
+    isOpen: boolean;
+    openTime: string | null;
+    closeTime: string | null;
+  }[];
+}
