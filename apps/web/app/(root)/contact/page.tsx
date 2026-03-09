@@ -88,7 +88,7 @@ export default function ContactPage() {
                       href="tel:+41793223520"
                       className="text-muted-foreground hover:text-primary hover:underline transition-colors"
                     >
-                      +41 79 322 35 20
+                      +41 (0)79 322 35 20
                     </Link>
                   </div>
                 </div>
@@ -110,8 +110,8 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold mb-1">Öffnungszeiten</h3>
                     <div className="text-muted-foreground space-y-1">
-                      <p>Montag - Freitag: 08:00 - 18:00</p>
-                      <p>Samstag: 09:00 - 16:00</p>
+                      <p>Montag - Freitag: 09:00 - 19:00</p>
+                      <p>Samstag: 09:00 - 12:00</p>
                       <p>Sonntag: Geschlossen</p>
                     </div>
                   </div>

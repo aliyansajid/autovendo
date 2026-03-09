@@ -28,6 +28,7 @@ const data = {
       title: "Fahrzeuge",
       url: "/dashboard/vehicles",
       icon: Car,
+      isActive: true,
     },
     {
       title: "Abonnement",

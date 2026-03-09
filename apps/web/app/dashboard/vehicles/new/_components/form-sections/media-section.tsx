@@ -45,10 +45,10 @@ export function MediaSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Vehicle Images</CardTitle>
+        <CardTitle>Fahrzeugbilder</CardTitle>
         <CardDescription>
-          Add photos of your vehicle. High quality photos increase your chances
-          of selling.
+          Fügen Sie Fotos Ihres Fahrzeugs hinzu. Hochwertige Fotos erhöhen Ihre
+          Verkaufschancen.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -58,7 +58,9 @@ export function MediaSection({
               <UploadCloud className="h-8 w-8 text-primary" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-lg font-semibold">Click to upload photos</h3>
+              <h3 className="text-lg font-semibold">
+                Klicken Sie hier, um Fotos hochzuladen
+              </h3>
               <p className="text-sm text-muted-foreground">
                 WEBP, PNG, JPG, JPEG
               </p>
@@ -66,7 +68,7 @@ export function MediaSection({
           </div>
           <input
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp"
             multiple
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             onChange={handleImageUpload}
@@ -82,7 +84,7 @@ export function MediaSection({
               >
                 <Image
                   src={src}
-                  alt={`Vehicle preview ${index + 1}`}
+                  alt={`Vorschau ${index + 1}`}
                   fill
                   className="object-cover transition-transform group-hover:scale-105"
                 />
@@ -90,10 +92,11 @@ export function MediaSection({
                   <Button
                     variant="destructive"
                     type="button"
+                    size="icon"
                     onClick={() => removeImage(index)}
-                    className="rounded-full h-10 w-10 p-0"
+                    className="rounded-full"
                   >
-                    <X className="h-4 w-4" />
+                    <X />
                   </Button>
                 </div>
               </div>
