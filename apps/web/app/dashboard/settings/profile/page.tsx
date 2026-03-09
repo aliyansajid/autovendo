@@ -1,6 +1,6 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { unauthorized } from "next/navigation";
 import { getDealerProfile } from "../../../actions/dealer-actions";
 import { DealerProfileForm } from "../../_components/dealer-profile-form";
 
@@ -9,9 +9,7 @@ export default async function ProfilePage() {
     headers: await headers(),
   });
 
-  if (!session) {
-    redirect("/login");
-  }
+  if (!session) unauthorized();
 
   const dealerProfile = await getDealerProfile(session.user.id);
 

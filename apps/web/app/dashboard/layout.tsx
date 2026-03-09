@@ -14,9 +14,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@repo/ui/src/components/breadcrumb";
-import { authClient } from "@repo/auth/client";
-import { redirect, usePathname } from "next/navigation";
-import { Spinner } from "@repo/ui/src/components/spinner";
+import { usePathname } from "next/navigation";
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
 
 export default function DashboardLayout({
@@ -25,19 +23,6 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { data: session, isPending } = authClient.useSession();
-
-  if (isPending) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Spinner className="size-8" />
-      </div>
-    );
-  }
-
-  if (!session) {
-    redirect("/login");
-  }
 
   const segments = pathname.split("/").filter(Boolean);
 

@@ -1,6 +1,6 @@
-"use client";
-
-import { authClient } from "@repo/auth/client";
+import { auth } from "@repo/auth";
+import { headers } from "next/headers";
+import { unauthorized } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -9,34 +9,29 @@ import {
   CardTitle,
 } from "@repo/ui/src/components/card";
 import { Badge } from "@repo/ui/src/components/badge";
-import { useEffect, useState } from "react";
 import { Car, CreditCard, Users } from "lucide-react";
 
-export default function DashboardPage() {
-  const { data: session } = authClient.useSession();
-  const [subscriptions, setSubscriptions] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default async function DashboardPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      const { data, error } = await authClient.subscription.list();
-      if (!error && data) {
-        setSubscriptions(data);
-      }
-      setIsLoading(false);
-    };
-    fetchSubscriptions();
-  }, []);
+  if (!session) unauthorized();
 
-  const activeSubscription = subscriptions.find(
-    (sub) => sub.status === "active" || sub.status === "trialing",
+  // @ts-ignore - subscription is added by the stripe plugin
+  const { data: subscriptions } = await auth.api.subscription.list({
+    headers: await headers(),
+  });
+
+  const activeSubscription = (subscriptions as any[] | undefined)?.find(
+    (sub: any) => sub.status === "active" || sub.status === "trialing",
   );
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          Willkommen zurück, {session?.user.name}!
+          Willkommen zurück, {session.user.name}!
         </h1>
         <p className="text-muted-foreground">
           Verwalten Sie Ihren Fahrzeughandel und Ihr Abonnement an einem Ort.

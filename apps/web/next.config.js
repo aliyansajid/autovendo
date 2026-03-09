@@ -10,10 +10,15 @@ const nextConfig = {
         protocol: "https",
         hostname: "assets.autoscout24.ch",
       },
+      {
+        protocol: "https",
+        hostname: "*.r2.cloudflarestorage.com",
+      },
     ],
   },
   experimental: {
     inlineCss: true,
+    authInterrupts: true,
   },
 };
 
