@@ -1,135 +1,85 @@
-# Turborepo starter
+# 🏎️ AutoVendo — Premium Vehicle Marketplace Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Turborepo](https://img.shields.io/badge/Turborepo-2.0-EF4444?style=for-the-badge&logo=turborepo)](https://turbo.build/)
+[![Prisma](https://img.shields.io/badge/Prisma-5-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
 
-## Using this example
+AutoVendo is a state-of-the-art vehicle marketplace engineered for speed, security, and a premium user experience. Built as a high-performance monorepo, it seamlessly integrates a customer-facing marketplace with a powerful administrative suite.
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
-```
+## 🏗️ Architecture
 
-## What's inside?
+AutoVendo utilizes a modern monorepo structure powered by **Turborepo**, ensuring efficient builds and seamless code sharing across applications.
 
-This Turborepo includes the following packages/apps:
+### 📱 Applications
 
-### Apps and Packages
+- **[Web](apps/web)**: The flagship marketplace. Features advanced multi-step vehicle insertion, dynamic filtering, and a glassmorphic UI.
+- **[Admin](apps/admin)**: Command center for platform operators. Oversee inventory, manage dealer registrations, and monitor ecosystem health.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### 📦 Core Packages
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- **`@repo/ui`**: A high-end, atomic design system library built with Radix UI and Tailwind CSS.
+- **`@repo/db`**: The centralized data layer, including our optimized Prisma schema and type-safe client.
+- **`@repo/auth`**: Unified authentication and authorization logic.
+- **`@repo/utils`**: Shared business logic, formatting helpers, and common utilities.
 
-### Utilities
+---
 
-This Turborepo has some additional tools already setup for you:
+## ✨ Key Features
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- **🛡️ Secure Vehicle Inserter**: A rigorous 4-step listing process with strict Zod validation, anti-tampering logic, and MIME-type secured media uploads.
+- **⚡ High-Performance Search**: Real-time filtering powered by a centralized constants system for cars, trucks, and campers.
+- **🎨 Elite Aesthetics**: A "wow" factor design philosophy featuring dark mode, smooth transitions, and premium typography.
+- **📱 Device Agnostic**: Fully responsive architecture optimized for mobile, tablet, and desktop experiences.
 
-### Build
+---
 
-To build all apps and packages, run the following command:
+## 🚀 Getting Started
 
-```
-cd my-turborepo
+### Prerequisites
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+- **Node.js**: `v18.17.0` or higher
+- **Database**: PostgreSQL (recommended)
+- **Package Manager**: `npm` (configured with workspaces)
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+### Installation
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/aliyansajid/autovendo.git
+    cd autovendo
+    ```
+2.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
+3.  **Environment Setup**
+    Copy `.env.example` in both root and `apps/web` to `.env` and configure your credentials.
+4.  **Database Migration**
+    ```bash
+    npx turbo db:push
+    ```
+5.  **Run Development**
+    ```bash
+    npm run dev
+    ```
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+---
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+## 🛠️ Development Workflow
 
-### Develop
+AutoVendo leverages Turbo's filtering for a focused development experience:
 
-To develop all apps and packages, run the following command:
+- **Run Web only**: `npm run dev --filter=web`
+- **Build all**: `npm run build`
+- **Lint all**: `npm run lint`
+- **Type Check**: `npm run check-types`
 
-```
-cd my-turborepo
+---
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+## 📄 License
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+This project is proprietary. All rights reserved.

@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# 🛠️ AutoVendo — Admin Dashboard
 
-## Getting Started
+The mission control for the AutoVendo ecosystem. Designed for operational efficiency and platform moderation.
 
-First, run the development server:
+## 🎯 Primary Functions
+
+- **Listing Management**: Review, approve, or flag vehicle listings for quality assurance.
+- **Dealer Oversight**: Manage dealer registrations, verify business credentials, and monitor performance.
+- **Platform Analytics**: High-level insights into marketplace activity and user growth.
+
+---
+
+## 🛠️ Technology Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Database**: Prisma + PostgreSQL
+- **Components**: Shared `@repo/ui` library
+- **Auth**: Role-based access control (RBAC)
+
+---
+
+## 💻 Development
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Or via the monorepo root:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev --filter=admin
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+---
 
-## Learn More
+## 🛡️ Moderation Workflow
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All vehicle data is accessed via the `@repo/db` package, ensuring consistent data structures and shared validation logic with the main Web portal.
