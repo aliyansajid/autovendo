@@ -1,8 +1,12 @@
 import { Button } from "@repo/ui/src/components/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { getDealerVehicles } from "@/app/actions/vehicle-actions";
+import { VehicleList } from "./_components/vehicle-list";
 
-export default function VehiclesPage() {
+export default async function VehiclesPage() {
+  const vehicles = await getDealerVehicles();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -19,6 +23,8 @@ export default function VehiclesPage() {
           </Link>
         </Button>
       </div>
+
+      <VehicleList vehicles={vehicles as any} />
     </div>
   );
 }

@@ -1,11 +1,19 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { getDealerProfile } from "@/app/actions/dealer-actions";
-import { VehicleForm } from "./_components/vehicle-form";
+import { getVehicleById } from "@/app/actions/vehicle-actions";
+import { VehicleForm } from "../new/_components/vehicle-form";
+import { mapVehicleToForm } from "@/lib/utils/vehicle-mapping";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default async function AddNewVehiclePage() {
+export default async function EditVehiclePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -13,6 +21,14 @@ export default async function AddNewVehiclePage() {
   const dealerProfile = session?.user?.id
     ? await getDealerProfile(session.user.id)
     : null;
+
+  const vehicle = await getVehicleById(id);
+
+  if (!vehicle) {
+    notFound();
+  }
+
+  const initialData = mapVehicleToForm(vehicle);
 
   return (
     <div className="space-y-8">
@@ -25,14 +41,17 @@ export default async function AddNewVehiclePage() {
           Zurück zur Übersicht
         </Link>
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold">Fahrzeug inserieren</h1>
+          <h1 className="text-2xl font-bold">Inserat bearbeiten</h1>
           <p className="text-sm text-muted-foreground">
-            Geben Sie die Details Ihres Fahrzeugs ein, um es auf dem Marktplatz
-            zu inserieren.
+            Aktualisieren Sie die Details Ihres Fahrzeugs.
           </p>
         </div>
       </div>
-      <VehicleForm dealerProfile={dealerProfile} />
+      <VehicleForm
+        dealerProfile={dealerProfile}
+        initialData={initialData}
+        vehicleId={id}
+      />
     </div>
   );
 }

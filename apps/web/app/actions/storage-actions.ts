@@ -1,15 +1,7 @@
 "use server";
 
+import { storage } from "@/lib/storage";
 import { StorageService } from "@repo/storage";
-
-// Initialize StorageService (In a real app, these should be env vars)
-const storage = new StorageService({
-  accessKeyId: process.env.R2_ACCESS_KEY_ID || "",
-  secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || "",
-  accountId: process.env.R2_ACCOUNT_ID || "",
-  bucket: process.env.R2_BUCKET_NAME || "dealers",
-  publicDomain: process.env.R2_PUBLIC_DOMAIN,
-});
 
 /**
  * Request a presigned URL to upload a file directly to R2.

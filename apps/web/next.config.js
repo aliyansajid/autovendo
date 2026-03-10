@@ -14,11 +14,18 @@ const nextConfig = {
         protocol: "https",
         hostname: "*.r2.cloudflarestorage.com",
       },
+      {
+        protocol: "https",
+        hostname: "*.r2.dev",
+      },
     ],
   },
   experimental: {
     inlineCss: true,
     authInterrupts: true,
+  },
+  serverActions: {
+    bodySizeLimit: "5mb",
   },
 };
 

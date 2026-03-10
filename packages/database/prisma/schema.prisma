@@ -118,8 +118,222 @@ model Dealer {
   updatedAt     DateTime @updatedAt
 
   openingHours OpeningHour[]
+  vehicles     Vehicle[]
 
   @@map("dealer")
+}
+
+enum VehicleType {
+  CAR
+  UTILITY
+  TRUCK
+  CAMPER
+}
+
+enum FuelType {
+  PETROL
+  ETHANOL_PETROL
+  DIESEL
+  ELECTRIC
+  CNG_PETROL
+  LPG_PETROL
+  MHEV_DIESEL
+  MHEV_PETROL
+  PHEV_DIESEL
+  PHEV_PETROL
+  HEV_DIESEL
+  HEV_PETROL
+  HYDROGEN
+}
+
+enum GearTransmission {
+  AUTOMATIC
+  MANUAL
+}
+
+enum TransmissionType {
+  AUTOMATIC
+  AUTOMATIC_STEPLESS
+  SEMI_AUTOMATIC
+  MANUAL
+}
+
+enum DriveType {
+  ALL
+  FRONT
+  REAR
+}
+
+enum Color {
+  ANTHRACITE
+  BEIGE
+  BLACK
+  BLUE
+  BORDEAUX
+  BROWN
+  GOLD
+  GRAY
+  GREEN
+  MULTICOLOURED
+  ORANGE
+  PINK
+  RED
+  SILVER
+  TURQUOISE
+  VIOLET
+  WHITE
+  YELLOW
+  OTHER
+}
+
+enum VehicleCondition {
+  NEW
+  DEMONSTRATION
+  PRE_REGISTERED
+  USED
+  OLDTIMER
+}
+
+enum Warranty {
+  FROM_DELIVERY
+  FROM_FIRST_REGISTRATION
+  FROM_DATE
+}
+
+enum EnergyLabel {
+  A
+  B
+  C
+  D
+  E
+  F
+  G
+}
+
+enum BatteryOwnership {
+  BATTERY_INCLUDED
+  BATTERY_RENT_REQUIRED
+}
+
+enum ChargingPlugTypeStandard {
+  TYPE_1
+  TYPE_2
+}
+
+enum ChargingPlugTypeFast {
+  CCS
+  CSS_2
+  CHADEMO
+  SUPERCHARGER
+}
+
+enum EmissionStandard {
+  EURO_1
+  EURO_2
+  EURO_3
+  EURO_4
+  EURO_5
+  EURO_5_PLUS
+  EURO_6
+  EURO_6A
+  EURO_6B
+  EURO_6C
+  EURO_6D
+  EURO_6D_ISC
+  EURO_6D_ISC_FCM
+  EURO_6D_TEMP
+  EURO_6D_TEMP_EVAP
+  EURO_6D_TEMP_EVAP_ISC
+  EURO_6D_TEMP_ISC
+  EURO_6E
+}
+
+model Vehicle {
+  id          String      @id @default(cuid())
+  dealerId    String
+  dealer      Dealer      @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  vehicleType VehicleType
+
+  // Basic Data
+  make              String
+  model             String?
+  version           String?
+  bodyType          String
+  fuelType          FuelType?
+  registrationMonth Int
+  registrationYear  Int
+  kilometer         Int
+  price             Int
+  newPrice          Int?
+
+  // Technical Data & Appearance
+  color            Color
+  gearTransmission GearTransmission?
+  transmissionType TransmissionType?
+  driveType        DriveType?
+  interiorColor    Color?
+  metallic         Boolean           @default(false)
+  vehicleCondition VehicleCondition?
+
+  // Inspection & Warranty
+  lastInspectionDate DateTime? @db.Date
+  inspectionPassed   Boolean   @default(false)
+  warranty           Warranty?
+  warrantyStartDate  DateTime? @db.Date
+  duration           Int?
+  maxKm              Int?
+
+  // Technical Data
+  doors                Int?
+  seats                Int?
+  hp                   Int?
+  kw                   Int?
+  energyLabel          EnergyLabel?
+  typeApproval         String?
+  wheelbase            Int?
+  vin                  String?      @map("vehicleIdentificationNumber")
+  emptyWeight          Int?
+  loadCapacity         Int?
+  serialNumber         String?
+  height               Int?
+  width                Int?
+  length               Int?
+  towingCapacityBraked Int?
+  cubicCapacity        Int?
+  co2Emission          Int?
+  cylinders            Int?
+  numberOfGears        Int?
+  emissionStandard     EmissionStandard?
+
+  // Consumption
+  consumptionCity    Float?
+  consumptionCountry Float?
+  consumptionTotal   Float?
+
+  // Electric / Hybrid
+  range                    Int?
+  batteryCapacity          Float?
+  batteryRentalMonth       Int?
+  powerConsumption         Float?
+  batteryOwnership         BatteryOwnership?
+  chargingPlugTypeStandard ChargingPlugTypeStandard?
+  chargingPlugTypeFast     ChargingPlugTypeFast?
+  chargingPower            Float?
+  combustionEnginePowerHp  Int?
+  electricMotorPowerHp     Int?
+
+  // Description & Dynamic Data
+  vehicleDescription String?
+  equipment          Json?
+  extras             Json?
+
+  // Media
+  images String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("vehicle")
 }
 
 enum DayOfWeek {

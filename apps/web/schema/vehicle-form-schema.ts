@@ -11,6 +11,7 @@ import {
   BatteryOwnershipEnum,
   ChargingPlugTypeStandardEnum,
   ChargingPlugTypeFastEnum,
+  EmissionStandardEnum,
   EquipmentEnum,
 } from "@/constants";
 import {
@@ -59,6 +60,9 @@ const VALID_CHARGING_AC = ChargingPlugTypeStandardEnum.map(
   (v) => v.value,
 ) as string[];
 const VALID_CHARGING_DC = ChargingPlugTypeFastEnum.map(
+  (v) => v.value,
+) as string[];
+const VALID_EMISSION_STANDARDS = EmissionStandardEnum.map(
   (v) => v.value,
 ) as string[];
 
@@ -232,6 +236,10 @@ export const vehicleFormSchema = z.object({
   chargingPower: optionalNonNegativeNumber,
   combustionEnginePowerHp: optionalNonNegativeNumber,
   electricMotorPowerHp: optionalNonNegativeNumber,
+  emissionStandard: enumField(
+    VALID_EMISSION_STANDARDS,
+    "Ungültiger Emissionsstandard",
+  ).optional(),
 
   vehicleDescription: z.string().optional(),
 

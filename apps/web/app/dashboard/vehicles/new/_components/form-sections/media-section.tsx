@@ -77,30 +77,37 @@ export function MediaSection({
 
         {previewImages.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 animate-in fade-in slide-in-from-bottom-2">
-            {previewImages.map((src, index) => (
-              <div
-                key={index}
-                className="relative aspect-video group rounded-lg overflow-hidden border bg-muted"
-              >
-                <Image
-                  src={src}
-                  alt={`Vorschau ${index + 1}`}
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Button
-                    variant="destructive"
-                    type="button"
-                    size="icon"
-                    onClick={() => removeImage(index)}
-                    className="rounded-full"
-                  >
-                    <X />
-                  </Button>
+            {previewImages.map((src, index) => {
+              const fullSrc =
+                src.startsWith("blob:") || src.startsWith("http")
+                  ? src
+                  : `${process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || ""}/${src}`;
+
+              return (
+                <div
+                  key={index}
+                  className="relative aspect-video group rounded-lg overflow-hidden border bg-muted"
+                >
+                  <Image
+                    src={fullSrc}
+                    alt={`Vorschau ${index + 1}`}
+                    fill
+                    className="object-cover transition-transform group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Button
+                      variant="destructive"
+                      type="button"
+                      size="icon"
+                      onClick={() => removeImage(index)}
+                      className="rounded-full"
+                    >
+                      <X />
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </CardContent>

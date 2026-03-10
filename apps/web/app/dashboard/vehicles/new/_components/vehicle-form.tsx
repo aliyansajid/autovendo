@@ -45,37 +45,77 @@ import {
   CardTitle,
 } from "@repo/ui/src/components/card";
 import { EquipmentSection } from "./form-sections/equipment-section";
+import {
+  prepareVehicleListing,
+  getPresignedUrls,
+  createVehicle,
+} from "@/app/actions/vehicle-actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { updateVehicle } from "@/app/actions/vehicle-actions";
 
 export function VehicleForm({
   dealerProfile,
+  initialData,
+  vehicleId,
 }: {
   dealerProfile: DealerProfile | null;
+  initialData?: z.infer<typeof vehicleFormSchema>;
+  vehicleId?: string;
 }) {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [previewImages, setPreviewImages] = useState<string[]>(
+    (initialData?.images as string[]) || [],
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const totalSteps = 4;
+
   const form = useForm<z.infer<typeof vehicleFormSchema>>({
     resolver: zodResolver(vehicleFormSchema) as any,
-    defaultValues: {
+    defaultValues: initialData || {
       vehicleType: "car",
+      make: undefined,
+      model: undefined,
       version: "",
       kilometer: "" as any,
       price: "" as any,
       newPrice: "" as any,
+      registrationMonth: undefined,
+      registrationYear: undefined,
+      bodyType: undefined,
+      fuelType: undefined,
+      color: undefined,
+      interiorColor: undefined,
+      metallic: false,
+      gearTransmission: undefined,
+      transmissionType: undefined,
+      driveType: undefined,
+      vehicleCondition: undefined,
+      lastInspectionDate: undefined,
+      inspectionPassed: false,
+      warranty: undefined,
+      duration: "" as any,
+      maxKm: "" as any,
+      warrantyStartDate: undefined,
       doors: "" as any,
       seats: "" as any,
       hp: "" as any,
       kw: "" as any,
+      energyLabel: undefined,
       typeApproval: "",
       wheelbase: "" as any,
       vehicleIdentificationNumber: "",
+      emptyWeight: "" as any,
+      loadCapacity: "" as any,
       serialNumber: "",
       height: "" as any,
       width: "" as any,
       length: "" as any,
-      emptyWeight: "" as any,
-      loadCapacity: "" as any,
       towingCapacityBraked: "" as any,
-      consumptionCity: "" as any,
-      consumptionCountry: "" as any,
-      consumptionTotal: "" as any,
       cubicCapacity: "" as any,
       co2Emission: "" as any,
       cylinders: "" as any,
@@ -84,9 +124,13 @@ export function VehicleForm({
       batteryCapacity: "" as any,
       batteryRentalMonth: "" as any,
       powerConsumption: "" as any,
+      batteryOwnership: undefined,
+      chargingPlugTypeStandard: undefined,
+      chargingPlugTypeFast: undefined,
       chargingPower: "" as any,
       combustionEnginePowerHp: "" as any,
       electricMotorPowerHp: "" as any,
+      emissionStandard: undefined,
       vehicleDescription: "",
       equipment: {},
       extras: {},
@@ -101,10 +145,6 @@ export function VehicleForm({
   });
 
   const { control, handleSubmit, trigger } = form;
-
-  const [currentStep, setCurrentStep] = useState(1);
-  const [previewImages, setPreviewImages] = useState<string[]>([]);
-  const totalSteps = 4;
 
   const handleNext = async () => {
     const isStepValid = await trigger();
@@ -159,15 +199,122 @@ export function VehicleForm({
     vehicleData.models as any;
   const activeBodyTypeEnum = vehicleData.bodyTypes;
 
-  const onSubmit = (data: z.infer<typeof vehicleFormSchema>) => {
-    console.log("Form Submitted:", data);
-    alert(
-      JSON.stringify(
-        { ...data, images: `${(data.images as any[])?.length || 0} files` },
-        null,
-        2,
-      ),
-    );
+  const uploadWithRetry = async (
+    url: string,
+    file: File,
+    retries = 3,
+  ): Promise<boolean> => {
+    for (let i = 0; i < retries; i++) {
+      try {
+        console.log(`[Upload] Attempt ${i + 1} to: ${url}`);
+        const response = await fetch(url, {
+          method: "PUT",
+          body: file,
+          headers: {
+            "Content-Type": file.type,
+          },
+        });
+
+        if (response.ok) {
+          console.log(`[Upload] Success: ${file.name}`);
+          return true;
+        }
+
+        const errorText = await response.text();
+        console.error(
+          `[Upload] Server rejected upload (${response.status}):`,
+          errorText,
+        );
+      } catch (error) {
+        console.error(
+          `[Upload] Fetch failed for ${file.name} (Attempt ${i + 1}):`,
+          error,
+        );
+        if (i === retries - 1) throw error;
+      }
+      // Wait before retry
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
+    }
+    return false;
+  };
+
+  const onSubmit = async (data: z.infer<typeof vehicleFormSchema>) => {
+    try {
+      setIsSubmitting(true);
+      setUploadStatus("Listing vorbereiten...");
+      setUploadProgress(10);
+
+      // Phase 0: Prepare
+      const { listingId } = await prepareVehicleListing();
+
+      // Phase 1: Separate new files and existing keys
+      const images = data.images || [];
+      const newFiles = images.filter((img) => img instanceof File) as File[];
+      const existingKeys = images.filter(
+        (img) => typeof img === "string",
+      ) as string[];
+
+      let finalImageKeys = [...existingKeys];
+
+      if (newFiles.length > 0) {
+        setUploadStatus("Upload-Berechtigungen abrufen...");
+        const presignedData = await getPresignedUrls(
+          listingId,
+          newFiles.map((f) => ({ name: f.name, type: f.type })),
+        );
+
+        // Phase 2: Upload Files
+        setUploadStatus("Bilder hochladen...");
+        const newlyUploadedKeys: string[] = [];
+
+        for (let i = 0; i < newFiles.length; i++) {
+          const file = newFiles[i]!;
+          const presignedItem = presignedData[i];
+
+          if (!presignedItem) {
+            throw new Error(`Konnte keine Upload-URL für ${file.name} abrufen`);
+          }
+
+          const { url, key } = presignedItem;
+
+          const success = await uploadWithRetry(url, file);
+          if (!success)
+            throw new Error(`Upload fehlgeschlagen für ${file.name}`);
+
+          newlyUploadedKeys.push(key);
+          setUploadProgress(20 + ((i + 1) / newFiles.length) * 60);
+        }
+
+        finalImageKeys = [...existingKeys, ...newlyUploadedKeys];
+      }
+
+      // Phase 3: Create or Update Vehicle in DB
+      setUploadStatus("Daten speichern...");
+
+      // Remove images from data to avoid exceeding 1MB Server Action limit
+      const { images: _, ...submitData } = data;
+      if (vehicleId) {
+        await updateVehicle(vehicleId, submitData, finalImageKeys);
+        toast.success("Inserat erfolgreich aktualisiert!");
+      } else {
+        await createVehicle(listingId, submitData, finalImageKeys);
+        toast.success("Inserat erfolgreich erstellt!");
+      }
+
+      setUploadProgress(100);
+      toast.success("Inserat erfolgreich veröffentlicht!");
+      router.push("/dashboard/vehicles");
+      router.refresh();
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Fehler beim Veröffentlichen",
+      );
+      setUploadStatus("");
+      setUploadProgress(0);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const steps = [
@@ -430,12 +577,47 @@ export function VehicleForm({
                 <ArrowRight />
               </Button>
             ) : (
-              <Button key="submit-button" type="submit">
-                Inserat veröffentlichen
-                <Send />
+              <Button
+                key="submit-button"
+                type="submit"
+                disabled={isSubmitting}
+                className="min-w-[140px]"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Verarbeiten...
+                  </>
+                ) : (
+                  <>
+                    Inserat veröffentlichen
+                    <Send />
+                  </>
+                )}
               </Button>
             )}
           </div>
+
+          {isSubmitting && (
+            <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+              <div className="bg-card border p-8 rounded-xl shadow-lg max-w-md w-full space-y-4">
+                <div className="flex justify-between items-center text-sm font-medium">
+                  <span>{uploadStatus}</span>
+                  <span>{Math.round(uploadProgress)}%</span>
+                </div>
+                <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
+                  <div
+                    className="bg-primary h-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground text-center">
+                  Bitte schließe dieses Fenster nicht, bis der Vorgang
+                  abgeschlossen ist.
+                </p>
+              </div>
+            </div>
+          )}
         </form>
       </FormProvider>
     </div>

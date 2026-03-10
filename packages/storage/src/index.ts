@@ -75,11 +75,14 @@ export class StorageService {
   static formatDealerPath(
     country: string,
     dealerId: string,
-    type: "branding" | "profiles" | "listings",
+    type: "branding" | "profiles" | "listing",
     filename: string,
+    subfolder?: string,
   ) {
     const timestamp = Math.floor(Date.now() / 1000);
     const sanitizedName = filename.replace(/\s+/g, "-").toLowerCase();
-    return `dealers/${country.toLowerCase()}/${dealerId}/${type}/${timestamp}_${sanitizedName}`;
+    const subPath = subfolder ? `/${subfolder}` : "";
+    // Note: 'type' will be 'listing' for vehicles
+    return `dealers/${country.toLowerCase()}/${dealerId}/${type}${subPath}/${timestamp}_${sanitizedName}`;
   }
 }
