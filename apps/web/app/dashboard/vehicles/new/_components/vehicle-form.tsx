@@ -76,9 +76,8 @@ export function VehicleForm({
 
   const form = useForm<z.infer<typeof vehicleFormSchema>>({
     resolver: zodResolver(vehicleFormSchema) as any,
-    defaultValues: initialData || {
+    defaultValues: {
       vehicleType: "car",
-      make: undefined,
       model: undefined,
       version: "",
       kilometer: "" as any,
@@ -134,13 +133,15 @@ export function VehicleForm({
       vehicleDescription: "",
       equipment: {},
       extras: {},
-      // Dealer info
-      companyName: dealerProfile?.companyName || "",
-      businessEmail: dealerProfile?.businessEmail || "",
-      phoneNumber: dealerProfile?.phoneNumber || "",
-      address: dealerProfile?.address || "",
-      zipCode: dealerProfile?.zipCode || "",
-      city: dealerProfile?.city || "",
+      ...(initialData || {}),
+      // Ensure dealer info is always populated if not already present in initialData
+      companyName: initialData?.companyName || dealerProfile?.companyName || "",
+      businessEmail:
+        initialData?.businessEmail || dealerProfile?.businessEmail || "",
+      phoneNumber: initialData?.phoneNumber || dealerProfile?.phoneNumber || "",
+      address: initialData?.address || dealerProfile?.address || "",
+      zipCode: initialData?.zipCode || dealerProfile?.zipCode || "",
+      city: initialData?.city || dealerProfile?.city || "",
     },
   });
 
@@ -491,7 +492,11 @@ export function VehicleForm({
                           className="relative aspect-video rounded-lg overflow-hidden border shadow-sm"
                         >
                           <Image
-                            src={src}
+                            src={
+                              src.startsWith("blob:") || src.startsWith("http")
+                                ? src
+                                : `${process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || ""}/${src}`
+                            }
                             alt={`Review ${index}`}
                             fill
                             className="object-cover"
