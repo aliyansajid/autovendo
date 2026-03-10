@@ -76,7 +76,7 @@ export function ContactSection() {
 
             <CustomFormField
               control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
+              fieldType={FormFieldType.INPUT}
               name="zipCode"
               label="PLZ"
               placeholder="PLZ"
@@ -85,7 +85,7 @@ export function ContactSection() {
 
             <CustomFormField
               control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
+              fieldType={FormFieldType.INPUT}
               name="city"
               label="Ort"
               placeholder="Ort"

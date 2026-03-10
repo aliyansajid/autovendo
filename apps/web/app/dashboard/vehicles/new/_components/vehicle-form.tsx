@@ -44,24 +44,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/src/components/card";
-
-const MANDATORY_FIELD_GROUPS: Record<
-  number,
-  (keyof z.infer<typeof vehicleFormSchema>)[]
-> = {
-  1: [
-    "vehicleType",
-    "make",
-    "bodyType",
-    "color",
-    "registrationMonth",
-    "registrationYear",
-    "kilometer",
-    "price",
-  ],
-  2: [],
-  3: [],
-};
+import { EquipmentSection } from "./form-sections/equipment-section";
 
 export function VehicleForm({
   dealerProfile,
@@ -102,13 +85,11 @@ export function VehicleForm({
       batteryRentalMonth: "" as any,
       powerConsumption: "" as any,
       chargingPower: "" as any,
-      chargingTime80: "" as any,
-      fastChargingTime80: "" as any,
-      chargingTime100: "" as any,
-      fastChargingTime100: "" as any,
       combustionEnginePowerHp: "" as any,
       electricMotorPowerHp: "" as any,
       vehicleDescription: "",
+      equipment: {},
+      extras: {},
       // Dealer info
       companyName: dealerProfile?.companyName || "",
       businessEmail: dealerProfile?.businessEmail || "",
@@ -253,6 +234,8 @@ export function VehicleForm({
           {currentStep === 1 && (
             <div className="space-y-6">
               <BasicDataSection />
+              <Separator />
+              <EquipmentSection />
               <Separator />
               <TechnicalDataSection />
             </div>
@@ -435,12 +418,19 @@ export function VehicleForm({
             </Button>
 
             {currentStep < totalSteps ? (
-              <Button type="button" onClick={handleNext}>
+              <Button
+                key="next-button"
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNext();
+                }}
+              >
                 Weiter
                 <ArrowRight />
               </Button>
             ) : (
-              <Button type="submit">
+              <Button key="submit-button" type="submit">
                 Inserat veröffentlichen
                 <Send />
               </Button>
