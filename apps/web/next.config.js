@@ -23,9 +23,9 @@ const nextConfig = {
   experimental: {
     inlineCss: true,
     authInterrupts: true,
-  },
-  serverActions: {
-    bodySizeLimit: "5mb",
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
   },
 };
 

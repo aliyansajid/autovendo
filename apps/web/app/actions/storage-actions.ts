@@ -15,7 +15,7 @@ export async function getPresignedUploadUrl({
 }: {
   country: string;
   dealerId: string;
-  type: "branding" | "profiles" | "listings";
+  type: "branding" | "profiles" | "listing";
   filename: string;
   contentType: string;
 }) {
