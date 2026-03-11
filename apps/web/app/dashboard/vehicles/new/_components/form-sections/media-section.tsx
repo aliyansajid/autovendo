@@ -8,8 +8,11 @@ import {
 import { UploadCloud, X } from "lucide-react";
 import Image from "next/image";
 import { useFormContext } from "react-hook-form";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { Button } from "@repo/ui/components/button";
+import { toast } from "sonner";
+import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
+import { z } from "zod";
 
 export function MediaSection({
   previewImages,
@@ -18,15 +21,30 @@ export function MediaSection({
   previewImages: string[];
   setPreviewImages: Dispatch<SetStateAction<string[]>>;
 }) {
-  const { setValue, watch } = useFormContext();
+  const { setValue, watch, formState } =
+    useFormContext<z.infer<typeof vehicleFormSchema>>();
+
+  useEffect(() => {
+    return () => {
+      previewImages.forEach((url) => {
+        if (url.startsWith("blob:")) {
+          URL.revokeObjectURL(url);
+        }
+      });
+    };
+  }, [previewImages]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
+      const currentImages = watch("images") || [];
+      if (currentImages.length + files.length > 10) {
+        toast.error("Maximal 10 Bilder sind erlaubt");
+        return;
+      }
+
       const newPreviews = files.map((file) => URL.createObjectURL(file));
       setPreviewImages((prev) => [...prev, ...newPreviews]);
-
-      const currentImages = watch("images") || [];
       setValue("images", [...currentImages, ...files]);
     }
   };
@@ -48,10 +66,21 @@ export function MediaSection({
         <CardTitle>Fahrzeugbilder</CardTitle>
         <CardDescription>
           Fügen Sie Fotos Ihres Fahrzeugs hinzu. Hochwertige Fotos erhöhen Ihre
-          Verkaufschancen.
+          Verkaufschancen. (Mindestens 5, maximal 10 Bilder)
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {formState?.errors?.images?.message && (
+          <div className="mb-4 text-sm font-medium text-destructive animate-in fade-in slide-in-from-top-1">
+            {formState.errors.images.message as string}
+          </div>
+        )}
+
+        {previewImages.length > 0 && previewImages.length < 5 && (
+          <div className="mb-4 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-sm animate-in fade-in slide-in-from-top-1">
+            Noch {5 - previewImages.length} weitere Bilder benötigt (Mindestens 5)
+          </div>
+        )}
         <div className="border-2 border-dashed rounded-lg h-60 w-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors hover:border-primary/50 relative">
           <div className="flex flex-col items-center gap-4 text-center pointer-events-none">
             <div className="p-4 rounded-full bg-primary/10">

@@ -39,8 +39,6 @@ import {
   camperExtrasEnum,
 } from "@/constants/camper";
 
-// --- Aggregated Constants for Validation ---
-
 const VALID_VEHICLE_TYPES = VehicleTypeEnum.map((v) => v.value) as string[];
 const VALID_GEAR_TRANSMISSIONS = GearTransmissionEnum.map(
   (v) => v.value,
@@ -109,6 +107,8 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/jpg",
   "image/webp",
 ];
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 // --- Helpers ---
 
@@ -272,8 +272,18 @@ export const vehicleFormSchema = z.object({
           {
             message: "Nur PNG, JPG, JPEG oder WEBP Bilder sind erlaubt",
           },
+        )
+        .refine(
+          (file) =>
+            typeof file === "string" ||
+            (file instanceof File && file.size <= MAX_FILE_SIZE),
+          {
+            message: "Datei darf maximal 10MB groß sein",
+          },
         ),
     )
+    .min(5, "Mindestens 5 Bilder sind erforderlich")
+    .max(10, "Maximal 10 Bilder sind erlaubt")
     .optional(),
 
   // Contact Details

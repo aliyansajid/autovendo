@@ -44,6 +44,8 @@ interface Vehicle {
   kilometer: number;
   registrationMonth: number;
   registrationYear: number;
+  bodyType: string;
+  color: string;
   images: string[];
   createdAt: Date;
 }
@@ -97,7 +99,10 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
               <TableHead className="w-[80px]">Bild</TableHead>
               <TableHead>Fahrzeug</TableHead>
               <TableHead>Preis</TableHead>
-              <TableHead>Details</TableHead>
+              <TableHead>Kilometer</TableHead>
+              <TableHead>Erstzulassung</TableHead>
+              <TableHead>Karosserie</TableHead>
+              <TableHead>Farbe</TableHead>
               <TableHead>Erstellt am</TableHead>
               <TableHead className="text-right">Aktionen</TableHead>
             </TableRow>
@@ -125,21 +130,27 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="font-medium">
-                  {vehicle.make}&nbsp;{vehicle.model}
+                <TableCell className="font-medium whitespace-nowrap">
+                  {vehicle.make}
+                  {vehicle.model ? ` ${vehicle.model}` : ""}
                 </TableCell>
-                <TableCell className="font-semibold">
+                <TableCell className="font-semibold whitespace-nowrap">
                   CHF {vehicle.price.toLocaleString("de-CH")}
                 </TableCell>
-                <TableCell>
-                  <div className="space-y-0.5 text-muted-foreground">
-                    <div>{vehicle.kilometer.toLocaleString("de-CH")} km</div>
-                    <div>
-                      {vehicle.registrationMonth}/{vehicle.registrationYear}
-                    </div>
-                  </div>
+                <TableCell className="text-muted-foreground whitespace-nowrap">
+                  {vehicle.kilometer.toLocaleString("de-CH")} km
                 </TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="text-muted-foreground whitespace-nowrap">
+                  {vehicle.registrationMonth.toString().padStart(2, "0")}/
+                  {vehicle.registrationYear}
+                </TableCell>
+                <TableCell className="text-muted-foreground whitespace-nowrap capitalize">
+                  {vehicle.bodyType.replace(/-/g, " ")}
+                </TableCell>
+                <TableCell className="text-muted-foreground whitespace-nowrap capitalize">
+                  {vehicle.color.toLowerCase()}
+                </TableCell>
+                <TableCell className="text-muted-foreground whitespace-nowrap">
                   {format(new Date(vehicle.createdAt), "dd.MM.yyyy")}
                 </TableCell>
                 <TableCell className="text-right">

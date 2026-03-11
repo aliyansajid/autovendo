@@ -85,7 +85,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
     return res.publicUrl;
   };
 
-  const onSubmit = async (values: z.infer<typeof dealerProfileSchema>) => {
+  function onSubmit(values: z.infer<typeof dealerProfileSchema>) {
     startTransition(async () => {
       try {
         let imageUrl = values.image;
@@ -144,7 +144,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         toast.error(error.message || "Something went wrong. Please try again.");
       }
     });
-  };
+  }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

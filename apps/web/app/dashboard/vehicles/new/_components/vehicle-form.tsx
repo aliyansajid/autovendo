@@ -35,7 +35,7 @@ import { BasicDataSection } from "./form-sections/basic-data-section";
 import { TechnicalDataSection } from "./form-sections/technical-data-section";
 import { MediaSection } from "./form-sections/media-section";
 import { ContactSection } from "./form-sections/contact-section";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
 import Image from "next/image";
 import {
@@ -54,6 +54,57 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { updateVehicle } from "@/app/actions/vehicle-actions";
+import { useEffect, useRef } from "react";
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+const VEHICLE_DATA_MAP: Record<string, any> = {
+  car: {
+    makes: carMakes,
+    models: carModels,
+    bodyTypes: carBodyTypeEnum,
+    fuelTypes: carFuelTypeEnum,
+  },
+  utility: {
+    makes: utilityMakes,
+    models: utilityModels,
+    bodyTypes: utilityBodyTypeEnum,
+    fuelTypes: utilityFuelTypeEnum,
+  },
+  truck: {
+    makes: truckMakes,
+    models: truckModels,
+    bodyTypes: truckBodyTypeEnum,
+    fuelTypes: truckFuelTypeEnum,
+  },
+  camper: {
+    makes: camperMakes,
+    models: {},
+    bodyTypes: camperBodyTypeEnum,
+    fuelTypes: camperFuelTypeEnum,
+  },
+};
+
+const STEP_FIELDS: Record<number, any[]> = {
+  1: [
+    "vehicleType",
+    "make",
+    "model",
+    "version",
+    "price",
+    "kilometer",
+    "registrationMonth",
+    "registrationYear",
+    "bodyType",
+    "fuelType",
+    "color",
+    "vehicleCondition",
+  ],
+  2: ["images"],
+  3: ["equipment", "extras"],
+  4: [],
+};
 
 export function VehicleForm({
   dealerProfile,
@@ -65,7 +116,18 @@ export function VehicleForm({
   vehicleId?: string;
 }) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [currentStep, setCurrentStep] = useState(1);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
   const [previewImages, setPreviewImages] = useState<string[]>(
     (initialData?.images as string[]) || [],
   );
@@ -148,7 +210,18 @@ export function VehicleForm({
   const { control, handleSubmit, trigger } = form;
 
   const handleNext = async () => {
-    const isStepValid = await trigger();
+    const fields = STEP_FIELDS[currentStep] || [];
+    // Ensure we only validate fields relevant to the current vehicle type
+    // and skip fields that are purely optional strings like 'model' if they are empty
+    const filteredFields = fields.filter((f) => {
+      if (f === "vehicleType") return true;
+      if (f === "images") return true;
+      if (f === "equipment" || f === "extras") return true;
+      // Check if field exists in vehicleData map
+      return f in vehicleData;
+    });
+
+    const isStepValid = await trigger(filteredFields);
 
     if (isStepValid) {
       setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
@@ -163,34 +236,7 @@ export function VehicleForm({
 
   const vehicleType = useWatch({ control, name: "vehicleType" });
 
-  const vehicleDataMap: Record<string, any> = {
-    car: {
-      makes: carMakes,
-      models: carModels,
-      bodyTypes: carBodyTypeEnum,
-      fuelTypes: carFuelTypeEnum,
-    },
-    utility: {
-      makes: utilityMakes,
-      models: utilityModels,
-      bodyTypes: utilityBodyTypeEnum,
-      fuelTypes: utilityFuelTypeEnum,
-    },
-    truck: {
-      makes: truckMakes,
-      models: truckModels,
-      bodyTypes: truckBodyTypeEnum,
-      fuelTypes: truckFuelTypeEnum,
-    },
-    camper: {
-      makes: camperMakes,
-      models: {},
-      bodyTypes: camperBodyTypeEnum,
-      fuelTypes: camperFuelTypeEnum,
-    },
-  };
-
-  const vehicleData = vehicleDataMap[vehicleType] || vehicleDataMap.car;
+  const vehicleData = VEHICLE_DATA_MAP[vehicleType] || VEHICLE_DATA_MAP.car;
 
   const activeMakes = vehicleData.makes as ReadonlyArray<{
     label: string;
@@ -203,120 +249,193 @@ export function VehicleForm({
   const uploadWithRetry = async (
     url: string,
     file: File,
+    onProgress?: (progress: number) => void,
+    signal?: AbortSignal,
     retries = 3,
   ): Promise<boolean> => {
     for (let i = 0; i < retries; i++) {
-      try {
-        console.log(`[Upload] Attempt ${i + 1} to: ${url}`);
-        const response = await fetch(url, {
-          method: "PUT",
-          body: file,
-          headers: {
-            "Content-Type": file.type,
-          },
-        });
+      if (signal?.aborted) throw new Error("Upload aborted");
 
-        if (response.ok) {
-          console.log(`[Upload] Success: ${file.name}`);
-          return true;
+      try {
+        return await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", url);
+          xhr.setRequestHeader("Content-Type", file.type);
+
+          if (signal) {
+            signal.addEventListener("abort", () => {
+              xhr.abort();
+              reject(new Error("Upload aborted"));
+            });
+          }
+
+          if (xhr.upload && onProgress) {
+            xhr.upload.onprogress = (event) => {
+              if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                onProgress(percentComplete);
+              }
+            };
+          }
+
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve(true);
+            } else {
+              reject(new Error(`Upload failed with status ${xhr.status}`));
+            }
+          };
+
+          xhr.onerror = () => reject(new Error("XHR request failed"));
+          xhr.send(file);
+        });
+      } catch (error) {
+        if (error instanceof Error && error.message === "Upload aborted") {
+          throw error;
         }
 
-        const errorText = await response.text();
-        console.error(
-          `[Upload] Server rejected upload (${response.status}):`,
-          errorText,
-        );
-      } catch (error) {
-        console.error(
-          `[Upload] Fetch failed for ${file.name} (Attempt ${i + 1}):`,
-          error,
-        );
+        const delay = Math.min(1000 * 2 ** i + Math.random() * 500, 8000); // Exponential backoff with jitter
+
+        if (process.env.NODE_ENV !== "production") {
+          console.error(
+            `[Upload] Attempt ${i + 1} failed for ${file.name} (Retrying in ${delay}ms):`,
+            error,
+          );
+        }
+
         if (i === retries - 1) throw error;
+        // Wait before retry
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
-      // Wait before retry
-      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
     }
+
     return false;
   };
 
-  const onSubmit = async (data: z.infer<typeof vehicleFormSchema>) => {
-    try {
+  function onSubmit(data: z.infer<typeof vehicleFormSchema>) {
+    if (isSubmitting) return;
+
+    startTransition(async () => {
       setIsSubmitting(true);
-      setUploadStatus("Listing vorbereiten...");
-      setUploadProgress(10);
 
-      // Phase 0: Prepare
-      const { listingId } = await prepareVehicleListing();
+      // Create a fresh abort controller for this submission
+      abortControllerRef.current = new AbortController();
+      const signal = abortControllerRef.current.signal;
 
-      // Phase 1: Separate new files and existing keys
-      const images = data.images || [];
-      const newFiles = images.filter((img) => img instanceof File) as File[];
-      const existingKeys = images.filter(
-        (img) => typeof img === "string",
-      ) as string[];
+      try {
+        setUploadStatus("Listing vorbereiten...");
+        setUploadProgress(10);
 
-      let finalImageKeys = [...existingKeys];
+        // Phase 1: Prepare
+        const { listingId } = await prepareVehicleListing();
 
-      if (newFiles.length > 0) {
-        setUploadStatus("Upload-Berechtigungen abrufen...");
-        const presignedData = await getPresignedUrls(
-          listingId,
-          newFiles.map((f) => ({ name: f.name, type: f.type })),
-        );
+        // Phase 2: Separate new files and existing keys
+        const images = data.images || [];
+        const newFiles = images.filter((img) => img instanceof File) as File[];
+        const existingKeys = images.filter(
+          (img) => typeof img === "string",
+        ) as string[];
 
-        // Phase 2: Upload Files
-        setUploadStatus("Bilder hochladen...");
-        const newlyUploadedKeys: string[] = [];
+        let finalImageKeys = [...existingKeys];
 
-        for (let i = 0; i < newFiles.length; i++) {
-          const file = newFiles[i]!;
-          const presignedItem = presignedData[i];
+        if (newFiles.length > 0) {
+          setUploadStatus("Upload-Berechtigungen abrufen...");
+          const presignedData = await getPresignedUrls(
+            listingId,
+            newFiles.map((f) => ({ name: f.name, type: f.type })),
+          );
 
-          if (!presignedItem) {
-            throw new Error(`Konnte keine Upload-URL für ${file.name} abrufen`);
+          if (presignedData.length !== newFiles.length) {
+            throw new Error("Fehler bei der Upload-Vorbereitung");
           }
 
-          const { url, key } = presignedItem;
+          // Phase 2: Upload Files in parallel (concurrency limit 3)
+          setUploadStatus("Bilder hochladen...");
+          const newlyUploadedKeys: string[] = [];
+          const progresses = new Array(newFiles.length).fill(0);
+          const CONCURRENCY_LIMIT = 3;
 
-          const success = await uploadWithRetry(url, file);
-          if (!success)
-            throw new Error(`Upload fehlgeschlagen für ${file.name}`);
+          // Helper for limited parallel processing
+          const uploadInChunks = async () => {
+            const results: string[] = [];
+            for (let i = 0; i < newFiles.length; i += CONCURRENCY_LIMIT) {
+              const chunk = newFiles.slice(i, i + CONCURRENCY_LIMIT);
+              const chunkPromises = chunk.map(async (file, chunkIndex) => {
+                const globalIndex = i + chunkIndex;
+                const { url, key } = presignedData[globalIndex]!;
 
-          newlyUploadedKeys.push(key);
-          setUploadProgress(20 + ((i + 1) / newFiles.length) * 60);
+                const success = await uploadWithRetry(
+                  url,
+                  file,
+                  (filePercent) => {
+                    progresses[globalIndex] = filePercent;
+                    const totalUploadProgress =
+                      progresses.reduce((a, b) => a + b, 0) / newFiles.length;
+                    setUploadProgress(10 + totalUploadProgress * 0.8);
+                  },
+                  signal,
+                );
+
+                if (!success) {
+                  throw new Error(`Upload fehlgeschlagen für ${file.name}`);
+                }
+                return key;
+              });
+
+              const chunkResults = await Promise.all(chunkPromises);
+              results.push(...chunkResults);
+            }
+            return results;
+          };
+
+          const uploadedKeys = await uploadInChunks();
+          newlyUploadedKeys.push(...uploadedKeys);
+          finalImageKeys = [...existingKeys, ...newlyUploadedKeys];
+        } else {
+          // No new files, skip to 90%
+          setUploadProgress(90);
         }
 
-        finalImageKeys = [...existingKeys, ...newlyUploadedKeys];
+        // Phase 3: Create or Update Vehicle in DB
+        setUploadStatus("Daten speichern...");
+        setUploadProgress(95);
+
+        // Remove images from data to avoid exceeding 1MB Server Action limit
+        const { images: _, ...submitData } = data;
+        if (vehicleId) {
+          await updateVehicle(vehicleId, submitData, finalImageKeys);
+          toast.success("Inserat erfolgreich aktualisiert!");
+        } else {
+          await createVehicle(listingId, submitData, finalImageKeys);
+          toast.success("Inserat erfolgreich veröffentlicht!");
+        }
+
+        setUploadProgress(100);
+        router.push("/dashboard/vehicles");
+      } catch (error) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error("Submission failed:", error);
+        }
+
+        // Show specific message for validation errors, generic for system errors
+        const isValidationError =
+          error instanceof Error &&
+          (error.message.includes("Datei") ||
+            error.message.includes("Dateityp") ||
+            error.message.includes("Upload-Vorbereitung"));
+
+        toast.error(
+          isValidationError && error instanceof Error
+            ? error.message
+            : "Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+        );
+        setUploadStatus("");
+        setUploadProgress(0);
+      } finally {
+        setIsSubmitting(false);
       }
-
-      // Phase 3: Create or Update Vehicle in DB
-      setUploadStatus("Daten speichern...");
-
-      // Remove images from data to avoid exceeding 1MB Server Action limit
-      const { images: _, ...submitData } = data;
-      if (vehicleId) {
-        await updateVehicle(vehicleId, submitData, finalImageKeys);
-        toast.success("Inserat erfolgreich aktualisiert!");
-      } else {
-        await createVehicle(listingId, submitData, finalImageKeys);
-        toast.success("Inserat erfolgreich erstellt!");
-      }
-
-      setUploadProgress(100);
-      toast.success("Inserat erfolgreich veröffentlicht!");
-      router.push("/dashboard/vehicles");
-      router.refresh();
-    } catch (error) {
-      console.error("Submission error:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Fehler beim Veröffentlichen",
-      );
-      setUploadStatus("");
-      setUploadProgress(0);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    });
+  }
 
   const steps = [
     { id: 1, label: "Fahrzeugdaten" },
