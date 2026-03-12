@@ -126,9 +126,9 @@ export const Footer = () => {
                 <li className="flex items-start gap-2 text-muted-foreground">
                   <MapPin className="size-4 text-muted-foreground mt-0.5" />
                   <span>
-                    Riehenstrasse 157,
+                    Bielstrasse 78,
                     <br />
-                    4058 Basel, Switzerland
+                    2555 Brugg / BE, Switzerland
                   </span>
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">

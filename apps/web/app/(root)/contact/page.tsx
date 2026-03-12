@@ -98,9 +98,9 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold mb-1">Adresse</h3>
                     <p className="text-muted-foreground">
-                      Riehenstrasse 157,
+                      Bielstrasse 78,
                       <br />
-                      4058 Basel, Switzerland
+                      2555 Brugg / BE, Switzerland
                     </p>
                   </div>
                 </div>
