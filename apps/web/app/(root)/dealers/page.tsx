@@ -1,6 +1,19 @@
 import { DealersList } from "./_components/dealers-list";
+import { getDealers } from "@/app/actions/dealer-actions";
 
-export default function DealersPage() {
+export default async function DealersPage(props: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const q = searchParams.q || "";
+  const page = Number(searchParams.page) || 1;
+
+  const initialData = await getDealers({
+    searchQuery: q,
+    page: page,
+    pageSize: 5,
+  });
+
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
@@ -17,7 +30,7 @@ export default function DealersPage() {
         </div>
       </div>
 
-      <DealersList />
+      <DealersList initialData={initialData} />
     </>
   );
 }

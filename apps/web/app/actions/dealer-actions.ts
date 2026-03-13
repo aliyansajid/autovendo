@@ -135,3 +135,59 @@ export async function getDealerProfile(
     })),
   } as DealerProfile;
 }
+
+export async function getDealers({
+  searchQuery = "",
+  page = 1,
+  pageSize = 5,
+}: {
+  searchQuery?: string;
+  page?: number;
+  pageSize?: number;
+}) {
+  try {
+    const skip = (page - 1) * pageSize;
+
+    const where = searchQuery
+      ? {
+          OR: [
+            { companyName: { contains: searchQuery, mode: "insensitive" as const } },
+            { city: { contains: searchQuery, mode: "insensitive" as const } },
+            { address: { contains: searchQuery, mode: "insensitive" as const } },
+          ],
+        }
+      : {};
+
+    const [dealers, totalCount] = await Promise.all([
+      prisma.dealer.findMany({
+        where,
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          companyName: true,
+          city: true,
+          address: true,
+          logo: true,
+        },
+      }),
+      prisma.dealer.count({ where }),
+    ]);
+
+    return {
+      dealers,
+      totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page,
+    };
+  } catch (error) {
+    console.error("Failed to fetch dealers:", error);
+    return {
+      dealers: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: page,
+    };
+  }
+}
