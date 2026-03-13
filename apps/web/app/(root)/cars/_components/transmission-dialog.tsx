@@ -19,20 +19,51 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { TransmissionTypeEnum } from "@/constants";
 
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useEffect } from "react";
+
 const formSchema = z.object({
-  transmissionType: z.array(z.string()),
+  transmission: z.array(z.string()),
 });
 
-export function TransmissionDialog() {
+function formatCount(n: number) {
+  return new Intl.NumberFormat("de-CH").format(n);
+}
+
+export function TransmissionDialog({
+  resultCount,
+  counts,
+}: {
+  resultCount?: number;
+  counts?: Record<string, number>;
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      transmissionType: [],
+      transmission: searchParams.get("transmission")?.split(",") || [],
     },
   });
 
+  // Sync form with URL
+  useEffect(() => {
+    form.reset({
+      transmission: searchParams.get("transmission")?.split(",") || [],
+    });
+  }, [searchParams, form]);
+
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+    const params = new URLSearchParams(searchParams.toString());
+    if (data.transmission.length > 0) {
+      params.set("transmission", data.transmission.join(","));
+    } else {
+      params.delete("transmission");
+    }
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
   return (
@@ -55,19 +86,30 @@ export function TransmissionDialog() {
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.CHECKBOX_GROUP}
-              name="transmissionType"
+              name="transmission"
               className="grid grid-cols-2 gap-3"
-              options={TransmissionTypeEnum.map((transmission) => ({
-                label: transmission.label,
-                value: transmission.value,
-              }))}
+              options={TransmissionTypeEnum.map((transmission) => {
+                const key = transmission.value.toUpperCase().replace(/-/g, "_");
+                const count = counts?.[key];
+                return {
+                  label:
+                    count !== undefined
+                      ? `${transmission.label} (${formatCount(count)})`
+                      : transmission.label,
+                  value: transmission.value,
+                };
+              })}
             />
           </FieldGroup>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Abbrechen</Button>
             </DialogClose>
-            <Button type="submit">1'409'625 Angebote</Button>
+            <Button type="submit">
+              {resultCount !== undefined
+                ? `${formatCount(resultCount)} Angebote`
+                : "Anwenden"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </form>

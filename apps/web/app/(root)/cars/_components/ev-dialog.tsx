@@ -42,7 +42,11 @@ const batteryCapacityOptions = Array.from({ length: 15 }, (_, i) => {
   return { value, label: `${value} kWh` };
 });
 
-export function EvDialog() {
+function formatCount(n: number) {
+  return new Intl.NumberFormat("de-CH").format(n);
+}
+
+export function EvDialog({ resultCount }: { resultCount?: number }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -151,7 +155,11 @@ export function EvDialog() {
             <DialogClose asChild>
               <Button variant="outline">Abbrechen</Button>
             </DialogClose>
-            <Button type="submit">1'409'625 Angebote</Button>
+            <Button type="submit">
+              {resultCount !== undefined
+                ? `${formatCount(resultCount)} Angebote`
+                : "Anwenden"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </form>

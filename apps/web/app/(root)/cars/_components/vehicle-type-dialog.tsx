@@ -19,20 +19,51 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { carBodyTypeEnum } from "@/constants/cars";
 
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useEffect } from "react";
+
 const formSchema = z.object({
   vehicleType: z.array(z.string()),
 });
 
-export function VehicleTypeDialog() {
+function formatCount(n: number) {
+  return new Intl.NumberFormat("de-CH").format(n);
+}
+
+export function VehicleTypeDialog({
+  resultCount,
+  counts,
+}: {
+  resultCount?: number;
+  counts?: Record<string, number>;
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      vehicleType: [],
+      vehicleType: searchParams.get("vehicleType")?.split(",") || [],
     },
   });
 
+  // Sync form with URL
+  useEffect(() => {
+    form.reset({
+      vehicleType: searchParams.get("vehicleType")?.split(",") || [],
+    });
+  }, [searchParams, form]);
+
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+    const params = new URLSearchParams(searchParams.toString());
+    if (data.vehicleType.length > 0) {
+      params.set("vehicleType", data.vehicleType.join(","));
+    } else {
+      params.delete("vehicleType");
+    }
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
   return (
@@ -58,10 +89,17 @@ export function VehicleTypeDialog() {
               name="vehicleType"
               className="grid grid-cols-2 gap-3"
               options={carBodyTypeEnum.map(
-                (body: { value: string; label: string }) => ({
-                  label: body.label,
-                  value: body.value,
-                }),
+                (body: { value: string; label: string }) => {
+                  const key = body.value.trim().toUpperCase();
+                  const count = counts?.[key];
+                  return {
+                    label:
+                      count !== undefined
+                        ? `${body.label} (${formatCount(count)})`
+                        : body.label,
+                    value: body.value,
+                  };
+                },
               )}
             />
           </FieldGroup>
@@ -69,7 +107,11 @@ export function VehicleTypeDialog() {
             <DialogClose asChild>
               <Button variant="outline">Abbrechen</Button>
             </DialogClose>
-            <Button type="submit">1'409'625 Angebote</Button>
+            <Button type="submit">
+              {resultCount !== undefined
+                ? `${formatCount(resultCount)} Angebote`
+                : "Anwenden"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </form>

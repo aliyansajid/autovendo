@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Phone,
-  ExternalLink,
-  MapPin,
-  ArrowRight,
-  Printer,
-  Star,
-} from "lucide-react";
+import { Phone, ExternalLink, MapPin, ArrowRight, Star } from "lucide-react";
 import Image from "next/image";
 import {
   Card,
@@ -20,14 +13,14 @@ import { LocationMap } from "./location-map";
 
 interface SellerSectionProps {
   seller: {
+    id: string;
+    logo?: string;
     name: string;
-    address: string;
-    phones: string[];
     rating: number;
     reviewCount: number;
     website?: string;
-    fax?: string;
-    logo?: string;
+    phone: string;
+    address: string;
     openingHours?: { day: string; hours: string }[];
   };
 }
@@ -43,14 +36,16 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-6">
               <div className="space-y-2">
-                <div className="relative w-32 h-32 mb-2">
-                  <Image
-                    src={seller.logo as string}
-                    alt={seller.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+                {seller.logo && (
+                  <div className="relative w-32 h-32">
+                    <Image
+                      src={seller.logo}
+                      alt={seller.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
                 <h3 className="font-bold text-lg">{seller.name}</h3>
                 <div className="flex items-center gap-1.5 text-sm">
                   <div className="flex text-rating">
@@ -68,42 +63,43 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                 </div>
                 {seller.website && (
                   <Link
-                    href={`https://${seller.website}`}
+                    href={seller.website}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-primary text-sm hover:underline flex items-center gap-1"
+                    className="flex items-center gap-1 text-sm text-primary underline-offset-4 hover:underline"
                   >
-                    {seller.website} <ExternalLink className="size-4" />
+                    {seller.website}
+                    <ExternalLink className="size-4" />
                   </Link>
                 )}
               </div>
 
               <div className="space-y-3">
-                {seller.phones.slice(0, 2).map((phone, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors cursor-pointer"
-                  >
-                    <Phone className="size-4" />
-                    <span className="font-medium">{phone}</span>
-                  </div>
-                ))}
-                {seller.fax && (
-                  <div className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors cursor-pointer">
-                    <Printer className="size-4" />
-                    <span className="font-medium">{seller.fax}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors cursor-pointer">
+                <Link
+                  href={`tel:${seller.phone}`}
+                  className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
+                >
+                  <Phone className="size-4" />
+                  {seller.phone}
+                </Link>
+
+                <Link
+                  href={`https://maps.google.com/?q=${seller.address}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
+                >
                   <MapPin className="size-4" />
-                  <span className="font-medium">{seller.address}</span>
-                </div>
-                <div className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors cursor-pointer">
+                  {seller.address}
+                </Link>
+
+                <Link
+                  href={`/cars?dealerId=${seller.id}`}
+                  className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
+                >
                   <ArrowRight className="size-4" />
-                  <span className="font-medium">
-                    Alle Fahrzeuge dieses Händlers
-                  </span>
-                </div>
+                  Alle Fahrzeuge dieses Händlers
+                </Link>
               </div>
             </div>
 

@@ -1,8 +1,6 @@
-"use client";
-
-import { carDetail } from "@/lib/mock-data";
+import { getVehicleById } from "@/app/actions/vehicles";
+import { notFound } from "next/navigation";
 import { Button } from "@repo/ui/components/button";
-import { Badge } from "@repo/ui/components/badge";
 import { Separator } from "@repo/ui/components/separator";
 import { ImageGallery } from "../_components/image-gallery";
 import {
@@ -32,30 +30,217 @@ import {
 import Link from "next/link";
 import { StickyActionBar } from "../_components/sticky-action-bar";
 import { EnergyLabel } from "../_components/energy-label";
+import { prisma } from "@repo/db";
+import { formatVehicleName } from "@/lib/text-format";
 
-export default function ListingPage() {
-  const {
-    title,
-    price,
-    images,
-    keyDetails,
-    basicData,
-    vehicleHistory,
-    technicalData,
-    energyConsumption,
-    equipment,
-    colourAndUpholstery,
-    description,
-    seller,
-    similarListings,
-  } = carDetail;
+function formatLabel(value: string | null | undefined) {
+  if (!value) return "N/A";
+  const normalized = value.toLowerCase().replace(/_/g, " ");
+  return normalized
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+export default async function ListingPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const item = await getVehicleById(id);
+
+  if (!item) {
+    notFound();
+  }
+
+  const r2Domain = process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || "";
+  const getFullImageUrl = (key: string | undefined) => {
+    if (!key) return "/placeholder-car.jpg";
+    if (key.startsWith("http")) return key;
+    return `${r2Domain}/${key.startsWith("/") ? key.slice(1) : key}`;
+  };
+
+  const title = formatVehicleName([item.make, item.model, item.version]);
+  const price = item.price;
+  const images = item.images.map(getFullImageUrl);
+
+  const keyDetails = {
+    kilometer: `${item.kilometer.toLocaleString()} km`,
+    transmission:
+      item.transmissionType?.toString() ||
+      item.gearTransmission?.toString() ||
+      "N/A",
+    firstRegistration: `${String(item.registrationMonth).padStart(
+      2,
+      "0",
+    )}/${item.registrationYear}`,
+    fuelType: item.fuelType?.toString() || "N/A",
+    power:
+      item.kw || item.hp
+        ? `${item.kw || 0} kW${item.hp ? ` (${item.hp} PS)` : ""}`
+        : "N/A",
+    sellerType: "Händler",
+    warranty: item.warranty ? `${item.duration || 0} Monate` : "Keine Angabe",
+    mfk: item.inspectionPassed ? "Ja" : "Nein",
+  };
+
+  const basicData = {
+    bodyType: item.bodyType || "N/A",
+    vehicleType: item.vehicleType?.toString() || "N/A",
+    vehicleCondition: item.vehicleCondition?.toString() || "N/A",
+    drivetrain: item.driveType?.toString() || "N/A",
+    seats: item.seats?.toString() || "N/A",
+    doors: item.doors?.toString() || "N/A",
+    offerNumber: item.id.slice(-8),
+  };
+
+  const vehicleHistory = {
+    kilometer: `${item.kilometer.toLocaleString()} km`,
+    firstRegistration: `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
+  };
+
+  const technicalData = {
+    power:
+      item.kw || item.hp
+        ? `${item.kw || 0} kW${item.hp ? ` (${item.hp} PS)` : ""}`
+        : "N/A",
+    gearbox: item.gearTransmission?.toString() || "N/A",
+    engineSize: item.cubicCapacity
+      ? `${item.cubicCapacity.toLocaleString()} ccm`
+      : "N/A",
+    gears: item.numberOfGears?.toString() || "N/A",
+    cylinders: item.cylinders?.toString() || "N/A",
+    emptyWeight: item.emptyWeight
+      ? `${item.emptyWeight.toLocaleString()} kg`
+      : "N/A",
+    loadCapacity: item.loadCapacity
+      ? `${item.loadCapacity.toLocaleString()} kg`
+      : "N/A",
+    wheelbase: item.wheelbase ? `${item.wheelbase.toLocaleString()} mm` : "N/A",
+    length: item.length ? `${item.length.toLocaleString()} mm` : "N/A",
+    width: item.width ? `${item.width.toLocaleString()} mm` : "N/A",
+    height: item.height ? `${item.height.toLocaleString()} mm` : "N/A",
+    towingCapacityBraked: item.towingCapacityBraked
+      ? `${item.towingCapacityBraked.toLocaleString()} kg`
+      : "N/A",
+  };
+
+  const energyConsumption = {
+    emissionClass: item.emissionStandard?.toString() || "N/A",
+    fuelType: item.fuelType?.toString() || "N/A",
+    co2Emissions: item.co2Emission ? `${item.co2Emission} g/km (komb.)` : "N/A",
+    efficiencyClass: item.energyLabel || undefined,
+  };
+
+  const inspectionAndWarranty = {
+    lastInspectionDate: item.lastInspectionDate
+      ? item.lastInspectionDate.toLocaleDateString("de-CH")
+      : "N/A",
+    inspectionPassed: item.inspectionPassed ? "Ja" : "Nein",
+    warrantyType: item.warranty?.toString() || "N/A",
+    warrantyStartDate: item.warrantyStartDate
+      ? item.warrantyStartDate.toLocaleDateString("de-CH")
+      : "N/A",
+    warrantyDurationMonths: item.duration?.toString() || "N/A",
+    warrantyMaxKm: item.maxKm ? `${item.maxKm.toLocaleString()} km` : "N/A",
+  };
+
+  const electricData = {
+    range: item.range ? `${item.range.toLocaleString()} km` : "N/A",
+    batteryCapacity: item.batteryCapacity
+      ? `${item.batteryCapacity.toLocaleString()} kWh`
+      : "N/A",
+    batteryRentalMonth: item.batteryRentalMonth
+      ? `${item.batteryRentalMonth.toLocaleString()} CHF/Monat`
+      : "N/A",
+    powerConsumption: item.powerConsumption
+      ? `${item.powerConsumption.toLocaleString()} kWh/100km`
+      : "N/A",
+    batteryOwnership: item.batteryOwnership?.toString() || "N/A",
+    chargingPlugTypeStandard:
+      item.chargingPlugTypeStandard?.toString() || "N/A",
+    chargingPlugTypeFast: item.chargingPlugTypeFast?.toString() || "N/A",
+    chargingPower: item.chargingPower
+      ? `${item.chargingPower.toLocaleString()} kW`
+      : "N/A",
+    combustionEnginePowerHp: item.combustionEnginePowerHp
+      ? `${item.combustionEnginePowerHp} PS`
+      : "N/A",
+    electricMotorPowerHp: item.electricMotorPowerHp
+      ? `${item.electricMotorPowerHp} PS`
+      : "N/A",
+  };
+
+  const identifiers = {
+    vin: item.vin || "N/A",
+    serialNumber: item.serialNumber || "N/A",
+    typeApproval: item.typeApproval || "N/A",
+  };
+
+  const equipment = {
+    comfort: item.equipment
+      ? Object.entries(item.equipment as Record<string, unknown>)
+          .filter(([_, v]) => v === true)
+          .map(([k]) => k.replace(/([A-Z])/g, " $1").trim())
+      : [],
+  };
+
+  const colourAndUpholstery = {
+    exteriorColour: item.color?.toString() || "N/A",
+    interiorColour: item.interiorColor?.toString() || "N/A",
+    paint: item.metallic ? "Metallic" : "Uni",
+  };
+
+  const description =
+    item.vehicleDescription && item.vehicleDescription.trim().length > 0
+      ? item.vehicleDescription
+      : "Keine Beschreibung verfügbar.";
+
+  const seller = {
+    id: item.dealer.id,
+    name: item.dealer.companyName,
+    address: `${item.dealer.address}, ${item.dealer.zipCode} ${item.dealer.city}`,
+    phone: item.dealer.phoneNumber,
+    logo: item.dealer.logo ? getFullImageUrl(item.dealer.logo) : undefined,
+    website: item.dealer.website || "",
+    rating: 0,
+    reviewCount: 0,
+  };
+
+  // Fetch some similar listings from same dealer
+  const similarItems = await prisma.vehicle.findMany({
+    where: {
+      dealerId: item.dealerId,
+      NOT: { id: item.id },
+    },
+    take: 5,
+    include: { dealer: true },
+  });
+
+  const similarListings = similarItems.map((sim) => ({
+    id: sim.id,
+    title: `${sim.make} ${sim.model || ""}`.trim(),
+    price: `CHF ${sim.price.toLocaleString()}`,
+    details: [
+      `${String(sim.registrationMonth).padStart(2, "0")}/${sim.registrationYear}`,
+      `${sim.kilometer.toLocaleString()} km`,
+      sim.fuelType?.toString().toLowerCase().replace(/_/g, " ") || "N/A",
+    ],
+    garageName: sim.dealer.companyName,
+    garageId: sim.dealerId,
+    garageLocation: `${sim.dealer.city}, CH`,
+    badge: sim.vehicleCondition === "NEW" ? "NEU" : "Gebraucht",
+    image: getFullImageUrl(sim.images[0]),
+  }));
 
   return (
     <div className="max-w-285 mx-auto px-4 py-12">
       <ListingHeader
-        make="Volkswagen"
-        model="T-Roc"
-        trim={title.replace("Volkswagen T-Roc ", "")}
+        make={item.make}
+        model={item.model || ""}
+        trim={item.version || ""}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -65,10 +250,6 @@ export default function ListingPage() {
             <div className="text-3xl font-bold text-primary">
               CHF {price.toLocaleString()}
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Badge>MwSt. ausweisbar</Badge>
-              <Badge variant="secondary">Verhandelbar</Badge>
-            </div>
           </div>
 
           <ImageGallery images={images} title={title} />
@@ -77,40 +258,28 @@ export default function ListingPage() {
             <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-6">
               <KeyDetailCard
                 icon={
-                  <Gauge
-                    className="text-muted-foreground w-6 h-6"
-                    strokeWidth={1.5}
-                  />
+                  <Gauge className="text-muted-foreground" strokeWidth={1.5} />
                 }
                 label="Kilometerstand"
                 value={keyDetails.kilometer}
               />
               <KeyDetailCard
                 icon={
-                  <Zap
-                    className="text-muted-foreground w-6 h-6"
-                    strokeWidth={1.5}
-                  />
+                  <Zap className="text-muted-foreground" strokeWidth={1.5} />
                 }
                 label="Leistung"
                 value={keyDetails.power}
               />
               <KeyDetailCard
                 icon={
-                  <Fuel
-                    className="text-muted-foreground w-6 h-6"
-                    strokeWidth={1.5}
-                  />
+                  <Fuel className="text-muted-foreground" strokeWidth={1.5} />
                 }
                 label="Treibstoff"
                 value={keyDetails.fuelType}
               />
               <KeyDetailCard
                 icon={
-                  <Disc
-                    className="text-muted-foreground w-6 h-6"
-                    strokeWidth={1.5}
-                  />
+                  <Disc className="text-muted-foreground" strokeWidth={1.5} />
                 }
                 label="Getriebe"
                 value={keyDetails.transmission}
@@ -118,7 +287,7 @@ export default function ListingPage() {
               <KeyDetailCard
                 icon={
                   <Calendar
-                    className="text-muted-foreground w-6 h-6"
+                    className="text-muted-foreground"
                     strokeWidth={1.5}
                   />
                 }
@@ -127,10 +296,7 @@ export default function ListingPage() {
               />
               <KeyDetailCard
                 icon={
-                  <Store
-                    className="text-muted-foreground w-6 h-6"
-                    strokeWidth={1.5}
-                  />
+                  <Store className="text-muted-foreground" strokeWidth={1.5} />
                 }
                 label="Verkäufer"
                 value={keyDetails.sellerType}
@@ -145,6 +311,10 @@ export default function ListingPage() {
 
             <Section title="Fahrzeughistorie">
               <DataGrid data={vehicleHistory} />
+            </Section>
+
+            <Section title="Inspektion & Garantie">
+              <DataGrid data={inspectionAndWarranty} />
             </Section>
 
             <Section title="Technische Daten">
@@ -174,8 +344,16 @@ export default function ListingPage() {
               )}
             </Section>
 
+            <Section title="Elektrische Daten">
+              <DataGrid data={electricData} />
+            </Section>
+
             <Section title="Farbe und Polsterung">
               <DataGrid data={colourAndUpholstery} />
+            </Section>
+
+            <Section title="Identifikationsnummern">
+              <DataGrid data={identifiers} />
             </Section>
 
             <Section title="Ausstattung">
@@ -183,7 +361,7 @@ export default function ListingPage() {
             </Section>
 
             <Section title="Fahrzeugbeschreibung">
-              <p className="whitespace-pre-line text-muted-foreground leading-relaxed">
+              <p className="whitespace-pre-line text-sm text-muted-foreground leading-relaxed">
                 {description}
               </p>
             </Section>
@@ -193,13 +371,13 @@ export default function ListingPage() {
             <ReviewSection
               rating={seller.rating}
               count={seller.reviewCount}
-              reviews={carDetail.reviews}
+              reviews={[]}
               dealerId={seller.id}
             />
 
             <Separator className="my-12" />
 
-            <SimilarListings listings={similarListings} />
+            <SimilarListings listings={similarListings as any} />
           </div>
         </div>
 
@@ -208,12 +386,8 @@ export default function ListingPage() {
             <CardContent className="space-y-3">
               <h1 className="text-xl font-bold">{title}</h1>
               <h2 className="text-2xl font-bold text-primary">
-                CHF {price.toLocaleString()}
+                CHF {price.toLocaleString("de-CH")}
               </h2>
-              <div className="flex flex-wrap gap-2">
-                <Badge>MwSt. ausweisbar</Badge>
-                <Badge variant="secondary">Verhandelbar</Badge>
-              </div>
             </CardContent>
           </Card>
 
@@ -255,19 +429,17 @@ export default function ListingPage() {
                   </p>
                 </div>
 
-                {seller.phones.slice(0, 1).map((phone, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="bg-muted p-2.5 rounded-lg">
-                      <Phone className="size-4 text-muted-foreground" />
-                    </div>
-                    <Link
-                      href={`tel:${phone}`}
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      {phone}
-                    </Link>
+                <div className="flex items-center gap-3">
+                  <div className="bg-muted p-2.5 rounded-lg">
+                    <Phone className="size-4 text-muted-foreground" />
                   </div>
-                ))}
+                  <Link
+                    href={`tel:${seller.phone}`}
+                    className="text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
+                  >
+                    {seller.phone}
+                  </Link>
+                </div>
               </div>
 
               <div className="space-y-3">
@@ -279,18 +451,17 @@ export default function ListingPage() {
                   <Mail />
                   Kontaktieren
                 </Button>
-                <Link
-                  href={`/dealers/${seller.id}`}
-                  className="block text-center text-sm text-primary font-medium hover:underline pt-2"
-                >
-                  Alle Fahrzeuge dieses Händlers
-                </Link>
+                <Button variant="link" className="w-full" asChild>
+                  <Link href={`/dealers/${seller.id}`}>
+                    Alle Fahrzeuge dieses Händlers
+                  </Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
-      <StickyActionBar price={price} sellerPhone={seller.phones?.[0] || ""} />
+      <StickyActionBar price={price} sellerPhone={seller.phone} />
     </div>
   );
 }
@@ -312,32 +483,6 @@ function Section({
   );
 }
 
-function DataGrid({ data }: { data: Record<string, string | number> }) {
-  const noBorderKeys = ["doors", "kilometer", "cylinders"];
-
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1">
-      {Object.entries(data).map(([key, value]) => {
-        const shouldHideBorder = noBorderKeys.includes(key.toLowerCase());
-
-        return (
-          <div
-            key={key}
-            className={`flex justify-between items-center py-3.5 ${
-              shouldHideBorder ? "border-b sm:border-b-0" : "border-b"
-            } last:border-0`}
-          >
-            <span className="text-sm text-muted-foreground capitalize">
-              {key.replace(/([A-Z])/g, " $1").trim()}
-            </span>
-            <span className="font-medium text-sm text-right">{value}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
 function KeyDetailCard({
   label,
   value,
@@ -354,8 +499,48 @@ function KeyDetailCard({
         <p className="text-xs text-muted-foreground font-medium truncate">
           {label}
         </p>
-        <p className="font-bold text-sm truncate">{value}</p>
+        <p className="font-bold text-sm truncate">
+          {typeof value === "string" ? formatLabel(value) : value}
+        </p>
       </div>
+    </div>
+  );
+}
+
+function DataGrid({
+  data,
+}: {
+  data: Record<string, string | number | undefined>;
+}) {
+  const noBorderKeys = [
+    "doors",
+    "kilometer",
+    "height",
+    "warrantydurationmonths",
+    "combustionenginepowerhp",
+    "electricmotorpowerhp",
+  ];
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+      {Object.entries(data).map(([key, value]) => {
+        const shouldHideBorder = noBorderKeys.includes(key.toLowerCase());
+        return (
+          <div
+            key={key}
+            className={`flex items-center justify-between pb-3 ${
+              shouldHideBorder ? "border-b sm:border-b-0" : "border-b"
+            } last:border-0`}
+          >
+            <span className="text-sm text-muted-foreground capitalize">
+              {key.replace(/([A-Z])/g, " $1").trim()}
+            </span>
+            <span className="text-sm font-medium text-right">
+              {typeof value === "string" ? formatLabel(value) : value}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -363,11 +548,11 @@ function KeyDetailCard({
 function EquipmentCategory({ items }: { items: string[] }) {
   if (!items.length) return null;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
       {items.map((item, i) => (
         <div
           key={i}
-          className="flex items-center gap-2 text-muted-foreground text-sm"
+          className="flex items-center gap-2 text-sm text-muted-foreground"
         >
           <CheckCircle2 className="size-4 text-green-500" />
           <span>{item}</span>

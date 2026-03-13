@@ -19,20 +19,51 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { carFuelTypeEnum } from "@/constants/cars";
 
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useEffect } from "react";
+
 const formSchema = z.object({
-  fuelType: z.array(z.string()),
+  fuel: z.array(z.string()),
 });
 
-export function FuelTypeDialog() {
+function formatCount(n: number) {
+  return new Intl.NumberFormat("de-CH").format(n);
+}
+
+export function FuelTypeDialog({
+  resultCount,
+  counts,
+}: {
+  resultCount?: number;
+  counts?: Record<string, number>;
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fuelType: [],
+      fuel: searchParams.get("fuel")?.split(",") || [],
     },
   });
 
+  // Sync form with URL
+  useEffect(() => {
+    form.reset({
+      fuel: searchParams.get("fuel")?.split(",") || [],
+    });
+  }, [searchParams, form]);
+
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+    const params = new URLSearchParams(searchParams.toString());
+    if (data.fuel.length > 0) {
+      params.set("fuel", data.fuel.join(","));
+    } else {
+      params.delete("fuel");
+    }
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
   return (
@@ -55,11 +86,15 @@ export function FuelTypeDialog() {
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.CHECKBOX_GROUP}
-              name="fuelType"
+              name="fuel"
               className="grid grid-cols-2 gap-3"
               options={carFuelTypeEnum.map(
                 (fuel: { value: string; label: string }) => ({
-                  label: fuel.label,
+                  label:
+                    counts?.[fuel.value.toUpperCase().replace(/-/g, "_")] !==
+                    undefined
+                      ? `${fuel.label} (${formatCount(counts[fuel.value.toUpperCase().replace(/-/g, "_")])})`
+                      : fuel.label,
                   value: fuel.value,
                 }),
               )}
@@ -69,7 +104,11 @@ export function FuelTypeDialog() {
             <DialogClose asChild>
               <Button variant="outline">Abbrechen</Button>
             </DialogClose>
-            <Button type="submit">1'409'625 Angebote</Button>
+            <Button type="submit">
+              {resultCount !== undefined
+                ? `${formatCount(resultCount)} Angebote`
+                : "Anwenden"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </form>

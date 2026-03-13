@@ -21,11 +21,28 @@ import { ScrollArea } from "@repo/ui/src/components/scroll-area";
 import { carMakes, popularCarMakes, carModels } from "@/constants/cars";
 import Image from "next/image";
 
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useEffect } from "react";
+
 const formSchema = z.object({
   search: z.string().optional(),
 });
 
-export function MakeModelDialog() {
+function formatCount(n: number) {
+  return new Intl.NumberFormat("de-CH").format(n);
+}
+
+export function MakeModelDialog({
+  makeCounts,
+  resultCount,
+}: {
+  makeCounts?: Record<string, number>;
+  resultCount?: number;
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const [selectedMake, setSelectedMake] = useState<{
     value: string;
     label: string;
@@ -38,15 +55,48 @@ export function MakeModelDialog() {
     },
   });
 
+  // Initialize selectedMake from URL
+  useEffect(() => {
+    const makeVal = searchParams.get("make");
+    if (makeVal && makeVal !== "any") {
+      // Find label from constants if possible, but for simplicity:
+      setSelectedMake({ value: makeVal, label: makeVal });
+    } else {
+      setSelectedMake(null);
+    }
+  }, [searchParams]);
+
   const searchQuery = (form.watch("search") || "").toLowerCase();
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
-  }
+  const handleMakeSelect = (make: { value: string; label: string }) => {
+    setSelectedMake(make);
+    // If there are no models for this make, we can just apply the make filter
+    if (!carModels[make.value as keyof typeof carModels]) {
+        applyFilters(make.value, "any");
+    }
+  };
+
+  const handleModelSelect = (modelValue: string) => {
+    if (selectedMake) {
+        applyFilters(selectedMake.value, modelValue);
+    }
+  };
+
+  const applyFilters = (make: string, model: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (make && make !== "any") params.set("make", make);
+    else params.delete("make");
+    
+    if (model && model !== "any") params.set("model", model);
+    else params.delete("model");
+    
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <Dialog>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <div>
         <DialogTrigger asChild>
           <span className="text-primary font-medium hover:underline cursor-pointer">
             ändern
@@ -100,6 +150,7 @@ export function MakeModelDialog() {
                             key={model.value}
                             variant="ghost"
                             className="w-full flex items-center justify-between text-base py-6 px-2 rounded-none transition-colors"
+                            onClick={() => handleModelSelect(model.value)}
                           >
                             {model.label}
                           </Button>
@@ -200,7 +251,7 @@ export function MakeModelDialog() {
                             variant="ghost"
                             className="w-full flex items-center justify-between text-base py-6 px-2 rounded-none transition-colors"
                             onClick={() =>
-                              setSelectedMake({
+                              handleMakeSelect({
                                 value: make.value,
                                 label: make.label,
                               })
@@ -208,11 +259,11 @@ export function MakeModelDialog() {
                           >
                             {make.label}
                             <div className="flex items-center gap-2 text-muted-foreground">
-                              <span className="text-sm tabular-nums text-muted-foreground/60">
-                                {Math.floor(
-                                  Math.random() * 50000,
-                                ).toLocaleString("de-CH")}
-                              </span>
+                              {makeCounts?.[make.value] !== undefined && (
+                                <span className="text-sm tabular-nums text-muted-foreground/60">
+                                  {formatCount(makeCounts[make.value])}
+                                </span>
+                              )}
                               <ChevronRight className="text-muted-foreground/60" />
                             </div>
                           </Button>
@@ -223,8 +274,14 @@ export function MakeModelDialog() {
               )}
             </ScrollArea>
           </FieldGroup>
+
+          {resultCount !== undefined && (
+            <div className="pt-2 text-xs text-muted-foreground">
+              {formatCount(resultCount)} Angebote
+            </div>
+          )}
         </DialogContent>
-      </form>
+      </div>
     </Dialog>
   );
 }

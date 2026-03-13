@@ -334,6 +334,16 @@ model Vehicle {
   updatedAt DateTime @updatedAt
 
   @@map("vehicle")
+  @@index([dealerId, createdAt])
+  @@index([vehicleType])
+  @@index([fuelType])
+  @@index([vehicleCondition])
+  @@index([price])
+  @@index([kilometer])
+  @@index([registrationYear])
+  @@index([createdAt])
+  @@index([vehicleType, fuelType, price])
+  @@index([vehicleCondition, kilometer])
 }
 
 enum DayOfWeek {

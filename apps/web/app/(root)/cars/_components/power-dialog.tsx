@@ -18,26 +18,57 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useEffect } from "react";
+
 const formSchema = z.object({
-  power: z.string(),
   powerFrom: z.string().optional(),
   powerTo: z.string().optional(),
+  unit: z.enum(["hp", "kW"]),
 });
 
-export function PowerDialog() {
+function formatCount(n: number) {
+  return new Intl.NumberFormat("de-CH").format(n);
+}
+
+export function PowerDialog({ resultCount }: { resultCount?: number }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      power: "hp",
-      powerFrom: "",
-      powerTo: "",
+      powerFrom: searchParams.get("powerFrom") || "",
+      powerTo: searchParams.get("powerTo") || "",
+      unit: (searchParams.get("powerUnit") as "hp" | "kW") || "hp",
     },
   });
 
-  const selectedPowerUnit = form.watch("power");
+  // Sync form with URL
+  useEffect(() => {
+    form.reset({
+      powerFrom: searchParams.get("powerFrom") || "",
+      powerTo: searchParams.get("powerTo") || "",
+      unit: (searchParams.get("powerUnit") as "hp" | "kW") || "hp",
+    });
+  }, [searchParams, form]);
+
+  const selectedPowerUnit = form.watch("unit");
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (data.powerFrom) params.set("powerFrom", data.powerFrom);
+    else params.delete("powerFrom");
+    
+    if (data.powerTo) params.set("powerTo", data.powerTo);
+    else params.delete("powerTo");
+    
+    params.set("powerUnit", data.unit);
+    
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
   return (
@@ -61,7 +92,7 @@ export function PowerDialog() {
             control={form.control}
             fieldType={FormFieldType.RADIO_GROUP}
             wrapperClassName="w-fit"
-            name="power"
+            name="unit"
             options={[
               {
                 label: "hp",
@@ -94,7 +125,11 @@ export function PowerDialog() {
             <DialogClose asChild>
               <Button variant="outline">Abbrechen</Button>
             </DialogClose>
-            <Button type="submit">1'409'625 Angebote</Button>
+            <Button type="submit">
+              {resultCount !== undefined
+                ? `${formatCount(resultCount)} Angebote`
+                : "Anwenden"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </form>

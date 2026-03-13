@@ -4,6 +4,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useEffect, useCallback, useRef } from "react";
+import { Check } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import {
   CustomFormField,
@@ -36,9 +39,13 @@ import { TransmissionDialog } from "./transmission-dialog";
 import { PowerDialog } from "./power-dialog";
 import { EvDialog } from "./ev-dialog";
 import { MakeModelDialog } from "./make-model-dialog";
+import type { VehicleFacetCounts } from "@/lib/vehicle-search";
+
+function formatCount(n: number) {
+  return new Intl.NumberFormat("de-CH").format(n);
+}
 
 const formSchema = z.object({
-  paymentType: z.string().optional(),
   priceFrom: z.string().optional(),
   priceTo: z.string().optional(),
   registrationFrom: z.string().optional(),
@@ -52,30 +59,123 @@ const formSchema = z.object({
   vehicleType: z.array(z.string()).optional(),
   evs: z.array(z.string()).optional(),
   transmission: z.array(z.string()).optional(),
+  color: z.array(z.string()).optional(),
 });
 
 export const FiltersSidebar = ({
   onClose,
   showActions = true,
+  resultCount,
+  facets,
 }: {
   onClose?: () => void;
   showActions?: boolean;
+  resultCount?: number;
+  facets?: VehicleFacetCounts;
 }) => {
   // Use variables to avoid lint warnings if passed but unused
   void onClose;
   void showActions;
-  const form = useForm<z.infer<typeof formSchema>>({
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  const getInitialValues = useCallback(() => {
+    const params = Object.fromEntries(searchParams.entries());
+    const parseArray = (key: string) => params[key]?.split(",") || [];
+
+    const equipmentFromParams: Record<string, boolean> = {};
+    const equipmentArray = params.equipment?.split(",") || [];
+    equipmentArray.forEach((key) => {
+      equipmentFromParams[key] = true;
+    });
+
+    return {
+      priceFrom: params.priceFrom || "any",
+      priceTo: params.priceTo || "any",
+      registrationFrom: params.registrationFrom || "any",
+      registrationTo: params.registrationTo || "any",
+      kilometerFrom: params.kilometerFrom || "any",
+      kilometerTo: params.kilometerTo || "any",
+      condition: parseArray("condition"),
+      make: params.make || "",
+      fuel: parseArray("fuel"),
+      power: parseArray("power"),
+      vehicleType: parseArray("vehicleType"),
+      evs: parseArray("evs"),
+      transmission: parseArray("transmission"),
+      color: parseArray("color"),
+      ...equipmentFromParams,
+    };
+  }, [searchParams]);
+
+  const form = useForm<z.infer<typeof formSchema> & Record<string, any>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      paymentType: "buy",
-      condition: [],
-      fuel: [],
-      power: [],
-      vehicleType: [],
-      evs: [],
-      transmission: [],
-    },
+    defaultValues: getInitialValues(),
   });
+
+  // Handle URL updates
+  const updateUrl = useCallback(
+    (values: Record<string, any>) => {
+      const params = new URLSearchParams(window.location.search);
+
+      const equipment: string[] = [];
+
+      Object.entries(values).forEach(([key, value]) => {
+        // Handle equipment (individual checkbox keys)
+        if (EquipmentEnum.some((e) => e.value === key)) {
+          if (value === true) equipment.push(key);
+          return;
+        }
+
+        // Handle other fields
+        if (Array.isArray(value)) {
+          if (value.length > 0) {
+            params.set(key, value.join(","));
+          } else {
+            params.delete(key);
+          }
+        } else if (
+          value !== undefined &&
+          value !== null &&
+          value !== "any" &&
+          value !== ""
+        ) {
+          params.set(key, value.toString());
+        } else if (
+          key !== "page" &&
+          key !== "sort" &&
+          key !== "search"
+        ) {
+          params.delete(key);
+        }
+      });
+
+      if (equipment.length > 0) {
+        params.set("equipment", equipment.join(","));
+      } else {
+        params.delete("equipment");
+      }
+
+      params.set("page", "1"); // Reset to page 1 on filter change
+      const newSearch = params.toString();
+      if (newSearch !== window.location.search.replace(/^\?/, "")) {
+        router.push(`${pathname}?${newSearch}`, { scroll: false });
+      }
+    },
+    [pathname, router],
+  );
+
+  // Watch for changes and update URL
+  useEffect(() => {
+    const subscription = form.watch((values: any) => {
+      const timer = setTimeout(() => {
+        updateUrl(values);
+      }, 500);
+      return () => clearTimeout(timer);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, updateUrl]);
 
   const watchCondition = form.watch("condition");
   const watchMake = form.watch("make");
@@ -84,6 +184,19 @@ export const FiltersSidebar = ({
   const watchVehicleType = form.watch("vehicleType");
   const watchEvs = form.watch("evs");
   const watchTransmission = form.watch("transmission");
+  const watchColor = form.watch("color") || [];
+
+  const handleColorToggle = (colorValue: string) => {
+    const current = form.getValues("color") || [];
+    if (current.includes(colorValue)) {
+      form.setValue(
+        "color",
+        (current as string[]).filter((c: string) => c !== colorValue),
+      );
+    } else {
+      form.setValue("color", [...(current as string[]), colorValue]);
+    }
+  };
 
   const renderSelectedText = (
     arr: string[] | undefined,
@@ -114,7 +227,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Fahrzeugzustand</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchCondition, VehicleConditionEnum)}
-                <ConditionDialog />
+                <ConditionDialog resultCount={resultCount} />
               </div>
             </div>
 
@@ -124,7 +237,10 @@ export const FiltersSidebar = ({
               <FieldLabel>Marke, Modell</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {watchMake || "Beliebig"}
-                <MakeModelDialog />
+                <MakeModelDialog
+                  makeCounts={facets?.make}
+                  resultCount={resultCount}
+                />
               </div>
             </div>
 
@@ -234,7 +350,10 @@ export const FiltersSidebar = ({
               <FieldLabel>Kraftstoffart</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchFuel, carFuelTypeEnum)}
-                <FuelTypeDialog />
+                <FuelTypeDialog
+                  resultCount={resultCount}
+                  counts={facets?.fuelType}
+                />
               </div>
             </div>
 
@@ -242,7 +361,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Leistung</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchPower, powerOptions)}
-                <PowerDialog />
+                <PowerDialog resultCount={resultCount} />
               </div>
             </div>
 
@@ -250,7 +369,10 @@ export const FiltersSidebar = ({
               <FieldLabel>Fahrzeugtyp</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchVehicleType, carBodyTypeEnum)}
-                <VehicleTypeDialog />
+                <VehicleTypeDialog
+                  resultCount={resultCount}
+                  counts={facets?.vehicleType}
+                />
               </div>
             </div>
 
@@ -258,7 +380,7 @@ export const FiltersSidebar = ({
               <FieldLabel>E-Autos</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchEvs, evOptions)}
-                <EvDialog />
+                <EvDialog resultCount={resultCount} />
               </div>
             </div>
 
@@ -266,7 +388,10 @@ export const FiltersSidebar = ({
               <FieldLabel>Getriebe</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchTransmission, TransmissionTypeEnum)}
-                <TransmissionDialog />
+                <TransmissionDialog
+                  resultCount={resultCount}
+                  counts={facets?.transmissionType}
+                />
               </div>
             </div>
 
@@ -277,21 +402,42 @@ export const FiltersSidebar = ({
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.CHECKBOX}
-                name="color-metallic"
+                name="metallic"
                 label="Metallic"
               />
               <div className="flex flex-wrap gap-1">
-                {ColorEnum.map((color) => (
-                  <div
-                    key={color.value}
-                    className="w-8 h-8 rounded-md cursor-pointer border border-border flex items-center justify-center"
-                    title={color.label}
-                    style={{
-                      background:
-                        "gradient" in color ? color.gradient : color.hex,
-                    }}
-                  ></div>
-                ))}
+                {ColorEnum.map((color) => {
+                  const isSelected = watchColor.includes(color.value);
+                  return (
+                    <div
+                      key={color.value}
+                      className={`w-8 h-8 rounded-md cursor-pointer border-2 flex items-center justify-center transition-all ${
+                        isSelected
+                          ? "border-primary scale-110 shadow-md"
+                          : "border-border hover:border-muted-foreground/30"
+                      }`}
+                      title={color.label}
+                      onClick={() => handleColorToggle(color.value)}
+                      style={{
+                        background:
+                          "gradient" in color ? color.gradient : color.hex,
+                      }}
+                    >
+                      {isSelected && (
+                        <Check
+                          className={`h-5 w-5 ${
+                            color.value === "white" ||
+                            color.value === "yellow" ||
+                            color.value === "beige" ||
+                            color.value === "silver"
+                              ? "text-black"
+                              : "text-white"
+                          }`}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Share2, Printer, ArrowLeft } from "lucide-react";
+import { Share2, ArrowLeft } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import {
   Breadcrumb,
@@ -11,6 +11,8 @@ import {
   BreadcrumbSeparator,
 } from "@repo/ui/src/components/breadcrumb";
 import { Separator } from "@repo/ui/src/components/separator";
+import Link from "next/link";
+import { formatVehicleName } from "@/lib/text-format";
 
 interface ListingHeaderProps {
   make: string;
@@ -19,12 +21,38 @@ interface ListingHeaderProps {
 }
 
 export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
+  const displayName = formatVehicleName([make, model, trim]);
+  const displayMake = formatVehicleName([make]);
+  const displayModel = formatVehicleName([model]);
+  const displayTrim = formatVehicleName([trim]);
+
+  const handleShare = async () => {
+    const shareData = {
+      title: displayName,
+      text: `Check out this ${displayName} on AutoVendo`,
+      url: window.location.href,
+    };
+
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard!");
+      }
+    } catch (err) {
+      console.error("Error sharing:", err);
+    }
+  };
+
   return (
     <div className="flex items-center justify-between gap-4 mb-6">
       <div className="flex items-center gap-2">
-        <Button variant="link">
-          <ArrowLeft />
-          Back
+        <Button variant="link" asChild>
+          <Link href="/cars">
+            <ArrowLeft />
+            Back
+          </Link>
         </Button>
 
         <Separator
@@ -39,34 +67,33 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/search">Used cars</BreadcrumbLink>
+              <BreadcrumbLink href="/cars">Used cars</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="#">{make}</BreadcrumbLink>
+              <BreadcrumbLink href="#">{displayMake}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="#">{model}</BreadcrumbLink>
+              <BreadcrumbLink href="#">{displayModel}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{trim}</BreadcrumbPage>
+              <BreadcrumbPage>{displayTrim}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" className="text-muted-foreground">
-          <Share2 />
-          <span className="hidden sm:inline">Share</span>
-        </Button>
-        <Button variant="ghost" className="text-muted-foreground">
-          <Printer />
-          <span className="hidden sm:inline">Print</span>
-        </Button>
-      </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-muted-foreground"
+        onClick={handleShare}
+      >
+        <Share2 />
+        <span className="hidden sm:inline">Share</span>
+      </Button>
     </div>
   );
 };

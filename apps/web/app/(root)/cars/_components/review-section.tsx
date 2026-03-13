@@ -35,7 +35,7 @@ export const ReviewSection = ({
       <CardHeader className="border-b gap-0">
         <CardTitle>Bewertungen</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-3">
         <div className="flex items-center gap-1.5 text-sm">
           <div className="flex text-rating">
             {Array.from({ length: 5 }).map((_, i) => (

@@ -19,29 +19,45 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { VehicleConditionEnum } from "@/constants";
 
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useEffect } from "react";
+
 const formSchema = z.object({
-  title: z
-    .string()
-    .min(5, "Bug title must be at least 5 characters.")
-    .max(32, "Bug title must be at most 32 characters."),
-  description: z
-    .string()
-    .min(20, "Description must be at least 20 characters.")
-    .max(100, "Description must be at most 100 characters."),
+  condition: z.array(z.string()),
 });
 
-export function ConditionDialog() {
+function formatCount(n: number) {
+  return new Intl.NumberFormat("de-CH").format(n);
+}
+
+export function ConditionDialog({ resultCount }: { resultCount?: number }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
+      condition: searchParams.get("condition")?.split(",") || [],
     },
   });
 
+  // Sync form with URL changes
+  useEffect(() => {
+    form.reset({
+      condition: searchParams.get("condition")?.split(",") || [],
+    });
+  }, [searchParams, form]);
+
   function onSubmit(data: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    console.log(data);
+    const params = new URLSearchParams(searchParams.toString());
+    if (data.condition.length > 0) {
+      params.set("condition", data.condition.join(","));
+    } else {
+      params.delete("condition");
+    }
+    params.set("page", "1");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
   return (
@@ -76,7 +92,11 @@ export function ConditionDialog() {
             <DialogClose asChild>
               <Button variant="outline">Abbrechen</Button>
             </DialogClose>
-            <Button type="submit">1'409'625 Angebote</Button>
+            <Button type="submit">
+              {resultCount !== undefined
+                ? `${formatCount(resultCount)} Angebote`
+                : "Anwenden"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </form>
