@@ -1,10 +1,10 @@
+import * as React from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@repo/ui/components/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -49,31 +49,36 @@ export function ConditionDialog({ resultCount }: { resultCount?: number }) {
     });
   }, [searchParams, form]);
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  const [open, setOpen] = React.useState(false);
+
+  const handleSubmit = (data: z.infer<typeof formSchema>) => {
     const params = new URLSearchParams(searchParams.toString());
     if (data.condition.length > 0) {
       params.set("condition", data.condition.join(","));
     } else {
       params.delete("condition");
     }
-    params.set("page", "1");
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  }
+    params.delete("page");
+    const queryString = params.toString();
+    router.push(queryString ? `${pathname}?${queryString}` : pathname, {
+      scroll: false,
+    });
+    setOpen(false);
+  };
 
   return (
-    <Dialog>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <DialogTrigger asChild>
-          <span className="text-primary font-medium hover:underline cursor-pointer">
-            ändern
-          </span>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-sm">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <span className="text-primary font-medium hover:underline cursor-pointer">
+          ändern
+        </span>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-sm max-h-[90vh] overflow-y-auto">
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
           <DialogHeader>
             <DialogTitle>Bedingungen</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
+              Wählen Sie den gewünschten Fahrzeugzustand aus.
             </DialogDescription>
           </DialogHeader>
           <FieldGroup>
@@ -89,17 +94,17 @@ export function ConditionDialog({ resultCount }: { resultCount?: number }) {
             />
           </FieldGroup>
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Abbrechen</Button>
-            </DialogClose>
-            <Button type="submit">
-              {resultCount !== undefined
-                ? `${formatCount(resultCount)} Angebote`
-                : "Anwenden"}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
+              Abbrechen
             </Button>
+            <Button type="submit">Anwenden</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

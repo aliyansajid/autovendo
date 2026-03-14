@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import {
@@ -39,11 +39,7 @@ import { TransmissionDialog } from "./transmission-dialog";
 import { PowerDialog } from "./power-dialog";
 import { EvDialog } from "./ev-dialog";
 import { MakeModelDialog } from "./make-model-dialog";
-import type { VehicleFacetCounts } from "@/lib/vehicle-search";
-
-function formatCount(n: number) {
-  return new Intl.NumberFormat("de-CH").format(n);
-}
+import type { VehicleFacets } from "@/lib/schemas/vehicle.schema";
 
 const formSchema = z.object({
   priceFrom: z.string().optional(),
@@ -71,7 +67,7 @@ export const FiltersSidebar = ({
   onClose?: () => void;
   showActions?: boolean;
   resultCount?: number;
-  facets?: VehicleFacetCounts;
+  facets?: VehicleFacets;
 }) => {
   // Use variables to avoid lint warnings if passed but unused
   void onClose;
@@ -114,6 +110,11 @@ export const FiltersSidebar = ({
     defaultValues: getInitialValues(),
   });
 
+  // Sync form with URL changes (handle back/forward navigation)
+  useEffect(() => {
+    form.reset(getInitialValues());
+  }, [searchParams, getInitialValues, form]);
+
   // Handle URL updates
   const updateUrl = useCallback(
     (values: Record<string, any>) => {
@@ -142,11 +143,7 @@ export const FiltersSidebar = ({
           value !== ""
         ) {
           params.set(key, value.toString());
-        } else if (
-          key !== "page" &&
-          key !== "sort" &&
-          key !== "search"
-        ) {
+        } else if (key !== "page" && key !== "sort" && key !== "search") {
           params.delete(key);
         }
       });
@@ -157,10 +154,15 @@ export const FiltersSidebar = ({
         params.delete("equipment");
       }
 
-      params.set("page", "1"); // Reset to page 1 on filter change
+      // Reset to page 1 on filter change, but don't add page=1 to URL
+      params.delete("page");
       const newSearch = params.toString();
-      if (newSearch !== window.location.search.replace(/^\?/, "")) {
-        router.push(`${pathname}?${newSearch}`, { scroll: false });
+      const currentSearch = window.location.search.replace(/^\?/, "");
+
+      if (newSearch !== currentSearch) {
+        router.push(newSearch ? `${pathname}?${newSearch}` : pathname, {
+          scroll: false,
+        });
       }
     },
     [pathname, router],
@@ -237,10 +239,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Marke, Modell</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {watchMake || "Beliebig"}
-                <MakeModelDialog
-                  makeCounts={facets?.make}
-                  resultCount={resultCount}
-                />
+                <MakeModelDialog makeCounts={facets?.make} />
               </div>
             </div>
 
@@ -350,10 +349,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Kraftstoffart</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchFuel, carFuelTypeEnum)}
-                <FuelTypeDialog
-                  resultCount={resultCount}
-                  counts={facets?.fuelType}
-                />
+                <FuelTypeDialog counts={facets?.fuelType} />
               </div>
             </div>
 
@@ -361,7 +357,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Leistung</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchPower, powerOptions)}
-                <PowerDialog resultCount={resultCount} />
+                <PowerDialog />
               </div>
             </div>
 
@@ -369,10 +365,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Fahrzeugtyp</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchVehicleType, carBodyTypeEnum)}
-                <VehicleTypeDialog
-                  resultCount={resultCount}
-                  counts={facets?.vehicleType}
-                />
+                <VehicleTypeDialog counts={facets?.vehicleType} />
               </div>
             </div>
 
@@ -380,7 +373,7 @@ export const FiltersSidebar = ({
               <FieldLabel>E-Autos</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchEvs, evOptions)}
-                <EvDialog resultCount={resultCount} />
+                <EvDialog />
               </div>
             </div>
 
@@ -388,10 +381,7 @@ export const FiltersSidebar = ({
               <FieldLabel>Getriebe</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchTransmission, TransmissionTypeEnum)}
-                <TransmissionDialog
-                  resultCount={resultCount}
-                  counts={facets?.transmissionType}
-                />
+                <TransmissionDialog counts={facets?.transmissionType} />
               </div>
             </div>
 

@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { Button } from "@repo/ui/components/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -17,9 +16,8 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   powerFrom: z.string().optional(),
@@ -27,11 +25,7 @@ const formSchema = z.object({
   unit: z.enum(["hp", "kW"]),
 });
 
-function formatCount(n: number) {
-  return new Intl.NumberFormat("de-CH").format(n);
-}
-
-export function PowerDialog({ resultCount }: { resultCount?: number }) {
+export function PowerDialog() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -56,83 +50,95 @@ export function PowerDialog({ resultCount }: { resultCount?: number }) {
 
   const selectedPowerUnit = form.watch("unit");
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  const [open, setOpen] = useState(false);
+
+  const handleSubmit = (data: z.infer<typeof formSchema>) => {
     const params = new URLSearchParams(searchParams.toString());
-    
+
     if (data.powerFrom) params.set("powerFrom", data.powerFrom);
     else params.delete("powerFrom");
-    
+
     if (data.powerTo) params.set("powerTo", data.powerTo);
     else params.delete("powerTo");
-    
+
     params.set("powerUnit", data.unit);
-    
-    params.set("page", "1");
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  }
+
+    params.delete("page");
+    const queryString = params.toString();
+    router.push(queryString ? `${pathname}?${queryString}` : pathname, {
+      scroll: false,
+    });
+    setOpen(false);
+  };
 
   return (
-    <Dialog>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <DialogTrigger asChild>
-          <span className="text-primary font-medium hover:underline cursor-pointer">
-            ändern
-          </span>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Leistung</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
-            </DialogDescription>
-          </DialogHeader>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <span className="text-primary font-medium hover:underline cursor-pointer">
+          ändern
+        </span>
+      </DialogTrigger>
+      <DialogContent>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <FieldGroup>
+            <DialogHeader>
+              <DialogTitle>Leistung</DialogTitle>
+              <DialogDescription>
+                Geben Sie den gewünschten Leistungsbereich ein.
+              </DialogDescription>
+            </DialogHeader>
 
-          <CustomFormField
-            control={form.control}
-            fieldType={FormFieldType.RADIO_GROUP}
-            wrapperClassName="w-fit"
-            name="unit"
-            options={[
-              {
-                label: "hp",
-                value: "hp",
-              },
-              {
-                label: "kW",
-                value: "kW",
-              },
-            ]}
-          />
-          <div className="flex gap-2">
-            <CustomFormField
-              control={form.control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              name="powerFrom"
-              placeholder="from"
-              inputGroupText={selectedPowerUnit}
-            />
-            <CustomFormField
-              control={form.control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              name="powerTo"
-              placeholder="to"
-              inputGroupText={selectedPowerUnit}
-            />
-          </div>
+            <div className="space-y-3">
+              <CustomFormField
+                control={form.control}
+                fieldType={FormFieldType.RADIO_GROUP}
+                wrapperClassName="w-fit"
+                name="unit"
+                options={[
+                  {
+                    label: "hp",
+                    value: "hp",
+                  },
+                  {
+                    label: "kW",
+                    value: "kW",
+                  },
+                ]}
+              />
 
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Abbrechen</Button>
-            </DialogClose>
-            <Button type="submit">
-              {resultCount !== undefined
-                ? `${formatCount(resultCount)} Angebote`
-                : "Anwenden"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </form>
+              <div className="flex gap-3">
+                <CustomFormField
+                  control={form.control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  inputType="number"
+                  name="powerFrom"
+                  placeholder="from"
+                  inputGroupText={selectedPowerUnit}
+                />
+                <CustomFormField
+                  control={form.control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  inputType="number"
+                  name="powerTo"
+                  placeholder="to"
+                  inputGroupText={selectedPowerUnit}
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                Abbrechen
+              </Button>
+              <Button type="submit">Anwenden</Button>
+            </DialogFooter>
+          </FieldGroup>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

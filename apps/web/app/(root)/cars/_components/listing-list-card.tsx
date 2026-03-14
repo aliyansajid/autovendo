@@ -5,44 +5,30 @@ import Image from "next/image";
 import { Check, Star, Phone } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@repo/ui/src/components/separator";
-import type { VehicleListItem } from "@/app/actions/vehicles";
+import type { VehicleListItem } from "@/lib/schemas/vehicle.schema";
+import { formatPrice, formatNumber, formatRegistrationDate, formatEnumLabel } from "@/lib/helpers/format";
+import { getImageUrl } from "@/lib/helpers/image";
+import { buildVehicleTitle, extractEquipment, formatEquipmentLabel } from "@/lib/helpers/vehicle";
 
 export interface ListingListCardProps {
   item: VehicleListItem;
   showDealerLink?: boolean;
 }
 
+/**
+ * Vehicle List Card - Pure UI Component
+ * Uses helpers for all formatting and business logic
+ */
 export function ListingListCard({
   item,
   showDealerLink = true,
 }: ListingListCardProps) {
-  const formattedPrice = new Intl.NumberFormat("de-CH", {
-    style: "currency",
-    currency: "CHF",
-    maximumFractionDigits: 0,
-  }).format(item.price);
-
-  const formattedKm = new Intl.NumberFormat("de-DE").format(item.kilometer);
-  const registrationDate =
-    `0${item.registrationMonth}/${item.registrationYear}`.slice(-7);
-
-  // Extract up to 4 equipment items from JSON
-  const equipmentList =
-    item.equipment && typeof item.equipment === "object"
-      ? Object.entries(item.equipment)
-          .filter(([_, value]) => value === true)
-          .map(([key]) => key)
-          .slice(0, 4)
-      : [];
-
-  const title = `${item.make} ${item.model || ""} ${item.version || ""}`.trim();
-  const r2Domain = process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || "";
-
-  const getFullImageUrl = (key: string | undefined) => {
-    if (!key) return "/placeholder-car.jpg";
-    if (key.startsWith("http")) return key;
-    return `${r2Domain}/${key.startsWith("/") ? key.slice(1) : key}`;
-  };
+  // Use helpers for ALL formatting
+  const title = buildVehicleTitle(item.make, item.model, item.version);
+  const formattedPrice = formatPrice(item.price);
+  const formattedKm = formatNumber(item.kilometer);
+  const registrationDate = formatRegistrationDate(item.registrationMonth, item.registrationYear);
+  const equipmentList = extractEquipment(item.equipment, 4);
 
   return (
     <Card className="hover:border-primary transition-colors group relative cursor-pointer">
@@ -56,7 +42,7 @@ export function ListingListCard({
         <div className="flex flex-col gap-2 w-full sm:w-[280px] md:w-[320px]">
           <div className="relative w-full aspect-4/3 rounded-md overflow-hidden bg-muted">
             <Image
-              src={getFullImageUrl(item.images[0])}
+              src={getImageUrl(item.images[0])}
               alt={title}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -71,7 +57,7 @@ export function ListingListCard({
                 className="relative w-full aspect-4/3 rounded-md overflow-hidden bg-muted"
               >
                 <Image
-                  src={getFullImageUrl(img)}
+                  src={getImageUrl(img)}
                   alt={`${title} - image ${i + 2}`}
                   fill
                   className="object-cover opacity-80 hover:opacity-100 transition-opacity"
@@ -131,18 +117,14 @@ export function ListingListCard({
                 <span className="text-muted-foreground">•</span>
               </>
             )}
-            {item.fuelType && (
-              <span>{item.fuelType.toLowerCase().replace(/_/g, " ")}</span>
-            )}
+            {item.fuelType && <span>{formatEnumLabel(item.fuelType)}</span>}
           </div>
 
           <div className="my-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
             {equipmentList.map((eq) => (
               <div key={eq} className="flex items-center gap-2">
                 <Check className="size-4" />
-                <span className="capitalize">
-                  {eq.replace(/([A-Z])/g, " $1").trim()}
-                </span>
+                <span>{formatEquipmentLabel(eq)}</span>
               </div>
             ))}
             {equipmentList.length === 0 && (

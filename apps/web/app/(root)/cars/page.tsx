@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { FiltersSidebar } from "./_components/filters-sidebar";
 import { ListingListCard } from "./_components/listing-list-card";
 import {
@@ -15,36 +16,45 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
-import {
-  getVehiclesWithFacets,
-} from "@/app/actions/vehicles";
-import { parseVehicleSearchParams } from "@/lib/vehicle-search";
+import { getVehiclesWithFacetsCached } from "@/app/actions/vehicles.actions";
+import { VehicleSearchSchema } from "@/lib/schemas/vehicle.schema";
+import { parseSearchParams } from "@/lib/helpers/vehicle";
 import { ListingControls } from "./_components/listing-controls";
 
-function toUrlSearchParams(input: {
-  [key: string]: string | string[] | undefined;
+/**
+ * Cars List Page - Pure UI Component
+ * All business logic handled in server actions
+ */
+export default async function CarsPage(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const sp = new URLSearchParams();
-  for (const [key, value] of Object.entries(input)) {
-    if (value === undefined) continue;
-    if (Array.isArray(value)) {
-      for (const v of value) sp.append(key, v);
-    } else {
-      sp.set(key, value);
-    }
-  }
-  return sp;
-}
+  const searchParams = await props.searchParams;
+  // Get data from server action (cached)
+  const { vehicles, total, totalPages, facets } =
+    await getVehiclesWithFacetsCached(searchParams);
 
-export default async function CarsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const query = parseVehicleSearchParams(searchParams);
-  const { vehicles, total, totalPages, facets } = await getVehiclesWithFacets(
-    query,
-  );
+  // Parse for UI needs
+  const parsed = parseSearchParams(searchParams);
+  const query = VehicleSearchSchema.parse(parsed);
+
+  // Helper to build pagination URLs
+  function buildUrl(params: Record<string, any>): string {
+    const sp = new URLSearchParams();
+    for (const [key, value] of Object.entries({ ...searchParams, ...params })) {
+      if (value !== undefined && value !== null) {
+        // Skip page=1 to keep URL clean
+        if (key === "page" && value === 1) continue;
+
+        if (Array.isArray(value)) {
+          value.forEach((v) => sp.append(key, String(v)));
+        } else {
+          sp.set(key, String(value));
+        }
+      }
+    }
+    const queryString = sp.toString();
+    return queryString ? `/cars?${queryString}` : "/cars";
+  }
 
   return (
     <>
@@ -62,11 +72,17 @@ export default async function CarsPage({
       <div className="w-full max-w-285 mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <aside className="hidden lg:block lg:col-span-1">
-            <FiltersSidebar
-              showActions={false}
-              resultCount={total}
-              facets={facets}
-            />
+            <Suspense
+              fallback={
+                <div className="animate-pulse h-96 bg-muted rounded-lg" />
+              }
+            >
+              <FiltersSidebar
+                showActions={false}
+                resultCount={total}
+                facets={facets}
+              />
+            </Suspense>
           </aside>
 
           <div className="lg:col-span-3 flex flex-col gap-6">
@@ -75,10 +91,16 @@ export default async function CarsPage({
                 <CardTitle>{total} Angebote</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center gap-3">
-                <ListingControls
-                  initialSearch={query.search}
-                  initialSort={query.sort}
-                />
+                <Suspense
+                  fallback={
+                    <div className="animate-pulse h-10 bg-muted rounded-lg w-full" />
+                  }
+                >
+                  <ListingControls
+                    initialSearch={query.search}
+                    initialSort={query.sort}
+                  />
+                </Suspense>
               </CardContent>
             </Card>
 
@@ -99,11 +121,7 @@ export default async function CarsPage({
                   {query.page > 1 && (
                     <PaginationItem>
                       <PaginationPrevious
-                        href={`/cars?${(() => {
-                          const sp = toUrlSearchParams(searchParams);
-                          sp.set("page", (query.page - 1).toString());
-                          return sp.toString();
-                        })()}`}
+                        href={buildUrl({ page: query.page - 1 })}
                       />
                     </PaginationItem>
                   )}
@@ -120,11 +138,7 @@ export default async function CarsPage({
                           return (
                             <PaginationItem key={p}>
                               <PaginationLink
-                                href={`/cars?${(() => {
-                                  const sp = toUrlSearchParams(searchParams);
-                                  sp.set("page", p.toString());
-                                  return sp.toString();
-                                })()}`}
+                                href={buildUrl({ page: p })}
                                 isActive={p === query.page}
                               >
                                 {p}
@@ -145,11 +159,7 @@ export default async function CarsPage({
                       return (
                         <PaginationItem key={p}>
                           <PaginationLink
-                            href={`/cars?${(() => {
-                              const sp = toUrlSearchParams(searchParams);
-                              sp.set("page", p.toString());
-                              return sp.toString();
-                            })()}`}
+                            href={buildUrl({ page: p })}
                             isActive={p === query.page}
                           >
                             {p}
@@ -162,11 +172,7 @@ export default async function CarsPage({
                   {query.page < totalPages && (
                     <PaginationItem>
                       <PaginationNext
-                        href={`/cars?${(() => {
-                          const sp = toUrlSearchParams(searchParams);
-                          sp.set("page", (query.page + 1).toString());
-                          return sp.toString();
-                        })()}`}
+                        href={buildUrl({ page: query.page + 1 })}
                       />
                     </PaginationItem>
                   )}

@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { Button } from "@repo/ui/components/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -18,6 +17,8 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   batteryCapacityFrom: z.string().optional(),
@@ -42,127 +43,163 @@ const batteryCapacityOptions = Array.from({ length: 15 }, (_, i) => {
   return { value, label: `${value} kWh` };
 });
 
-function formatCount(n: number) {
-  return new Intl.NumberFormat("de-CH").format(n);
-}
+export function EvDialog() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
-export function EvDialog({ resultCount }: { resultCount?: number }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      batteryCapacityFrom: "",
-      batteryCapacityTo: "",
-      rangeFrom: "",
-      chargeTime: "",
-      fastChargeTime: "",
+      batteryCapacityFrom: searchParams.get("batteryCapacityFrom") || "",
+      batteryCapacityTo: searchParams.get("batteryCapacityTo") || "",
+      rangeFrom: searchParams.get("rangeFrom") || "",
+      chargeTime: searchParams.get("chargeTime") || "",
+      fastChargeTime: searchParams.get("fastChargeTime") || "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
-  }
+  // Sync form with URL
+  useEffect(() => {
+    form.reset({
+      batteryCapacityFrom: searchParams.get("batteryCapacityFrom") || "",
+      batteryCapacityTo: searchParams.get("batteryCapacityTo") || "",
+      rangeFrom: searchParams.get("rangeFrom") || "",
+      chargeTime: searchParams.get("chargeTime") || "",
+      fastChargeTime: searchParams.get("fastChargeTime") || "",
+    });
+  }, [searchParams, form]);
+
+  const [open, setOpen] = useState(false);
+
+  const handleSubmit = (data: z.infer<typeof formSchema>) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (data.batteryCapacityFrom && data.batteryCapacityFrom !== "any")
+      params.set("batteryCapacityFrom", data.batteryCapacityFrom);
+    else params.delete("batteryCapacityFrom");
+
+    if (data.batteryCapacityTo && data.batteryCapacityTo !== "any")
+      params.set("batteryCapacityTo", data.batteryCapacityTo);
+    else params.delete("batteryCapacityTo");
+
+    if (data.rangeFrom && data.rangeFrom !== "any")
+      params.set("rangeFrom", data.rangeFrom);
+    else params.delete("rangeFrom");
+
+    if (data.chargeTime) params.set("chargeTime", data.chargeTime);
+    else params.delete("chargeTime");
+
+    if (data.fastChargeTime) params.set("fastChargeTime", data.fastChargeTime);
+    else params.delete("fastChargeTime");
+
+    params.delete("page");
+    const queryString = params.toString();
+    router.push(queryString ? `${pathname}?${queryString}` : pathname, {
+      scroll: false,
+    });
+    setOpen(false);
+  };
 
   return (
-    <Dialog>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <DialogTrigger asChild>
-          <span className="text-primary font-medium hover:underline cursor-pointer">
-            ändern
-          </span>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Elektrofahrzeug</DialogTitle>
-            <DialogDescription>
-              Filtern Sie nach Batteriekapazität, Reichweite und Ladezeit.
-            </DialogDescription>
-          </DialogHeader>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <span className="text-primary font-medium hover:underline cursor-pointer">
+          ändern
+        </span>
+      </DialogTrigger>
+      <DialogContent>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <CustomFormField
-                  control={form.control}
-                  fieldType={FormFieldType.SELECT}
-                  name="rangeFrom"
-                  label="Reichweite"
-                  placeholder="Beliebig"
-                  className="w-full"
-                >
-                  <SelectItem value="any">Beliebig</SelectItem>
-                  {rangeOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </CustomFormField>
-              </div>
+            <DialogHeader>
+              <DialogTitle>Elektrofahrzeug</DialogTitle>
+              <DialogDescription>
+                Filtern Sie nach Batteriekapazität, Reichweite und Ladezeit.
+              </DialogDescription>
+            </DialogHeader>
 
-              <div className="flex items-end gap-3">
-                <CustomFormField
-                  control={form.control}
-                  fieldType={FormFieldType.SELECT}
-                  name="batteryCapacityFrom"
-                  label="Batteriekapazität"
-                  placeholder="von"
-                  className="w-full"
-                >
-                  <SelectItem value="any">Beliebig</SelectItem>
-                  {batteryCapacityOptions.map((opt) => (
-                    <SelectItem key={`from-${opt.value}`} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </CustomFormField>
+            <CustomFormField
+              control={form.control}
+              fieldType={FormFieldType.SELECT}
+              name="rangeFrom"
+              label="Reichweite"
+              placeholder="Beliebig"
+              className="w-full"
+            >
+              <SelectItem value="any">Beliebig</SelectItem>
+              {rangeOptions.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </CustomFormField>
 
-                <CustomFormField
-                  control={form.control}
-                  fieldType={FormFieldType.SELECT}
-                  name="batteryCapacityTo"
-                  placeholder="bis"
-                  className="w-full"
-                >
-                  <SelectItem value="any">Beliebig</SelectItem>
-                  {batteryCapacityOptions.map((opt) => (
-                    <SelectItem key={`to-${opt.value}`} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </CustomFormField>
-              </div>
+            <div className="flex items-end gap-3">
+              <CustomFormField
+                control={form.control}
+                fieldType={FormFieldType.SELECT}
+                name="batteryCapacityFrom"
+                label="Batteriekapazität"
+                placeholder="von"
+                className="w-full"
+              >
+                <SelectItem value="any">Beliebig</SelectItem>
+                {batteryCapacityOptions.map((opt) => (
+                  <SelectItem key={`from-${opt.value}`} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </CustomFormField>
 
-              <div className="flex gap-3">
-                <CustomFormField
-                  control={form.control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="chargeTime"
-                  label="Ladezeit (bis)"
-                  placeholder="Minuten"
-                  inputGroupText="min"
-                />
-
-                <CustomFormField
-                  control={form.control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="fastChargeTime"
-                  label="Schnellladezeit (bis)"
-                  placeholder="Minuten"
-                  inputGroupText="min"
-                />
-              </div>
+              <CustomFormField
+                control={form.control}
+                fieldType={FormFieldType.SELECT}
+                name="batteryCapacityTo"
+                placeholder="bis"
+                className="w-full"
+              >
+                <SelectItem value="any">Beliebig</SelectItem>
+                {batteryCapacityOptions.map((opt) => (
+                  <SelectItem key={`to-${opt.value}`} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </CustomFormField>
             </div>
+
+            <div className="flex gap-3">
+              <CustomFormField
+                control={form.control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="chargeTime"
+                label="Ladezeit (bis)"
+                placeholder="Minuten"
+                inputGroupText="min"
+              />
+
+              <CustomFormField
+                control={form.control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="fastChargeTime"
+                label="Schnellladezeit (bis)"
+                placeholder="Minuten"
+                inputGroupText="min"
+              />
+            </div>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                Abbrechen
+              </Button>
+              <Button type="submit">Anwenden</Button>
+            </DialogFooter>
           </FieldGroup>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Abbrechen</Button>
-            </DialogClose>
-            <Button type="submit">
-              {resultCount !== undefined
-                ? `${formatCount(resultCount)} Angebote`
-                : "Anwenden"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

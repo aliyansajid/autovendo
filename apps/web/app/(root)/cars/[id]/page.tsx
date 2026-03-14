@@ -1,5 +1,7 @@
-import { getVehicleById } from "@/app/actions/vehicles";
+import { getVehicleCached } from "@/app/actions/vehicles.actions";
 import { notFound } from "next/navigation";
+import { formatVehicleName } from "@/lib/helpers/vehicle";
+import { formatEnumLabel } from "@/lib/helpers/format";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import { ImageGallery } from "../_components/image-gallery";
@@ -31,25 +33,18 @@ import Link from "next/link";
 import { StickyActionBar } from "../_components/sticky-action-bar";
 import { EnergyLabel } from "../_components/energy-label";
 import { prisma } from "@repo/db";
-import { formatVehicleName } from "@/lib/text-format";
 
-function formatLabel(value: string | null | undefined) {
-  if (!value) return "N/A";
-  const normalized = value.toLowerCase().replace(/_/g, " ");
-  return normalized
-    .split(" ")
-    .filter(Boolean)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
-}
-
+/**
+ * Vehicle Detail Page - Pure UI Component
+ * All business logic handled in server actions
+ */
 export default async function ListingPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const item = await getVehicleById(id);
+  const item = await getVehicleCached(id);
 
   if (!item) {
     notFound();
@@ -500,7 +495,7 @@ function KeyDetailCard({
           {label}
         </p>
         <p className="font-bold text-sm truncate">
-          {typeof value === "string" ? formatLabel(value) : value}
+          {typeof value === "string" ? formatEnumLabel(value) : value}
         </p>
       </div>
     </div>
@@ -536,7 +531,7 @@ function DataGrid({
               {key.replace(/([A-Z])/g, " $1").trim()}
             </span>
             <span className="text-sm font-medium text-right">
-              {typeof value === "string" ? formatLabel(value) : value}
+              {typeof value === "string" ? formatEnumLabel(value) : value}
             </span>
           </div>
         );

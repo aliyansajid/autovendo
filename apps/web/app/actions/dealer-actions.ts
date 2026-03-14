@@ -191,3 +191,79 @@ export async function getDealers({
     };
   }
 }
+
+export async function getDealerById(id: string) {
+  try {
+    const dealer = await prisma.dealer.findUnique({
+      where: { id },
+      include: {
+        openingHours: true,
+        vehicles: {
+          orderBy: { createdAt: "desc" },
+          take: 10,
+          select: {
+            id: true,
+            make: true,
+            model: true,
+            version: true,
+            price: true,
+            kilometer: true,
+            registrationMonth: true,
+            registrationYear: true,
+            kw: true,
+            hp: true,
+            fuelType: true,
+            vehicleCondition: true,
+            images: true,
+            equipment: true,
+            dealer: {
+              select: {
+                id: true,
+                companyName: true,
+                city: true,
+                zipCode: true,
+                phoneNumber: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!dealer) return null;
+
+    return {
+      id: dealer.id,
+      name: dealer.companyName,
+      description: dealer.description,
+      website: dealer.website,
+      logo: dealer.logo,
+      address: dealer.zipCode + " " + dealer.city + ", " + dealer.address,
+      city: dealer.city,
+      zipCode: dealer.zipCode,
+      phoneNumber: dealer.phoneNumber,
+      email: dealer.businessEmail,
+      openingHours: dealer.openingHours.map((oh) => ({
+        day: oh.day,
+        isOpen: oh.isOpen,
+        hours:
+          oh.isOpen && oh.openTime && oh.closeTime
+            ? `${new Date(oh.openTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })} - ${new Date(oh.closeTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`
+            : "Closed",
+      })),
+      vehicles: dealer.vehicles,
+      rating: 4.8, // Static for now
+      reviewCount: 120, // Static for now
+      isVerified: true, // Static for now
+      established: "2015", // Static
+      coverImage:
+        "https://images.pexels.com/photos/3752194/pexels-photo-3752194.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      about: dealer.description || "Willkommen bei " + dealer.companyName,
+      services: ["Fahrzeugverkauf", "Finanzierung", "Eintausch", "Garantie"],
+      phones: [dealer.phoneNumber],
+    };
+  } catch (error) {
+    console.error("Failed to fetch dealer by id:", error);
+    return null;
+  }
+}

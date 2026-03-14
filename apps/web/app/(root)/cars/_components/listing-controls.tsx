@@ -59,11 +59,17 @@ export function ListingControls({
       const next = new URLSearchParams(nextBase.toString());
       if (search.trim()) next.set("search", search.trim());
       else next.delete("search");
-      next.set("page", "1");
+      // Reset to page 1 on search, but don't add page=1 to URL
+      next.delete("page");
 
-      startTransition(() => {
-        router.replace(`${pathname}?${next.toString()}`, { scroll: false });
-      });
+      const queryString = next.toString();
+      const currentQueryString = window.location.search.replace(/^\?/, "");
+
+      if (queryString !== currentQueryString) {
+        startTransition(() => {
+          router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+        });
+      }
     }, debounceMs);
 
     return () => clearTimeout(timer);
@@ -74,9 +80,12 @@ export function ListingControls({
     setSort(value);
     const next = new URLSearchParams(sp.toString());
     next.set("sort", value);
-    next.set("page", "1");
+    // Reset to page 1 on sort, but don't add page=1 to URL
+    next.delete("page");
+
+    const queryString = next.toString();
     startTransition(() => {
-      router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
     });
   }
 
