@@ -42,7 +42,6 @@ import {
   AvatarFallback,
 } from "@repo/ui/src/components/avatar";
 import Link from "next/link";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -50,47 +49,16 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
-
-import { type VehicleListItem } from "@/lib/schemas/vehicle.schema";
-
-const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  phone: z.string().min(1, "Phone is required"),
-  email: z.email("Invalid email"),
-  message: z.string().min(1, "Message is required"),
-});
+import type { DealerDetail } from "@/types";
+import { dealerContactSchema } from "@/schema/dealer-contact-schema";
 
 interface DealerDetailContentProps {
-  dealer: {
-    id: string;
-    name: string;
-    description: string | null;
-    website: string | null;
-    logo: string | null;
-    address: string;
-    city: string;
-    phone: string;
-    email: string;
-    openingHours: {
-      day: string;
-      isOpen: boolean;
-      hours: string;
-    }[];
-    vehicles: VehicleListItem[];
-    rating: number;
-    reviewCount: number;
-    isVerified: boolean;
-    established: string;
-    coverImage: string;
-    about: string;
-    services: string[];
-    phones: string[];
-  };
+  dealer: DealerDetail;
 }
 
 export const DealerDetailContent = ({ dealer }: DealerDetailContentProps) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<DealerContactFormValues>({
+    resolver: zodResolver(dealerContactSchema),
     defaultValues: {
       name: "",
       phone: "",
@@ -99,7 +67,7 @@ export const DealerDetailContent = ({ dealer }: DealerDetailContentProps) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: DealerContactFormValues) {
     console.log(values);
   }
 
@@ -127,7 +95,7 @@ export const DealerDetailContent = ({ dealer }: DealerDetailContentProps) => {
                     className="object-cover"
                   />
                   <AvatarFallback>
-                    {dealer.name.substring(0, 2).toUpperCase()}
+                    {dealer.name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
 
@@ -288,11 +256,11 @@ export const DealerDetailContent = ({ dealer }: DealerDetailContentProps) => {
                 <CardContent className="space-y-6">
                   <div className="space-y-4">
                     <Link
-                      href={`tel:${dealer.phone}`}
+                      href={`tel:${dealer.phoneNumber}`}
                       className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
                     >
                       <Phone className="size-4 text-muted-foreground" />
-                      {dealer.phone}
+                      {dealer.phoneNumber}
                     </Link>
 
                     <Link

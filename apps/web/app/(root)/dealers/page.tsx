@@ -1,16 +1,21 @@
 import { DealersList } from "./_components/dealers-list";
 import { getDealers } from "@/app/actions/dealer.actions";
 
+interface DealersPageSearchParams {
+  q?: string;
+  page?: string;
+}
+
 export default async function DealersPage(props: {
-  searchParams: Promise<{ q?: string; page?: string }>;
+  searchParams: DealersPageSearchParams;
 }) {
-  const searchParams = await props.searchParams;
+  const searchParams = props.searchParams;
   const q = searchParams.q || "";
   const page = Number(searchParams.page) || 1;
 
   const initialData = await getDealers({
     searchQuery: q,
-    page: page,
+    page,
     pageSize: 5,
   });
 

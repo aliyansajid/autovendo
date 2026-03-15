@@ -4,7 +4,12 @@ import { prisma } from "@repo/db";
 import { dealerProfileSchema } from "@/schema/profile-schema";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { DealerProfile } from "@/types";
+import {
+  DealerProfile,
+  DealerListResult,
+  DealerDetail,
+  VehicleSummary,
+} from "@/types";
 
 export async function updateDealerProfile(
   userId: string,
@@ -136,6 +141,12 @@ export async function getDealerProfile(
   } as DealerProfile;
 }
 
+/**
+ * List dealers for the public dealers directory page.
+ * Uses offset-based pagination (page, pageSize).
+ *
+ * Search: simple OR across companyName, city and address (case-insensitive).
+ */
 export async function getDealers({
   searchQuery = "",
   page = 1,
@@ -144,7 +155,7 @@ export async function getDealers({
   searchQuery?: string;
   page?: number;
   pageSize?: number;
-}) {
+}): Promise<DealerListResult> {
   try {
     const skip = (page - 1) * pageSize;
 
@@ -192,7 +203,11 @@ export async function getDealers({
   }
 }
 
-export async function getDealerById(id: string) {
+/**
+ * Get a single dealer with a small number of recent vehicles for the dealer detail page.
+ * Returns a view model shaped for the UI (DealerDetail).
+ */
+export async function getDealerById(id: string): Promise<DealerDetail | null> {
   try {
     const dealer = await prisma.dealer.findUnique({
       where: { id },
@@ -232,13 +247,15 @@ export async function getDealerById(id: string) {
 
     if (!dealer) return null;
 
+    const vehicles = dealer.vehicles as VehicleSummary[];
+
     return {
       id: dealer.id,
       name: dealer.companyName,
       description: dealer.description,
       website: dealer.website,
       logo: dealer.logo,
-      address: dealer.zipCode + " " + dealer.city + ", " + dealer.address,
+      address: `${dealer.zipCode} ${dealer.city}, ${dealer.address}`,
       city: dealer.city,
       zipCode: dealer.zipCode,
       phoneNumber: dealer.phoneNumber,
@@ -248,19 +265,22 @@ export async function getDealerById(id: string) {
         isOpen: oh.isOpen,
         hours:
           oh.isOpen && oh.openTime && oh.closeTime
-            ? `${new Date(oh.openTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })} - ${new Date(oh.closeTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`
-            : "Closed",
+            ? `${new Date(oh.openTime).toLocaleTimeString("de-CH", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })} - ${new Date(oh.closeTime).toLocaleTimeString("de-CH", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}`
+            : "Geschlossen",
       })),
-      vehicles: dealer.vehicles,
-      rating: 4.8, // Static for now
-      reviewCount: 120, // Static for now
-      isVerified: true, // Static for now
-      established: "2015", // Static
+      vehicles,
+      rating: 4.8,
+      reviewCount: 120,
+      isVerified: true,
+      established: "2015",
       coverImage:
         "https://images.pexels.com/photos/3752194/pexels-photo-3752194.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      about: dealer.description || "Willkommen bei " + dealer.companyName,
-      services: ["Fahrzeugverkauf", "Finanzierung", "Eintausch", "Garantie"],
-      phones: [dealer.phoneNumber],
     };
   } catch (error) {
     console.error("Failed to fetch dealer by id:", error);

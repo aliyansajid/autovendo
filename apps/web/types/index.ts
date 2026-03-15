@@ -1,3 +1,7 @@
+// =============================================================================
+// GARAGE / DEALER TYPES
+// =============================================================================
+
 export interface Garage {
   id: string | number;
   name: string;
@@ -20,14 +24,55 @@ export interface Garage {
   ownerId?: string | number;
 }
 
-export interface User {
-  id: string | number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  personalPhone?: string;
-  role: "BUYER" | "DEALER_OWNER" | "DEALER_STAFF" | "ADMIN";
+export interface DealerListItem {
+  id: string;
+  companyName: string;
+  city: string;
+  address: string;
+  logo: string | null;
 }
+
+export interface DealerListResult {
+  dealers: DealerListItem[];
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
+}
+
+export interface DealerOpeningHour {
+  day: string;
+  isOpen: boolean;
+  hours: string;
+}
+
+export interface DealerDetail {
+  id: string;
+  name: string;
+  description: string | null;
+  website: string | null;
+  logo: string | null;
+  address: string;
+  city: string;
+  zipCode: string;
+  phoneNumber: string | null;
+  email: string | null;
+  openingHours: DealerOpeningHour[];
+  vehicles: VehicleSummary[];
+  rating: number;
+  reviewCount: number;
+  isVerified: boolean;
+  established: string;
+  coverImage: string;
+  about: string;
+  services: string[];
+  phones: string[];
+}
+
+export type VehicleSummary = import("@/lib/schemas/vehicle.schema").VehicleListItem;
+
+// =============================================================================
+// LISTING TYPES
+// =============================================================================
 
 export interface Listing {
   id: string | number;
@@ -39,6 +84,10 @@ export interface Listing {
   garageId: string | number;
   garage?: Pick<Garage, "id" | "name" | "address" | "rating" | "reviewCount">;
 }
+
+// =============================================================================
+// DASHBOARD DEALER PROFILE
+// =============================================================================
 
 export interface DealerProfile {
   id: string;

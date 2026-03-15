@@ -17,20 +17,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
+import type { DealerListResult } from "@/types";
 
 interface DealersListProps {
-  initialData: {
-    dealers: {
-      id: string;
-      companyName: string;
-      city: string;
-      address: string;
-      logo: string | null;
-    }[];
-    totalCount: number;
-    totalPages: number;
-    currentPage: number;
-  };
+  initialData: DealerListResult;
 }
 
 export const DealersList = ({ initialData }: DealersListProps) => {
@@ -68,7 +58,7 @@ export const DealersList = ({ initialData }: DealersListProps) => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold">Unsere Händler</h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Finden Sie den passenden Händler in Ihrer Nähe.
           </p>
         </div>
