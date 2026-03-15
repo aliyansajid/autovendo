@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTransition } from "react";
 import { Button } from "@repo/ui/src/components/button";
 import {
   CustomFormField,
@@ -12,6 +13,9 @@ import { Separator } from "@repo/ui/src/components/separator";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 import Link from "next/link";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
+import { sendContactMessage } from "@/app/actions/contact.actions";
+import { Spinner } from "@repo/ui/src/components/spinner";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z
@@ -34,6 +38,8 @@ const formSchema = z.object({
 });
 
 export default function ContactPage() {
+  const [isPending, startTransition] = useTransition();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,7 +51,24 @@ export default function ContactPage() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {}
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    startTransition(async () => {
+      const result = await sendContactMessage({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        subject: data.subject || undefined,
+        message: data.message || undefined,
+      });
+
+      result.ok
+        ? toast.success(
+            "Vielen Dank. Ihre Nachricht wurde gesendet. Wir melden uns in Kürze bei Ihnen.",
+          )
+        : toast.error(result.error ?? "Ein Fehler ist aufgetreten.");
+      form.reset();
+    });
+  }
 
   return (
     <>
@@ -61,7 +84,7 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <div className="w-full max-w-285 mx-auto py-12 px-4">
+      <div className="w-full max-w-285 mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-1 space-y-6">
             <section>
@@ -73,7 +96,7 @@ export default function ContactPage() {
                     <h3 className="font-semibold mb-1">E-Mail</h3>
                     <Link
                       href="mailto:info@autovendo.ch"
-                      className="text-muted-foreground hover:text-primary hover:underline transition-colors"
+                      className="text-primary underline-offset-4 hover:underline"
                     >
                       info@autovendo.ch
                     </Link>
@@ -86,7 +109,7 @@ export default function ContactPage() {
                     <h3 className="font-semibold mb-1">Telefon</h3>
                     <Link
                       href="tel:+41793223520"
-                      className="text-muted-foreground hover:text-primary hover:underline transition-colors"
+                      className="text-primary underline-offset-4 hover:underline"
                     >
                       +41 (0)79 322 35 20
                     </Link>
@@ -131,13 +154,13 @@ export default function ContactPage() {
           </div>
 
           <div className="lg:col-span-2">
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <FieldGroup>
                 <h2 className="text-2xl font-bold">
                   Senden Sie uns eine Nachricht
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <CustomFormField
                     control={form.control}
                     fieldType={FormFieldType.INPUT}
@@ -156,7 +179,7 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <CustomFormField
                     control={form.control}
                     fieldType={FormFieldType.INPUT}
@@ -186,9 +209,22 @@ export default function ContactPage() {
 
                 <Field>
                   <div className="flex w-full justify-end">
-                    <Button type="submit" className="w-full md:w-auto">
-                      Nachricht senden
-                      <Send />
+                    <Button
+                      type="submit"
+                      className="w-full md:w-auto"
+                      disabled={isPending}
+                    >
+                      {isPending ? (
+                        <>
+                          <Spinner />
+                          Wird gesendet...
+                        </>
+                      ) : (
+                        <>
+                          Nachricht senden
+                          <Send />
+                        </>
+                      )}
                     </Button>
                   </div>
                 </Field>
