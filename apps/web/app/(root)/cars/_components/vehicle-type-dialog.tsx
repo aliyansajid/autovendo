@@ -21,7 +21,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const formSchema = z.object({
-  vehicleType: z.array(z.string()),
+  bodyType: z.array(z.string()),
 });
 
 function formatCount(n: number) {
@@ -40,14 +40,14 @@ export function VehicleTypeDialog({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      vehicleType: searchParams.get("vehicleType")?.split(",") || [],
+      bodyType: searchParams.get("bodyType")?.split(",").filter(Boolean) || [],
     },
   });
 
   // Sync form with URL
   useEffect(() => {
     form.reset({
-      vehicleType: searchParams.get("vehicleType")?.split(",") || [],
+      bodyType: searchParams.get("bodyType")?.split(",").filter(Boolean) || [],
     });
   }, [searchParams, form]);
 
@@ -55,10 +55,10 @@ export function VehicleTypeDialog({
 
   const handleSubmit = (data: z.infer<typeof formSchema>) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (data.vehicleType.length > 0) {
-      params.set("vehicleType", data.vehicleType.join(","));
+    if (data.bodyType.length > 0) {
+      params.set("bodyType", data.bodyType.join(","));
     } else {
-      params.delete("vehicleType");
+      params.delete("bodyType");
     }
     params.delete("page");
     const queryString = params.toString();
@@ -88,12 +88,11 @@ export function VehicleTypeDialog({
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.CHECKBOX_GROUP}
-              name="vehicleType"
+              name="bodyType"
               className="grid grid-cols-2 gap-3"
               options={carBodyTypeEnum.map(
                 (body: { value: string; label: string }) => {
-                  const key = body.value.trim().toUpperCase();
-                  const count = counts?.[key];
+                  const count = counts?.[body.value];
                   return {
                     label:
                       count !== undefined

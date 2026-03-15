@@ -1,6 +1,6 @@
 "use client";
 
-import { Phone, ExternalLink, MapPin, ArrowRight, Star } from "lucide-react";
+import { Phone, Mail, ExternalLink, MapPin, ArrowRight, Star } from "lucide-react";
 import Image from "next/image";
 import {
   Card,
@@ -21,6 +21,9 @@ interface SellerSectionProps {
     website?: string;
     phone: string;
     address: string;
+    contactPerson?: string;
+    businessEmail?: string;
+    description?: string;
     openingHours?: { day: string; hours: string }[];
   };
 }
@@ -61,9 +64,14 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                     ({seller.reviewCount} Bewertungen)
                   </span>
                 </div>
+                {seller.contactPerson && (
+                  <p className="text-sm text-muted-foreground">
+                    Ansprechpartner: {seller.contactPerson}
+                  </p>
+                )}
                 {seller.website && (
                   <Link
-                    href={seller.website}
+                    href={seller.website.startsWith("http") ? seller.website : `https://${seller.website}`}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1 text-sm text-primary underline-offset-4 hover:underline"
@@ -71,6 +79,11 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                     {seller.website}
                     <ExternalLink className="size-4" />
                   </Link>
+                )}
+                {seller.description && (
+                  <p className="text-sm text-muted-foreground whitespace-pre-line">
+                    {seller.description}
+                  </p>
                 )}
               </div>
 
@@ -82,6 +95,15 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                   <Phone className="size-4" />
                   {seller.phone}
                 </Link>
+                {seller.businessEmail && (
+                  <Link
+                    href={`mailto:${seller.businessEmail}`}
+                    className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
+                  >
+                    <Mail className="size-4" />
+                    {seller.businessEmail}
+                  </Link>
+                )}
 
                 <Link
                   href={`https://maps.google.com/?q=${seller.address}`}

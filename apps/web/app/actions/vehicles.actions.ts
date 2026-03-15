@@ -83,13 +83,40 @@ function buildWhereClause(
     ];
   }
 
-  // Exact match filters - indexed columns
-  if (!omitFilters.make && params.make && params.make !== "any") {
-    where.make = { equals: params.make, mode: "insensitive" };
+  // Multi-select make (OR across selected makes)
+  if (
+    !omitFilters.make &&
+    params.make &&
+    Array.isArray(params.make) &&
+    params.make.length > 0
+  ) {
+    const makeOr = params.make
+      .filter((m) => m && m !== "any")
+      .map((m) => ({ make: { equals: m, mode: "insensitive" as const } }));
+    if (makeOr.length > 0) {
+      where.AND = [
+        ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+        { OR: makeOr },
+      ];
+    }
   }
 
-  if (!omitFilters.model && params.model && params.model !== "any") {
-    where.model = { equals: params.model, mode: "insensitive" };
+  // Multi-select model (OR across selected models)
+  if (
+    !omitFilters.model &&
+    params.model &&
+    Array.isArray(params.model) &&
+    params.model.length > 0
+  ) {
+    const modelOr = params.model
+      .filter((m) => m && m !== "any")
+      .map((m) => ({ model: { equals: m, mode: "insensitive" as const } }));
+    if (modelOr.length > 0) {
+      where.AND = [
+        ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+        { OR: modelOr },
+      ];
+    }
   }
 
   // Range filters - indexed columns for optimal performance
@@ -162,6 +189,21 @@ function buildWhereClause(
     where.vehicleType = { in: params.vehicleType.map(toDbEnum) as any };
   }
 
+  // Body type (Karosserie) - string field; match case-insensitively for DB uppercase/lowercase
+  if (
+    !omitFilters.bodyType &&
+    params.bodyType &&
+    params.bodyType.length > 0
+  ) {
+    const bodyTypeOr = params.bodyType.map((b) => ({
+      bodyType: { equals: b, mode: "insensitive" as const },
+    }));
+    where.AND = [
+      ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+      { OR: bodyTypeOr },
+    ];
+  }
+
   if (!omitFilters.color && params.color && params.color.length > 0) {
     where.color = { in: params.color.map(toDbEnum) as any };
   }
@@ -177,9 +219,13 @@ function buildWhereClause(
     params.equipment &&
     params.equipment.length > 0
   ) {
-    where.AND = params.equipment.map((item) => ({
+    const equipmentClauses = params.equipment.map((item) => ({
       equipment: { path: [item], equals: true },
     }));
+    where.AND = [
+      ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+      ...equipmentClauses,
+    ];
   }
 
   return where;
@@ -227,6 +273,29 @@ function toFacetCounts<T extends string>(
     if (value) counts[value] = row._count._all;
   }
   return counts;
+}
+
+/**
+ * Normalize facet keys to frontend format (lowercase, hyphen) so filter UI can look up by option value.
+ * DB stores enums as UPPER_SNAKE; frontend uses lower-kebab.
+ */
+function toFrontendFacetKeys(counts: Record<string, number>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [key, count] of Object.entries(counts)) {
+    const normalized = key.toLowerCase().replace(/_/g, "-");
+    out[normalized] = (out[normalized] ?? 0) + count;
+  }
+  return out;
+}
+
+/** Normalize string facet keys to lowercase (e.g. make) for consistent UI lookup */
+function toLowerFacetKeys(counts: Record<string, number>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [key, count] of Object.entries(counts)) {
+    const k = key.toLowerCase();
+    out[k] = (out[k] ?? 0) + count;
+  }
+  return out;
 }
 
 // =============================================================================
@@ -303,6 +372,7 @@ export async function getVehiclesWithFacets(rawParams: {
     transmissionRows,
     conditionRows,
     typeRows,
+    bodyTypeRows,
     colorRows,
   ] = await Promise.all([
     prisma.vehicle.count({ where }),
@@ -341,19 +411,26 @@ export async function getVehiclesWithFacets(rawParams: {
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
+      by: ["bodyType"],
+      where: buildWhereClause(params, { bodyType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
       by: ["color"],
       where: buildWhereClause(params, { color: true }),
       _count: { _all: true },
     }),
   ]);
 
+  // Normalize enum/body facet keys to frontend format (lowercase, hyphen) so filter UI matches
   const facets: VehicleFacets = {
-    make: toFacetCounts(makeRows, "make"),
-    fuelType: toFacetCounts(fuelRows, "fuelType"),
-    transmissionType: toFacetCounts(transmissionRows, "transmissionType"),
-    vehicleCondition: toFacetCounts(conditionRows, "vehicleCondition"),
-    vehicleType: toFacetCounts(typeRows, "vehicleType"),
-    color: toFacetCounts(colorRows, "color"),
+    make: toLowerFacetKeys(toFacetCounts(makeRows, "make")),
+    fuelType: toFrontendFacetKeys(toFacetCounts(fuelRows, "fuelType")),
+    transmissionType: toFrontendFacetKeys(toFacetCounts(transmissionRows, "transmissionType")),
+    vehicleCondition: toFrontendFacetKeys(toFacetCounts(conditionRows, "vehicleCondition")),
+    vehicleType: toFrontendFacetKeys(toFacetCounts(typeRows, "vehicleType")),
+    bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
+    color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
   };
 
   return {
@@ -375,7 +452,13 @@ export async function getVehicle(id: string): Promise<VehicleDetails | null> {
 
   return await prisma.vehicle.findUnique({
     where: { id },
-    include: { dealer: true },
+    include: {
+      dealer: {
+        include: {
+          openingHours: { orderBy: { day: "asc" } },
+        },
+      },
+    },
   });
 }
 

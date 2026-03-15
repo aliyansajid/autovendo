@@ -20,8 +20,8 @@ import {
 import { authClient } from "@repo/auth/client";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { getPresignedUploadUrl } from "@/app/actions/storage-actions";
-import { updateDealerProfile } from "@/app/actions/dealer-actions";
+import { getPresignedUploadUrl } from "@/app/actions/storage.actions";
+import { updateDealerProfile } from "@/app/actions/dealer.actions";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { DealerProfile } from "@/types";
 

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Button } from "@repo/ui/components/button";
 import {
   Dialog,
@@ -16,13 +16,11 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { ChevronRight, Search, ChevronLeft } from "lucide-react";
+import { ChevronRight, Search, ChevronLeft, Check } from "lucide-react";
 import { ScrollArea } from "@repo/ui/src/components/scroll-area";
 import { carMakes, popularCarMakes, carModels } from "@/constants/cars";
 import Image from "next/image";
-
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useEffect } from "react";
 
 const formSchema = z.object({
   search: z.string().optional(),
@@ -30,6 +28,13 @@ const formSchema = z.object({
 
 function formatCount(n: number) {
   return new Intl.NumberFormat("de-CH").format(n);
+}
+
+function getAllMakes(): { value: string; label: string }[] {
+  const items = carMakes.flatMap((group) => [...group.items]);
+  return Array.from(
+    new Map(items.map((item) => [item.value, item] as const)).values(),
+  ) as { value: string; label: string }[];
 }
 
 export function MakeModelDialog({
@@ -40,63 +45,100 @@ export function MakeModelDialog({
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
-  const [selectedMake, setSelectedMake] = useState<{
+  const [selectedMakes, setSelectedMakes] = useState<string[]>([]);
+  const [selectedModels, setSelectedModels] = useState<string[]>([]);
+  const [currentMake, setCurrentMake] = useState<{
     value: string;
     label: string;
   } | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      search: "",
-    },
+    defaultValues: { search: "" },
   });
-
-  // Initialize selectedMake from URL
-  useEffect(() => {
-    const makeVal = searchParams.get("make");
-    if (makeVal && makeVal !== "any") {
-      // Find label from constants if possible, but for simplicity:
-      setSelectedMake({ value: makeVal, label: makeVal });
-    } else {
-      setSelectedMake(null);
-    }
-  }, [searchParams]);
 
   const searchQuery = (form.watch("search") || "").toLowerCase();
 
-  const handleMakeSelect = (make: { value: string; label: string }) => {
-    setSelectedMake(make);
-    // If there are no models for this make, we can just apply the make filter
-    if (!carModels[make.value as keyof typeof carModels]) {
-      applyFilters(make.value, "any");
-    }
-  };
+  useEffect(() => {
+    const makeParam = searchParams.get("make");
+    const modelParam = searchParams.get("model");
+    setSelectedMakes(
+      makeParam ? makeParam.split(",").map((s) => s.trim()).filter(Boolean) : [],
+    );
+    setSelectedModels(
+      modelParam
+        ? modelParam.split(",").map((s) => s.trim()).filter(Boolean)
+        : [],
+    );
+  }, [searchParams, open]);
 
-  const handleModelSelect = (modelValue: string) => {
-    if (selectedMake) {
-      applyFilters(selectedMake.value, modelValue);
-    }
-  };
-
-  const [open, setOpen] = useState(false);
-
-  const applyFilters = (make: string, model: string) => {
+  const applyFilters = (makes: string[], models: string[], close = false) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (make && make !== "any") params.set("make", make);
+    if (makes.length > 0) params.set("make", makes.join(","));
     else params.delete("make");
-
-    if (model && model !== "any") params.set("model", model);
+    if (models.length > 0) params.set("model", models.join(","));
     else params.delete("model");
-
     params.delete("page");
     const queryString = params.toString();
     router.push(queryString ? `${pathname}?${queryString}` : pathname, {
       scroll: false,
     });
-    setOpen(false);
+    if (close) setOpen(false);
   };
+
+  const handleMakeClick = (make: { value: string; label: string }) => {
+    const isSelected = selectedMakes.includes(make.value);
+    if (isSelected) {
+      const next = selectedMakes.filter((m) => m !== make.value);
+      setSelectedMakes(next);
+      applyFilters(next, selectedModels, false);
+      if (currentMake?.value === make.value) setCurrentMake(null);
+    } else {
+      const next = [...selectedMakes, make.value];
+      setSelectedMakes(next);
+      applyFilters(next, selectedModels, false);
+      setCurrentMake(make);
+    }
+  };
+
+  const toggleModel = (value: string) => {
+    const next = selectedModels.includes(value)
+      ? selectedModels.filter((m) => m !== value)
+      : [...selectedModels, value];
+    setSelectedModels(next);
+    applyFilters(selectedMakes, next, false);
+  };
+
+  const handleBack = () => {
+    setCurrentMake(null);
+  };
+
+  const nameToMakeValue = (name: string) => {
+    let value = name.toLowerCase();
+    if (name === "VW") value = "volkswagen";
+    if (name === "Mercedes-Benz") value = "mercedes";
+    return value;
+  };
+
+  const allMakes = getAllMakes();
+  const filteredMakes = allMakes.filter((m) =>
+    m.label.toLowerCase().includes(searchQuery),
+  );
+  const popularFiltered = popularCarMakes.filter((m) =>
+    m.name.toLowerCase().includes(searchQuery),
+  );
+
+  const showModelStep = currentMake !== null;
+  const modelsForCurrentMake =
+    currentMake && carModels[currentMake.value as keyof typeof carModels]
+      ? (
+          carModels[currentMake.value as keyof typeof carModels] ?? []
+        ).filter((m: { value: string; label: string }) =>
+          m.label.toLowerCase().includes(searchQuery),
+        )
+      : [];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -109,7 +151,9 @@ export function MakeModelDialog({
         <DialogHeader>
           <DialogTitle>Marke & Modell</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
+            {showModelStep
+              ? `Modelle für ${currentMake?.label} – Klicken zum An- oder Abwählen.`
+              : "Marke(n) anklicken (nochmal = Abwählen). Mit Pfeil öffnen Sie die Modellauswahl."}
           </DialogDescription>
         </DialogHeader>
         <FieldGroup>
@@ -122,42 +166,52 @@ export function MakeModelDialog({
           />
 
           <ScrollArea className="h-[60vh]">
-            {selectedMake ? (
+            {showModelStep ? (
               <div className="space-y-6">
                 <div className="flex items-center gap-2 pb-2 border-b">
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => setSelectedMake(null)}
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={handleBack}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleBack();
+                      }
+                    }}
+                    className="cursor-pointer p-1 -m-1 rounded hover:bg-muted"
+                    aria-label="Zurück zu Marken"
                   >
-                    <ChevronLeft />
-                  </Button>
+                    <ChevronLeft className="h-5 w-5" />
+                  </span>
                   <h3 className="font-semibold text-base">
-                    {selectedMake.label} Modelle
+                    {currentMake?.label} – Modelle
                   </h3>
                 </div>
                 <div className="divide-y divide-border">
-                  {carModels[selectedMake.value as keyof typeof carModels]
-                    ?.length ? (
-                    (
-                      carModels[selectedMake.value as keyof typeof carModels] ??
-                      []
+                  {modelsForCurrentMake.length > 0 ? (
+                    modelsForCurrentMake.map(
+                      (model: { value: string; label: string }) => {
+                        const isSelected = selectedModels.includes(model.value);
+                        return (
+                          <button
+                            key={model.value}
+                            type="button"
+                            className={`w-full flex items-center justify-between text-base py-4 px-2 rounded-none transition-colors hover:bg-muted/50 text-left ${
+                              isSelected ? "bg-primary/10" : ""
+                            }`}
+                            onClick={() => toggleModel(model.value)}
+                          >
+                            {model.label}
+                            {isSelected && (
+                              <Check className="h-5 w-5 text-primary shrink-0" />
+                            )}
+                          </button>
+                        );
+                      },
                     )
-                      .filter((model: { value: string; label: string }) =>
-                        model.label.toLowerCase().includes(searchQuery),
-                      )
-                      .map((model: { value: string; label: string }) => (
-                        <Button
-                          key={model.value}
-                          variant="ghost"
-                          className="w-full flex items-center justify-between text-base py-6 px-2 rounded-none transition-colors"
-                          onClick={() => handleModelSelect(model.value)}
-                        >
-                          {model.label}
-                        </Button>
-                      ))
                   ) : (
-                    <div className="p-4 text-center text-muted-foreground text-sm flex-1 mt-10">
+                    <div className="p-4 text-center text-muted-foreground text-sm">
                       Keine Modelle gefunden.
                     </div>
                   )}
@@ -165,47 +219,47 @@ export function MakeModelDialog({
               </div>
             ) : (
               <div className="space-y-6">
-                {popularCarMakes.filter(
-                  (make: { name: string; logo: string }) =>
-                    make.name.toLowerCase().includes(searchQuery),
-                ).length > 0 && (
+                {popularFiltered.length > 0 && (
                   <div className="space-y-3">
                     <FieldLabel>Meistgesuchte marken</FieldLabel>
                     <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-                      {popularCarMakes
-                        .filter((make: { name: string; logo: string }) =>
-                          make.name.toLowerCase().includes(searchQuery),
-                        )
-                        .map((make: { name: string; logo: string }) => (
-                          <Button
-                            key={make.name}
-                            variant="outline"
-                            title={make.name}
-                            className="h-auto aspect-square"
-                            onClick={() => {
-                              let value = make.name.toLowerCase();
-                              if (make.name === "VW") value = "volkswagen";
-                              if (make.name === "Mercedes-Benz")
-                                value = "mercedes";
-                              setSelectedMake({ value, label: make.name });
-                            }}
-                          >
-                            {make.logo ? (
-                              <div className="relative w-full h-full">
-                                <Image
-                                  src={make.logo}
-                                  alt={make.name}
-                                  fill
-                                  className="object-contain"
-                                />
-                              </div>
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-muted/50 text-xs font-bold text-center rounded-sm">
-                                {make.name}
-                              </div>
-                            )}
-                          </Button>
-                        ))}
+                      {popularFiltered.map(
+                        (make: { name: string; logo: string }) => {
+                          const value = nameToMakeValue(make.name);
+                          const isSelected = selectedMakes.includes(value);
+                          return (
+                            <Button
+                              key={make.name}
+                              variant={isSelected ? "default" : "outline"}
+                              title={make.name}
+                              className="h-auto aspect-square relative"
+                              onClick={() =>
+                                handleMakeClick({ value, label: make.name })
+                              }
+                            >
+                              {isSelected && (
+                                <span className="absolute top-1 right-1 rounded-full bg-primary-foreground p-0.5">
+                                  <Check className="h-3 w-3 text-primary" />
+                                </span>
+                              )}
+                              {make.logo ? (
+                                <div className="relative w-full h-full">
+                                  <Image
+                                    src={make.logo}
+                                    alt={make.name}
+                                    fill
+                                    className="object-contain"
+                                  />
+                                </div>
+                              ) : (
+                                <span className="text-xs font-bold text-center">
+                                  {make.name}
+                                </span>
+                              )}
+                            </Button>
+                          );
+                        },
+                      )}
                     </div>
                   </div>
                 )}
@@ -213,64 +267,38 @@ export function MakeModelDialog({
                 <div className="space-y-3">
                   <FieldLabel>Alle marken</FieldLabel>
                   <div className="divide-y divide-border">
-                    {Array.from(
-                      new Map(
-                        (
-                          carMakes as unknown as {
-                            items: readonly {
-                              value: string;
-                              label: string;
-                            }[];
-                          }[]
-                        )
-                          .flatMap((group) => group.items)
-                          .map(
-                            (item: any) => [item.value, item] as [string, any],
-                          ),
-                      ).values(),
-                    )
-                      .filter(
-                        (make: any) =>
-                          make.label.toLowerCase().includes(searchQuery) &&
-                          !popularCarMakes.some(
-                            (pm: { name: string; logo: string }) =>
-                              pm.name.toLowerCase() ===
-                                make.label.toLowerCase() ||
-                              (pm.name === "VW" &&
-                                make.value === "volkswagen") ||
-                              (pm.name === "Mercedes-Benz" &&
-                                make.value === "mercedes"),
-                          ),
-                      )
-                      .sort((a: any, b: any) => a.label.localeCompare(b.label))
-                      .map((make: any) => (
-                        <Button
-                          key={make.value}
-                          variant="ghost"
-                          className="w-full flex items-center justify-between text-base py-6 px-2 rounded-none transition-colors"
-                          onClick={() =>
-                            handleMakeSelect({
-                              value: make.value,
-                              label: make.label,
-                            })
-                          }
-                        >
-                          {make.label}
-                          <div className="flex items-center gap-2 text-muted-foreground">
-                            {(() => {
+                    {filteredMakes
+                      .sort((a, b) => a.label.localeCompare(b.label))
+                      .map((make) => {
+                        const isSelected = selectedMakes.includes(make.value);
+                        return (
+                          <button
+                            key={make.value}
+                            type="button"
+                            className={`w-full flex items-center justify-between text-base py-4 px-2 rounded-none transition-colors hover:bg-muted/50 text-left ${
+                              isSelected ? "bg-primary/10" : ""
+                            }`}
+                            onClick={() => handleMakeClick(make)}
+                          >
+                            {make.label}
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                              {(() => {
                               const count = makeCounts?.[make.value];
-                              return (
-                                count !== undefined && (
-                                  <span className="text-sm tabular-nums text-muted-foreground/60">
-                                    {formatCount(count)}
-                                  </span>
-                                )
-                              );
+                              return count != null ? (
+                                <span className="text-sm tabular-nums">
+                                  {formatCount(count)}
+                                </span>
+                              ) : null;
                             })()}
-                            <ChevronRight className="text-muted-foreground/60" />
-                          </div>
-                        </Button>
-                      ))}
+                              {isSelected ? (
+                                <Check className="h-5 w-5 text-primary shrink-0" />
+                              ) : (
+                                <ChevronRight className="h-5 w-5 shrink-0 opacity-60" />
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
                   </div>
                 </div>
               </div>

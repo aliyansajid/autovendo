@@ -49,11 +49,11 @@ import {
   prepareVehicleListing,
   getPresignedUrls,
   createVehicle,
-} from "@/app/actions/vehicle-actions";
+} from "@/app/actions/vehicle.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { updateVehicle } from "@/app/actions/vehicle-actions";
+import { updateVehicle } from "@/app/actions/vehicle.actions";
 import { useEffect, useRef } from "react";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB

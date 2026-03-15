@@ -13,7 +13,7 @@ import { Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
-import { deleteVehicle } from "@/app/actions/vehicle-actions";
+import { deleteVehicle } from "@/app/actions/vehicle.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";

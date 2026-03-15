@@ -73,15 +73,16 @@ export function ConditionDialog({ resultCount }: { resultCount?: number }) {
           ändern
         </span>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-sm max-h-[90vh] overflow-y-auto">
+      <DialogContent>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <FieldGroup>
           <DialogHeader>
             <DialogTitle>Bedingungen</DialogTitle>
             <DialogDescription>
               Wählen Sie den gewünschten Fahrzeugzustand aus.
             </DialogDescription>
           </DialogHeader>
-          <FieldGroup>
+          
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.RADIO_GROUP}
@@ -92,7 +93,7 @@ export function ConditionDialog({ resultCount }: { resultCount?: number }) {
                 value: condition.value,
               }))}
             />
-          </FieldGroup>
+         
           <DialogFooter>
             <Button
               type="button"
@@ -103,6 +104,7 @@ export function ConditionDialog({ resultCount }: { resultCount?: number }) {
             </Button>
             <Button type="submit">Anwenden</Button>
           </DialogFooter>
+          </FieldGroup>
         </form>
       </DialogContent>
     </Dialog>

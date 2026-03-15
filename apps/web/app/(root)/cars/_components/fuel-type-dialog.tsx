@@ -93,8 +93,7 @@ export function FuelTypeDialog({
               className="grid grid-cols-2 gap-3"
               options={carFuelTypeEnum.map(
                 (fuel: { value: string; label: string }) => {
-                  const countKey = fuel.value.toUpperCase().replace(/-/g, "_");
-                  const count = counts?.[countKey];
+                  const count = counts?.[fuel.value];
                   return {
                     label:
                       count !== undefined

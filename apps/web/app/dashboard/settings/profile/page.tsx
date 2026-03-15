@@ -1,7 +1,7 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { unauthorized } from "next/navigation";
-import { getDealerProfile } from "../../../actions/dealer-actions";
+import { getDealerProfile } from "../../../actions/dealer.actions";
 import { DealerProfileForm } from "../../_components/dealer-profile-form";
 
 export default async function ProfilePage() {

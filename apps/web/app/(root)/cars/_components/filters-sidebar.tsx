@@ -22,7 +22,11 @@ import {
   powerOptions,
   evOptions,
 } from "@/constants";
-import { carBodyTypeEnum, carFuelTypeEnum } from "@/constants/cars";
+import {
+  carBodyTypeEnum,
+  carFuelTypeEnum,
+  carMakes,
+} from "@/constants/cars";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import { Separator } from "@repo/ui/components/separator";
 import { getRegistrationYears, kilometers } from "@/lib/utils";
@@ -49,10 +53,11 @@ const formSchema = z.object({
   kilometerFrom: z.string().optional(),
   kilometerTo: z.string().optional(),
   condition: z.array(z.string()).optional(),
-  make: z.string().optional(),
+  make: z.array(z.string()).optional(),
   fuel: z.array(z.string()).optional(),
   power: z.array(z.string()).optional(),
   vehicleType: z.array(z.string()).optional(),
+  bodyType: z.array(z.string()).optional(),
   evs: z.array(z.string()).optional(),
   transmission: z.array(z.string()).optional(),
   color: z.array(z.string()).optional(),
@@ -94,10 +99,11 @@ export const FiltersSidebar = ({
       kilometerFrom: params.kilometerFrom || "any",
       kilometerTo: params.kilometerTo || "any",
       condition: parseArray("condition"),
-      make: params.make || "",
+      make: parseArray("make"),
       fuel: parseArray("fuel"),
       power: parseArray("power"),
       vehicleType: parseArray("vehicleType"),
+      bodyType: parseArray("bodyType"),
       evs: parseArray("evs"),
       transmission: parseArray("transmission"),
       color: parseArray("color"),
@@ -184,6 +190,7 @@ export const FiltersSidebar = ({
   const watchFuel = form.watch("fuel");
   const watchPower = form.watch("power");
   const watchVehicleType = form.watch("vehicleType");
+  const watchBodyType = form.watch("bodyType");
   const watchEvs = form.watch("evs");
   const watchTransmission = form.watch("transmission");
   const watchColor = form.watch("color") || [];
@@ -200,9 +207,13 @@ export const FiltersSidebar = ({
     }
   };
 
+  const allMakeOptions: { value: string; label: string }[] = carMakes.flatMap(
+    (g) => [...g.items],
+  );
+
   const renderSelectedText = (
     arr: string[] | undefined,
-    options: readonly any[],
+    options: readonly { value: string; label: string }[],
   ) => {
     if (!arr || arr.length === 0) return "Beliebig";
     if (arr.length === 1) {
@@ -238,7 +249,7 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>Marke, Modell</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {watchMake || "Beliebig"}
+                {renderSelectedText(watchMake, allMakeOptions)}
                 <MakeModelDialog makeCounts={facets?.make} />
               </div>
             </div>
@@ -364,8 +375,8 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>Fahrzeugtyp</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchVehicleType, carBodyTypeEnum)}
-                <VehicleTypeDialog counts={facets?.vehicleType} />
+                {renderSelectedText(watchBodyType, carBodyTypeEnum)}
+                <VehicleTypeDialog counts={facets?.bodyType} />
               </div>
             </div>
 

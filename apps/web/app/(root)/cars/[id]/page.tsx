@@ -61,131 +61,130 @@ export default async function ListingPage({
   const price = item.price;
   const images = item.images.map(getFullImageUrl);
 
+  const na = "Keine Angabe";
+
   const keyDetails = {
-    kilometer: `${item.kilometer.toLocaleString()} km`,
+    kilometer: `${item.kilometer.toLocaleString("de-CH")} km`,
     transmission:
       item.transmissionType?.toString() ||
       item.gearTransmission?.toString() ||
-      "N/A",
+      na,
     firstRegistration: `${String(item.registrationMonth).padStart(
       2,
       "0",
     )}/${item.registrationYear}`,
-    fuelType: item.fuelType?.toString() || "N/A",
+    fuelType: item.fuelType?.toString() || na,
     power:
-      item.kw || item.hp
-        ? `${item.kw || 0} kW${item.hp ? ` (${item.hp} PS)` : ""}`
-        : "N/A",
+      item.kw != null || item.hp != null
+        ? `${item.kw ?? 0} kW${item.hp != null ? ` (${item.hp} PS)` : ""}`
+        : na,
     sellerType: "Händler",
-    warranty: item.warranty ? `${item.duration || 0} Monate` : "Keine Angabe",
+    warranty:
+      item.warranty != null
+        ? `${item.duration ?? 0} Monate`
+        : na,
     mfk: item.inspectionPassed ? "Ja" : "Nein",
   };
 
-  const basicData = {
-    bodyType: item.bodyType || "N/A",
-    vehicleType: item.vehicleType?.toString() || "N/A",
-    vehicleCondition: item.vehicleCondition?.toString() || "N/A",
-    drivetrain: item.driveType?.toString() || "N/A",
-    seats: item.seats?.toString() || "N/A",
-    doors: item.doors?.toString() || "N/A",
-    offerNumber: item.id.slice(-8),
+  const basicData: Record<string, string> = {
+    Karosserie: item.bodyType || na,
+    "Fahrzeugtyp": item.vehicleType?.toString() || na,
+    Zustand: item.vehicleCondition?.toString() || na,
+    Antrieb: item.driveType?.toString() || na,
+    Sitzplätze: item.seats?.toString() ?? na,
+    Türen: item.doors?.toString() ?? na,
+    "Angebots-Nr.": item.id.slice(-8),
   };
 
-  const vehicleHistory = {
-    kilometer: `${item.kilometer.toLocaleString()} km`,
-    firstRegistration: `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
+  const vehicleHistory: Record<string, string> = {
+    Kilometerstand: `${item.kilometer.toLocaleString("de-CH")} km`,
+    Erstzulassung: `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
   };
 
-  const technicalData = {
-    power:
-      item.kw || item.hp
-        ? `${item.kw || 0} kW${item.hp ? ` (${item.hp} PS)` : ""}`
-        : "N/A",
-    gearbox: item.gearTransmission?.toString() || "N/A",
-    engineSize: item.cubicCapacity
-      ? `${item.cubicCapacity.toLocaleString()} ccm`
-      : "N/A",
-    gears: item.numberOfGears?.toString() || "N/A",
-    cylinders: item.cylinders?.toString() || "N/A",
-    emptyWeight: item.emptyWeight
-      ? `${item.emptyWeight.toLocaleString()} kg`
-      : "N/A",
-    loadCapacity: item.loadCapacity
-      ? `${item.loadCapacity.toLocaleString()} kg`
-      : "N/A",
-    wheelbase: item.wheelbase ? `${item.wheelbase.toLocaleString()} mm` : "N/A",
-    length: item.length ? `${item.length.toLocaleString()} mm` : "N/A",
-    width: item.width ? `${item.width.toLocaleString()} mm` : "N/A",
-    height: item.height ? `${item.height.toLocaleString()} mm` : "N/A",
-    towingCapacityBraked: item.towingCapacityBraked
-      ? `${item.towingCapacityBraked.toLocaleString()} kg`
-      : "N/A",
+  const technicalData: Record<string, string> = {
+    Leistung:
+      item.kw != null || item.hp != null
+        ? `${item.kw ?? 0} kW${item.hp != null ? ` (${item.hp} PS)` : ""}`
+        : na,
+    Getriebe: item.gearTransmission?.toString() || item.transmissionType?.toString() || na,
+    Hubraum: item.cubicCapacity
+      ? `${item.cubicCapacity.toLocaleString("de-CH")} ccm`
+      : na,
+    Gänge: item.numberOfGears?.toString() ?? na,
+    Zylinder: item.cylinders?.toString() ?? na,
+    Leergewicht: item.emptyWeight
+      ? `${item.emptyWeight.toLocaleString("de-CH")} kg`
+      : na,
+    Nutzlast: item.loadCapacity
+      ? `${item.loadCapacity.toLocaleString("de-CH")} kg`
+      : na,
+    Radstand: item.wheelbase ? `${item.wheelbase.toLocaleString("de-CH")} mm` : na,
+    Länge: item.length ? `${item.length.toLocaleString("de-CH")} mm` : na,
+    Breite: item.width ? `${item.width.toLocaleString("de-CH")} mm` : na,
+    Höhe: item.height ? `${item.height.toLocaleString("de-CH")} mm` : na,
+    "Anhängelast gebremst": item.towingCapacityBraked
+      ? `${item.towingCapacityBraked.toLocaleString("de-CH")} kg`
+      : na,
   };
 
-  const energyConsumption = {
-    emissionClass: item.emissionStandard?.toString() || "N/A",
-    fuelType: item.fuelType?.toString() || "N/A",
-    co2Emissions: item.co2Emission ? `${item.co2Emission} g/km (komb.)` : "N/A",
-    efficiencyClass: item.energyLabel || undefined,
+  const energyConsumption: Record<string, string | undefined> = {
+    "Schadstoffklasse": item.emissionStandard?.toString() || na,
+    Treibstoff: item.fuelType?.toString() || na,
+    "CO₂-Emissionen (komb.)": item.co2Emission != null ? `${item.co2Emission} g/km` : na,
+    "Verbrauch Stadt": item.consumptionCity != null ? `${item.consumptionCity} l/100km` : na,
+    "Verbrauch Land": item.consumptionCountry != null ? `${item.consumptionCountry} l/100km` : na,
+    "Verbrauch kombiniert": item.consumptionTotal != null ? `${item.consumptionTotal} l/100km` : na,
+    efficiencyClass: item.energyLabel ?? undefined,
   };
 
-  const inspectionAndWarranty = {
-    lastInspectionDate: item.lastInspectionDate
+  const inspectionAndWarranty: Record<string, string> = {
+    "Letzte MFK": item.lastInspectionDate
       ? item.lastInspectionDate.toLocaleDateString("de-CH")
-      : "N/A",
-    inspectionPassed: item.inspectionPassed ? "Ja" : "Nein",
-    warrantyType: item.warranty?.toString() || "N/A",
-    warrantyStartDate: item.warrantyStartDate
+      : na,
+    "MFK bestanden": item.inspectionPassed ? "Ja" : "Nein",
+    Garantieart: item.warranty?.toString() || na,
+    "Garantie ab": item.warrantyStartDate
       ? item.warrantyStartDate.toLocaleDateString("de-CH")
-      : "N/A",
-    warrantyDurationMonths: item.duration?.toString() || "N/A",
-    warrantyMaxKm: item.maxKm ? `${item.maxKm.toLocaleString()} km` : "N/A",
+      : na,
+    "Garantiedauer (Monate)": item.duration?.toString() ?? na,
+    "Garantie max. km": item.maxKm != null ? `${item.maxKm.toLocaleString("de-CH")} km` : na,
   };
 
-  const electricData = {
-    range: item.range ? `${item.range.toLocaleString()} km` : "N/A",
-    batteryCapacity: item.batteryCapacity
-      ? `${item.batteryCapacity.toLocaleString()} kWh`
-      : "N/A",
-    batteryRentalMonth: item.batteryRentalMonth
-      ? `${item.batteryRentalMonth.toLocaleString()} CHF/Monat`
-      : "N/A",
-    powerConsumption: item.powerConsumption
-      ? `${item.powerConsumption.toLocaleString()} kWh/100km`
-      : "N/A",
-    batteryOwnership: item.batteryOwnership?.toString() || "N/A",
-    chargingPlugTypeStandard:
-      item.chargingPlugTypeStandard?.toString() || "N/A",
-    chargingPlugTypeFast: item.chargingPlugTypeFast?.toString() || "N/A",
-    chargingPower: item.chargingPower
-      ? `${item.chargingPower.toLocaleString()} kW`
-      : "N/A",
-    combustionEnginePowerHp: item.combustionEnginePowerHp
-      ? `${item.combustionEnginePowerHp} PS`
-      : "N/A",
-    electricMotorPowerHp: item.electricMotorPowerHp
-      ? `${item.electricMotorPowerHp} PS`
-      : "N/A",
+  const electricData: Record<string, string> = {
+    Reichweite: item.range != null ? `${item.range.toLocaleString("de-CH")} km` : na,
+    "Batteriekapazität (kWh)": item.batteryCapacity != null
+      ? `${item.batteryCapacity} kWh`
+      : na,
+    "Batteriemiete/Monat": item.batteryRentalMonth != null
+      ? `${item.batteryRentalMonth} CHF/Monat`
+      : na,
+    "Stromverbrauch": item.powerConsumption != null
+      ? `${item.powerConsumption} kWh/100km`
+      : na,
+    Batterieeigentum: item.batteryOwnership?.toString() || na,
+    "Ladeanschluss Typ 2": item.chargingPlugTypeStandard?.toString() || na,
+    "Schnellladeanschluss": item.chargingPlugTypeFast?.toString() || na,
+    Ladeleistung: item.chargingPower != null ? `${item.chargingPower} kW` : na,
+    "Verbrennungsmotor (PS)": item.combustionEnginePowerHp != null ? `${item.combustionEnginePowerHp} PS` : na,
+    "E-Motor (PS)": item.electricMotorPowerHp != null ? `${item.electricMotorPowerHp} PS` : na,
   };
 
-  const identifiers = {
-    vin: item.vin || "N/A",
-    serialNumber: item.serialNumber || "N/A",
-    typeApproval: item.typeApproval || "N/A",
+  const identifiers: Record<string, string> = {
+    FIN: item.vin ?? na,
+    Seriennummer: item.serialNumber ?? na,
+    Typengenehmigung: item.typeApproval ?? na,
   };
 
-  const equipment = {
-    comfort: item.equipment
-      ? Object.entries(item.equipment as Record<string, unknown>)
-          .filter(([_, v]) => v === true)
-          .map(([k]) => k.replace(/([A-Z])/g, " $1").trim())
-      : [],
-  };
+  const equipmentList = item.equipment
+    ? Object.entries(item.equipment as Record<string, unknown>)
+        .filter(([_, v]) => v === true)
+        .map(([k]) => k.replace(/([A-Z])/g, " $1").trim())
+    : [];
 
-  const colourAndUpholstery = {
-    exteriorColour: item.color?.toString() || "N/A",
-    interiorColour: item.interiorColor?.toString() || "N/A",
-    paint: item.metallic ? "Metallic" : "Uni",
+  const colourAndUpholstery: Record<string, string> = {
+    Außenfarbe: item.color?.toString() || na,
+    Innenfarbe: item.interiorColor?.toString() ?? na,
+    Lackierung: item.metallic ? "Metallic" : "Uni",
   };
 
   const description =
@@ -193,13 +192,37 @@ export default async function ListingPage({
       ? item.vehicleDescription
       : "Keine Beschreibung verfügbar.";
 
+  const dayNames: Record<string, string> = {
+    MONDAY: "Montag",
+    TUESDAY: "Dienstag",
+    WEDNESDAY: "Mittwoch",
+    THURSDAY: "Donnerstag",
+    FRIDAY: "Freitag",
+    SATURDAY: "Samstag",
+    SUNDAY: "Sonntag",
+  };
+  const dealerWithHours = item.dealer as typeof item.dealer & {
+    openingHours?: Array<{ day: string; openTime: Date | null; closeTime: Date | null; isOpen: boolean }>;
+  };
+  const openingHours =
+    dealerWithHours.openingHours?.map((oh: { day: string; openTime: Date | null; closeTime: Date | null; isOpen: boolean }) => ({
+      day: dayNames[oh.day] ?? oh.day,
+      hours: oh.isOpen && oh.openTime != null && oh.closeTime != null
+        ? `${oh.openTime.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${oh.closeTime.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
+        : "Geschlossen",
+    })) ?? [];
+
   const seller = {
     id: item.dealer.id,
     name: item.dealer.companyName,
     address: `${item.dealer.address}, ${item.dealer.zipCode} ${item.dealer.city}`,
-    phone: item.dealer.phoneNumber,
+    phone: item.dealer.phoneNumber ?? na,
     logo: item.dealer.logo ? getFullImageUrl(item.dealer.logo) : undefined,
-    website: item.dealer.website || "",
+    website: item.dealer.website ?? undefined,
+    contactPerson: item.dealer.contactPerson ?? undefined,
+    businessEmail: item.dealer.businessEmail ?? undefined,
+    description: item.dealer.description ?? undefined,
+    openingHours: openingHours.length > 0 ? openingHours : undefined,
     rating: 0,
     reviewCount: 0,
   };
@@ -321,10 +344,10 @@ export default async function ListingPage({
                 data={Object.fromEntries(
                   Object.entries(energyConsumption).filter(
                     ([key]) => key !== "efficiencyClass",
-                  ),
+                  ) as [string, string][],
                 )}
               />
-              {energyConsumption.efficiencyClass && (
+              {energyConsumption.efficiencyClass != null && energyConsumption.efficiencyClass !== "" && (
                 <>
                   <Separator />
                   <div className="mt-6">
@@ -352,8 +375,20 @@ export default async function ListingPage({
             </Section>
 
             <Section title="Ausstattung">
-              <EquipmentCategory items={equipment.comfort} />
+              <EquipmentCategory items={equipmentList} />
             </Section>
+
+            {item.extras != null &&
+              typeof item.extras === "object" &&
+              Object.keys(item.extras as object).length > 0 && (
+                <Section title="Extras">
+                  <EquipmentCategory
+                    items={Object.entries(item.extras as Record<string, unknown>)
+                      .filter(([_, v]) => v === true)
+                      .map(([k]) => k.replace(/([A-Z])/g, " $1").trim())}
+                  />
+                </Section>
+              )}
 
             <Section title="Fahrzeugbeschreibung">
               <p className="whitespace-pre-line text-sm text-muted-foreground leading-relaxed">
@@ -383,6 +418,11 @@ export default async function ListingPage({
               <h2 className="text-2xl font-bold text-primary">
                 CHF {price.toLocaleString("de-CH")}
               </h2>
+              {item.newPrice != null && item.newPrice > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  Neupreis: CHF {item.newPrice.toLocaleString("de-CH")}
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -507,41 +547,31 @@ function DataGrid({
 }: {
   data: Record<string, string | number | undefined>;
 }) {
-  const noBorderKeys = [
-    "doors",
-    "kilometer",
-    "height",
-    "warrantydurationmonths",
-    "combustionenginepowerhp",
-    "electricmotorpowerhp",
-  ];
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
-      {Object.entries(data).map(([key, value]) => {
-        const shouldHideBorder = noBorderKeys.includes(key.toLowerCase());
-        return (
-          <div
-            key={key}
-            className={`flex items-center justify-between pb-3 ${
-              shouldHideBorder ? "border-b sm:border-b-0" : "border-b"
-            } last:border-0`}
-          >
-            <span className="text-sm text-muted-foreground capitalize">
-              {key.replace(/([A-Z])/g, " $1").trim()}
-            </span>
-            <span className="text-sm font-medium text-right">
-              {typeof value === "string" ? formatEnumLabel(value) : value}
-            </span>
-          </div>
-        );
-      })}
+      {Object.entries(data).map(([label, value]) => (
+        <div
+          key={label}
+          className="flex items-center justify-between pb-3 border-b last:border-0"
+        >
+          <span className="text-sm text-muted-foreground">{label}</span>
+          <span className="text-sm font-medium text-right">
+            {typeof value === "string" ? formatEnumLabel(value) : value}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
 
 function EquipmentCategory({ items }: { items: string[] }) {
-  if (!items.length) return null;
+  if (!items.length) {
+    return (
+      <p className="text-sm text-muted-foreground italic">
+        Keine Ausstattung angegeben.
+      </p>
+    );
+  }
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
       {items.map((item, i) => (
@@ -549,8 +579,8 @@ function EquipmentCategory({ items }: { items: string[] }) {
           key={i}
           className="flex items-center gap-2 text-sm text-muted-foreground"
         >
-          <CheckCircle2 className="size-4 text-green-500" />
-          <span>{item}</span>
+          <CheckCircle2 className="size-4 text-green-500 shrink-0" />
+          <span>{formatEnumLabel(item)}</span>
         </div>
       ))}
     </div>

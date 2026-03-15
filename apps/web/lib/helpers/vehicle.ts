@@ -88,6 +88,19 @@ export function isNew(condition: string | null): boolean {
   return condition?.toUpperCase() === "NEW";
 }
 
+/** Param keys that are always parsed as string[] (multi-select filters) */
+const ARRAY_PARAM_KEYS = new Set([
+  "make",
+  "model",
+  "fuel",
+  "transmission",
+  "condition",
+  "vehicleType",
+  "bodyType",
+  "color",
+  "equipment",
+]);
+
 /**
  * Parse URL search params to validated search object
  */
@@ -102,10 +115,10 @@ export function parseSearchParams(params: {
     // Handle arrays (comma-separated or multiple values)
     if (Array.isArray(value)) {
       result[key] = value;
-    } else if (value.includes(",")) {
-      result[key] = value
-        .split(",")
-        .map((v) => v.trim())
+    } else if (value.includes(",") || ARRAY_PARAM_KEYS.has(key)) {
+      const raw = typeof value === "string" ? value.split(",") : [value];
+      result[key] = raw
+        .map((v) => (typeof v === "string" ? v.trim() : String(v)))
         .filter(Boolean);
     } else {
       // Handle single values

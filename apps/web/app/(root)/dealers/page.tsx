@@ -1,5 +1,5 @@
 import { DealersList } from "./_components/dealers-list";
-import { getDealers } from "@/app/actions/dealer-actions";
+import { getDealers } from "@/app/actions/dealer.actions";
 
 export default async function DealersPage(props: {
   searchParams: Promise<{ q?: string; page?: string }>;

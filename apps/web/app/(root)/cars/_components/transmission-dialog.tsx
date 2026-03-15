@@ -91,8 +91,7 @@ export function TransmissionDialog({
               name="transmission"
               className="grid grid-cols-2 gap-3"
               options={TransmissionTypeEnum.map((transmission) => {
-                const key = transmission.value.toUpperCase().replace(/-/g, "_");
-                const count = counts?.[key];
+                const count = counts?.[transmission.value];
                 return {
                   label:
                     count !== undefined

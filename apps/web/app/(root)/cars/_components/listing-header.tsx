@@ -29,7 +29,7 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
   const handleShare = async () => {
     const shareData = {
       title: displayName,
-      text: `Check out this ${displayName} on AutoVendo`,
+      text: `${displayName} – AutoVendo`,
       url: window.location.href,
     };
 
@@ -38,7 +38,7 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        alert("Link copied to clipboard!");
+        alert("Link in die Zwischenablage kopiert.");
       }
     } catch (err) {
       console.error("Error sharing:", err);
@@ -51,7 +51,7 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
         <Button variant="link" asChild>
           <Link href="/cars">
             <ArrowLeft />
-            Back
+            Zurück
           </Link>
         </Button>
 
@@ -63,11 +63,11 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
         <Breadcrumb className="hidden md:block">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink href="/">Start</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/cars">Used cars</BreadcrumbLink>
+              <BreadcrumbLink href="/cars">Fahrzeuge</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -92,7 +92,7 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
         onClick={handleShare}
       >
         <Share2 />
-        <span className="hidden sm:inline">Share</span>
+        <span className="hidden sm:inline">Teilen</span>
       </Button>
     </div>
   );

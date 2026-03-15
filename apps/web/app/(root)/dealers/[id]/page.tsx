@@ -1,4 +1,4 @@
-import { getDealerById } from "@/app/actions/dealer-actions";
+import { getDealerById } from "@/app/actions/dealer.actions";
 import { notFound } from "next/navigation";
 import { DealerDetailContent } from "./_components/dealer-detail-content";
 

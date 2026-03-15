@@ -57,6 +57,19 @@ export const VEHICLE_CONDITIONS = [
 
 export const VEHICLE_TYPES = ["car", "utility", "truck", "camper"] as const;
 
+/** Body type (Karosserie) - used for cars listing filter; stored as string in DB */
+export const BODY_TYPES = [
+  "bus",
+  "cabriolet",
+  "coupe",
+  "small-car",
+  "estate",
+  "minivan",
+  "saloon",
+  "pickup",
+  "suv",
+] as const;
+
 export const COLORS = [
   "anthracite",
   "beige",
@@ -88,6 +101,7 @@ export type FuelType = (typeof FUEL_TYPES)[number];
 export type TransmissionType = (typeof TRANSMISSION_TYPES)[number];
 export type VehicleCondition = (typeof VEHICLE_CONDITIONS)[number];
 export type VehicleType = (typeof VEHICLE_TYPES)[number];
+export type BodyType = (typeof BODY_TYPES)[number];
 export type Color = (typeof COLORS)[number];
 
 /**
@@ -133,6 +147,7 @@ export interface VehicleFacets {
   transmissionType: Record<string, number>;
   vehicleCondition: Record<string, number>;
   vehicleType: Record<string, number>;
+  bodyType: Record<string, number>;
   color: Record<string, number>;
 }
 
@@ -166,9 +181,9 @@ export const VehicleSearchSchema = z.object({
   // Text search
   search: z.string().trim().default(""),
 
-  // Filters
-  make: z.string().trim().optional(),
-  model: z.string().trim().optional(),
+  // Filters (multi-select)
+  make: z.array(z.string().trim()).optional(),
+  model: z.array(z.string().trim()).optional(),
 
   priceFrom: z.number().int().nonnegative().optional(),
   priceTo: z.number().int().nonnegative().optional(),
@@ -187,6 +202,7 @@ export const VehicleSearchSchema = z.object({
   transmission: z.array(z.enum(TRANSMISSION_TYPES)).optional(),
   condition: z.array(z.enum(VEHICLE_CONDITIONS)).optional(),
   vehicleType: z.array(z.enum(VEHICLE_TYPES)).optional(),
+  bodyType: z.array(z.enum(BODY_TYPES)).optional(),
   color: z.array(z.enum(COLORS)).optional(),
   equipment: z.array(z.string()).optional(),
 

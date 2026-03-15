@@ -1,7 +1,7 @@
 import { Button } from "@repo/ui/src/components/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { getDealerVehicles } from "@/app/actions/vehicle-actions";
+import { getDealerVehicles } from "@/app/actions/vehicle.actions";
 import { VehicleList } from "./_components/vehicle-list";
 
 export default async function VehiclesPage() {

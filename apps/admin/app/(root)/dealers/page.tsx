@@ -11,6 +11,8 @@ import {
   TableRow,
 } from "@repo/ui/components/table";
 
+export const dynamic = "force-dynamic";
+
 export default async function DealersPage() {
   const dealers = await prisma.dealer.findMany({
     include: {
