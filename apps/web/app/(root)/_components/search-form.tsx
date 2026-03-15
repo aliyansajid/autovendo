@@ -29,7 +29,7 @@ import { prices } from "@/constants";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-  query: z.string().optional(),
+  query: z.string().min(3, "Suchen Sie nach mindestens 3 Zeichen"),
   make: z.string().optional(),
   model: z.string().optional(),
   price: z.string().optional(),

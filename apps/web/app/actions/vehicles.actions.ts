@@ -444,6 +444,80 @@ export async function getVehiclesWithFacets(rawParams: {
 }
 
 /**
+ * Get total count and facet counts only (no vehicle list). For advanced search / filter UI.
+ */
+export async function getVehicleCountAndFacets(rawParams: {
+  [key: string]: string | string[] | undefined;
+}): Promise<{ total: number; facets: VehicleFacets }> {
+  const parsed = parseSearchParams(rawParams);
+  const params = VehicleSearchSchema.parse(parsed);
+
+  const where = buildWhereClause(params);
+  const facetBase = buildWhereClause(params, { make: true, model: true });
+
+  const [
+    total,
+    makeRows,
+    fuelRows,
+    transmissionRows,
+    conditionRows,
+    typeRows,
+    bodyTypeRows,
+    colorRows,
+  ] = await Promise.all([
+    prisma.vehicle.count({ where }),
+    prisma.vehicle.groupBy({
+      by: ["make"],
+      where: facetBase,
+      _count: { _all: true },
+      orderBy: { make: "asc" },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["fuelType"],
+      where: buildWhereClause(params, { fuel: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["transmissionType"],
+      where: buildWhereClause(params, { transmission: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["vehicleCondition"],
+      where: buildWhereClause(params, { condition: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["vehicleType"],
+      where: buildWhereClause(params, { vehicleType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["bodyType"],
+      where: buildWhereClause(params, { bodyType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["color"],
+      where: buildWhereClause(params, { color: true }),
+      _count: { _all: true },
+    }),
+  ]);
+
+  const facets: VehicleFacets = {
+    make: toLowerFacetKeys(toFacetCounts(makeRows, "make")),
+    fuelType: toFrontendFacetKeys(toFacetCounts(fuelRows, "fuelType")),
+    transmissionType: toFrontendFacetKeys(toFacetCounts(transmissionRows, "transmissionType")),
+    vehicleCondition: toFrontendFacetKeys(toFacetCounts(conditionRows, "vehicleCondition")),
+    vehicleType: toFrontendFacetKeys(toFacetCounts(typeRows, "vehicleType")),
+    bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
+    color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
+  };
+
+  return { total, facets };
+}
+
+/**
  * Get single vehicle by ID
  * Cached for 5 minutes
  */

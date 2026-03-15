@@ -79,10 +79,10 @@ const RenderField = ({
 
   switch (props.fieldType) {
     case FormFieldType.INPUT:
-      const { value, ...fieldWithoutValue } = field;
+      const { value: inputValue, ...fieldWithoutValue } = field;
       return (
         <Input
-          {...(props.inputType === "file" ? fieldWithoutValue : field)}
+          {...(props.inputType === "file" ? fieldWithoutValue : { ...field, value: inputValue ?? "" })}
           type={props.inputType}
           accept={
             props.inputType === "file"
@@ -115,6 +115,7 @@ const RenderField = ({
         <InputGroup>
           <InputGroupInput
             {...field}
+            value={field.value ?? ""}
             type={props.inputType}
             placeholder={props.placeholder}
             disabled={props.disabled}
@@ -261,13 +262,19 @@ const RenderField = ({
       );
 
     case FormFieldType.SLIDER:
+      // Range sliders: always treat as controlled [min, max] array
+      const sliderValue =
+        Array.isArray(field.value) && field.value.length > 0
+          ? field.value
+          : [props.min ?? 0, props.max ?? 100];
+
       return (
         <div className={cn(props.className)}>
           <Slider
             min={props.min}
             max={props.max}
             step={props.step}
-            defaultValue={field.value}
+            value={sliderValue}
             onValueChange={field.onChange}
             className="py-2"
           />

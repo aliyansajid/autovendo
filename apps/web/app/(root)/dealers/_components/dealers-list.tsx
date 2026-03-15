@@ -2,7 +2,6 @@
 
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Button } from "@repo/ui/components/button";
-import { Badge } from "@repo/ui/components/badge";
 import { MapPin, ArrowRight, Search } from "lucide-react";
 import Link from "next/link";
 import {

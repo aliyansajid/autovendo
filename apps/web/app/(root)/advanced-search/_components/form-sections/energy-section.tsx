@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
+import { useEffect } from "react";
 import { Label } from "@repo/ui/src/components/label";
 import {
   AccordionContent,
@@ -14,7 +15,19 @@ import {
 import { EnergyLabelEnum, EmissionStandardEnum } from "@/constants";
 
 export function EnergySection() {
-  const { control } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
+  const consumptionRange = watch("consumption") || [0, 30];
+  const emissionsRange = watch("emissions") || [0, 560];
+
+  useEffect(() => {
+    setValue("consumption-from", consumptionRange[0]?.toString() || "0");
+    setValue("consumption-to", consumptionRange[1]?.toString() || "30");
+  }, [consumptionRange, setValue]);
+
+  useEffect(() => {
+    setValue("emissions-from", emissionsRange[0]?.toString() || "0");
+    setValue("emissions-to", emissionsRange[1]?.toString() || "560");
+  }, [emissionsRange, setValue]);
 
   return (
     <AccordionItem value="energy" className="border-none">
@@ -112,9 +125,7 @@ export function EnergySection() {
                     name={`energy-${item.value}`}
                     label={item.label}
                   />
-                  <span className="text-sm text-muted-foreground">
-                    {Math.floor(Math.random() * 50000).toLocaleString("de-CH")}
-                  </span>
+                  <span className="text-sm text-muted-foreground">0</span>
                 </div>
               ))}
             </div>
@@ -140,9 +151,7 @@ export function EnergySection() {
                   name={`eu-${item.value}`}
                   label={item.label}
                 />
-                <span className="text-sm text-muted-foreground">
-                  {Math.floor(Math.random() * 50000).toLocaleString("de-CH")}
-                </span>
+                  <span className="text-sm text-muted-foreground">0</span>
               </div>
             ))}
           </div>

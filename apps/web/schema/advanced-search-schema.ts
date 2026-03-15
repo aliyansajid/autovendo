@@ -28,6 +28,7 @@ const optionalStr = z.string().optional();
 
 export const advancedSearchFormSchema = z
   .object({
+    make: z.array(z.string()).optional(),
     year: optionalNonNegativeNumberArray,
     "year-from": optionalNonNegativeNumberString,
     "year-to": optionalNonNegativeNumberString,

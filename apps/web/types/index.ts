@@ -67,3 +67,15 @@ export interface DealerProfile {
     closeTime: string | null;
   }[];
 }
+
+export interface ListingProps {
+  id: number | string;
+  image: string;
+  badge?: string;
+  title: string;
+  price: string;
+  details: string[];
+  garageName: string;
+  garageId: number | string;
+  garageLocation: string;
+}

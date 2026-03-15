@@ -17,7 +17,7 @@ import { sendContactMessage } from "@/app/actions/contact.actions";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { toast } from "sonner";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   name: z
     .string()
     .min(3, "Name muss mindestens 3 Zeichen lang sein")
@@ -62,9 +62,7 @@ export default function ContactPage() {
       });
 
       result.ok
-        ? toast.success(
-            "Vielen Dank. Ihre Nachricht wurde gesendet. Wir melden uns in Kürze bei Ihnen.",
-          )
+        ? toast.success(result.message)
         : toast.error(result.error ?? "Ein Fehler ist aufgetreten.");
       form.reset();
     });

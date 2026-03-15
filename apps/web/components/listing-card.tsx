@@ -12,18 +12,7 @@ import Image from "next/image";
 import { Heart } from "lucide-react";
 import { Separator } from "@repo/ui/components/separator";
 import Link from "next/link";
-
-export interface ListingProps {
-  id: number | string;
-  image: string;
-  badge?: string;
-  title: string;
-  price: string;
-  details: string[];
-  garageName: string;
-  garageId: number | string;
-  garageLocation: string;
-}
+import { ListingProps } from "@/types";
 
 export const ListingCard = ({ item }: { item: ListingProps }) => {
   return (

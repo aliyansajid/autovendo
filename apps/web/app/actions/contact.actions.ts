@@ -3,18 +3,14 @@
 import sendEmail from "@repo/transactional";
 import ContactMessage from "@repo/transactional/emails/contact-message";
 import React from "react";
+import { z } from "zod";
+import { contactFormSchema } from "@/schema/contact-schema";
 
 const CONTACT_EMAIL = "info@autovendo.ch";
 
-export type SendContactMessageInput = {
-  name: string;
-  email: string;
-  phone: string;
-  subject?: string;
-  message?: string;
-};
-
-export async function sendContactMessage(input: SendContactMessageInput) {
+export async function sendContactMessage(
+  input: z.infer<typeof contactFormSchema>,
+) {
   const { name, email, phone, subject, message } = input;
 
   const result = await sendEmail({
@@ -40,5 +36,5 @@ export async function sendContactMessage(input: SendContactMessageInput) {
     };
   }
 
-  return { ok: true };
+  return { ok: true, message: "Nachricht erfolgreich gesendet" };
 }

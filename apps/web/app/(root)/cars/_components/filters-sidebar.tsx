@@ -36,13 +36,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/src/components/card";
-import { ConditionDialog } from "./condition-dialog";
-import { FuelTypeDialog } from "./fuel-type-dialog";
-import { VehicleTypeDialog } from "./vehicle-type-dialog";
-import { TransmissionDialog } from "./transmission-dialog";
-import { PowerDialog } from "./power-dialog";
-import { EvDialog } from "./ev-dialog";
-import { MakeModelDialog } from "./make-model-dialog";
+import { ConditionDialog } from "./filters/condition-dialog";
+import { FuelTypeDialog } from "./filters/fuel-type-dialog";
+import { VehicleTypeDialog } from "./filters/vehicle-type-dialog";
+import { TransmissionDialog } from "./filters/transmission-dialog";
+import { PowerDialog } from "./filters/power-dialog";
+import { EvDialog } from "./filters/ev-dialog";
+import { MakeModelDialog } from "./filters/make-model-dialog";
 import type { VehicleFacets } from "@/lib/schemas/vehicle.schema";
 
 const formSchema = z.object({

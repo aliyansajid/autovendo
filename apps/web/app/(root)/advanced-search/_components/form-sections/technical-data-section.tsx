@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
+import { useEffect } from "react";
 import { Label } from "@repo/ui/src/components/label";
 import {
   AccordionContent,
@@ -16,9 +17,23 @@ import { carFuelTypeEnum } from "@/constants/cars";
 import { utilityFuelTypeEnum } from "@/constants/commercial-vehicles";
 import { truckFuelTypeEnum } from "@/constants/truck";
 import { camperFuelTypeEnum } from "@/constants/camper";
+import type { VehicleFacets } from "@/lib/schemas/vehicle.schema";
+import { formatCount } from "@/lib/helpers/format";
 
-export function TechnicalDataSection({ vehicleType }: { vehicleType: string }) {
-  const { control } = useFormContext();
+export function TechnicalDataSection({
+  vehicleType,
+  facets,
+}: {
+  vehicleType: string;
+  facets?: VehicleFacets | null;
+}) {
+  const { control, watch, setValue } = useFormContext();
+  const powerRange = watch("power") ?? [0, 1500];
+
+  useEffect(() => {
+    setValue("power-from", powerRange[0]?.toString() ?? "0");
+    setValue("power-to", powerRange[1]?.toString() ?? "1500");
+  }, [powerRange, setValue]);
 
   return (
     <AccordionItem value="tech" className="border-none">
@@ -42,22 +57,25 @@ export function TechnicalDataSection({ vehicleType }: { vehicleType: string }) {
                   : vehicleType === "camper"
                     ? camperFuelTypeEnum
                     : carFuelTypeEnum
-              ).map((type: { value: string; label: string }) => (
-                <div
-                  key={type.value}
-                  className="flex items-center justify-between"
-                >
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.CHECKBOX}
-                    name={`fuel-${type.value}`}
-                    label={type.label}
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    {Math.floor(Math.random() * 50000).toLocaleString("de-CH")}
-                  </span>
-                </div>
-              ))}
+              ).map((type: { value: string; label: string }) => {
+                const count = facets?.fuelType?.[type.value];
+                return (
+                  <div
+                    key={type.value}
+                    className="flex items-center justify-between"
+                  >
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.CHECKBOX}
+                      name={`fuel-${type.value}`}
+                      label={type.label}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {formatCount(count ?? 0)}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -69,22 +87,25 @@ export function TechnicalDataSection({ vehicleType }: { vehicleType: string }) {
               </span>
             </div>
             <div className="space-y-3">
-              {TransmissionTypeEnum.map((type) => (
-                <div
-                  key={type.value}
-                  className="flex items-center justify-between"
-                >
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.CHECKBOX}
-                    name={`transmission-${type.value}`}
-                    label={type.label}
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    {Math.floor(Math.random() * 50000).toLocaleString("de-CH")}
-                  </span>
-                </div>
-              ))}
+              {TransmissionTypeEnum.map((type) => {
+                const count = facets?.transmissionType?.[type.value];
+                return (
+                  <div
+                    key={type.value}
+                    className="flex items-center justify-between"
+                  >
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.CHECKBOX}
+                      name={`transmission-${type.value}`}
+                      label={type.label}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {formatCount(count ?? 0)}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -107,9 +128,7 @@ export function TechnicalDataSection({ vehicleType }: { vehicleType: string }) {
                     name={`drive-${type.value}`}
                     label={type.label}
                   />
-                  <span className="text-sm text-muted-foreground">
-                    {Math.floor(Math.random() * 50000).toLocaleString("de-CH")}
-                  </span>
+                  <span className="text-sm text-muted-foreground">0</span>
                 </div>
               ))}
             </div>

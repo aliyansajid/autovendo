@@ -23,20 +23,79 @@ import { carBodyTypeEnum } from "@/constants/cars";
 import { utilityBodyTypeEnum } from "@/constants/commercial-vehicles";
 import { truckBodyTypeEnum } from "@/constants/truck";
 import { camperBodyTypeEnum } from "@/constants/camper";
+import type { VehicleFacets } from "@/lib/schemas/vehicle.schema";
+import { formatCount } from "@/lib/helpers/format";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
-export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
-  const { control, watch, setValue } = useFormContext();
+export function BasicDataSection({
+  vehicleType,
+  facets,
+}: {
+  vehicleType: string;
+  facets?: VehicleFacets | null;
+}) {
+  const { control, watch, setValue, getValues } = useFormContext();
 
   const yearRange = watch("year") || [1900, CURRENT_YEAR];
   const kilometerRange = watch("kilometer") || [0, 400000];
   const priceRange = watch("price") || [0, 1000000];
 
+  const kilometerFrom = useWatch({ control, name: "kilometer-from" });
+  const kilometerTo = useWatch({ control, name: "kilometer-to" });
+  const priceFrom = useWatch({ control, name: "price-from" });
+  const priceTo = useWatch({ control, name: "price-to" });
+
   useEffect(() => {
     setValue("year-from", yearRange[0]?.toString() || "1900");
     setValue("year-to", yearRange[1]?.toString() || CURRENT_YEAR.toString());
   }, [yearRange, setValue]);
+
+  useEffect(() => {
+    setValue("kilometer-from", kilometerRange[0]?.toString() || "0");
+    setValue("kilometer-to", kilometerRange[1]?.toString() || "400000");
+  }, [kilometerRange, setValue]);
+
+  useEffect(() => {
+    setValue("price-from", priceRange[0]?.toString() || "0");
+    setValue("price-to", priceRange[1]?.toString() || "1000000");
+  }, [priceRange, setValue]);
+
+  // Two-way sync: inputs -> sliders for kilometer (without depending on slider value to avoid loops)
+  useEffect(() => {
+    const parseNumber = (val: unknown, fallback: number) => {
+      if (val === undefined || val === null || val === "") return fallback;
+      const cleaned = String(val).replace(/[^0-9.-]/g, "");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : fallback;
+    };
+
+    const from = parseNumber(kilometerFrom, 0);
+    const to = parseNumber(kilometerTo, 400000);
+
+    const [curFrom, curTo] = getValues("kilometer") || [0, 400000];
+    if (from === curFrom && to === curTo) return;
+
+    setValue("kilometer", [from, to], { shouldDirty: true });
+  }, [kilometerFrom, kilometerTo, getValues, setValue]);
+
+  // Two-way sync: inputs -> sliders for price
+  useEffect(() => {
+    const parseNumber = (val: unknown, fallback: number) => {
+      if (val === undefined || val === null || val === "") return fallback;
+      const cleaned = String(val).replace(/[^0-9.-]/g, "");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : fallback;
+    };
+
+    const from = parseNumber(priceFrom, 0);
+    const to = parseNumber(priceTo, 1000000);
+
+    const [curFrom, curTo] = getValues("price") || [0, 1000000];
+    if (from === curFrom && to === curTo) return;
+
+    setValue("price", [from, to], { shouldDirty: true });
+  }, [priceFrom, priceTo, getValues, setValue]);
 
   return (
     <AccordionItem value="basic" className="border-none">
@@ -220,24 +279,25 @@ export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
             </div>
             <div className="space-y-3">
               {VehicleConditionEnum.map(
-                (item: { value: string; label: string }) => (
-                  <div
-                    key={item.value}
-                    className="flex items-center justify-between"
-                  >
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.CHECKBOX}
-                      name={`condition-${item.value}`}
-                      label={item.label}
-                    />
-                    <span className="text-sm text-muted-foreground">
-                      {Math.floor(Math.random() * 50000).toLocaleString(
-                        "de-CH",
-                      )}
-                    </span>
-                  </div>
-                ),
+                (item: { value: string; label: string }) => {
+                  const count = facets?.vehicleCondition?.[item.value];
+                  return (
+                    <div
+                      key={item.value}
+                      className="flex items-center justify-between"
+                    >
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.CHECKBOX}
+                        name={`condition-${item.value}`}
+                        label={item.label}
+                      />
+                      <span className="text-sm text-muted-foreground">
+                        {formatCount(count ?? 0)}
+                      </span>
+                    </div>
+                  );
+                },
               )}
             </div>
           </div>
@@ -257,9 +317,7 @@ export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
                   name="condition-mfk"
                   label="Ab MFK"
                 />
-                <span className="text-sm text-muted-foreground">
-                  112&apos;484
-                </span>
+                <span className="text-sm text-muted-foreground">0</span>
               </div>
 
               <div className="flex items-center justify-between">
@@ -269,9 +327,7 @@ export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
                   name="condition-warranty"
                   label="Mit Garantie"
                 />
-                <span className="text-sm text-muted-foreground">
-                  107&apos;688
-                </span>
+                <span className="text-sm text-muted-foreground">0</span>
               </div>
             </div>
           </div>
@@ -291,7 +347,7 @@ export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
                   name="condition-accident"
                   label="Unfallfahrzeug"
                 />
-                <span className="text-sm text-muted-foreground">750</span>
+                <span className="text-sm text-muted-foreground">0</span>
               </div>
               <div className="flex items-center justify-between">
                 <CustomFormField
@@ -300,9 +356,7 @@ export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
                   name="condition-noaccident"
                   label="Kein Unfallfahrzeug"
                 />
-                <span className="text-sm text-muted-foreground">
-                  155&apos;177
-                </span>
+                <span className="text-sm text-muted-foreground">0</span>
               </div>
             </div>
           </div>
@@ -325,22 +379,25 @@ export function BasicDataSection({ vehicleType }: { vehicleType: string }) {
                 : vehicleType === "camper"
                   ? camperBodyTypeEnum
                   : carBodyTypeEnum
-            ).map((type: { value: string; label: string }) => (
-              <div
-                key={type.value}
-                className="flex items-center justify-between"
-              >
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.CHECKBOX}
-                  name={`bodyType-${type.value}`}
-                  label={type.label}
-                />
-                <span className="text-sm text-muted-foreground">
-                  {Math.floor(Math.random() * 50000).toLocaleString("de-CH")}
-                </span>
-              </div>
-            ))}
+            ).map((type: { value: string; label: string }) => {
+              const count = facets?.bodyType?.[type.value];
+              return (
+                <div
+                  key={type.value}
+                  className="flex items-center justify-between"
+                >
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.CHECKBOX}
+                    name={`bodyType-${type.value}`}
+                    label={type.label}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {formatCount(count ?? 0)}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </AccordionContent>

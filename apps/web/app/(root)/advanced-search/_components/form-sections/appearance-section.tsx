@@ -13,8 +13,14 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { ColorEnum } from "@/constants";
 import { Separator } from "@repo/ui/src/components/separator";
+import type { VehicleFacets } from "@/lib/schemas/vehicle.schema";
+import { formatCount } from "@/lib/helpers/format";
 
-export function AppearanceSection() {
+export function AppearanceSection({
+  facets,
+}: {
+  facets?: VehicleFacets | null;
+}) {
   const { control } = useFormContext();
 
   return (
@@ -38,37 +44,40 @@ export function AppearanceSection() {
               name="metallic"
               label="Metallic"
             />
-            <span className="text-sm text-muted-foreground">86&apos;371</span>
+            <span className="text-sm text-muted-foreground">0</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
-            {ColorEnum.map((color) => (
-              <div
-                key={color.value}
-                className="flex items-center justify-between"
-              >
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.CHECKBOX}
-                  name={`color-${color.value}`}
-                  label={
-                    <span className="flex items-center gap-2">
-                      <div
-                        className={`w-4 h-4 rounded-full border border-border/20 ${"border" in color && color.border ? "border-border" : ""}`}
-                        style={{
-                          background:
-                            "gradient" in color ? color.gradient : color.hex,
-                        }}
-                      />
-                      {color.label}
-                    </span>
-                  }
-                />
-                <span className="text-sm text-muted-foreground">
-                  {Math.floor(Math.random() * 50000).toLocaleString("de-CH")}
-                </span>
-              </div>
-            ))}
+            {ColorEnum.map((color) => {
+              const count = facets?.color?.[color.value];
+              return (
+                <div
+                  key={color.value}
+                  className="flex items-center justify-between"
+                >
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.CHECKBOX}
+                    name={`color-${color.value}`}
+                    label={
+                      <span className="flex items-center gap-2">
+                        <div
+                          className={`w-4 h-4 rounded-full border border-border/20 ${"border" in color && color.border ? "border-border" : ""}`}
+                          style={{
+                            background:
+                              "gradient" in color ? color.gradient : color.hex,
+                          }}
+                        />
+                        {color.label}
+                      </span>
+                    }
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {formatCount(count ?? 0)}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -105,9 +114,7 @@ export function AppearanceSection() {
                     </span>
                   }
                 />
-                <span className="text-sm text-muted-foreground">
-                  {Math.floor(Math.random() * 50000).toLocaleString("de-CH")}
-                </span>
+                <span className="text-sm text-muted-foreground">0</span>
               </div>
             ))}
           </div>

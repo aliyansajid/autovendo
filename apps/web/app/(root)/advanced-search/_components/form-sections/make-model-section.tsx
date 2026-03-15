@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormContext, useWatch } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { useState } from "react";
 import { PlusCircle, MinusCircle } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
@@ -12,22 +12,33 @@ import {
 import { Badge } from "@repo/ui/src/components/badge";
 import { MakeSelectorDialog } from "@/components/make-selector-dialog";
 import { MakeExclusionDialog } from "@/components/make-exclusion-dialog";
-import { Separator } from "@repo/ui/src/components/separator";
 
 export function MakeModelSection() {
+  const { watch, setValue } = useFormContext();
   const [isMakeModalOpen, setIsMakeModalOpen] = useState(false);
   const [isExclusionModalOpen, setIsExclusionModalOpen] = useState(false);
-  const [selectedMakes, setSelectedMakes] = useState<string[]>([]);
   const [excludedMakes, setExcludedMakes] = useState<string[]>([]);
 
+  const selectedMakes: string[] = watch("make") ?? [];
+
   const handleMakeSelect = (make: string) => {
-    setSelectedMakes((prev) => (prev.includes(make) ? prev : [...prev, make]));
+    if (!selectedMakes.includes(make)) {
+      setValue("make", [...selectedMakes, make], { shouldDirty: true });
+    }
     setIsMakeModalOpen(false);
   };
 
   const handleMakeExclusion = (make: string) => {
     setExcludedMakes((prev) => (prev.includes(make) ? prev : [...prev, make]));
     setIsExclusionModalOpen(false);
+  };
+
+  const removeMake = (make: string) => {
+    setValue(
+      "make",
+      selectedMakes.filter((m) => m !== make),
+      { shouldDirty: true },
+    );
   };
 
   return (
@@ -68,7 +79,12 @@ export function MakeModelSection() {
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {selectedMakes.map((make) => (
-                    <Badge key={make} variant="secondary" className="text-sm">
+                    <Badge
+                      key={make}
+                      variant="secondary"
+                      className="text-sm cursor-pointer hover:bg-destructive/20"
+                      onClick={() => removeMake(make)}
+                    >
                       {make}
                     </Badge>
                   ))}

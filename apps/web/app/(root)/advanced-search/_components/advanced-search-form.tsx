@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Car, Truck, Caravan, X } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
 import { Accordion } from "@repo/ui/src/components/accordion";
@@ -8,6 +8,7 @@ import { Separator } from "@repo/ui/src/components/separator";
 import { z } from "zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { advancedSearchFormSchema } from "@/schema/advanced-search-schema";
 import { MakeModelSection } from "./form-sections/make-model-section";
 import { BasicDataSection } from "./form-sections/basic-data-section";
@@ -17,17 +18,69 @@ import { ExtrasSection } from "./form-sections/extras-section";
 import { AppearanceSection } from "./form-sections/appearance-section";
 import { EnergySection } from "./form-sections/energy-section";
 import { MoreFiltersSection } from "./form-sections/more-filters-section";
+import { buildSearchParams } from "../_lib/build-search-params";
+import { getVehicleCountAndFacets } from "@/app/actions/vehicles.actions";
+import type { VehicleFacets } from "@/lib/schemas/vehicle.schema";
+import { formatCount } from "@/lib/helpers/format";
+
+function paramsToQueryString(params: Record<string, string | string[]>): string {
+  const sp = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null) continue;
+    if (Array.isArray(value)) {
+      value.forEach((v) => sp.append(key, String(v)));
+    } else {
+      sp.set(key, String(value));
+    }
+  }
+  return sp.toString();
+}
 
 export const AdvancedSearchForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof advancedSearchFormSchema>>({
     resolver: zodResolver(advancedSearchFormSchema) as any,
-    defaultValues: { powerType: "ps", daysListed: "any" },
+    defaultValues: { make: [], powerType: "ps", daysListed: "any" },
   });
 
   const [vehicleType, setVehicleType] = useState("car");
+  const [total, setTotal] = useState<number | null>(null);
+  const [facets, setFacets] = useState<VehicleFacets | null>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        const params = buildSearchParams(
+          values as Record<string, unknown>,
+          vehicleType,
+        );
+        getVehicleCountAndFacets(params)
+          .then(({ total: t, facets: f }) => {
+            setTotal(t);
+            setFacets(f);
+          })
+          .catch(() => {
+            setTotal(null);
+            setFacets(null);
+          });
+      }, 300);
+    });
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      subscription.unsubscribe();
+    };
+  }, [form, vehicleType]);
 
   function onSubmit(data: z.infer<typeof advancedSearchFormSchema>) {
-    console.log("Advanced Search Filters:", data);
+    const params = buildSearchParams(
+      data as Record<string, unknown>,
+      vehicleType,
+    );
+    const query = paramsToQueryString(params);
+    router.push(query ? `/cars?${query}` : "/cars");
   }
 
   return (
@@ -80,15 +133,15 @@ export const AdvancedSearchForm = () => {
           >
             <MakeModelSection />
             <Separator />
-            <BasicDataSection vehicleType={vehicleType} />
+            <BasicDataSection vehicleType={vehicleType} facets={facets} />
             <Separator />
-            <TechnicalDataSection vehicleType={vehicleType} />
+            <TechnicalDataSection vehicleType={vehicleType} facets={facets} />
             <Separator />
             <EquipmentSection />
             <Separator />
             <ExtrasSection vehicleType={vehicleType} />
             <Separator />
-            <AppearanceSection />
+            <AppearanceSection facets={facets} />
             <Separator />
             <EnergySection />
             <Separator />
@@ -101,7 +154,7 @@ export const AdvancedSearchForm = () => {
               size="lg"
               className="w-full max-w-xl bg-rating hover:bg-rating/90 text-black"
             >
-              155&apos;927 Fahrzeuge anzeigen
+              {total != null ? `${formatCount(total)} Fahrzeuge anzeigen` : "Fahrzeuge anzeigen"}
             </Button>
           </div>
         </form>
