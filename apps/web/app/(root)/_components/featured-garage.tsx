@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader } from "@repo/ui/components/card";
 import { Button } from "@repo/ui/components/button";
-import { Badge } from "@repo/ui/components/badge";
 import {
   Carousel,
   CarouselContent,
@@ -10,10 +9,31 @@ import {
 } from "@repo/ui/components/carousel";
 import Image from "next/image";
 import { MapPin, ArrowRight } from "lucide-react";
-import { garages } from "@/lib/mock-data";
 import Link from "next/link";
 
-export const FeaturedGarage = () => {
+export type FeaturedGarageItem = {
+  id: string;
+  name: string;
+  image: string;
+  garageLocation: string;
+};
+
+export const FeaturedGarage = ({
+  garages = [],
+}: {
+  garages?: FeaturedGarageItem[];
+}) => {
+  if (garages.length === 0) {
+    return (
+      <section className="bg-secondary">
+        <div className="w-full max-w-285 mx-auto px-4 py-12">
+          <h2 className="text-2xl font-bold mb-6">Ausgewählte Garagen</h2>
+          <p className="text-muted-foreground">Derzeit keine Garagen eingetragen.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-secondary">
       <div className="w-full max-w-285 mx-auto px-4 py-12">
@@ -31,7 +51,6 @@ export const FeaturedGarage = () => {
                 className="basis-full sm:basis-1/2 lg:basis-1/4"
               >
                 <Link
-                  key={garage.id}
                   href={`/dealers/${garage.id}`}
                   className="group"
                 >
@@ -42,20 +61,15 @@ export const FeaturedGarage = () => {
                         alt={garage.name}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
-                        priority={garage.id <= 4}
+                        sizes="(max-width: 640px) 100vw, 25vw"
                       />
-                      {(garage.id === 1 || garage.id === 2) && (
-                        <Badge className="absolute top-2 right-2 bg-[#f9a602] text-foreground font-semibold z-10">
-                          Premium Partner
-                        </Badge>
-                      )}
                     </CardHeader>
 
                     <CardContent className="space-y-6">
                       <div className="space-y-2">
                         <h2 className="text-lg font-bold">{garage.name}</h2>
                         <div className="flex items-center text-muted-foreground gap-1">
-                          <MapPin className="size-4" />
+                          <MapPin className="size-4 shrink-0" />
                           <span className="text-sm truncate">
                             {garage.garageLocation}
                           </span>
@@ -63,7 +77,7 @@ export const FeaturedGarage = () => {
                       </div>
 
                       <Button variant="secondary" className="w-full">
-                        Zum garage
+                        Zur Garage
                         <ArrowRight />
                       </Button>
                     </CardContent>

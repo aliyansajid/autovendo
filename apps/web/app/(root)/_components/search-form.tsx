@@ -26,6 +26,7 @@ import { Field, FieldGroup } from "@repo/ui/src/components/field";
 import { Search, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { prices } from "@/constants";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   query: z.string().optional(),
@@ -36,6 +37,7 @@ const formSchema = z.object({
 });
 
 export const SearchForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,7 +56,14 @@ export const SearchForm = () => {
   }, [selectedMake, form]);
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+    const params = new URLSearchParams();
+    if (data.query?.trim()) params.set("search", data.query.trim());
+    if (data.make) params.set("make", data.make);
+    if (data.model) params.set("model", data.model);
+    if (data.price) params.set("priceFrom", data.price);
+    if (data.registration) params.set("registrationFrom", data.registration);
+    const query = params.toString();
+    router.push(query ? `/cars?${query}` : "/cars");
   }
 
   return (
@@ -152,9 +161,9 @@ export const SearchForm = () => {
               </CustomFormField>
 
               <Field>
-                <Button>
+                <Button type="submit">
                   <Search />
-                  2.029.498 Ergebnisse
+                  Suchen
                 </Button>
               </Field>
             </div>
