@@ -281,6 +281,9 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
       established: "2015",
       coverImage:
         "https://images.pexels.com/photos/3752194/pexels-photo-3752194.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+      about: dealer.description ?? "",
+      services: [],
+      phones: dealer.phoneNumber ? [dealer.phoneNumber] : [],
     };
   } catch (error) {
     console.error("Failed to fetch dealer by id:", error);
