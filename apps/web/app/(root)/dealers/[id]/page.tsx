@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getDealerById } from "@/app/actions/dealer.actions";
 import { notFound } from "next/navigation";
 import { DealerDetailContent } from "../_components/dealer-detail-content";

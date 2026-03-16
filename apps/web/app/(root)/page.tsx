@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { SearchForm } from "./_components/search-form";
 import { FeaturedListings } from "./_components/featured-listings";
 import { FeaturedGarage } from "./_components/featured-garage";

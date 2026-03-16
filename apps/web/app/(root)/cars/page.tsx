@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Suspense } from "react";
 import { FiltersSidebar } from "./_components/filters-sidebar";
 import { ListingListCard } from "./_components/listing-list-card";

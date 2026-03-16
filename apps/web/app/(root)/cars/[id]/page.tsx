@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getVehicleCached } from "@/app/actions/vehicles.actions";
 import { notFound } from "next/navigation";
 import { formatVehicleName } from "@/lib/helpers/vehicle";

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { DealersList } from "./_components/dealers-list";
 import { getDealers } from "@/app/actions/dealer.actions";
 
