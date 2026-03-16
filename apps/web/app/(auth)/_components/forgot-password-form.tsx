@@ -45,11 +45,11 @@ export const ForgotPasswordForm = () => {
       });
 
       if (error) {
-        toast.error(error.message || "Failed to send reset link");
+        toast.error(error.message ?? "Link konnte nicht gesendet werden. Bitte versuchen Sie es erneut.");
         return;
       }
 
-      toast.success(data.message);
+      toast.success(data.message ?? "Link erfolgreich gesendet.");
     });
   }
 

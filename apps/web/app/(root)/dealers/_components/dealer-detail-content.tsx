@@ -1,9 +1,10 @@
 "use client";
 
+import { z } from "zod";
 import { ListingListCard } from "@/app/(root)/cars/_components/listing-list-card";
 import { Button } from "@repo/ui/src/components/button";
 import { Badge } from "@repo/ui/src/components/badge";
-import GarageFilters from "../../_components/garage-rich-filters";
+import GarageFilters from "./garage-rich-filters";
 import { Separator } from "@repo/ui/src/components/separator";
 import {
   Tabs,
@@ -57,7 +58,7 @@ interface DealerDetailContentProps {
 }
 
 export const DealerDetailContent = ({ dealer }: DealerDetailContentProps) => {
-  const form = useForm<DealerContactFormValues>({
+  const form = useForm<z.infer<typeof dealerContactSchema>>({
     resolver: zodResolver(dealerContactSchema),
     defaultValues: {
       name: "",
@@ -67,7 +68,7 @@ export const DealerDetailContent = ({ dealer }: DealerDetailContentProps) => {
     },
   });
 
-  function onSubmit(values: DealerContactFormValues) {
+  function onSubmit(values: z.infer<typeof dealerContactSchema>) {
     console.log(values);
   }
 

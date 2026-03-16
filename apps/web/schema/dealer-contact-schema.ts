@@ -7,5 +7,3 @@ export const dealerContactSchema = z.object({
   message: z.string().min(1, "Nachricht ist erforderlich"),
 });
 
-export type DealerContactFormValues = z.infer<typeof dealerContactSchema>;
-

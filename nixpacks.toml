@@ -1,0 +1,8 @@
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npx turbo run build --filter=web"]
+
+[start]
+cmd = "node_modules/.bin/next start apps/web -p 3000"

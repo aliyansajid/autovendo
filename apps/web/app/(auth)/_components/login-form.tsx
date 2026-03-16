@@ -48,7 +48,7 @@ export const LoginForm = () => {
       });
 
       if (error) {
-        toast.error(error.message || "Something went wrong. Please try again.");
+        toast.error(error.message ?? "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
         return;
       }
     });

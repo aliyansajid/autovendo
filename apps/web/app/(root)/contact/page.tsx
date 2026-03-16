@@ -16,32 +16,13 @@ import { Field, FieldGroup } from "@repo/ui/src/components/field";
 import { sendContactMessage } from "@/app/actions/contact.actions";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { toast } from "sonner";
-
-export const formSchema = z.object({
-  name: z
-    .string()
-    .min(3, "Name muss mindestens 3 Zeichen lang sein")
-    .max(50, "Name darf maximal 50 Zeichen lang sein"),
-  email: z.email("Ungültige E-Mail-Adresse"),
-  phone: z
-    .string()
-    .min(1, "Telefonnummer ist erforderlich")
-    .regex(/^(\+41|0041|0)[0-9\s.-]{8,}$/, "Ungültige Schweizer Telefonnummer"),
-  subject: z
-    .string()
-    .max(100, "Betreff darf maximal 100 Zeichen lang sein")
-    .optional(),
-  message: z
-    .string()
-    .max(1000, "Nachricht darf maximal 1000 Zeichen lang sein")
-    .optional(),
-});
+import { contactFormSchema } from "@/schema/contact-schema";
 
 export default function ContactPage() {
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof contactFormSchema>>({
+    resolver: zodResolver(contactFormSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -51,7 +32,7 @@ export default function ContactPage() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(data: z.infer<typeof contactFormSchema>) {
     startTransition(async () => {
       const result = await sendContactMessage({
         name: data.name,
@@ -62,8 +43,8 @@ export default function ContactPage() {
       });
 
       result.ok
-        ? toast.success(result.message)
-        : toast.error(result.error ?? "Ein Fehler ist aufgetreten.");
+        ? toast.success(result.message ?? "Nachricht erfolgreich gesendet.")
+        : toast.error(result.error ?? "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
       form.reset();
     });
   }

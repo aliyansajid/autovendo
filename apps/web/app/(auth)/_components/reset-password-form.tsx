@@ -51,11 +51,11 @@ export const ResetPasswordForm = () => {
       });
 
       if (error) {
-        toast.error(error.message || "Failed to reset password");
+        toast.error(error.message ?? "Passwort konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.");
         return;
       }
 
-      toast.success("Password has been reset successfully");
+      toast.success("Passwort erfolgreich zurückgesetzt.");
       router.push("/login");
     });
   }

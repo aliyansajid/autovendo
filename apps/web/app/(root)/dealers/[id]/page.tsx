@@ -1,6 +1,6 @@
 import { getDealerById } from "@/app/actions/dealer.actions";
 import { notFound } from "next/navigation";
-import { DealerDetailContent } from "./_components/dealer-detail-content";
+import { DealerDetailContent } from "../_components/dealer-detail-content";
 
 interface DealerPageParams {
   id: string;
