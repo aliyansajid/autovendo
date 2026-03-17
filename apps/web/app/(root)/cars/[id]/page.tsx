@@ -217,7 +217,7 @@ export default async function ListingPage({
   const seller = {
     id: item.dealer.id,
     name: item.dealer.companyName,
-    address: `${item.dealer.address}, ${item.dealer.zipCode} ${item.dealer.city}`,
+    address: `${item.dealer.streetAddress}, ${item.dealer.zipCode} ${item.dealer.city}`,
     phone: item.dealer.phoneNumber ?? na,
     logo: item.dealer.logo ? getFullImageUrl(item.dealer.logo) : undefined,
     website: item.dealer.website ?? undefined,

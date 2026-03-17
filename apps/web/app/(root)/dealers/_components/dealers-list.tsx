@@ -36,21 +36,10 @@ export const DealersList = ({ initialData }: DealersListProps) => {
   const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
     Object.entries(updates).forEach(([key, value]) => {
-      if (value === null) {
-        params.delete(key);
-      } else {
-        params.set(key, value);
-      }
+      if (value === null) params.delete(key);
+      else params.set(key, value);
     });
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
-
-  const handleSearchChange = (value: string) => {
-    updateParams({ q: value || null, page: "1" });
-  };
-
-  const handlePageChange = (page: number) => {
-    updateParams({ page: page.toString() });
   };
 
   return (
@@ -67,7 +56,9 @@ export const DealersList = ({ initialData }: DealersListProps) => {
           <InputGroupInput
             placeholder="Händler suchen..."
             value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
+            onChange={(e) =>
+              updateParams({ q: e.target.value || null, page: "1" })
+            }
           />
           <InputGroupAddon>
             <Search />
@@ -76,18 +67,33 @@ export const DealersList = ({ initialData }: DealersListProps) => {
       </div>
 
       {dealers.length === 0 ? (
-        <div className="py-20 text-center bg-secondary/30 rounded-xl border border-border">
-          <h3 className="text-xl font-semibold mb-2">Kein Händler gefunden</h3>
-          <p className="text-muted-foreground">
-            Versuchen Sie es mit einem anderen Suchbegriff.
-          </p>
-          <Button
-            variant="outline"
-            className="mt-4"
-            onClick={() => updateParams({ q: null, page: "1" })}
-          >
-            Suche zurücksetzen
-          </Button>
+        <div className="py-20 text-center bg-secondary/30 rounded-xl border border-border space-y-3">
+          {searchQuery ? (
+            <>
+              <h3 className="text-xl font-semibold">Kein Händler gefunden</h3>
+              <p className="text-muted-foreground text-sm">
+                Kein Händler entspricht &ldquo;{searchQuery}&rdquo;.
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => updateParams({ q: null, page: "1" })}
+              >
+                Suche zurücksetzen
+              </Button>
+            </>
+          ) : (
+            <>
+              <h3 className="text-xl font-semibold">
+                Noch keine Händler registriert
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                Möchten Sie Ihr Fahrzeug als Händler anbieten?
+              </p>
+              <Button asChild>
+                <Link href="/sell">Händler werden</Link>
+              </Button>
+            </>
+          )}
         </div>
       ) : (
         <>
@@ -98,20 +104,18 @@ export const DealersList = ({ initialData }: DealersListProps) => {
                 href={`/dealers/${dealer.id}`}
                 className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-muted/50 transition-colors group"
               >
-                <div className="min-w-0 space-y-2 flex-1">
-                  <div className="flex items-center gap-2">
-                    <h2 className="font-semibold text-base truncate">
-                      {dealer.companyName}
-                    </h2>
-                    {/* Optional: Add logic for Premium Partner if needed from DB */}
-                  </div>
+                <div className="min-w-0 space-y-1 flex-1">
+                  <h2 className="font-semibold text-base truncate">
+                    {dealer.companyName}
+                  </h2>
                   <div className="flex items-center text-muted-foreground gap-1">
-                    <MapPin className="size-3.5" />
-                    <span className="text-xs">{dealer.city}, {dealer.address}</span>
+                    <MapPin className="size-3.5 shrink-0" />
+                    <span className="text-xs truncate">
+                    {dealer.streetAddress}, {dealer.zipCode} {dealer.city}
+                    </span> 
                   </div>
                 </div>
-
-                <ArrowRight className="size-4 text-muted-foreground -translate-x-1 group-hover:translate-x-0 transition-transform" />
+                <ArrowRight className="size-4 text-muted-foreground shrink-0 -translate-x-1 group-hover:translate-x-0 transition-transform" />
               </Link>
             ))}
           </div>
@@ -124,13 +128,15 @@ export const DealersList = ({ initialData }: DealersListProps) => {
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      if (currentPage > 1) handlePageChange(currentPage - 1);
+                      if (currentPage > 1)
+                        updateParams({ page: String(currentPage - 1) });
                     }}
                     className={
                       currentPage === 1 ? "pointer-events-none opacity-50" : ""
                     }
                   />
                 </PaginationItem>
+
                 {Array.from({ length: totalPages }).map((_, i) => (
                   <PaginationItem key={i}>
                     <PaginationLink
@@ -138,20 +144,21 @@ export const DealersList = ({ initialData }: DealersListProps) => {
                       isActive={currentPage === i + 1}
                       onClick={(e) => {
                         e.preventDefault();
-                        handlePageChange(i + 1);
+                        updateParams({ page: String(i + 1) });
                       }}
                     >
                       {i + 1}
                     </PaginationLink>
                   </PaginationItem>
                 ))}
+
                 <PaginationItem>
                   <PaginationNext
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
                       if (currentPage < totalPages)
-                        handlePageChange(currentPage + 1);
+                        updateParams({ page: String(currentPage + 1) });
                     }}
                     className={
                       currentPage === totalPages

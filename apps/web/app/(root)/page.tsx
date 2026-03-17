@@ -41,7 +41,13 @@ function vehicleToListingProps(item: VehicleListItem): ListingProps {
 
 export default async function HomePage() {
   const [vehiclesResult, dealersResult] = await Promise.all([
-    getVehicles({ pageSize: "12", sort: "created-desc" }),
+    getVehicles({ pageSize: "12", sort: "created-desc" }).catch(() => ({
+      vehicles: [],
+      total: 0,
+      page: 1,
+      pageSize: 12,
+      totalPages: 0,
+    })),
     getDealers({ pageSize: 8 }),
   ]);
 
@@ -57,7 +63,7 @@ export default async function HomePage() {
         ? d.logo
         : getImageUrl(d.logo)
       : "/placeholder-car.jpg",
-    garageLocation: d.address || d.city,
+    garageLocation: d.streetAddress || d.city,
   }));
 
   return (

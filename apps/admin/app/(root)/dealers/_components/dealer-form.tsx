@@ -34,7 +34,7 @@ export function DealerForm() {
       email: "",
       password: "",
       companyName: "",
-      address: "",
+      streetAddress: "",
       zipCode: "",
       city: "",
       uidNumber: "",
@@ -141,7 +141,7 @@ export function DealerForm() {
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.INPUT}
-                name="address"
+                name="streetAddress"
                 label="Street Address"
                 placeholder="e.g. Main Street 1"
                 disabled={isPending}

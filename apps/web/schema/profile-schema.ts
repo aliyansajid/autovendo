@@ -45,10 +45,10 @@ export const dealerProfileSchema = z.object({
   description: optionalString,
   website: optionalUrl,
   logo: optionalImage,
-  address: z
+  streetAddress: z
     .string()
     .min(5, "Address must be at least 5 characters")
-    .max(50, "Address must be at most 50 characters"),
+    .max(100, "Address must be at most 100 characters"),
   zipCode: z
     .string()
     .min(4, "Zip code must be at least 4 characters")
@@ -57,6 +57,7 @@ export const dealerProfileSchema = z.object({
     .string()
     .min(2, "City must be at least 2 characters")
     .max(50, "City must be at most 50 characters"),
+  country: z.literal("Switzerland"),
   uidNumber: z
     .string()
     .min(5, "UID number must be at least 5 characters")

@@ -107,19 +107,23 @@ model Dealer {
   description   String?
   website       String?
   logo          String?
-  address       String
+  coverImage    String?
+  streetAddress String
   zipCode       String
   city          String
+  country       String   @default("Switzerland")
   uidNumber     String   @unique // UID-Nr. (Tax ID)
   contactPerson String
   phoneNumber   String
   businessEmail String
+  googlePlaceId String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   openingHours OpeningHour[]
   vehicles     Vehicle[]
 
+  @@index([companyName])
   @@map("dealer")
 }
 

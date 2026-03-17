@@ -1,7 +1,8 @@
-export const dynamic = "force-dynamic";
-
+import { Suspense } from "react";
 import { DealersList } from "./_components/dealers-list";
 import { getDealers } from "@/app/actions/dealer.actions";
+
+export const dynamic = "force-dynamic";
 
 interface DealersPageSearchParams {
   q?: string;
@@ -18,7 +19,7 @@ export default async function DealersPage(props: {
   const initialData = await getDealers({
     searchQuery: q,
     page,
-    pageSize: 5,
+    pageSize: 12,
   });
 
   return (
@@ -37,7 +38,9 @@ export default async function DealersPage(props: {
         </div>
       </div>
 
-      <DealersList initialData={initialData} />
+      <Suspense fallback={null}>
+        <DealersList initialData={initialData} />
+      </Suspense>
     </>
   );
 }

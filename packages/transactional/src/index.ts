@@ -19,12 +19,13 @@ interface SendEmailOptions {
   to: string;
   subject: string;
   template: React.ReactElement;
+  replyTo?: string;
 }
 
 /**
  * Render React Email template and send email
  */
-export async function sendEmail({ to, subject, template }: SendEmailOptions) {
+export async function sendEmail({ to, subject, template, replyTo }: SendEmailOptions) {
   try {
     const html = await render(template);
 
@@ -32,6 +33,7 @@ export async function sendEmail({ to, subject, template }: SendEmailOptions) {
       from: process.env.EMAIL_FROM || '"Autovendo" <info@autovendo.ch>',
       to,
       subject,
+      replyTo,
       html,
       text: html.replace(/<[^>]*>?/gm, ""), // fallback plain text
     });
@@ -53,3 +55,6 @@ export async function sendEmail({ to, subject, template }: SendEmailOptions) {
 }
 
 export default sendEmail;
+
+export { DealerContactEmail } from "../emails/dealer-contact";
+export type { DealerContactEmailProps } from "../emails/dealer-contact";

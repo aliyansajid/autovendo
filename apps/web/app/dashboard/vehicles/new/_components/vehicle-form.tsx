@@ -201,7 +201,7 @@ export function VehicleForm({
       businessEmail:
         initialData?.businessEmail || dealerProfile?.businessEmail || "",
       phoneNumber: initialData?.phoneNumber || dealerProfile?.phoneNumber || "",
-      address: initialData?.address || dealerProfile?.address || "",
+      address: initialData?.address || dealerProfile?.streetAddress || "",
       zipCode: initialData?.zipCode || dealerProfile?.zipCode || "",
       city: initialData?.city || dealerProfile?.city || "",
     },

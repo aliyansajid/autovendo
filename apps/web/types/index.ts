@@ -1,34 +1,17 @@
-// =============================================================================
-// GARAGE / DEALER TYPES
-// =============================================================================
+import type { VehicleListItem } from "@/lib/schemas/vehicle.schema";
 
-export interface Garage {
-  id: string | number;
-  name: string;
-  slug?: string;
-  logo?: string;
-  coverImage?: string;
-  address?: string;
-  mapLocation?: { lat: number; lng: number };
-  phones?: string[];
-  email?: string;
-  website?: string;
-  isVerified?: boolean;
-  rating?: number;
-  reviewCount?: number;
-  established?: string;
-  languages?: string[];
-  about?: string;
-  services?: string[];
-  openingHours?: { day: string; hours: string }[];
-  ownerId?: string | number;
-}
+export type { VehicleListItem };
+
+// =============================================================================
+// DEALER LIST
+// =============================================================================
 
 export interface DealerListItem {
   id: string;
   companyName: string;
+  streetAddress: string;
   city: string;
-  address: string;
+  zipCode: string;
   logo: string | null;
 }
 
@@ -39,6 +22,10 @@ export interface DealerListResult {
   currentPage: number;
 }
 
+// =============================================================================
+// DEALER DETAIL
+// =============================================================================
+
 export interface DealerOpeningHour {
   day: string;
   isOpen: boolean;
@@ -47,42 +34,45 @@ export interface DealerOpeningHour {
 
 export interface DealerDetail {
   id: string;
-  name: string;
+  companyName: string;
+  email: string;
+  phoneNumber: string;
+  isVerified: boolean;
   description: string | null;
   website: string | null;
   logo: string | null;
-  address: string;
+  coverImage: string | null;
+  streetAddress: string;
   city: string;
   zipCode: string;
-  phoneNumber: string | null;
-  email: string | null;
+  country: string;
+  
   openingHours: DealerOpeningHour[];
-  vehicles: VehicleSummary[];
-  rating: number;
-  reviewCount: number;
-  isVerified: boolean;
-  established: string;
-  coverImage: string;
-  about: string;
-  services: string[];
-  phones: string[];
+  googlePlaceId: string | null;
 }
 
-export type VehicleSummary = import("@/lib/schemas/vehicle.schema").VehicleListItem;
+export interface DealerVehiclesResult {
+  vehicles: VehicleListItem[];
+  totalCount: number;
+  hasMore: boolean;
+}
 
 // =============================================================================
-// LISTING TYPES
+// GOOGLE REVIEWS
 // =============================================================================
 
-export interface Listing {
-  id: string | number;
-  title: string;
-  price: string; // or number depending on backend, string in mock data ("CHF 30,490")
-  details: string[];
-  badge?: string;
-  image: string;
-  garageId: string | number;
-  garage?: Pick<Garage, "id" | "name" | "address" | "rating" | "reviewCount">;
+export interface GoogleReview {
+  authorName: string;
+  rating: number;
+  text: string;
+  relativeTimeDescription: string;
+  profilePhotoUrl: string | null;
+}
+
+export interface GooglePlaceData {
+  rating: number | null;
+  reviewCount: number | null;
+  reviews: GoogleReview[];
 }
 
 // =============================================================================
@@ -102,9 +92,10 @@ export interface DealerProfile {
   description: string | null;
   website: string | null;
   logo: string | null;
-  address: string;
+  streetAddress: string;
   zipCode: string;
   city: string;
+  country: string;
   uidNumber: string;
   contactPerson: string;
   phoneNumber: string;
@@ -115,6 +106,39 @@ export interface DealerProfile {
     openTime: string | null;
     closeTime: string | null;
   }[];
+}
+
+// =============================================================================
+// LEGACY — kept for components not yet migrated
+// =============================================================================
+
+export interface Garage {
+  id: string | number;
+  name: string;
+  slug?: string;
+  logo?: string;
+  coverImage?: string;
+  address?: string;
+  phones?: string[];
+  email?: string;
+  website?: string;
+  isVerified?: boolean;
+  rating?: number;
+  reviewCount?: number;
+  about?: string;
+  services?: string[];
+  openingHours?: { day: string; hours: string }[];
+}
+
+export interface Listing {
+  id: string | number;
+  title: string;
+  price: string;
+  details: string[];
+  badge?: string;
+  image: string;
+  garageId: string | number;
+  garage?: Pick<Garage, "id" | "name" | "address" | "rating" | "reviewCount">;
 }
 
 export interface ListingProps {

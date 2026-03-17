@@ -16,10 +16,10 @@ export const dealerSchema = z.object({
     .string()
     .min(3, "Company name must be at least 3 characters")
     .max(50, "Company name must be at most 50 characters"),
-  address: z
+  streetAddress: z
     .string()
     .min(5, "Address is required")
-    .max(50, "Address must be at most 50 characters"),
+    .max(100, "Address must be at most 100 characters"),
   zipCode: z
     .string()
     .min(4, "Zip code is required")

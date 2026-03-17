@@ -31,7 +31,7 @@ export async function createDealerAction(
       data: {
         userId: newUser.user.id,
         companyName: validatedData.companyName,
-        address: validatedData.address,
+        streetAddress: validatedData.streetAddress,
         zipCode: validatedData.zipCode,
         city: validatedData.city,
         uidNumber: validatedData.uidNumber,

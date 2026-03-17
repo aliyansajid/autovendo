@@ -42,7 +42,8 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       description: initialData?.description || "",
       website: initialData?.website || "",
       logo: initialData?.logo || undefined,
-      address: initialData?.address || "",
+      streetAddress: initialData?.streetAddress || "",
+      country: "Switzerland" as const,
       zipCode: initialData?.zipCode || "",
       city: initialData?.city || "",
       uidNumber: initialData?.uidNumber || "",
@@ -259,9 +260,9 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.INPUT}
-                name="address"
-                label="Address"
-                placeholder="e.g. Street 123"
+                name="streetAddress"
+                label="Street Address"
+                placeholder="e.g. Bahnhofstrasse 123"
               />
               <div className="grid grid-cols-2 gap-4">
                 <CustomFormField
