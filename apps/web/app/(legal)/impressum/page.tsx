@@ -27,10 +27,10 @@ export default function ImpressumPage() {
               <p className="font-semibold text-foreground">Autovendo.ch</p>
               <p>Die Verkaufsplattform für Autohändler in der Schweiz</p>
               <div>
-                <p>[Name der Firma oder Inhaber]</p>
-                <p>[Strasse und Hausnummer]</p>
-                <p>[PLZ, Ort]</p>
-                <p>Schweiz</p>
+                <p>Mackee Johnson</p>
+                <p>Bielstrasse 78</p>
+                <p>2555 Brügg / BE</p>
+                <p>Switzerland</p>
               </div>
             </div>
           </section>
@@ -48,7 +48,7 @@ export default function ImpressumPage() {
                   &nbsp;
                   <Link
                     href="tel:+41793223520"
-                    className="text-primary hover:underline"
+                    className="text-primary underline-offset-4 hover:underline"
                   >
                     +41 79 322 35 20
                   </Link>
@@ -58,7 +58,7 @@ export default function ImpressumPage() {
                   &nbsp;
                   <Link
                     href="mailto:info@autovendo.ch"
-                    className="text-primary hover:underline"
+                    className="text-primary underline-offset-4 hover:underline"
                   >
                     info@autovendo.ch
                   </Link>
@@ -72,7 +72,7 @@ export default function ImpressumPage() {
                     href="https://www.autovendo.ch"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary hover:underline"
+                    className="text-primary underline-offset-4 hover:underline"
                   >
                     www.autovendo.ch
                   </Link>
@@ -82,47 +82,13 @@ export default function ImpressumPage() {
 
             <section className="space-y-4">
               <h2 className="text-xl md:text-2xl font-bold">
-                Vertretungsberechtigte Person(en)
+              Vertretungsberechtigte Person
               </h2>
               <div className="text-muted-foreground text-lg">
                 <p>
-                  [Name der vertretungsberechtigten Person, z. B.
-                  Geschäftsführer / Inhaber]
+                Charles McCorvick
                 </p>
-              </div>
-            </section>
-          </div>
-
-          <Separator />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <section className="space-y-4">
-              <h2 className="text-xl md:text-2xl font-bold">Handelsregister</h2>
-              <div className="space-y-2 text-muted-foreground text-lg">
-                <p>
-                  <span className="font-semibold text-foreground">
-                    Handelsregisteramt:
-                  </span>
-                  &nbsp; [Kanton]
-                </p>
-                <p>
-                  <span className="font-semibold text-foreground">
-                    Firmennummer (UID):
-                  </span>
-                  &nbsp; [UID-Nummer]
-                </p>
-              </div>
-            </section>
-
-            <section className="space-y-4">
-              <h2 className="text-xl md:text-2xl font-bold">Mehrwertsteuer</h2>
-              <div className="space-y-2 text-muted-foreground text-lg">
-                <p>
-                  <span className="font-semibold text-foreground">
-                    MWST-Nummer:
-                  </span>
-                  &nbsp; [CHE-xxx.xxx.xxx MWST]
-                </p>
+                <p>Geschäftsführer</p>
               </div>
             </section>
           </div>
