@@ -24,6 +24,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@repo/ui/src/components/sheet";
 import { Separator } from "@repo/ui/src/components/separator";
 import { authClient } from "@repo/auth/client";
@@ -194,9 +195,11 @@ export const Header = () => {
               <div className="flex flex-col gap-6 px-4">
                 <nav className="flex flex-col gap-4">
                   {navLinks.map(({ href, label }) => (
-                    <Link key={href} href={href}>
-                      {label}
-                    </Link>
+                    <SheetClose asChild key={href}>
+                      <Link href={href}>
+                        {label}
+                      </Link>
+                    </SheetClose>
                   ))}
                 </nav>
 
@@ -233,16 +236,18 @@ export const Header = () => {
                         </p>
                       </div>
                     </div>
-                    <Button
-                      variant="outline"
-                      asChild
-                      className="w-full justify-start text-left"
-                    >
-                      <Link href="/dashboard">
-                        <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Dashboard
-                      </Link>
-                    </Button>
+                    <SheetClose asChild>
+                      <Button
+                        variant="outline"
+                        asChild
+                        className="w-full justify-start text-left"
+                      >
+                        <Link href="/dashboard">
+                          <LayoutDashboard className="mr-2 h-4 w-4" />
+                          Dashboard
+                        </Link>
+                      </Button>
+                    </SheetClose>
                     <Button
                       variant="destructive"
                       onClick={handleLogout}
@@ -253,12 +258,14 @@ export const Header = () => {
                     </Button>
                   </div>
                 ) : (
-                  <Button asChild className="w-full">
-                    <Link href="/login">
-                      <PlusCircle />
-                      Login
-                    </Link>
-                  </Button>
+                  <SheetClose asChild>
+                    <Button asChild className="w-full">
+                      <Link href="/login">
+                        <PlusCircle />
+                        Login
+                      </Link>
+                    </Button>
+                  </SheetClose>
                 )}
               </div>
             </SheetContent>
