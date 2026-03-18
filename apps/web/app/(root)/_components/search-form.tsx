@@ -150,8 +150,8 @@ export const SearchForm = () => {
                 control={form.control}
                 fieldType={FormFieldType.SELECT}
                 name="registration"
-                placeholder="Fahrzeugkennzeichen"
-                ariaLabel="Fahrzeugkennzeichen"
+                placeholder="Erstzulassung ab"
+                ariaLabel="Erstzulassung ab"
               >
                 {getRegistrationYears().map((year) => (
                   <SelectItem key={year.value} value={year.value}>

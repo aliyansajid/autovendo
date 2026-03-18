@@ -19,11 +19,13 @@ export default async function DashboardPage() {
   if (!session) unauthorized();
 
   // @ts-ignore - subscription is added by the stripe plugin
-  const { data: subscriptions } = await auth.api.subscription.list({
-    headers: await headers(),
-  });
+  const subscriptionApi = (auth.api as any).subscription;
+  const subscriptionsResponse = subscriptionApi
+    ? await subscriptionApi.list({ headers: await headers() })
+    : { data: [] };
 
-  const activeSubscription = (subscriptions as any[] | undefined)?.find(
+  const subscriptions = subscriptionsResponse?.data || [];
+  const activeSubscription = subscriptions.find(
     (sub: any) => sub.status === "active" || sub.status === "trialing",
   );
 

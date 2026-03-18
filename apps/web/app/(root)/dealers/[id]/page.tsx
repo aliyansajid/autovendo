@@ -9,9 +9,10 @@ interface DealerPageParams {
 export default async function DealerPage({
   params,
 }: {
-  params: DealerPageParams;
+  params: Promise<DealerPageParams>;
 }) {
-  const dealer = await getDealerById(params.id);
+  const { id } = await params;
+  const dealer = await getDealerById(id);
 
   if (!dealer) {
     notFound();
