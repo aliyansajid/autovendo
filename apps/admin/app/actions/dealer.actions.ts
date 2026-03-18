@@ -75,7 +75,7 @@ export async function createDealerAction(
 
     return {
       success: false,
-      error: "An unexpected error occurred",
+      error: "An unexpected error occurred. Please try again later.",
     };
   }
 }

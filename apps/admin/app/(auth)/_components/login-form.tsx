@@ -18,13 +18,11 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { authClient } from "@repo/auth/client";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { loginSchema } from "@/schema";
 
 export const LoginForm = () => {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -47,8 +45,6 @@ export const LoginForm = () => {
         toast.error(result.error.message);
         return;
       }
-
-      router.push("/");
     });
   }
 

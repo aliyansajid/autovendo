@@ -23,7 +23,7 @@ export const auth = betterAuth({
         await import("@repo/transactional/emails/reset-password");
       await sendEmail({
         to: user.email,
-        subject: "Reset your Autovendo password",
+        subject: "Reset your AutoVendo password",
         template: ResetPasswordEmail({
           userEmail: user.email,
           resetPasswordUrl: url,
@@ -39,7 +39,7 @@ export const auth = betterAuth({
         await import("@repo/transactional/emails/verify-email");
       await sendEmail({
         to: user.email,
-        subject: "Verify your Autovendo email address",
+        subject: "Verify your AutoVendo email address",
         template: VerifyEmail({
           userEmail: user.email,
           verificationUrl: url,
@@ -57,7 +57,7 @@ export const auth = betterAuth({
           await import("@repo/transactional/emails/confirm-email-change");
         await sendEmail({
           to: user.email,
-          subject: "Approve your Autovendo email change",
+          subject: "Approve your AutoVendo email change",
           template: ConfirmEmailChangeEmail({
             currentEmail: user.email,
             newEmail: newEmail,
@@ -71,7 +71,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     "https://autovendo.ch",
     "https://www.autovendo.ch",
-    "http://localhost:3000",
+    "https://admin.autovendo.ch",
   ],
 
   plugins: [

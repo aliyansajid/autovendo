@@ -30,8 +30,11 @@ export const dealerSchema = z.object({
     .max(50, "City must be at most 50 characters"),
   uidNumber: z
     .string()
-    .min(5, "UID Number is required")
-    .max(50, "UID Number must be at most 50 characters"),
+    .min(1, "UID is required")
+    .regex(
+      /^CHE[\s-]?\d{3}[\s.]?\d{3}[\s.]?\d{3}(?:\s?(MWST|TVA|IVA))?$/i,
+      "Invalid UID format (e.g. CHE-123.456.789 MWST)"
+    ),
   contactPerson: z
     .string()
     .min(3, "Contact person is required")
@@ -39,6 +42,9 @@ export const dealerSchema = z.object({
   phoneNumber: z
     .string()
     .min(1, "Phone number is required")
-    .regex(/^(\+41|0041|0)[0-9\s.-]{8,}$/, "Invalid phone number"),
+    .regex(
+      /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/,
+      "Invalid Swiss phone number format"
+    ),
   businessEmail: z.email("Please enter a valid email"),
 });

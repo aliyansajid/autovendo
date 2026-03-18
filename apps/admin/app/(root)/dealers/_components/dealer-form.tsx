@@ -19,9 +19,11 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import { createDealerAction } from "@/app/actions/dealer-actions";
+import { createDealerAction } from "@/app/actions/dealer.actions";
 import { PlusCircle } from "lucide-react";
 import { dealerSchema } from "@/schema";
+import { swissCities } from "@/lib/swiss-data";
+import { SelectItem } from "@repo/ui/components/select";
 
 export function DealerForm() {
   const router = useRouter();
@@ -70,7 +72,7 @@ export function DealerForm() {
                 fieldType={FormFieldType.INPUT}
                 name="name"
                 label="Name"
-                placeholder="e.g. John Doe"
+                placeholder="John Doe"
                 disabled={isPending}
               />
               <CustomFormField
@@ -79,7 +81,7 @@ export function DealerForm() {
                 inputType="email"
                 name="email"
                 label="Email"
-                placeholder="e.g. john@example.com"
+                placeholder="john@example.com"
                 disabled={isPending}
               />
               <CustomFormField
@@ -106,7 +108,7 @@ export function DealerForm() {
                 fieldType={FormFieldType.INPUT}
                 name="companyName"
                 label="Company Name"
-                placeholder="e.g. AutoVendo"
+                placeholder="AutoVendo"
                 disabled={isPending}
               />
               <CustomFormField
@@ -114,7 +116,7 @@ export function DealerForm() {
                 fieldType={FormFieldType.INPUT}
                 name="uidNumber"
                 label="UID-Nr. (Tax ID)"
-                placeholder="e.g. CHE-123.456.789"
+                placeholder="CHE-123.456.789"
                 disabled={isPending}
               />
               <CustomFormField
@@ -123,7 +125,7 @@ export function DealerForm() {
                 inputType="email"
                 name="businessEmail"
                 label="Business Email"
-                placeholder="e.g. info@autovendo.ch"
+                placeholder="info@autovendo.ch"
                 disabled={isPending}
               />
             </FieldGroup>
@@ -143,7 +145,7 @@ export function DealerForm() {
                 fieldType={FormFieldType.INPUT}
                 name="streetAddress"
                 label="Street Address"
-                placeholder="e.g. Main Street 1"
+                placeholder="Main Street 1"
                 disabled={isPending}
               />
               <div className="grid grid-cols-2 gap-2">
@@ -152,17 +154,24 @@ export function DealerForm() {
                   fieldType={FormFieldType.INPUT}
                   name="zipCode"
                   label="Zip"
-                  placeholder="e.g. 8000"
+                  placeholder="8000"
                   disabled={isPending}
                 />
+
                 <CustomFormField
                   control={form.control}
-                  fieldType={FormFieldType.INPUT}
+                  fieldType={FormFieldType.SELECT}
                   name="city"
                   label="City"
-                  placeholder="e.g. Zurich"
+                  placeholder="Select City"
                   disabled={isPending}
-                />
+                >
+                  {swissCities.map((city) => (
+                    <SelectItem key={city} value={city}>
+                      {city}
+                    </SelectItem>
+                  ))}
+                </CustomFormField>
               </div>
             </FieldGroup>
             <FieldGroup>
@@ -171,7 +180,7 @@ export function DealerForm() {
                 fieldType={FormFieldType.INPUT}
                 name="contactPerson"
                 label="Contact Person"
-                placeholder="e.g. Jane Smith"
+                placeholder="Jane Smith"
                 disabled={isPending}
               />
               <CustomFormField
@@ -179,7 +188,7 @@ export function DealerForm() {
                 fieldType={FormFieldType.INPUT}
                 name="phoneNumber"
                 label="Phone Number"
-                placeholder="e.g. +41 79 123 45 67"
+                placeholder="+41 79 123 45 67"
                 disabled={isPending}
               />
             </FieldGroup>
