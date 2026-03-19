@@ -24,15 +24,8 @@ export function MediaSection({
   const { setValue, watch, formState } =
     useFormContext<z.infer<typeof vehicleFormSchema>>();
 
-  useEffect(() => {
-    return () => {
-      previewImages.forEach((url) => {
-        if (url.startsWith("blob:")) {
-          URL.revokeObjectURL(url);
-        }
-      });
-    };
-  }, [previewImages]);
+  // We purposefully do not revoke blob URLs on component unmount because the review step uses them.
+  // Instead, we only revoke them when the user explicitly removes an image.
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -50,6 +43,11 @@ export function MediaSection({
   };
 
   const removeImage = (index: number) => {
+    const urlToRemove = previewImages[index];
+    if (urlToRemove && urlToRemove.startsWith("blob:")) {
+      URL.revokeObjectURL(urlToRemove);
+    }
+    
     setPreviewImages((prev) => prev.filter((_, i) => i !== index));
     const currentImages = watch("images") || [];
     if (Array.isArray(currentImages)) {
