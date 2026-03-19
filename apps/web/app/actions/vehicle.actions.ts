@@ -3,6 +3,7 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { prisma } from "@repo/db";
+import { revalidatePath } from "next/cache";
 import { StorageService } from "@repo/storage";
 import { storage } from "@/lib/utils/storage";
 import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
@@ -236,6 +237,7 @@ export async function createVehicle(
     },
   });
 
+  revalidatePath("/dashboard/vehicles");
   return listingId;
 }
 
@@ -452,6 +454,7 @@ export async function updateVehicle(
     },
   });
 
+  revalidatePath("/dashboard/vehicles");
   return vehicleId;
 }
 
@@ -482,5 +485,6 @@ export async function deleteVehicle(id: string) {
     },
   });
 
+  revalidatePath("/dashboard/vehicles");
   return { success: true };
 }
