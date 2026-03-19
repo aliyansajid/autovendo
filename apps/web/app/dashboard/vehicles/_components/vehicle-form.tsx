@@ -338,9 +338,9 @@ export function VehicleForm({
   function onSubmit(data: z.infer<typeof vehicleFormSchema>) {
     if (isSubmitting) return;
 
-    startTransition(async () => {
-      setIsSubmitting(true);
+    setIsSubmitting(true);
 
+    startTransition(async () => {
       // Create a fresh abort controller for this submission
       abortControllerRef.current = new AbortController();
       const signal = abortControllerRef.current.signal;
@@ -429,7 +429,11 @@ export function VehicleForm({
           await updateVehicle(vehicleId, submitData, finalImageKeys);
           toast.success("Inserat erfolgreich aktualisiert!");
         } else {
-          const result = await createVehicle(listingId, submitData, finalImageKeys);
+          const result = await createVehicle(
+            listingId,
+            submitData,
+            finalImageKeys,
+          );
           if (typeof result === "object" && result && "error" in result) {
             throw new Error(result.error as string);
           }
@@ -735,7 +739,6 @@ export function VehicleForm({
                 disabled={
                   isSubmitting || (!!vehicleId && !form.formState.isDirty)
                 }
-                className="min-w-[140px]"
               >
                 {isSubmitting ? (
                   <>

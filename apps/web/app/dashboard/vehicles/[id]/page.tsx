@@ -2,7 +2,7 @@ import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { getDealerProfile } from "@/app/actions/dealer.actions";
 import { getVehicleById } from "@/app/actions/vehicle.actions";
-import { VehicleForm } from "../new/_components/vehicle-form";
+import { VehicleForm } from "../_components/vehicle-form";
 import { mapVehicleToForm } from "@/lib/utils/vehicle-mapping";
 import { notFound } from "next/navigation";
 import Link from "next/link";

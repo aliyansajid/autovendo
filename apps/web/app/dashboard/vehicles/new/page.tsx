@@ -1,7 +1,7 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { getDealerProfile } from "@/app/actions/dealer.actions";
-import { VehicleForm } from "./_components/vehicle-form";
+import { VehicleForm } from "../_components/vehicle-form";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
