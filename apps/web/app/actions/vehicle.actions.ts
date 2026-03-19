@@ -127,9 +127,9 @@ export async function createVehicle(
   });
 
   if (currentCount >= maxVehicles) {
-    throw new Error(
-      `Limit erreicht: Ihr aktuelles Abo (${subscription?.plan || "Kein Abo"}) erlaubt maximal ${maxVehicles} Fahrzeuge.`
-    );
+    return {
+      error: `Limit erreicht: Ihr aktuelles Abo (${subscription?.plan || "Kein Abo"}) erlaubt maximal ${maxVehicles} Fahrzeuge.`
+    };
   }
 
   const vehicle = await prisma.vehicle.create({

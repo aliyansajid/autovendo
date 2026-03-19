@@ -100,7 +100,6 @@ export const DealerDetailContent = ({
     resolver: zodResolver(dealerContactSchema),
     defaultValues: { name: "", phone: "", email: "", message: "" },
   });
- 
 
   async function onSubmit(values: z.infer<typeof dealerContactSchema>) {
     setIsSubmitting(true);
@@ -199,25 +198,24 @@ export const DealerDetailContent = ({
               </div>
 
               <div className="flex gap-3 w-full md:w-auto shrink-0">
-                  <Button className="flex-1" asChild>
-                    <Link href={`tel:${dealer.phoneNumber}`}>
-                      <Phone  />
-                      Telefon
-                    </Link>
-                  </Button>
+                <Button className="flex-1" asChild>
+                  <Link href={`tel:${dealer.phoneNumber}`}>
+                    <Phone />
+                    Telefon
+                  </Link>
+                </Button>
 
-                  <Button variant="outline" className="flex-1" asChild>
-                    <Link href={`mailto:${dealer.email}`}>
-                      <Mail />
-                      E-Mail
-                    </Link>
-                  </Button>
+                <Button variant="outline" className="flex-1" asChild>
+                  <Link href={`mailto:${dealer.email}`}>
+                    <Mail />
+                    E-Mail
+                  </Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
-
 
       <div className="max-w-285 mx-auto px-4 pt-6">
         <Tabs defaultValue="about" className="space-y-6">
@@ -232,9 +230,7 @@ export const DealerDetailContent = ({
             <TabsTrigger value="ratings">Bewertungen</TabsTrigger>
           </TabsList>
 
-        
           <TabsContent value="about" className="space-y-10 mb-0">
-
             <Card>
               <CardHeader className="border-b gap-0">
                 <CardTitle>Über {dealer.companyName}</CardTitle>
@@ -347,25 +343,21 @@ export const DealerDetailContent = ({
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-3">
-                   
-                      <Link
-                        href={`tel:${dealer.phoneNumber}`}
-                        className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
-                      >
-                        <Phone className="size-4 text-muted-foreground shrink-0" />
-                        {dealer.phoneNumber}
-                      </Link>
-                
+                    <Link
+                      href={`tel:${dealer.phoneNumber}`}
+                      className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
+                    >
+                      <Phone className="size-4 text-muted-foreground shrink-0" />
+                      {dealer.phoneNumber}
+                    </Link>
 
-                   
-                      <Link
-                        href={`mailto:${dealer.email}`}
-                        className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
-                      >
-                        <Mail className="size-4 text-muted-foreground shrink-0" />
-                        {dealer.email}
-                      </Link>
-             
+                    <Link
+                      href={`mailto:${dealer.email}`}
+                      className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
+                    >
+                      <Mail className="size-4 text-muted-foreground shrink-0" />
+                      {dealer.email}
+                    </Link>
 
                     <Link
                       href={`https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`}
@@ -434,11 +426,7 @@ export const DealerDetailContent = ({
                           className="w-full"
                           disabled={isSubmitting}
                         >
-                          {isSubmitting ? (
-                           <Spinner />
-                          ) : (
-                            <Send  />
-                          )}
+                          {isSubmitting ? <Spinner /> : <Send />}
                           Nachricht senden
                         </Button>
                       </Field>
@@ -503,11 +491,7 @@ export const DealerDetailContent = ({
                   onClick={loadMore}
                   disabled={isLoadingMore}
                 >
-                  {isLoadingMore ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <PlusCircle className="size-4" />
-                  )}
+                  {isLoadingMore ? <Spinner /> : <PlusCircle />}
                   Mehr laden
                 </Button>
               </div>

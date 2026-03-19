@@ -55,6 +55,7 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { updateVehicle } from "@/app/actions/vehicle.actions";
 import { useEffect, useRef } from "react";
+import { Spinner } from "@repo/ui/src/components/spinner";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -211,7 +212,7 @@ export function VehicleForm({
 
   const handleNext = async () => {
     const fields = STEP_FIELDS[currentStep] || [];
-    
+
     // Validate all fields defined for the current step
     const isStepValid = await trigger(fields as any[]);
 
@@ -230,21 +231,26 @@ export function VehicleForm({
   const watchColor = useWatch({ control, name: "color" });
   const watchImages = useWatch({ control, name: "images" });
 
-  const isStep1Complete = 
-    !!watchMake && 
-    watchPrice !== undefined && String(watchPrice) !== "" && 
-    watchKilometer !== undefined && String(watchKilometer) !== "" && 
-    !!watchMonth && 
-    !!watchYear && 
-    !!watchBodyType && 
+  const isStep1Complete =
+    !!watchMake &&
+    watchPrice !== undefined &&
+    String(watchPrice) !== "" &&
+    watchKilometer !== undefined &&
+    String(watchKilometer) !== "" &&
+    !!watchMonth &&
+    !!watchYear &&
+    !!watchBodyType &&
     !!watchColor;
-    
-  const isStep2Complete = watchImages && watchImages.length >= 5 && watchImages.length <= 10;
 
-  const isNextDisabled = 
-    currentStep === 1 ? !isStep1Complete : 
-    currentStep === 2 ? !isStep2Complete : 
-    false;
+  const isStep2Complete =
+    watchImages && watchImages.length >= 5 && watchImages.length <= 10;
+
+  const isNextDisabled =
+    currentStep === 1
+      ? !isStep1Complete
+      : currentStep === 2
+        ? !isStep2Complete
+        : false;
 
   const handleBack = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
@@ -423,7 +429,10 @@ export function VehicleForm({
           await updateVehicle(vehicleId, submitData, finalImageKeys);
           toast.success("Inserat erfolgreich aktualisiert!");
         } else {
-          await createVehicle(listingId, submitData, finalImageKeys);
+          const result = await createVehicle(listingId, submitData, finalImageKeys);
+          if (typeof result === "object" && result && "error" in result) {
+            throw new Error(result.error as string);
+          }
           toast.success("Inserat erfolgreich veröffentlicht!");
         }
 
@@ -439,7 +448,8 @@ export function VehicleForm({
           error instanceof Error &&
           (error.message.includes("Datei") ||
             error.message.includes("Dateityp") ||
-            error.message.includes("Upload-Vorbereitung"));
+            error.message.includes("Upload-Vorbereitung") ||
+            error.message.includes("Limit"));
 
         toast.error(
           isValidationError && error instanceof Error
@@ -722,12 +732,14 @@ export function VehicleForm({
               <Button
                 key="submit-button"
                 type="submit"
-                disabled={isSubmitting || (!!vehicleId && !form.formState.isDirty)}
+                disabled={
+                  isSubmitting || (!!vehicleId && !form.formState.isDirty)
+                }
                 className="min-w-[140px]"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Spinner />
                     Verarbeiten...
                   </>
                 ) : (
