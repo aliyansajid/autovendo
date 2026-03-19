@@ -4,6 +4,7 @@ import { getDealerProfile } from "@/app/actions/dealer.actions";
 import { VehicleForm } from "./_components/vehicle-form";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@repo/ui/src/components/button";
 
 export default async function AddNewVehiclePage() {
   const session = await auth.api.getSession({
@@ -17,13 +18,12 @@ export default async function AddNewVehiclePage() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4">
-        <Link
-          href="/dashboard/vehicles"
-          className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors w-fit"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Zurück zur Übersicht
-        </Link>
+        <Button variant="link" asChild>
+          <Link href="/dashboard/vehicles" className="flex items-center">
+            <ArrowLeft />
+            Zurück zur Übersicht
+          </Link>
+        </Button>
         <div className="space-y-1">
           <h1 className="text-2xl font-bold">Fahrzeug inserieren</h1>
           <p className="text-sm text-muted-foreground">
