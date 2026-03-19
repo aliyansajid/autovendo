@@ -1,6 +1,6 @@
 "use server";
 
-import { storage } from "@/lib/storage";
+import { storage } from "@/lib/utils/storage";
 import { StorageService } from "@repo/storage";
 
 /**

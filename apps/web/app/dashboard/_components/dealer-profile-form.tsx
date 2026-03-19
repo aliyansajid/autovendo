@@ -24,6 +24,8 @@ import { getPresignedUploadUrl } from "@/app/actions/storage.actions";
 import { updateDealerProfile } from "@/app/actions/dealer.actions";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { DealerProfile } from "@/types";
+import { swissCities } from "@/lib/swiss-cities";
+import { SelectItem } from "@repo/ui/src/components/select";
 
 interface DealerProfileFormProps {
   initialData: DealerProfile | null;
@@ -57,7 +59,15 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
             openTime: oh.openTime || "08:00",
             closeTime: oh.closeTime || "18:00",
           }))
-        : [],
+        : [
+            { day: "Montag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "Dienstag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "Mittwoch", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "Donnerstag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "Freitag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "Samstag", isOpen: false, openTime: "08:00", closeTime: "18:00" },
+            { day: "Sonntag", isOpen: false, openTime: "08:00", closeTime: "18:00" },
+          ],
     },
   });
 
@@ -109,7 +119,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
 
         if (Object.keys(userUpdates).length > 0) {
           const { error } = await authClient.updateUser(userUpdates);
-          if (error) toast.error(error.message || "Failed to update user info");
+          if (error) toast.error(error.message || "Benutzerinformationen konnten nicht aktualisiert werden");
         }
 
         // Handle email change
@@ -120,16 +130,16 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           });
 
           if (error)
-            toast.error(error.message || "Failed to initiate email change");
+            toast.error(error.message || "E-Mail-Änderung konnte nicht initiiert werden");
 
           toast.info(
-            "A verification email has been sent to your new email address.",
+            "Eine Bestätigungs-E-Mail wurde an Ihre neue E-Mail-Adresse gesendet.",
           );
         }
 
         // Update dealer
         if (!initialData?.user?.id) {
-          toast.error("User information is missing.");
+          toast.error("Benutzerinformationen fehlen.");
           return;
         }
 
@@ -139,10 +149,22 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           logo: logoUrl as string,
         });
 
-        if (result.success) toast.success(result.message);
-        else toast.error(result.error || "Failed to update business profile");
+        if (result.success) {
+          toast.success(
+            result.message === "Profile updated successfully" 
+              ? "Profil erfolgreich aktualisiert" 
+              : result.message
+          );
+          form.reset({
+            ...values,
+            image: imageUrl as string | undefined,
+            logo: logoUrl as string | undefined,
+          });
+        } else {
+          toast.error(result.error || "Unternehmensprofil konnte nicht aktualisiert werden");
+        }
       } catch (error: any) {
-        toast.error(error.message || "Something went wrong. Please try again.");
+        toast.error(error.message || "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
       }
     });
   }
@@ -152,40 +174,65 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-            <CardDescription>Your basic account details.</CardDescription>
+            <CardTitle>Persönliche Informationen</CardTitle>
+            <CardDescription>Ihre grundlegenden Kontodaten.</CardDescription>
           </CardHeader>
           <CardContent>
             <FieldGroup>
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.INPUT}
+                inputType="text"
                 name="name"
                 label="Name"
-                placeholder="e.g. John Doe"
+                placeholder="Max Mustermann"
+                disabled={isPending}
               />
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.INPUT}
+                inputType="email"
                 name="email"
-                label="Email"
-                placeholder="e.g. john@example.com"
+                label="E-Mail"
+                placeholder="max@beispiel.ch"
+                disabled={isPending}
               />
-              <CustomFormField
-                control={form.control}
-                fieldType={FormFieldType.INPUT}
-                inputType="file"
-                name="image"
-                label="Image"
-              />
+              <div className="space-y-4">
+                <CustomFormField
+                  control={form.control}
+                  fieldType={FormFieldType.INPUT}
+                  inputType="file"
+                  name="image"
+                  label="Profilbild"
+                  disabled={isPending}
+                />
+                {form.watch("image") && (
+                  <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
+                    <img 
+                      src={form.watch("image") instanceof File ? URL.createObjectURL(form.watch("image") as File) : (form.watch("image") as string)} 
+                      alt="Profilbild Vorschau" 
+                      className="object-cover w-full h-full"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-1 right-1 h-6 w-6 p-0 rounded-full"
+                      onClick={() => form.setValue("image", undefined, { shouldDirty: true })}
+                    >
+                      ✕
+                    </Button>
+                  </div>
+                )}
+              </div>
             </FieldGroup>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Business Information</CardTitle>
-            <CardDescription>Your company and contact details.</CardDescription>
+            <CardTitle>Unternehmensinformationen</CardTitle>
+            <CardDescription>Ihre Firmen- und Kontaktdaten.</CardDescription>
           </CardHeader>
           <CardContent>
             <FieldGroup>
@@ -193,56 +240,89 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.INPUT}
+                  inputType="text"
                   name="companyName"
-                  label="Company Name"
-                  placeholder="e.g. ACME Corp"
+                  label="Firmenname"
+                  placeholder="ACME GmbH"
+                  disabled={isPending}
                 />
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.INPUT}
+                  inputType="text"
                   name="uidNumber"
-                  label="UID Number"
-                  placeholder="e.g. CHE-123.456.789"
+                  label="UID-Nummer"
+                  placeholder="CHE-123.456.789"
+                  disabled={isPending}
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.INPUT}
+                  inputType="url"
                   name="website"
-                  label="Website"
-                  placeholder="e.g. https://www.acme.com"
+                  label="Webseite"
+                  placeholder="https://www.acme.ch"
+                  disabled={isPending}
                 />
-                <CustomFormField
-                  control={form.control}
-                  fieldType={FormFieldType.INPUT}
-                  inputType="file"
-                  name="logo"
-                  label="Company Logo"
-                />
+                <div className="space-y-4">
+                  <CustomFormField
+                    control={form.control}
+                    fieldType={FormFieldType.INPUT}
+                    inputType="file"
+                    name="logo"
+                    label="Firmenlogo"
+                    disabled={isPending}
+                  />
+                  {form.watch("logo") && (
+                    <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
+                      <img 
+                        src={form.watch("logo") instanceof File ? URL.createObjectURL(form.watch("logo") as File) : (form.watch("logo") as string)} 
+                        alt="Firmenlogo Vorschau" 
+                        className="object-cover w-full h-full"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute top-1 right-1 h-6 w-6 p-0 rounded-full"
+                        onClick={() => form.setValue("logo", undefined, { shouldDirty: true })}
+                      >
+                        ✕
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.INPUT}
+                  inputType="email"
                   name="businessEmail"
-                  label="Business Email"
-                  placeholder="e.g. info@acme.com"
+                  label="Geschäftliche E-Mail"
+                  placeholder="info@acme.ch"
+                  disabled={isPending}
                 />
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.INPUT}
+                  inputType="tel"
                   name="phoneNumber"
-                  label="Phone Number"
-                  placeholder="e.g. +41 79 123 45 67"
+                  label="Telefonnummer"
+                  placeholder="+41 79 123 45 67"
+                  disabled={isPending}
                 />
               </div>
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.INPUT}
+                inputType="text"
                 name="contactPerson"
-                label="Contact Person"
-                placeholder="e.g. John Doe"
+                label="Kontaktperson"
+                placeholder="Max Mustermann"
+                disabled={isPending}
               />
             </FieldGroup>
           </CardContent>
@@ -252,33 +332,44 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Address</CardTitle>
-            <CardDescription>Where your business is located.</CardDescription>
+            <CardTitle>Adresse</CardTitle>
+            <CardDescription>Wo sich Ihr Unternehmen befindet.</CardDescription>
           </CardHeader>
           <CardContent>
             <FieldGroup>
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.INPUT}
+                inputType="text"
                 name="streetAddress"
-                label="Street Address"
-                placeholder="e.g. Bahnhofstrasse 123"
+                label="Strasse und Hausnummer"
+                placeholder="Bahnhofstrasse 123"
+                disabled={isPending}
               />
               <div className="grid grid-cols-2 gap-4">
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.INPUT}
+                  inputType="text"
                   name="zipCode"
-                  label="ZIP Code"
-                  placeholder="e.g. 8000"
+                  label="PLZ"
+                  placeholder="8000"
+                  disabled={isPending}
                 />
                 <CustomFormField
                   control={form.control}
-                  fieldType={FormFieldType.INPUT}
+                  fieldType={FormFieldType.SELECT}
                   name="city"
-                  label="City"
-                  placeholder="e.g. Zurich"
-                />
+                  label="Stadt"
+                  placeholder="Stadt auswählen"
+                  disabled={isPending}
+                >
+                  {swissCities.map((city) => (
+                    <SelectItem key={city} value={city}>
+                      {city}
+                    </SelectItem>
+                  ))}
+                </CustomFormField>
               </div>
             </FieldGroup>
           </CardContent>
@@ -286,8 +377,8 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Description</CardTitle>
-            <CardDescription>Tell us about your business.</CardDescription>
+            <CardTitle>Beschreibung</CardTitle>
+            <CardDescription>Erzählen Sie uns von Ihrem Unternehmen.</CardDescription>
           </CardHeader>
           <CardContent>
             <FieldGroup>
@@ -295,9 +386,10 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                 control={form.control}
                 fieldType={FormFieldType.TEXTAREA}
                 name="description"
-                label="Description"
+                label="Beschreibung"
                 className="min-h-[120px]"
-                placeholder="Tell us about your business..."
+                placeholder="Erzählen Sie uns von Ihrem Unternehmen..."
+                disabled={isPending}
               />
             </FieldGroup>
           </CardContent>
@@ -306,8 +398,8 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Opening Hours</CardTitle>
-          <CardDescription>When you are available.</CardDescription>
+          <CardTitle>Öffnungszeiten</CardTitle>
+          <CardDescription>Wann Sie erreichbar sind.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -325,9 +417,10 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                       name={`openingHours.${index}.isOpen`}
                       label={
                         form.watch(`openingHours.${index}.isOpen`)
-                          ? "Open"
-                          : "Closed"
+                          ? "Geöffnet"
+                          : "Geschlossen"
                       }
+                      disabled={isPending}
                     />
                   </div>
                   {form.watch(`openingHours.${index}.isOpen`) && (
@@ -339,6 +432,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                         name={`openingHours.${index}.openTime`}
                         placeholder="08:00"
                         className="h-9"
+                        disabled={isPending}
                       />
                       <CustomFormField
                         control={form.control}
@@ -347,6 +441,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                         name={`openingHours.${index}.closeTime`}
                         placeholder="18:00"
                         className="h-9"
+                        disabled={isPending}
                       />
                     </>
                   )}
@@ -354,7 +449,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
               ))
             ) : (
               <p className="text-sm text-muted-foreground">
-                No opening hours defined.
+                Keine Öffnungszeiten definiert.
               </p>
             )}
           </div>
@@ -362,14 +457,14 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       </Card>
 
       <div className="flex justify-end pt-4">
-        <Button disabled={isPending} type="submit">
+        <Button disabled={isPending || !form.formState.isDirty} type="submit">
           {isPending ? (
             <>
               <Spinner />
-              Saving...
+              Speichert...
             </>
           ) : (
-            "Save Profile"
+            "Profil speichern"
           )}
         </Button>
       </div>

@@ -60,15 +60,22 @@ export const dealerProfileSchema = z.object({
   country: z.literal("Switzerland"),
   uidNumber: z
     .string()
-    .min(5, "UID number must be at least 5 characters")
-    .max(50, "UID number must be at most 50 characters"),
+    .min(1, "UID is required")
+    .regex(
+      /^CHE[\s-]?\d{3}[\s.]?\d{3}[\s.]?\d{3}(?:\s?(MWST|TVA|IVA))?$/i,
+      "Invalid UID format (e.g. CHE-123.456.789 MWST)",
+    ),
   contactPerson: z
     .string()
     .min(3, "Contact person must be at least 3 characters")
     .max(50, "Contact person must be at most 50 characters"),
   phoneNumber: z
     .string()
-    .regex(/^(\+41|0041|0)[0-9\s.-]{8,}$/, "Please enter a valid phone number"),
+    .min(1, "Phone number is required")
+    .regex(
+      /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/,
+      "Invalid Swiss phone number format",
+    ),
   businessEmail: z.email("Invalid business email address"),
 
   // Opening Hours

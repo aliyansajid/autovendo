@@ -4,7 +4,7 @@ import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { prisma } from "@repo/db";
 import { StorageService } from "@repo/storage";
-import { storage } from "@/lib/storage";
+import { storage } from "@/lib/utils/storage";
 import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
 import { createId } from "@paralleldrive/cuid2";
 

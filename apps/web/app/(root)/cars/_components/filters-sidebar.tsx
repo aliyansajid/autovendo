@@ -22,14 +22,10 @@ import {
   powerOptions,
   evOptions,
 } from "@/constants";
-import {
-  carBodyTypeEnum,
-  carFuelTypeEnum,
-  carMakes,
-} from "@/constants/cars";
+import { carBodyTypeEnum, carFuelTypeEnum, carMakes } from "@/constants/cars";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import { Separator } from "@repo/ui/components/separator";
-import { getRegistrationYears, kilometers } from "@/lib/utils";
+import { getRegistrationYears, kilometers } from "@/lib/utils/utils";
 import {
   Card,
   CardContent,
