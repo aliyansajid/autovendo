@@ -34,12 +34,13 @@ export default async function EditVehiclePage({
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4">
-        <Button variant="link" asChild>
-          <Link href="/dashboard/vehicles" className="flex items-center">
-            <ArrowLeft />
-            Zurück zur Übersicht
-          </Link>
-        </Button>
+        <Link
+          href="/dashboard/vehicles"
+          className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors w-fit"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Zurück zur Übersicht
+        </Link>
 
         <div className="space-y-1">
           <h1 className="text-2xl font-bold">Inserat bearbeiten</h1>
