@@ -2,6 +2,7 @@ import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -54,6 +55,19 @@ export class StorageService {
     });
 
     return getSignedUrl(this.client, command, { expiresIn });
+  }
+
+  /**
+   * Deletes a file from the R2 bucket.
+   */
+  async deleteFile(key: string) {
+    const command = new DeleteObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+    });
+    
+    await this.client.send(command);
+    return true;
   }
 
   /**

@@ -117,11 +117,11 @@ export function MediaSection({
                   key={index}
                   className="relative aspect-video group rounded-lg overflow-hidden border bg-muted"
                 >
-                  <Image
+                  {/* Using standard img tag to prevent Next.js Image component failing on blob:// URLs */}
+                  <img
                     src={fullSrc}
                     alt={`Vorschau ${index + 1}`}
-                    fill
-                    className="object-cover transition-transform group-hover:scale-105"
+                    className="object-cover w-full h-full rounded-md transition-transform group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <Button

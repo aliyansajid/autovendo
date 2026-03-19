@@ -288,7 +288,7 @@ export const vehicleFormSchema = z.object({
 
   // Contact Details
   companyName: z.string().optional(),
-  businessEmail: z.string().email().optional().or(z.literal("")),
+  businessEmail: z.string().email("Ungültige E-Mail-Adresse").optional().or(z.literal("")),
   phoneNumber: z.string().optional(),
   address: z.string().optional(),
   zipCode: z.string().optional(),

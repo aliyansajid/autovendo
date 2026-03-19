@@ -211,23 +211,40 @@ export function VehicleForm({
 
   const handleNext = async () => {
     const fields = STEP_FIELDS[currentStep] || [];
-    // Ensure we only validate fields relevant to the current vehicle type
-    // and skip fields that are purely optional strings like 'model' if they are empty
-    const filteredFields = fields.filter((f) => {
-      if (f === "vehicleType") return true;
-      if (f === "images") return true;
-      if (f === "equipment" || f === "extras") return true;
-      // Check if field exists in vehicleData map
-      return f in vehicleData;
-    });
-
-    const isStepValid = await trigger(filteredFields);
+    
+    // Validate all fields defined for the current step
+    const isStepValid = await trigger(fields as any[]);
 
     if (isStepValid) {
       setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
       window.scrollTo(0, 0);
     }
   };
+
+  const watchMake = useWatch({ control, name: "make" });
+  const watchPrice = useWatch({ control, name: "price" });
+  const watchKilometer = useWatch({ control, name: "kilometer" });
+  const watchMonth = useWatch({ control, name: "registrationMonth" });
+  const watchYear = useWatch({ control, name: "registrationYear" });
+  const watchBodyType = useWatch({ control, name: "bodyType" });
+  const watchColor = useWatch({ control, name: "color" });
+  const watchImages = useWatch({ control, name: "images" });
+
+  const isStep1Complete = 
+    !!watchMake && 
+    watchPrice !== undefined && String(watchPrice) !== "" && 
+    watchKilometer !== undefined && String(watchKilometer) !== "" && 
+    !!watchMonth && 
+    !!watchYear && 
+    !!watchBodyType && 
+    !!watchColor;
+    
+  const isStep2Complete = watchImages && watchImages.length >= 5 && watchImages.length <= 10;
+
+  const isNextDisabled = 
+    currentStep === 1 ? !isStep1Complete : 
+    currentStep === 2 ? !isStep2Complete : 
+    false;
 
   const handleBack = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
@@ -608,17 +625,17 @@ export function VehicleForm({
                       {previewImages.map((src, index) => (
                         <div
                           key={index}
-                          className="relative aspect-video rounded-lg overflow-hidden border shadow-sm"
+                          className="relative aspect-video rounded-lg overflow-hidden border shadow-sm bg-muted flex items-center justify-center p-1"
                         >
-                          <Image
+                          {/* Using standard img tag to prevent Next.js Image component failing on blob:// URLs */}
+                          <img
                             src={
                               src.startsWith("blob:") || src.startsWith("http")
                                 ? src
                                 : `${process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || ""}/${src}`
                             }
                             alt={`Review ${index}`}
-                            fill
-                            className="object-cover"
+                            className="object-cover w-full h-full rounded-md"
                           />
                         </div>
                       ))}
@@ -692,6 +709,7 @@ export function VehicleForm({
               <Button
                 key="next-button"
                 type="button"
+                disabled={isNextDisabled}
                 onClick={(e) => {
                   e.preventDefault();
                   handleNext();
@@ -704,7 +722,7 @@ export function VehicleForm({
               <Button
                 key="submit-button"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || (!!vehicleId && !form.formState.isDirty)}
                 className="min-w-[140px]"
               >
                 {isSubmitting ? (

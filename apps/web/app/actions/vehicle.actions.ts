@@ -104,6 +104,34 @@ export async function createVehicle(
 
   const validatedData = vehicleFormSchema.parse(formData);
 
+  const PLAN_LIMITS: Record<string, number> = {
+    bronze: 5,
+    silver: 10,
+    gold: 15,
+    diamond: 25,
+  };
+
+  const subscription = await prisma.subscription.findFirst({
+    where: {
+      referenceId: session.user.id,
+      status: { in: ["active", "trialing", "past_due"] }, // allowed active states
+    },
+    orderBy: { periodEnd: "desc" },
+  });
+
+  const planName = subscription?.plan?.toLowerCase() || "";
+  const maxVehicles = PLAN_LIMITS[planName] || 0;
+
+  const currentCount = await prisma.vehicle.count({
+    where: { dealerId: dealer.id },
+  });
+
+  if (currentCount >= maxVehicles) {
+    throw new Error(
+      `Limit erreicht: Ihr aktuelles Abo (${subscription?.plan || "Kein Abo"}) erlaubt maximal ${maxVehicles} Fahrzeuge.`
+    );
+  }
+
   const vehicle = await prisma.vehicle.create({
     data: {
       id: listingId,
@@ -294,6 +322,29 @@ export async function updateVehicle(
   }
 
   const validatedData = vehicleFormSchema.parse(formData);
+
+  const existingVehicle = await prisma.vehicle.findUnique({
+    where: { id: vehicleId, dealerId: dealer.id },
+    select: { images: true },
+  });
+
+  if (existingVehicle) {
+    const oldImages = existingVehicle.images;
+    const imagesToDelete = oldImages.filter((img) => !imageKeys.includes(img));
+    
+    if (imagesToDelete.length > 0) {
+      // Clean up deleted images from R2
+      await Promise.all(
+        imagesToDelete.map(async (key) => {
+          try {
+            await storage.deleteFile(key);
+          } catch (e) {
+            console.error(`Failed to delete image: ${key}`, e);
+          }
+        })
+      );
+    }
+  }
 
   await prisma.vehicle.update({
     where: {

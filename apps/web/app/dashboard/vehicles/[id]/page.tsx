@@ -7,6 +7,7 @@ import { mapVehicleToForm } from "@/lib/utils/vehicle-mapping";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@repo/ui/src/components/button";
 
 export default async function EditVehiclePage({
   params,
@@ -33,13 +34,13 @@ export default async function EditVehiclePage({
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4">
-        <Link
-          href="/dashboard/vehicles"
-          className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors w-fit"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Zurück zur Übersicht
-        </Link>
+        <Button variant="link" asChild>
+          <Link href="/dashboard/vehicles" className="flex items-center">
+            <ArrowLeft />
+            Zurück zur Übersicht
+          </Link>
+        </Button>
+
         <div className="space-y-1">
           <h1 className="text-2xl font-bold">Inserat bearbeiten</h1>
           <p className="text-sm text-muted-foreground">
