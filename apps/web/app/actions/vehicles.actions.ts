@@ -530,6 +530,7 @@ export async function getVehicle(id: string): Promise<VehicleDetails | null> {
       dealer: {
         include: {
           openingHours: { orderBy: { day: "asc" } },
+          user: { select: { emailVerified: true } },
         },
       },
     },

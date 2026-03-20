@@ -213,6 +213,8 @@ export default async function ListingPage({
       };
     }) ?? [];
 
+  const dealerUser = (item.dealer as typeof item.dealer & { user?: { emailVerified: boolean } }).user;
+
   const seller = {
     id: item.dealer.id,
     name: item.dealer.companyName,
@@ -224,6 +226,7 @@ export default async function ListingPage({
     businessEmail: item.dealer.businessEmail ?? undefined,
     description: item.dealer.description ?? undefined,
     openingHours: openingHours.length > 0 ? openingHours : undefined,
+    isVerified: dealerUser?.emailVerified === true,
     rating: 0,
     reviewCount: 0,
   };
@@ -423,12 +426,14 @@ export default async function ListingPage({
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <h3 className="text-xl font-bold">{seller.name}</h3>
-                <div className="flex items-center gap-2">
-                  <BadgeCheck className="size-4 text-primary" />
-                  <span className="text-sm font-medium text-primary">
-                    Verifizierter Händler
-                  </span>
-                </div>
+                {seller.isVerified && (
+                  <div className="flex items-center gap-2">
+                    <BadgeCheck className="size-4 text-primary" />
+                    <span className="text-sm font-medium text-primary">
+                      Verifizierter Händler
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center gap-1.5 text-sm">
                   <div className="flex text-rating">
                     {Array.from({ length: 5 }).map((_, i) => (
@@ -540,17 +545,25 @@ function DataGrid({
 }: {
   data: Record<string, string | number | undefined>;
 }) {
+  const entries = Object.entries(data);
+  const rows = Array.from({ length: Math.ceil(entries.length / 2) }, (_, i) =>
+    entries.slice(i * 2, i * 2 + 2),
+  );
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
-      {Object.entries(data).map(([label, value]) => (
+    <div className="divide-y">
+      {rows.map((row, rowIdx) => (
         <div
-          key={label}
-          className="flex items-center justify-between pb-3 border-b last:border-0"
+          key={rowIdx}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 py-3 first:pt-0 last:pb-0"
         >
-          <span className="text-sm text-muted-foreground">{label}</span>
-          <span className="text-sm font-medium text-right">
-            {typeof value === "string" ? formatEnumLabel(value) : value}
-          </span>
+          {row.map(([label, value]) => (
+            <div key={label} className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">{label}</span>
+              <span className="text-sm font-medium text-right">
+                {typeof value === "string" ? formatEnumLabel(value) : value}
+              </span>
+            </div>
+          ))}
         </div>
       ))}
     </div>
