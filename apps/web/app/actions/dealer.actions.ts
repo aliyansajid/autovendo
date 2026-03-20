@@ -13,7 +13,8 @@ import type {
   DealerVehiclesResult,
   GooglePlaceData,
 } from "@/types";
-import type { VehicleListItem } from "@/lib/schemas/vehicle.schema";
+import type { VehicleListItem } from "@/types";
+import { DAY_LABELS } from "@/lib/helpers/format";
 
 // -----------------------------------------------------------------------------
 // Helpers
@@ -28,16 +29,6 @@ const DAY_ORDER = [
   "SATURDAY",
   "SUNDAY",
 ] as const;
-
-const DAY_LABELS: Record<string, string> = {
-  MONDAY: "Montag",
-  TUESDAY: "Dienstag",
-  WEDNESDAY: "Mittwoch",
-  THURSDAY: "Donnerstag",
-  FRIDAY: "Freitag",
-  SATURDAY: "Samstag",
-  SUNDAY: "Sonntag",
-};
 
 const REVERSE_DAY_LABELS: Record<string, string> = Object.entries(
   DAY_LABELS,

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Check, Star, Phone } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@repo/ui/src/components/separator";
-import type { VehicleListItem } from "@/lib/schemas/vehicle.schema";
+import type { VehicleListItem } from "@/types";
 import { formatPrice, formatNumber, formatRegistrationDate, formatEnumLabel } from "@/lib/helpers/format";
 import { getImageUrl } from "@/lib/helpers/image";
 import { buildVehicleTitle, extractEquipment, formatEquipmentLabel } from "@/lib/helpers/vehicle";

@@ -1,6 +1,24 @@
-import type { VehicleListItem } from "@/lib/schemas/vehicle.schema";
+import type { VehicleListItem as _VehicleListItem } from "@/lib/schemas/vehicle.schema";
 
-export type { VehicleListItem };
+export type {
+  VehicleListItem,
+  VehicleDetails,
+  PaginatedVehicles,
+  VehicleFacets,
+  VehicleSearchParams,
+  SortOption,
+  FuelType,
+  TransmissionType,
+  VehicleCondition,
+  VehicleType,
+  BodyType,
+  Color,
+} from "@/lib/schemas/vehicle.schema";
+
+export {
+  VehicleSearchSchema,
+  SORT_OPTIONS,
+} from "@/lib/schemas/vehicle.schema";
 
 // =============================================================================
 // DEALER LIST
@@ -52,7 +70,7 @@ export interface DealerDetail {
 }
 
 export interface DealerVehiclesResult {
-  vehicles: VehicleListItem[];
+  vehicles: _VehicleListItem[];
   totalCount: number;
   hasMore: boolean;
 }
@@ -107,39 +125,6 @@ export interface DealerProfile {
     openTime: string | null;
     closeTime: string | null;
   }[];
-}
-
-// =============================================================================
-// LEGACY — kept for components not yet migrated
-// =============================================================================
-
-export interface Garage {
-  id: string | number;
-  name: string;
-  slug?: string;
-  logo?: string;
-  coverImage?: string;
-  address?: string;
-  phones?: string[];
-  email?: string;
-  website?: string;
-  isVerified?: boolean;
-  rating?: number;
-  reviewCount?: number;
-  about?: string;
-  services?: string[];
-  openingHours?: { day: string; hours: string }[];
-}
-
-export interface Listing {
-  id: string | number;
-  title: string;
-  price: string;
-  details: string[];
-  badge?: string;
-  image: string;
-  garageId: string | number;
-  garage?: Pick<Garage, "id" | "name" | "address" | "rating" | "reviewCount">;
 }
 
 export interface ListingProps {

@@ -10,9 +10,10 @@ import {
 } from "@repo/ui/components/carousel";
 import { Button } from "@repo/ui/components/button";
 import Link from "next/link";
+import type { ListingProps } from "@/types";
 
 interface SimilarListingsProps {
-  listings: any[];
+  listings: ListingProps[];
 }
 
 export const SimilarListings = ({ listings }: SimilarListingsProps) => {

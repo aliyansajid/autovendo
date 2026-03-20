@@ -34,7 +34,9 @@ import {
 import Link from "next/link";
 import { StickyActionBar } from "../_components/sticky-action-bar";
 import { EnergyLabel } from "../_components/energy-label";
-import { prisma } from "@repo/db";
+import { getSimilarVehicles } from "@/app/actions/vehicles.actions";
+import { DAY_LABELS } from "@/lib/helpers/format";
+import type { ListingProps } from "@/types";
 
 /**
  * Vehicle Detail Page - Pure UI Component
@@ -194,21 +196,12 @@ export default async function ListingPage({
       ? item.vehicleDescription
       : "Keine Beschreibung verfügbar.";
 
-  const dayNames: Record<string, string> = {
-    MONDAY: "Montag",
-    TUESDAY: "Dienstag",
-    WEDNESDAY: "Mittwoch",
-    THURSDAY: "Donnerstag",
-    FRIDAY: "Freitag",
-    SATURDAY: "Samstag",
-    SUNDAY: "Sonntag",
-  };
   const dealerWithHours = item.dealer as typeof item.dealer & {
     openingHours?: Array<{ day: string; openTime: Date | null; closeTime: Date | null; isOpen: boolean }>;
   };
   const openingHours =
     dealerWithHours.openingHours?.map((oh: { day: string; openTime: Date | null; closeTime: Date | null; isOpen: boolean }) => ({
-      day: dayNames[oh.day] ?? oh.day,
+      day: DAY_LABELS[oh.day] ?? oh.day,
       hours: oh.isOpen && oh.openTime != null && oh.closeTime != null
         ? `${oh.openTime.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${oh.closeTime.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
         : "Geschlossen",
@@ -229,17 +222,9 @@ export default async function ListingPage({
     reviewCount: 0,
   };
 
-  // Fetch some similar listings from same dealer
-  const similarItems = await prisma.vehicle.findMany({
-    where: {
-      dealerId: item.dealerId,
-      NOT: { id: item.id },
-    },
-    take: 5,
-    include: { dealer: true },
-  });
+  const similarItems = await getSimilarVehicles(item.dealerId, item.id);
 
-  const similarListings = similarItems.map((sim) => ({
+  const similarListings: ListingProps[] = similarItems.map((sim) => ({
     id: sim.id,
     title: `${sim.make} ${sim.model || ""}`.trim(),
     price: `CHF ${sim.price.toLocaleString()}`,
@@ -249,7 +234,7 @@ export default async function ListingPage({
       sim.fuelType?.toString().toLowerCase().replace(/_/g, " ") || "N/A",
     ],
     garageName: sim.dealer.companyName,
-    garageId: sim.dealerId,
+    garageId: sim.dealer.id,
     garageLocation: `${sim.dealer.city}, CH`,
     badge: sim.vehicleCondition === "NEW" ? "NEU" : "Gebraucht",
     image: getFullImageUrl(sim.images[0]),
@@ -409,7 +394,7 @@ export default async function ListingPage({
 
             <Separator className="my-12" />
 
-            <SimilarListings listings={similarListings as any} />
+            <SimilarListings listings={similarListings} />
           </div>
         </div>
 

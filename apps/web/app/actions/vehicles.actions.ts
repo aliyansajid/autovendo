@@ -564,3 +564,25 @@ export async function getVehicleCached(id: string) {
     tags: ["vehicles", `vehicle:${id}`],
   })();
 }
+
+/**
+ * Get similar vehicles from the same dealer (excluding current vehicle)
+ */
+export async function getSimilarVehicles(
+  dealerId: string,
+  excludeId: string,
+): Promise<VehicleListItem[]> {
+  if (!dealerId) return [];
+
+  const vehicles = await prisma.vehicle.findMany({
+    where: {
+      dealerId,
+      NOT: { id: excludeId },
+    },
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    select: VEHICLE_LIST_SELECT,
+  });
+
+  return vehicles as VehicleListItem[];
+}

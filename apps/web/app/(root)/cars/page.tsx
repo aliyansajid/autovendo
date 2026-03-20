@@ -19,7 +19,7 @@ import {
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
 import { getVehiclesWithFacetsCached } from "@/app/actions/vehicles.actions";
-import { VehicleSearchSchema } from "@/lib/schemas/vehicle.schema";
+import { VehicleSearchSchema } from "@/types";
 import { parseSearchParams } from "@/lib/helpers/vehicle";
 import { ListingControls } from "./_components/listing-controls";
 

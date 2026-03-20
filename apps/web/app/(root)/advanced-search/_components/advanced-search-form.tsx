@@ -20,7 +20,7 @@ import { EnergySection } from "./form-sections/energy-section";
 import { MoreFiltersSection } from "./form-sections/more-filters-section";
 import { buildSearchParams } from "../_lib/build-search-params";
 import { getVehicleCountAndFacets } from "@/app/actions/vehicles.actions";
-import type { VehicleFacets } from "@/lib/schemas/vehicle.schema";
+import type { VehicleFacets } from "@/types";
 import { formatCount } from "@/lib/helpers/format";
 
 function paramsToQueryString(params: Record<string, string | string[]>): string {

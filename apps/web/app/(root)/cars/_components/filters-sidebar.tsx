@@ -1,7 +1,6 @@
 "use client";
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
@@ -39,25 +38,11 @@ import { TransmissionDialog } from "./filters/transmission-dialog";
 import { PowerDialog } from "./filters/power-dialog";
 import { EvDialog } from "./filters/ev-dialog";
 import { MakeModelDialog } from "./filters/make-model-dialog";
-import type { VehicleFacets } from "@/lib/schemas/vehicle.schema";
-
-const formSchema = z.object({
-  priceFrom: z.string().optional(),
-  priceTo: z.string().optional(),
-  registrationFrom: z.string().optional(),
-  registrationTo: z.string().optional(),
-  kilometerFrom: z.string().optional(),
-  kilometerTo: z.string().optional(),
-  condition: z.array(z.string()).optional(),
-  make: z.array(z.string()).optional(),
-  fuel: z.array(z.string()).optional(),
-  power: z.array(z.string()).optional(),
-  vehicleType: z.array(z.string()).optional(),
-  bodyType: z.array(z.string()).optional(),
-  evs: z.array(z.string()).optional(),
-  transmission: z.array(z.string()).optional(),
-  color: z.array(z.string()).optional(),
-});
+import type { VehicleFacets } from "@/types";
+import {
+  vehicleFiltersSchema,
+  type VehicleFiltersValues,
+} from "@/schema/vehicle-filters-schema";
 
 export const FiltersSidebar = ({
   onClose,
@@ -107,8 +92,8 @@ export const FiltersSidebar = ({
     };
   }, [searchParams]);
 
-  const form = useForm<z.infer<typeof formSchema> & Record<string, any>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<VehicleFiltersValues & Record<string, any>>({
+    resolver: zodResolver(vehicleFiltersSchema),
     defaultValues: getInitialValues(),
   });
 
@@ -181,15 +166,15 @@ export const FiltersSidebar = ({
     return () => subscription.unsubscribe();
   }, [form, updateUrl]);
 
-  const watchCondition = form.watch("condition");
-  const watchMake = form.watch("make");
-  const watchFuel = form.watch("fuel");
-  const watchPower = form.watch("power");
-  const watchVehicleType = form.watch("vehicleType");
-  const watchBodyType = form.watch("bodyType");
-  const watchEvs = form.watch("evs");
-  const watchTransmission = form.watch("transmission");
-  const watchColor = form.watch("color") || [];
+  const watchCondition = useWatch({ control: form.control, name: "condition" });
+  const watchMake = useWatch({ control: form.control, name: "make" });
+  const watchFuel = useWatch({ control: form.control, name: "fuel" });
+  const watchPower = useWatch({ control: form.control, name: "power" });
+  const watchVehicleType = useWatch({ control: form.control, name: "vehicleType" });
+  const watchBodyType = useWatch({ control: form.control, name: "bodyType" });
+  const watchEvs = useWatch({ control: form.control, name: "evs" });
+  const watchTransmission = useWatch({ control: form.control, name: "transmission" });
+  const watchColor = useWatch({ control: form.control, name: "color" }) || [];
 
   const handleColorToggle = (colorValue: string) => {
     const current = form.getValues("color") || [];

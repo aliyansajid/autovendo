@@ -71,3 +71,16 @@ export function formatEnumLabel(value: string | null | undefined): string {
 export function formatCount(count: number): string {
   return new Intl.NumberFormat("de-CH").format(count);
 }
+
+/**
+ * Map DayOfWeek enum values to German day names
+ */
+export const DAY_LABELS: Record<string, string> = {
+  MONDAY: "Montag",
+  TUESDAY: "Dienstag",
+  WEDNESDAY: "Mittwoch",
+  THURSDAY: "Donnerstag",
+  FRIDAY: "Freitag",
+  SATURDAY: "Samstag",
+  SUNDAY: "Sonntag",
+};

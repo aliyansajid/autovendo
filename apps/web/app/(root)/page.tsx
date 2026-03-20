@@ -14,8 +14,7 @@ import {
   formatEnumLabel,
 } from "@/lib/helpers/format";
 import { getImageUrl } from "@/lib/helpers/image";
-import type { VehicleListItem } from "@/lib/schemas/vehicle.schema";
-import { ListingProps } from "@/types";
+import type { VehicleListItem, ListingProps } from "@/types";
 
 function vehicleToListingProps(item: VehicleListItem): ListingProps {
   return {
