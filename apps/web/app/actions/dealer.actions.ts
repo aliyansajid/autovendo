@@ -39,6 +39,11 @@ const DAY_LABELS: Record<string, string> = {
   SUNDAY: "Sonntag",
 };
 
+const REVERSE_DAY_LABELS: Record<string, string> = Object.entries(DAY_LABELS).reduce(
+  (acc, [key, value]) => ({ ...acc, [value]: key }),
+  {},
+);
+
 function toTimeString(date: Date | string | null): string {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
@@ -108,7 +113,7 @@ export async function updateDealerProfile(
       await prisma.openingHour.createMany({
         data: values.openingHours.map((oh) => ({
           dealerId: dealer.id,
-          day: oh.day.toUpperCase() as any,
+          day: REVERSE_DAY_LABELS[oh.day] as any,
           isOpen: oh.isOpen,
           openTime: parseTimeString(oh.openTime),
           closeTime: parseTimeString(oh.closeTime),
