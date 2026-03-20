@@ -99,6 +99,10 @@ const ARRAY_PARAM_KEYS = new Set([
   "bodyType",
   "color",
   "equipment",
+  "driveType",
+  "energyLabels",
+  "emissionStandards",
+  "interiorColor",
 ]);
 
 /**

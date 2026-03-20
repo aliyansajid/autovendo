@@ -67,6 +67,10 @@ export default async function ListingPage({
 
   const na = "Keine Angabe";
 
+  // unstable_cache serializes Date objects to strings — must re-wrap
+  const toDate = (v: Date | string | null | undefined): Date | null =>
+    v == null ? null : v instanceof Date ? v : new Date(v as string);
+
   const keyDetails = {
     kilometer: `${item.kilometer.toLocaleString("de-CH")} km`,
     transmission:
@@ -92,6 +96,7 @@ export default async function ListingPage({
 
   const basicData: Record<string, string> = {
     Karosserie: item.bodyType || na,
+    Ausführung: item.version ?? na,
     "Fahrzeugtyp": item.vehicleType?.toString() || na,
     Zustand: item.vehicleCondition?.toString() || na,
     Antrieb: item.driveType?.toString() || na,
@@ -142,13 +147,13 @@ export default async function ListingPage({
   };
 
   const inspectionAndWarranty: Record<string, string> = {
-    "Letzte MFK": item.lastInspectionDate
-      ? item.lastInspectionDate.toLocaleDateString("de-CH")
+    "Letzte MFK": toDate(item.lastInspectionDate)
+      ? toDate(item.lastInspectionDate)!.toLocaleDateString("de-CH")
       : na,
     "MFK bestanden": item.inspectionPassed ? "Ja" : "Nein",
     Garantieart: item.warranty?.toString() || na,
-    "Garantie ab": item.warrantyStartDate
-      ? item.warrantyStartDate.toLocaleDateString("de-CH")
+    "Garantie ab": toDate(item.warrantyStartDate)
+      ? toDate(item.warrantyStartDate)!.toLocaleDateString("de-CH")
       : na,
     "Garantiedauer (Monate)": item.duration?.toString() ?? na,
     "Garantie max. km": item.maxKm != null ? `${item.maxKm.toLocaleString("de-CH")} km` : na,
@@ -201,8 +206,6 @@ export default async function ListingPage({
   };
   const openingHours =
     dealerWithHours.openingHours?.map((oh) => {
-      const toDate = (v: Date | string | null): Date | null =>
-        v == null ? null : v instanceof Date ? v : new Date(v);
       const open = toDate(oh.openTime);
       const close = toDate(oh.closeTime);
       return {

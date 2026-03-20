@@ -151,6 +151,13 @@ function buildWhereClause(
     };
   }
 
+  if (params.kwFrom !== undefined || params.kwTo !== undefined) {
+    where.kw = {
+      ...(params.kwFrom ? { gte: params.kwFrom } : {}),
+      ...(params.kwTo ? { lte: params.kwTo } : {}),
+    };
+  }
+
   // EV filter
   if (!omitFilters.evs && params.evs) {
     if (params.evs === "only_ev") {
@@ -211,6 +218,75 @@ function buildWhereClause(
   // Boolean filter
   if (!omitFilters.metallic && params.metallic !== undefined) {
     where.metallic = params.metallic;
+  }
+
+  // Drive type
+  if (!omitFilters.driveType && params.driveType && params.driveType.length > 0) {
+    where.driveType = { in: params.driveType.map(toDbEnum) as any };
+  }
+
+  // Cubic capacity (Hubraum)
+  if (params.cubicCapacityFrom !== undefined || params.cubicCapacityTo !== undefined) {
+    where.cubicCapacity = {
+      ...(params.cubicCapacityFrom ? { gte: params.cubicCapacityFrom } : {}),
+      ...(params.cubicCapacityTo ? { lte: params.cubicCapacityTo } : {}),
+    };
+  }
+
+  // Cylinders
+  if (params.cylindersFrom !== undefined || params.cylindersTo !== undefined) {
+    where.cylinders = {
+      ...(params.cylindersFrom ? { gte: params.cylindersFrom } : {}),
+      ...(params.cylindersTo ? { lte: params.cylindersTo } : {}),
+    };
+  }
+
+  // Consumption (consumptionTotal)
+  if (params.consumptionFrom !== undefined || params.consumptionTo !== undefined) {
+    where.consumptionTotal = {
+      ...(params.consumptionFrom ? { gte: params.consumptionFrom } : {}),
+      ...(params.consumptionTo ? { lte: params.consumptionTo } : {}),
+    };
+  }
+
+  // CO2 emissions
+  if (params.co2From !== undefined || params.co2To !== undefined) {
+    where.co2Emission = {
+      ...(params.co2From ? { gte: params.co2From } : {}),
+      ...(params.co2To ? { lte: params.co2To } : {}),
+    };
+  }
+
+  // Energy efficiency label
+  if (!omitFilters.energyLabels && params.energyLabels && params.energyLabels.length > 0) {
+    where.energyLabel = { in: params.energyLabels.map(toDbEnum) as any };
+  }
+
+  // Emission standard (Euronorm)
+  if (!omitFilters.emissionStandards && params.emissionStandards && params.emissionStandards.length > 0) {
+    where.emissionStandard = { in: params.emissionStandards.map(toDbEnum) as any };
+  }
+
+  // Inspection passed (MFK)
+  if (!omitFilters.inspectionPassed && params.inspectionPassed === true) {
+    where.inspectionPassed = true;
+  }
+
+  // Has warranty
+  if (!omitFilters.hasWarranty && params.hasWarranty === true) {
+    where.warranty = { not: null };
+  }
+
+  // Interior color
+  if (!omitFilters.interiorColor && params.interiorColor && params.interiorColor.length > 0) {
+    where.interiorColor = { in: params.interiorColor.map(toDbEnum) as any };
+  }
+
+  // Days listed (createdAt >= now - N days)
+  if (!omitFilters.daysListed && params.daysListed != null) {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - params.daysListed);
+    where.createdAt = { gte: cutoff };
   }
 
   // JSON equipment filter - uses JSON path operators

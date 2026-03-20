@@ -1,6 +1,13 @@
 "use client";
 
-import { Phone, Mail, ExternalLink, MapPin, ArrowRight, Star } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  ExternalLink,
+  MapPin,
+  ArrowRight,
+  Star,
+} from "lucide-react";
 import Image from "next/image";
 import {
   Card,
@@ -64,14 +71,14 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                     ({seller.reviewCount} Bewertungen)
                   </span>
                 </div>
-                {seller.contactPerson && (
-                  <p className="text-sm text-muted-foreground">
-                    Ansprechpartner: {seller.contactPerson}
-                  </p>
-                )}
+
                 {seller.website && (
                   <Link
-                    href={seller.website.startsWith("http") ? seller.website : `https://${seller.website}`}
+                    href={
+                      seller.website.startsWith("http")
+                        ? seller.website
+                        : `https://${seller.website}`
+                    }
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1 text-sm text-primary underline-offset-4 hover:underline"

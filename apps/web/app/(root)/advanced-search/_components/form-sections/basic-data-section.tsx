@@ -332,34 +332,6 @@ export function BasicDataSection({
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex flex-col">
-              <Label className="text-base font-semibold">Unfallfahrzeug</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
-                Zurücksetzen
-              </span>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.CHECKBOX}
-                  name="condition-accident"
-                  label="Unfallfahrzeug"
-                />
-                <span className="text-sm text-muted-foreground">0</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.CHECKBOX}
-                  name="condition-noaccident"
-                  label="Kein Unfallfahrzeug"
-                />
-                <span className="text-sm text-muted-foreground">0</span>
-              </div>
-            </div>
-          </div>
         </div>
 
         <Separator />

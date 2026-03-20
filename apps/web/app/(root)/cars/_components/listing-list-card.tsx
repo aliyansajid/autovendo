@@ -6,9 +6,18 @@ import { Check, Star, Phone } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@repo/ui/src/components/separator";
 import type { VehicleListItem } from "@/types";
-import { formatPrice, formatNumber, formatRegistrationDate, formatEnumLabel } from "@/lib/helpers/format";
+import {
+  formatPrice,
+  formatNumber,
+  formatRegistrationDate,
+  formatEnumLabel,
+} from "@/lib/helpers/format";
 import { getImageUrl } from "@/lib/helpers/image";
-import { buildVehicleTitle, extractEquipment, formatEquipmentLabel } from "@/lib/helpers/vehicle";
+import {
+  buildVehicleTitle,
+  extractEquipment,
+  formatEquipmentLabel,
+} from "@/lib/helpers/vehicle";
 
 export interface ListingListCardProps {
   item: VehicleListItem;
@@ -27,7 +36,10 @@ export function ListingListCard({
   const title = buildVehicleTitle(item.make, item.model, item.version);
   const formattedPrice = formatPrice(item.price);
   const formattedKm = formatNumber(item.kilometer);
-  const registrationDate = formatRegistrationDate(item.registrationMonth, item.registrationYear);
+  const registrationDate = formatRegistrationDate(
+    item.registrationMonth,
+    item.registrationYear,
+  );
   const equipmentList = extractEquipment(item.equipment, 4);
 
   return (
@@ -173,7 +185,7 @@ export function ListingListCard({
           {showDealerLink && (
             <Link
               href={`/dealers/${item.dealer.id}`}
-              className="mt-4 text-sm text-primary hover:underline relative z-20"
+              className="mt-4 text-sm text-primary underline-offset-4 hover:underline relative z-20"
             >
               Alle Fahrzeuge von diesem Händler
             </Link>

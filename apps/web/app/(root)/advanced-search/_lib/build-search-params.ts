@@ -38,11 +38,22 @@ export function buildSearchParams(
   if (formValues["price-to"] != null && formValues["price-to"] !== "") {
     params.priceTo = String(formValues["price-to"]);
   }
-  if (formValues["power-from"] != null && formValues["power-from"] !== "") {
-    params.powerFrom = String(formValues["power-from"]);
-  }
-  if (formValues["power-to"] != null && formValues["power-to"] !== "") {
-    params.powerTo = String(formValues["power-to"]);
+  // Power: emit kwFrom/kwTo if powerType=kw, else powerFrom/powerTo (hp)
+  const powerType = formValues["powerType"] ?? "ps";
+  if (powerType === "kw") {
+    if (formValues["power-from"] != null && formValues["power-from"] !== "") {
+      params.kwFrom = String(formValues["power-from"]);
+    }
+    if (formValues["power-to"] != null && formValues["power-to"] !== "") {
+      params.kwTo = String(formValues["power-to"]);
+    }
+  } else {
+    if (formValues["power-from"] != null && formValues["power-from"] !== "") {
+      params.powerFrom = String(formValues["power-from"]);
+    }
+    if (formValues["power-to"] != null && formValues["power-to"] !== "") {
+      params.powerTo = String(formValues["power-to"]);
+    }
   }
 
   // Condition (condition-new, condition-demonstration, ...)
@@ -81,7 +92,7 @@ export function buildSearchParams(
   }
   if (transmission.length > 0) params.transmission = transmission;
 
-  // Color (color-black, ...) - only exterior; int-* is interior, backend may not support
+  // Exterior color (color-black, ...)
   const color: string[] = [];
   const colorKeys = [
     "anthracite", "beige", "black", "blue", "bordeaux", "brown", "gold", "gray", "green",
@@ -104,6 +115,81 @@ export function buildSearchParams(
   // Metallic
   if (formValues.metallic === true) params.metallic = "true";
   if (formValues.metallic === false) params.metallic = "false";
+
+  // Drive type (drive-all, drive-front, drive-rear)
+  const driveType: string[] = [];
+  for (const key of ["all", "front", "rear"]) {
+    if (formValues[`drive-${key}`] === true) driveType.push(key);
+  }
+  if (driveType.length > 0) params.driveType = driveType;
+
+  // Cubic capacity (Hubraum)
+  if (formValues["capacity-from"] != null && formValues["capacity-from"] !== "") {
+    params.cubicCapacityFrom = String(formValues["capacity-from"]);
+  }
+  if (formValues["capacity-to"] != null && formValues["capacity-to"] !== "") {
+    params.cubicCapacityTo = String(formValues["capacity-to"]);
+  }
+
+  // Cylinders
+  if (formValues["cylinder-from"] != null && formValues["cylinder-from"] !== "") {
+    params.cylindersFrom = String(formValues["cylinder-from"]);
+  }
+  if (formValues["cylinder-to"] != null && formValues["cylinder-to"] !== "") {
+    params.cylindersTo = String(formValues["cylinder-to"]);
+  }
+
+  // Consumption
+  if (formValues["consumption-from"] != null && formValues["consumption-from"] !== "") {
+    params.consumptionFrom = String(formValues["consumption-from"]);
+  }
+  if (formValues["consumption-to"] != null && formValues["consumption-to"] !== "") {
+    params.consumptionTo = String(formValues["consumption-to"]);
+  }
+
+  // CO2 emissions
+  if (formValues["emissions-from"] != null && formValues["emissions-from"] !== "") {
+    params.co2From = String(formValues["emissions-from"]);
+  }
+  if (formValues["emissions-to"] != null && formValues["emissions-to"] !== "") {
+    params.co2To = String(formValues["emissions-to"]);
+  }
+
+  // Energy efficiency label (energy-a, energy-b, ...)
+  const energyLabels: string[] = [];
+  for (const key of ["a", "b", "c", "d", "e", "f", "g"]) {
+    if (formValues[`energy-${key}`] === true) energyLabels.push(key);
+  }
+  if (energyLabels.length > 0) params.energyLabels = energyLabels;
+
+  // Emission standard / Euronorm (eu-euro-1, eu-euro-2, ...)
+  const emissionStandards: string[] = [];
+  for (const [key, value] of Object.entries(formValues)) {
+    if (key.startsWith("eu-") && value === true) {
+      emissionStandards.push(key.replace("eu-", ""));
+    }
+  }
+  if (emissionStandards.length > 0) params.emissionStandards = emissionStandards;
+
+  // Inspection passed (MFK)
+  if (formValues["condition-mfk"] === true) params.inspectionPassed = "true";
+
+  // Has warranty
+  if (formValues["condition-warranty"] === true) params.hasWarranty = "true";
+
+  // Interior color (int-black, ...)
+  const interiorColor: string[] = [];
+  for (const key of colorKeys) {
+    if (formValues[`int-${key}`] === true) interiorColor.push(key);
+  }
+  if (interiorColor.length > 0) params.interiorColor = interiorColor;
+
+  // Days listed
+  const daysListed = formValues["daysListed"];
+  if (daysListed && daysListed !== "any") {
+    const days = parseInt(String(daysListed).split(" ")[0], 10);
+    if (!isNaN(days)) params.daysListed = String(days);
+  }
 
   return params;
 }

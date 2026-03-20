@@ -209,6 +209,39 @@ export const VehicleSearchSchema = z.object({
   // Special filters
   evs: z.enum(["only_ev", "no_ev"]).optional(),
   metallic: z.boolean().optional(),
+
+  // kW-based power filter (separate from hp/powerFrom/powerTo)
+  kwFrom: z.number().int().nonnegative().optional(),
+  kwTo: z.number().int().nonnegative().optional(),
+
+  // Interior color
+  interiorColor: z.array(z.string()).optional(),
+
+  // Days since listed
+  daysListed: z.number().int().positive().optional(),
+
+  // Drive type
+  driveType: z.array(z.string()).optional(),
+
+  // Engine / capacity
+  cubicCapacityFrom: z.number().int().nonnegative().optional(),
+  cubicCapacityTo: z.number().int().nonnegative().optional(),
+  cylindersFrom: z.number().int().nonnegative().optional(),
+  cylindersTo: z.number().int().nonnegative().optional(),
+
+  // Consumption / emissions
+  consumptionFrom: z.number().nonnegative().optional(),
+  consumptionTo: z.number().nonnegative().optional(),
+  co2From: z.number().int().nonnegative().optional(),
+  co2To: z.number().int().nonnegative().optional(),
+
+  // Energy & emission standard
+  energyLabels: z.array(z.string()).optional(),
+  emissionStandards: z.array(z.string()).optional(),
+
+  // Inspection / warranty
+  inspectionPassed: z.boolean().optional(),
+  hasWarranty: z.boolean().optional(),
 });
 
 export type VehicleSearchParams = z.infer<typeof VehicleSearchSchema>;
