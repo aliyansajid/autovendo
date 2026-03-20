@@ -103,23 +103,26 @@ export const DealerDetailContent = ({
     defaultValues: { name: "", phone: "", email: "", message: "" },
   });
 
-  async function onSubmit(values: z.infer<typeof dealerContactSchema>) {
-    setIsSubmitting(true);
-    try {
-      const result = await sendDealerContactEmail(dealer.id, values);
-      if (result.success) {
-        toast.success("Nachricht gesendet! Der Händler meldet sich bei Ihnen.");
-        form.reset();
-      } else {
-        toast.error(result.error ?? "Nachricht konnte nicht gesendet werden.");
-      }
-    } catch (error) {
-      toast.error("Ein unerwarteter Fehler ist aufgetreten.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
+  function onSubmit(values: z.infer<typeof dealerContactSchema>) {
+    startTransition(async () => {
+      try {
+        const result = await sendDealerContactEmail(dealer.id, values);
 
+        if (result.success) {
+          toast.success(
+            "Nachricht gesendet! Der Händler meldet sich bei Ihnen.",
+          );
+          form.reset();
+        } else {
+          toast.error(
+            result.error ?? "Nachricht konnte nicht gesendet werden.",
+          );
+        }
+      } catch (error) {
+        toast.error("Ein unerwarteter Fehler ist aufgetreten.");
+      }
+    });
+  }
   const rating = googleData?.rating ?? null;
   const reviewCount = googleData?.reviewCount ?? null;
   const fullAddress = `${dealer.streetAddress}, ${dealer.zipCode} ${dealer.city}`;

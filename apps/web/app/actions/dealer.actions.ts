@@ -39,10 +39,9 @@ const DAY_LABELS: Record<string, string> = {
   SUNDAY: "Sonntag",
 };
 
-const REVERSE_DAY_LABELS: Record<string, string> = Object.entries(DAY_LABELS).reduce(
-  (acc, [key, value]) => ({ ...acc, [value]: key }),
-  {},
-);
+const REVERSE_DAY_LABELS: Record<string, string> = Object.entries(
+  DAY_LABELS,
+).reduce((acc, [key, value]) => ({ ...acc, [value]: key }), {});
 
 function toTimeString(date: Date | string | null): string {
   if (!date) return "";
@@ -88,14 +87,25 @@ export async function updateDealerProfile(
         contactPerson: values.contactPerson,
         phoneNumber: values.phoneNumber,
         businessEmail: values.businessEmail,
-        coverImage: typeof values.coverImage === "string" ? values.coverImage : undefined,
+        coverImage:
+          typeof values.coverImage === "string" ? values.coverImage : undefined,
       },
       update: {
         companyName: values.companyName,
         description: values.description,
         website: values.website,
-        logo: typeof values.logo === "string" ? values.logo : (values.logo === null ? null : undefined),
-        coverImage: typeof values.coverImage === "string" ? values.coverImage : (values.coverImage === null ? null : undefined),
+        logo:
+          typeof values.logo === "string"
+            ? values.logo
+            : values.logo === null
+              ? null
+              : undefined,
+        coverImage:
+          typeof values.coverImage === "string"
+            ? values.coverImage
+            : values.coverImage === null
+              ? null
+              : undefined,
         streetAddress: values.streetAddress,
         zipCode: values.zipCode,
         city: values.city,
@@ -377,7 +387,7 @@ export async function sendDealerContactEmail(
         senderName: data.name,
         senderEmail: data.email,
         senderPhone: data.phone,
-        message: data.message,
+        message: data.message || "",
       }),
     });
 
