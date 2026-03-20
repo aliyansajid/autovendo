@@ -100,6 +100,7 @@ export interface DealerProfile {
   contactPerson: string;
   phoneNumber: string;
   businessEmail: string;
+  coverImage: string | null;
   openingHours: {
     day: string;
     isOpen: boolean;

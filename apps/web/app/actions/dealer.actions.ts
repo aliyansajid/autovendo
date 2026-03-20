@@ -83,12 +83,14 @@ export async function updateDealerProfile(
         contactPerson: values.contactPerson,
         phoneNumber: values.phoneNumber,
         businessEmail: values.businessEmail,
+        coverImage: typeof values.coverImage === "string" ? values.coverImage : undefined,
       },
       update: {
         companyName: values.companyName,
         description: values.description,
         website: values.website,
         logo: typeof values.logo === "string" ? values.logo : (values.logo === null ? null : undefined),
+        coverImage: typeof values.coverImage === "string" ? values.coverImage : (values.coverImage === null ? null : undefined),
         streetAddress: values.streetAddress,
         zipCode: values.zipCode,
         city: values.city,
@@ -147,6 +149,7 @@ export async function getDealerProfile(
       contactPerson: true,
       phoneNumber: true,
       businessEmail: true,
+      coverImage: true,
       openingHours: {
         select: { day: true, isOpen: true, openTime: true, closeTime: true },
       },

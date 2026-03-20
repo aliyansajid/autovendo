@@ -45,6 +45,7 @@ export const dealerProfileSchema = z.object({
   description: optionalString,
   website: optionalUrl,
   logo: optionalImage,
+  coverImage: optionalImage,
   streetAddress: z
     .string()
     .min(5, "Address must be at least 5 characters")

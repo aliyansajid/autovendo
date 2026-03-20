@@ -44,6 +44,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       description: initialData?.description || "",
       website: initialData?.website || "",
       logo: initialData?.logo || undefined,
+      coverImage: initialData?.coverImage || undefined,
       streetAddress: initialData?.streetAddress || "",
       country: "Switzerland" as const,
       zipCode: initialData?.zipCode || "",
@@ -60,13 +61,48 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
             closeTime: oh.closeTime || "18:00",
           }))
         : [
-            { day: "Montag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "Dienstag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "Mittwoch", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "Donnerstag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "Freitag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "Samstag", isOpen: false, openTime: "08:00", closeTime: "18:00" },
-            { day: "Sonntag", isOpen: false, openTime: "08:00", closeTime: "18:00" },
+            {
+              day: "Montag",
+              isOpen: true,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "Dienstag",
+              isOpen: true,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "Mittwoch",
+              isOpen: true,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "Donnerstag",
+              isOpen: true,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "Freitag",
+              isOpen: true,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "Samstag",
+              isOpen: false,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "Sonntag",
+              isOpen: false,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
           ],
     },
   });
@@ -101,6 +137,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       try {
         let imageUrl = values.image;
         let logoUrl = values.logo;
+        let coverImageUrl = values.coverImage;
 
         if (values.image instanceof File) {
           imageUrl = await uploadFile(values.image, "profiles");
@@ -110,27 +147,30 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           logoUrl = await uploadFile(values.logo, "branding");
         }
 
+        if (values.coverImage instanceof File) {
+          coverImageUrl = await uploadFile(values.coverImage, "branding");
+        }
+
         // Update user
         const userUpdates: { name?: string; image?: string } = {};
-        
+
         // Normalize values for comparison
         const currentName = values.name || "";
         const initialName = initialData?.user?.name || "";
         const currentImage = (imageUrl as string) || null;
         const initialImage = initialData?.user?.image || null;
 
-        if (currentName !== initialName)
-          userUpdates.name = currentName;
+        if (currentName !== initialName) userUpdates.name = currentName;
         if (currentImage !== initialImage)
           userUpdates.image = currentImage as string;
 
         if (Object.keys(userUpdates).length > 0) {
           const { error } = await authClient.updateUser(userUpdates);
           if (error) {
-            // Ignore "No fields to update" as it's not a critical failure here
-            if (error.message !== "No fields to update") {
-              toast.error(error.message || "Benutzerinformationen konnten nicht aktualisiert werden");
-            }
+            toast.error(
+              error.message ||
+                "Benutzerinformationen konnten nicht aktualisiert werden",
+            );
           }
         }
 
@@ -142,7 +182,9 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           });
 
           if (error)
-            toast.error(error.message || "E-Mail-Änderung konnte nicht initiiert werden");
+            toast.error(
+              error.message || "E-Mail-Änderung konnte nicht initiiert werden",
+            );
 
           toast.info(
             "Eine Bestätigungs-E-Mail wurde an Ihre neue E-Mail-Adresse gesendet.",
@@ -159,24 +201,28 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           ...values,
           image: (imageUrl as string) || null,
           logo: (logoUrl as string) || null,
+          coverImage: (coverImageUrl as string) || null,
         });
 
         if (result.success) {
-          toast.success(
-            result.message === "Profile updated successfully" 
-              ? "Profil erfolgreich aktualisiert" 
-              : result.message
-          );
+          toast.success(result.message || "Profil erfolgreich aktualisiert");
           form.reset({
             ...values,
             image: imageUrl as string | undefined,
             logo: logoUrl as string | undefined,
+            coverImage: coverImageUrl as string | undefined,
           });
         } else {
-          toast.error(result.error || "Unternehmensprofil konnte nicht aktualisiert werden");
+          toast.error(
+            result.error ||
+              "Unternehmensprofil konnte nicht aktualisiert werden",
+          );
         }
       } catch (error: any) {
-        toast.error(error.message || "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+        toast.error(
+          error.message ||
+            "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+        );
       }
     });
   }
@@ -220,9 +266,13 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                 />
                 {form.watch("image") && (
                   <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
-                    <img 
-                      src={form.watch("image") instanceof File ? URL.createObjectURL(form.watch("image") as File) : (form.watch("image") as string)} 
-                      alt="Profilbild Vorschau" 
+                    <img
+                      src={
+                        form.watch("image") instanceof File
+                          ? URL.createObjectURL(form.watch("image") as File)
+                          : (form.watch("image") as string)
+                      }
+                      alt="Profilbild Vorschau"
                       className="object-cover w-full h-full"
                     />
                     <Button
@@ -230,7 +280,9 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                       variant="destructive"
                       size="sm"
                       className="absolute top-1 right-1 h-6 w-6 p-0 rounded-full"
-                      onClick={() => form.setValue("image", undefined, { shouldDirty: true })}
+                      onClick={() =>
+                        form.setValue("image", undefined, { shouldDirty: true })
+                      }
                     >
                       ✕
                     </Button>
@@ -289,9 +341,13 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                   />
                   {form.watch("logo") && (
                     <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
-                      <img 
-                        src={form.watch("logo") instanceof File ? URL.createObjectURL(form.watch("logo") as File) : (form.watch("logo") as string)} 
-                        alt="Firmenlogo Vorschau" 
+                      <img
+                        src={
+                          form.watch("logo") instanceof File
+                            ? URL.createObjectURL(form.watch("logo") as File)
+                            : (form.watch("logo") as string)
+                        }
+                        alt="Firmenlogo Vorschau"
                         className="object-cover w-full h-full"
                       />
                       <Button
@@ -299,7 +355,11 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                         variant="destructive"
                         size="sm"
                         className="absolute top-1 right-1 h-6 w-6 p-0 rounded-full"
-                        onClick={() => form.setValue("logo", undefined, { shouldDirty: true })}
+                        onClick={() =>
+                          form.setValue("logo", undefined, {
+                            shouldDirty: true,
+                          })
+                        }
                       >
                         ✕
                       </Button>
@@ -307,6 +367,44 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                   )}
                 </div>
               </div>
+
+              <div className="space-y-4">
+                <CustomFormField
+                  control={form.control}
+                  fieldType={FormFieldType.INPUT}
+                  inputType="file"
+                  name="coverImage"
+                  label="Titelbild"
+                  disabled={isPending}
+                />
+                {form.watch("coverImage") && (
+                  <div className="relative w-full h-40 rounded-lg overflow-hidden border">
+                    <img
+                      src={
+                        form.watch("coverImage") instanceof File
+                          ? URL.createObjectURL(form.watch("coverImage") as File)
+                          : (form.watch("coverImage") as string)
+                      }
+                      alt="Titelbild Vorschau"
+                      className="object-cover w-full h-full"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
+                      onClick={() =>
+                        form.setValue("coverImage", undefined, {
+                          shouldDirty: true,
+                        })
+                      }
+                    >
+                      ✕
+                    </Button>
+                  </div>
+                )}
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <CustomFormField
                   control={form.control}
@@ -390,7 +488,9 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         <Card>
           <CardHeader>
             <CardTitle>Beschreibung</CardTitle>
-            <CardDescription>Erzählen Sie uns von Ihrem Unternehmen.</CardDescription>
+            <CardDescription>
+              Erzählen Sie uns von Ihrem Unternehmen.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <FieldGroup>
