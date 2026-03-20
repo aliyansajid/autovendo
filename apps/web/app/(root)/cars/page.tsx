@@ -22,6 +22,7 @@ import { getVehiclesWithFacetsCached } from "@/app/actions/vehicles.actions";
 import { VehicleSearchSchema } from "@/types";
 import { parseSearchParams } from "@/lib/helpers/vehicle";
 import { ListingControls } from "./_components/listing-controls";
+import { formatCount } from "@/lib/helpers/format";
 
 /**
  * Cars List Page - Pure UI Component
@@ -40,7 +41,7 @@ export default async function CarsPage(props: {
   const query = VehicleSearchSchema.parse(parsed);
 
   // Helper to build pagination URLs
-  function buildUrl(params: Record<string, any>): string {
+  function buildUrl(params: Record<string, string | string[] | number | undefined>): string {
     const sp = new URLSearchParams();
     for (const [key, value] of Object.entries({ ...searchParams, ...params })) {
       if (value !== undefined && value !== null) {
@@ -90,7 +91,7 @@ export default async function CarsPage(props: {
           <div className="lg:col-span-3 flex flex-col gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>{total} Angebote</CardTitle>
+                <CardTitle>{formatCount(total)} Angebote</CardTitle>
               </CardHeader>
               <CardContent className="flex items-center gap-3">
                 <Suspense

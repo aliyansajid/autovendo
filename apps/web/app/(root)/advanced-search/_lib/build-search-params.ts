@@ -19,6 +19,14 @@ export function buildSearchParams(
     params.make = make.filter((m): m is string => typeof m === "string");
   }
 
+  // Exclude make (array)
+  const excludeMake = formValues.excludeMake;
+  if (Array.isArray(excludeMake) && excludeMake.length > 0) {
+    params.excludeMake = excludeMake.filter(
+      (m): m is string => typeof m === "string",
+    );
+  }
+
   // Ranges
   if (formValues["year-from"] != null && formValues["year-from"] !== "") {
     params.registrationFrom = String(formValues["year-from"]);

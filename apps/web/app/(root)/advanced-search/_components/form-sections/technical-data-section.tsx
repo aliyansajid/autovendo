@@ -35,6 +35,14 @@ export function TechnicalDataSection({
     setValue("power-to", powerRange[1]?.toString() ?? "1500");
   }, [powerRange, setValue]);
 
+  const currentFuelEnum = vehicleType === "utility"
+    ? utilityFuelTypeEnum
+    : vehicleType === "truck"
+      ? truckFuelTypeEnum
+      : vehicleType === "camper"
+        ? camperFuelTypeEnum
+        : carFuelTypeEnum;
+
   return (
     <AccordionItem value="tech" className="border-none">
       <AccordionTrigger className="flex items-center text-xl font-bold text-primary hover:no-underline">
@@ -45,7 +53,10 @@ export function TechnicalDataSection({
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Treibstoff</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => currentFuelEnum.forEach((t) => setValue(`fuel-${t.value}`, false))}
+              >
                 Zurücksetzen
               </span>
             </div>
@@ -82,7 +93,10 @@ export function TechnicalDataSection({
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Getriebe</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => TransmissionTypeEnum.forEach((t) => setValue(`transmission-${t.value}`, false))}
+              >
                 Zurücksetzen
               </span>
             </div>
@@ -112,25 +126,33 @@ export function TechnicalDataSection({
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Antrieb</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => DriveTypeEnum.forEach((t) => setValue(`drive-${t.value}`, false))}
+              >
                 Zurücksetzen
               </span>
             </div>
             <div className="space-y-3">
-              {DriveTypeEnum.map((type) => (
-                <div
-                  key={type.value}
-                  className="flex items-center justify-between"
-                >
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.CHECKBOX}
-                    name={`drive-${type.value}`}
-                    label={type.label}
-                  />
-                  <span className="text-sm text-muted-foreground">0</span>
-                </div>
-              ))}
+              {DriveTypeEnum.map((type) => {
+                const count = facets?.driveType?.[type.value];
+                return (
+                  <div
+                    key={type.value}
+                    className="flex items-center justify-between"
+                  >
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.CHECKBOX}
+                      name={`drive-${type.value}`}
+                      label={type.label}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {formatCount(count ?? 0)}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -140,7 +162,10 @@ export function TechnicalDataSection({
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Label className="text-base font-semibold">Leistung</Label>
-                <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+                <span
+                  className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                  onClick={() => { setValue("power", [0, 1500]); setValue("power-from", "0"); setValue("power-to", "1500"); }}
+                >
                   Zurücksetzen
                 </span>
               </div>
@@ -186,7 +211,10 @@ export function TechnicalDataSection({
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Hubraum</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => { setValue("capacity", [1, 8000]); setValue("capacity-from", ""); setValue("capacity-to", ""); }}
+              >
                 Zurücksetzen
               </span>
             </div>
@@ -220,7 +248,10 @@ export function TechnicalDataSection({
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Zylinder</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => { setValue("cylinder", [1, 16]); setValue("cylinder-from", ""); setValue("cylinder-to", ""); }}
+              >
                 Zurücksetzen
               </span>
             </div>

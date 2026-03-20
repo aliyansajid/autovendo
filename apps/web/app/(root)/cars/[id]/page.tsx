@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 import { getVehicleCached } from "@/app/actions/vehicles.actions";
 import { notFound } from "next/navigation";
 import { formatVehicleName } from "@/lib/helpers/vehicle";
-import { formatEnumLabel } from "@/lib/helpers/format";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import { ImageGallery } from "../_components/image-gallery";
@@ -38,10 +37,150 @@ import { getSimilarVehicles } from "@/app/actions/vehicles.actions";
 import { DAY_LABELS } from "@/lib/helpers/format";
 import type { ListingProps } from "@/types";
 
-/**
- * Vehicle Detail Page - Pure UI Component
- * All business logic handled in server actions
- */
+// ─── German label maps ────────────────────────────────────────────────────────
+
+const FUEL_LABELS: Record<string, string> = {
+  PETROL: "Benzin",
+  DIESEL: "Diesel",
+  ELECTRIC: "Elektro",
+  ETHANOL_PETROL: "Ethanol/Benzin",
+  CNG_PETROL: "Erdgas/Benzin",
+  LPG_PETROL: "Flüssiggas/Benzin",
+  MHEV_DIESEL: "Mild-Hybrid Diesel",
+  MHEV_PETROL: "Mild-Hybrid Benzin",
+  PHEV_DIESEL: "Plug-in-Hybrid Diesel",
+  PHEV_PETROL: "Plug-in-Hybrid Benzin",
+  HEV_DIESEL: "Hybrid Diesel",
+  HEV_PETROL: "Hybrid Benzin",
+  HYDROGEN: "Wasserstoff",
+};
+
+const TRANSMISSION_LABELS: Record<string, string> = {
+  AUTOMATIC: "Automatik",
+  MANUAL: "Manuell",
+  AUTOMATIC_STEPLESS: "Stufenautomatik",
+  SEMI_AUTOMATIC: "Halbautomatik",
+};
+
+const DRIVE_LABELS: Record<string, string> = {
+  ALL: "Allrad",
+  FRONT: "Frontantrieb",
+  REAR: "Hinterradantrieb",
+};
+
+const CONDITION_LABELS: Record<string, string> = {
+  NEW: "Neu",
+  DEMONSTRATION: "Vorführfahrzeug",
+  PRE_REGISTERED: "Neuimmatrikuliert",
+  USED: "Occasion",
+  OLDTIMER: "Oldtimer",
+};
+
+const VEHICLE_TYPE_LABELS: Record<string, string> = {
+  CAR: "Personenwagen",
+  UTILITY: "Nutzfahrzeug",
+  TRUCK: "Lastwagen",
+  CAMPER: "Wohnmobil",
+};
+
+const COLOR_LABELS: Record<string, string> = {
+  ANTHRACITE: "Anthrazit",
+  BEIGE: "Beige",
+  BLACK: "Schwarz",
+  BLUE: "Blau",
+  BORDEAUX: "Bordeaux",
+  BROWN: "Braun",
+  GOLD: "Gold",
+  GRAY: "Grau",
+  GREEN: "Grün",
+  MULTICOLOURED: "Mehrfarbig",
+  ORANGE: "Orange",
+  PINK: "Pink",
+  RED: "Rot",
+  SILVER: "Silber",
+  TURQUOISE: "Türkis",
+  VIOLET: "Violett",
+  WHITE: "Weiss",
+  YELLOW: "Gelb",
+  OTHER: "Andere",
+};
+
+const BATTERY_OWNERSHIP_LABELS: Record<string, string> = {
+  BATTERY_INCLUDED: "Batterie inklusive",
+  BATTERY_RENT_REQUIRED: "Batteriemiete erforderlich",
+};
+
+const CHARGING_STANDARD_LABELS: Record<string, string> = {
+  TYPE_1: "Typ 1",
+  TYPE_2: "Typ 2",
+};
+
+const CHARGING_FAST_LABELS: Record<string, string> = {
+  CCS: "CCS",
+  CSS_2: "CCS 2",
+  CHADEMO: "CHAdeMO",
+  SUPERCHARGER: "Supercharger",
+};
+
+const WARRANTY_LABELS: Record<string, string> = {
+  FROM_DELIVERY: "Ab Lieferung",
+  FROM_FIRST_REGISTRATION: "Ab Erstzulassung",
+  FROM_DATE: "Ab Datum",
+};
+
+const EMISSION_LABELS: Record<string, string> = {
+  EURO_1: "Euro 1",
+  EURO_2: "Euro 2",
+  EURO_3: "Euro 3",
+  EURO_4: "Euro 4",
+  EURO_5: "Euro 5",
+  EURO_5_PLUS: "Euro 5+",
+  EURO_6: "Euro 6",
+  EURO_6A: "Euro 6a",
+  EURO_6B: "Euro 6b",
+  EURO_6C: "Euro 6c",
+  EURO_6D: "Euro 6d",
+  EURO_6D_ISC: "Euro 6d ISC",
+  EURO_6D_ISC_FCM: "Euro 6d ISC FCM",
+  EURO_6D_TEMP: "Euro 6d-temp",
+  EURO_6D_TEMP_EVAP: "Euro 6d-temp EVAP",
+  EURO_6D_TEMP_EVAP_ISC: "Euro 6d-temp EVAP ISC",
+  EURO_6D_TEMP_ISC: "Euro 6d-temp ISC",
+  EURO_6E: "Euro 6e",
+};
+
+// ─── Data building helpers ────────────────────────────────────────────────────
+
+/** Returns the value only if it's not null/undefined/empty. */
+function f(value: string | null | undefined): string | undefined {
+  return value != null && value !== "" ? value : undefined;
+}
+
+/** Format an integer with de-CH thousands separator + suffix. */
+function n(value: number | null | undefined, suffix = ""): string | undefined {
+  if (value == null) return undefined;
+  const formatted = value.toLocaleString("de-CH");
+  return suffix ? `${formatted} ${suffix}` : formatted;
+}
+
+/** Format a float with de-CH locale + suffix. */
+function fl(value: number | null | undefined, suffix = ""): string | undefined {
+  if (value == null) return undefined;
+  const formatted = value.toLocaleString("de-CH", { maximumFractionDigits: 2 });
+  return suffix ? `${formatted} ${suffix}` : formatted;
+}
+
+/** Remove undefined entries from a Record. */
+function filterObj(
+  obj: Record<string, string | undefined>,
+): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(obj).filter((e): e is [string, string] => e[1] != null),
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function ListingPage({
   params,
 }: {
@@ -50,9 +189,7 @@ export default async function ListingPage({
   const { id } = await params;
   const item = await getVehicleCached(id);
 
-  if (!item) {
-    notFound();
-  }
+  if (!item) notFound();
 
   const r2Domain = process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || "";
   const getFullImageUrl = (key: string | undefined) => {
@@ -65,124 +202,111 @@ export default async function ListingPage({
   const price = item.price;
   const images = item.images.map(getFullImageUrl);
 
-  const na = "Keine Angabe";
-
   // unstable_cache serializes Date objects to strings — must re-wrap
   const toDate = (v: Date | string | null | undefined): Date | null =>
     v == null ? null : v instanceof Date ? v : new Date(v as string);
 
-  const keyDetails = {
-    kilometer: `${item.kilometer.toLocaleString("de-CH")} km`,
-    transmission:
-      item.transmissionType?.toString() ||
-      item.gearTransmission?.toString() ||
-      na,
-    firstRegistration: `${String(item.registrationMonth).padStart(
-      2,
-      "0",
-    )}/${item.registrationYear}`,
-    fuelType: item.fuelType?.toString() || na,
-    power:
-      item.kw != null || item.hp != null
-        ? `${item.kw ?? 0} kW${item.hp != null ? ` (${item.hp} PS)` : ""}`
-        : na,
-    sellerType: "Händler",
-    warranty:
-      item.warranty != null
-        ? `${item.duration ?? 0} Monate`
-        : na,
-    mfk: item.inspectionPassed ? "Ja" : "Nein",
-  };
+  // ── Derived formatted values ──
+  const fuelLabel = item.fuelType ? (FUEL_LABELS[item.fuelType] ?? item.fuelType) : undefined;
+  const transmissionLabel =
+    item.transmissionType
+      ? (TRANSMISSION_LABELS[item.transmissionType] ?? item.transmissionType)
+      : item.gearTransmission
+        ? (TRANSMISSION_LABELS[item.gearTransmission] ?? item.gearTransmission)
+        : undefined;
+  const powerLabel =
+    item.kw != null || item.hp != null
+      ? [
+          item.kw != null ? `${item.kw.toLocaleString("de-CH")} kW` : null,
+          item.hp != null ? `(${item.hp.toLocaleString("de-CH")} PS)` : null,
+        ]
+          .filter(Boolean)
+          .join(" ")
+      : undefined;
 
-  const basicData: Record<string, string> = {
-    Karosserie: item.bodyType || na,
-    Ausführung: item.version ?? na,
-    "Fahrzeugtyp": item.vehicleType?.toString() || na,
-    Zustand: item.vehicleCondition?.toString() || na,
-    Antrieb: item.driveType?.toString() || na,
-    Sitzplätze: item.seats?.toString() ?? na,
-    Türen: item.doors?.toString() ?? na,
+  // ── Data sections ──
+  const basicData = filterObj({
+    Karosserie: f(item.bodyType),
+    Ausführung: f(item.version),
+    Fahrzeugtyp: item.vehicleType ? (VEHICLE_TYPE_LABELS[item.vehicleType] ?? item.vehicleType) : undefined,
+    Zustand: item.vehicleCondition ? (CONDITION_LABELS[item.vehicleCondition] ?? item.vehicleCondition) : undefined,
+    Antrieb: item.driveType ? (DRIVE_LABELS[item.driveType] ?? item.driveType) : undefined,
+    Sitzplätze: n(item.seats),
+    Türen: n(item.doors),
     "Angebots-Nr.": item.id.slice(-8),
-  };
+  });
 
-  const vehicleHistory: Record<string, string> = {
+  const vehicleHistory = filterObj({
     Kilometerstand: `${item.kilometer.toLocaleString("de-CH")} km`,
     Erstzulassung: `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
-  };
+  });
 
-  const technicalData: Record<string, string> = {
-    Leistung:
-      item.kw != null || item.hp != null
-        ? `${item.kw ?? 0} kW${item.hp != null ? ` (${item.hp} PS)` : ""}`
-        : na,
-    Getriebe: item.gearTransmission?.toString() || item.transmissionType?.toString() || na,
-    Hubraum: item.cubicCapacity
-      ? `${item.cubicCapacity.toLocaleString("de-CH")} ccm`
-      : na,
-    Gänge: item.numberOfGears?.toString() ?? na,
-    Zylinder: item.cylinders?.toString() ?? na,
-    Leergewicht: item.emptyWeight
-      ? `${item.emptyWeight.toLocaleString("de-CH")} kg`
-      : na,
-    Nutzlast: item.loadCapacity
-      ? `${item.loadCapacity.toLocaleString("de-CH")} kg`
-      : na,
-    Radstand: item.wheelbase ? `${item.wheelbase.toLocaleString("de-CH")} mm` : na,
-    Länge: item.length ? `${item.length.toLocaleString("de-CH")} mm` : na,
-    Breite: item.width ? `${item.width.toLocaleString("de-CH")} mm` : na,
-    Höhe: item.height ? `${item.height.toLocaleString("de-CH")} mm` : na,
-    "Anhängelast gebremst": item.towingCapacityBraked
-      ? `${item.towingCapacityBraked.toLocaleString("de-CH")} kg`
-      : na,
-  };
+  const lastInspectionDate = toDate(item.lastInspectionDate);
+  const warrantyStartDate = toDate(item.warrantyStartDate);
 
-  const energyConsumption: Record<string, string | undefined> = {
-    "Schadstoffklasse": item.emissionStandard?.toString() || na,
-    Treibstoff: item.fuelType?.toString() || na,
-    "CO₂-Emissionen (komb.)": item.co2Emission != null ? `${item.co2Emission} g/km` : na,
-    "Verbrauch Stadt": item.consumptionCity != null ? `${item.consumptionCity} l/100km` : na,
-    "Verbrauch Land": item.consumptionCountry != null ? `${item.consumptionCountry} l/100km` : na,
-    "Verbrauch kombiniert": item.consumptionTotal != null ? `${item.consumptionTotal} l/100km` : na,
-    efficiencyClass: item.energyLabel ?? undefined,
-  };
+  const inspectionAndWarranty = filterObj({
+    "Letzte MFK": lastInspectionDate
+      ? lastInspectionDate.toLocaleDateString("de-CH")
+      : undefined,
+    "MFK bestanden": lastInspectionDate != null
+      ? item.inspectionPassed ? "Ja" : "Nein"
+      : undefined,
+    Garantieart: item.warranty ? (WARRANTY_LABELS[item.warranty] ?? item.warranty) : undefined,
+    "Garantie ab": warrantyStartDate
+      ? warrantyStartDate.toLocaleDateString("de-CH")
+      : undefined,
+    "Garantiedauer": item.duration != null ? `${item.duration} Monate` : undefined,
+    "Garantie max. km": n(item.maxKm, "km"),
+  });
 
-  const inspectionAndWarranty: Record<string, string> = {
-    "Letzte MFK": toDate(item.lastInspectionDate)
-      ? toDate(item.lastInspectionDate)!.toLocaleDateString("de-CH")
-      : na,
-    "MFK bestanden": item.inspectionPassed ? "Ja" : "Nein",
-    Garantieart: item.warranty?.toString() || na,
-    "Garantie ab": toDate(item.warrantyStartDate)
-      ? toDate(item.warrantyStartDate)!.toLocaleDateString("de-CH")
-      : na,
-    "Garantiedauer (Monate)": item.duration?.toString() ?? na,
-    "Garantie max. km": item.maxKm != null ? `${item.maxKm.toLocaleString("de-CH")} km` : na,
-  };
+  const technicalData = filterObj({
+    Leistung: powerLabel,
+    Getriebe: transmissionLabel,
+    Hubraum: n(item.cubicCapacity, "ccm"),
+    Gänge: n(item.numberOfGears),
+    Zylinder: n(item.cylinders),
+    Leergewicht: n(item.emptyWeight, "kg"),
+    Nutzlast: n(item.loadCapacity, "kg"),
+    Radstand: n(item.wheelbase, "mm"),
+    Länge: n(item.length, "mm"),
+    Breite: n(item.width, "mm"),
+    Höhe: n(item.height, "mm"),
+    "Anhängelast gebremst": n(item.towingCapacityBraked, "kg"),
+  });
 
-  const electricData: Record<string, string> = {
-    Reichweite: item.range != null ? `${item.range.toLocaleString("de-CH")} km` : na,
-    "Batteriekapazität (kWh)": item.batteryCapacity != null
-      ? `${item.batteryCapacity} kWh`
-      : na,
-    "Batteriemiete/Monat": item.batteryRentalMonth != null
-      ? `${item.batteryRentalMonth} CHF/Monat`
-      : na,
-    "Stromverbrauch": item.powerConsumption != null
-      ? `${item.powerConsumption} kWh/100km`
-      : na,
-    Batterieeigentum: item.batteryOwnership?.toString() || na,
-    "Ladeanschluss Typ 2": item.chargingPlugTypeStandard?.toString() || na,
-    "Schnellladeanschluss": item.chargingPlugTypeFast?.toString() || na,
-    Ladeleistung: item.chargingPower != null ? `${item.chargingPower} kW` : na,
-    "Verbrennungsmotor (PS)": item.combustionEnginePowerHp != null ? `${item.combustionEnginePowerHp} PS` : na,
-    "E-Motor (PS)": item.electricMotorPowerHp != null ? `${item.electricMotorPowerHp} PS` : na,
-  };
+  const energyData = filterObj({
+    Schadstoffklasse: item.emissionStandard ? (EMISSION_LABELS[item.emissionStandard] ?? item.emissionStandard) : undefined,
+    Treibstoff: fuelLabel,
+    "CO₂-Emissionen (komb.)": n(item.co2Emission, "g/km"),
+    "Verbrauch Stadt": fl(item.consumptionCity, "l/100km"),
+    "Verbrauch Land": fl(item.consumptionCountry, "l/100km"),
+    "Verbrauch kombiniert": fl(item.consumptionTotal, "l/100km"),
+  });
 
-  const identifiers: Record<string, string> = {
-    FIN: item.vin ?? na,
-    Seriennummer: item.serialNumber ?? na,
-    Typengenehmigung: item.typeApproval ?? na,
-  };
+  const electricData = filterObj({
+    Reichweite: n(item.range, "km"),
+    "Batteriekapazität": fl(item.batteryCapacity, "kWh"),
+    "Batteriemiete": item.batteryRentalMonth != null ? `${item.batteryRentalMonth} CHF/Monat` : undefined,
+    Stromverbrauch: fl(item.powerConsumption, "kWh/100km"),
+    Batterieeigentum: item.batteryOwnership ? (BATTERY_OWNERSHIP_LABELS[item.batteryOwnership] ?? item.batteryOwnership) : undefined,
+    "Ladeanschluss (Standard)": item.chargingPlugTypeStandard ? (CHARGING_STANDARD_LABELS[item.chargingPlugTypeStandard] ?? item.chargingPlugTypeStandard) : undefined,
+    "Schnellladeanschluss": item.chargingPlugTypeFast ? (CHARGING_FAST_LABELS[item.chargingPlugTypeFast] ?? item.chargingPlugTypeFast) : undefined,
+    Ladeleistung: fl(item.chargingPower, "kW"),
+    "Verbrennungsmotor": item.combustionEnginePowerHp != null ? `${item.combustionEnginePowerHp.toLocaleString("de-CH")} PS` : undefined,
+    "E-Motor": item.electricMotorPowerHp != null ? `${item.electricMotorPowerHp.toLocaleString("de-CH")} PS` : undefined,
+  });
+
+  const colourAndUpholstery = filterObj({
+    Außenfarbe: item.color ? (COLOR_LABELS[item.color] ?? item.color) : undefined,
+    Innenfarbe: item.interiorColor ? (COLOR_LABELS[item.interiorColor] ?? item.interiorColor) : undefined,
+    Lackierung: item.metallic ? "Metallic" : "Uni",
+  });
+
+  const identifiers = filterObj({
+    FIN: f(item.vin),
+    Seriennummer: f(item.serialNumber),
+    Typengenehmigung: f(item.typeApproval),
+  });
 
   const equipmentList = item.equipment
     ? Object.entries(item.equipment as Record<string, unknown>)
@@ -190,19 +314,25 @@ export default async function ListingPage({
         .map(([k]) => k.replace(/([A-Z])/g, " $1").trim())
     : [];
 
-  const colourAndUpholstery: Record<string, string> = {
-    Außenfarbe: item.color?.toString() || na,
-    Innenfarbe: item.interiorColor?.toString() ?? na,
-    Lackierung: item.metallic ? "Metallic" : "Uni",
-  };
+  const extrasList =
+    item.extras != null && typeof item.extras === "object"
+      ? Object.entries(item.extras as Record<string, unknown>)
+          .filter(([_, v]) => v === true)
+          .map(([k]) => k.replace(/([A-Z])/g, " $1").trim())
+      : [];
 
   const description =
     item.vehicleDescription && item.vehicleDescription.trim().length > 0
       ? item.vehicleDescription
-      : "Keine Beschreibung verfügbar.";
+      : null;
 
   const dealerWithHours = item.dealer as typeof item.dealer & {
-    openingHours?: Array<{ day: string; openTime: Date | string | null; closeTime: Date | string | null; isOpen: boolean }>;
+    openingHours?: Array<{
+      day: string;
+      openTime: Date | string | null;
+      closeTime: Date | string | null;
+      isOpen: boolean;
+    }>;
   };
   const openingHours =
     dealerWithHours.openingHours?.map((oh) => {
@@ -210,19 +340,22 @@ export default async function ListingPage({
       const close = toDate(oh.closeTime);
       return {
         day: DAY_LABELS[oh.day] ?? oh.day,
-        hours: oh.isOpen && open != null && close != null
-          ? `${open.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
-          : "Geschlossen",
+        hours:
+          oh.isOpen && open != null && close != null
+            ? `${open.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
+            : "Geschlossen",
       };
     }) ?? [];
 
-  const dealerUser = (item.dealer as typeof item.dealer & { user?: { emailVerified: boolean } }).user;
+  const dealerUser = (
+    item.dealer as typeof item.dealer & { user?: { emailVerified: boolean } }
+  ).user;
 
   const seller = {
     id: item.dealer.id,
     name: item.dealer.companyName,
     address: `${item.dealer.streetAddress}, ${item.dealer.zipCode} ${item.dealer.city}`,
-    phone: item.dealer.phoneNumber ?? na,
+    phone: item.dealer.phoneNumber ?? undefined,
     logo: item.dealer.logo ? getFullImageUrl(item.dealer.logo) : undefined,
     website: item.dealer.website ?? undefined,
     contactPerson: item.dealer.contactPerson ?? undefined,
@@ -239,16 +372,18 @@ export default async function ListingPage({
   const similarListings: ListingProps[] = similarItems.map((sim) => ({
     id: sim.id,
     title: `${sim.make} ${sim.model || ""}`.trim(),
-    price: `CHF ${sim.price.toLocaleString()}`,
+    price: `CHF ${sim.price.toLocaleString("de-CH")}`,
     details: [
       `${String(sim.registrationMonth).padStart(2, "0")}/${sim.registrationYear}`,
-      `${sim.kilometer.toLocaleString()} km`,
-      sim.fuelType?.toString().toLowerCase().replace(/_/g, " ") || "N/A",
-    ],
+      `${sim.kilometer.toLocaleString("de-CH")} km`,
+      sim.fuelType ? (FUEL_LABELS[sim.fuelType] ?? sim.fuelType) : undefined,
+    ].filter((d): d is string => d != null && d !== ""),
     garageName: sim.dealer.companyName,
     garageId: sim.dealer.id,
     garageLocation: `${sim.dealer.city}, CH`,
-    badge: sim.vehicleCondition === "NEW" ? "NEU" : "Gebraucht",
+    badge: sim.vehicleCondition
+      ? (CONDITION_LABELS[sim.vehicleCondition] ?? sim.vehicleCondition)
+      : undefined,
     image: getFullImageUrl(sim.images[0]),
   }));
 
@@ -265,135 +400,133 @@ export default async function ListingPage({
           <div className="lg:hidden space-y-3">
             <h1 className="text-2xl font-bold leading-tight">{title}</h1>
             <div className="text-3xl font-bold text-primary">
-              CHF {price.toLocaleString()}
+              CHF {price.toLocaleString("de-CH")}
             </div>
           </div>
 
           <ImageGallery images={images} title={title} />
 
+          {/* Key detail cards */}
           <Card>
             <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-6">
               <KeyDetailCard
-                icon={
-                  <Gauge className="text-muted-foreground" strokeWidth={1.5} />
-                }
+                icon={<Gauge className="text-muted-foreground" strokeWidth={1.5} />}
                 label="Kilometerstand"
-                value={keyDetails.kilometer}
+                value={`${item.kilometer.toLocaleString("de-CH")} km`}
               />
+              {powerLabel && (
+                <KeyDetailCard
+                  icon={<Zap className="text-muted-foreground" strokeWidth={1.5} />}
+                  label="Leistung"
+                  value={powerLabel}
+                />
+              )}
+              {fuelLabel && (
+                <KeyDetailCard
+                  icon={<Fuel className="text-muted-foreground" strokeWidth={1.5} />}
+                  label="Treibstoff"
+                  value={fuelLabel}
+                />
+              )}
+              {transmissionLabel && (
+                <KeyDetailCard
+                  icon={<Disc className="text-muted-foreground" strokeWidth={1.5} />}
+                  label="Getriebe"
+                  value={transmissionLabel}
+                />
+              )}
               <KeyDetailCard
-                icon={
-                  <Zap className="text-muted-foreground" strokeWidth={1.5} />
-                }
-                label="Leistung"
-                value={keyDetails.power}
-              />
-              <KeyDetailCard
-                icon={
-                  <Fuel className="text-muted-foreground" strokeWidth={1.5} />
-                }
-                label="Treibstoff"
-                value={keyDetails.fuelType}
-              />
-              <KeyDetailCard
-                icon={
-                  <Disc className="text-muted-foreground" strokeWidth={1.5} />
-                }
-                label="Getriebe"
-                value={keyDetails.transmission}
-              />
-              <KeyDetailCard
-                icon={
-                  <Calendar
-                    className="text-muted-foreground"
-                    strokeWidth={1.5}
-                  />
-                }
+                icon={<Calendar className="text-muted-foreground" strokeWidth={1.5} />}
                 label="Erstzulassung"
-                value={keyDetails.firstRegistration}
+                value={`${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`}
               />
               <KeyDetailCard
-                icon={
-                  <Store className="text-muted-foreground" strokeWidth={1.5} />
-                }
+                icon={<Store className="text-muted-foreground" strokeWidth={1.5} />}
                 label="Verkäufer"
-                value={keyDetails.sellerType}
+                value="Händler"
               />
             </CardContent>
           </Card>
 
           <div className="space-y-6">
-            <Section title="Basisdaten">
-              <DataGrid data={basicData} />
-            </Section>
+            {Object.keys(basicData).length > 0 && (
+              <Section title="Basisdaten">
+                <DataGrid data={basicData} />
+              </Section>
+            )}
 
             <Section title="Fahrzeughistorie">
               <DataGrid data={vehicleHistory} />
             </Section>
 
-            <Section title="Inspektion & Garantie">
-              <DataGrid data={inspectionAndWarranty} />
-            </Section>
+            {Object.keys(inspectionAndWarranty).length > 0 && (
+              <Section title="Inspektion & Garantie">
+                <DataGrid data={inspectionAndWarranty} />
+              </Section>
+            )}
 
-            <Section title="Technische Daten">
-              <DataGrid data={technicalData} />
-            </Section>
+            {Object.keys(technicalData).length > 0 && (
+              <Section title="Technische Daten">
+                <DataGrid data={technicalData} />
+              </Section>
+            )}
 
-            <Section title="Energieverbrauch">
-              <DataGrid
-                data={Object.fromEntries(
-                  Object.entries(energyConsumption).filter(
-                    ([key]) => key !== "efficiencyClass",
-                  ) as [string, string][],
+            {(Object.keys(energyData).length > 0 || item.energyLabel) && (
+              <Section title="Energieverbrauch">
+                {Object.keys(energyData).length > 0 && (
+                  <DataGrid data={energyData} />
                 )}
-              />
-              {energyConsumption.efficiencyClass != null && energyConsumption.efficiencyClass !== "" && (
-                <>
-                  <Separator />
-                  <div className="mt-6">
-                    <h3 className="text-sm font-medium mb-4">
-                      Energieeffizienzklasse
-                    </h3>
-                    <EnergyLabel
-                      efficiencyClass={energyConsumption.efficiencyClass}
-                    />
-                  </div>
-                </>
-              )}
-            </Section>
+                {item.energyLabel && (
+                  <>
+                    {Object.keys(energyData).length > 0 && <Separator className="my-4" />}
+                    <div>
+                      <h3 className="text-sm font-medium mb-4">
+                        Energieeffizienzklasse
+                      </h3>
+                      <EnergyLabel efficiencyClass={item.energyLabel} />
+                    </div>
+                  </>
+                )}
+              </Section>
+            )}
 
-            <Section title="Elektrische Daten">
-              <DataGrid data={electricData} />
-            </Section>
+            {Object.keys(electricData).length > 0 && (
+              <Section title="Elektrische Daten">
+                <DataGrid data={electricData} />
+              </Section>
+            )}
 
-            <Section title="Farbe und Polsterung">
-              <DataGrid data={colourAndUpholstery} />
-            </Section>
+            {Object.keys(colourAndUpholstery).length > 0 && (
+              <Section title="Farbe und Polsterung">
+                <DataGrid data={colourAndUpholstery} />
+              </Section>
+            )}
 
-            <Section title="Identifikationsnummern">
-              <DataGrid data={identifiers} />
-            </Section>
+            {Object.keys(identifiers).length > 0 && (
+              <Section title="Identifikationsnummern">
+                <DataGrid data={identifiers} />
+              </Section>
+            )}
 
-            <Section title="Ausstattung">
-              <EquipmentCategory items={equipmentList} />
-            </Section>
+            {equipmentList.length > 0 && (
+              <Section title="Ausstattung">
+                <EquipmentList items={equipmentList} />
+              </Section>
+            )}
 
-            {item.extras != null &&
-              typeof item.extras === "object" &&
-              Object.keys(item.extras as object).length > 0 && (
-                <Section title="Extras">
-                  <EquipmentCategory
-                    items={Object.entries(item.extras as Record<string, unknown>)
-                      .filter(([_, v]) => v === true)
-                      .map(([k]) => k.replace(/([A-Z])/g, " $1").trim())}
-                  />
-                </Section>
-              )}
+            {extrasList.length > 0 && (
+              <Section title="Extras">
+                <EquipmentList items={extrasList} />
+              </Section>
+            )}
 
-            <Section title="Fahrzeugbeschreibung">
-              <p className="whitespace-pre-line text-sm text-muted-foreground leading-relaxed">
-                {description}
-              </p>
-            </Section>
+            {description && (
+              <Section title="Fahrzeugbeschreibung">
+                <p className="whitespace-pre-line text-sm text-muted-foreground leading-relaxed">
+                  {description}
+                </p>
+              </Section>
+            )}
 
             <SellerSection seller={seller} />
 
@@ -465,28 +598,38 @@ export default async function ListingPage({
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="bg-muted p-2.5 rounded-lg">
-                    <Phone className="size-4 text-muted-foreground" />
+                {seller.phone && (
+                  <div className="flex items-center gap-3">
+                    <div className="bg-muted p-2.5 rounded-lg">
+                      <Phone className="size-4 text-muted-foreground" />
+                    </div>
+                    <Link
+                      href={`tel:${seller.phone}`}
+                      className="text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
+                    >
+                      {seller.phone}
+                    </Link>
                   </div>
-                  <Link
-                    href={`tel:${seller.phone}`}
-                    className="text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
-                  >
-                    {seller.phone}
-                  </Link>
-                </div>
+                )}
               </div>
 
               <div className="space-y-3">
-                <Button className="w-full">
-                  <Phone />
-                  Telefon
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <Mail />
-                  Kontaktieren
-                </Button>
+                {seller.phone && (
+                  <Button className="w-full" asChild>
+                    <Link href={`tel:${seller.phone}`}>
+                      <Phone />
+                      Telefon
+                    </Link>
+                  </Button>
+                )}
+                {seller.businessEmail && (
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href={`mailto:${seller.businessEmail}`}>
+                      <Mail />
+                      Kontaktieren
+                    </Link>
+                  </Button>
+                )}
                 <Button variant="link" className="w-full" asChild>
                   <Link href={`/dealers/${seller.id}`}>
                     Alle Fahrzeuge dieses Händlers
@@ -497,10 +640,13 @@ export default async function ListingPage({
           </Card>
         </div>
       </div>
-      <StickyActionBar price={price} sellerPhone={seller.phone} />
+
+      <StickyActionBar price={price} sellerPhone={seller.phone ?? ""} />
     </div>
   );
 }
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function Section({
   title,
@@ -535,19 +681,13 @@ function KeyDetailCard({
         <p className="text-xs text-muted-foreground font-medium truncate">
           {label}
         </p>
-        <p className="font-bold text-sm truncate">
-          {typeof value === "string" ? formatEnumLabel(value) : value}
-        </p>
+        <p className="font-bold text-sm truncate">{value}</p>
       </div>
     </div>
   );
 }
 
-function DataGrid({
-  data,
-}: {
-  data: Record<string, string | number | undefined>;
-}) {
+function DataGrid({ data }: { data: Record<string, string> }) {
   const entries = Object.entries(data);
   const rows = Array.from({ length: Math.ceil(entries.length / 2) }, (_, i) =>
     entries.slice(i * 2, i * 2 + 2),
@@ -564,9 +704,7 @@ function DataGrid({
                 className={`flex items-center justify-between py-3 ${!isLastRow ? "border-b" : ""}`}
               >
                 <span className="text-sm text-muted-foreground">{label}</span>
-                <span className="text-sm font-medium text-right">
-                  {typeof value === "string" ? formatEnumLabel(value) : value}
-                </span>
+                <span className="text-sm font-medium text-right">{value}</span>
               </div>
             ))}
           </div>
@@ -576,14 +714,7 @@ function DataGrid({
   );
 }
 
-function EquipmentCategory({ items }: { items: string[] }) {
-  if (!items.length) {
-    return (
-      <p className="text-sm text-muted-foreground italic">
-        Keine Ausstattung angegeben.
-      </p>
-    );
-  }
+function EquipmentList({ items }: { items: string[] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
       {items.map((item, i) => (
@@ -592,7 +723,7 @@ function EquipmentCategory({ items }: { items: string[] }) {
           className="flex items-center gap-2 text-sm text-muted-foreground"
         >
           <CheckCircle2 className="size-4 text-green-500 shrink-0" />
-          <span>{formatEnumLabel(item)}</span>
+          <span>{item}</span>
         </div>
       ))}
     </div>

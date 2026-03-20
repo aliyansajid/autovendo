@@ -19,7 +19,7 @@ export function formatPrice(price: number, locale: string = "de-CH"): string {
 /**
  * Format number with thousand separators
  */
-export function formatNumber(num: number, locale: string = "de-DE"): string {
+export function formatNumber(num: number, locale: string = "de-CH"): string {
   return new Intl.NumberFormat(locale).format(num);
 }
 

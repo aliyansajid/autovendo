@@ -131,15 +131,6 @@ export const Header = () => {
                       <span>Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/dashboard/settings"
-                      className="flex items-center w-full"
-                    >
-                      <Settings />
-                      <span>Einstellungen</span>
-                    </Link>
-                  </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
@@ -196,9 +187,7 @@ export const Header = () => {
                 <nav className="flex flex-col gap-4">
                   {navLinks.map(({ href, label }) => (
                     <SheetClose asChild key={href}>
-                      <Link href={href}>
-                        {label}
-                      </Link>
+                      <Link href={href}>{label}</Link>
                     </SheetClose>
                   ))}
                 </nav>

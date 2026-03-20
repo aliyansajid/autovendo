@@ -18,6 +18,7 @@ import {
   type VehicleDetails,
   type PaginatedVehicles,
   type VehicleFacets,
+  type PriceRating,
 } from "@/lib/schemas/vehicle.schema";
 import { parseSearchParams } from "@/lib/helpers/vehicle";
 
@@ -375,6 +376,45 @@ function toLowerFacetKeys(counts: Record<string, number>): Record<string, number
 }
 
 // =============================================================================
+// PRICE RATING
+// =============================================================================
+
+/** Fetch average price per make+model across the whole catalogue (no filters). */
+async function fetchAvgPriceMap(): Promise<Map<string, number>> {
+  const rows = await prisma.vehicle.groupBy({
+    by: ["make", "model"],
+    _avg: { price: true },
+  });
+  const map = new Map<string, number>();
+  for (const row of rows) {
+    if (row._avg.price != null) {
+      map.set(`${row.make}::${row.model ?? ""}`, row._avg.price);
+    }
+  }
+  return map;
+}
+
+/** Compare vehicle price against market average for same make+model. */
+function computePriceRating(price: number, avgPrice: number): PriceRating {
+  const pct = (price - avgPrice) / avgPrice;
+  if (pct > 0.2)   return { label: "Überteuert",       bars: 1, sentiment: "red" };
+  if (pct > 0.05)  return { label: "Fairer Preis",      bars: 2, sentiment: "yellow" };
+  if (pct > -0.05) return { label: "Guter Preis",       bars: 3, sentiment: "green" };
+  if (pct > -0.2)  return { label: "Sehr guter Preis",  bars: 4, sentiment: "green" };
+  return                  { label: "Ausgezeichnet",      bars: 5, sentiment: "green" };
+}
+
+function attachPriceRatings(
+  vehicles: any[],
+  avgMap: Map<string, number>,
+): VehicleListItem[] {
+  return vehicles.map((v) => {
+    const avg = avgMap.get(`${v.make}::${v.model ?? ""}`);
+    return { ...v, priceRating: avg != null ? computePriceRating(v.price, avg) : undefined };
+  });
+}
+
+// =============================================================================
 // PUBLIC ACTIONS
 // =============================================================================
 
@@ -398,7 +438,7 @@ export async function getVehicles(rawParams: {
   const orderBy = buildOrderBy(params.sort);
 
   // Execute queries in parallel for optimal performance
-  const [total, vehicles] = await Promise.all([
+  const [total, vehicles, avgMap] = await Promise.all([
     prisma.vehicle.count({ where }),
     prisma.vehicle.findMany({
       where,
@@ -407,12 +447,13 @@ export async function getVehicles(rawParams: {
       take,
       select: VEHICLE_LIST_SELECT,
     }),
+    fetchAvgPriceMap(),
   ]);
 
   const totalPages = Math.ceil(total / params.pageSize);
 
   return {
-    vehicles: vehicles as VehicleListItem[],
+    vehicles: attachPriceRatings(vehicles, avgMap),
     total,
     page: params.page,
     pageSize: params.pageSize,
@@ -443,6 +484,7 @@ export async function getVehiclesWithFacets(rawParams: {
   const [
     total,
     vehicles,
+    avgMap,
     makeRows,
     fuelRows,
     transmissionRows,
@@ -451,6 +493,12 @@ export async function getVehiclesWithFacets(rawParams: {
     bodyTypeRows,
     colorRows,
     interiorColorRows,
+    driveTypeRows,
+    energyLabelRows,
+    emissionStandardRows,
+    metallicCount,
+    inspectionPassedCount,
+    hasWarrantyCount,
   ] = await Promise.all([
     prisma.vehicle.count({ where }),
     prisma.vehicle.findMany({
@@ -460,6 +508,7 @@ export async function getVehiclesWithFacets(rawParams: {
       take,
       select: VEHICLE_LIST_SELECT,
     }),
+    fetchAvgPriceMap(),
     // Facet aggregations - each excludes its own filter
     prisma.vehicle.groupBy({
       by: ["make"],
@@ -502,6 +551,24 @@ export async function getVehiclesWithFacets(rawParams: {
       where: buildWhereClause(params, { interiorColor: true }),
       _count: { _all: true },
     }),
+    prisma.vehicle.groupBy({
+      by: ["driveType"],
+      where: buildWhereClause(params, { driveType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["energyLabel"],
+      where: buildWhereClause(params, { energyLabels: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["emissionStandard"],
+      where: buildWhereClause(params, { emissionStandards: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.count({ where: { ...buildWhereClause(params, { metallic: true }), metallic: true } }),
+    prisma.vehicle.count({ where: { ...buildWhereClause(params, { inspectionPassed: true }), inspectionPassed: true } }),
+    prisma.vehicle.count({ where: { ...buildWhereClause(params, { hasWarranty: true }), warranty: { not: null } } }),
   ]);
 
   // Normalize enum/body facet keys to frontend format (lowercase, hyphen) so filter UI matches
@@ -514,10 +581,16 @@ export async function getVehiclesWithFacets(rawParams: {
     bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
     color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
     interiorColor: toFrontendFacetKeys(toFacetCounts(interiorColorRows, "interiorColor")),
+    driveType: toFrontendFacetKeys(toFacetCounts(driveTypeRows, "driveType")),
+    energyLabel: toFrontendFacetKeys(toFacetCounts(energyLabelRows, "energyLabel")),
+    emissionStandard: toFrontendFacetKeys(toFacetCounts(emissionStandardRows, "emissionStandard")),
+    metallic: metallicCount,
+    inspectionPassed: inspectionPassedCount,
+    hasWarranty: hasWarrantyCount,
   };
 
   return {
-    vehicles: vehicles as VehicleListItem[],
+    vehicles: attachPriceRatings(vehicles, avgMap),
     total,
     page: params.page,
     pageSize: params.pageSize,
@@ -548,6 +621,12 @@ export async function getVehicleCountAndFacets(rawParams: {
     bodyTypeRows,
     colorRows,
     interiorColorRows,
+    driveTypeRows,
+    energyLabelRows,
+    emissionStandardRows,
+    metallicCount,
+    inspectionPassedCount,
+    hasWarrantyCount,
   ] = await Promise.all([
     prisma.vehicle.count({ where }),
     prisma.vehicle.groupBy({
@@ -591,6 +670,24 @@ export async function getVehicleCountAndFacets(rawParams: {
       where: buildWhereClause(params, { interiorColor: true }),
       _count: { _all: true },
     }),
+    prisma.vehicle.groupBy({
+      by: ["driveType"],
+      where: buildWhereClause(params, { driveType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["energyLabel"],
+      where: buildWhereClause(params, { energyLabels: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["emissionStandard"],
+      where: buildWhereClause(params, { emissionStandards: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.count({ where: { ...buildWhereClause(params, { metallic: true }), metallic: true } }),
+    prisma.vehicle.count({ where: { ...buildWhereClause(params, { inspectionPassed: true }), inspectionPassed: true } }),
+    prisma.vehicle.count({ where: { ...buildWhereClause(params, { hasWarranty: true }), warranty: { not: null } } }),
   ]);
 
   const facets: VehicleFacets = {
@@ -602,6 +699,12 @@ export async function getVehicleCountAndFacets(rawParams: {
     bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
     color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
     interiorColor: toFrontendFacetKeys(toFacetCounts(interiorColorRows, "interiorColor")),
+    driveType: toFrontendFacetKeys(toFacetCounts(driveTypeRows, "driveType")),
+    energyLabel: toFrontendFacetKeys(toFacetCounts(energyLabelRows, "energyLabel")),
+    emissionStandard: toFrontendFacetKeys(toFacetCounts(emissionStandardRows, "emissionStandard")),
+    metallic: metallicCount,
+    inspectionPassed: inspectionPassedCount,
+    hasWarranty: hasWarrantyCount,
   };
 
   return { total, facets };

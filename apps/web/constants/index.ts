@@ -19,8 +19,8 @@ export const TransmissionTypeEnum = [
 
 export const DriveTypeEnum = [
   { value: "all", label: "Allrad" },
-  { value: "front", label: "Hinterradantrieb" },
-  { value: "rear", label: "Vorderradantrieb" },
+  { value: "front", label: "Vorderradantrieb" },
+  { value: "rear", label: "Hinterradantrieb" },
 ] as const;
 
 export const ColorEnum = [

@@ -107,6 +107,12 @@ export type Color = (typeof COLORS)[number];
 /**
  * Optimized vehicle list item - ONLY fields needed for listing
  */
+export interface PriceRating {
+  label: string;
+  bars: number; // 1–5
+  sentiment: "red" | "yellow" | "green";
+}
+
 export interface VehicleListItem {
   id: string;
   make: string;
@@ -122,6 +128,7 @@ export interface VehicleListItem {
   vehicleCondition: string | null;
   images: string[];
   equipment: Prisma.JsonValue | null;
+  priceRating?: PriceRating;
   dealer: {
     id: string;
     companyName: string;
@@ -150,6 +157,12 @@ export interface VehicleFacets {
   bodyType: Record<string, number>;
   color: Record<string, number>;
   interiorColor: Record<string, number>;
+  driveType: Record<string, number>;
+  energyLabel: Record<string, number>;
+  emissionStandard: Record<string, number>;
+  metallic: number;
+  inspectionPassed: number;
+  hasWarranty: number;
 }
 
 /**

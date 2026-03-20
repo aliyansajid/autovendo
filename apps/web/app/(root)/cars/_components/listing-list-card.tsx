@@ -19,6 +19,14 @@ import {
   formatEquipmentLabel,
 } from "@/lib/helpers/vehicle";
 
+const CONDITION_LABELS: Record<string, string> = {
+  NEW: "Neu",
+  DEMONSTRATION: "Vorführung",
+  PRE_REGISTERED: "Neuimmatrikuliert",
+  USED: "Occasion",
+  OLDTIMER: "Oldtimer",
+};
+
 export interface ListingListCardProps {
   item: VehicleListItem;
   showDealerLink?: boolean;
@@ -60,6 +68,11 @@ export function ListingListCard({
               className="object-cover group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 640px) 100vw, 320px"
             />
+            {item.vehicleCondition && (
+              <Badge className="absolute top-2 left-2 bg-rating text-foreground font-semibold text-xs">
+                {CONDITION_LABELS[item.vehicleCondition] ?? item.vehicleCondition}
+              </Badge>
+            )}
           </div>
 
           <div className="grid grid-cols-3 gap-2">
@@ -70,7 +83,7 @@ export function ListingListCard({
               >
                 <Image
                   src={getImageUrl(img)}
-                  alt={`${title} - image ${i + 2}`}
+                  alt={`${title} - Bild ${i + 2}`}
                   fill
                   className="object-cover opacity-80 hover:opacity-100 transition-opacity"
                 />
@@ -81,38 +94,47 @@ export function ListingListCard({
 
         <div className="flex flex-col grow py-1 text-sm">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              {item.vehicleCondition === "NEW" && (
-                <Badge
-                  variant="secondary"
-                  className="text-xs font-semibold uppercase rounded-sm"
-                >
-                  NEU
-                </Badge>
-              )}
-              <span className="text-sm font-semibold">{item.make}</span>
-            </div>
-
-            <h2 className="text-lg font-bold">{title}</h2>
+            <span className="text-sm font-semibold capitalize">{item.make}</span>
+            <h2 className="text-lg font-bold">
+              {[item.model, item.version].filter(Boolean).join(" ") || title}
+            </h2>
           </div>
 
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <p className="text-2xl font-bold">{formattedPrice}</p>
 
-              <div className="flex flex-col items-start gap-1">
-                <div className="flex gap-0.5">
-                  <div className="h-2 w-5 bg-green-600 rounded-sm" />
-                  <div className="h-2 w-5 bg-green-600 rounded-sm" />
-                  <div className="h-2 w-5 bg-green-600 rounded-sm" />
-                  <div className="h-2 w-5 bg-muted rounded-sm" />
-                  <div className="h-2 w-5 bg-muted rounded-sm" />
+              {item.priceRating && (
+                <div className="flex flex-col items-start gap-1">
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <div
+                        key={i}
+                        className={`h-2 w-5 rounded-sm ${
+                          i < item.priceRating!.bars
+                            ? item.priceRating!.sentiment === "red"
+                              ? "bg-red-500"
+                              : item.priceRating!.sentiment === "yellow"
+                                ? "bg-yellow-500"
+                                : "bg-green-600"
+                            : "bg-muted"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span
+                    className={`text-xs font-medium ${
+                      item.priceRating.sentiment === "red"
+                        ? "text-red-500"
+                        : item.priceRating.sentiment === "yellow"
+                          ? "text-yellow-500"
+                          : "text-green-600"
+                    }`}
+                  >
+                    {item.priceRating.label}
+                  </span>
                 </div>
-
-                <span className="text-xs text-green-600 font-medium">
-                  Guter Preis
-                </span>
-              </div>
+              )}
             </div>
           </div>
 
@@ -124,7 +146,7 @@ export function ListingListCard({
             {item.kw !== null && item.kw !== undefined && (
               <>
                 <span>
-                  {item.kw} kW{item.hp ? ` (${item.hp} PS)` : ""}
+                  {formatNumber(item.kw)} kW{item.hp ? ` (${formatNumber(item.hp)} PS)` : ""}
                 </span>
                 <span className="text-muted-foreground">•</span>
               </>
@@ -185,7 +207,7 @@ export function ListingListCard({
           {showDealerLink && (
             <Link
               href={`/dealers/${item.dealer.id}`}
-              className="mt-4 text-sm text-primary underline-offset-4 hover:underline relative z-20"
+              className="mt-4 text-sm text-primary font-medium underline-offset-4 hover:underline relative z-20"
             >
               Alle Fahrzeuge von diesem Händler
             </Link>

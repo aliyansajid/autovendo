@@ -13,8 +13,10 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { EnergyLabelEnum, EmissionStandardEnum } from "@/constants";
+import type { VehicleFacets } from "@/types";
+import { formatCount } from "@/lib/helpers/format";
 
-export function EnergySection() {
+export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
   const { control, watch, setValue } = useFormContext();
   const consumptionRange = watch("consumption") || [0, 30];
   const emissionsRange = watch("emissions") || [0, 560];
@@ -39,7 +41,10 @@ export function EnergySection() {
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Verbrauch</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => { setValue("consumption", [0, 30]); setValue("consumption-from", "0"); setValue("consumption-to", "30"); }}
+              >
                 Zurücksetzen
               </span>
             </div>
@@ -73,7 +78,10 @@ export function EnergySection() {
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">CO2-Emissionen</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => { setValue("emissions", [0, 560]); setValue("emissions-from", "0"); setValue("emissions-to", "560"); }}
+              >
                 Zurücksetzen
               </span>
             </div>
@@ -109,25 +117,33 @@ export function EnergySection() {
               <Label className="text-base font-semibold">
                 Energieeffizienz
               </Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => EnergyLabelEnum.forEach((item) => setValue(`energy-${item.value}`, false))}
+              >
                 Zurücksetzen
               </span>
             </div>
             <div className="space-y-3">
-              {EnergyLabelEnum.map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-center justify-between"
-                >
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.CHECKBOX}
-                    name={`energy-${item.value}`}
-                    label={item.label}
-                  />
-                  <span className="text-sm text-muted-foreground">0</span>
-                </div>
-              ))}
+              {EnergyLabelEnum.map((item) => {
+                const count = facets?.energyLabel?.[item.value];
+                return (
+                  <div
+                    key={item.label}
+                    className="flex items-center justify-between"
+                  >
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.CHECKBOX}
+                      name={`energy-${item.value}`}
+                      label={item.label}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {formatCount(count ?? 0)}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -135,25 +151,33 @@ export function EnergySection() {
         <div className="space-y-4">
           <div className="flex flex-col">
             <Label className="text-base font-semibold">Euronorm</Label>
-            <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+            <span
+              className="text-xs text-muted-foreground cursor-pointer hover:underline"
+              onClick={() => EmissionStandardEnum.forEach((item) => setValue(`eu-${item.value}`, false))}
+            >
               Zurücksetzen
             </span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
-            {EmissionStandardEnum.map((item) => (
-              <div
-                key={item.label}
-                className="flex items-center justify-between"
-              >
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.CHECKBOX}
-                  name={`eu-${item.value}`}
-                  label={item.label}
-                />
-                  <span className="text-sm text-muted-foreground">0</span>
-              </div>
-            ))}
+            {EmissionStandardEnum.map((item) => {
+              const count = facets?.emissionStandard?.[item.value];
+              return (
+                <div
+                  key={item.label}
+                  className="flex items-center justify-between"
+                >
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.CHECKBOX}
+                    name={`eu-${item.value}`}
+                    label={item.label}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {formatCount(count ?? 0)}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </AccordionContent>

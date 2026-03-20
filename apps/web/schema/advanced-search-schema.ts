@@ -29,6 +29,8 @@ const optionalStr = z.string().optional();
 export const advancedSearchFormSchema = z
   .object({
     make: z.array(z.string()).optional(),
+    excludeMake: z.array(z.string()).optional(),
+    model: z.array(z.string()).optional(),
     year: optionalNonNegativeNumberArray,
     "year-from": optionalNonNegativeNumberString,
     "year-to": optionalNonNegativeNumberString,
@@ -64,6 +66,5 @@ export const advancedSearchFormSchema = z
     "emissions-to": optionalNonNegativeNumberString,
 
     daysListed: optionalStr,
-    conditions: z.array(z.string()).optional(),
   })
   .catchall(z.any());

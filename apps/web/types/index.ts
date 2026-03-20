@@ -6,6 +6,7 @@ export type {
   PaginatedVehicles,
   VehicleFacets,
   VehicleSearchParams,
+  PriceRating,
   SortOption,
   FuelType,
   TransmissionType,

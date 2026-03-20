@@ -107,7 +107,10 @@ export function BasicDataSection({
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Jahr</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => { setValue("year", [1900, CURRENT_YEAR]); setValue("year-from", "1900"); setValue("year-to", CURRENT_YEAR.toString()); }}
+              >
                 Zurücksetzen
               </span>
             </div>
@@ -160,7 +163,10 @@ export function BasicDataSection({
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Kilometerstand</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => { setValue("kilometer", [0, 400000]); setValue("kilometer-from", "0"); setValue("kilometer-to", "400000"); }}
+              >
                 Zurücksetzen
               </span>
             </div>
@@ -214,7 +220,10 @@ export function BasicDataSection({
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Preis</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => { setValue("price", [0, 200000]); setValue("price-from", "0"); setValue("price-to", "200000"); }}
+              >
                 Zurücksetzen
               </span>
             </div>
@@ -273,7 +282,10 @@ export function BasicDataSection({
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Zustand</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => VehicleConditionEnum.forEach((item) => setValue(`condition-${item.value}`, false))}
+              >
                 Zurücksetzen
               </span>
             </div>
@@ -305,7 +317,10 @@ export function BasicDataSection({
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">MFK & Garantie</Label>
-              <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => { setValue("condition-mfk", false); setValue("condition-warranty", false); }}
+              >
                 Zurücksetzen
               </span>
             </div>
@@ -317,7 +332,7 @@ export function BasicDataSection({
                   name="condition-mfk"
                   label="Ab MFK"
                 />
-                <span className="text-sm text-muted-foreground">0</span>
+                <span className="text-sm text-muted-foreground">{formatCount(facets?.inspectionPassed ?? 0)}</span>
               </div>
 
               <div className="flex items-center justify-between">
@@ -327,7 +342,7 @@ export function BasicDataSection({
                   name="condition-warranty"
                   label="Mit Garantie"
                 />
-                <span className="text-sm text-muted-foreground">0</span>
+                <span className="text-sm text-muted-foreground">{formatCount(facets?.hasWarranty ?? 0)}</span>
               </div>
             </div>
           </div>
@@ -339,7 +354,13 @@ export function BasicDataSection({
         <div className="space-y-4">
           <div className="flex flex-col">
             <Label className="text-base font-semibold">Aufbauart</Label>
-            <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+            <span
+              className="text-xs text-muted-foreground cursor-pointer hover:underline"
+              onClick={() => {
+                const bodyEnum = vehicleType === "utility" ? utilityBodyTypeEnum : vehicleType === "truck" ? truckBodyTypeEnum : vehicleType === "camper" ? camperBodyTypeEnum : carBodyTypeEnum;
+                bodyEnum.forEach((t: { value: string }) => setValue(`bodyType-${t.value}`, false));
+              }}
+            >
               Zurücksetzen
             </span>
           </div>

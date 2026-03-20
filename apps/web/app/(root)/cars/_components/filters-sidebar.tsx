@@ -92,7 +92,7 @@ export const FiltersSidebar = ({
     };
   }, [searchParams]);
 
-  const form = useForm<VehicleFiltersValues & Record<string, any>>({
+  const form = useForm<VehicleFiltersValues>({
     resolver: zodResolver(vehicleFiltersSchema),
     defaultValues: getInitialValues(),
   });
@@ -104,7 +104,7 @@ export const FiltersSidebar = ({
 
   // Handle URL updates
   const updateUrl = useCallback(
-    (values: Record<string, any>) => {
+    (values: VehicleFiltersValues) => {
       const params = new URLSearchParams(window.location.search);
 
       const equipment: string[] = [];
@@ -157,7 +157,7 @@ export const FiltersSidebar = ({
 
   // Watch for changes and update URL
   useEffect(() => {
-    const subscription = form.watch((values: any) => {
+    const subscription = form.watch((values) => {
       const timer = setTimeout(() => {
         updateUrl(values);
       }, 500);

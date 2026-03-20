@@ -14,7 +14,7 @@ import {
 import { daysListedOptions } from "@/constants";
 
 export function MoreFiltersSection() {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
 
   return (
     <AccordionItem value="more" className="border-none">
@@ -25,7 +25,10 @@ export function MoreFiltersSection() {
         <div className="space-y-4">
           <div className="flex flex-col">
             <Label className="text-base font-semibold">Inseratedauer</Label>
-            <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+            <span
+              className="text-xs text-muted-foreground cursor-pointer hover:underline"
+              onClick={() => setValue("daysListed", "any")}
+            >
               Zurücksetzen
             </span>
           </div>
@@ -34,12 +37,7 @@ export function MoreFiltersSection() {
             fieldType={FormFieldType.RADIO_GROUP}
             name="daysListed"
             className="flex-col"
-            options={
-              daysListedOptions as unknown as {
-                label: string;
-                value: string;
-              }[]
-            }
+            options={daysListedOptions.map((o) => ({ label: o.label, value: o.value }))}
           />
         </div>
       </AccordionContent>

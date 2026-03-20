@@ -49,6 +49,21 @@ export const AdvancedSearchForm = () => {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // Fetch immediately on mount and whenever vehicleType changes
+    const params = buildSearchParams(
+      form.getValues() as Record<string, unknown>,
+      vehicleType,
+    );
+    getVehicleCountAndFacets(params)
+      .then(({ total: t, facets: f }) => {
+        setTotal(t);
+        setFacets(f);
+      })
+      .catch(() => {
+        setTotal(null);
+        setFacets(null);
+      });
+
     const subscription = form.watch((values) => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
@@ -143,7 +158,7 @@ export const AdvancedSearchForm = () => {
             <Separator />
             <AppearanceSection facets={facets} />
             <Separator />
-            <EnergySection />
+            <EnergySection facets={facets} />
             <Separator />
             <MoreFiltersSection />
           </Accordion>

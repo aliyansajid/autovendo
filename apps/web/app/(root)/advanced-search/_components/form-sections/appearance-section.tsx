@@ -21,7 +21,7 @@ export function AppearanceSection({
 }: {
   facets?: VehicleFacets | null;
 }) {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
 
   return (
     <AccordionItem value="appearance" className="border-none">
@@ -32,7 +32,10 @@ export function AppearanceSection({
         <div className="space-y-4">
           <div className="flex flex-col">
             <Label className="text-base font-semibold">Aussenfarbe</Label>
-            <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+            <span
+              className="text-xs text-muted-foreground cursor-pointer hover:underline"
+              onClick={() => { setValue("metallic", false); ColorEnum.forEach((c) => setValue(`color-${c.value}`, false)); }}
+            >
               Zurücksetzen
             </span>
           </div>
@@ -44,7 +47,7 @@ export function AppearanceSection({
               name="metallic"
               label="Metallic"
             />
-            <span className="text-sm text-muted-foreground">0</span>
+            <span className="text-sm text-muted-foreground">{formatCount(facets?.metallic ?? 0)}</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
@@ -86,7 +89,10 @@ export function AppearanceSection({
         <div className="space-y-4">
           <div className="flex flex-col">
             <Label className="text-base font-semibold">Innenfarbe</Label>
-            <span className="text-xs text-muted-foreground cursor-pointer hover:underline">
+            <span
+              className="text-xs text-muted-foreground cursor-pointer hover:underline"
+              onClick={() => ColorEnum.forEach((c) => setValue(`int-${c.value}`, false))}
+            >
               Zurücksetzen
             </span>
           </div>
