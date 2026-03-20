@@ -187,7 +187,7 @@ export function buildSearchParams(
   // Days listed
   const daysListed = formValues["daysListed"];
   if (daysListed && daysListed !== "any") {
-    const days = parseInt(String(daysListed).split(" ")[0], 10);
+    const days = parseInt(daysListed.split(" ")[0], 10);
     if (!isNaN(days)) params.daysListed = String(days);
   }
 
