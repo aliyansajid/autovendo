@@ -450,6 +450,7 @@ export async function getVehiclesWithFacets(rawParams: {
     typeRows,
     bodyTypeRows,
     colorRows,
+    interiorColorRows,
   ] = await Promise.all([
     prisma.vehicle.count({ where }),
     prisma.vehicle.findMany({
@@ -496,6 +497,11 @@ export async function getVehiclesWithFacets(rawParams: {
       where: buildWhereClause(params, { color: true }),
       _count: { _all: true },
     }),
+    prisma.vehicle.groupBy({
+      by: ["interiorColor"],
+      where: buildWhereClause(params, { interiorColor: true }),
+      _count: { _all: true },
+    }),
   ]);
 
   // Normalize enum/body facet keys to frontend format (lowercase, hyphen) so filter UI matches
@@ -507,6 +513,7 @@ export async function getVehiclesWithFacets(rawParams: {
     vehicleType: toFrontendFacetKeys(toFacetCounts(typeRows, "vehicleType")),
     bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
     color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
+    interiorColor: toFrontendFacetKeys(toFacetCounts(interiorColorRows, "interiorColor")),
   };
 
   return {
@@ -540,6 +547,7 @@ export async function getVehicleCountAndFacets(rawParams: {
     typeRows,
     bodyTypeRows,
     colorRows,
+    interiorColorRows,
   ] = await Promise.all([
     prisma.vehicle.count({ where }),
     prisma.vehicle.groupBy({
@@ -578,6 +586,11 @@ export async function getVehicleCountAndFacets(rawParams: {
       where: buildWhereClause(params, { color: true }),
       _count: { _all: true },
     }),
+    prisma.vehicle.groupBy({
+      by: ["interiorColor"],
+      where: buildWhereClause(params, { interiorColor: true }),
+      _count: { _all: true },
+    }),
   ]);
 
   const facets: VehicleFacets = {
@@ -588,6 +601,7 @@ export async function getVehicleCountAndFacets(rawParams: {
     vehicleType: toFrontendFacetKeys(toFacetCounts(typeRows, "vehicleType")),
     bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
     color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
+    interiorColor: toFrontendFacetKeys(toFacetCounts(interiorColorRows, "interiorColor")),
   };
 
   return { total, facets };

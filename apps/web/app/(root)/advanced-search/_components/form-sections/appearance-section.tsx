@@ -92,31 +92,36 @@ export function AppearanceSection({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-3 gap-x-12">
-            {ColorEnum.map((color) => (
-              <div
-                key={color.value}
-                className="flex items-center justify-between"
-              >
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.CHECKBOX}
-                  name={`int-${color.value}`}
-                  label={
-                    <span className="flex items-center gap-2">
-                      <div
-                        className={`w-4 h-4 rounded-full border border-border/20 ${"border" in color && color.border ? "border-border" : ""}`}
-                        style={{
-                          background:
-                            "gradient" in color ? color.gradient : color.hex,
-                        }}
-                      />
-                      {color.label}
-                    </span>
-                  }
-                />
-                <span className="text-sm text-muted-foreground">0</span>
-              </div>
-            ))}
+            {ColorEnum.map((color) => {
+              const count = facets?.interiorColor?.[color.value];
+              return (
+                <div
+                  key={color.value}
+                  className="flex items-center justify-between"
+                >
+                  <CustomFormField
+                    control={control}
+                    fieldType={FormFieldType.CHECKBOX}
+                    name={`int-${color.value}`}
+                    label={
+                      <span className="flex items-center gap-2">
+                        <div
+                          className={`w-4 h-4 rounded-full border border-border/20 ${"border" in color && color.border ? "border-border" : ""}`}
+                          style={{
+                            background:
+                              "gradient" in color ? color.gradient : color.hex,
+                          }}
+                        />
+                        {color.label}
+                      </span>
+                    }
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {formatCount(count ?? 0)}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </AccordionContent>

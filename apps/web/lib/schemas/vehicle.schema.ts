@@ -149,6 +149,7 @@ export interface VehicleFacets {
   vehicleType: Record<string, number>;
   bodyType: Record<string, number>;
   color: Record<string, number>;
+  interiorColor: Record<string, number>;
 }
 
 /**
