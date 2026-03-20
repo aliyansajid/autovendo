@@ -49,13 +49,20 @@ import {
   prepareVehicleListing,
   getPresignedUrls,
   createVehicle,
+  type SubscriptionStatus,
 } from "@/app/actions/vehicle.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle, AlertTriangle } from "lucide-react";
 import { updateVehicle } from "@/app/actions/vehicle.actions";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@repo/ui/src/components/spinner";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@repo/ui/src/components/alert";
+import { format } from "date-fns";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -111,10 +118,12 @@ export function VehicleForm({
   dealerProfile,
   initialData,
   vehicleId,
+  subscriptionStatus,
 }: {
   dealerProfile: DealerProfile | null;
   initialData?: z.infer<typeof vehicleFormSchema>;
   vehicleId?: string;
+  subscriptionStatus?: SubscriptionStatus;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -209,6 +218,16 @@ export function VehicleForm({
   });
 
   const { control, handleSubmit, trigger } = form;
+
+  // Determine whether submission should be blocked based on subscription state.
+  // For new listings: block unless subscription is active.
+  // For edits: only block when the grace period after expiry has already passed.
+  const isSubmitBlocked = subscriptionStatus
+    ? vehicleId
+      ? subscriptionStatus.type === "expired" &&
+        subscriptionStatus.isGraceExpired
+      : subscriptionStatus.type !== "active"
+    : false;
 
   const handleNext = async () => {
     const fields = STEP_FIELDS[currentStep] || [];
@@ -484,7 +503,60 @@ export function VehicleForm({
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Subscription status banners */}
+      {subscriptionStatus?.type === "no_subscription" && (
+        <Alert variant="destructive">
+          <AlertCircle />
+          <AlertTitle>Kein aktives Abonnement</AlertTitle>
+          <AlertDescription>
+            Sie haben kein aktives Abonnement. Wählen Sie bitte einen Plan, um
+            Fahrzeuge zu inserieren.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {subscriptionStatus?.type === "quota_exhausted" && (
+        <Alert variant="destructive">
+          <AlertCircle />
+          <AlertTitle>Inseratskontingent ausgeschöpft</AlertTitle>
+          <AlertDescription>
+            Sie haben das maximale Kontingent Ihres Plans (
+            {subscriptionStatus.plan}) erreicht (
+            {subscriptionStatus.currentCount}/{subscriptionStatus.maxVehicles}{" "}
+            Inserate). Bitte upgraden Sie Ihr Abonnement.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {subscriptionStatus?.type === "expired" &&
+        !subscriptionStatus.isGraceExpired &&
+        subscriptionStatus.graceEnd && (
+          <Alert className="border-yellow-500 bg-yellow-50 text-yellow-900 dark:bg-yellow-950/20 dark:text-yellow-400 [&>svg]:text-yellow-500">
+            <AlertTriangle />
+            <AlertTitle>Abonnement abgelaufen</AlertTitle>
+            <AlertDescription>
+              Ihr Abonnement ist abgelaufen. Inserate werden am{" "}
+              <strong>
+                {format(new Date(subscriptionStatus.graceEnd), "dd.MM.yyyy")}
+              </strong>{" "}
+              deaktiviert. Bitte erneuern Sie Ihr Abo.
+            </AlertDescription>
+          </Alert>
+        )}
+
+      {subscriptionStatus?.type === "expired" &&
+        subscriptionStatus.isGraceExpired && (
+          <Alert variant="destructive">
+            <AlertCircle />
+            <AlertTitle>Abonnement abgelaufen</AlertTitle>
+            <AlertDescription>
+              Ihr Abonnement ist abgelaufen und Ihre Inserate wurden
+              deaktiviert. Bitte erneuern Sie Ihr Abo, um wieder aktiv zu sein.
+            </AlertDescription>
+          </Alert>
+        )}
+
       <div className="flex justify-between items-start w-full max-w-3xl mx-auto mb-8 isolate">
         {steps.map((step, index) => {
           const isActive = currentStep >= step.id;
@@ -737,7 +809,9 @@ export function VehicleForm({
                 key="submit-button"
                 type="submit"
                 disabled={
-                  isSubmitting || (!!vehicleId && !form.formState.isDirty)
+                  isSubmitting ||
+                  isSubmitBlocked ||
+                  (!!vehicleId && !form.formState.isDirty)
                 }
               >
                 {isSubmitting ? (

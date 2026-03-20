@@ -1,7 +1,7 @@
 "use client";
 
 import { z } from "zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch, Control } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { dealerProfileSchema } from "@/schema/profile-schema";
 import { Button } from "@repo/ui/src/components/button";
@@ -18,7 +18,7 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { authClient } from "@repo/auth/client";
-import { useTransition } from "react";
+import { useTransition, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getPresignedUploadUrl } from "@/app/actions/storage.actions";
 import { updateDealerProfile } from "@/app/actions/dealer.actions";
@@ -27,6 +27,129 @@ import { DealerProfile } from "@/types";
 import { swissCities } from "@/lib/swiss-cities";
 import { SelectItem } from "@repo/ui/src/components/select";
 
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+type FormValues = z.infer<typeof dealerProfileSchema>;
+
+// ---------------------------------------------------------------------------
+// useObjectUrl — creates an object URL for File inputs and revokes on cleanup
+// ---------------------------------------------------------------------------
+
+function useObjectUrl(value: File | string | null | undefined): string | null {
+  const [url, setUrl] = useState<string | null>(
+    typeof value === "string" && value ? value : null,
+  );
+
+  useEffect(() => {
+    if (value instanceof File) {
+      const objectUrl = URL.createObjectURL(value);
+      setUrl(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    } else if (typeof value === "string" && value) {
+      setUrl(value);
+    } else {
+      setUrl(null);
+    }
+  }, [value]);
+
+  return url;
+}
+
+// ---------------------------------------------------------------------------
+// OpeningHourRow — isolated component so useWatch only re-renders the row
+// ---------------------------------------------------------------------------
+
+function OpeningHourRow({
+  control,
+  index,
+  day,
+  isPending,
+}: {
+  control: Control<FormValues>;
+  index: number;
+  day: string;
+  isPending: boolean;
+}) {
+  const isOpen = useWatch({
+    control,
+    name: `openingHours.${index}.isOpen`,
+  });
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4 p-3 rounded-lg border bg-muted/30">
+      <span className="font-medium">{day}</span>
+      <div className="flex items-center gap-2">
+        <CustomFormField
+          control={control}
+          fieldType={FormFieldType.CHECKBOX}
+          name={`openingHours.${index}.isOpen`}
+          label={isOpen ? "Geöffnet" : "Geschlossen"}
+          disabled={isPending}
+        />
+      </div>
+      {isOpen && (
+        <>
+          <CustomFormField
+            control={control}
+            fieldType={FormFieldType.INPUT}
+            inputType="time"
+            name={`openingHours.${index}.openTime`}
+            placeholder="08:00"
+            className="h-9"
+            disabled={isPending}
+          />
+          <CustomFormField
+            control={control}
+            fieldType={FormFieldType.INPUT}
+            inputType="time"
+            name={`openingHours.${index}.closeTime`}
+            placeholder="18:00"
+            className="h-9"
+            disabled={isPending}
+          />
+        </>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ImagePreview — isolated to avoid re-rendering the whole form
+// ---------------------------------------------------------------------------
+
+function ImagePreview({
+  src,
+  alt,
+  aspectClass,
+  onRemove,
+}: {
+  src: string;
+  alt: string;
+  aspectClass: string;
+  onRemove: () => void;
+}) {
+  return (
+    <div className={`relative ${aspectClass} rounded-lg overflow-hidden border`}>
+      <img src={src} alt={alt} className="object-cover w-full h-full" />
+      <Button
+        type="button"
+        variant="destructive"
+        size="sm"
+        className="absolute top-1 right-1 h-6 w-6 p-0 rounded-full"
+        onClick={onRemove}
+      >
+        ✕
+      </Button>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// DealerProfileForm
+// ---------------------------------------------------------------------------
+
 interface DealerProfileFormProps {
   initialData: DealerProfile | null;
 }
@@ -34,7 +157,7 @@ interface DealerProfileFormProps {
 export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof dealerProfileSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(dealerProfileSchema),
     defaultValues: {
       name: initialData?.user?.name || "",
@@ -55,62 +178,35 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       businessEmail: initialData?.businessEmail || "",
       openingHours: initialData?.openingHours?.length
         ? initialData.openingHours.map((oh) => ({
-            day: oh.day.charAt(0).toUpperCase() + oh.day.slice(1).toLowerCase(),
+            day:
+              oh.day.charAt(0).toUpperCase() + oh.day.slice(1).toLowerCase(),
             isOpen: oh.isOpen,
             openTime: oh.openTime || "08:00",
             closeTime: oh.closeTime || "18:00",
           }))
         : [
-            {
-              day: "Montag",
-              isOpen: true,
-              openTime: "08:00",
-              closeTime: "18:00",
-            },
-            {
-              day: "Dienstag",
-              isOpen: true,
-              openTime: "08:00",
-              closeTime: "18:00",
-            },
-            {
-              day: "Mittwoch",
-              isOpen: true,
-              openTime: "08:00",
-              closeTime: "18:00",
-            },
-            {
-              day: "Donnerstag",
-              isOpen: true,
-              openTime: "08:00",
-              closeTime: "18:00",
-            },
-            {
-              day: "Freitag",
-              isOpen: true,
-              openTime: "08:00",
-              closeTime: "18:00",
-            },
-            {
-              day: "Samstag",
-              isOpen: false,
-              openTime: "08:00",
-              closeTime: "18:00",
-            },
-            {
-              day: "Sonntag",
-              isOpen: false,
-              openTime: "08:00",
-              closeTime: "18:00",
-            },
+            { day: "Montag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "Dienstag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "Mittwoch", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "Donnerstag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "Freitag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "Samstag", isOpen: false, openTime: "08:00", closeTime: "18:00" },
+            { day: "Sonntag", isOpen: false, openTime: "08:00", closeTime: "18:00" },
           ],
     },
   });
 
-  const { fields } = useFieldArray({
-    control: form.control,
-    name: "openingHours",
-  });
+  const { fields } = useFieldArray({ control: form.control, name: "openingHours" });
+
+  // useWatch for image fields — each only triggers its own re-render
+  const imageValue = useWatch({ control: form.control, name: "image" });
+  const logoValue = useWatch({ control: form.control, name: "logo" });
+  const coverValue = useWatch({ control: form.control, name: "coverImage" });
+
+  // Object URL lifecycle management — no memory leaks
+  const imagePreviewUrl = useObjectUrl(imageValue as File | string | undefined);
+  const logoPreviewUrl = useObjectUrl(logoValue as File | string | undefined);
+  const coverPreviewUrl = useObjectUrl(coverValue as File | string | undefined);
 
   const uploadFile = async (file: File, type: "branding" | "profiles") => {
     const res = await getPresignedUploadUrl({
@@ -123,16 +219,18 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
 
     if (!res.success || !res.uploadUrl) throw new Error(res.error);
 
-    await fetch(res.uploadUrl, {
+    const uploadRes = await fetch(res.uploadUrl, {
       method: "PUT",
       body: file,
       headers: { "Content-Type": file.type },
     });
 
+    if (!uploadRes.ok) throw new Error("Datei-Upload fehlgeschlagen.");
+
     return res.publicUrl;
   };
 
-  function onSubmit(values: z.infer<typeof dealerProfileSchema>) {
+  function onSubmit(values: FormValues) {
     startTransition(async () => {
       try {
         let imageUrl = values.image;
@@ -142,56 +240,53 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         if (values.image instanceof File) {
           imageUrl = await uploadFile(values.image, "profiles");
         }
-
         if (values.logo instanceof File) {
           logoUrl = await uploadFile(values.logo, "branding");
         }
-
         if (values.coverImage instanceof File) {
           coverImageUrl = await uploadFile(values.coverImage, "branding");
         }
 
-        // Update user
+        // User name / profile image update
         const userUpdates: { name?: string; image?: string } = {};
-
-        // Normalize values for comparison
-        const currentName = values.name || "";
-        const initialName = initialData?.user?.name || "";
-        const currentImage = (imageUrl as string) || null;
-        const initialImage = initialData?.user?.image || null;
-
-        if (currentName !== initialName) userUpdates.name = currentName;
-        if (currentImage !== initialImage)
-          userUpdates.image = currentImage as string;
+        if ((values.name || "") !== (initialData?.user?.name || "")) {
+          userUpdates.name = values.name;
+        }
+        if ((imageUrl as string | null) !== (initialData?.user?.image || null)) {
+          userUpdates.image = (imageUrl as string) || "";
+        }
 
         if (Object.keys(userUpdates).length > 0) {
           const { error } = await authClient.updateUser(userUpdates);
           if (error) {
             toast.error(
               error.message ||
-                "Benutzerinformationen konnten nicht aktualisiert werden",
+                "Benutzerinformationen konnten nicht aktualisiert werden.",
             );
+            return;
           }
         }
 
-        // Handle email change
+        // Email change (sends confirmation)
         if (values.email !== initialData?.user?.email) {
           const { error } = await authClient.changeEmail({
             newEmail: values.email,
             callbackURL: "/dashboard/settings/profile",
           });
 
-          if (error)
+          if (error) {
             toast.error(
-              error.message || "E-Mail-Änderung konnte nicht initiiert werden",
+              error.message ||
+                "E-Mail-Änderung konnte nicht initiiert werden.",
             );
+            return;
+          }
 
           toast.info(
             "Eine Bestätigungs-E-Mail wurde an Ihre neue E-Mail-Adresse gesendet.",
           );
         }
 
-        // Update dealer
         if (!initialData?.user?.id) {
           toast.error("Benutzerinformationen fehlen.");
           return;
@@ -205,7 +300,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         });
 
         if (result.success) {
-          toast.success(result.message || "Profil erfolgreich aktualisiert");
+          toast.success(result.message || "Profil erfolgreich aktualisiert.");
           form.reset({
             ...values,
             image: imageUrl as string | undefined,
@@ -215,12 +310,12 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         } else {
           toast.error(
             result.error ||
-              "Unternehmensprofil konnte nicht aktualisiert werden",
+              "Unternehmensprofil konnte nicht aktualisiert werden.",
           );
         }
       } catch (error: any) {
         toast.error(
-          error.message ||
+          error?.message ||
             "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
         );
       }
@@ -230,6 +325,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Personal information */}
         <Card>
           <CardHeader>
             <CardTitle>Persönliche Informationen</CardTitle>
@@ -264,35 +360,22 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                   label="Profilbild"
                   disabled={isPending}
                 />
-                {form.watch("image") && (
-                  <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
-                    <img
-                      src={
-                        form.watch("image") instanceof File
-                          ? URL.createObjectURL(form.watch("image") as File)
-                          : (form.watch("image") as string)
-                      }
-                      alt="Profilbild Vorschau"
-                      className="object-cover w-full h-full"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="sm"
-                      className="absolute top-1 right-1 h-6 w-6 p-0 rounded-full"
-                      onClick={() =>
-                        form.setValue("image", undefined, { shouldDirty: true })
-                      }
-                    >
-                      ✕
-                    </Button>
-                  </div>
+                {imagePreviewUrl && (
+                  <ImagePreview
+                    src={imagePreviewUrl}
+                    alt="Profilbild Vorschau"
+                    aspectClass="w-32 h-32"
+                    onRemove={() =>
+                      form.setValue("image", undefined, { shouldDirty: true })
+                    }
+                  />
                 )}
               </div>
             </FieldGroup>
           </CardContent>
         </Card>
 
+        {/* Company information */}
         <Card>
           <CardHeader>
             <CardTitle>Unternehmensinformationen</CardTitle>
@@ -339,31 +422,15 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                     label="Firmenlogo"
                     disabled={isPending}
                   />
-                  {form.watch("logo") && (
-                    <div className="relative w-32 h-32 rounded-lg overflow-hidden border">
-                      <img
-                        src={
-                          form.watch("logo") instanceof File
-                            ? URL.createObjectURL(form.watch("logo") as File)
-                            : (form.watch("logo") as string)
-                        }
-                        alt="Firmenlogo Vorschau"
-                        className="object-cover w-full h-full"
-                      />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute top-1 right-1 h-6 w-6 p-0 rounded-full"
-                        onClick={() =>
-                          form.setValue("logo", undefined, {
-                            shouldDirty: true,
-                          })
-                        }
-                      >
-                        ✕
-                      </Button>
-                    </div>
+                  {logoPreviewUrl && (
+                    <ImagePreview
+                      src={logoPreviewUrl}
+                      alt="Firmenlogo Vorschau"
+                      aspectClass="w-32 h-32"
+                      onRemove={() =>
+                        form.setValue("logo", undefined, { shouldDirty: true })
+                      }
+                    />
                   )}
                 </div>
               </div>
@@ -377,31 +444,17 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                   label="Titelbild"
                   disabled={isPending}
                 />
-                {form.watch("coverImage") && (
-                  <div className="relative w-full h-40 rounded-lg overflow-hidden border">
-                    <img
-                      src={
-                        form.watch("coverImage") instanceof File
-                          ? URL.createObjectURL(form.watch("coverImage") as File)
-                          : (form.watch("coverImage") as string)
-                      }
-                      alt="Titelbild Vorschau"
-                      className="object-cover w-full h-full"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="sm"
-                      className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
-                      onClick={() =>
-                        form.setValue("coverImage", undefined, {
-                          shouldDirty: true,
-                        })
-                      }
-                    >
-                      ✕
-                    </Button>
-                  </div>
+                {coverPreviewUrl && (
+                  <ImagePreview
+                    src={coverPreviewUrl}
+                    alt="Titelbild Vorschau"
+                    aspectClass="w-full h-40"
+                    onRemove={() =>
+                      form.setValue("coverImage", undefined, {
+                        shouldDirty: true,
+                      })
+                    }
+                  />
                 )}
               </div>
 
@@ -440,6 +493,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Address */}
         <Card>
           <CardHeader>
             <CardTitle>Adresse</CardTitle>
@@ -485,12 +539,11 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           </CardContent>
         </Card>
 
+        {/* Description */}
         <Card>
           <CardHeader>
             <CardTitle>Beschreibung</CardTitle>
-            <CardDescription>
-              Erzählen Sie uns von Ihrem Unternehmen.
-            </CardDescription>
+            <CardDescription>Erzählen Sie uns von Ihrem Unternehmen.</CardDescription>
           </CardHeader>
           <CardContent>
             <FieldGroup>
@@ -508,6 +561,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         </Card>
       </div>
 
+      {/* Opening hours */}
       <Card>
         <CardHeader>
           <CardTitle>Öffnungszeiten</CardTitle>
@@ -515,49 +569,15 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {fields && fields.length > 0 ? (
+            {fields.length > 0 ? (
               fields.map((item, index) => (
-                <div
+                <OpeningHourRow
                   key={item.id}
-                  className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4 p-3 rounded-lg border bg-muted/30"
-                >
-                  <span className="font-medium">{item.day}</span>
-                  <div className="flex items-center gap-2">
-                    <CustomFormField
-                      control={form.control}
-                      fieldType={FormFieldType.CHECKBOX}
-                      name={`openingHours.${index}.isOpen`}
-                      label={
-                        form.watch(`openingHours.${index}.isOpen`)
-                          ? "Geöffnet"
-                          : "Geschlossen"
-                      }
-                      disabled={isPending}
-                    />
-                  </div>
-                  {form.watch(`openingHours.${index}.isOpen`) && (
-                    <>
-                      <CustomFormField
-                        control={form.control}
-                        fieldType={FormFieldType.INPUT}
-                        inputType="time"
-                        name={`openingHours.${index}.openTime`}
-                        placeholder="08:00"
-                        className="h-9"
-                        disabled={isPending}
-                      />
-                      <CustomFormField
-                        control={form.control}
-                        fieldType={FormFieldType.INPUT}
-                        inputType="time"
-                        name={`openingHours.${index}.closeTime`}
-                        placeholder="18:00"
-                        className="h-9"
-                        disabled={isPending}
-                      />
-                    </>
-                  )}
-                </div>
+                  control={form.control}
+                  index={index}
+                  day={item.day}
+                  isPending={isPending}
+                />
               ))
             ) : (
               <p className="text-sm text-muted-foreground">
@@ -569,7 +589,10 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       </Card>
 
       <div className="flex justify-end pt-4">
-        <Button disabled={isPending || !form.formState.isDirty} type="submit">
+        <Button
+          disabled={isPending || !form.formState.isDirty}
+          type="submit"
+        >
           {isPending ? (
             <>
               <Spinner />

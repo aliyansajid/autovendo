@@ -2,11 +2,9 @@
 
 import {
   BadgeCheck,
-  Bell,
   ChevronsUpDown,
   CreditCard,
   LogOut,
-  Sparkles,
 } from "lucide-react";
 import {
   Avatar,
@@ -30,6 +28,9 @@ import {
 } from "@repo/ui/components/sidebar";
 import { authClient } from "@repo/auth/client";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { Spinner } from "@repo/ui/src/components/spinner";
+import Link from "next/link";
 
 export function NavUser({
   user,
@@ -42,14 +43,17 @@ export function NavUser({
 }) {
   const router = useRouter();
   const { isMobile } = useSidebar();
+  const [isSigningOut, startSignOut] = useTransition();
 
-  const handleLogout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/login");
+  const handleLogout = () => {
+    startSignOut(async () => {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/login");
+          },
         },
-      },
+      });
     });
   };
 
@@ -97,30 +101,23 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/settings/profile">
+                  <BadgeCheck />
+                  Konto
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/subscription">
+                  <CreditCard />
+                  Abonnement
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut />
-              Log out
+            <DropdownMenuItem onClick={handleLogout} disabled={isSigningOut}>
+              {isSigningOut ? <Spinner className="size-4" /> : <LogOut />}
+              Abmelden
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -12,29 +12,29 @@ import {
 } from "@repo/ui/src/components/card";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { Badge } from "@repo/ui/src/components/badge";
-import { useEffect, useState, useTransition } from "react";
+import { useTransition } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { CreditCard, ExternalLink } from "lucide-react";
+import { format } from "date-fns";
 
-export const SubscriptionCard = () => {
+type SubscriptionData = {
+  id: string;
+  plan: string;
+  status: string;
+  periodEnd: string | null;
+  cancelAtPeriodEnd: boolean;
+};
+
+interface SubscriptionCardProps {
+  subscriptions: SubscriptionData[];
+}
+
+export function SubscriptionCard({ subscriptions }: SubscriptionCardProps) {
   const [isPending, startTransition] = useTransition();
-  const [subscriptions, setSubscriptions] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      const { data, error } = await authClient.subscription.list();
-      if (!error && data) {
-        setSubscriptions(data);
-      }
-      setIsLoading(false);
-    };
-    fetchSubscriptions();
-  }, []);
 
   const activeSubscription = subscriptions.find(
-    (sub) => sub.status === "active" || sub.status === "trialing",
+    (s) => s.status === "active" || s.status === "trialing",
   );
 
   const handleManageBilling = () => {
@@ -44,7 +44,9 @@ export const SubscriptionCard = () => {
       });
 
       if (error) {
-        toast.error(error.message || "Failed to open billing portal");
+        toast.error(
+          error.message || "Abrechnungsportal konnte nicht geöffnet werden.",
+        );
         return;
       }
 
@@ -54,51 +56,41 @@ export const SubscriptionCard = () => {
     });
   };
 
-  if (isLoading) {
-    return (
-      <Card>
-        <CardContent className="py-10 flex justify-center">
-          <Spinner />
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="size-5" />
-          Subscription
+          Abonnement
         </CardTitle>
         <CardDescription>
-          Manage your subscription and billing details.
+          Verwalten Sie Ihr Abonnement und Ihre Rechnungsdetails.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {activeSubscription ? (
           <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/30">
-            <div>
+            <div className="space-y-1">
               <p className="font-semibold capitalize">
                 {activeSubscription.plan} Plan
               </p>
               <p className="text-sm text-muted-foreground">
-                {activeSubscription.periodEnd
-                  ? `Next billing date: ${new Date(
-                      activeSubscription.periodEnd,
-                    ).toLocaleDateString()}`
-                  : "Active subscription"}
+                {activeSubscription.cancelAtPeriodEnd
+                  ? "Kündigung zum Periodenende"
+                  : activeSubscription.periodEnd
+                    ? `Nächste Abrechnung: ${format(new Date(activeSubscription.periodEnd), "dd.MM.yyyy")}`
+                    : "Aktives Abonnement"}
               </p>
             </div>
             <Badge className="bg-green-500 hover:bg-green-600">
-              {activeSubscription.status === "trialing" ? "Trial" : "Active"}
+              {activeSubscription.status === "trialing" ? "Testphase" : "Aktiv"}
             </Badge>
           </div>
         ) : (
           <div className="p-4 border border-dashed rounded-lg text-center space-y-2">
-            <p className="text-muted-foreground">No active subscription</p>
+            <p className="text-muted-foreground">Kein aktives Abonnement</p>
             <Button variant="outline" size="sm" asChild>
-              <Link href="/pricing">View Plans</Link>
+              <Link href="/pricing">Pläne anzeigen</Link>
             </Button>
           </div>
         )}
@@ -112,10 +104,13 @@ export const SubscriptionCard = () => {
             onClick={handleManageBilling}
           >
             {isPending ? (
-              <Spinner />
+              <>
+                <Spinner />
+                Wird geöffnet...
+              </>
             ) : (
               <>
-                Manage Billing
+                Abrechnung verwalten
                 <ExternalLink />
               </>
             )}
@@ -124,4 +119,4 @@ export const SubscriptionCard = () => {
       )}
     </Card>
   );
-};
+}

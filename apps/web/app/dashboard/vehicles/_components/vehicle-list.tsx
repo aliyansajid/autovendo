@@ -9,11 +9,11 @@ import {
   TableRow,
 } from "@repo/ui/src/components/table";
 import { Button } from "@repo/ui/src/components/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
-import { deleteVehicle } from "@/app/actions/vehicle.actions";
+import { deleteVehicle, type SubscriptionStatus } from "@/app/actions/vehicle.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
@@ -34,6 +34,7 @@ import {
   InputGroupInput,
   InputGroupAddon,
 } from "@repo/ui/src/components/input-group";
+import { Badge } from "@repo/ui/src/components/badge";
 
 interface Vehicle {
   id: string;
@@ -50,9 +51,19 @@ interface Vehicle {
   createdAt: Date;
 }
 
-export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
+export function VehicleList({
+  vehicles,
+  subscriptionStatus,
+}: {
+  vehicles: Vehicle[];
+  subscriptionStatus?: SubscriptionStatus;
+}) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const isExpiredGraceDone =
+    subscriptionStatus?.type === "expired" &&
+    subscriptionStatus.isGraceExpired;
 
   const filteredVehicles = useMemo(() => {
     if (!searchQuery) return vehicles;
@@ -72,15 +83,34 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
         <p className="text-muted-foreground mb-6">
           Sie haben noch keine Fahrzeuge inseriert.
         </p>
-        <Button asChild>
-          <Link href="/dashboard/vehicles/new">Neues Inserat erstellen</Link>
-        </Button>
+        {!isExpiredGraceDone &&
+          subscriptionStatus?.type !== "no_subscription" &&
+          subscriptionStatus?.type !== "quota_exhausted" && (
+            <Button asChild>
+              <Link href="/dashboard/vehicles/new">Neues Inserat erstellen</Link>
+            </Button>
+          )}
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
+      {subscriptionStatus?.type === "expired" &&
+        !subscriptionStatus.isGraceExpired &&
+        subscriptionStatus.graceEnd && (
+          <div className="flex items-start gap-3 rounded-lg border border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20 px-4 py-3 text-sm text-yellow-900 dark:text-yellow-400">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0 text-yellow-500" />
+            <p>
+              Ihre Inserate werden am{" "}
+              <strong>
+                {format(new Date(subscriptionStatus.graceEnd), "dd.MM.yyyy")}
+              </strong>{" "}
+              deaktiviert, falls Sie Ihr Abo nicht erneuern.
+            </p>
+          </div>
+        )}
+
       <InputGroup className="sm:max-w-sm">
         <InputGroupInput
           placeholder="Nach Marke, Modell oder Version suchen..."
@@ -109,7 +139,10 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
           </TableHeader>
           <TableBody>
             {filteredVehicles.map((vehicle) => (
-              <TableRow key={vehicle.id}>
+              <TableRow
+                key={vehicle.id}
+                className={isExpiredGraceDone ? "opacity-50" : undefined}
+              >
                 <TableCell>
                   <div className="relative w-12 h-12 rounded-md overflow-hidden bg-muted">
                     {vehicle.images?.[0] ? (
@@ -131,8 +164,15 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
                   </div>
                 </TableCell>
                 <TableCell className="font-medium whitespace-nowrap">
-                  {vehicle.make}
-                  {vehicle.model ? ` ${vehicle.model}` : ""}
+                  <span className="flex items-center gap-2">
+                    {vehicle.make}
+                    {vehicle.model ? ` ${vehicle.model}` : ""}
+                    {isExpiredGraceDone && (
+                      <Badge variant="secondary" className="text-xs">
+                        Inaktiv
+                      </Badge>
+                    )}
+                  </span>
                 </TableCell>
                 <TableCell className="font-semibold whitespace-nowrap">
                   CHF {vehicle.price.toLocaleString("de-CH")}

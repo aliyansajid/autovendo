@@ -1,6 +1,5 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
-import { unauthorized } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -15,8 +14,6 @@ export default async function DashboardPage() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-
-  if (!session) unauthorized();
 
   // @ts-ignore - subscription is added by the stripe plugin
   const subscriptionApi = (auth.api as any).subscription;
@@ -33,7 +30,7 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          Willkommen zurück, {session.user.name}!
+          Willkommen zurück, {session!.user.name}!
         </h1>
         <p className="text-muted-foreground">
           Verwalten Sie Ihren Fahrzeughandel und Ihr Abonnement an einem Ort.

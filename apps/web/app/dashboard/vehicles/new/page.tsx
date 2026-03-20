@@ -1,6 +1,7 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { getDealerProfile } from "@/app/actions/dealer.actions";
+import { getVehicleSubscriptionStatus } from "@/app/actions/vehicle.actions";
 import { VehicleForm } from "../_components/vehicle-form";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -11,9 +12,10 @@ export default async function AddNewVehiclePage() {
     headers: await headers(),
   });
 
-  const dealerProfile = session?.user?.id
-    ? await getDealerProfile(session.user.id)
-    : null;
+  const [dealerProfile, subscriptionStatus] = await Promise.all([
+    session?.user?.id ? getDealerProfile(session.user.id) : null,
+    getVehicleSubscriptionStatus(),
+  ]);
 
   return (
     <div className="space-y-8">
@@ -34,7 +36,7 @@ export default async function AddNewVehiclePage() {
           </p>
         </div>
       </div>
-      <VehicleForm dealerProfile={dealerProfile} />
+      <VehicleForm dealerProfile={dealerProfile} subscriptionStatus={subscriptionStatus} />
     </div>
   );
 }

@@ -13,87 +13,78 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@repo/ui/src/components/sidebar";
-import { Skeleton } from "@repo/ui/src/components/skeleton";
-import { authClient } from "@repo/auth/client";
 import Link from "next/link";
 
-const data = {
-  navMain: [
-    {
-      title: "Übersicht",
-      url: "/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Fahrzeuge",
-      url: "/dashboard/vehicles",
-      icon: Car,
-      isActive: true,
-    },
-    {
-      title: "Abonnement",
-      url: "/dashboard/subscription",
-      icon: CreditCard,
-    },
-    {
-      title: "Einstellungen",
-      url: "#",
-      icon: Settings,
-      isActive: false,
-      items: [
-        {
-          title: "Profile",
-          url: "/dashboard/settings/profile",
-        },
-        {
-          title: "Change Password",
-          url: "/dashboard/settings/change-password",
-        },
-      ],
-    },
-  ],
-};
+const navItems = [
+  {
+    title: "Übersicht",
+    url: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Fahrzeuge",
+    url: "/dashboard/vehicles",
+    icon: Car,
+    isActive: true,
+  },
+  {
+    title: "Abonnement",
+    url: "/dashboard/subscription",
+    icon: CreditCard,
+  },
+  {
+    title: "Einstellungen",
+    url: "#",
+    icon: Settings,
+    isActive: false,
+    items: [
+      {
+        title: "Profil",
+        url: "/dashboard/settings/profile",
+      },
+      {
+        title: "Passwort ändern",
+        url: "/dashboard/settings/change-password",
+      },
+    ],
+  },
+];
 
-export function DashboardSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
-  const { data: session, isPending } = authClient.useSession();
+interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  user: {
+    name: string;
+    email: string;
+    image?: string | null;
+  } | null;
+}
 
+export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/">
-                <Image src="/logo.svg" alt="Logo" fill />
+              <Link href="/" className="relative flex items-center">
+                <Image
+                  src="/logo.svg"
+                  alt="AutoVendo"
+                  width={120}
+                  height={32}
+                  priority
+                />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navItems} />
       </SidebarContent>
       <SidebarFooter>
-        {isPending ? (
-          <div className="flex items-center gap-2 p-2">
-            <Skeleton className="h-8 w-8 rounded-lg" />
-            <div className="space-y-1">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-3 w-32" />
-            </div>
-          </div>
-        ) : (
-          <NavUser
-            user={
-              session?.user ?? {
-                name: "Guest",
-                email: "m@example.com",
-              }
-            }
-          />
-        )}
+        {user ? (
+          <NavUser user={user} />
+        ) : null}
       </SidebarFooter>
     </Sidebar>
   );

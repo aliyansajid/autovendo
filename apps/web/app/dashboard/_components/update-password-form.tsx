@@ -43,11 +43,13 @@ export const UpdatePasswordForm = () => {
       });
 
       if (error) {
-        toast.error(error.message || "Failed to update password");
+        toast.error(
+          error.message || "Passwort konnte nicht aktualisiert werden.",
+        );
         return;
       }
 
-      toast.success("Password updated successfully");
+      toast.success("Passwort erfolgreich aktualisiert.");
       form.reset();
     });
   }
@@ -55,9 +57,9 @@ export const UpdatePasswordForm = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Update Password</CardTitle>
+        <CardTitle>Passwort ändern</CardTitle>
         <CardDescription>
-          Change your password to keep your account secure.
+          Aktualisieren Sie Ihr Passwort, um Ihr Konto zu schützen.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -68,40 +70,37 @@ export const UpdatePasswordForm = () => {
               fieldType={FormFieldType.INPUT}
               inputType="password"
               name="currentPassword"
-              label="Current Password"
-              placeholder="********"
+              label="Aktuelles Passwort"
+              placeholder="••••••••"
               disabled={isPending}
             />
-
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
               inputType="password"
               name="newPassword"
-              label="New Password"
-              placeholder="********"
+              label="Neues Passwort"
+              placeholder="••••••••"
               disabled={isPending}
             />
-
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
               inputType="password"
               name="confirmPassword"
-              label="Confirm Password"
-              placeholder="********"
+              label="Passwort bestätigen"
+              placeholder="••••••••"
               disabled={isPending}
             />
-
             <Field>
-              <Button type="submit" disabled={isPending}>
+              <Button type="submit" disabled={isPending || !form.formState.isDirty}>
                 {isPending ? (
                   <>
                     <Spinner />
-                    Updating...
+                    Wird gespeichert...
                   </>
                 ) : (
-                  "Update Password"
+                  "Passwort speichern"
                 )}
               </Button>
             </Field>

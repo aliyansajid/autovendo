@@ -9,6 +9,105 @@ import { storage } from "@/lib/utils/storage";
 import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
 import { createId } from "@paralleldrive/cuid2";
 
+const PLAN_LIMITS: Record<string, number> = {
+  bronze: 5,
+  silver: 10,
+  gold: 15,
+  diamond: 25,
+};
+
+export type SubscriptionStatus = {
+  type: "active" | "no_subscription" | "quota_exhausted" | "expired";
+  plan: string;
+  maxVehicles: number;
+  currentCount: number;
+  remainingQuota: number;
+  /** ISO date string — when the 7-day grace period ends */
+  graceEnd: string | null;
+  /** true when the grace period has already passed */
+  isGraceExpired: boolean;
+};
+
+export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  const currentCount = dealer
+    ? await prisma.vehicle.count({ where: { dealerId: dealer.id } })
+    : 0;
+
+  const subscription = await prisma.subscription.findFirst({
+    where: { referenceId: session.user.id },
+    orderBy: { periodEnd: "desc" },
+  });
+
+  if (!subscription) {
+    return {
+      type: "no_subscription",
+      plan: "",
+      maxVehicles: 0,
+      currentCount,
+      remainingQuota: 0,
+      graceEnd: null,
+      isGraceExpired: false,
+    };
+  }
+
+  const planName = subscription.plan.toLowerCase();
+  const maxVehicles = PLAN_LIMITS[planName] ?? 0;
+  const isActive = ["active", "trialing", "past_due"].includes(
+    subscription.status,
+  );
+
+  if (!isActive) {
+    const expiredAt =
+      subscription.periodEnd ??
+      subscription.endedAt ??
+      subscription.canceledAt;
+    const graceEnd = expiredAt
+      ? new Date(expiredAt.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      : null;
+    const isGraceExpired = graceEnd ? new Date() > new Date(graceEnd) : true;
+    return {
+      type: "expired",
+      plan: subscription.plan,
+      maxVehicles,
+      currentCount,
+      remainingQuota: 0,
+      graceEnd,
+      isGraceExpired,
+    };
+  }
+
+  const remainingQuota = Math.max(0, maxVehicles - currentCount);
+
+  if (remainingQuota === 0) {
+    return {
+      type: "quota_exhausted",
+      plan: subscription.plan,
+      maxVehicles,
+      currentCount,
+      remainingQuota: 0,
+      graceEnd: null,
+      isGraceExpired: false,
+    };
+  }
+
+  return {
+    type: "active",
+    plan: subscription.plan,
+    maxVehicles,
+    currentCount,
+    remainingQuota,
+    graceEnd: null,
+    isGraceExpired: false,
+  };
+}
+
 /**
  * Phase 0: Prepare a new vehicle listing by generating a unique ID.
  */
@@ -104,13 +203,6 @@ export async function createVehicle(
   }
 
   const validatedData = vehicleFormSchema.parse(formData);
-
-  const PLAN_LIMITS: Record<string, number> = {
-    bronze: 5,
-    silver: 10,
-    gold: 15,
-    diamond: 25,
-  };
 
   const subscription = await prisma.subscription.findFirst({
     where: {
