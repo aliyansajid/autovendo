@@ -12,6 +12,7 @@ import {
 } from "@repo/ui/src/components/card";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { Badge } from "@repo/ui/src/components/badge";
+import { Progress } from "@repo/ui/src/components/progress";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -28,9 +29,17 @@ type SubscriptionData = {
 
 interface SubscriptionCardProps {
   subscriptions: SubscriptionData[];
+  currentCount: number;
+  maxVehicles: number;
+  hasSubscription: boolean;
 }
 
-export function SubscriptionCard({ subscriptions }: SubscriptionCardProps) {
+export function SubscriptionCard({
+  subscriptions,
+  currentCount,
+  maxVehicles,
+  hasSubscription,
+}: SubscriptionCardProps) {
   const [isPending, startTransition] = useTransition();
 
   const activeSubscription = subscriptions.find(
@@ -92,6 +101,18 @@ export function SubscriptionCard({ subscriptions }: SubscriptionCardProps) {
             <Button variant="outline" size="sm" asChild>
               <Link href="/pricing">Pläne anzeigen</Link>
             </Button>
+          </div>
+        )}
+
+        {hasSubscription && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Inseratskontingent</span>
+              <span className="font-medium">
+                {currentCount} / {maxVehicles} genutzt
+              </span>
+            </div>
+            <Progress value={(currentCount / maxVehicles) * 100} className="h-2" />
           </div>
         )}
       </CardContent>

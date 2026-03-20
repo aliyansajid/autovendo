@@ -75,12 +75,6 @@ export default async function VehiclesPage() {
           <p className="text-sm text-muted-foreground">
             Verwalten Sie Ihre inserierten Fahrzeuge und deren Status.
           </p>
-          {subscriptionStatus.type !== "no_subscription" && (
-            <p className="text-sm text-muted-foreground">
-              {subscriptionStatus.currentCount} von{" "}
-              {subscriptionStatus.maxVehicles} Inseraten genutzt
-            </p>
-          )}
         </div>
 
         {isBlocked ? (
