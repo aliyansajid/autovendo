@@ -553,22 +553,25 @@ function DataGrid({
     entries.slice(i * 2, i * 2 + 2),
   );
   return (
-    <div className="divide-y">
-      {rows.map((row, rowIdx) => (
-        <div
-          key={rowIdx}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 py-3 first:pt-0 last:pb-0"
-        >
-          {row.map(([label, value]) => (
-            <div key={label} className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">{label}</span>
-              <span className="text-sm font-medium text-right">
-                {typeof value === "string" ? formatEnumLabel(value) : value}
-              </span>
-            </div>
-          ))}
-        </div>
-      ))}
+    <div>
+      {rows.map((row, rowIdx) => {
+        const isLastRow = rowIdx === rows.length - 1;
+        return (
+          <div key={rowIdx} className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+            {row.map(([label, value]) => (
+              <div
+                key={label}
+                className={`flex items-center justify-between py-3 ${!isLastRow ? "border-b" : ""}`}
+              >
+                <span className="text-sm text-muted-foreground">{label}</span>
+                <span className="text-sm font-medium text-right">
+                  {typeof value === "string" ? formatEnumLabel(value) : value}
+                </span>
+              </div>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
