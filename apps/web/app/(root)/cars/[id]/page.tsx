@@ -197,15 +197,21 @@ export default async function ListingPage({
       : "Keine Beschreibung verfügbar.";
 
   const dealerWithHours = item.dealer as typeof item.dealer & {
-    openingHours?: Array<{ day: string; openTime: Date | null; closeTime: Date | null; isOpen: boolean }>;
+    openingHours?: Array<{ day: string; openTime: Date | string | null; closeTime: Date | string | null; isOpen: boolean }>;
   };
   const openingHours =
-    dealerWithHours.openingHours?.map((oh: { day: string; openTime: Date | null; closeTime: Date | null; isOpen: boolean }) => ({
-      day: DAY_LABELS[oh.day] ?? oh.day,
-      hours: oh.isOpen && oh.openTime != null && oh.closeTime != null
-        ? `${oh.openTime.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${oh.closeTime.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
-        : "Geschlossen",
-    })) ?? [];
+    dealerWithHours.openingHours?.map((oh) => {
+      const toDate = (v: Date | string | null): Date | null =>
+        v == null ? null : v instanceof Date ? v : new Date(v);
+      const open = toDate(oh.openTime);
+      const close = toDate(oh.closeTime);
+      return {
+        day: DAY_LABELS[oh.day] ?? oh.day,
+        hours: oh.isOpen && open != null && close != null
+          ? `${open.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
+          : "Geschlossen",
+      };
+    }) ?? [];
 
   const seller = {
     id: item.dealer.id,
