@@ -86,6 +86,7 @@ export const DealerDetailContent = ({
   const [hasMore, setHasMore] = useState(initialVehicles.hasMore);
   const [vehiclePage, setVehiclePage] = useState(1);
   const [isLoadingMore, startLoadMore] = useTransition();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function loadMore() {
     startLoadMore(async () => {
@@ -102,24 +103,21 @@ export const DealerDetailContent = ({
     defaultValues: { name: "", phone: "", email: "", message: "" },
   });
 
-  function onSubmit(values: z.infer<typeof dealerContactSchema>) {
-    startTransition(async () => {
-      try {
-        const result = await sendDealerContactEmail(dealer.id, values);
-        if (result.success) {
-          toast.success(
-            "Nachricht gesendet! Der Händler meldet sich bei Ihnen.",
-          );
-          form.reset();
-        } else {
-          toast.error(
-            result.error ?? "Nachricht konnte nicht gesendet werden.",
-          );
-        }
-      } catch (error) {
-        toast.error("Ein unerwarteter Fehler ist aufgetreten.");
+  async function onSubmit(values: z.infer<typeof dealerContactSchema>) {
+    setIsSubmitting(true);
+    try {
+      const result = await sendDealerContactEmail(dealer.id, values);
+      if (result.success) {
+        toast.success("Nachricht gesendet! Der Händler meldet sich bei Ihnen.");
+        form.reset();
+      } else {
+        toast.error(result.error ?? "Nachricht konnte nicht gesendet werden.");
       }
-    });
+    } catch (error) {
+      toast.error("Ein unerwarteter Fehler ist aufgetreten.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const rating = googleData?.rating ?? null;
@@ -434,17 +432,17 @@ export const DealerDetailContent = ({
                         <Button
                           type="submit"
                           className="w-full"
-                          disabled={isPending}
+                          disabled={isSubmitting}
                         >
-                          {isPending ? (
+                          {isSubmitting ? (
                             <>
                               <Spinner />
-                              Wird gesendet
+                              <span>Wird gesendet</span>
                             </>
                           ) : (
                             <>
                               <Send />
-                              Nachricht senden
+                              <span>Nachricht senden</span>
                             </>
                           )}
                         </Button>
