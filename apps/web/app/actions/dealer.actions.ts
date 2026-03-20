@@ -39,11 +39,23 @@ const DAY_LABELS: Record<string, string> = {
   SUNDAY: "Sonntag",
 };
 
-function toTimeString(date: Date): string {
-  return date.toLocaleTimeString("de-CH", {
+function toTimeString(date: Date | string | null): string {
+  if (!date) return "";
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleTimeString("de-CH", {
     hour: "2-digit",
     minute: "2-digit",
+    hour12: false,
   });
+}
+
+function parseTimeString(time: string | null | undefined): Date | null {
+  if (!time || !time.includes(":")) return null;
+  const [hours, minutes] = time.split(":").map(Number);
+  const date = new Date();
+  date.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+  return date;
 }
 
 // -----------------------------------------------------------------------------
@@ -76,7 +88,7 @@ export async function updateDealerProfile(
         companyName: values.companyName,
         description: values.description,
         website: values.website,
-        logo: typeof values.logo === "string" ? values.logo : undefined,
+        logo: typeof values.logo === "string" ? values.logo : (values.logo === null ? null : undefined),
         streetAddress: values.streetAddress,
         zipCode: values.zipCode,
         city: values.city,
@@ -96,8 +108,8 @@ export async function updateDealerProfile(
           dealerId: dealer.id,
           day: oh.day.toUpperCase() as any,
           isOpen: oh.isOpen,
-          openTime: oh.openTime || null,
-          closeTime: oh.closeTime || null,
+          openTime: parseTimeString(oh.openTime),
+          closeTime: parseTimeString(oh.closeTime),
         })),
       });
     }
@@ -147,18 +159,8 @@ export async function getDealerProfile(
     ...dealer,
     openingHours: dealer.openingHours.map((oh) => ({
       ...oh,
-      openTime: oh.openTime
-        ? new Date(oh.openTime).toLocaleTimeString("en-GB", {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        : null,
-      closeTime: oh.closeTime
-        ? new Date(oh.closeTime).toLocaleTimeString("en-GB", {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        : null,
+      openTime: toTimeString(oh.openTime),
+      closeTime: toTimeString(oh.closeTime),
     })),
   } as DealerProfile;
 }

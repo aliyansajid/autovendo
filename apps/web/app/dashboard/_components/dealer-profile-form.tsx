@@ -112,14 +112,26 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
 
         // Update user
         const userUpdates: { name?: string; image?: string } = {};
-        if (values.name !== initialData?.user?.name)
-          userUpdates.name = values.name;
-        if (imageUrl !== initialData?.user?.image)
-          userUpdates.image = imageUrl as string;
+        
+        // Normalize values for comparison
+        const currentName = values.name || "";
+        const initialName = initialData?.user?.name || "";
+        const currentImage = (imageUrl as string) || null;
+        const initialImage = initialData?.user?.image || null;
+
+        if (currentName !== initialName)
+          userUpdates.name = currentName;
+        if (currentImage !== initialImage)
+          userUpdates.image = currentImage as string;
 
         if (Object.keys(userUpdates).length > 0) {
           const { error } = await authClient.updateUser(userUpdates);
-          if (error) toast.error(error.message || "Benutzerinformationen konnten nicht aktualisiert werden");
+          if (error) {
+            // Ignore "No fields to update" as it's not a critical failure here
+            if (error.message !== "No fields to update") {
+              toast.error(error.message || "Benutzerinformationen konnten nicht aktualisiert werden");
+            }
+          }
         }
 
         // Handle email change
@@ -145,8 +157,8 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
 
         const result = await updateDealerProfile(initialData.user.id, {
           ...values,
-          image: imageUrl as string,
-          logo: logoUrl as string,
+          image: (imageUrl as string) || null,
+          logo: (logoUrl as string) || null,
         });
 
         if (result.success) {
@@ -428,7 +440,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                       <CustomFormField
                         control={form.control}
                         fieldType={FormFieldType.INPUT}
-                        inputType="text"
+                        inputType="time"
                         name={`openingHours.${index}.openTime`}
                         placeholder="08:00"
                         className="h-9"
@@ -437,7 +449,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                       <CustomFormField
                         control={form.control}
                         fieldType={FormFieldType.INPUT}
-                        inputType="text"
+                        inputType="time"
                         name={`openingHours.${index}.closeTime`}
                         placeholder="18:00"
                         className="h-9"
