@@ -78,13 +78,14 @@ export const DealerDetailContent = ({
   initialVehicles,
   googleData,
 }: DealerDetailContentProps) => {
+  const [isPending, startTransition] = useTransition();
+
   const [vehicles, setVehicles] = useState<VehicleListItem[]>(
     initialVehicles.vehicles,
   );
   const [hasMore, setHasMore] = useState(initialVehicles.hasMore);
   const [vehiclePage, setVehiclePage] = useState(1);
   const [isLoadingMore, startLoadMore] = useTransition();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function loadMore() {
     startLoadMore(async () => {
@@ -101,19 +102,24 @@ export const DealerDetailContent = ({
     defaultValues: { name: "", phone: "", email: "", message: "" },
   });
 
-  async function onSubmit(values: z.infer<typeof dealerContactSchema>) {
-    setIsSubmitting(true);
-    try {
-      const result = await sendDealerContactEmail(dealer.id, values);
-      if (result.success) {
-        toast.success("Nachricht gesendet! Der Händler meldet sich bei Ihnen.");
-        form.reset();
-      } else {
-        toast.error(result.error ?? "Nachricht konnte nicht gesendet werden.");
+  function onSubmit(values: z.infer<typeof dealerContactSchema>) {
+    startTransition(async () => {
+      try {
+        const result = await sendDealerContactEmail(dealer.id, values);
+        if (result.success) {
+          toast.success(
+            "Nachricht gesendet! Der Händler meldet sich bei Ihnen.",
+          );
+          form.reset();
+        } else {
+          toast.error(
+            result.error ?? "Nachricht konnte nicht gesendet werden.",
+          );
+        }
+      } catch (error) {
+        toast.error("Ein unerwarteter Fehler ist aufgetreten.");
       }
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   }
 
   const rating = googleData?.rating ?? null;
@@ -396,6 +402,7 @@ export const DealerDetailContent = ({
                         name="name"
                         label="Name"
                         placeholder="Max Mustermann"
+                        disabled={isPending}
                       />
                       <CustomFormField
                         control={form.control}
@@ -404,6 +411,7 @@ export const DealerDetailContent = ({
                         name="phone"
                         label="Telefon"
                         placeholder="+41 79 123 45 67"
+                        disabled={isPending}
                       />
                       <CustomFormField
                         control={form.control}
@@ -412,6 +420,7 @@ export const DealerDetailContent = ({
                         name="email"
                         label="E-Mail"
                         placeholder="m@example.com"
+                        disabled={isPending}
                       />
                       <CustomFormField
                         control={form.control}
@@ -419,15 +428,25 @@ export const DealerDetailContent = ({
                         name="message"
                         label="Nachricht"
                         placeholder="Ich interessiere mich für..."
+                        disabled={isPending}
                       />
                       <Field>
                         <Button
                           type="submit"
                           className="w-full"
-                          disabled={isSubmitting}
+                          disabled={isPending}
                         >
-                          {isSubmitting ? <Spinner /> : <Send />}
-                          Nachricht senden
+                          {isPending ? (
+                            <>
+                              <Spinner />
+                              Wird gesendet
+                            </>
+                          ) : (
+                            <>
+                              <Send />
+                              Nachricht senden
+                            </>
+                          )}
                         </Button>
                       </Field>
                     </FieldGroup>
