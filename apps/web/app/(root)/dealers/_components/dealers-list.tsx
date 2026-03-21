@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@repo/ui/components/button";
 import { MapPin, ArrowRight, Search } from "lucide-react";
 import Link from "next/link";
@@ -33,14 +34,33 @@ export const DealersList = ({ initialData }: DealersListProps) => {
   const totalPages = initialData.totalPages;
   const dealers = initialData.dealers;
 
-  const updateParams = (updates: Record<string, string | null>) => {
-    const params = new URLSearchParams(searchParams.toString());
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value === null) params.delete(key);
-      else params.set(key, value);
-    });
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
+  const updateParams = useCallback(
+    (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams.toString());
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value === null) params.delete(key);
+        else params.set(key, value);
+      });
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    },
+    [searchParams, router, pathname]
+  );
+
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+
+  useEffect(() => {
+    setLocalSearch(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (localSearch === searchQuery) return;
+
+    const timer = setTimeout(() => {
+      updateParams({ q: localSearch || null, page: "1" });
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [localSearch, searchQuery, updateParams]);
 
   return (
     <div className="w-full max-w-285 mx-auto px-4 py-12 space-y-6">
@@ -55,10 +75,8 @@ export const DealersList = ({ initialData }: DealersListProps) => {
         <InputGroup className="w-full md:w-96">
           <InputGroupInput
             placeholder="Händler suchen..."
-            value={searchQuery}
-            onChange={(e) =>
-              updateParams({ q: e.target.value || null, page: "1" })
-            }
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
           />
           <InputGroupAddon>
             <Search />

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { PlusCircle, Menu, LayoutDashboard, Settings } from "lucide-react";
+import { PlusCircle, Menu, LayoutDashboard } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuItem,
