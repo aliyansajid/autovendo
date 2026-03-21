@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import { AdvancedSearchForm } from "./_components/advanced-search-form";
 
 export default function AdvancedSearchPage() {
-  return <AdvancedSearchForm />;
+  return (
+    <Suspense>
+      <AdvancedSearchForm />
+    </Suspense>
+  );
 }
