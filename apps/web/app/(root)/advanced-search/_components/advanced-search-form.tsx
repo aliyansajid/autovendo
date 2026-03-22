@@ -36,8 +36,13 @@ function paramsToQueryString(params: Record<string, string | string[]>): string 
   return sp.toString();
 }
 
+import { useSearchParams } from "next/navigation";
+
 export const AdvancedSearchForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const dealerId = searchParams.get("dealer");
+
   const form = useForm<z.infer<typeof advancedSearchFormSchema>>({
     resolver: zodResolver(advancedSearchFormSchema) as any,
     defaultValues: { make: [], powerType: "ps", daysListed: "any" },
@@ -51,18 +56,20 @@ export const AdvancedSearchForm = () => {
 
   useEffect(() => {
     // If vehicleType changed, reset form filters to avoid contradictory filters
-    // (e.g. car body types applied to trucks)
     if (prevVehicleTypeRef.current !== vehicleType) {
       prevVehicleTypeRef.current = vehicleType;
-      // Keep only fixed non-filter defaults, or reset entirely
       form.reset({ make: [], powerType: "ps", daysListed: "any" });
     }
 
     // Fetch immediately on mount and whenever vehicleType changes
-    const params = buildSearchParams(
-      form.getValues() as Record<string, unknown>,
-      vehicleType,
-    );
+    const params = {
+      ...buildSearchParams(
+        form.getValues() as Record<string, unknown>,
+        vehicleType,
+      ),
+      ...(dealerId ? { dealerId } : {}),
+    };
+
     getVehicleCountAndFacets(params)
       .then(({ total: t, facets: f }) => {
         setTotal(t);
@@ -76,10 +83,13 @@ export const AdvancedSearchForm = () => {
     const subscription = form.watch((values) => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
-        const params = buildSearchParams(
-          values as Record<string, unknown>,
-          vehicleType,
-        );
+        const params = {
+          ...buildSearchParams(
+            values as Record<string, unknown>,
+            vehicleType,
+          ),
+          ...(dealerId ? { dealerId } : {}),
+        };
         getVehicleCountAndFacets(params)
           .then(({ total: t, facets: f }) => {
             setTotal(t);
@@ -96,7 +106,7 @@ export const AdvancedSearchForm = () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       subscription.unsubscribe();
     };
-  }, [form, vehicleType]);
+  }, [form, vehicleType, dealerId]);
 
   function onSubmit(data: z.infer<typeof advancedSearchFormSchema>) {
     const params = buildSearchParams(
@@ -104,7 +114,12 @@ export const AdvancedSearchForm = () => {
       vehicleType,
     );
     const query = paramsToQueryString(params);
-    router.push(query ? `/cars?${query}` : "/cars");
+
+    if (dealerId) {
+      router.push(`/dealers/${dealerId}?tab=cars&${query}`);
+    } else {
+      router.push(query ? `/cars?${query}` : "/cars");
+    }
   }
 
   return (

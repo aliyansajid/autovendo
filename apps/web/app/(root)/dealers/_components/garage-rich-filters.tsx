@@ -234,6 +234,7 @@ import type { VehicleSearchParams } from "@/lib/schemas/vehicle.schema";
 
 interface GarageRichFiltersProps {
   onFilterChange: (filters: Partial<VehicleSearchParams>) => void;
+  dealerId?: string;
 }
 
 const DEFAULTS = {
@@ -244,6 +245,7 @@ const DEFAULTS = {
 
 export default function GarageRichFilters({
   onFilterChange,
+  dealerId,
 }: GarageRichFiltersProps) {
   const [isMakeModalOpen, setIsMakeModalOpen] = useState(false);
 
@@ -583,7 +585,7 @@ export default function GarageRichFilters({
             Filter zurücksetzen
           </Button>
         )}
-        <Link href="/advanced-search">
+        <Link href={dealerId ? `/advanced-search?dealer=${dealerId}` : "/advanced-search"}>
           <Button variant="secondary">
             <CircleEllipsis />
             Mehr Filter

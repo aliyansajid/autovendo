@@ -72,12 +72,14 @@ interface DealerDetailContentProps {
   dealer: DealerDetail;
   initialVehicles: DealerVehiclesResult;
   googleData: GooglePlaceData | null;
+  initialFilters?: Partial<VehicleSearchParams>;
 }
 
 export const DealerDetailContent = ({
   dealer,
   initialVehicles,
   googleData,
+  initialFilters = {},
 }: DealerDetailContentProps) => {
   const [isPending, startTransition] = useTransition();
 
@@ -88,7 +90,7 @@ export const DealerDetailContent = ({
   const [hasMore, setHasMore] = useState(initialVehicles.hasMore);
   const [vehiclePage, setVehiclePage] = useState(1);
   const [currentFilters, setCurrentFilters] = useState<Partial<VehicleSearchParams>>(
-    {},
+    initialFilters,
   );
   const [sortBy, setSortBy] = useState("newest");
   const [isLoadingMore, startLoadMore] = useTransition();
@@ -508,7 +510,10 @@ export const DealerDetailContent = ({
           </TabsContent>
 
           <TabsContent value="cars" className="space-y-8 mb-0">
-            <GarageFilters onFilterChange={handleFilterChange} />
+            <GarageFilters
+              onFilterChange={handleFilterChange}
+              dealerId={dealer.id}
+            />
 
             <div className="flex flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border relative">
               {isFiltering && (

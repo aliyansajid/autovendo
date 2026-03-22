@@ -6,12 +6,18 @@ interface DealerPageParams {
   id: string;
 }
 
-export default async function DealerPage({
-  params,
-}: {
-  params: Promise<DealerPageParams>;
+import { parseSearchParams } from "@/lib/helpers/vehicle";
+import { VehicleSearchSchema } from "@/lib/schemas/vehicle.schema";
+
+export default async function DealerPage(props: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const { id } = await params;
+  const { id } = await props.params;
+  const searchParams = await props.searchParams;
+  
+  const parsedFilters = parseSearchParams(searchParams);
+  const filters = VehicleSearchSchema.parse(parsedFilters);
   const dealer = await getDealerById(id);
 
   if (!dealer) {
@@ -19,7 +25,7 @@ export default async function DealerPage({
   }
 
   const [initialVehicles, googleData] = await Promise.all([
-    getDealerVehicles(dealer.id, 1, 12),
+    getDealerVehicles(dealer.id, 1, 12, filters),
     dealer.googlePlaceId
       ? getDealerGoogleReviews(dealer.googlePlaceId)
       : Promise.resolve(null),
@@ -30,6 +36,7 @@ export default async function DealerPage({
       dealer={dealer}
       initialVehicles={initialVehicles}
       googleData={googleData}
+      initialFilters={filters}
     />
   );
 }

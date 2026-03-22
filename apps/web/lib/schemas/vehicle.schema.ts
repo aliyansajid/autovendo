@@ -269,6 +269,9 @@ export const VehicleSearchSchema = z.object({
   // Inspection / warranty
   inspectionPassed: z.boolean().optional(),
   hasWarranty: z.boolean().optional(),
+
+  // Dealer context (for dealer-specific advanced search)
+  dealerId: z.string().optional(),
 });
 
 export type VehicleSearchParams = z.infer<typeof VehicleSearchSchema>;

@@ -279,6 +279,11 @@ export async function buildWhereClause(
     where.warranty = { not: null };
   }
 
+  // Dealer filter
+  if (!omitFilters.dealerId && params.dealerId) {
+    where.dealerId = params.dealerId;
+  }
+
   // Interior color
   if (!omitFilters.interiorColor && params.interiorColor && params.interiorColor.length > 0) {
     where.interiorColor = { in: params.interiorColor.map(toDbEnum) as any };
