@@ -47,8 +47,17 @@ export const AdvancedSearchForm = () => {
   const [total, setTotal] = useState<number | null>(null);
   const [facets, setFacets] = useState<VehicleFacets | null>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const prevVehicleTypeRef = useRef(vehicleType);
 
   useEffect(() => {
+    // If vehicleType changed, reset form filters to avoid contradictory filters
+    // (e.g. car body types applied to trucks)
+    if (prevVehicleTypeRef.current !== vehicleType) {
+      prevVehicleTypeRef.current = vehicleType;
+      // Keep only fixed non-filter defaults, or reset entirely
+      form.reset({ make: [], powerType: "ps", daysListed: "any" });
+    }
+
     // Fetch immediately on mount and whenever vehicleType changes
     const params = buildSearchParams(
       form.getValues() as Record<string, unknown>,

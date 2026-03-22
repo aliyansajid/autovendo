@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Label } from "@repo/ui/src/components/label";
 import {
   AccordionContent,
@@ -28,12 +28,65 @@ export function TechnicalDataSection({
   facets?: VehicleFacets | null;
 }) {
   const { control, watch, setValue } = useFormContext();
-  const powerRange = watch("power") ?? [0, 1500];
+  const powerType = watch("powerType") ?? "ps";
+  const powerValue = watch("power"); // undefined = slider not yet moved
+
+  // Compute dynamic slider limits from DB facets, rounded to nearest step
+  const maxPs = facets?.hpMax ? Math.ceil(facets.hpMax / 10) * 10 : 1500;
+  const maxKw = facets?.kwMax ? Math.ceil(facets.kwMax / 5) * 5 : 1000;
+  const currentMax = powerType === "kw" ? maxKw : maxPs;
+  const currentStep = powerType === "kw" ? 5 : 10;
+  const currentUnit = powerType === "kw" ? "kW" : "PS";
+
+  // Reset slider and filter inputs when the user switches between PS and kW
+  const prevPowerTypeRef = useRef(powerType);
+  useEffect(() => {
+    if (prevPowerTypeRef.current !== powerType) {
+      prevPowerTypeRef.current = powerType;
+      setValue("power", undefined as any);
+      setValue("power-from", "");
+      setValue("power-to", "");
+    }
+  }, [powerType, setValue]);
+
+  // Sync slider position → input fields; treat min/max positions as "no filter"
+  useEffect(() => {
+    if (powerValue === undefined) {
+      setValue("power-from", "");
+      setValue("power-to", "");
+      return;
+    }
+    const [from, to] = powerValue as [number, number];
+    setValue("power-from", from === 0 ? "" : from.toString());
+    setValue("power-to", to >= currentMax ? "" : to.toString());
+  }, [powerValue, setValue, currentMax]);
+
+  const cubicCapacityMax = facets?.cubicCapacityMax ? Math.ceil(facets.cubicCapacityMax / 100) * 100 : 8000;
+  const cylindersMax = facets?.cylindersMax ?? 16;
+  const capacityValue = watch("capacity");
+  const cylinderValue = watch("cylinder");
 
   useEffect(() => {
-    setValue("power-from", powerRange[0]?.toString() ?? "0");
-    setValue("power-to", powerRange[1]?.toString() ?? "1500");
-  }, [powerRange, setValue]);
+    if (capacityValue === undefined) {
+      setValue("capacity-from", "");
+      setValue("capacity-to", "");
+      return;
+    }
+    const [from, to] = capacityValue as [number, number];
+    setValue("capacity-from", from <= 1 ? "" : from.toString());
+    setValue("capacity-to", to >= cubicCapacityMax ? "" : to.toString());
+  }, [capacityValue, cubicCapacityMax, setValue]);
+
+  useEffect(() => {
+    if (cylinderValue === undefined) {
+      setValue("cylinder-from", "");
+      setValue("cylinder-to", "");
+      return;
+    }
+    const [from, to] = cylinderValue as [number, number];
+    setValue("cylinder-from", from <= 1 ? "" : from.toString());
+    setValue("cylinder-to", to >= cylindersMax ? "" : to.toString());
+  }, [cylinderValue, cylindersMax, setValue]);
 
   const currentFuelEnum = vehicleType === "utility"
     ? utilityFuelTypeEnum
@@ -164,7 +217,7 @@ export function TechnicalDataSection({
                 <Label className="text-base font-semibold">Leistung</Label>
                 <span
                   className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                  onClick={() => { setValue("power", [0, 1500]); setValue("power-from", "0"); setValue("power-to", "1500"); }}
+                  onClick={() => { setValue("power", undefined as any); setValue("power-from", ""); setValue("power-to", ""); }}
                 >
                   Zurücksetzen
                 </span>
@@ -186,23 +239,23 @@ export function TechnicalDataSection({
               fieldType={FormFieldType.SLIDER}
               name="power"
               min={0}
-              max={1500}
-              step={10}
+              max={currentMax}
+              step={currentStep}
             >
               <div className="flex gap-2">
                 <CustomFormField
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="power-from"
-                  inputGroupText="PS"
+                  inputGroupText={currentUnit}
                   placeholder="0"
                 />
                 <CustomFormField
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="power-to"
-                  inputGroupText="PS"
-                  placeholder="1'500+"
+                  inputGroupText={currentUnit}
+                  placeholder={`${currentMax}+`}
                 />
               </div>
             </CustomFormField>
@@ -213,7 +266,7 @@ export function TechnicalDataSection({
               <Label className="text-base font-semibold">Hubraum</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("capacity", [1, 8000]); setValue("capacity-from", ""); setValue("capacity-to", ""); }}
+                onClick={() => { setValue("capacity", undefined as any); setValue("capacity-from", ""); setValue("capacity-to", ""); }}
               >
                 Zurücksetzen
               </span>
@@ -223,7 +276,7 @@ export function TechnicalDataSection({
               fieldType={FormFieldType.SLIDER}
               name="capacity"
               min={1}
-              max={8000}
+              max={cubicCapacityMax}
               step={100}
             >
               <div className="flex gap-2">
@@ -239,7 +292,7 @@ export function TechnicalDataSection({
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="capacity-to"
                   inputGroupText="cm³"
-                  placeholder="8'000+"
+                  placeholder={`${cubicCapacityMax.toLocaleString("de-CH")}+`}
                 />
               </div>
             </CustomFormField>
@@ -250,7 +303,7 @@ export function TechnicalDataSection({
               <Label className="text-base font-semibold">Zylinder</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("cylinder", [1, 16]); setValue("cylinder-from", ""); setValue("cylinder-to", ""); }}
+                onClick={() => { setValue("cylinder", undefined as any); setValue("cylinder-from", ""); setValue("cylinder-to", ""); }}
               >
                 Zurücksetzen
               </span>
@@ -260,7 +313,7 @@ export function TechnicalDataSection({
               fieldType={FormFieldType.SLIDER}
               name="cylinder"
               min={1}
-              max={16}
+              max={cylindersMax}
               step={1}
             >
               <div className="flex gap-2">
@@ -274,7 +327,7 @@ export function TechnicalDataSection({
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="cylinder-to"
-                  placeholder="16"
+                  placeholder={`${cylindersMax}+`}
                 />
               </div>
             </CustomFormField>

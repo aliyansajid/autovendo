@@ -627,6 +627,15 @@ export async function getVehicleCountAndFacets(rawParams: {
     metallicCount,
     inspectionPassedCount,
     hasWarrantyCount,
+    hpAgg,
+    kwAgg,
+    priceAgg,
+    kilometerAgg,
+    yearAgg,
+    consumptionAgg,
+    co2Agg,
+    cubicCapacityAgg,
+    cylindersAgg,
   ] = await Promise.all([
     prisma.vehicle.count({ where }),
     prisma.vehicle.groupBy({
@@ -688,6 +697,15 @@ export async function getVehicleCountAndFacets(rawParams: {
     prisma.vehicle.count({ where: { ...buildWhereClause(params, { metallic: true }), metallic: true } }),
     prisma.vehicle.count({ where: { ...buildWhereClause(params, { inspectionPassed: true }), inspectionPassed: true } }),
     prisma.vehicle.count({ where: { ...buildWhereClause(params, { hasWarranty: true }), warranty: { not: null } } }),
+    prisma.vehicle.aggregate({ _max: { hp: true }, where: facetBase }),
+    prisma.vehicle.aggregate({ _max: { kw: true }, where: facetBase }),
+    prisma.vehicle.aggregate({ _max: { price: true }, where: facetBase }),
+    prisma.vehicle.aggregate({ _max: { kilometer: true }, where: facetBase }),
+    prisma.vehicle.aggregate({ _min: { registrationYear: true }, _max: { registrationYear: true }, where: facetBase }),
+    prisma.vehicle.aggregate({ _max: { consumptionTotal: true }, where: facetBase }),
+    prisma.vehicle.aggregate({ _max: { co2Emission: true }, where: facetBase }),
+    prisma.vehicle.aggregate({ _max: { cubicCapacity: true }, where: facetBase }),
+    prisma.vehicle.aggregate({ _max: { cylinders: true }, where: facetBase }),
   ]);
 
   const facets: VehicleFacets = {
@@ -705,6 +723,16 @@ export async function getVehicleCountAndFacets(rawParams: {
     metallic: metallicCount,
     inspectionPassed: inspectionPassedCount,
     hasWarranty: hasWarrantyCount,
+    hpMax: hpAgg._max.hp ?? undefined,
+    kwMax: kwAgg._max.kw ?? undefined,
+    priceMax: priceAgg._max.price ?? undefined,
+    kilometerMax: kilometerAgg._max.kilometer ?? undefined,
+    yearMin: yearAgg._min.registrationYear ?? undefined,
+    yearMax: yearAgg._max.registrationYear ?? undefined,
+    consumptionMax: consumptionAgg._max.consumptionTotal ?? undefined,
+    co2Max: co2Agg._max.co2Emission ?? undefined,
+    cubicCapacityMax: cubicCapacityAgg._max.cubicCapacity ?? undefined,
+    cylindersMax: cylindersAgg._max.cylinders ?? undefined,
   };
 
   return { total, facets };

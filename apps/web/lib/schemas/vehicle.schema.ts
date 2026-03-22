@@ -163,6 +163,16 @@ export interface VehicleFacets {
   metallic: number;
   inspectionPassed: number;
   hasWarranty: number;
+  hpMax?: number;
+  kwMax?: number;
+  priceMax?: number;
+  kilometerMax?: number;
+  yearMin?: number;
+  yearMax?: number;
+  consumptionMax?: number;
+  co2Max?: number;
+  cubicCapacityMax?: number;
+  cylindersMax?: number;
 }
 
 /**

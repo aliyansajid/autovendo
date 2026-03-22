@@ -18,18 +18,34 @@ import { formatCount } from "@/lib/helpers/format";
 
 export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
   const { control, watch, setValue } = useFormContext();
-  const consumptionRange = watch("consumption") || [0, 30];
-  const emissionsRange = watch("emissions") || [0, 560];
+
+  const consumptionMax = facets?.consumptionMax ? Math.ceil(facets.consumptionMax * 10) / 10 + 0.1 : 30;
+  const co2Max = facets?.co2Max ? Math.ceil(facets.co2Max / 10) * 10 : 560;
+
+  const consumptionValue = watch("consumption");
+  const emissionsValue = watch("emissions");
 
   useEffect(() => {
-    setValue("consumption-from", consumptionRange[0]?.toString() || "0");
-    setValue("consumption-to", consumptionRange[1]?.toString() || "30");
-  }, [consumptionRange, setValue]);
+    if (consumptionValue === undefined) {
+      setValue("consumption-from", "");
+      setValue("consumption-to", "");
+      return;
+    }
+    const [from, to] = consumptionValue as [number, number];
+    setValue("consumption-from", from === 0 ? "" : from.toString());
+    setValue("consumption-to", to >= consumptionMax ? "" : to.toString());
+  }, [consumptionValue, consumptionMax, setValue]);
 
   useEffect(() => {
-    setValue("emissions-from", emissionsRange[0]?.toString() || "0");
-    setValue("emissions-to", emissionsRange[1]?.toString() || "560");
-  }, [emissionsRange, setValue]);
+    if (emissionsValue === undefined) {
+      setValue("emissions-from", "");
+      setValue("emissions-to", "");
+      return;
+    }
+    const [from, to] = emissionsValue as [number, number];
+    setValue("emissions-from", from === 0 ? "" : from.toString());
+    setValue("emissions-to", to >= co2Max ? "" : to.toString());
+  }, [emissionsValue, co2Max, setValue]);
 
   return (
     <AccordionItem value="energy" className="border-none">
@@ -43,7 +59,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               <Label className="text-base font-semibold">Verbrauch</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("consumption", [0, 30]); setValue("consumption-from", "0"); setValue("consumption-to", "30"); }}
+                onClick={() => { setValue("consumption", undefined as any); setValue("consumption-from", ""); setValue("consumption-to", ""); }}
               >
                 Zurücksetzen
               </span>
@@ -53,7 +69,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               fieldType={FormFieldType.SLIDER}
               name="consumption"
               min={0}
-              max={30}
+              max={consumptionMax}
               step={0.1}
             >
               <div className="flex gap-2">
@@ -68,7 +84,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="consumption-to"
-                  placeholder="30+"
+                  placeholder={`${consumptionMax}+`}
                   inputGroupText="1/100km"
                 />
               </div>
@@ -80,7 +96,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               <Label className="text-base font-semibold">CO2-Emissionen</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("emissions", [0, 560]); setValue("emissions-from", "0"); setValue("emissions-to", "560"); }}
+                onClick={() => { setValue("emissions", undefined as any); setValue("emissions-from", ""); setValue("emissions-to", ""); }}
               >
                 Zurücksetzen
               </span>
@@ -90,7 +106,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               fieldType={FormFieldType.SLIDER}
               name="emissions"
               min={0}
-              max={560}
+              max={co2Max}
               step={1}
             >
               <div className="flex gap-2">
@@ -105,7 +121,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="emissions-to"
-                  placeholder="560+"
+                  placeholder={`${co2Max}+`}
                   inputGroupText="g/km"
                 />
               </div>

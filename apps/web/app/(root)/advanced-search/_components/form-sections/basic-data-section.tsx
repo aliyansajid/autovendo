@@ -37,9 +37,18 @@ export function BasicDataSection({
 }) {
   const { control, watch, setValue, getValues } = useFormContext();
 
-  const yearRange = watch("year") || [1900, CURRENT_YEAR];
-  const kilometerRange = watch("kilometer") || [0, 400000];
-  const priceRange = watch("price") || [0, 1000000];
+  const yearMin = facets?.yearMin ?? 1900;
+  const yearMax = facets?.yearMax ?? CURRENT_YEAR;
+  const kmMax = facets?.kilometerMax ? Math.ceil(facets.kilometerMax / 1000) * 1000 : 400000;
+  const priceMax = facets?.priceMax ? Math.ceil(facets.priceMax / 10000) * 10000 : 1000000;
+
+  const yearValue = watch("year");
+  const kilometerValue = watch("kilometer");
+  const priceValue = watch("price");
+
+  const yearRange = yearValue ?? [yearMin, yearMax];
+  const kilometerRange = kilometerValue ?? [0, kmMax];
+  const priceRange = priceValue ?? [0, priceMax];
 
   const kilometerFrom = useWatch({ control, name: "kilometer-from" });
   const kilometerTo = useWatch({ control, name: "kilometer-to" });
@@ -47,21 +56,38 @@ export function BasicDataSection({
   const priceTo = useWatch({ control, name: "price-to" });
 
   useEffect(() => {
-    setValue("year-from", yearRange[0]?.toString() || "1900");
-    setValue("year-to", yearRange[1]?.toString() || CURRENT_YEAR.toString());
-  }, [yearRange, setValue]);
+    if (yearValue === undefined) {
+      setValue("year-from", "");
+      setValue("year-to", "");
+      return;
+    }
+    const [from, to] = yearValue as [number, number];
+    setValue("year-from", from <= yearMin ? "" : from.toString());
+    setValue("year-to", to >= yearMax ? "" : to.toString());
+  }, [yearValue, yearMin, yearMax, setValue]);
 
   useEffect(() => {
-    setValue("kilometer-from", kilometerRange[0]?.toString() || "0");
-    setValue("kilometer-to", kilometerRange[1]?.toString() || "400000");
-  }, [kilometerRange, setValue]);
+    if (kilometerValue === undefined) {
+      setValue("kilometer-from", "");
+      setValue("kilometer-to", "");
+      return;
+    }
+    const [from, to] = kilometerValue as [number, number];
+    setValue("kilometer-from", from === 0 ? "" : from.toString());
+    setValue("kilometer-to", to >= kmMax ? "" : to.toString());
+  }, [kilometerValue, kmMax, setValue]);
 
   useEffect(() => {
-    setValue("price-from", priceRange[0]?.toString() || "0");
-    setValue("price-to", priceRange[1]?.toString() || "1000000");
-  }, [priceRange, setValue]);
+    if (priceValue === undefined) {
+      setValue("price-from", "");
+      setValue("price-to", "");
+      return;
+    }
+    const [from, to] = priceValue as [number, number];
+    setValue("price-from", from === 0 ? "" : from.toString());
+    setValue("price-to", to >= priceMax ? "" : to.toString());
+  }, [priceValue, priceMax, setValue]);
 
-  // Two-way sync: inputs -> sliders for kilometer (without depending on slider value to avoid loops)
   useEffect(() => {
     const parseNumber = (val: unknown, fallback: number) => {
       if (val === undefined || val === null || val === "") return fallback;
@@ -69,17 +95,13 @@ export function BasicDataSection({
       const num = Number(cleaned);
       return Number.isFinite(num) ? num : fallback;
     };
-
     const from = parseNumber(kilometerFrom, 0);
-    const to = parseNumber(kilometerTo, 400000);
-
-    const [curFrom, curTo] = getValues("kilometer") || [0, 400000];
+    const to = parseNumber(kilometerTo, kmMax);
+    const [curFrom, curTo] = getValues("kilometer") ?? [0, kmMax];
     if (from === curFrom && to === curTo) return;
-
     setValue("kilometer", [from, to], { shouldDirty: true });
-  }, [kilometerFrom, kilometerTo, getValues, setValue]);
+  }, [kilometerFrom, kilometerTo, getValues, setValue, kmMax]);
 
-  // Two-way sync: inputs -> sliders for price
   useEffect(() => {
     const parseNumber = (val: unknown, fallback: number) => {
       if (val === undefined || val === null || val === "") return fallback;
@@ -87,15 +109,12 @@ export function BasicDataSection({
       const num = Number(cleaned);
       return Number.isFinite(num) ? num : fallback;
     };
-
     const from = parseNumber(priceFrom, 0);
-    const to = parseNumber(priceTo, 1000000);
-
-    const [curFrom, curTo] = getValues("price") || [0, 1000000];
+    const to = parseNumber(priceTo, priceMax);
+    const [curFrom, curTo] = getValues("price") ?? [0, priceMax];
     if (from === curFrom && to === curTo) return;
-
     setValue("price", [from, to], { shouldDirty: true });
-  }, [priceFrom, priceTo, getValues, setValue]);
+  }, [priceFrom, priceTo, getValues, setValue, priceMax]);
 
   return (
     <AccordionItem value="basic" className="border-none">
@@ -109,7 +128,7 @@ export function BasicDataSection({
               <Label className="text-base font-semibold">Jahr</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("year", [1900, CURRENT_YEAR]); setValue("year-from", "1900"); setValue("year-to", CURRENT_YEAR.toString()); }}
+                onClick={() => { setValue("year", undefined as any); setValue("year-from", ""); setValue("year-to", ""); }}
               >
                 Zurücksetzen
               </span>
@@ -118,8 +137,8 @@ export function BasicDataSection({
             <div className="h-16 flex items-end justify-between gap-1">
               {yearHistogram.map(
                 (item: { year: number; h: number }, i: number) => {
-                  const yStart = yearRange?.[0] ?? 1900;
-                  const yEnd = yearRange?.[1] ?? CURRENT_YEAR;
+                  const yStart = yearRange?.[0] ?? yearMin;
+                  const yEnd = yearRange?.[1] ?? yearMax;
                   const isActive = item.year >= yStart && item.year <= yEnd;
                   return (
                     <div
@@ -139,8 +158,8 @@ export function BasicDataSection({
               control={control}
               fieldType={FormFieldType.SLIDER}
               name="year"
-              min={1900}
-              max={CURRENT_YEAR}
+              min={yearMin}
+              max={yearMax}
               step={1}
             >
               <div className="flex gap-2">
@@ -148,13 +167,13 @@ export function BasicDataSection({
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="year-from"
-                  placeholder="1900"
+                  placeholder={yearMin.toString()}
                 />
                 <CustomFormField
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="year-to"
-                  placeholder={CURRENT_YEAR.toString()}
+                  placeholder={yearMax.toString()}
                 />
               </div>
             </CustomFormField>
@@ -165,7 +184,7 @@ export function BasicDataSection({
               <Label className="text-base font-semibold">Kilometerstand</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("kilometer", [0, 400000]); setValue("kilometer-from", "0"); setValue("kilometer-to", "400000"); }}
+                onClick={() => { setValue("kilometer", undefined as any); setValue("kilometer-from", ""); setValue("kilometer-to", ""); }}
               >
                 Zurücksetzen
               </span>
@@ -174,7 +193,7 @@ export function BasicDataSection({
               {kilometerHistogram.map(
                 (item: { value: number; h: number }, i: number) => {
                   const mStart = kilometerRange?.[0] ?? 0;
-                  const mEnd = kilometerRange?.[1] ?? 400000;
+                  const mEnd = kilometerRange?.[1] ?? kmMax;
                   const isActive = item.value >= mStart && item.value <= mEnd;
                   return (
                     <div
@@ -195,7 +214,7 @@ export function BasicDataSection({
               fieldType={FormFieldType.SLIDER}
               name="kilometer"
               min={0}
-              max={400000}
+              max={kmMax}
               step={1000}
             >
               <div className="flex gap-2">
@@ -210,7 +229,7 @@ export function BasicDataSection({
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="kilometer-to"
-                  placeholder="400'000+"
+                  placeholder={`${kmMax.toLocaleString("de-CH")}+`}
                   inputGroupText="km"
                 />
               </div>
@@ -222,7 +241,7 @@ export function BasicDataSection({
               <Label className="text-base font-semibold">Preis</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("price", [0, 200000]); setValue("price-from", "0"); setValue("price-to", "200000"); }}
+                onClick={() => { setValue("price", undefined as any); setValue("price-from", ""); setValue("price-to", ""); }}
               >
                 Zurücksetzen
               </span>
@@ -232,7 +251,7 @@ export function BasicDataSection({
               {priceHistogram.map(
                 (item: { value: number; h: number }, i: number) => {
                   const pStart = priceRange?.[0] ?? 0;
-                  const pEnd = priceRange?.[1] ?? 1000000;
+                  const pEnd = priceRange?.[1] ?? priceMax;
                   const isActive = item.value >= pStart && item.value <= pEnd;
                   return (
                     <div
@@ -253,7 +272,7 @@ export function BasicDataSection({
               fieldType={FormFieldType.SLIDER}
               name="price"
               min={0}
-              max={200000}
+              max={priceMax}
               step={1000}
             >
               <div className="flex gap-2 text-sm">
@@ -268,7 +287,7 @@ export function BasicDataSection({
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="price-to"
-                  placeholder="1'000'000+"
+                  placeholder={`${priceMax.toLocaleString("de-CH")}+`}
                   inputGroupText="CHF"
                 />
               </div>
