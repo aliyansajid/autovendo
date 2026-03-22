@@ -179,15 +179,16 @@ export function BasicDataSection({
                   const yEnd = yearRange?.[1] ?? yearMax;
                   const isActive = item.year >= yStart && item.year <= yEnd;
                   return (
-                    <div
-                      key={i}
-                      className={`w-full rounded-t transition-colors ${
-                        isActive
-                          ? "bg-primary"
-                          : "bg-muted-foreground/30 opacity-50"
-                      }`}
-                      style={{ height: `${item.h}%` }}
-                    ></div>
+                    <div key={i} className="w-full h-full bg-muted/10 rounded-t relative overflow-hidden">
+                      <div
+                        className={`absolute bottom-0 left-0 right-0 rounded-t transition-all duration-300 ${
+                          isActive
+                            ? "bg-primary"
+                            : "bg-primary/20"
+                        }`}
+                        style={{ height: `${Math.max(item.h, item.h > 0 ? 2 : 0)}%` }}
+                      ></div>
+                    </div>
                   );
                 },
               )}
@@ -238,15 +239,16 @@ export function BasicDataSection({
                   const mEnd = kilometerRange?.[1] ?? kmMax;
                   const isActive = item.value >= mStart && item.value <= mEnd;
                   return (
-                    <div
-                      key={i}
-                      className={`w-full rounded-t transition-colors ${
-                        isActive
-                          ? "bg-primary"
-                          : "bg-muted-foreground/30 opacity-50"
-                      }`}
-                      style={{ height: `${item.h}%` }}
-                    ></div>
+                    <div key={i} className="w-full h-full bg-muted/10 rounded-t relative overflow-hidden">
+                      <div
+                        className={`absolute bottom-0 left-0 right-0 rounded-t transition-all duration-300 ${
+                          isActive
+                            ? "bg-primary"
+                            : "bg-primary/20"
+                        }`}
+                        style={{ height: `${Math.max(item.h, item.h > 0 ? 2 : 0)}%` }}
+                      ></div>
+                    </div>
                   );
                 },
               )}
@@ -300,15 +302,16 @@ export function BasicDataSection({
                   const pEnd = priceRange?.[1] ?? priceMax;
                   const isActive = item.value >= pStart && item.value <= pEnd;
                   return (
-                    <div
-                      key={i}
-                      className={`w-full rounded-t transition-colors ${
-                        isActive
-                          ? "bg-primary"
-                          : "bg-muted-foreground/30 opacity-50"
-                      }`}
-                      style={{ height: `${item.h}%` }}
-                    ></div>
+                    <div key={i} className="w-full h-full bg-muted/10 rounded-t relative overflow-hidden">
+                      <div
+                        className={`absolute bottom-0 left-0 right-0 rounded-t transition-all duration-300 ${
+                          isActive
+                            ? "bg-primary"
+                            : "bg-primary/20"
+                        }`}
+                        style={{ height: `${Math.max(item.h, item.h > 0 ? 2 : 0)}%` }}
+                      ></div>
+                    </div>
                   );
                 },
               )}

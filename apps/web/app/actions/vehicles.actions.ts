@@ -121,7 +121,7 @@ function buildWhereClause(
   }
 
   // Range filters - indexed columns for optimal performance
-  if (params.priceFrom !== undefined || params.priceTo !== undefined) {
+  if (!omitFilters.priceFrom && (params.priceFrom !== undefined || params.priceTo !== undefined)) {
     where.price = {
       ...(params.priceFrom && { gte: params.priceFrom }),
       ...(params.priceTo && { lte: params.priceTo }),
@@ -129,8 +129,9 @@ function buildWhereClause(
   }
 
   if (
-    params.registrationFrom !== undefined ||
-    params.registrationTo !== undefined
+    !omitFilters.registrationFrom &&
+    (params.registrationFrom !== undefined ||
+      params.registrationTo !== undefined)
   ) {
     where.registrationYear = {
       ...(params.registrationFrom && { gte: params.registrationFrom }),
@@ -138,7 +139,7 @@ function buildWhereClause(
     };
   }
 
-  if (params.kilometerFrom !== undefined || params.kilometerTo !== undefined) {
+  if (!omitFilters.kilometerFrom && (params.kilometerFrom !== undefined || params.kilometerTo !== undefined)) {
     where.kilometer = {
       ...(params.kilometerFrom && { gte: params.kilometerFrom }),
       ...(params.kilometerTo && { lte: params.kilometerTo }),
@@ -610,6 +611,10 @@ export async function getVehicleCountAndFacets(rawParams: {
 
   const where = buildWhereClause(params);
   const facetBase = buildWhereClause(params, { make: true, model: true });
+  // Pro histogram bases: ignore the specific range filter to keep chart stable
+  const yearBase = buildWhereClause(params, { registrationFrom: true, make: true, model: true });
+  const kmBase = buildWhereClause(params, { kilometerFrom: true, make: true, model: true });
+  const priceBase = buildWhereClause(params, { priceFrom: true, make: true, model: true });
 
   const [
     total,
@@ -700,54 +705,52 @@ export async function getVehicleCountAndFacets(rawParams: {
     prisma.vehicle.count({ where: { ...buildWhereClause(params, { hasWarranty: true }), warranty: { not: null } } }),
     prisma.vehicle.aggregate({ _max: { hp: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { kw: true }, where: facetBase }),
-    prisma.vehicle.aggregate({ _max: { price: true }, where: facetBase }),
-    prisma.vehicle.aggregate({ _max: { kilometer: true }, where: facetBase }),
-    prisma.vehicle.aggregate({ _min: { registrationYear: true }, _max: { registrationYear: true }, where: facetBase }),
+    prisma.vehicle.aggregate({ _max: { price: true }, where: priceBase }),
+    prisma.vehicle.aggregate({ _max: { kilometer: true }, where: kmBase }),
+    prisma.vehicle.aggregate({ _min: { registrationYear: true }, _max: { registrationYear: true }, where: yearBase }),
     prisma.vehicle.aggregate({ _max: { consumptionTotal: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { co2Emission: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { cubicCapacity: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { cylinders: true }, where: facetBase }),
-    // Year distribution for histogram
+    // Year distribution for histogram - use yearBase to show full range
     prisma.vehicle.groupBy({
       by: ["registrationYear"],
-      where: facetBase,
+      where: yearBase,
       _count: { _all: true },
       orderBy: { registrationYear: "asc" },
     }),
   ]);
-
   // Dynamic Kilometer Histogram (20 buckets up to max)
   const kmLimit = kilometerAgg._max.kilometer ?? 400000;
   const kmStep = Math.max(1000, Math.ceil(kmLimit / 20 / 1000) * 1000);
   const kmBucketCount = 20;
-  const kmHistogramQueries = Array.from({ length: kmBucketCount }).map((_, i) => {
-    const from = i * kmStep;
-    const to = (i + 1) * kmStep;
-    return prisma.vehicle.count({
-      where: { ...facetBase, kilometer: { gte: from, lt: to } },
-    });
-  });
 
   // Dynamic Price Histogram (20 buckets up to max)
   const priceLimit = priceAgg._max.price ?? 200000;
   const priceStep = Math.max(1000, Math.ceil(priceLimit / 20 / 1000) * 1000);
   const priceBucketCount = 20;
-  const priceHistogramQueries = Array.from({ length: priceBucketCount }).map((_, i) => {
-    const from = i * priceStep;
-    const to = (i + 1) * priceStep;
-    return prisma.vehicle.count({
-      where: { ...facetBase, price: { gte: from, lt: to } },
-    });
-  });
 
   const [kmCounts, priceCounts] = await Promise.all([
-    Promise.all(kmHistogramQueries),
-    Promise.all(priceHistogramQueries),
+    Promise.all(
+      Array.from({ length: kmBucketCount }).map((_, i) =>
+        prisma.vehicle.count({
+          where: { ...kmBase, kilometer: { gte: i * kmStep, lt: (i + 1) * kmStep } },
+        })
+      )
+    ),
+    Promise.all(
+      Array.from({ length: priceBucketCount }).map((_, i) =>
+        prisma.vehicle.count({
+          where: { ...priceBase, price: { gte: i * priceStep, lt: (i + 1) * priceStep } },
+        })
+      )
+    ),
   ]);
+
 
   const maxKmCount = Math.max(...kmCounts, 1);
   const maxPriceCount = Math.max(...priceCounts, 1);
-  const maxYearCount = Math.max(...yearRows.map(r => r._count._all), 1);
+  const maxYearCount = Math.max(...(yearRows as any[]).map(r => r._count._all), 1);
 
   const facets: VehicleFacets = {
     make: toLowerFacetKeys(toFacetCounts(makeRows, "make")),
@@ -777,8 +780,8 @@ export async function getVehicleCountAndFacets(rawParams: {
     yearHistogram: yearRows
       .filter((r) => r.registrationYear != null)
       .map((r) => ({
-        year: r.registrationYear!,
-        h: Math.round((r._count._all / maxYearCount) * 100),
+        year: (r as any).registrationYear!,
+        h: Math.round(((r as any)._count._all / maxYearCount) * 100),
       })),
     kilometerHistogram: kmCounts.map((count, i) => ({
       value: i * kmStep,
