@@ -1,22 +1,23 @@
-import { getDealerById, getDealerVehicles, getDealerGoogleReviews } from "@/app/actions/dealer.actions";
+import {
+  getDealerById,
+  getDealerVehicles,
+  getDealerGoogleReviews,
+} from "@/app/actions/dealer.actions";
 import { notFound } from "next/navigation";
 import { DealerDetailContent } from "../_components/dealer-detail-content";
-
-interface DealerPageParams {
-  id: string;
-}
-
 import { parseSearchParams } from "@/lib/helpers/vehicle";
 import { VehicleSearchSchema } from "@/lib/schemas/vehicle.schema";
 
-export default async function DealerPage(props: {
+export default async function DealerPage({
+  params,
+  searchParams,
+}: {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const { id } = await props.params;
-  const searchParams = await props.searchParams;
-  
-  const parsedFilters = parseSearchParams(searchParams);
+  const [{ id }, sp] = await Promise.all([params, searchParams]);
+
+  const parsedFilters = parseSearchParams(sp);
   const filters = VehicleSearchSchema.parse(parsedFilters);
   const dealer = await getDealerById(id);
 

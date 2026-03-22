@@ -51,7 +51,7 @@ export const AdvancedSearchForm = () => {
   const [vehicleType, setVehicleType] = useState("car");
   const [total, setTotal] = useState<number | null>(null);
   const [facets, setFacets] = useState<VehicleFacets | null>(null);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevVehicleTypeRef = useRef(vehicleType);
 
   useEffect(() => {
