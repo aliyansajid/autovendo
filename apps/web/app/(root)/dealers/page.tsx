@@ -10,9 +10,9 @@ interface DealersPageSearchParams {
 }
 
 export default async function DealersPage(props: {
-  searchParams: DealersPageSearchParams;
+  searchParams: Promise<DealersPageSearchParams>;
 }) {
-  const searchParams = props.searchParams;
+  const searchParams = await props.searchParams;
   const q = searchParams.q || "";
   const page = Number(searchParams.page) || 1;
 

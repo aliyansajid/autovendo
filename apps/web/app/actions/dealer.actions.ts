@@ -192,7 +192,14 @@ export async function getDealers({
     const skip = (page - 1) * pageSize;
 
     const where = searchQuery
-      ? { companyName: { contains: searchQuery, mode: "insensitive" as const } }
+      ? {
+          OR: [
+            { companyName: { contains: searchQuery, mode: "insensitive" as const } },
+            { streetAddress: { contains: searchQuery, mode: "insensitive" as const } },
+            { city: { contains: searchQuery, mode: "insensitive" as const } },
+            { zipCode: { contains: searchQuery, mode: "insensitive" as const } },
+          ],
+        }
       : {};
 
     const [dealers, totalCount] = await Promise.all([
