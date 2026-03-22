@@ -329,10 +329,24 @@ export default function GarageRichFilters({
     current: [number, number] | null,
     def: [number, number],
     unit = "",
+    noPlus = false,
   ) => {
     if (!current) return label;
-    if (current[1] === def[1]) return `${current[0].toLocaleString()}${unit}+`;
-    return `${current[0].toLocaleString()}${unit} - ${current[1].toLocaleString()}${unit}`;
+    const [cMin, cMax] = current;
+    const [dMin, dMax] = def;
+
+    const minStr = cMin.toLocaleString("de-CH");
+    const maxStr = cMax.toLocaleString("de-CH");
+
+    if (noPlus) {
+      return `${minStr} - ${maxStr}${unit}`;
+    }
+
+    if (cMax === dMax) {
+      return `${minStr} - ${maxStr}${unit}+`;
+    }
+
+    return `${minStr}${unit} - ${maxStr}${unit}`;
   };
 
   const isRangeActive = (current: [number, number] | null) => {
@@ -386,7 +400,7 @@ export default function GarageRichFilters({
               variant="outline"
               className={getTriggerClass(isRangeActive(yearRange))}
             >
-              {formatRangeLabel("Jahr", yearRange, DEFAULTS.YEAR)}
+              {formatRangeLabel("Jahr", yearRange, DEFAULTS.YEAR, "", true)}
               <ChevronDown />
             </Button>
           </PopoverTrigger>
