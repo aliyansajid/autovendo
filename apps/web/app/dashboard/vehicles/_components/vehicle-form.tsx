@@ -155,17 +155,17 @@ export function VehicleForm({
       kilometer: "" as any,
       price: "" as any,
       newPrice: "" as any,
-      registrationMonth: undefined,
-      registrationYear: undefined,
-      bodyType: undefined,
-      fuelType: undefined,
-      color: undefined,
-      interiorColor: undefined,
+      registrationMonth: "" as any,
+      registrationYear: "" as any,
+      bodyType: "" as any,
+      fuelType: "" as any,
+      color: "" as any,
+      interiorColor: "" as any,
       metallic: false,
-      gearTransmission: undefined,
-      transmissionType: undefined,
-      driveType: undefined,
-      vehicleCondition: undefined,
+      gearTransmission: "",
+      transmissionType: "",
+      driveType: "",
+      vehicleCondition: "",
       lastInspectionDate: undefined,
       inspectionPassed: false,
       warranty: undefined,
@@ -253,8 +253,10 @@ export function VehicleForm({
   const isStep1Complete =
     !!watchMake &&
     watchPrice !== undefined &&
+    watchPrice !== null &&
     String(watchPrice) !== "" &&
     watchKilometer !== undefined &&
+    watchKilometer !== null &&
     String(watchKilometer) !== "" &&
     !!watchMonth &&
     !!watchYear &&
@@ -600,7 +602,7 @@ export function VehicleForm({
       </div>
 
       <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
           {currentStep === 1 && (
             <div className="space-y-6">
               <BasicDataSection />

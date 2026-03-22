@@ -94,7 +94,7 @@ export function ListingListCard({
 
         <div className="flex flex-col grow py-1 text-sm">
           <div className="space-y-1.5">
-            <Badge variant="secondary" className="px-1.5 py-0 h-5 text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground border-none">
+            <Badge variant="secondary" className="font-bold uppercase">
               {item.make}
             </Badge>
             <h2 className="text-lg font-bold leading-tight">
