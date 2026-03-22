@@ -66,6 +66,7 @@ import {
   getDealerVehicles,
 } from "@/app/actions/dealer.actions";
 import { Spinner } from "@repo/ui/src/components/spinner";
+import type { VehicleSearchParams } from "@/lib/schemas/vehicle.schema";
 
 interface DealerDetailContentProps {
   dealer: DealerDetail;
@@ -83,18 +84,32 @@ export const DealerDetailContent = ({
   const [vehicles, setVehicles] = useState<VehicleListItem[]>(
     initialVehicles.vehicles,
   );
+  const [totalCount, setTotalCount] = useState(initialVehicles.totalCount);
   const [hasMore, setHasMore] = useState(initialVehicles.hasMore);
   const [vehiclePage, setVehiclePage] = useState(1);
+  const [currentFilters, setCurrentFilters] = useState<Partial<VehicleSearchParams>>({});
   const [isLoadingMore, startLoadMore] = useTransition();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFiltering, startFilterTransition] = useTransition();
 
   function loadMore() {
     startLoadMore(async () => {
       const next = vehiclePage + 1;
-      const result = await getDealerVehicles(dealer.id, next, 12);
+      const result = await getDealerVehicles(dealer.id, next, 12, currentFilters);
       setVehicles((prev) => [...prev, ...result.vehicles]);
       setHasMore(result.hasMore);
       setVehiclePage(next);
+    });
+  }
+
+  function handleFilterChange(newFilters: Partial<VehicleSearchParams>) {
+    setCurrentFilters(newFilters);
+    startFilterTransition(async () => {
+      const result = await getDealerVehicles(dealer.id, 1, 12, newFilters);
+      setVehicles(result.vehicles);
+      setTotalCount(result.totalCount);
+      setHasMore(result.hasMore);
+      setVehiclePage(1);
     });
   }
 
@@ -231,7 +246,7 @@ export const DealerDetailContent = ({
             <TabsTrigger value="cars">
               Fahrzeuge
               <Badge variant="secondary" className="ml-1">
-                {initialVehicles.totalCount}
+                {totalCount}
               </Badge>
             </TabsTrigger>
             <TabsTrigger value="ratings">Bewertungen</TabsTrigger>
@@ -458,11 +473,16 @@ export const DealerDetailContent = ({
           </TabsContent>
 
           <TabsContent value="cars" className="space-y-8 mb-0">
-            <GarageFilters />
+            <GarageFilters onFilterChange={handleFilterChange} />
 
-            <div className="flex flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border">
+            <div className="flex flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border relative">
+              {isFiltering && (
+                <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10 rounded-xl">
+                  <Loader2 className="animate-spin text-primary" />
+                </div>
+              )}
               <p className="font-semibold">
-                {initialVehicles.totalCount} Fahrzeuge
+                {totalCount} Fahrzeuge
               </p>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground hidden sm:inline">

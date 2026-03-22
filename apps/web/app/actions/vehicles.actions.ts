@@ -68,7 +68,7 @@ function toDbEnum(value: string): string {
  * Build optimized WHERE clause for vehicle queries
  * Uses database indexes for optimal performance
  */
-function buildWhereClause(
+export function buildWhereClause(
   params: VehicleSearchParams,
   omitFilters: Partial<Record<keyof VehicleSearchParams, boolean>> = {},
 ): Prisma.VehicleWhereInput {

@@ -15,6 +15,8 @@ import type {
 } from "@/types";
 import type { VehicleListItem } from "@/types";
 import { DAY_LABELS } from "@/lib/helpers/format";
+import type { VehicleSearchParams } from "@/lib/schemas/vehicle.schema";
+import { buildWhereClause } from "./vehicles.actions";
 
 // -----------------------------------------------------------------------------
 // Helpers
@@ -307,13 +309,18 @@ export async function getDealerVehicles(
   dealerId: string,
   page: number = 1,
   pageSize: number = 12,
+  filters: Partial<VehicleSearchParams> = {},
 ): Promise<DealerVehiclesResult> {
   try {
     const skip = (page - 1) * pageSize;
 
+    const where = {
+      AND: [buildWhereClause(filters as VehicleSearchParams), { dealerId }],
+    };
+
     const [vehicles, totalCount] = await Promise.all([
       prisma.vehicle.findMany({
-        where: { dealerId },
+        where,
         skip,
         take: pageSize,
         orderBy: { createdAt: "desc" },
@@ -343,7 +350,7 @@ export async function getDealerVehicles(
           },
         },
       }),
-      prisma.vehicle.count({ where: { dealerId } }),
+      prisma.vehicle.count({ where }),
     ]);
 
     return {

@@ -31,8 +31,6 @@ function cn(...inputs: (string | undefined | null | false)[]) {
   return inputs.filter(Boolean).join(" ");
 }
 
-const mockHistogram = [10, 25, 40, 30, 65, 35, 20, 10, 5, 15, 40, 80, 50, 20];
-
 interface RangeFilterProps {
   label: string;
   min: number;
@@ -41,7 +39,6 @@ interface RangeFilterProps {
   step?: number;
   value: [number, number];
   onValueChange: (val: [number, number]) => void;
-  histogramData?: number[];
 }
 
 function RangeFilter({
@@ -52,7 +49,6 @@ function RangeFilter({
   step = 1,
   value,
   onValueChange,
-  histogramData = mockHistogram,
 }: RangeFilterProps) {
   return (
     <div className="space-y-4">
@@ -66,24 +62,16 @@ function RangeFilter({
         </PopoverDescription>
       </PopoverHeader>
 
-      <div className="h-16 flex items-end justify-between gap-1 px-2 pb-2 opacity-50">
-        {histogramData.map((h, i) => (
-          <div
-            key={i}
-            className="w-full bg-muted-foreground/30 rounded-t"
-            style={{ height: `${h}%` }}
-          ></div>
-        ))}
+      <div className="pt-2">
+        <Slider
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onValueChange={(val) => onValueChange(val as [number, number])}
+          className="py-2"
+        />
       </div>
-
-      <Slider
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onValueChange={(val) => onValueChange(val as [number, number])}
-        className="py-2"
-      />
 
       <div className="flex gap-2">
         <InputGroup>
@@ -241,7 +229,14 @@ function GridFilter({
   );
 }
 
-export default function GarageRichFilters() {
+import { useEffect, useMemo } from "react";
+import type { VehicleSearchParams } from "@/lib/schemas/vehicle.schema";
+
+interface GarageRichFiltersProps {
+  onFilterChange: (filters: Partial<VehicleSearchParams>) => void;
+}
+
+export default function GarageRichFilters({ onFilterChange }: GarageRichFiltersProps) {
   const [isMakeModalOpen, setIsMakeModalOpen] = useState(false);
 
   // Filter States
@@ -250,13 +245,46 @@ export default function GarageRichFilters() {
   const [kilometerRange, setKilometerRange] = useState<[number, number]>([
     0, 200000,
   ]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 150000]);
   const [selectedBodyTypes, setSelectedBodyTypes] = useState<string[]>([]);
   const [selectedFuels, setSelectedFuels] = useState<string[]>([]);
   const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>(
     [],
   );
   const [selectedDrives, setSelectedDrives] = useState<string[]>([]);
+
+  // Debounce and Notify
+  const filterValues = useMemo(() => {
+    const filters: Partial<VehicleSearchParams> = {};
+    if (selectedMakes.length > 0) filters.make = selectedMakes;
+    if (yearRange[0] !== 1990) filters.registrationFrom = yearRange[0];
+    if (yearRange[1] !== 2026) filters.registrationTo = yearRange[1];
+    if (kilometerRange[0] !== 0) filters.kilometerFrom = kilometerRange[0];
+    if (kilometerRange[1] !== 200000) filters.kilometerTo = kilometerRange[1];
+    if (priceRange[0] !== 0) filters.priceFrom = priceRange[0];
+    if (priceRange[1] !== 150000) filters.priceTo = priceRange[1];
+    if (selectedBodyTypes.length > 0) filters.bodyType = selectedBodyTypes as any;
+    if (selectedFuels.length > 0) filters.fuel = selectedFuels as any;
+    if (selectedTransmissions.length > 0) filters.transmission = selectedTransmissions as any;
+    if (selectedDrives.length > 0) filters.driveType = selectedDrives;
+    return filters;
+  }, [
+    selectedMakes,
+    yearRange,
+    kilometerRange,
+    priceRange,
+    selectedBodyTypes,
+    selectedFuels,
+    selectedTransmissions,
+    selectedDrives,
+  ]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onFilterChange(filterValues);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [filterValues, onFilterChange]);
 
   const handleMakeSelect = (make: string) => {
     setSelectedMakes((prev) => (prev.includes(make) ? prev : [...prev, make]));
@@ -267,7 +295,7 @@ export default function GarageRichFilters() {
     setSelectedMakes([]);
     setYearRange([1990, 2026]);
     setKilometerRange([0, 200000]);
-    setPriceRange([0, 100000]);
+    setPriceRange([0, 150000]);
     setSelectedBodyTypes([]);
     setSelectedFuels([]);
     setSelectedTransmissions([]);
@@ -290,8 +318,8 @@ export default function GarageRichFilters() {
 
   const getTriggerClass = (isActive: boolean) =>
     cn(
-      "w-full justify-between font-normal text-muted-foreground",
-      isActive && "text-primary border-primary/10 bg-primary/10",
+      "w-full justify-between font-normal text-muted-foreground transition-all duration-200",
+      isActive && "text-primary border-primary/20 bg-primary/5 font-medium shadow-xs",
     );
 
   return (
@@ -300,7 +328,7 @@ export default function GarageRichFilters() {
         <Button
           variant="outline"
           onClick={() => setIsMakeModalOpen(true)}
-          className={cn(getTriggerClass(selectedMakes.length > 0))}
+          className={getTriggerClass(selectedMakes.length > 0)}
         >
           <span className="truncate">
             {selectedMakes.length > 0
@@ -313,7 +341,7 @@ export default function GarageRichFilters() {
                 e.stopPropagation();
                 setSelectedMakes([]);
               }}
-              className="hover:bg-blue-200 rounded-full p-0.5 ml-2"
+              className="hover:bg-primary/20 rounded-full p-0.5 ml-2 transition-colors"
             >
               <X className="h-4 w-4" />
             </div>
@@ -340,7 +368,7 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="start">
+          <PopoverContent align="start" className="w-[300px]">
             <RangeFilter
               label="Jahr"
               min={1990}
@@ -368,7 +396,7 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="start">
+          <PopoverContent align="start" className="w-[300px]">
             <RangeFilter
               label="Kilometerstand"
               min={0}
@@ -386,14 +414,14 @@ export default function GarageRichFilters() {
             <Button
               variant="outline"
               className={getTriggerClass(
-                isRangeActive(priceRange, [0, 100000]),
+                isRangeActive(priceRange, [0, 150000]),
               )}
             >
-              {formatRangeLabel("Preis", priceRange, [0, 100000], "CHF")}
+              {formatRangeLabel("Preis", priceRange, [0, 150000], " CHF")}
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="end">
+          <PopoverContent align="end" className="w-[300px]">
             <RangeFilter
               label="Preis"
               min={0}
@@ -418,7 +446,7 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto" align="start">
+          <PopoverContent className="w-[300px]" align="start">
             <CheckboxListFilter
               title="Karosserieform"
               items={carBodyTypeEnum.map(
@@ -442,13 +470,12 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="start">
+          <PopoverContent align="start" className="w-[300px]">
             <CheckboxListFilter
               title="Treibstoff"
               items={carFuelTypeEnum.map(
                 (t: { value: string; label: string }) => ({
                   ...t,
-                  count: Math.floor(Math.random() * 100),
                 }),
               )}
               selectedValues={selectedFuels}
@@ -469,12 +496,11 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="start">
+          <PopoverContent align="start" className="w-[300px]">
             <CheckboxListFilter
               title="Getriebe"
               items={TransmissionTypeEnum.map((t) => ({
                 ...t,
-                count: Math.floor(Math.random() * 50),
               }))}
               selectedValues={selectedTransmissions}
               onChange={setSelectedTransmissions}
@@ -494,12 +520,11 @@ export default function GarageRichFilters() {
               <ChevronDown />
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="end">
+          <PopoverContent align="end" className="w-[300px]">
             <CheckboxListFilter
               title="Antrieb"
               items={DriveTypeEnum.map((t) => ({
                 ...t,
-                count: Math.floor(Math.random() * 30),
               }))}
               selectedValues={selectedDrives}
               onChange={setSelectedDrives}
@@ -509,13 +534,22 @@ export default function GarageRichFilters() {
       </div>
 
       <div className="flex items-center justify-end gap-3">
-        <Button variant="secondary" onClick={resetAll}>
-          <X />
-          Filter zurücksetzen
-        </Button>
+        {(selectedMakes.length > 0 ||
+          isRangeActive(yearRange, [1990, 2026]) ||
+          isRangeActive(kilometerRange, [0, 200000]) ||
+          isRangeActive(priceRange, [0, 150000]) ||
+          selectedBodyTypes.length > 0 ||
+          selectedFuels.length > 0 ||
+          selectedTransmissions.length > 0 ||
+          selectedDrives.length > 0) && (
+          <Button variant="ghost" onClick={resetAll} className="text-muted-foreground hover:text-foreground">
+            <X className="mr-2 h-4 w-4" />
+            Filter zurücksetzen
+          </Button>
+        )}
         <Link href="/advanced-search">
-          <Button>
-            <CircleEllipsis />
+          <Button variant="secondary">
+            <CircleEllipsis className="mr-2 h-4 w-4" />
             Mehr Filter
           </Button>
         </Link>
