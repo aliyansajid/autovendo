@@ -18,7 +18,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
-import type { DealerListResult } from "@/types";
+import type { DealerListResult } from "@/types/dealer";
 
 interface DealersListProps {
   initialData: DealerListResult;
@@ -35,15 +35,19 @@ export const DealersList = ({ initialData }: DealersListProps) => {
   const dealers = initialData.dealers;
 
   const updateParams = useCallback(
-    (updates: Record<string, string | null>) => {
+    (updates: Record<string, string | null | number>) => {
       const params = new URLSearchParams(searchParams.toString());
       Object.entries(updates).forEach(([key, value]) => {
-        if (value === null) params.delete(key);
-        else params.set(key, value);
+        if (value === null || value === undefined) params.delete(key);
+        else params.set(key, String(value));
       });
-      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      // Skip page=1 for clean URL
+      if (params.get("page") === "1") params.delete("page");
+
+      const qs = params.toString();
+      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
-    [searchParams, router, pathname]
+    [searchParams, router, pathname],
   );
 
   const [localSearch, setLocalSearch] = useState(searchQuery);
@@ -56,7 +60,7 @@ export const DealersList = ({ initialData }: DealersListProps) => {
     if (localSearch === searchQuery) return;
 
     const timer = setTimeout(() => {
-      updateParams({ q: localSearch || null, page: "1" });
+      updateParams({ q: localSearch || null, page: 1 });
     }, 500);
 
     return () => clearTimeout(timer);
@@ -79,7 +83,7 @@ export const DealersList = ({ initialData }: DealersListProps) => {
             onChange={(e) => setLocalSearch(e.target.value)}
           />
           <InputGroupAddon>
-            <Search />
+            <Search className="size-4" />
           </InputGroupAddon>
         </InputGroup>
       </div>
@@ -88,20 +92,22 @@ export const DealersList = ({ initialData }: DealersListProps) => {
         <div className="py-20 text-center bg-secondary/30 rounded-xl border border-border space-y-3">
           {searchQuery ? (
             <>
-              <h3 className="text-xl font-semibold">Kein Händler gefunden</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Kein Händler gefunden
+              </h3>
               <p className="text-muted-foreground text-sm">
                 Kein Händler entspricht &ldquo;{searchQuery}&rdquo;.
               </p>
               <Button
                 variant="outline"
-                onClick={() => updateParams({ q: null, page: "1" })}
+                onClick={() => updateParams({ q: null, page: 1 })}
               >
                 Suche zurücksetzen
               </Button>
             </>
           ) : (
             <>
-              <h3 className="text-xl font-semibold">
+              <h3 className="text-xl font-semibold text-foreground">
                 Noch keine Händler registriert
               </h3>
               <p className="text-muted-foreground text-sm">
@@ -115,7 +121,7 @@ export const DealersList = ({ initialData }: DealersListProps) => {
         </div>
       ) : (
         <>
-          <div className="divide-y divide-border border border-border rounded-xl overflow-hidden">
+          <div className="divide-y divide-border border border-border rounded-xl overflow-hidden bg-card">
             {dealers.map((dealer) => (
               <Link
                 key={dealer.id}
@@ -123,17 +129,17 @@ export const DealersList = ({ initialData }: DealersListProps) => {
                 className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-muted/50 transition-colors group"
               >
                 <div className="min-w-0 space-y-1 flex-1">
-                  <h2 className="font-semibold text-base truncate">
+                  <h2 className="font-semibold text-base truncate text-foreground group-hover:text-primary transition-colors">
                     {dealer.companyName}
                   </h2>
                   <div className="flex items-center text-muted-foreground gap-1">
                     <MapPin className="size-3.5 shrink-0" />
                     <span className="text-xs truncate">
-                    {dealer.streetAddress}, {dealer.zipCode} {dealer.city}
-                    </span> 
+                      {dealer.streetAddress}, {dealer.zipCode} {dealer.city}
+                    </span>
                   </div>
                 </div>
-                <ArrowRight className="size-4 text-muted-foreground shrink-0 -translate-x-1 group-hover:translate-x-0 transition-transform" />
+                <ArrowRight className="size-4 text-muted-foreground shrink-0 -translate-x-1 group-hover:translate-x-0 group-hover:text-primary transition-all" />
               </Link>
             ))}
           </div>
@@ -146,10 +152,12 @@ export const DealersList = ({ initialData }: DealersListProps) => {
                   onClick={(e) => {
                     e.preventDefault();
                     if (currentPage > 1)
-                      updateParams({ page: String(currentPage - 1) });
+                      updateParams({ page: currentPage - 1 });
                   }}
                   className={
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                    currentPage <= 1
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
                   }
                 />
               </PaginationItem>
@@ -161,8 +169,9 @@ export const DealersList = ({ initialData }: DealersListProps) => {
                     isActive={currentPage === i + 1}
                     onClick={(e) => {
                       e.preventDefault();
-                      updateParams({ page: String(i + 1) });
+                      updateParams({ page: i + 1 });
                     }}
+                    className="cursor-pointer"
                   >
                     {i + 1}
                   </PaginationLink>
@@ -175,12 +184,12 @@ export const DealersList = ({ initialData }: DealersListProps) => {
                   onClick={(e) => {
                     e.preventDefault();
                     if (currentPage < totalPages)
-                      updateParams({ page: String(currentPage + 1) });
+                      updateParams({ page: currentPage + 1 });
                   }}
                   className={
-                    currentPage === totalPages || totalPages === 0
+                    currentPage >= totalPages || totalPages === 0
                       ? "pointer-events-none opacity-50"
-                      : ""
+                      : "cursor-pointer"
                   }
                 />
               </PaginationItem>

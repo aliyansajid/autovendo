@@ -6,25 +6,24 @@
  */
 
 /**
- * Format price in Swiss Francs
+ * Format price in Swiss Francs (CHF 1'234.00)
  */
-export function formatPrice(price: number, locale: string = "de-CH"): string {
-  return new Intl.NumberFormat(locale, {
+export function formatPrice(price: number): string {
+  return new Intl.NumberFormat("de-CH", {
     style: "currency",
     currency: "CHF",
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);
 }
 
-/**
- * Format number with thousand separators
- */
-export function formatNumber(num: number, locale: string = "de-CH"): string {
-  return new Intl.NumberFormat(locale).format(num);
+export function formatNumber(num: number | null | undefined): string {
+  if (num === null || num === undefined) return "0";
+  return new Intl.NumberFormat("de-CH").format(num);
 }
 
 /**
- * Format kilometers
+ * Format kilometers (1'234 km)
  */
 export function formatKilometers(km: number): string {
   return `${formatNumber(km)} km`;
@@ -45,14 +44,31 @@ export function formatRegistrationDate(
  * Format power (kW and PS)
  */
 export function formatPower(kw: number | null, hp: number | null): string {
-  if (!kw && !hp) return "N/A";
-  if (kw && hp) return `${kw} kW (${hp} PS)`;
-  if (kw) return `${kw} kW`;
-  return `${hp} PS`;
+  if (kw === null && hp === null) return "N/A";
+  if (kw !== null && hp !== null)
+    return `${formatNumber(kw)} kW (${formatNumber(hp)} PS)`;
+  if (kw !== null) return `${formatNumber(kw)} kW`;
+  return `${formatNumber(hp)} PS`;
 }
 
 /**
- * Format enum value to readable label
+ * Format PS only
+ */
+export function formatPS(hp: number | null): string {
+  if (hp === null) return "N/A";
+  return `${formatNumber(hp)} PS`;
+}
+
+/**
+ * Format kW only
+ */
+export function formatKW(kw: number | null): string {
+  if (kw === null) return "N/A";
+  return `${formatNumber(kw)} kW`;
+}
+
+/**
+ * Format enum value to readable label - DEPRECATED: Use constants labels instead
  * Example: "MHEV_DIESEL" -> "Mhev Diesel"
  */
 export function formatEnumLabel(value: string | null | undefined): string {
@@ -69,7 +85,7 @@ export function formatEnumLabel(value: string | null | undefined): string {
  * Format count with thousand separators
  */
 export function formatCount(count: number): string {
-  return new Intl.NumberFormat("de-CH").format(count);
+  return formatNumber(count);
 }
 
 /**

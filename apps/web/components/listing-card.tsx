@@ -12,7 +12,7 @@ import Image from "next/image";
 import { Heart } from "lucide-react";
 import { Separator } from "@repo/ui/components/separator";
 import Link from "next/link";
-import { ListingProps } from "@/types";
+import { ListingProps } from "@/types/vehicle";
 
 export const ListingCard = ({ item }: { item: ListingProps }) => {
   return (

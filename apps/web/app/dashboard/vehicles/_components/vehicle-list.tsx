@@ -13,7 +13,7 @@ import { Edit, Trash2, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
-import { deleteVehicle, type SubscriptionStatus } from "@/app/actions/vehicle.actions";
+import { deleteVehicle, type SubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState, useMemo } from "react";

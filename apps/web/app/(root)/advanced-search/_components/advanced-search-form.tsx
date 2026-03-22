@@ -20,10 +20,12 @@ import { EnergySection } from "./form-sections/energy-section";
 import { MoreFiltersSection } from "./form-sections/more-filters-section";
 import { buildSearchParams } from "../_lib/build-search-params";
 import { getVehicleCountAndFacets } from "@/app/actions/vehicles.actions";
-import type { VehicleFacets } from "@/types";
+import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";
 
-function paramsToQueryString(params: Record<string, string | string[]>): string {
+function paramsToQueryString(
+  params: Record<string, string | string[]>,
+): string {
   const sp = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null) continue;
@@ -84,10 +86,7 @@ export const AdvancedSearchForm = () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
         const params = {
-          ...buildSearchParams(
-            values as Record<string, unknown>,
-            vehicleType,
-          ),
+          ...buildSearchParams(values as Record<string, unknown>, vehicleType),
           ...(dealerId ? { dealerId } : {}),
         };
         getVehicleCountAndFacets(params)
@@ -193,7 +192,9 @@ export const AdvancedSearchForm = () => {
               size="lg"
               className="w-full max-w-xl bg-rating hover:bg-rating/90 text-black"
             >
-              {total != null ? `${formatCount(total)} Fahrzeuge anzeigen` : "Fahrzeuge anzeigen"}
+              {total != null
+                ? `${formatCount(total)} Fahrzeuge anzeigen`
+                : "Fahrzeuge anzeigen"}
             </Button>
           </div>
         </form>

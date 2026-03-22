@@ -1,6 +1,9 @@
 export const dynamic = "force-dynamic";
 
-import { getVehicleCached } from "@/app/actions/vehicles.actions";
+import {
+  getVehicleCached,
+  getSimilarVehicles,
+} from "@/app/actions/vehicles.actions";
 import { notFound } from "next/navigation";
 import { formatVehicleName } from "@/lib/helpers/vehicle";
 import { Button } from "@repo/ui/components/button";
@@ -10,7 +13,6 @@ import {
   MapPin,
   Phone,
   Mail,
-  CheckCircle2,
   Calendar,
   Fuel,
   Gauge,
@@ -24,130 +26,34 @@ import { SimilarListings } from "../_components/similar-listings";
 import { ListingHeader } from "../_components/listing-header";
 import { SellerSection } from "../_components/seller-section";
 import { ReviewSection } from "../_components/review-section";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui/src/components/card";
+import { Card, CardContent } from "@repo/ui/src/components/card";
 import Link from "next/link";
 import { StickyActionBar } from "../_components/sticky-action-bar";
 import { EnergyLabel } from "../_components/energy-label";
-import { getSimilarVehicles } from "@/app/actions/vehicles.actions";
-import { DAY_LABELS } from "@/lib/helpers/format";
-import type { ListingProps } from "@/types";
-
-// ─── German label maps ────────────────────────────────────────────────────────
-
-const FUEL_LABELS: Record<string, string> = {
-  PETROL: "Benzin",
-  DIESEL: "Diesel",
-  ELECTRIC: "Elektro",
-  ETHANOL_PETROL: "Ethanol/Benzin",
-  CNG_PETROL: "Erdgas/Benzin",
-  LPG_PETROL: "Flüssiggas/Benzin",
-  MHEV_DIESEL: "Mild-Hybrid Diesel",
-  MHEV_PETROL: "Mild-Hybrid Benzin",
-  PHEV_DIESEL: "Plug-in-Hybrid Diesel",
-  PHEV_PETROL: "Plug-in-Hybrid Benzin",
-  HEV_DIESEL: "Hybrid Diesel",
-  HEV_PETROL: "Hybrid Benzin",
-  HYDROGEN: "Wasserstoff",
-};
-
-const TRANSMISSION_LABELS: Record<string, string> = {
-  AUTOMATIC: "Automatik",
-  MANUAL: "Manuell",
-  AUTOMATIC_STEPLESS: "Stufenautomatik",
-  SEMI_AUTOMATIC: "Halbautomatik",
-};
-
-const DRIVE_LABELS: Record<string, string> = {
-  ALL: "Allrad",
-  FRONT: "Frontantrieb",
-  REAR: "Hinterradantrieb",
-};
-
-const CONDITION_LABELS: Record<string, string> = {
-  NEW: "Neu",
-  DEMONSTRATION: "Vorführfahrzeug",
-  PRE_REGISTERED: "Neuimmatrikuliert",
-  USED: "Occasion",
-  OLDTIMER: "Oldtimer",
-};
-
-const VEHICLE_TYPE_LABELS: Record<string, string> = {
-  CAR: "Personenwagen",
-  UTILITY: "Nutzfahrzeug",
-  TRUCK: "Lastwagen",
-  CAMPER: "Wohnmobil",
-};
-
-const COLOR_LABELS: Record<string, string> = {
-  ANTHRACITE: "Anthrazit",
-  BEIGE: "Beige",
-  BLACK: "Schwarz",
-  BLUE: "Blau",
-  BORDEAUX: "Bordeaux",
-  BROWN: "Braun",
-  GOLD: "Gold",
-  GRAY: "Grau",
-  GREEN: "Grün",
-  MULTICOLOURED: "Mehrfarbig",
-  ORANGE: "Orange",
-  PINK: "Pink",
-  RED: "Rot",
-  SILVER: "Silber",
-  TURQUOISE: "Türkis",
-  VIOLET: "Violett",
-  WHITE: "Weiss",
-  YELLOW: "Gelb",
-  OTHER: "Andere",
-};
-
-const BATTERY_OWNERSHIP_LABELS: Record<string, string> = {
-  BATTERY_INCLUDED: "Batterie inklusive",
-  BATTERY_RENT_REQUIRED: "Batteriemiete erforderlich",
-};
-
-const CHARGING_STANDARD_LABELS: Record<string, string> = {
-  TYPE_1: "Typ 1",
-  TYPE_2: "Typ 2",
-};
-
-const CHARGING_FAST_LABELS: Record<string, string> = {
-  CCS: "CCS",
-  CSS_2: "CCS 2",
-  CHADEMO: "CHAdeMO",
-  SUPERCHARGER: "Supercharger",
-};
-
-const WARRANTY_LABELS: Record<string, string> = {
-  FROM_DELIVERY: "Ab Lieferung",
-  FROM_FIRST_REGISTRATION: "Ab Erstzulassung",
-  FROM_DATE: "Ab Datum",
-};
-
-const EMISSION_LABELS: Record<string, string> = {
-  EURO_1: "Euro 1",
-  EURO_2: "Euro 2",
-  EURO_3: "Euro 3",
-  EURO_4: "Euro 4",
-  EURO_5: "Euro 5",
-  EURO_5_PLUS: "Euro 5+",
-  EURO_6: "Euro 6",
-  EURO_6A: "Euro 6a",
-  EURO_6B: "Euro 6b",
-  EURO_6C: "Euro 6c",
-  EURO_6D: "Euro 6d",
-  EURO_6D_ISC: "Euro 6d ISC",
-  EURO_6D_ISC_FCM: "Euro 6d ISC FCM",
-  EURO_6D_TEMP: "Euro 6d-temp",
-  EURO_6D_TEMP_EVAP: "Euro 6d-temp EVAP",
-  EURO_6D_TEMP_EVAP_ISC: "Euro 6d-temp EVAP ISC",
-  EURO_6D_TEMP_ISC: "Euro 6d-temp ISC",
-  EURO_6E: "Euro 6e",
-};
+import {
+  DAY_LABELS,
+  formatNumber,
+  formatPrice,
+  formatKilometers,
+} from "@/lib/helpers/format";
+import type { ListingProps } from "@/types/vehicle";
+import {
+  FUEL_LABELS,
+  TRANSMISSION_LABELS,
+  DRIVE_LABELS,
+  CONDITION_LABELS,
+  VEHICLE_TYPE_LABELS,
+  COLOR_LABELS,
+  BATTERY_OWNERSHIP_LABELS,
+  CHARGING_STANDARD_LABELS,
+  CHARGING_FAST_LABELS,
+  WARRANTY_LABELS,
+  EMISSION_LABELS,
+} from "@/lib/constants/vehicle-constants";
+import { KeyDetailCard } from "../_components/key-detail-card";
+import { ListingSection } from "../_components/listing-section";
+import { ListingDataGrid } from "../_components/listing-data-grid";
+import { EquipmentList } from "../_components/equipment-list";
 
 // ─── Data building helpers ────────────────────────────────────────────────────
 
@@ -159,7 +65,7 @@ function f(value: string | null | undefined): string | undefined {
 /** Format an integer with de-CH thousands separator + suffix. */
 function n(value: number | null | undefined, suffix = ""): string | undefined {
   if (value == null) return undefined;
-  const formatted = value.toLocaleString("de-CH");
+  const formatted = formatNumber(value);
   return suffix ? `${formatted} ${suffix}` : formatted;
 }
 
@@ -207,18 +113,19 @@ export default async function ListingPage({
     v == null ? null : v instanceof Date ? v : new Date(v as string);
 
   // ── Derived formatted values ──
-  const fuelLabel = item.fuelType ? (FUEL_LABELS[item.fuelType] ?? item.fuelType) : undefined;
-  const transmissionLabel =
-    item.transmissionType
-      ? (TRANSMISSION_LABELS[item.transmissionType] ?? item.transmissionType)
-      : item.gearTransmission
-        ? (TRANSMISSION_LABELS[item.gearTransmission] ?? item.gearTransmission)
-        : undefined;
+  const fuelLabel = item.fuelType
+    ? (FUEL_LABELS[item.fuelType] ?? item.fuelType)
+    : undefined;
+  const transmissionLabel = item.transmissionType
+    ? (TRANSMISSION_LABELS[item.transmissionType] ?? item.transmissionType)
+    : item.gearTransmission
+      ? (TRANSMISSION_LABELS[item.gearTransmission] ?? item.gearTransmission)
+      : undefined;
   const powerLabel =
     item.kw != null || item.hp != null
       ? [
-          item.kw != null ? `${item.kw.toLocaleString("de-CH")} kW` : null,
-          item.hp != null ? `(${item.hp.toLocaleString("de-CH")} PS)` : null,
+          item.kw != null ? `${formatNumber(item.kw)} kW` : null,
+          item.hp != null ? `(${formatNumber(item.hp)} PS)` : null,
         ]
           .filter(Boolean)
           .join(" ")
@@ -228,16 +135,22 @@ export default async function ListingPage({
   const basicData = filterObj({
     Karosserie: f(item.bodyType),
     Ausführung: f(item.version),
-    Fahrzeugtyp: item.vehicleType ? (VEHICLE_TYPE_LABELS[item.vehicleType] ?? item.vehicleType) : undefined,
-    Zustand: item.vehicleCondition ? (CONDITION_LABELS[item.vehicleCondition] ?? item.vehicleCondition) : undefined,
-    Antrieb: item.driveType ? (DRIVE_LABELS[item.driveType] ?? item.driveType) : undefined,
+    Fahrzeugtyp: item.vehicleType
+      ? (VEHICLE_TYPE_LABELS[item.vehicleType] ?? item.vehicleType)
+      : undefined,
+    Zustand: item.vehicleCondition
+      ? (CONDITION_LABELS[item.vehicleCondition] ?? item.vehicleCondition)
+      : undefined,
+    Antrieb: item.driveType
+      ? (DRIVE_LABELS[item.driveType] ?? item.driveType)
+      : undefined,
     Sitzplätze: n(item.seats),
     Türen: n(item.doors),
     "Angebots-Nr.": item.id.slice(-8),
   });
 
   const vehicleHistory = filterObj({
-    Kilometerstand: `${item.kilometer.toLocaleString("de-CH")} km`,
+    Kilometerstand: formatKilometers(item.kilometer),
     Erstzulassung: `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
   });
 
@@ -248,14 +161,20 @@ export default async function ListingPage({
     "Letzte MFK": lastInspectionDate
       ? lastInspectionDate.toLocaleDateString("de-CH")
       : undefined,
-    "MFK bestanden": lastInspectionDate != null
-      ? item.inspectionPassed ? "Ja" : "Nein"
+    "MFK bestanden":
+      lastInspectionDate != null
+        ? item.inspectionPassed
+          ? "Ja"
+          : "Nein"
+        : undefined,
+    Garantieart: item.warranty
+      ? (WARRANTY_LABELS[item.warranty] ?? item.warranty)
       : undefined,
-    Garantieart: item.warranty ? (WARRANTY_LABELS[item.warranty] ?? item.warranty) : undefined,
     "Garantie ab": warrantyStartDate
       ? warrantyStartDate.toLocaleDateString("de-CH")
       : undefined,
-    "Garantiedauer": item.duration != null ? `${item.duration} Monate` : undefined,
+    Garantiedauer:
+      item.duration != null ? `${item.duration} Monate` : undefined,
     "Garantie max. km": n(item.maxKm, "km"),
   });
 
@@ -275,7 +194,9 @@ export default async function ListingPage({
   });
 
   const energyData = filterObj({
-    Schadstoffklasse: item.emissionStandard ? (EMISSION_LABELS[item.emissionStandard] ?? item.emissionStandard) : undefined,
+    Schadstoffklasse: item.emissionStandard
+      ? (EMISSION_LABELS[item.emissionStandard] ?? item.emissionStandard)
+      : undefined,
     Treibstoff: fuelLabel,
     "CO₂-Emissionen (komb.)": n(item.co2Emission, "g/km"),
     "Verbrauch Stadt": fl(item.consumptionCity, "l/100km"),
@@ -285,20 +206,42 @@ export default async function ListingPage({
 
   const electricData = filterObj({
     Reichweite: n(item.range, "km"),
-    "Batteriekapazität": fl(item.batteryCapacity, "kWh"),
-    "Batteriemiete": item.batteryRentalMonth != null ? `${item.batteryRentalMonth} CHF/Monat` : undefined,
+    Batteriekapazität: fl(item.batteryCapacity, "kWh"),
+    Batteriemiete:
+      item.batteryRentalMonth != null
+        ? `${formatNumber(item.batteryRentalMonth)} CHF/Monat`
+        : undefined,
     Stromverbrauch: fl(item.powerConsumption, "kWh/100km"),
-    Batterieeigentum: item.batteryOwnership ? (BATTERY_OWNERSHIP_LABELS[item.batteryOwnership] ?? item.batteryOwnership) : undefined,
-    "Ladeanschluss (Standard)": item.chargingPlugTypeStandard ? (CHARGING_STANDARD_LABELS[item.chargingPlugTypeStandard] ?? item.chargingPlugTypeStandard) : undefined,
-    "Schnellladeanschluss": item.chargingPlugTypeFast ? (CHARGING_FAST_LABELS[item.chargingPlugTypeFast] ?? item.chargingPlugTypeFast) : undefined,
+    Batterieeigentum: item.batteryOwnership
+      ? (BATTERY_OWNERSHIP_LABELS[item.batteryOwnership] ??
+        item.batteryOwnership)
+      : undefined,
+    "Ladeanschluss (Standard)": item.chargingPlugTypeStandard
+      ? (CHARGING_STANDARD_LABELS[item.chargingPlugTypeStandard] ??
+        item.chargingPlugTypeStandard)
+      : undefined,
+    Schnellladeanschluss: item.chargingPlugTypeFast
+      ? (CHARGING_FAST_LABELS[item.chargingPlugTypeFast] ??
+        item.chargingPlugTypeFast)
+      : undefined,
     Ladeleistung: fl(item.chargingPower, "kW"),
-    "Verbrennungsmotor": item.combustionEnginePowerHp != null ? `${item.combustionEnginePowerHp.toLocaleString("de-CH")} PS` : undefined,
-    "E-Motor": item.electricMotorPowerHp != null ? `${item.electricMotorPowerHp.toLocaleString("de-CH")} PS` : undefined,
+    Verbrennungsmotor:
+      item.combustionEnginePowerHp != null
+        ? `${formatNumber(item.combustionEnginePowerHp)} PS`
+        : undefined,
+    "E-Motor":
+      item.electricMotorPowerHp != null
+        ? `${formatNumber(item.electricMotorPowerHp)} PS`
+        : undefined,
   });
 
   const colourAndUpholstery = filterObj({
-    Außenfarbe: item.color ? (COLOR_LABELS[item.color] ?? item.color) : undefined,
-    Innenfarbe: item.interiorColor ? (COLOR_LABELS[item.interiorColor] ?? item.interiorColor) : undefined,
+    Außenfarbe: item.color
+      ? (COLOR_LABELS[item.color] ?? item.color)
+      : undefined,
+    Innenfarbe: item.interiorColor
+      ? (COLOR_LABELS[item.interiorColor] ?? item.interiorColor)
+      : undefined,
     Lackierung: item.metallic ? "Metallic" : "Uni",
   });
 
@@ -372,10 +315,10 @@ export default async function ListingPage({
   const similarListings: ListingProps[] = similarItems.map((sim) => ({
     id: sim.id,
     title: `${sim.make} ${sim.model || ""}`.trim(),
-    price: `CHF ${sim.price.toLocaleString("de-CH")}`,
+    price: formatPrice(sim.price),
     details: [
       `${String(sim.registrationMonth).padStart(2, "0")}/${sim.registrationYear}`,
-      `${sim.kilometer.toLocaleString("de-CH")} km`,
+      formatKilometers(sim.kilometer),
       sim.fuelType ? (FUEL_LABELS[sim.fuelType] ?? sim.fuelType) : undefined,
     ].filter((d): d is string => d != null && d !== ""),
     garageName: sim.dealer.companyName,
@@ -400,7 +343,7 @@ export default async function ListingPage({
           <div className="lg:hidden space-y-3">
             <h1 className="text-2xl font-bold leading-tight">{title}</h1>
             <div className="text-3xl font-bold text-primary">
-              CHF {price.toLocaleString("de-CH")}
+              {formatPrice(price)}
             </div>
           </div>
 
@@ -410,38 +353,53 @@ export default async function ListingPage({
           <Card>
             <CardContent className="grid grid-cols-2 lg:grid-cols-3 gap-6">
               <KeyDetailCard
-                icon={<Gauge className="text-muted-foreground" strokeWidth={1.5} />}
+                icon={
+                  <Gauge className="text-muted-foreground" strokeWidth={1.5} />
+                }
                 label="Kilometerstand"
-                value={`${item.kilometer.toLocaleString("de-CH")} km`}
+                value={formatKilometers(item.kilometer)}
               />
               {powerLabel && (
                 <KeyDetailCard
-                  icon={<Zap className="text-muted-foreground" strokeWidth={1.5} />}
+                  icon={
+                    <Zap className="text-muted-foreground" strokeWidth={1.5} />
+                  }
                   label="Leistung"
                   value={powerLabel}
                 />
               )}
               {fuelLabel && (
                 <KeyDetailCard
-                  icon={<Fuel className="text-muted-foreground" strokeWidth={1.5} />}
+                  icon={
+                    <Fuel className="text-muted-foreground" strokeWidth={1.5} />
+                  }
                   label="Treibstoff"
                   value={fuelLabel}
                 />
               )}
               {transmissionLabel && (
                 <KeyDetailCard
-                  icon={<Disc className="text-muted-foreground" strokeWidth={1.5} />}
+                  icon={
+                    <Disc className="text-muted-foreground" strokeWidth={1.5} />
+                  }
                   label="Getriebe"
                   value={transmissionLabel}
                 />
               )}
               <KeyDetailCard
-                icon={<Calendar className="text-muted-foreground" strokeWidth={1.5} />}
+                icon={
+                  <Calendar
+                    className="text-muted-foreground"
+                    strokeWidth={1.5}
+                  />
+                }
                 label="Erstzulassung"
                 value={`${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`}
               />
               <KeyDetailCard
-                icon={<Store className="text-muted-foreground" strokeWidth={1.5} />}
+                icon={
+                  <Store className="text-muted-foreground" strokeWidth={1.5} />
+                }
                 label="Verkäufer"
                 value="Händler"
               />
@@ -450,35 +408,37 @@ export default async function ListingPage({
 
           <div className="space-y-6">
             {Object.keys(basicData).length > 0 && (
-              <Section title="Basisdaten">
-                <DataGrid data={basicData} />
-              </Section>
+              <ListingSection title="Basisdaten">
+                <ListingDataGrid data={basicData} />
+              </ListingSection>
             )}
 
-            <Section title="Fahrzeughistorie">
-              <DataGrid data={vehicleHistory} />
-            </Section>
+            <ListingSection title="Fahrzeughistorie">
+              <ListingDataGrid data={vehicleHistory} />
+            </ListingSection>
 
             {Object.keys(inspectionAndWarranty).length > 0 && (
-              <Section title="Inspektion & Garantie">
-                <DataGrid data={inspectionAndWarranty} />
-              </Section>
+              <ListingSection title="Inspektion & Garantie">
+                <ListingDataGrid data={inspectionAndWarranty} />
+              </ListingSection>
             )}
 
             {Object.keys(technicalData).length > 0 && (
-              <Section title="Technische Daten">
-                <DataGrid data={technicalData} />
-              </Section>
+              <ListingSection title="Technische Daten">
+                <ListingDataGrid data={technicalData} />
+              </ListingSection>
             )}
 
             {(Object.keys(energyData).length > 0 || item.energyLabel) && (
-              <Section title="Energieverbrauch">
+              <ListingSection title="Energieverbrauch">
                 {Object.keys(energyData).length > 0 && (
-                  <DataGrid data={energyData} />
+                  <ListingDataGrid data={energyData} />
                 )}
                 {item.energyLabel && (
                   <>
-                    {Object.keys(energyData).length > 0 && <Separator className="my-4" />}
+                    {Object.keys(energyData).length > 0 && (
+                      <Separator className="my-4" />
+                    )}
                     <div>
                       <h3 className="text-sm font-medium mb-4">
                         Energieeffizienzklasse
@@ -487,45 +447,45 @@ export default async function ListingPage({
                     </div>
                   </>
                 )}
-              </Section>
+              </ListingSection>
             )}
 
             {Object.keys(electricData).length > 0 && (
-              <Section title="Elektrische Daten">
-                <DataGrid data={electricData} />
-              </Section>
+              <ListingSection title="Elektrische Daten">
+                <ListingDataGrid data={electricData} />
+              </ListingSection>
             )}
 
             {Object.keys(colourAndUpholstery).length > 0 && (
-              <Section title="Farbe und Polsterung">
-                <DataGrid data={colourAndUpholstery} />
-              </Section>
+              <ListingSection title="Farbe und Polsterung">
+                <ListingDataGrid data={colourAndUpholstery} />
+              </ListingSection>
             )}
 
             {Object.keys(identifiers).length > 0 && (
-              <Section title="Identifikationsnummern">
-                <DataGrid data={identifiers} />
-              </Section>
+              <ListingSection title="Identifikationsnummern">
+                <ListingDataGrid data={identifiers} />
+              </ListingSection>
             )}
 
             {equipmentList.length > 0 && (
-              <Section title="Ausstattung">
+              <ListingSection title="Ausstattung">
                 <EquipmentList items={equipmentList} />
-              </Section>
+              </ListingSection>
             )}
 
             {extrasList.length > 0 && (
-              <Section title="Extras">
+              <ListingSection title="Extras">
                 <EquipmentList items={extrasList} />
-              </Section>
+              </ListingSection>
             )}
 
             {description && (
-              <Section title="Fahrzeugbeschreibung">
+              <ListingSection title="Fahrzeugbeschreibung">
                 <p className="whitespace-pre-line text-sm text-muted-foreground leading-relaxed">
                   {description}
                 </p>
-              </Section>
+              </ListingSection>
             )}
 
             <SellerSection seller={seller} />
@@ -548,11 +508,11 @@ export default async function ListingPage({
             <CardContent className="space-y-3">
               <h1 className="text-xl font-bold">{title}</h1>
               <h2 className="text-2xl font-bold text-primary">
-                CHF {price.toLocaleString("de-CH")}
+                {formatPrice(price)}
               </h2>
               {item.newPrice != null && item.newPrice > 0 && (
                 <p className="text-sm text-muted-foreground">
-                  Neupreis: CHF {item.newPrice.toLocaleString("de-CH")}
+                  Neupreis: {formatPrice(item.newPrice)}
                 </p>
               )}
             </CardContent>
@@ -642,90 +602,6 @@ export default async function ListingPage({
       </div>
 
       <StickyActionBar price={price} sellerPhone={seller.phone ?? ""} />
-    </div>
-  );
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Card>
-      <CardHeader className="border-b gap-0">
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
-  );
-}
-
-function KeyDetailCard({
-  label,
-  value,
-  icon,
-}: {
-  label: string;
-  value: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-center gap-4">
-      <div className="shrink-0 flex items-center justify-center">{icon}</div>
-      <div className="flex flex-col min-w-0">
-        <p className="text-xs text-muted-foreground font-medium truncate">
-          {label}
-        </p>
-        <p className="font-bold text-sm truncate">{value}</p>
-      </div>
-    </div>
-  );
-}
-
-function DataGrid({ data }: { data: Record<string, string> }) {
-  const entries = Object.entries(data);
-  const rows = Array.from({ length: Math.ceil(entries.length / 2) }, (_, i) =>
-    entries.slice(i * 2, i * 2 + 2),
-  );
-  return (
-    <div>
-      {rows.map((row, rowIdx) => {
-        const isLastRow = rowIdx === rows.length - 1;
-        return (
-          <div key={rowIdx} className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
-            {row.map(([label, value]) => (
-              <div
-                key={label}
-                className={`flex items-center justify-between py-3 ${!isLastRow ? "border-b" : ""}`}
-              >
-                <span className="text-sm text-muted-foreground">{label}</span>
-                <span className="text-sm font-medium text-right">{value}</span>
-              </div>
-            ))}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function EquipmentList({ items }: { items: string[] }) {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
-      {items.map((item, i) => (
-        <div
-          key={i}
-          className="flex items-center gap-2 text-sm text-muted-foreground"
-        >
-          <CheckCircle2 className="size-4 text-green-500 shrink-0" />
-          <span>{item}</span>
-        </div>
-      ))}
     </div>
   );
 }

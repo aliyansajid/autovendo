@@ -16,17 +16,7 @@ import {
   InputGroupInput,
 } from "@repo/ui/src/components/input-group";
 
-const sortOptions = [
-  { label: "Standard-Sortierung", value: "relevance" },
-  { label: "Preis (niedrigster zuerst)", value: "price-asc" },
-  { label: "Preis (höchster zuerst)", value: "price-desc" },
-  { label: "Kilometerstand (niedrigster zuerst)", value: "kilometer-asc" },
-  { label: "Kilometerstand (höchster zuerst)", value: "kilometer-desc" },
-  { label: "Erstzulassung (älteste zuerst)", value: "registration-asc" },
-  { label: "Erstzulassung (jüngste zuerst)", value: "registration-desc" },
-  { label: "Inserate (älteste zuerst)", value: "created-asc" },
-  { label: "Inserate (neueste zuerst)", value: "created-desc" },
-] as const;
+import { SORT_OPTIONS, SORT_LABELS } from "@/lib/constants/vehicle-constants";
 
 export function ListingControls({
   initialSearch,
@@ -67,7 +57,10 @@ export function ListingControls({
 
       if (queryString !== currentQueryString) {
         startTransition(() => {
-          router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+          router.replace(
+            queryString ? `${pathname}?${queryString}` : pathname,
+            { scroll: false },
+          );
         });
       }
     }, debounceMs);
@@ -85,7 +78,9 @@ export function ListingControls({
 
     const queryString = next.toString();
     startTransition(() => {
-      router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+        scroll: false,
+      });
     });
   }
 
@@ -108,9 +103,9 @@ export function ListingControls({
           <SelectValue placeholder="Sortieren nach" />
         </SelectTrigger>
         <SelectContent>
-          {sortOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
+          {SORT_OPTIONS.map((option) => (
+            <SelectItem key={option} value={option}>
+              {SORT_LABELS[option]}
             </SelectItem>
           ))}
         </SelectContent>
@@ -118,4 +113,3 @@ export function ListingControls({
     </div>
   );
 }
-

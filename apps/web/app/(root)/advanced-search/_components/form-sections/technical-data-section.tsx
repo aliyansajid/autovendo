@@ -17,7 +17,7 @@ import { carFuelTypeEnum } from "@/constants/cars";
 import { utilityFuelTypeEnum } from "@/constants/commercial-vehicles";
 import { truckFuelTypeEnum } from "@/constants/truck";
 import { camperFuelTypeEnum } from "@/constants/camper";
-import type { VehicleFacets } from "@/types";
+import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";
 
 export function TechnicalDataSection({
@@ -81,7 +81,10 @@ export function TechnicalDataSection({
 
   useEffect(() => {
     if (capacityValue === undefined) {
-      if (getValues("capacity-from") !== "" || getValues("capacity-to") !== "") {
+      if (
+        getValues("capacity-from") !== "" ||
+        getValues("capacity-to") !== ""
+      ) {
         setValue("capacity-from", "");
         setValue("capacity-to", "");
       }
@@ -90,13 +93,17 @@ export function TechnicalDataSection({
     const [from, to] = capacityValue as [number, number];
     const nextFrom = from <= 1 ? "" : from.toString();
     const nextTo = to >= cubicCapacityMax ? "" : to.toString();
-    if (getValues("capacity-from") !== nextFrom) setValue("capacity-from", nextFrom);
+    if (getValues("capacity-from") !== nextFrom)
+      setValue("capacity-from", nextFrom);
     if (getValues("capacity-to") !== nextTo) setValue("capacity-to", nextTo);
   }, [capacityValue, cubicCapacityMax, setValue, getValues]);
 
   useEffect(() => {
     if (cylinderValue === undefined) {
-      if (getValues("cylinder-from") !== "" || getValues("cylinder-to") !== "") {
+      if (
+        getValues("cylinder-from") !== "" ||
+        getValues("cylinder-to") !== ""
+      ) {
         setValue("cylinder-from", "");
         setValue("cylinder-to", "");
       }
@@ -105,7 +112,8 @@ export function TechnicalDataSection({
     const [from, to] = cylinderValue as [number, number];
     const nextFrom = from <= 1 ? "" : from.toString();
     const nextTo = to >= cylindersMax ? "" : to.toString();
-    if (getValues("cylinder-from") !== nextFrom) setValue("cylinder-from", nextFrom);
+    if (getValues("cylinder-from") !== nextFrom)
+      setValue("cylinder-from", nextFrom);
     if (getValues("cylinder-to") !== nextTo) setValue("cylinder-to", nextTo);
   }, [cylinderValue, cylindersMax, setValue, getValues]);
 

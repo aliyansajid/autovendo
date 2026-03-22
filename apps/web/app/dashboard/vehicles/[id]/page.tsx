@@ -1,12 +1,8 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { getDealerProfile } from "@/app/actions/dealer.actions";
-import {
-  getVehicleById,
-  getVehicleSubscriptionStatus,
-} from "@/app/actions/vehicle.actions";
-import { VehicleForm } from "../_components/vehicle-form";
-import { mapVehicleToForm } from "@/lib/utils/vehicle-mapping";
+import { getVehicleById, getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";import { VehicleForm } from "../_components/vehicle-form";
+import { mapVehicleToForm } from "@/lib/helpers/vehicle";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

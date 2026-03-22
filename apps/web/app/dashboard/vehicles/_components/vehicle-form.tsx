@@ -5,7 +5,7 @@ import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@repo/ui/lib/utils";
 import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
-import { DealerProfile } from "@/types";
+import { DealerProfile } from "@/types/dealer";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import {
@@ -49,12 +49,12 @@ import {
   prepareVehicleListing,
   getPresignedUrls,
   createVehicle,
+  updateVehicle,
   type SubscriptionStatus,
-} from "@/app/actions/vehicle.actions";
+} from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2, AlertCircle, AlertTriangle } from "lucide-react";
-import { updateVehicle } from "@/app/actions/vehicle.actions";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import {

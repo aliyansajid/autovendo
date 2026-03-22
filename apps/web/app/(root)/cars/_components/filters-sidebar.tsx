@@ -13,18 +13,22 @@ import {
 } from "@repo/ui/components/custom-form-field";
 import { SelectItem } from "@repo/ui/components/select";
 import {
-  ColorEnum,
-  EquipmentEnum,
-  VehicleConditionEnum,
-  TransmissionTypeEnum,
-  prices,
-  powerOptions,
-  evOptions,
-} from "@/constants";
-import { carBodyTypeEnum, carFuelTypeEnum, carMakes } from "@/constants/cars";
+  PRICING_OPTIONS,
+  POWER_OPTIONS,
+  EV_OPTIONS,
+  getRegistrationYears,
+  KILOMETER_OPTIONS,
+  CONDITION_LABELS,
+  FUEL_LABELS,
+  TRANSMISSION_LABELS,
+  BODY_TYPE_LABELS,
+  COLOR_LABELS,
+  COLOR_OPTIONS,
+  EQUIPMENT_LABELS,
+} from "@/lib/constants/vehicle-constants";
+import { carMakes } from "@/constants/cars";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import { Separator } from "@repo/ui/components/separator";
-import { getRegistrationYears, kilometers } from "@/lib/utils/utils";
 import {
   Card,
   CardContent,
@@ -38,7 +42,7 @@ import { TransmissionDialog } from "./filters/transmission-dialog";
 import { PowerDialog } from "./filters/power-dialog";
 import { EvDialog } from "./filters/ev-dialog";
 import { MakeModelDialog } from "./filters/make-model-dialog";
-import type { VehicleFacets } from "@/types";
+import type { VehicleFacets } from "@/types/vehicle";
 import {
   vehicleFiltersSchema,
   type VehicleFiltersValues,
@@ -111,7 +115,7 @@ export const FiltersSidebar = ({
 
       Object.entries(values).forEach(([key, value]) => {
         // Handle equipment (individual checkbox keys)
-        if (EquipmentEnum.some((e) => e.value === key)) {
+        if (key in EQUIPMENT_LABELS) {
           if (value === true) equipment.push(key);
           return;
         }
@@ -170,10 +174,16 @@ export const FiltersSidebar = ({
   const watchMake = useWatch({ control: form.control, name: "make" });
   const watchFuel = useWatch({ control: form.control, name: "fuel" });
   const watchPower = useWatch({ control: form.control, name: "power" });
-  const watchVehicleType = useWatch({ control: form.control, name: "vehicleType" });
+  const watchVehicleType = useWatch({
+    control: form.control,
+    name: "vehicleType",
+  });
   const watchBodyType = useWatch({ control: form.control, name: "bodyType" });
   const watchEvs = useWatch({ control: form.control, name: "evs" });
-  const watchTransmission = useWatch({ control: form.control, name: "transmission" });
+  const watchTransmission = useWatch({
+    control: form.control,
+    name: "transmission",
+  });
   const watchColor = useWatch({ control: form.control, name: "color" }) || [];
 
   const handleColorToggle = (colorValue: string) => {
@@ -220,7 +230,13 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>Fahrzeugzustand</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchCondition, VehicleConditionEnum)}
+                {renderSelectedText(
+                  watchCondition,
+                  Object.entries(CONDITION_LABELS).map(([value, label]) => ({
+                    value,
+                    label,
+                  })),
+                )}
                 <ConditionDialog resultCount={resultCount} />
               </div>
             </div>
@@ -247,7 +263,7 @@ export const FiltersSidebar = ({
                   placeholder="von"
                 >
                   <SelectItem value="any">Beliebig</SelectItem>
-                  {prices.map((p) => (
+                  {PRICING_OPTIONS.map((p) => (
                     <SelectItem key={p.value} value={p.value}>
                       {p.label}
                     </SelectItem>
@@ -260,7 +276,7 @@ export const FiltersSidebar = ({
                   placeholder="bis"
                 >
                   <SelectItem value="any">Beliebig</SelectItem>
-                  {prices.map((p) => (
+                  {PRICING_OPTIONS.map((p) => (
                     <SelectItem key={p.value} value={p.value}>
                       {p.label}
                     </SelectItem>
@@ -313,7 +329,7 @@ export const FiltersSidebar = ({
                   placeholder="von"
                 >
                   <SelectItem value="any">Beliebig</SelectItem>
-                  {kilometers.map((m) => (
+                  {KILOMETER_OPTIONS.map((m) => (
                     <SelectItem key={m.value} value={m.value}>
                       {m.label}
                     </SelectItem>
@@ -326,7 +342,7 @@ export const FiltersSidebar = ({
                   placeholder="bis"
                 >
                   <SelectItem value="any">Beliebig</SelectItem>
-                  {kilometers.map((m) => (
+                  {KILOMETER_OPTIONS.map((m) => (
                     <SelectItem key={m.value} value={m.value}>
                       {m.label}
                     </SelectItem>
@@ -340,7 +356,13 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>Kraftstoffart</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchFuel, carFuelTypeEnum)}
+                {renderSelectedText(
+                  watchFuel,
+                  Object.entries(FUEL_LABELS).map(([value, label]) => ({
+                    value,
+                    label,
+                  })),
+                )}
                 <FuelTypeDialog counts={facets?.fuelType} />
               </div>
             </div>
@@ -348,7 +370,7 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>Leistung</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchPower, powerOptions)}
+                {renderSelectedText(watchPower, POWER_OPTIONS)}
                 <PowerDialog />
               </div>
             </div>
@@ -356,7 +378,13 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>Fahrzeugtyp</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchBodyType, carBodyTypeEnum)}
+                {renderSelectedText(
+                  watchBodyType,
+                  Object.entries(BODY_TYPE_LABELS).map(([value, label]) => ({
+                    value,
+                    label,
+                  })),
+                )}
                 <VehicleTypeDialog counts={facets?.bodyType} />
               </div>
             </div>
@@ -364,7 +392,7 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>E-Autos</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchEvs, evOptions)}
+                {renderSelectedText(watchEvs, EV_OPTIONS)}
                 <EvDialog />
               </div>
             </div>
@@ -372,7 +400,13 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>Getriebe</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchTransmission, TransmissionTypeEnum)}
+                {renderSelectedText(
+                  watchTransmission,
+                  Object.entries(TRANSMISSION_LABELS).map(([value, label]) => ({
+                    value,
+                    label,
+                  })),
+                )}
                 <TransmissionDialog counts={facets?.transmissionType} />
               </div>
             </div>
@@ -388,7 +422,7 @@ export const FiltersSidebar = ({
                 label="Metallic"
               />
               <div className="flex flex-wrap gap-1">
-                {ColorEnum.map((color) => {
+                {COLOR_OPTIONS.map((color) => {
                   const isSelected = watchColor.includes(color.value);
                   return (
                     <div
@@ -428,15 +462,17 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>Ausstattung</FieldLabel>
               <div className="space-y-3">
-                {EquipmentEnum.slice(0, 10).map((equipment) => (
-                  <CustomFormField
-                    key={equipment.value}
-                    control={form.control}
-                    fieldType={FormFieldType.CHECKBOX}
-                    name={equipment.value}
-                    label={equipment.label}
-                  />
-                ))}
+                {Object.entries(EQUIPMENT_LABELS)
+                  .slice(0, 10)
+                  .map(([value, label]) => (
+                    <CustomFormField
+                      key={value}
+                      control={form.control}
+                      fieldType={FormFieldType.CHECKBOX}
+                      name={value}
+                      label={label}
+                    />
+                  ))}
               </div>
               <Link
                 href={"/advanced-search"}

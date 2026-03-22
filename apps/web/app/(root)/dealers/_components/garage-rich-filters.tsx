@@ -26,7 +26,7 @@ import {
 } from "@repo/ui/src/components/input-group";
 import { TransmissionTypeEnum, DriveTypeEnum } from "@/constants";
 import { carBodyTypeEnum, carFuelTypeEnum } from "@/constants/cars";
-
+import { formatNumber } from "@/lib/helpers/format";
 import { FieldLabel } from "@repo/ui/src/components/field";
 
 // Utility for classes
@@ -61,7 +61,7 @@ function RangeFilter({
           className="text-xs cursor-pointer hover:underline"
           onClick={() => onValueChange([min, max])}
         >
-          Reset
+          Zurücksetzen
         </PopoverDescription>
       </PopoverHeader>
 
@@ -150,7 +150,7 @@ function CheckboxListFilter({
           className="text-xs cursor-pointer hover:underline"
           onClick={() => onChange?.([])}
         >
-          Reset
+          Zurücksetzen
         </PopoverDescription>
       </PopoverHeader>
 
@@ -207,7 +207,7 @@ function GridFilter({
           className="text-xs cursor-pointer hover:underline"
           onClick={() => onChange?.([])}
         >
-          Reset
+          Zurücksetzen
         </PopoverDescription>
       </PopoverHeader>
 
@@ -233,8 +233,8 @@ function GridFilter({
 }
 
 import { useEffect, useMemo } from "react";
-import type { VehicleSearchParams } from "@/lib/schemas/vehicle.schema";
-import type { VehicleFacets } from "@/types";
+import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
+import type { VehicleFacets } from "@/types/vehicle";
 
 interface GarageRichFiltersProps {
   onFilterChange: (filters: Partial<VehicleSearchParams>) => void;
@@ -309,9 +309,9 @@ export default function GarageRichFilters({
     // Preserve ALL initial filters initially (especially unmanaged ones like vehicleType, condition)
     const filters: Partial<VehicleSearchParams> = { ...initialFilters };
 
-    // Overwrite with local UI state. 
+    // Overwrite with local UI state.
     // If local state is empty/null, we explicitly clear those keys to allow user to "reset" via this UI.
-    
+
     // Make & Model
     if (selectedMakes.length > 0) {
       filters.make = selectedMakes;
@@ -443,8 +443,8 @@ export default function GarageRichFilters({
     const [cMin, cMax] = current;
     const [dMin, dMax] = def;
 
-    const minStr = cMin.toLocaleString("de-CH");
-    const maxStr = cMax.toLocaleString("de-CH");
+    const minStr = formatNumber(cMin);
+    const maxStr = formatNumber(cMax);
 
     if (noPlus) {
       return `${minStr} - ${maxStr}${unit}`;
@@ -468,11 +468,9 @@ export default function GarageRichFilters({
         "text-primary border-primary/20 bg-primary/5 font-medium shadow-xs",
     );
 
-    const totalSelected = selectedMakes.length + excludedMakes.length;
-    const label =
-      totalSelected > 0
-        ? `${totalSelected} Marken/Modelle`
-        : "Marke & Modell";
+  const totalSelected = selectedMakes.length + excludedMakes.length;
+  const label =
+    totalSelected > 0 ? `${totalSelected} Marken/Modelle` : "Marke & Modell";
 
   return (
     <div className="space-y-4">
@@ -689,7 +687,13 @@ export default function GarageRichFilters({
             Filter zurücksetzen
           </Button>
         )}
-        <Link href={dealerId ? `/advanced-search?dealer=${dealerId}` : "/advanced-search"}>
+        <Link
+          href={
+            dealerId
+              ? `/advanced-search?dealer=${dealerId}`
+              : "/advanced-search"
+          }
+        >
           <Button variant="secondary">
             <CircleEllipsis />
             Mehr Filter

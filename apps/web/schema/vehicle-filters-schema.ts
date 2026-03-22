@@ -19,8 +19,6 @@ export const vehicleFiltersSchema = z
     color: z.array(z.string()).optional(),
     metallic: z.boolean().optional(),
   })
-  // Equipment checkboxes and other dynamic keys (e.g. "abs", "bluetooth")
-  // Wide union keeps index signature compatible with all known field types
   .catchall(z.union([z.boolean(), z.string(), z.array(z.string())]).optional());
 
 export type VehicleFiltersValues = z.infer<typeof vehicleFiltersSchema>;

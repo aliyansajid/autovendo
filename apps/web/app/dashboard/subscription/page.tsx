@@ -2,7 +2,7 @@ import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { prisma } from "@repo/db";
 import { SubscriptionCard } from "../_components/subscription-card";
-import { getVehicleSubscriptionStatus } from "@/app/actions/vehicle.actions";
+import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 
 export default async function SubscriptionPage() {
   const session = await auth.api.getSession({ headers: await headers() });

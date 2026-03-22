@@ -31,7 +31,6 @@ import {
   Globe,
   BadgeCheck,
   Send,
-  PlusCircle,
   Loader2,
   Clock,
   ExternalLink,
@@ -63,20 +62,21 @@ import {
   PaginationPrevious,
 } from "@repo/ui/src/components/pagination";
 import { getVehicleCountAndFacets } from "@/app/actions/vehicles.actions";
+import { formatCount } from "@/lib/helpers/format";
 import type {
   DealerDetail,
   DealerVehiclesResult,
   GooglePlaceData,
-  VehicleFacets,
-  VehicleListItem,
-} from "@/types";
+} from "@/types/dealer";
+import type { VehicleFacets, VehicleListItem } from "@/types/vehicle";
 import { dealerContactSchema } from "@/schema/dealer-contact-schema";
 import {
   sendDealerContactEmail,
   getDealerVehicles,
 } from "@/app/actions/dealer.actions";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import type { VehicleSearchParams } from "@/lib/schemas/vehicle.schema";
+import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
+import { useSearchParams } from "next/navigation";
 
 interface DealerDetailContentProps {
   dealer: DealerDetail;
@@ -84,8 +84,6 @@ interface DealerDetailContentProps {
   googleData: GooglePlaceData | null;
   initialFilters?: Partial<VehicleSearchParams>;
 }
-
-import { useSearchParams } from "next/navigation";
 
 export const DealerDetailContent = ({
   dealer,
@@ -108,7 +106,6 @@ export const DealerDetailContent = ({
   const [currentFilters, setCurrentFilters] =
     useState<Partial<VehicleSearchParams>>(initialFilters);
   const [sortBy, setSortBy] = useState("newest");
-  const [isLoadingMore, startLoadMore] = useTransition();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFiltering, startFilterTransition] = useTransition();
 
@@ -536,7 +533,11 @@ export const DealerDetailContent = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="cars" className="space-y-8 mb-0" id="cars-tabs-content">
+          <TabsContent
+            value="cars"
+            className="space-y-8 mb-0"
+            id="cars-tabs-content"
+          >
             <GarageFilters
               onFilterChange={handleFilterChange}
               dealerId={dealer.id}
@@ -550,7 +551,9 @@ export const DealerDetailContent = ({
                   <Loader2 className="animate-spin text-primary" />
                 </div>
               )}
-              <p className="font-semibold">{totalCount} Fahrzeuge</p>
+              <p className="font-semibold">
+                {formatCount(totalCount)} Fahrzeuge
+              </p>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground hidden sm:inline">
                   Sortieren nach:
@@ -601,7 +604,9 @@ export const DealerDetailContent = ({
                       if (vehiclePage > 1) handlePageChange(vehiclePage - 1);
                     }}
                     className={
-                      vehiclePage === 1 ? "pointer-events-none opacity-50" : ""
+                      vehiclePage <= 1
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
                     }
                   />
                 </PaginationItem>
@@ -615,6 +620,7 @@ export const DealerDetailContent = ({
                         e.preventDefault();
                         handlePageChange(i + 1);
                       }}
+                      className="cursor-pointer"
                     >
                       {i + 1}
                     </PaginationLink>
@@ -630,9 +636,9 @@ export const DealerDetailContent = ({
                         handlePageChange(vehiclePage + 1);
                     }}
                     className={
-                      vehiclePage === totalPages || totalPages === 0
+                      vehiclePage >= totalPages || totalPages === 0
                         ? "pointer-events-none opacity-50"
-                        : ""
+                        : "cursor-pointer"
                     }
                   />
                 </PaginationItem>

@@ -10,7 +10,7 @@ import {
 import { Badge } from "@repo/ui/src/components/badge";
 import { Progress } from "@repo/ui/src/components/progress";
 import { Car, CreditCard, Users } from "lucide-react";
-import { getVehicleSubscriptionStatus } from "@/app/actions/vehicle.actions";
+import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({

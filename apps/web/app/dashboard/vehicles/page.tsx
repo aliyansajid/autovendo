@@ -1,11 +1,7 @@
 import { Button } from "@repo/ui/src/components/button";
 import { Plus, AlertCircle, AlertTriangle } from "lucide-react";
 import Link from "next/link";
-import {
-  getDealerVehicles,
-  getVehicleSubscriptionStatus,
-} from "@/app/actions/vehicle.actions";
-import { VehicleList } from "./_components/vehicle-list";
+import { getDealerVehicles, getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";import { VehicleList } from "./_components/vehicle-list";
 import {
   Alert,
   AlertDescription,

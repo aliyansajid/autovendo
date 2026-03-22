@@ -13,7 +13,7 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { EnergyLabelEnum, EmissionStandardEnum } from "@/constants";
-import type { VehicleFacets } from "@/types";
+import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";
 
 export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
@@ -34,7 +34,10 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
 
   useEffect(() => {
     if (consumptionValue === undefined) {
-      if (getValues("consumption-from") !== "" || getValues("consumption-to") !== "") {
+      if (
+        getValues("consumption-from") !== "" ||
+        getValues("consumption-to") !== ""
+      ) {
         setValue("consumption-from", "");
         setValue("consumption-to", "");
       }
@@ -43,13 +46,18 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
     const [from, to] = consumptionValue as [number, number];
     const nextFrom = from === 0 ? "" : from.toString();
     const nextTo = to >= consumptionMax ? "" : to.toString();
-    if (getValues("consumption-from") !== nextFrom) setValue("consumption-from", nextFrom);
-    if (getValues("consumption-to") !== nextTo) setValue("consumption-to", nextTo);
+    if (getValues("consumption-from") !== nextFrom)
+      setValue("consumption-from", nextFrom);
+    if (getValues("consumption-to") !== nextTo)
+      setValue("consumption-to", nextTo);
   }, [consumptionValue, consumptionMax, setValue, getValues]);
 
   useEffect(() => {
     if (emissionsValue === undefined) {
-      if (getValues("emissions-from") !== "" || getValues("emissions-to") !== "") {
+      if (
+        getValues("emissions-from") !== "" ||
+        getValues("emissions-to") !== ""
+      ) {
         setValue("emissions-from", "");
         setValue("emissions-to", "");
       }
@@ -58,7 +66,8 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
     const [from, to] = emissionsValue as [number, number];
     const nextFrom = from === 0 ? "" : from.toString();
     const nextTo = to >= co2Max ? "" : to.toString();
-    if (getValues("emissions-from") !== nextFrom) setValue("emissions-from", nextFrom);
+    if (getValues("emissions-from") !== nextFrom)
+      setValue("emissions-from", nextFrom);
     if (getValues("emissions-to") !== nextTo) setValue("emissions-to", nextTo);
   }, [emissionsValue, co2Max, setValue, getValues]);
 

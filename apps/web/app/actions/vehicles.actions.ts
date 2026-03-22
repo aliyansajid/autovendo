@@ -8,19 +8,45 @@
  * Optimized for thousands of vehicles with proper indexing and caching
  */
 
-import { unstable_cache } from "next/cache";
+import { unstable_cache, revalidatePath } from "next/cache";
 import { prisma } from "@repo/db";
 import type { Prisma } from "@repo/db";
+import { auth } from "@repo/auth";
+import { headers } from "next/headers";
+import { createId } from "@paralleldrive/cuid2";
+import { storage } from "@/lib/helpers/storage";
+import { StorageService } from "@repo/storage";
+import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
 import {
-  VehicleSearchSchema,
-  type VehicleSearchParams,
   type VehicleListItem,
   type VehicleDetails,
   type PaginatedVehicles,
   type VehicleFacets,
   type PriceRating,
-} from "@/lib/schemas/vehicle.schema";
+} from "@/types/vehicle";
+import {
+  VehicleSearchSchema,
+  type VehicleSearchParams,
+} from "@/schema/vehicle-search-schema";
+
 import { parseSearchParams } from "@/lib/helpers/vehicle";
+
+const PLAN_LIMITS: Record<string, number> = {
+  bronze: 5,
+  silver: 10,
+  gold: 15,
+  diamond: 25,
+};
+
+export type SubscriptionStatus = {
+  type: "active" | "no_subscription" | "quota_exhausted" | "expired";
+  plan: string;
+  maxVehicles: number;
+  currentCount: number;
+  remainingQuota: number;
+  graceEnd: string | null;
+  isGraceExpired: boolean;
+};
 
 // =============================================================================
 // DATABASE QUERY OPTIMIZATION
@@ -96,7 +122,11 @@ export async function buildWhereClause(
       .map((m) => ({ make: { equals: m, mode: "insensitive" as const } }));
     if (makeOr.length > 0) {
       where.AND = [
-        ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+        ...(Array.isArray(where.AND)
+          ? where.AND
+          : where.AND
+            ? [where.AND]
+            : []),
         { OR: makeOr },
       ];
     }
@@ -114,7 +144,11 @@ export async function buildWhereClause(
       .map((m) => ({ model: { equals: m, mode: "insensitive" as const } }));
     if (modelOr.length > 0) {
       where.AND = [
-        ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+        ...(Array.isArray(where.AND)
+          ? where.AND
+          : where.AND
+            ? [where.AND]
+            : []),
         { OR: modelOr },
       ];
     }
@@ -145,7 +179,10 @@ export async function buildWhereClause(
   }
 
   // Range filters - indexed columns for optimal performance
-  if (!omitFilters.priceFrom && (params.priceFrom !== undefined || params.priceTo !== undefined)) {
+  if (
+    !omitFilters.priceFrom &&
+    (params.priceFrom !== undefined || params.priceTo !== undefined)
+  ) {
     where.price = {
       ...(params.priceFrom && { gte: params.priceFrom }),
       ...(params.priceTo && { lte: params.priceTo }),
@@ -163,7 +200,10 @@ export async function buildWhereClause(
     };
   }
 
-  if (!omitFilters.kilometerFrom && (params.kilometerFrom !== undefined || params.kilometerTo !== undefined)) {
+  if (
+    !omitFilters.kilometerFrom &&
+    (params.kilometerFrom !== undefined || params.kilometerTo !== undefined)
+  ) {
     where.kilometer = {
       ...(params.kilometerFrom && { gte: params.kilometerFrom }),
       ...(params.kilometerTo && { lte: params.kilometerTo }),
@@ -223,11 +263,7 @@ export async function buildWhereClause(
   }
 
   // Body type (Karosserie) - string field; match case-insensitively for DB uppercase/lowercase
-  if (
-    !omitFilters.bodyType &&
-    params.bodyType &&
-    params.bodyType.length > 0
-  ) {
+  if (!omitFilters.bodyType && params.bodyType && params.bodyType.length > 0) {
     const bodyTypeOr = params.bodyType.map((b) => ({
       bodyType: { equals: b, mode: "insensitive" as const },
     }));
@@ -247,12 +283,19 @@ export async function buildWhereClause(
   }
 
   // Drive type
-  if (!omitFilters.driveType && params.driveType && params.driveType.length > 0) {
+  if (
+    !omitFilters.driveType &&
+    params.driveType &&
+    params.driveType.length > 0
+  ) {
     where.driveType = { in: params.driveType.map(toDbEnum) as any };
   }
 
   // Cubic capacity (Hubraum)
-  if (params.cubicCapacityFrom !== undefined || params.cubicCapacityTo !== undefined) {
+  if (
+    params.cubicCapacityFrom !== undefined ||
+    params.cubicCapacityTo !== undefined
+  ) {
     where.cubicCapacity = {
       ...(params.cubicCapacityFrom ? { gte: params.cubicCapacityFrom } : {}),
       ...(params.cubicCapacityTo ? { lte: params.cubicCapacityTo } : {}),
@@ -268,7 +311,10 @@ export async function buildWhereClause(
   }
 
   // Consumption (consumptionTotal)
-  if (params.consumptionFrom !== undefined || params.consumptionTo !== undefined) {
+  if (
+    params.consumptionFrom !== undefined ||
+    params.consumptionTo !== undefined
+  ) {
     where.consumptionTotal = {
       ...(params.consumptionFrom ? { gte: params.consumptionFrom } : {}),
       ...(params.consumptionTo ? { lte: params.consumptionTo } : {}),
@@ -284,13 +330,23 @@ export async function buildWhereClause(
   }
 
   // Energy efficiency label
-  if (!omitFilters.energyLabels && params.energyLabels && params.energyLabels.length > 0) {
+  if (
+    !omitFilters.energyLabels &&
+    params.energyLabels &&
+    params.energyLabels.length > 0
+  ) {
     where.energyLabel = { in: params.energyLabels.map(toDbEnum) as any };
   }
 
   // Emission standard (Euronorm)
-  if (!omitFilters.emissionStandards && params.emissionStandards && params.emissionStandards.length > 0) {
-    where.emissionStandard = { in: params.emissionStandards.map(toDbEnum) as any };
+  if (
+    !omitFilters.emissionStandards &&
+    params.emissionStandards &&
+    params.emissionStandards.length > 0
+  ) {
+    where.emissionStandard = {
+      in: params.emissionStandards.map(toDbEnum) as any,
+    };
   }
 
   // Inspection passed (MFK)
@@ -309,7 +365,11 @@ export async function buildWhereClause(
   }
 
   // Interior color
-  if (!omitFilters.interiorColor && params.interiorColor && params.interiorColor.length > 0) {
+  if (
+    !omitFilters.interiorColor &&
+    params.interiorColor &&
+    params.interiorColor.length > 0
+  ) {
     where.interiorColor = { in: params.interiorColor.map(toDbEnum) as any };
   }
 
@@ -386,7 +446,9 @@ function toFacetCounts<T extends string>(
  * Normalize facet keys to frontend format (lowercase, hyphen) so filter UI can look up by option value.
  * DB stores enums as UPPER_SNAKE; frontend uses lower-kebab.
  */
-function toFrontendFacetKeys(counts: Record<string, number>): Record<string, number> {
+function toFrontendFacetKeys(
+  counts: Record<string, number>,
+): Record<string, number> {
   const out: Record<string, number> = {};
   for (const [key, count] of Object.entries(counts)) {
     const normalized = key.toLowerCase().replace(/_/g, "-");
@@ -396,7 +458,9 @@ function toFrontendFacetKeys(counts: Record<string, number>): Record<string, num
 }
 
 /** Normalize string facet keys to lowercase (e.g. make) for consistent UI lookup */
-function toLowerFacetKeys(counts: Record<string, number>): Record<string, number> {
+function toLowerFacetKeys(
+  counts: Record<string, number>,
+): Record<string, number> {
   const out: Record<string, number> = {};
   for (const [key, count] of Object.entries(counts)) {
     const k = key.toLowerCase();
@@ -427,11 +491,13 @@ async function fetchAvgPriceMap(): Promise<Map<string, number>> {
 /** Compare vehicle price against market average for same make+model. */
 function computePriceRating(price: number, avgPrice: number): PriceRating {
   const pct = (price - avgPrice) / avgPrice;
-  if (pct > 0.2)   return { label: "Überteuert",       bars: 1, sentiment: "red" };
-  if (pct > 0.05)  return { label: "Fairer Preis",      bars: 2, sentiment: "yellow" };
-  if (pct > -0.05) return { label: "Guter Preis",       bars: 3, sentiment: "green" };
-  if (pct > -0.2)  return { label: "Sehr guter Preis",  bars: 4, sentiment: "green" };
-  return                  { label: "Ausgezeichnet",      bars: 5, sentiment: "green" };
+  if (pct > 0.2) return { label: "Überteuert", bars: 1, sentiment: "red" };
+  if (pct > 0.05)
+    return { label: "Fairer Preis", bars: 2, sentiment: "yellow" };
+  if (pct > -0.05) return { label: "Guter Preis", bars: 3, sentiment: "green" };
+  if (pct > -0.2)
+    return { label: "Sehr guter Preis", bars: 4, sentiment: "green" };
+  return { label: "Ausgezeichnet", bars: 5, sentiment: "green" };
 }
 
 function attachPriceRatings(
@@ -440,7 +506,10 @@ function attachPriceRatings(
 ): VehicleListItem[] {
   return vehicles.map((v) => {
     const avg = avgMap.get(`${v.make}::${v.model ?? ""}`);
-    return { ...v, priceRating: avg != null ? computePriceRating(v.price, avg) : undefined };
+    return {
+      ...v,
+      priceRating: avg != null ? computePriceRating(v.price, avg) : undefined,
+    };
   });
 }
 
@@ -620,15 +689,25 @@ export async function getVehiclesWithFacets(rawParams: {
   const facets: VehicleFacets = {
     make: toLowerFacetKeys(toFacetCounts(makeRows, "make")),
     fuelType: toFrontendFacetKeys(toFacetCounts(fuelRows, "fuelType")),
-    transmissionType: toFrontendFacetKeys(toFacetCounts(transmissionRows, "transmissionType")),
-    vehicleCondition: toFrontendFacetKeys(toFacetCounts(conditionRows, "vehicleCondition")),
+    transmissionType: toFrontendFacetKeys(
+      toFacetCounts(transmissionRows, "transmissionType"),
+    ),
+    vehicleCondition: toFrontendFacetKeys(
+      toFacetCounts(conditionRows, "vehicleCondition"),
+    ),
     vehicleType: toFrontendFacetKeys(toFacetCounts(typeRows, "vehicleType")),
     bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
     color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
-    interiorColor: toFrontendFacetKeys(toFacetCounts(interiorColorRows, "interiorColor")),
+    interiorColor: toFrontendFacetKeys(
+      toFacetCounts(interiorColorRows, "interiorColor"),
+    ),
     driveType: toFrontendFacetKeys(toFacetCounts(driveTypeRows, "driveType")),
-    energyLabel: toFrontendFacetKeys(toFacetCounts(energyLabelRows, "energyLabel")),
-    emissionStandard: toFrontendFacetKeys(toFacetCounts(emissionStandardRows, "emissionStandard")),
+    energyLabel: toFrontendFacetKeys(
+      toFacetCounts(energyLabelRows, "energyLabel"),
+    ),
+    emissionStandard: toFrontendFacetKeys(
+      toFacetCounts(emissionStandardRows, "emissionStandard"),
+    ),
     metallic: metallicCount,
     inspectionPassed: inspectionPassedCount,
     hasWarranty: hasWarrantyCount,
@@ -778,10 +857,20 @@ export async function getVehicleCountAndFacets(rawParams: {
     prisma.vehicle.aggregate({ _max: { kw: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { price: true }, where: priceBase }),
     prisma.vehicle.aggregate({ _max: { kilometer: true }, where: kmBase }),
-    prisma.vehicle.aggregate({ _min: { registrationYear: true }, _max: { registrationYear: true }, where: yearBase }),
-    prisma.vehicle.aggregate({ _max: { consumptionTotal: true }, where: facetBase }),
+    prisma.vehicle.aggregate({
+      _min: { registrationYear: true },
+      _max: { registrationYear: true },
+      where: yearBase,
+    }),
+    prisma.vehicle.aggregate({
+      _max: { consumptionTotal: true },
+      where: facetBase,
+    }),
     prisma.vehicle.aggregate({ _max: { co2Emission: true }, where: facetBase }),
-    prisma.vehicle.aggregate({ _max: { cubicCapacity: true }, where: facetBase }),
+    prisma.vehicle.aggregate({
+      _max: { cubicCapacity: true },
+      where: facetBase,
+    }),
     prisma.vehicle.aggregate({ _max: { cylinders: true }, where: facetBase }),
     // Year distribution for histogram - use yearBase to show full range
     prisma.vehicle.groupBy({
@@ -805,36 +894,54 @@ export async function getVehicleCountAndFacets(rawParams: {
     Promise.all(
       Array.from({ length: kmBucketCount }).map((_, i) =>
         prisma.vehicle.count({
-          where: { ...kmBase, kilometer: { gte: i * kmStep, lt: (i + 1) * kmStep } },
-        })
-      )
+          where: {
+            ...kmBase,
+            kilometer: { gte: i * kmStep, lt: (i + 1) * kmStep },
+          },
+        }),
+      ),
     ),
     Promise.all(
       Array.from({ length: priceBucketCount }).map((_, i) =>
         prisma.vehicle.count({
-          where: { ...priceBase, price: { gte: i * priceStep, lt: (i + 1) * priceStep } },
-        })
-      )
+          where: {
+            ...priceBase,
+            price: { gte: i * priceStep, lt: (i + 1) * priceStep },
+          },
+        }),
+      ),
     ),
   ]);
 
-
   const maxKmCount = Math.max(...kmCounts, 1);
   const maxPriceCount = Math.max(...priceCounts, 1);
-  const maxYearCount = Math.max(...(yearRows as any[]).map(r => r._count._all), 1);
+  const maxYearCount = Math.max(
+    ...(yearRows as any[]).map((r) => r._count._all),
+    1,
+  );
 
   const facets: VehicleFacets = {
     make: toLowerFacetKeys(toFacetCounts(makeRows, "make")),
     fuelType: toFrontendFacetKeys(toFacetCounts(fuelRows, "fuelType")),
-    transmissionType: toFrontendFacetKeys(toFacetCounts(transmissionRows, "transmissionType")),
-    vehicleCondition: toFrontendFacetKeys(toFacetCounts(conditionRows, "vehicleCondition")),
+    transmissionType: toFrontendFacetKeys(
+      toFacetCounts(transmissionRows, "transmissionType"),
+    ),
+    vehicleCondition: toFrontendFacetKeys(
+      toFacetCounts(conditionRows, "vehicleCondition"),
+    ),
     vehicleType: toFrontendFacetKeys(toFacetCounts(typeRows, "vehicleType")),
     bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
     color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
-    interiorColor: toFrontendFacetKeys(toFacetCounts(interiorColorRows, "interiorColor")),
+    interiorColor: toFrontendFacetKeys(
+      toFacetCounts(interiorColorRows, "interiorColor"),
+    ),
     driveType: toFrontendFacetKeys(toFacetCounts(driveTypeRows, "driveType")),
-    energyLabel: toFrontendFacetKeys(toFacetCounts(energyLabelRows, "energyLabel")),
-    emissionStandard: toFrontendFacetKeys(toFacetCounts(emissionStandardRows, "emissionStandard")),
+    energyLabel: toFrontendFacetKeys(
+      toFacetCounts(energyLabelRows, "energyLabel"),
+    ),
+    emissionStandard: toFrontendFacetKeys(
+      toFacetCounts(emissionStandardRows, "emissionStandard"),
+    ),
     metallic: metallicCount,
     inspectionPassed: inspectionPassedCount,
     hasWarranty: hasWarrantyCount,
@@ -936,4 +1043,537 @@ export async function getSimilarVehicles(
   });
 
   return vehicles as VehicleListItem[];
+}
+
+// =============================================================================
+// DASHBOARD / ADMIN ACTIONS
+// =============================================================================
+
+export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  const currentCount = dealer
+    ? await prisma.vehicle.count({ where: { dealerId: dealer.id } })
+    : 0;
+
+  const subscription = await prisma.subscription.findFirst({
+    where: { referenceId: session.user.id },
+    orderBy: { periodEnd: "desc" },
+  });
+
+  if (!subscription) {
+    return {
+      type: "no_subscription",
+      plan: "",
+      maxVehicles: 0,
+      currentCount,
+      remainingQuota: 0,
+      graceEnd: null,
+      isGraceExpired: false,
+    };
+  }
+
+  const planName = subscription.plan.toLowerCase();
+  const maxVehicles = PLAN_LIMITS[planName] ?? 0;
+  const isActive = ["active", "trialing", "past_due"].includes(
+    subscription.status,
+  );
+
+  if (!isActive) {
+    const expiredAt =
+      subscription.periodEnd ?? subscription.endedAt ?? subscription.canceledAt;
+    const graceEnd = expiredAt
+      ? new Date(expiredAt.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      : null;
+    const isGraceExpired = graceEnd ? new Date() > new Date(graceEnd) : true;
+    return {
+      type: "expired",
+      plan: subscription.plan,
+      maxVehicles,
+      currentCount,
+      remainingQuota: 0,
+      graceEnd,
+      isGraceExpired,
+    };
+  }
+
+  const remainingQuota = Math.max(0, maxVehicles - currentCount);
+
+  if (remainingQuota === 0) {
+    return {
+      type: "quota_exhausted",
+      plan: subscription.plan,
+      maxVehicles,
+      currentCount,
+      remainingQuota: 0,
+      graceEnd: null,
+      isGraceExpired: false,
+    };
+  }
+
+  return {
+    type: "active",
+    plan: subscription.plan,
+    maxVehicles,
+    currentCount,
+    remainingQuota,
+    graceEnd: null,
+    isGraceExpired: false,
+  };
+}
+
+export async function prepareVehicleListing() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!dealer) {
+    throw new Error("Dealer profile not found");
+  }
+
+  return {
+    listingId: createId(),
+    country: "ch",
+    dealerId: dealer.id,
+  };
+}
+
+export async function getPresignedUrls(
+  listingId: string,
+  files: { name: string; type: string }[],
+) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!dealer) {
+    throw new Error("Dealer profile not found");
+  }
+
+  const country = "ch";
+
+  const urls = await Promise.all(
+    files.map(async (file) => {
+      const key = StorageService.formatDealerPath(
+        country,
+        dealer.id,
+        "listing",
+        file.name,
+        listingId,
+      );
+
+      const url = await storage.getUploadUrl(key, file.type);
+      return { url, key };
+    }),
+  );
+
+  return urls;
+}
+
+export async function createVehicle(
+  listingId: string,
+  formData: any,
+  imageKeys: string[],
+) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!dealer) {
+    throw new Error("Dealer profile not found");
+  }
+
+  const validatedData = vehicleFormSchema.parse(formData);
+
+  const subscription = await prisma.subscription.findFirst({
+    where: {
+      referenceId: session.user.id,
+      status: { in: ["active", "trialing", "past_due"] },
+    },
+    orderBy: { periodEnd: "desc" },
+  });
+
+  const planName = subscription?.plan?.toLowerCase() || "";
+  const maxVehicles = PLAN_LIMITS[planName] || 0;
+
+  const currentCount = await prisma.vehicle.count({
+    where: { dealerId: dealer.id },
+  });
+
+  if (currentCount >= maxVehicles) {
+    return {
+      error: `Limit erreicht: Ihr aktuelles Abo (${subscription?.plan || "Kein Abo"}) erlaubt maximal ${maxVehicles} Fahrzeuge.`,
+    };
+  }
+
+  const vehicle = await prisma.vehicle.create({
+    data: {
+      id: listingId,
+      dealerId: dealer.id,
+      vehicleType: validatedData.vehicleType.toUpperCase() as any,
+      make: validatedData.make,
+      model: validatedData.model || null,
+      version: validatedData.version || null,
+      bodyType: validatedData.bodyType,
+      fuelType: validatedData.fuelType
+        ? (validatedData.fuelType.toUpperCase().replace(/-/g, "_") as any)
+        : null,
+      registrationMonth: validatedData.registrationMonth,
+      registrationYear: validatedData.registrationYear,
+      kilometer: validatedData.kilometer,
+      price: validatedData.price,
+      newPrice: validatedData.newPrice || null,
+      color: validatedData.color.toUpperCase() as any,
+      gearTransmission: validatedData.gearTransmission
+        ? (validatedData.gearTransmission.toUpperCase() as any)
+        : null,
+      transmissionType: validatedData.transmissionType
+        ? (validatedData.transmissionType
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      driveType: validatedData.driveType
+        ? (validatedData.driveType.toUpperCase() as any)
+        : null,
+      interiorColor: validatedData.interiorColor
+        ? (validatedData.interiorColor.toUpperCase() as any)
+        : null,
+      metallic: validatedData.metallic,
+      vehicleCondition: validatedData.vehicleCondition
+        ? (validatedData.vehicleCondition
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      lastInspectionDate: validatedData.lastInspectionDate || null,
+      inspectionPassed: validatedData.inspectionPassed,
+      warranty: validatedData.warranty
+        ? (validatedData.warranty.toUpperCase().replace(/-/g, "_") as any)
+        : null,
+      warrantyStartDate: validatedData.warrantyStartDate || null,
+      duration: validatedData.duration || null,
+      maxKm: validatedData.maxKm || null,
+      doors: validatedData.doors || null,
+      seats: validatedData.seats || null,
+      hp: validatedData.hp || null,
+      kw: validatedData.kw || null,
+      energyLabel: validatedData.energyLabel
+        ? (validatedData.energyLabel.toUpperCase() as any)
+        : null,
+      typeApproval: validatedData.typeApproval || null,
+      wheelbase: validatedData.wheelbase || null,
+      vin: validatedData.vehicleIdentificationNumber || null,
+      emptyWeight: validatedData.emptyWeight || null,
+      loadCapacity: validatedData.loadCapacity || null,
+      serialNumber: validatedData.serialNumber || null,
+      height: validatedData.height || null,
+      width: validatedData.width || null,
+      length: validatedData.length || null,
+      towingCapacityBraked: validatedData.towingCapacityBraked || null,
+      cubicCapacity: validatedData.cubicCapacity || null,
+      co2Emission: validatedData.co2Emission || null,
+      cylinders: validatedData.cylinders || null,
+      numberOfGears: validatedData.numberOfGears || null,
+      emissionStandard: validatedData.emissionStandard
+        ? (validatedData.emissionStandard
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      consumptionCity: validatedData.consumptionCity || null,
+      consumptionCountry: validatedData.consumptionCountry || null,
+      consumptionTotal: validatedData.consumptionTotal || null,
+      range: validatedData.range || null,
+      batteryCapacity: validatedData.batteryCapacity || null,
+      batteryRentalMonth: validatedData.batteryRentalMonth || null,
+      powerConsumption: validatedData.powerConsumption || null,
+      batteryOwnership: validatedData.batteryOwnership
+        ? (validatedData.batteryOwnership
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      chargingPlugTypeStandard: validatedData.chargingPlugTypeStandard
+        ? (validatedData.chargingPlugTypeStandard
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      chargingPlugTypeFast: validatedData.chargingPlugTypeFast
+        ? (validatedData.chargingPlugTypeFast
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      chargingPower: validatedData.chargingPower || null,
+      combustionEnginePowerHp: validatedData.combustionEnginePowerHp || null,
+      electricMotorPowerHp: validatedData.electricMotorPowerHp || null,
+      vehicleDescription: validatedData.vehicleDescription || null,
+      equipment: validatedData.equipment || {},
+      extras: validatedData.extras || {},
+      images: imageKeys,
+    },
+  });
+
+  revalidatePath("/dashboard/vehicles");
+  return listingId;
+}
+
+export async function getDealerVehicles() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!dealer) {
+    throw new Error("Dealer profile not found");
+  }
+
+  const vehicles = await prisma.vehicle.findMany({
+    where: { dealerId: dealer.id },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return vehicles;
+}
+
+export async function getVehicleById(id: string) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!dealer) {
+    throw new Error("Dealer profile not found");
+  }
+
+  const vehicle = await prisma.vehicle.findUnique({
+    where: {
+      id,
+      dealerId: dealer.id,
+    },
+  });
+
+  return vehicle;
+}
+
+export async function updateVehicle(
+  vehicleId: string,
+  formData: any,
+  imageKeys: string[],
+) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!dealer) {
+    throw new Error("Dealer profile not found");
+  }
+
+  const validatedData = vehicleFormSchema.parse(formData);
+
+  const existingVehicle = await prisma.vehicle.findUnique({
+    where: { id: vehicleId, dealerId: dealer.id },
+    select: { images: true },
+  });
+
+  if (existingVehicle) {
+    const oldImages = existingVehicle.images;
+    const imagesToDelete = oldImages.filter((img) => !imageKeys.includes(img));
+
+    if (imagesToDelete.length > 0) {
+      await Promise.all(
+        imagesToDelete.map(async (key) => {
+          try {
+            await storage.deleteFile(key);
+          } catch (e) {
+            console.error(`Failed to delete image: ${key}`, e);
+          }
+        }),
+      );
+    }
+  }
+
+  await prisma.vehicle.update({
+    where: {
+      id: vehicleId,
+      dealerId: dealer.id,
+    },
+    data: {
+      vehicleType: validatedData.vehicleType.toUpperCase() as any,
+      make: validatedData.make,
+      model: validatedData.model || null,
+      version: validatedData.version || null,
+      bodyType: validatedData.bodyType,
+      fuelType: validatedData.fuelType
+        ? (validatedData.fuelType.toUpperCase().replace(/-/g, "_") as any)
+        : null,
+      registrationMonth: validatedData.registrationMonth,
+      registrationYear: validatedData.registrationYear,
+      kilometer: validatedData.kilometer,
+      price: validatedData.price,
+      newPrice: validatedData.newPrice || null,
+      color: validatedData.color.toUpperCase() as any,
+      gearTransmission: validatedData.gearTransmission
+        ? (validatedData.gearTransmission.toUpperCase() as any)
+        : null,
+      transmissionType: validatedData.transmissionType
+        ? (validatedData.transmissionType
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      driveType: validatedData.driveType
+        ? (validatedData.driveType.toUpperCase() as any)
+        : null,
+      interiorColor: validatedData.interiorColor
+        ? (validatedData.interiorColor.toUpperCase() as any)
+        : null,
+      metallic: validatedData.metallic,
+      vehicleCondition: validatedData.vehicleCondition
+        ? (validatedData.vehicleCondition
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      lastInspectionDate: validatedData.lastInspectionDate || null,
+      inspectionPassed: validatedData.inspectionPassed,
+      warranty: validatedData.warranty
+        ? (validatedData.warranty.toUpperCase().replace("-", "_") as any)
+        : null,
+      warrantyStartDate: validatedData.warrantyStartDate || null,
+      duration: validatedData.duration || null,
+      maxKm: validatedData.maxKm || null,
+      doors: validatedData.doors || null,
+      seats: validatedData.seats || null,
+      hp: validatedData.hp || null,
+      kw: validatedData.kw || null,
+      energyLabel: validatedData.energyLabel
+        ? (validatedData.energyLabel.toUpperCase() as any)
+        : null,
+      typeApproval: validatedData.typeApproval || null,
+      wheelbase: validatedData.wheelbase || null,
+      vin: validatedData.vehicleIdentificationNumber || null,
+      emptyWeight: validatedData.emptyWeight || null,
+      loadCapacity: validatedData.loadCapacity || null,
+      serialNumber: validatedData.serialNumber || null,
+      height: validatedData.height || null,
+      width: validatedData.width || null,
+      length: validatedData.length || null,
+      towingCapacityBraked: validatedData.towingCapacityBraked || null,
+      cubicCapacity: validatedData.cubicCapacity || null,
+      co2Emission: validatedData.co2Emission || null,
+      cylinders: validatedData.cylinders || null,
+      numberOfGears: validatedData.numberOfGears || null,
+      emissionStandard: validatedData.emissionStandard
+        ? (validatedData.emissionStandard
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      consumptionCity: validatedData.consumptionCity || null,
+      consumptionCountry: validatedData.consumptionCountry || null,
+      consumptionTotal: validatedData.consumptionTotal || null,
+      range: validatedData.range || null,
+      batteryCapacity: validatedData.batteryCapacity || null,
+      batteryRentalMonth: validatedData.batteryRentalMonth || null,
+      powerConsumption: validatedData.powerConsumption || null,
+      batteryOwnership: validatedData.batteryOwnership
+        ? (validatedData.batteryOwnership
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      chargingPlugTypeStandard: validatedData.chargingPlugTypeStandard
+        ? (validatedData.chargingPlugTypeStandard
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      chargingPlugTypeFast: validatedData.chargingPlugTypeFast
+        ? (validatedData.chargingPlugTypeFast
+            .toUpperCase()
+            .replace(/-/g, "_") as any)
+        : null,
+      chargingPower: validatedData.chargingPower || null,
+      combustionEnginePowerHp: validatedData.combustionEnginePowerHp || null,
+      electricMotorPowerHp: validatedData.electricMotorPowerHp || null,
+      vehicleDescription: validatedData.vehicleDescription || null,
+      equipment: validatedData.equipment || {},
+      extras: validatedData.extras || {},
+      images: imageKeys,
+    },
+  });
+
+  revalidatePath("/dashboard/vehicles");
+  return vehicleId;
+}
+
+export async function deleteVehicle(id: string) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!dealer) {
+    throw new Error("Dealer profile not found");
+  }
+
+  await prisma.vehicle.delete({
+    where: {
+      id,
+      dealerId: dealer.id,
+    },
+  });
+
+  revalidatePath("/dashboard/vehicles");
+  return { success: true };
 }

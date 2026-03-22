@@ -19,7 +19,7 @@ import {
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
 import { getVehiclesWithFacetsCached } from "@/app/actions/vehicles.actions";
-import { VehicleSearchSchema } from "@/types";
+import { VehicleSearchSchema } from "@/schema/vehicle-search-schema";
 import { parseSearchParams } from "@/lib/helpers/vehicle";
 import { ListingControls } from "./_components/listing-controls";
 import { formatCount } from "@/lib/helpers/format";
@@ -41,7 +41,9 @@ export default async function CarsPage(props: {
   const query = VehicleSearchSchema.parse(parsed);
 
   // Helper to build pagination URLs
-  function buildUrl(params: Record<string, string | string[] | number | undefined>): string {
+  function buildUrl(
+    params: Record<string, string | string[] | number | undefined>,
+  ): string {
     const sp = new URLSearchParams();
     for (const [key, value] of Object.entries({ ...searchParams, ...params })) {
       if (value !== undefined && value !== null) {
@@ -118,20 +120,25 @@ export default async function CarsPage(props: {
               )}
             </div>
 
-            {totalPages > 1 && (
-              <Pagination>
-                <PaginationContent>
-                  {query.page > 1 && (
-                    <PaginationItem>
-                      <PaginationPrevious
-                        href={buildUrl({ page: query.page - 1 })}
-                      />
-                    </PaginationItem>
-                  )}
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href={
+                      query.page > 1
+                        ? buildUrl({ page: query.page - 1 })
+                        : undefined
+                    }
+                    className={
+                      query.page <= 1 ? "pointer-events-none opacity-50" : ""
+                    }
+                  />
+                </PaginationItem>
 
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                {totalPages > 0 &&
+                  Array.from({ length: totalPages }, (_, i) => i + 1).map(
                     (p) => {
-                      // Simple pagination logic, showing up to 5 pages
+                      // Simple pagination logic, showing up to 7 pages with dots
                       if (totalPages > 7) {
                         if (
                           p === 1 ||
@@ -172,16 +179,22 @@ export default async function CarsPage(props: {
                     },
                   )}
 
-                  {query.page < totalPages && (
-                    <PaginationItem>
-                      <PaginationNext
-                        href={buildUrl({ page: query.page + 1 })}
-                      />
-                    </PaginationItem>
-                  )}
-                </PaginationContent>
-              </Pagination>
-            )}
+                <PaginationItem>
+                  <PaginationNext
+                    href={
+                      query.page < totalPages
+                        ? buildUrl({ page: query.page + 1 })
+                        : undefined
+                    }
+                    className={
+                      query.page >= totalPages
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         </div>
       </div>

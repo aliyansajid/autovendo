@@ -12,10 +12,9 @@ import type {
   DealerDetail,
   DealerVehiclesResult,
   GooglePlaceData,
-} from "@/types";
-import type { VehicleListItem } from "@/types";
+} from "@/types/dealer";
 import { DAY_LABELS } from "@/lib/helpers/format";
-import type { VehicleSearchParams } from "@/lib/schemas/vehicle.schema";
+import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { buildWhereClause } from "./vehicles.actions";
 
 // -----------------------------------------------------------------------------
@@ -196,10 +195,22 @@ export async function getDealers({
     const where = searchQuery
       ? {
           OR: [
-            { companyName: { contains: searchQuery, mode: "insensitive" as const } },
-            { streetAddress: { contains: searchQuery, mode: "insensitive" as const } },
+            {
+              companyName: {
+                contains: searchQuery,
+                mode: "insensitive" as const,
+              },
+            },
+            {
+              streetAddress: {
+                contains: searchQuery,
+                mode: "insensitive" as const,
+              },
+            },
             { city: { contains: searchQuery, mode: "insensitive" as const } },
-            { zipCode: { contains: searchQuery, mode: "insensitive" as const } },
+            {
+              zipCode: { contains: searchQuery, mode: "insensitive" as const },
+            },
           ],
         }
       : {};
@@ -316,7 +327,10 @@ export async function getDealerVehicles(
     const skip = (page - 1) * pageSize;
 
     const where = {
-      AND: [await buildWhereClause(filters as VehicleSearchParams), { dealerId }],
+      AND: [
+        await buildWhereClause(filters as VehicleSearchParams),
+        { dealerId },
+      ],
     };
 
     let orderBy: any = { createdAt: "desc" };

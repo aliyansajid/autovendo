@@ -23,8 +23,8 @@ import { toast } from "sonner";
 import { getPresignedUploadUrl } from "@/app/actions/storage.actions";
 import { updateDealerProfile } from "@/app/actions/dealer.actions";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import { DealerProfile } from "@/types";
-import { swissCities } from "@/lib/swiss-cities";
+import { DealerProfile } from "@/types/dealer";
+import { swissCities } from "@/lib/constants/swiss-cities";
 import { SelectItem } from "@repo/ui/src/components/select";
 
 // ---------------------------------------------------------------------------

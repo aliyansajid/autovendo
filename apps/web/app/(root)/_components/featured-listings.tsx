@@ -4,7 +4,7 @@ import { ListingCard } from "@/components/listing-card";
 import { Button } from "@repo/ui/src/components/button";
 import { MinusCircle, PlusCircle } from "lucide-react";
 import { useState } from "react";
-import { ListingProps } from "@/types";
+import { ListingProps } from "@/types/vehicle";
 
 export const FeaturedListings = ({
   listings = [],

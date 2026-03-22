@@ -1,24 +1,21 @@
 import { Suspense } from "react";
 import { DealersList } from "./_components/dealers-list";
 import { getDealers } from "@/app/actions/dealer.actions";
+import { dealerSearchSchema } from "@/schema/dealer-search-schema";
 
 export const dynamic = "force-dynamic";
 
-interface DealersPageSearchParams {
-  q?: string;
-  page?: string;
-}
-
 export default async function DealersPage(props: {
-  searchParams: Promise<DealersPageSearchParams>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const searchParams = await props.searchParams;
-  const q = searchParams.q || "";
-  const page = Number(searchParams.page) || 1;
+
+  // Parse and validate search params
+  const query = dealerSearchSchema.parse(searchParams);
 
   const initialData = await getDealers({
-    searchQuery: q,
-    page,
+    searchQuery: query.q,
+    page: query.page,
     pageSize: 12,
   });
 

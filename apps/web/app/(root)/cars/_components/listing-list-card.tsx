@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Check, Star, Phone } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@repo/ui/src/components/separator";
-import type { VehicleListItem } from "@/types";
+import type { VehicleListItem } from "@/types/vehicle";
 import {
   formatPrice,
   formatNumber,
@@ -17,15 +17,14 @@ import {
   buildVehicleTitle,
   extractEquipment,
   formatEquipmentLabel,
+  formatVehicleName,
 } from "@/lib/helpers/vehicle";
+import {
+  CONDITION_LABELS,
+  FUEL_LABELS,
+} from "@/lib/constants/vehicle-constants";
 
-const CONDITION_LABELS: Record<string, string> = {
-  NEW: "Neu",
-  DEMONSTRATION: "Vorführung",
-  PRE_REGISTERED: "Neuimmatrikuliert",
-  USED: "Occasion",
-  OLDTIMER: "Oldtimer",
-};
+// Centralized labels now imported from vehicle-constants
 
 export interface ListingListCardProps {
   item: VehicleListItem;
@@ -41,7 +40,7 @@ export function ListingListCard({
   showDealerLink = true,
 }: ListingListCardProps) {
   // Use helpers for ALL formatting
-  const title = buildVehicleTitle(item.make, item.model, item.version);
+  const title = formatVehicleName([item.make, item.model, item.version]);
   const formattedPrice = formatPrice(item.price);
   const formattedKm = formatNumber(item.kilometer);
   const registrationDate = formatRegistrationDate(
@@ -70,7 +69,8 @@ export function ListingListCard({
             />
             {item.vehicleCondition && (
               <Badge className="absolute top-2 left-2 bg-rating text-foreground font-semibold text-xs">
-                {CONDITION_LABELS[item.vehicleCondition] ?? item.vehicleCondition}
+                {CONDITION_LABELS[item.vehicleCondition] ??
+                  item.vehicleCondition}
               </Badge>
             )}
           </div>
@@ -94,7 +94,9 @@ export function ListingListCard({
 
         <div className="flex flex-col grow py-1 text-sm">
           <div className="space-y-1">
-            <span className="text-sm font-semibold capitalize">{item.make}</span>
+            <span className="text-sm font-semibold capitalize">
+              {item.make}
+            </span>
             <h2 className="text-lg font-bold">
               {[item.model, item.version].filter(Boolean).join(" ") || title}
             </h2>
@@ -146,12 +148,15 @@ export function ListingListCard({
             {item.kw !== null && item.kw !== undefined && (
               <>
                 <span>
-                  {formatNumber(item.kw)} kW{item.hp ? ` (${formatNumber(item.hp)} PS)` : ""}
+                  {formatNumber(item.kw)} kW
+                  {item.hp ? ` (${formatNumber(item.hp)} PS)` : ""}
                 </span>
                 <span className="text-muted-foreground">•</span>
               </>
             )}
-            {item.fuelType && <span>{formatEnumLabel(item.fuelType)}</span>}
+            {item.fuelType && (
+              <span>{FUEL_LABELS[item.fuelType] ?? item.fuelType}</span>
+            )}
           </div>
 
           <div className="my-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">

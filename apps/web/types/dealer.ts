@@ -1,29 +1,4 @@
-import type { VehicleListItem as _VehicleListItem } from "@/lib/schemas/vehicle.schema";
-
-export type {
-  VehicleListItem,
-  VehicleDetails,
-  PaginatedVehicles,
-  VehicleFacets,
-  VehicleSearchParams,
-  PriceRating,
-  SortOption,
-  FuelType,
-  TransmissionType,
-  VehicleCondition,
-  VehicleType,
-  BodyType,
-  Color,
-} from "@/lib/schemas/vehicle.schema";
-
-export {
-  VehicleSearchSchema,
-  SORT_OPTIONS,
-} from "@/lib/schemas/vehicle.schema";
-
-// =============================================================================
-// DEALER LIST
-// =============================================================================
+import { VehicleListItem } from "./vehicle";
 
 export interface DealerListItem {
   id: string;
@@ -40,10 +15,6 @@ export interface DealerListResult {
   totalPages: number;
   currentPage: number;
 }
-
-// =============================================================================
-// DEALER DETAIL
-// =============================================================================
 
 export interface DealerOpeningHour {
   day: string;
@@ -65,22 +36,17 @@ export interface DealerDetail {
   city: string;
   zipCode: string;
   country: string;
-  
   openingHours: DealerOpeningHour[];
   googlePlaceId: string | null;
 }
 
 export interface DealerVehiclesResult {
-  vehicles: _VehicleListItem[];
+  vehicles: VehicleListItem[];
   totalCount: number;
   totalPages: number;
   currentPage: number;
   hasMore: boolean;
 }
-
-// =============================================================================
-// GOOGLE REVIEWS
-// =============================================================================
 
 export interface GoogleReview {
   authorName: string;
@@ -95,10 +61,6 @@ export interface GooglePlaceData {
   reviewCount: number | null;
   reviews: GoogleReview[];
 }
-
-// =============================================================================
-// DASHBOARD DEALER PROFILE
-// =============================================================================
 
 export interface DealerProfile {
   id: string;
@@ -128,16 +90,4 @@ export interface DealerProfile {
     openTime: string | null;
     closeTime: string | null;
   }[];
-}
-
-export interface ListingProps {
-  id: number | string;
-  image: string;
-  badge?: string;
-  title: string;
-  price: string;
-  details: string[];
-  garageName: string;
-  garageId: number | string;
-  garageLocation: string;
 }

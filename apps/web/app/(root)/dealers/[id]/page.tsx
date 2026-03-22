@@ -6,7 +6,7 @@ import {
 import { notFound } from "next/navigation";
 import { DealerDetailContent } from "../_components/dealer-detail-content";
 import { parseSearchParams } from "@/lib/helpers/vehicle";
-import { VehicleSearchSchema } from "@/lib/schemas/vehicle.schema";
+import { VehicleSearchSchema } from "@/schema/vehicle-search-schema";
 
 export default async function DealerPage({
   params,

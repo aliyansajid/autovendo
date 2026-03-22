@@ -13,14 +13,12 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Separator } from "@repo/ui/src/components/separator";
-import {
-  VehicleConditionEnum,
-} from "@/constants";
+import { VehicleConditionEnum } from "@/constants";
 import { carBodyTypeEnum } from "@/constants/cars";
 import { utilityBodyTypeEnum } from "@/constants/commercial-vehicles";
 import { truckBodyTypeEnum } from "@/constants/truck";
 import { camperBodyTypeEnum } from "@/constants/camper";
-import type { VehicleFacets } from "@/types";
+import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -56,7 +54,10 @@ export function BasicDataSection({
   const kilometerHistogramData = facets?.kilometerHistogram ?? [];
   const priceHistogramData = facets?.priceHistogram ?? [];
 
-  const PLACEHOLDER_HEIGHTS = [22, 35, 28, 45, 55, 40, 62, 75, 58, 80, 70, 85, 65, 50, 42, 60, 38, 30, 20, 15];
+  const PLACEHOLDER_HEIGHTS = [
+    22, 35, 28, 45, 55, 40, 62, 75, 58, 80, 70, 85, 65, 50, 42, 60, 38, 30, 20,
+    15,
+  ];
 
   const normalizeHistogram = (data: { h: number }[]) => {
     const nonZero = data.filter((d) => d.h > 0);
@@ -96,7 +97,10 @@ export function BasicDataSection({
 
   useEffect(() => {
     if (kilometerValue === undefined) {
-      if (getValues("kilometer-from") !== "" || getValues("kilometer-to") !== "") {
+      if (
+        getValues("kilometer-from") !== "" ||
+        getValues("kilometer-to") !== ""
+      ) {
         setValue("kilometer-from", "");
         setValue("kilometer-to", "");
       }
@@ -105,7 +109,8 @@ export function BasicDataSection({
     const [from, to] = kilometerValue as [number, number];
     const nextFrom = from === 0 ? "" : from.toString();
     const nextTo = to >= kmMax ? "" : to.toString();
-    if (getValues("kilometer-from") !== nextFrom) setValue("kilometer-from", nextFrom);
+    if (getValues("kilometer-from") !== nextFrom)
+      setValue("kilometer-from", nextFrom);
     if (getValues("kilometer-to") !== nextTo) setValue("kilometer-to", nextTo);
   }, [kilometerValue, kmMax, setValue, getValues]);
 
@@ -190,15 +195,26 @@ export function BasicDataSection({
 
             <div className="h-16 flex items-end justify-between gap-[3px]">
               {normalizeHistogram(yearHistogramData).map(
-                (item: { year?: number; h: number; _placeholder?: boolean }, i: number) => {
+                (
+                  item: { year?: number; h: number; _placeholder?: boolean },
+                  i: number,
+                ) => {
                   const yStart = yearRange?.[0] ?? yearMin;
                   const yEnd = yearRange?.[1] ?? yearMax;
-                  const isActive = !item._placeholder && item.year != null && item.year >= yStart && item.year <= yEnd;
+                  const isActive =
+                    !item._placeholder &&
+                    item.year != null &&
+                    item.year >= yStart &&
+                    item.year <= yEnd;
                   return (
                     <div
                       key={i}
                       className={`flex-1 min-w-0 rounded-t transition-all duration-300 ${
-                        item._placeholder ? "bg-primary/10" : isActive ? "bg-primary/70" : "bg-primary/15"
+                        item._placeholder
+                          ? "bg-primary/10"
+                          : isActive
+                            ? "bg-primary/70"
+                            : "bg-primary/15"
                       }`}
                       style={{ height: `${item.h}%` }}
                     />
@@ -247,15 +263,26 @@ export function BasicDataSection({
             </div>
             <div className="h-16 flex items-end justify-between gap-[3px]">
               {normalizeHistogram(kilometerHistogramData).map(
-                (item: { value?: number; h: number; _placeholder?: boolean }, i: number) => {
+                (
+                  item: { value?: number; h: number; _placeholder?: boolean },
+                  i: number,
+                ) => {
                   const mStart = kilometerRange?.[0] ?? 0;
                   const mEnd = kilometerRange?.[1] ?? kmMax;
-                  const isActive = !item._placeholder && item.value != null && item.value >= mStart && item.value <= mEnd;
+                  const isActive =
+                    !item._placeholder &&
+                    item.value != null &&
+                    item.value >= mStart &&
+                    item.value <= mEnd;
                   return (
                     <div
                       key={i}
                       className={`flex-1 min-w-0 rounded-t transition-all duration-300 ${
-                        item._placeholder ? "bg-primary/10" : isActive ? "bg-primary/70" : "bg-primary/15"
+                        item._placeholder
+                          ? "bg-primary/10"
+                          : isActive
+                            ? "bg-primary/70"
+                            : "bg-primary/15"
                       }`}
                       style={{ height: `${item.h}%` }}
                     />
@@ -307,15 +334,26 @@ export function BasicDataSection({
 
             <div className="h-16 flex items-end justify-between gap-[3px]">
               {normalizeHistogram(priceHistogramData).map(
-                (item: { value?: number; h: number; _placeholder?: boolean }, i: number) => {
+                (
+                  item: { value?: number; h: number; _placeholder?: boolean },
+                  i: number,
+                ) => {
                   const pStart = priceRange?.[0] ?? 0;
                   const pEnd = priceRange?.[1] ?? priceMax;
-                  const isActive = !item._placeholder && item.value != null && item.value >= pStart && item.value <= pEnd;
+                  const isActive =
+                    !item._placeholder &&
+                    item.value != null &&
+                    item.value >= pStart &&
+                    item.value <= pEnd;
                   return (
                     <div
                       key={i}
                       className={`flex-1 min-w-0 rounded-t transition-all duration-300 ${
-                        item._placeholder ? "bg-primary/10" : isActive ? "bg-primary/70" : "bg-primary/15"
+                        item._placeholder
+                          ? "bg-primary/10"
+                          : isActive
+                            ? "bg-primary/70"
+                            : "bg-primary/15"
                       }`}
                       style={{ height: `${item.h}%` }}
                     />
