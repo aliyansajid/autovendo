@@ -249,13 +249,11 @@ export default function GarageRichFilters({
 
   // Filter States
   const [selectedMakes, setSelectedMakes] = useState<string[]>([]);
-  const [yearRange, setYearRange] = useState<[number, number]>(DEFAULTS.YEAR);
-  const [kilometerRange, setKilometerRange] = useState<[number, number]>(
-    DEFAULTS.KILOMETER,
+  const [yearRange, setYearRange] = useState<[number, number] | null>(null);
+  const [kilometerRange, setKilometerRange] = useState<[number, number] | null>(
+    null,
   );
-  const [priceRange, setPriceRange] = useState<[number, number]>(
-    DEFAULTS.PRICE,
-  );
+  const [priceRange, setPriceRange] = useState<[number, number] | null>(null);
   const [selectedBodyTypes, setSelectedBodyTypes] = useState<string[]>([]);
   const [selectedFuels, setSelectedFuels] = useState<string[]>([]);
   const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>(
@@ -267,12 +265,24 @@ export default function GarageRichFilters({
   const filterValues = useMemo(() => {
     const filters: Partial<VehicleSearchParams> = {};
     if (selectedMakes.length > 0) filters.make = selectedMakes;
-    if (yearRange[0] !== DEFAULTS.YEAR[0]) filters.registrationFrom = yearRange[0];
-    if (yearRange[1] !== DEFAULTS.YEAR[1]) filters.registrationTo = yearRange[1];
-    if (kilometerRange[0] !== DEFAULTS.KILOMETER[0]) filters.kilometerFrom = kilometerRange[0];
-    if (kilometerRange[1] !== DEFAULTS.KILOMETER[1]) filters.kilometerTo = kilometerRange[1];
-    if (priceRange[0] !== DEFAULTS.PRICE[0]) filters.priceFrom = priceRange[0];
-    if (priceRange[1] !== DEFAULTS.PRICE[1]) filters.priceTo = priceRange[1];
+
+    if (yearRange) {
+      filters.registrationFrom = yearRange[0];
+      filters.registrationTo = yearRange[1];
+    }
+    if (kilometerRange) {
+      filters.kilometerFrom = kilometerRange[0];
+      if (kilometerRange[1] !== DEFAULTS.KILOMETER[1]) {
+        filters.kilometerTo = kilometerRange[1];
+      }
+    }
+    if (priceRange) {
+      filters.priceFrom = priceRange[0];
+      if (priceRange[1] !== DEFAULTS.PRICE[1]) {
+        filters.priceTo = priceRange[1];
+      }
+    }
+
     if (selectedBodyTypes.length > 0)
       filters.bodyType = selectedBodyTypes as any;
     if (selectedFuels.length > 0) filters.fuel = selectedFuels as any;
@@ -305,9 +315,9 @@ export default function GarageRichFilters({
 
   const resetAll = () => {
     setSelectedMakes([]);
-    setYearRange(DEFAULTS.YEAR);
-    setKilometerRange(DEFAULTS.KILOMETER);
-    setPriceRange(DEFAULTS.PRICE);
+    setYearRange(null);
+    setKilometerRange(null);
+    setPriceRange(null);
     setSelectedBodyTypes([]);
     setSelectedFuels([]);
     setSelectedTransmissions([]);
@@ -316,17 +326,17 @@ export default function GarageRichFilters({
 
   const formatRangeLabel = (
     label: string,
-    current: [number, number],
+    current: [number, number] | null,
     def: [number, number],
     unit = "",
   ) => {
-    if (current[0] === def[0] && current[1] === def[1]) return label;
+    if (!current) return label;
     if (current[1] === def[1]) return `${current[0].toLocaleString()}${unit}+`;
     return `${current[0].toLocaleString()}${unit} - ${current[1].toLocaleString()}${unit}`;
   };
 
-  const isRangeActive = (current: [number, number], def: [number, number]) => {
-    return current[0] !== def[0] || current[1] !== def[1];
+  const isRangeActive = (current: [number, number] | null) => {
+    return current !== null;
   };
 
   const getTriggerClass = (isActive: boolean) =>
@@ -374,9 +384,7 @@ export default function GarageRichFilters({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className={getTriggerClass(
-                isRangeActive(yearRange, DEFAULTS.YEAR),
-              )}
+              className={getTriggerClass(isRangeActive(yearRange))}
             >
               {formatRangeLabel("Jahr", yearRange, DEFAULTS.YEAR)}
               <ChevronDown />
@@ -387,7 +395,7 @@ export default function GarageRichFilters({
               label="Jahr"
               min={1900}
               max={2026}
-              value={yearRange}
+              value={yearRange ?? DEFAULTS.YEAR}
               onValueChange={setYearRange}
             />
           </PopoverContent>
@@ -397,9 +405,7 @@ export default function GarageRichFilters({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className={getTriggerClass(
-                isRangeActive(kilometerRange, DEFAULTS.KILOMETER),
-              )}
+              className={getTriggerClass(isRangeActive(kilometerRange))}
             >
               {formatRangeLabel(
                 "Kilometerstand",
@@ -417,7 +423,7 @@ export default function GarageRichFilters({
               max={200000}
               unit="km"
               step={1000}
-              value={kilometerRange}
+              value={kilometerRange ?? DEFAULTS.KILOMETER}
               onValueChange={setKilometerRange}
             />
           </PopoverContent>
@@ -427,9 +433,7 @@ export default function GarageRichFilters({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className={getTriggerClass(
-                isRangeActive(priceRange, DEFAULTS.PRICE),
-              )}
+              className={getTriggerClass(isRangeActive(priceRange))}
             >
               {formatRangeLabel("Preis", priceRange, DEFAULTS.PRICE, " CHF")}
               <ChevronDown />
@@ -442,7 +446,7 @@ export default function GarageRichFilters({
               max={100000}
               unit="CHF"
               step={1000}
-              value={priceRange}
+              value={priceRange ?? DEFAULTS.PRICE}
               onValueChange={setPriceRange}
             />
           </PopoverContent>
@@ -549,9 +553,9 @@ export default function GarageRichFilters({
 
       <div className="flex items-center justify-end gap-3">
         {(selectedMakes.length > 0 ||
-          isRangeActive(yearRange, DEFAULTS.YEAR) ||
-          isRangeActive(kilometerRange, DEFAULTS.KILOMETER) ||
-          isRangeActive(priceRange, DEFAULTS.PRICE) ||
+          isRangeActive(yearRange) ||
+          isRangeActive(kilometerRange) ||
+          isRangeActive(priceRange) ||
           selectedBodyTypes.length > 0 ||
           selectedFuels.length > 0 ||
           selectedTransmissions.length > 0 ||
