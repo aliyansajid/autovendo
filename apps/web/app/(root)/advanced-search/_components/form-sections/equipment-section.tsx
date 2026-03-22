@@ -20,7 +20,7 @@ export function EquipmentSection() {
       <AccordionTrigger className="flex items-center text-xl font-bold text-primary hover:no-underline">
         Ausstattung
       </AccordionTrigger>
-      <AccordionContent className="pt-6">
+      <AccordionContent className="pt-6 px-1">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
           {EquipmentEnum.map((equipment) => (
             <CustomFormField

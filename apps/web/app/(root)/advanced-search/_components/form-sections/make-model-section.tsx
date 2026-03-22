@@ -45,8 +45,7 @@ export function MakeModelSection() {
     );
   };
 
-  const hasSelections =
-    selectedMakes.length > 0 || excludedMakes.length > 0;
+  const hasSelections = selectedMakes.length > 0 || excludedMakes.length > 0;
 
   return (
     <>
@@ -54,7 +53,7 @@ export function MakeModelSection() {
         <AccordionTrigger className="flex items-center text-xl font-bold text-primary hover:no-underline">
           Marke &amp; Modell
         </AccordionTrigger>
-        <AccordionContent className="pt-6">
+        <AccordionContent className="pt-6 px-1">
           <Button
             type="button"
             size="lg"
@@ -70,7 +69,7 @@ export function MakeModelSection() {
             {selectedMakes.length > 0 && (
               <div className="flex flex-col gap-2">
                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Einschliessen
+                  Fahrzeuge einschliessen
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {selectedMakes.map((make) => (
@@ -91,7 +90,7 @@ export function MakeModelSection() {
             {excludedMakes.length > 0 && (
               <div className="flex flex-col gap-2">
                 <span className="text-xs font-semibold text-destructive uppercase tracking-wider">
-                  Ausschliessen
+                  Fahrzeuge ausschliessen
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {excludedMakes.map((make) => (

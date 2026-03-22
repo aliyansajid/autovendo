@@ -173,6 +173,9 @@ export interface VehicleFacets {
   co2Max?: number;
   cubicCapacityMax?: number;
   cylindersMax?: number;
+  yearHistogram?: { year: number; h: number }[];
+  kilometerHistogram?: { value: number; h: number }[];
+  priceHistogram?: { value: number; h: number }[];
 }
 
 /**

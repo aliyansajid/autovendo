@@ -636,6 +636,7 @@ export async function getVehicleCountAndFacets(rawParams: {
     co2Agg,
     cubicCapacityAgg,
     cylindersAgg,
+    yearRows,
   ] = await Promise.all([
     prisma.vehicle.count({ where }),
     prisma.vehicle.groupBy({
@@ -706,7 +707,47 @@ export async function getVehicleCountAndFacets(rawParams: {
     prisma.vehicle.aggregate({ _max: { co2Emission: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { cubicCapacity: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { cylinders: true }, where: facetBase }),
+    // Year distribution for histogram
+    prisma.vehicle.groupBy({
+      by: ["registrationYear"],
+      where: facetBase,
+      _count: { _all: true },
+      orderBy: { registrationYear: "asc" },
+    }),
   ]);
+
+  // Dynamic Kilometer Histogram (20 buckets up to max)
+  const kmLimit = kilometerAgg._max.kilometer ?? 400000;
+  const kmStep = Math.max(1000, Math.ceil(kmLimit / 20 / 1000) * 1000);
+  const kmBucketCount = 20;
+  const kmHistogramQueries = Array.from({ length: kmBucketCount }).map((_, i) => {
+    const from = i * kmStep;
+    const to = (i + 1) * kmStep;
+    return prisma.vehicle.count({
+      where: { ...facetBase, kilometer: { gte: from, lt: to } },
+    });
+  });
+
+  // Dynamic Price Histogram (20 buckets up to max)
+  const priceLimit = priceAgg._max.price ?? 200000;
+  const priceStep = Math.max(1000, Math.ceil(priceLimit / 20 / 1000) * 1000);
+  const priceBucketCount = 20;
+  const priceHistogramQueries = Array.from({ length: priceBucketCount }).map((_, i) => {
+    const from = i * priceStep;
+    const to = (i + 1) * priceStep;
+    return prisma.vehicle.count({
+      where: { ...facetBase, price: { gte: from, lt: to } },
+    });
+  });
+
+  const [kmCounts, priceCounts] = await Promise.all([
+    Promise.all(kmHistogramQueries),
+    Promise.all(priceHistogramQueries),
+  ]);
+
+  const maxKmCount = Math.max(...kmCounts, 1);
+  const maxPriceCount = Math.max(...priceCounts, 1);
+  const maxYearCount = Math.max(...yearRows.map(r => r._count._all), 1);
 
   const facets: VehicleFacets = {
     make: toLowerFacetKeys(toFacetCounts(makeRows, "make")),
@@ -733,6 +774,20 @@ export async function getVehicleCountAndFacets(rawParams: {
     co2Max: co2Agg._max.co2Emission ?? undefined,
     cubicCapacityMax: cubicCapacityAgg._max.cubicCapacity ?? undefined,
     cylindersMax: cylindersAgg._max.cylinders ?? undefined,
+    yearHistogram: yearRows
+      .filter((r) => r.registrationYear != null)
+      .map((r) => ({
+        year: r.registrationYear!,
+        h: Math.round((r._count._all / maxYearCount) * 100),
+      })),
+    kilometerHistogram: kmCounts.map((count, i) => ({
+      value: i * kmStep,
+      h: Math.round((count / maxKmCount) * 100),
+    })),
+    priceHistogram: priceCounts.map((count, i) => ({
+      value: i * priceStep,
+      h: Math.round((count / maxPriceCount) * 100),
+    })),
   };
 
   return { total, facets };

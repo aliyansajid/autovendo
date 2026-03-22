@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { useEffect, useRef } from "react";
 import { Label } from "@repo/ui/src/components/label";
 import {
@@ -27,9 +27,16 @@ export function TechnicalDataSection({
   vehicleType: string;
   facets?: VehicleFacets | null;
 }) {
-  const { control, watch, setValue } = useFormContext();
+  const { control, watch, setValue, getValues } = useFormContext();
   const powerType = watch("powerType") ?? "ps";
   const powerValue = watch("power"); // undefined = slider not yet moved
+
+  const powerFrom = useWatch({ control, name: "power-from" });
+  const powerTo = useWatch({ control, name: "power-to" });
+  const capacityFrom = useWatch({ control, name: "capacity-from" });
+  const capacityTo = useWatch({ control, name: "capacity-to" });
+  const cylinderFrom = useWatch({ control, name: "cylinder-from" });
+  const cylinderTo = useWatch({ control, name: "cylinder-to" });
 
   // Compute dynamic slider limits from DB facets, rounded to nearest step
   const maxPs = facets?.hpMax ? Math.ceil(facets.hpMax / 10) * 10 : 1500;
@@ -61,7 +68,9 @@ export function TechnicalDataSection({
     setValue("power-to", to >= currentMax ? "" : to.toString());
   }, [powerValue, setValue, currentMax]);
 
-  const cubicCapacityMax = facets?.cubicCapacityMax ? Math.ceil(facets.cubicCapacityMax / 100) * 100 : 8000;
+  const cubicCapacityMax = facets?.cubicCapacityMax
+    ? Math.ceil(facets.cubicCapacityMax / 100) * 100
+    : 8000;
   const cylindersMax = facets?.cylindersMax ?? 16;
   const capacityValue = watch("capacity");
   const cylinderValue = watch("cylinder");
@@ -88,27 +97,75 @@ export function TechnicalDataSection({
     setValue("cylinder-to", to >= cylindersMax ? "" : to.toString());
   }, [cylinderValue, cylindersMax, setValue]);
 
-  const currentFuelEnum = vehicleType === "utility"
-    ? utilityFuelTypeEnum
-    : vehicleType === "truck"
-      ? truckFuelTypeEnum
-      : vehicleType === "camper"
-        ? camperFuelTypeEnum
-        : carFuelTypeEnum;
+  // Two-way sync: inputs -> sliders
+  useEffect(() => {
+    const parseNumber = (val: unknown, fallback: number) => {
+      if (val === undefined || val === null || val === "") return fallback;
+      const cleaned = String(val).replace(/[^0-9.-]/g, "");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : fallback;
+    };
+    const from = parseNumber(powerFrom, 0);
+    const to = parseNumber(powerTo, currentMax);
+    const [curFrom, curTo] = getValues("power") ?? [0, currentMax];
+    if (from === curFrom && to === curTo) return;
+    setValue("power", [from, to], { shouldDirty: true });
+  }, [powerFrom, powerTo, getValues, setValue, currentMax]);
+
+  useEffect(() => {
+    const parseNumber = (val: unknown, fallback: number) => {
+      if (val === undefined || val === null || val === "") return fallback;
+      const cleaned = String(val).replace(/[^0-9.-]/g, "");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : fallback;
+    };
+    const from = parseNumber(capacityFrom, 1);
+    const to = parseNumber(capacityTo, cubicCapacityMax);
+    const [curFrom, curTo] = getValues("capacity") ?? [1, cubicCapacityMax];
+    if (from === curFrom && to === curTo) return;
+    setValue("capacity", [from, to], { shouldDirty: true });
+  }, [capacityFrom, capacityTo, getValues, setValue, cubicCapacityMax]);
+
+  useEffect(() => {
+    const parseNumber = (val: unknown, fallback: number) => {
+      if (val === undefined || val === null || val === "") return fallback;
+      const cleaned = String(val).replace(/[^0-9.-]/g, "");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : fallback;
+    };
+    const from = parseNumber(cylinderFrom, 1);
+    const to = parseNumber(cylinderTo, cylindersMax);
+    const [curFrom, curTo] = getValues("cylinder") ?? [1, cylindersMax];
+    if (from === curFrom && to === curTo) return;
+    setValue("cylinder", [from, to], { shouldDirty: true });
+  }, [cylinderFrom, cylinderTo, getValues, setValue, cylindersMax]);
+
+  const currentFuelEnum =
+    vehicleType === "utility"
+      ? utilityFuelTypeEnum
+      : vehicleType === "truck"
+        ? truckFuelTypeEnum
+        : vehicleType === "camper"
+          ? camperFuelTypeEnum
+          : carFuelTypeEnum;
 
   return (
     <AccordionItem value="tech" className="border-none">
       <AccordionTrigger className="flex items-center text-xl font-bold text-primary hover:no-underline">
         Technischen Daten
       </AccordionTrigger>
-      <AccordionContent className="pt-6 space-y-12">
+      <AccordionContent className="pt-6 px-1 space-y-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Treibstoff</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => currentFuelEnum.forEach((t) => setValue(`fuel-${t.value}`, false))}
+                onClick={() =>
+                  currentFuelEnum.forEach((t) =>
+                    setValue(`fuel-${t.value}`, false),
+                  )
+                }
               >
                 Zurücksetzen
               </span>
@@ -148,7 +205,11 @@ export function TechnicalDataSection({
               <Label className="text-base font-semibold">Getriebe</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => TransmissionTypeEnum.forEach((t) => setValue(`transmission-${t.value}`, false))}
+                onClick={() =>
+                  TransmissionTypeEnum.forEach((t) =>
+                    setValue(`transmission-${t.value}`, false),
+                  )
+                }
               >
                 Zurücksetzen
               </span>
@@ -181,7 +242,11 @@ export function TechnicalDataSection({
               <Label className="text-base font-semibold">Antrieb</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => DriveTypeEnum.forEach((t) => setValue(`drive-${t.value}`, false))}
+                onClick={() =>
+                  DriveTypeEnum.forEach((t) =>
+                    setValue(`drive-${t.value}`, false),
+                  )
+                }
               >
                 Zurücksetzen
               </span>
@@ -217,7 +282,11 @@ export function TechnicalDataSection({
                 <Label className="text-base font-semibold">Leistung</Label>
                 <span
                   className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                  onClick={() => { setValue("power", undefined as any); setValue("power-from", ""); setValue("power-to", ""); }}
+                  onClick={() => {
+                    setValue("power", undefined as any);
+                    setValue("power-from", "");
+                    setValue("power-to", "");
+                  }}
                 >
                   Zurücksetzen
                 </span>
@@ -266,7 +335,11 @@ export function TechnicalDataSection({
               <Label className="text-base font-semibold">Hubraum</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("capacity", undefined as any); setValue("capacity-from", ""); setValue("capacity-to", ""); }}
+                onClick={() => {
+                  setValue("capacity", undefined as any);
+                  setValue("capacity-from", "");
+                  setValue("capacity-to", "");
+                }}
               >
                 Zurücksetzen
               </span>
@@ -303,7 +376,11 @@ export function TechnicalDataSection({
               <Label className="text-base font-semibold">Zylinder</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("cylinder", undefined as any); setValue("cylinder-from", ""); setValue("cylinder-to", ""); }}
+                onClick={() => {
+                  setValue("cylinder", undefined as any);
+                  setValue("cylinder-from", "");
+                  setValue("cylinder-to", "");
+                }}
               >
                 Zurücksetzen
               </span>

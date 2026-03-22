@@ -15,9 +15,6 @@ import {
 import { Separator } from "@repo/ui/src/components/separator";
 import {
   VehicleConditionEnum,
-  yearHistogram,
-  kilometerHistogram,
-  priceHistogram,
 } from "@/constants";
 import { carBodyTypeEnum } from "@/constants/cars";
 import { utilityBodyTypeEnum } from "@/constants/commercial-vehicles";
@@ -39,8 +36,12 @@ export function BasicDataSection({
 
   const yearMin = facets?.yearMin ?? 1900;
   const yearMax = facets?.yearMax ?? CURRENT_YEAR;
-  const kmMax = facets?.kilometerMax ? Math.ceil(facets.kilometerMax / 1000) * 1000 : 400000;
-  const priceMax = facets?.priceMax ? Math.ceil(facets.priceMax / 10000) * 10000 : 1000000;
+  const kmMax = facets?.kilometerMax
+    ? Math.ceil(facets.kilometerMax / 1000) * 1000
+    : 400000;
+  const priceMax = facets?.priceMax
+    ? Math.ceil(facets.priceMax / 10000) * 10000
+    : 1000000;
 
   const yearValue = watch("year");
   const kilometerValue = watch("kilometer");
@@ -50,6 +51,13 @@ export function BasicDataSection({
   const kilometerRange = kilometerValue ?? [0, kmMax];
   const priceRange = priceValue ?? [0, priceMax];
 
+  // Fallbacks for histograms if data is not yet loaded
+  const yearHistogramData = facets?.yearHistogram ?? [];
+  const kilometerHistogramData = facets?.kilometerHistogram ?? [];
+  const priceHistogramData = facets?.priceHistogram ?? [];
+
+  const yearFrom = useWatch({ control, name: "year-from" });
+  const yearTo = useWatch({ control, name: "year-to" });
   const kilometerFrom = useWatch({ control, name: "kilometer-from" });
   const kilometerTo = useWatch({ control, name: "kilometer-to" });
   const priceFrom = useWatch({ control, name: "price-from" });
@@ -95,6 +103,20 @@ export function BasicDataSection({
       const num = Number(cleaned);
       return Number.isFinite(num) ? num : fallback;
     };
+    const from = parseNumber(yearFrom, yearMin);
+    const to = parseNumber(yearTo, yearMax);
+    const [curFrom, curTo] = getValues("year") ?? [yearMin, yearMax];
+    if (from === curFrom && to === curTo) return;
+    setValue("year", [from, to], { shouldDirty: true });
+  }, [yearFrom, yearTo, getValues, setValue, yearMin, yearMax]);
+
+  useEffect(() => {
+    const parseNumber = (val: unknown, fallback: number) => {
+      if (val === undefined || val === null || val === "") return fallback;
+      const cleaned = String(val).replace(/[^0-9.-]/g, "");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : fallback;
+    };
     const from = parseNumber(kilometerFrom, 0);
     const to = parseNumber(kilometerTo, kmMax);
     const [curFrom, curTo] = getValues("kilometer") ?? [0, kmMax];
@@ -121,21 +143,25 @@ export function BasicDataSection({
       <AccordionTrigger className="text-xl font-bold text-primary hover:no-underline flex items-center">
         Basisdaten
       </AccordionTrigger>
-      <AccordionContent className="pt-6 space-y-12">
+      <AccordionContent className="pt-6 px-1 space-y-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Jahr</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("year", undefined as any); setValue("year-from", ""); setValue("year-to", ""); }}
+                onClick={() => {
+                  setValue("year", undefined as any);
+                  setValue("year-from", "");
+                  setValue("year-to", "");
+                }}
               >
                 Zurücksetzen
               </span>
             </div>
 
             <div className="h-16 flex items-end justify-between gap-1">
-              {yearHistogram.map(
+              {yearHistogramData.map(
                 (item: { year: number; h: number }, i: number) => {
                   const yStart = yearRange?.[0] ?? yearMin;
                   const yEnd = yearRange?.[1] ?? yearMax;
@@ -184,13 +210,17 @@ export function BasicDataSection({
               <Label className="text-base font-semibold">Kilometerstand</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("kilometer", undefined as any); setValue("kilometer-from", ""); setValue("kilometer-to", ""); }}
+                onClick={() => {
+                  setValue("kilometer", undefined as any);
+                  setValue("kilometer-from", "");
+                  setValue("kilometer-to", "");
+                }}
               >
                 Zurücksetzen
               </span>
             </div>
             <div className="h-16 flex items-end justify-between gap-1">
-              {kilometerHistogram.map(
+              {kilometerHistogramData.map(
                 (item: { value: number; h: number }, i: number) => {
                   const mStart = kilometerRange?.[0] ?? 0;
                   const mEnd = kilometerRange?.[1] ?? kmMax;
@@ -241,14 +271,18 @@ export function BasicDataSection({
               <Label className="text-base font-semibold">Preis</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("price", undefined as any); setValue("price-from", ""); setValue("price-to", ""); }}
+                onClick={() => {
+                  setValue("price", undefined as any);
+                  setValue("price-from", "");
+                  setValue("price-to", "");
+                }}
               >
                 Zurücksetzen
               </span>
             </div>
 
             <div className="h-16 flex items-end justify-between gap-1">
-              {priceHistogram.map(
+              {priceHistogramData.map(
                 (item: { value: number; h: number }, i: number) => {
                   const pStart = priceRange?.[0] ?? 0;
                   const pEnd = priceRange?.[1] ?? priceMax;
@@ -303,7 +337,11 @@ export function BasicDataSection({
               <Label className="text-base font-semibold">Zustand</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => VehicleConditionEnum.forEach((item) => setValue(`condition-${item.value}`, false))}
+                onClick={() =>
+                  VehicleConditionEnum.forEach((item) =>
+                    setValue(`condition-${item.value}`, false),
+                  )
+                }
               >
                 Zurücksetzen
               </span>
@@ -338,7 +376,10 @@ export function BasicDataSection({
               <Label className="text-base font-semibold">MFK & Garantie</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("condition-mfk", false); setValue("condition-warranty", false); }}
+                onClick={() => {
+                  setValue("condition-mfk", false);
+                  setValue("condition-warranty", false);
+                }}
               >
                 Zurücksetzen
               </span>
@@ -351,7 +392,9 @@ export function BasicDataSection({
                   name="condition-mfk"
                   label="Ab MFK"
                 />
-                <span className="text-sm text-muted-foreground">{formatCount(facets?.inspectionPassed ?? 0)}</span>
+                <span className="text-sm text-muted-foreground">
+                  {formatCount(facets?.inspectionPassed ?? 0)}
+                </span>
               </div>
 
               <div className="flex items-center justify-between">
@@ -361,11 +404,12 @@ export function BasicDataSection({
                   name="condition-warranty"
                   label="Mit Garantie"
                 />
-                <span className="text-sm text-muted-foreground">{formatCount(facets?.hasWarranty ?? 0)}</span>
+                <span className="text-sm text-muted-foreground">
+                  {formatCount(facets?.hasWarranty ?? 0)}
+                </span>
               </div>
             </div>
           </div>
-
         </div>
 
         <Separator />
@@ -376,8 +420,17 @@ export function BasicDataSection({
             <span
               className="text-xs text-muted-foreground cursor-pointer hover:underline"
               onClick={() => {
-                const bodyEnum = vehicleType === "utility" ? utilityBodyTypeEnum : vehicleType === "truck" ? truckBodyTypeEnum : vehicleType === "camper" ? camperBodyTypeEnum : carBodyTypeEnum;
-                bodyEnum.forEach((t: { value: string }) => setValue(`bodyType-${t.value}`, false));
+                const bodyEnum =
+                  vehicleType === "utility"
+                    ? utilityBodyTypeEnum
+                    : vehicleType === "truck"
+                      ? truckBodyTypeEnum
+                      : vehicleType === "camper"
+                        ? camperBodyTypeEnum
+                        : carBodyTypeEnum;
+                bodyEnum.forEach((t: { value: string }) =>
+                  setValue(`bodyType-${t.value}`, false),
+                );
               }}
             >
               Zurücksetzen

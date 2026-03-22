@@ -21,7 +21,7 @@ export function MoreFiltersSection() {
       <AccordionTrigger className="flex items-center text-xl font-bold text-primary hover:no-underline">
         Weitere Filter
       </AccordionTrigger>
-      <AccordionContent className="pt-6">
+      <AccordionContent className="pt-6 px-1">
         <div className="space-y-4">
           <div className="flex flex-col">
             <Label className="text-base font-semibold">Inseratedauer</Label>
@@ -37,7 +37,10 @@ export function MoreFiltersSection() {
             fieldType={FormFieldType.RADIO_GROUP}
             name="daysListed"
             className="flex-col"
-            options={daysListedOptions.map((o) => ({ label: o.label, value: o.value }))}
+            options={daysListedOptions.map((o) => ({
+              label: o.label,
+              value: o.value,
+            }))}
           />
         </div>
       </AccordionContent>

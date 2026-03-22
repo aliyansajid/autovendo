@@ -99,7 +99,9 @@ export function MakeModelDialog({
   const searchQuery = (form.watch("search") || "").toLowerCase();
 
   // Derived values — single source of truth for rendering
-  const effectiveIncludes = isControlled ? (value?.includes ?? []) : urlIncludes;
+  const effectiveIncludes = isControlled
+    ? (value?.includes ?? [])
+    : urlIncludes;
   const effectiveExcludes = isControlled ? (value?.excludes ?? []) : [];
   const effectiveModels = isControlled ? (value?.models ?? []) : urlModels;
 
@@ -109,11 +111,19 @@ export function MakeModelDialog({
     const makeParam = searchParams.get("make");
     const modelParam = searchParams.get("model");
     setUrlIncludes(
-      makeParam ? makeParam.split(",").map((s) => s.trim()).filter(Boolean) : [],
+      makeParam
+        ? makeParam
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [],
     );
     setUrlModels(
       modelParam
-        ? modelParam.split(",").map((s) => s.trim()).filter(Boolean)
+        ? modelParam
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
         : [],
     );
   }, [searchParams, uncontrolledOpen, isControlled]);
@@ -228,17 +238,17 @@ export function MakeModelDialog({
                 htmlFor="exclude-toggle"
                 className={`text-sm font-medium cursor-pointer ${isExcludeMode ? "text-destructive" : "text-muted-foreground"}`}
               >
-                Ausschliessen
+                Fahrzeuge ausschliessen
               </Label>
             </div>
           )}
         </div>
         <DialogDescription>
           {showModelStep
-            ? `Modelle für ${currentMake?.label} – Klicken zum An- oder Abwählen.`
+            ? `Modelle für ${currentMake?.label} auswählen.`
             : isExcludeMode
-              ? "Marken zum Ausschliessen auswählen."
-              : "Marke(n) anklicken (nochmal = Abwählen). Mit Pfeil öffnen Sie die Modellauswahl."}
+              ? "Fahrzeuge zum Ausschließen auswählen."
+              : "Fahrzeuge zum Einschließen auswählen."}
         </DialogDescription>
       </DialogHeader>
 

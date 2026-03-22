@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { useEffect } from "react";
 import { Label } from "@repo/ui/src/components/label";
 import {
@@ -17,9 +17,16 @@ import type { VehicleFacets } from "@/types";
 import { formatCount } from "@/lib/helpers/format";
 
 export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
-  const { control, watch, setValue } = useFormContext();
+  const { control, watch, setValue, getValues } = useFormContext();
 
-  const consumptionMax = facets?.consumptionMax ? Math.ceil(facets.consumptionMax * 10) / 10 + 0.1 : 30;
+  const consumptionFrom = useWatch({ control, name: "consumption-from" });
+  const consumptionTo = useWatch({ control, name: "consumption-to" });
+  const emissionsFrom = useWatch({ control, name: "emissions-from" });
+  const emissionsTo = useWatch({ control, name: "emissions-to" });
+
+  const consumptionMax = facets?.consumptionMax
+    ? Math.ceil(facets.consumptionMax * 10) / 10 + 0.1
+    : 30;
   const co2Max = facets?.co2Max ? Math.ceil(facets.co2Max / 10) * 10 : 560;
 
   const consumptionValue = watch("consumption");
@@ -47,19 +54,52 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
     setValue("emissions-to", to >= co2Max ? "" : to.toString());
   }, [emissionsValue, co2Max, setValue]);
 
+  // Two-way sync: inputs -> sliders
+  useEffect(() => {
+    const parseNumber = (val: unknown, fallback: number) => {
+      if (val === undefined || val === null || val === "") return fallback;
+      const cleaned = String(val).replace(/[^0-9.-]/g, "");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : fallback;
+    };
+    const from = parseNumber(consumptionFrom, 0);
+    const to = parseNumber(consumptionTo, consumptionMax);
+    const [curFrom, curTo] = getValues("consumption") ?? [0, consumptionMax];
+    if (from === curFrom && to === curTo) return;
+    setValue("consumption", [from, to], { shouldDirty: true });
+  }, [consumptionFrom, consumptionTo, getValues, setValue, consumptionMax]);
+
+  useEffect(() => {
+    const parseNumber = (val: unknown, fallback: number) => {
+      if (val === undefined || val === null || val === "") return fallback;
+      const cleaned = String(val).replace(/[^0-9.-]/g, "");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : fallback;
+    };
+    const from = parseNumber(emissionsFrom, 0);
+    const to = parseNumber(emissionsTo, co2Max);
+    const [curFrom, curTo] = getValues("emissions") ?? [0, co2Max];
+    if (from === curFrom && to === curTo) return;
+    setValue("emissions", [from, to], { shouldDirty: true });
+  }, [emissionsFrom, emissionsTo, getValues, setValue, co2Max]);
+
   return (
     <AccordionItem value="energy" className="border-none">
       <AccordionTrigger className="flex items-center text-xl font-bold text-primary hover:no-underline">
         Energie & Umwelt
       </AccordionTrigger>
-      <AccordionContent className="pt-6 space-y-12">
+      <AccordionContent className="pt-6 px-1 space-y-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">Verbrauch</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("consumption", undefined as any); setValue("consumption-from", ""); setValue("consumption-to", ""); }}
+                onClick={() => {
+                  setValue("consumption", undefined as any);
+                  setValue("consumption-from", "");
+                  setValue("consumption-to", "");
+                }}
               >
                 Zurücksetzen
               </span>
@@ -96,7 +136,11 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               <Label className="text-base font-semibold">CO2-Emissionen</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => { setValue("emissions", undefined as any); setValue("emissions-from", ""); setValue("emissions-to", ""); }}
+                onClick={() => {
+                  setValue("emissions", undefined as any);
+                  setValue("emissions-from", "");
+                  setValue("emissions-to", "");
+                }}
               >
                 Zurücksetzen
               </span>
@@ -135,7 +179,11 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               </Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() => EnergyLabelEnum.forEach((item) => setValue(`energy-${item.value}`, false))}
+                onClick={() =>
+                  EnergyLabelEnum.forEach((item) =>
+                    setValue(`energy-${item.value}`, false),
+                  )
+                }
               >
                 Zurücksetzen
               </span>
@@ -169,7 +217,11 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
             <Label className="text-base font-semibold">Euronorm</Label>
             <span
               className="text-xs text-muted-foreground cursor-pointer hover:underline"
-              onClick={() => EmissionStandardEnum.forEach((item) => setValue(`eu-${item.value}`, false))}
+              onClick={() =>
+                EmissionStandardEnum.forEach((item) =>
+                  setValue(`eu-${item.value}`, false),
+                )
+              }
             >
               Zurücksetzen
             </span>
