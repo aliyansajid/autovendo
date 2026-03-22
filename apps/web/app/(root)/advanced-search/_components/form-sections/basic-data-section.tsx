@@ -65,36 +65,48 @@ export function BasicDataSection({
 
   useEffect(() => {
     if (yearValue === undefined) {
-      setValue("year-from", "");
-      setValue("year-to", "");
+      if (getValues("year-from") !== "" || getValues("year-to") !== "") {
+        setValue("year-from", "");
+        setValue("year-to", "");
+      }
       return;
     }
     const [from, to] = yearValue as [number, number];
-    setValue("year-from", from <= yearMin ? "" : from.toString());
-    setValue("year-to", to >= yearMax ? "" : to.toString());
-  }, [yearValue, yearMin, yearMax, setValue]);
+    const nextFrom = from <= yearMin ? "" : from.toString();
+    const nextTo = to >= yearMax ? "" : to.toString();
+    if (getValues("year-from") !== nextFrom) setValue("year-from", nextFrom);
+    if (getValues("year-to") !== nextTo) setValue("year-to", nextTo);
+  }, [yearValue, yearMin, yearMax, setValue, getValues]);
 
   useEffect(() => {
     if (kilometerValue === undefined) {
-      setValue("kilometer-from", "");
-      setValue("kilometer-to", "");
+      if (getValues("kilometer-from") !== "" || getValues("kilometer-to") !== "") {
+        setValue("kilometer-from", "");
+        setValue("kilometer-to", "");
+      }
       return;
     }
     const [from, to] = kilometerValue as [number, number];
-    setValue("kilometer-from", from === 0 ? "" : from.toString());
-    setValue("kilometer-to", to >= kmMax ? "" : to.toString());
-  }, [kilometerValue, kmMax, setValue]);
+    const nextFrom = from === 0 ? "" : from.toString();
+    const nextTo = to >= kmMax ? "" : to.toString();
+    if (getValues("kilometer-from") !== nextFrom) setValue("kilometer-from", nextFrom);
+    if (getValues("kilometer-to") !== nextTo) setValue("kilometer-to", nextTo);
+  }, [kilometerValue, kmMax, setValue, getValues]);
 
   useEffect(() => {
     if (priceValue === undefined) {
-      setValue("price-from", "");
-      setValue("price-to", "");
+      if (getValues("price-from") !== "" || getValues("price-to") !== "") {
+        setValue("price-from", "");
+        setValue("price-to", "");
+      }
       return;
     }
     const [from, to] = priceValue as [number, number];
-    setValue("price-from", from === 0 ? "" : from.toString());
-    setValue("price-to", to >= priceMax ? "" : to.toString());
-  }, [priceValue, priceMax, setValue]);
+    const nextFrom = from === 0 ? "" : from.toString();
+    const nextTo = to >= priceMax ? "" : to.toString();
+    if (getValues("price-from") !== nextFrom) setValue("price-from", nextFrom);
+    if (getValues("price-to") !== nextTo) setValue("price-to", nextTo);
+  }, [priceValue, priceMax, setValue, getValues]);
 
   useEffect(() => {
     const parseNumber = (val: unknown, fallback: number) => {

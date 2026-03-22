@@ -59,14 +59,18 @@ export function TechnicalDataSection({
   // Sync slider position → input fields; treat min/max positions as "no filter"
   useEffect(() => {
     if (powerValue === undefined) {
-      setValue("power-from", "");
-      setValue("power-to", "");
+      if (getValues("power-from") !== "" || getValues("power-to") !== "") {
+        setValue("power-from", "");
+        setValue("power-to", "");
+      }
       return;
     }
     const [from, to] = powerValue as [number, number];
-    setValue("power-from", from === 0 ? "" : from.toString());
-    setValue("power-to", to >= currentMax ? "" : to.toString());
-  }, [powerValue, setValue, currentMax]);
+    const nextFrom = from === 0 ? "" : from.toString();
+    const nextTo = to >= currentMax ? "" : to.toString();
+    if (getValues("power-from") !== nextFrom) setValue("power-from", nextFrom);
+    if (getValues("power-to") !== nextTo) setValue("power-to", nextTo);
+  }, [powerValue, currentMax, setValue, getValues]);
 
   const cubicCapacityMax = facets?.cubicCapacityMax
     ? Math.ceil(facets.cubicCapacityMax / 100) * 100
@@ -77,25 +81,33 @@ export function TechnicalDataSection({
 
   useEffect(() => {
     if (capacityValue === undefined) {
-      setValue("capacity-from", "");
-      setValue("capacity-to", "");
+      if (getValues("capacity-from") !== "" || getValues("capacity-to") !== "") {
+        setValue("capacity-from", "");
+        setValue("capacity-to", "");
+      }
       return;
     }
     const [from, to] = capacityValue as [number, number];
-    setValue("capacity-from", from <= 1 ? "" : from.toString());
-    setValue("capacity-to", to >= cubicCapacityMax ? "" : to.toString());
-  }, [capacityValue, cubicCapacityMax, setValue]);
+    const nextFrom = from <= 1 ? "" : from.toString();
+    const nextTo = to >= cubicCapacityMax ? "" : to.toString();
+    if (getValues("capacity-from") !== nextFrom) setValue("capacity-from", nextFrom);
+    if (getValues("capacity-to") !== nextTo) setValue("capacity-to", nextTo);
+  }, [capacityValue, cubicCapacityMax, setValue, getValues]);
 
   useEffect(() => {
     if (cylinderValue === undefined) {
-      setValue("cylinder-from", "");
-      setValue("cylinder-to", "");
+      if (getValues("cylinder-from") !== "" || getValues("cylinder-to") !== "") {
+        setValue("cylinder-from", "");
+        setValue("cylinder-to", "");
+      }
       return;
     }
     const [from, to] = cylinderValue as [number, number];
-    setValue("cylinder-from", from <= 1 ? "" : from.toString());
-    setValue("cylinder-to", to >= cylindersMax ? "" : to.toString());
-  }, [cylinderValue, cylindersMax, setValue]);
+    const nextFrom = from <= 1 ? "" : from.toString();
+    const nextTo = to >= cylindersMax ? "" : to.toString();
+    if (getValues("cylinder-from") !== nextFrom) setValue("cylinder-from", nextFrom);
+    if (getValues("cylinder-to") !== nextTo) setValue("cylinder-to", nextTo);
+  }, [cylinderValue, cylindersMax, setValue, getValues]);
 
   // Two-way sync: inputs -> sliders
   useEffect(() => {
