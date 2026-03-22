@@ -236,7 +236,9 @@ interface GarageRichFiltersProps {
   onFilterChange: (filters: Partial<VehicleSearchParams>) => void;
 }
 
-export default function GarageRichFilters({ onFilterChange }: GarageRichFiltersProps) {
+export default function GarageRichFilters({
+  onFilterChange,
+}: GarageRichFiltersProps) {
   const [isMakeModalOpen, setIsMakeModalOpen] = useState(false);
 
   // Filter States
@@ -263,9 +265,11 @@ export default function GarageRichFilters({ onFilterChange }: GarageRichFiltersP
     if (kilometerRange[1] !== 200000) filters.kilometerTo = kilometerRange[1];
     if (priceRange[0] !== 0) filters.priceFrom = priceRange[0];
     if (priceRange[1] !== 150000) filters.priceTo = priceRange[1];
-    if (selectedBodyTypes.length > 0) filters.bodyType = selectedBodyTypes as any;
+    if (selectedBodyTypes.length > 0)
+      filters.bodyType = selectedBodyTypes as any;
     if (selectedFuels.length > 0) filters.fuel = selectedFuels as any;
-    if (selectedTransmissions.length > 0) filters.transmission = selectedTransmissions as any;
+    if (selectedTransmissions.length > 0)
+      filters.transmission = selectedTransmissions as any;
     if (selectedDrives.length > 0) filters.driveType = selectedDrives;
     return filters;
   }, [
@@ -319,7 +323,8 @@ export default function GarageRichFilters({ onFilterChange }: GarageRichFiltersP
   const getTriggerClass = (isActive: boolean) =>
     cn(
       "w-full justify-between font-normal text-muted-foreground transition-all duration-200",
-      isActive && "text-primary border-primary/20 bg-primary/5 font-medium shadow-xs",
+      isActive &&
+        "text-primary border-primary/20 bg-primary/5 font-medium shadow-xs",
     );
 
   return (
@@ -542,14 +547,18 @@ export default function GarageRichFilters({ onFilterChange }: GarageRichFiltersP
           selectedFuels.length > 0 ||
           selectedTransmissions.length > 0 ||
           selectedDrives.length > 0) && (
-          <Button variant="ghost" onClick={resetAll} className="text-muted-foreground hover:text-foreground">
-            <X className="mr-2 h-4 w-4" />
+          <Button
+            variant="ghost"
+            onClick={resetAll}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <X />
             Filter zurücksetzen
           </Button>
         )}
         <Link href="/advanced-search">
           <Button variant="secondary">
-            <CircleEllipsis className="mr-2 h-4 w-4" />
+            <CircleEllipsis />
             Mehr Filter
           </Button>
         </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useCallback, useMemo } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -102,16 +102,19 @@ export const DealerDetailContent = ({
     });
   }
 
-  function handleFilterChange(newFilters: Partial<VehicleSearchParams>) {
-    setCurrentFilters(newFilters);
-    startFilterTransition(async () => {
-      const result = await getDealerVehicles(dealer.id, 1, 12, newFilters);
-      setVehicles(result.vehicles);
-      setTotalCount(result.totalCount);
-      setHasMore(result.hasMore);
-      setVehiclePage(1);
-    });
-  }
+  const handleFilterChange = useCallback(
+    (newFilters: Partial<VehicleSearchParams>) => {
+      setCurrentFilters(newFilters);
+      startFilterTransition(async () => {
+        const result = await getDealerVehicles(dealer.id, 1, 12, newFilters);
+        setVehicles(result.vehicles);
+        setTotalCount(result.totalCount);
+        setHasMore(result.hasMore);
+        setVehiclePage(1);
+      });
+    },
+    [dealer.id],
+  );
 
   const form = useForm<z.infer<typeof dealerContactSchema>>({
     resolver: zodResolver(dealerContactSchema),
