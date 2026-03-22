@@ -360,13 +360,21 @@ export async function getDealerVehicles(
     ]);
 
     return {
-      vehicles: vehicles as unknown as VehicleListItem[],
+      vehicles: vehicles as any,
       totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page,
       hasMore: skip + vehicles.length < totalCount,
     };
   } catch (error) {
     console.error("Failed to fetch dealer vehicles:", error);
-    return { vehicles: [], totalCount: 0, hasMore: false };
+    return {
+      vehicles: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: page,
+      hasMore: false,
+    };
   }
 }
 

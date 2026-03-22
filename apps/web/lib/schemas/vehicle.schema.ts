@@ -211,6 +211,8 @@ export const VehicleSearchSchema = z.object({
   // Filters (multi-select)
   make: z.array(z.string().trim()).optional(),
   model: z.array(z.string().trim()).optional(),
+  excludeMake: z.array(z.string().trim()).optional(),
+  excludeModel: z.array(z.string().trim()).optional(),
 
   priceFrom: z.number().int().nonnegative().optional(),
   priceTo: z.number().int().nonnegative().optional(),

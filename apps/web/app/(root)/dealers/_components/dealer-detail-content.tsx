@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useCallback } from "react";
+import { useState, useTransition, useCallback, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,10 +54,20 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@repo/ui/src/components/pagination";
+import { getVehicleCountAndFacets } from "@/app/actions/vehicles.actions";
 import type {
   DealerDetail,
   DealerVehiclesResult,
   GooglePlaceData,
+  VehicleFacets,
   VehicleListItem,
 } from "@/types";
 import { dealerContactSchema } from "@/schema/dealer-contact-schema";
@@ -91,8 +101,10 @@ export const DealerDetailContent = ({
     initialVehicles.vehicles,
   );
   const [totalCount, setTotalCount] = useState(initialVehicles.totalCount);
+  const [totalPages, setTotalPages] = useState(initialVehicles.totalPages);
   const [hasMore, setHasMore] = useState(initialVehicles.hasMore);
-  const [vehiclePage, setVehiclePage] = useState(1);
+  const [vehiclePage, setVehiclePage] = useState(initialVehicles.currentPage);
+  const [facets, setFacets] = useState<VehicleFacets | null>(null);
   const [currentFilters, setCurrentFilters] =
     useState<Partial<VehicleSearchParams>>(initialFilters);
   const [sortBy, setSortBy] = useState("newest");
@@ -100,9 +112,8 @@ export const DealerDetailContent = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFiltering, startFilterTransition] = useTransition();
 
-  function loadMore() {
-    startLoadMore(async () => {
-      const next = vehiclePage + 1;
+  const handlePageChange = (next: number) => {
+    startFilterTransition(async () => {
       const result = await getDealerVehicles(
         dealer.id,
         next,
@@ -110,11 +121,22 @@ export const DealerDetailContent = ({
         currentFilters,
         sortBy,
       );
-      setVehicles((prev) => [...prev, ...result.vehicles]);
+      setVehicles(result.vehicles);
       setHasMore(result.hasMore);
       setVehiclePage(next);
+      setTotalPages(result.totalPages);
+      // Scroll to top of cars section if needed
+      document
+        .getElementById("cars-tabs-content")
+        ?.scrollIntoView({ behavior: "smooth" });
     });
-  }
+  };
+
+  useEffect(() => {
+    getVehicleCountAndFacets({ dealerId: dealer.id }).then((res) =>
+      setFacets(res.facets),
+    );
+  }, [dealer.id]);
 
   const handleFilterChange = useCallback(
     (newFilters: Partial<VehicleSearchParams>) => {
@@ -129,6 +151,7 @@ export const DealerDetailContent = ({
         );
         setVehicles(result.vehicles);
         setTotalCount(result.totalCount);
+        setTotalPages(result.totalPages);
         setHasMore(result.hasMore);
         setVehiclePage(1);
       });
@@ -148,6 +171,7 @@ export const DealerDetailContent = ({
       );
       setVehicles(result.vehicles);
       setTotalCount(result.totalCount);
+      setTotalPages(result.totalPages);
       setHasMore(result.hasMore);
       setVehiclePage(1);
     });
@@ -512,11 +536,12 @@ export const DealerDetailContent = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="cars" className="space-y-8 mb-0">
+          <TabsContent value="cars" className="space-y-8 mb-0" id="cars-tabs-content">
             <GarageFilters
               onFilterChange={handleFilterChange}
               dealerId={dealer.id}
               initialFilters={initialFilters}
+              facets={facets}
             />
 
             <div className="flex flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border relative">
@@ -566,18 +591,53 @@ export const DealerDetailContent = ({
               </div>
             )}
 
-            {hasMore && (
-              <div className="flex justify-center">
-                <Button
-                  variant="outline"
-                  onClick={loadMore}
-                  disabled={isLoadingMore}
-                >
-                  {isLoadingMore ? <Spinner /> : <PlusCircle />}
-                  Mehr laden
-                </Button>
-              </div>
-            )}
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (vehiclePage > 1) handlePageChange(vehiclePage - 1);
+                    }}
+                    className={
+                      vehiclePage === 1 ? "pointer-events-none opacity-50" : ""
+                    }
+                  />
+                </PaginationItem>
+
+                {Array.from({ length: totalPages || 1 }).map((_, i) => (
+                  <PaginationItem key={i}>
+                    <PaginationLink
+                      href="#"
+                      isActive={vehiclePage === i + 1}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(i + 1);
+                      }}
+                    >
+                      {i + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (vehiclePage < totalPages)
+                        handlePageChange(vehiclePage + 1);
+                    }}
+                    className={
+                      vehiclePage === totalPages || totalPages === 0
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </TabsContent>
 
           <TabsContent value="ratings">

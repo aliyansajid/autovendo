@@ -120,6 +120,30 @@ export async function buildWhereClause(
     }
   }
 
+  // Exclude Make (NOT IN)
+  if (
+    params.excludeMake &&
+    Array.isArray(params.excludeMake) &&
+    params.excludeMake.length > 0
+  ) {
+    where.NOT = [
+      ...(Array.isArray(where.NOT) ? where.NOT : where.NOT ? [where.NOT] : []),
+      { make: { in: params.excludeMake, mode: "insensitive" as const } },
+    ];
+  }
+
+  // Exclude Model (NOT IN)
+  if (
+    params.excludeModel &&
+    Array.isArray(params.excludeModel) &&
+    params.excludeModel.length > 0
+  ) {
+    where.NOT = [
+      ...(Array.isArray(where.NOT) ? where.NOT : where.NOT ? [where.NOT] : []),
+      { model: { in: params.excludeModel, mode: "insensitive" as const } },
+    ];
+  }
+
   // Range filters - indexed columns for optimal performance
   if (!omitFilters.priceFrom && (params.priceFrom !== undefined || params.priceTo !== undefined)) {
     where.price = {

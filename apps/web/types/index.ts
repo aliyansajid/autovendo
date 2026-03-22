@@ -73,6 +73,8 @@ export interface DealerDetail {
 export interface DealerVehiclesResult {
   vehicles: _VehicleListItem[];
   totalCount: number;
+  totalPages: number;
+  currentPage: number;
   hasMore: boolean;
 }
 

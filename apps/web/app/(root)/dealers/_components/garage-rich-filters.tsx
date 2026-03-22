@@ -6,7 +6,10 @@ import { Car, ChevronDown, CircleEllipsis, X } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
 import { Checkbox } from "@repo/ui/src/components/checkbox";
 import { Slider } from "@repo/ui/src/components/slider";
-import { MakeSelectorDialog } from "@/components/make-selector-dialog";
+import {
+  MakeModelDialog,
+  type MakeModelValue,
+} from "@/app/(root)/cars/_components/filters/make-model-dialog";
 import {
   Popover,
   PopoverContent,
@@ -231,11 +234,13 @@ function GridFilter({
 
 import { useEffect, useMemo } from "react";
 import type { VehicleSearchParams } from "@/lib/schemas/vehicle.schema";
+import type { VehicleFacets } from "@/types";
 
 interface GarageRichFiltersProps {
   onFilterChange: (filters: Partial<VehicleSearchParams>) => void;
   dealerId?: string;
   initialFilters?: Partial<VehicleSearchParams>;
+  facets?: VehicleFacets | null;
 }
 
 const DEFAULTS = {
@@ -248,12 +253,19 @@ export default function GarageRichFilters({
   onFilterChange,
   dealerId,
   initialFilters = {},
+  facets,
 }: GarageRichFiltersProps) {
   const [isMakeModalOpen, setIsMakeModalOpen] = useState(false);
 
   // Filter States
   const [selectedMakes, setSelectedMakes] = useState<string[]>(
     initialFilters.make || [],
+  );
+  const [excludedMakes, setExcludedMakes] = useState<string[]>(
+    initialFilters.excludeMake || [],
+  );
+  const [selectedModels, setSelectedModels] = useState<string[]>(
+    initialFilters.model || [],
   );
   const [yearRange, setYearRange] = useState<[number, number] | null>(
     initialFilters.registrationFrom || initialFilters.registrationTo
@@ -300,11 +312,23 @@ export default function GarageRichFilters({
     // Overwrite with local UI state. 
     // If local state is empty/null, we explicitly clear those keys to allow user to "reset" via this UI.
     
-    // Make
+    // Make & Model
     if (selectedMakes.length > 0) {
       filters.make = selectedMakes;
     } else {
       delete filters.make;
+    }
+
+    if (excludedMakes.length > 0) {
+      filters.excludeMake = excludedMakes;
+    } else {
+      delete filters.excludeMake;
+    }
+
+    if (selectedModels.length > 0) {
+      filters.model = selectedModels;
+    } else {
+      delete filters.model;
     }
 
     // Year
@@ -371,6 +395,8 @@ export default function GarageRichFilters({
   }, [
     initialFilters,
     selectedMakes,
+    excludedMakes,
+    selectedModels,
     yearRange,
     kilometerRange,
     priceRange,
@@ -387,13 +413,16 @@ export default function GarageRichFilters({
     return () => clearTimeout(timer);
   }, [filterValues, onFilterChange]);
 
-  const handleMakeSelect = (make: string) => {
-    setSelectedMakes((prev) => (prev.includes(make) ? prev : [...prev, make]));
-    setIsMakeModalOpen(false);
+  const handleMakeModelChange = (v: MakeModelValue) => {
+    setSelectedMakes(v.includes);
+    setExcludedMakes(v.excludes);
+    setSelectedModels(v.models);
   };
 
   const resetAll = () => {
     setSelectedMakes([]);
+    setExcludedMakes([]);
+    setSelectedModels([]);
     setYearRange(null);
     setKilometerRange(null);
     setPriceRange(null);
@@ -439,38 +468,36 @@ export default function GarageRichFilters({
         "text-primary border-primary/20 bg-primary/5 font-medium shadow-xs",
     );
 
+    const totalSelected = selectedMakes.length + excludedMakes.length;
+    const label =
+      totalSelected > 0
+        ? `${totalSelected} Marken/Modelle`
+        : "Marke & Modell";
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Button
           variant="outline"
           onClick={() => setIsMakeModalOpen(true)}
-          className={getTriggerClass(selectedMakes.length > 0)}
-        >
-          <span className="truncate">
-            {selectedMakes.length > 0
-              ? selectedMakes.join(", ")
-              : "Marke & Modell"}
-          </span>
-          {selectedMakes.length > 0 ? (
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedMakes([]);
-              }}
-              className="hover:bg-primary/20 rounded-full p-0.5 ml-2 transition-colors"
-            >
-              <X className="h-4 w-4" />
-            </div>
-          ) : (
-            <ChevronDown />
+          className={getTriggerClass(
+            selectedMakes.length > 0 || excludedMakes.length > 0,
           )}
+        >
+          <span className="truncate">{label}</span>
+          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
 
-        <MakeSelectorDialog
+        <MakeModelDialog
           open={isMakeModalOpen}
           onOpenChange={setIsMakeModalOpen}
-          onSelect={handleMakeSelect}
+          value={{
+            includes: selectedMakes,
+            excludes: excludedMakes,
+            models: selectedModels,
+          }}
+          onChange={handleMakeModelChange}
+          makeCounts={facets?.make}
         />
 
         <Popover>
