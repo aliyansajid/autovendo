@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useCallback, useMemo } from "react";
+import { useState, useTransition, useCallback } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -75,12 +75,16 @@ interface DealerDetailContentProps {
   initialFilters?: Partial<VehicleSearchParams>;
 }
 
+import { useSearchParams } from "next/navigation";
+
 export const DealerDetailContent = ({
   dealer,
   initialVehicles,
   googleData,
   initialFilters = {},
 }: DealerDetailContentProps) => {
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get("tab") || "about";
   const [isPending, startTransition] = useTransition();
 
   const [vehicles, setVehicles] = useState<VehicleListItem[]>(
@@ -89,9 +93,8 @@ export const DealerDetailContent = ({
   const [totalCount, setTotalCount] = useState(initialVehicles.totalCount);
   const [hasMore, setHasMore] = useState(initialVehicles.hasMore);
   const [vehiclePage, setVehiclePage] = useState(1);
-  const [currentFilters, setCurrentFilters] = useState<Partial<VehicleSearchParams>>(
-    initialFilters,
-  );
+  const [currentFilters, setCurrentFilters] =
+    useState<Partial<VehicleSearchParams>>(initialFilters);
   const [sortBy, setSortBy] = useState("newest");
   const [isLoadingMore, startLoadMore] = useTransition();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -277,7 +280,7 @@ export const DealerDetailContent = ({
       </div>
 
       <div className="max-w-285 mx-auto px-4 pt-6">
-        <Tabs defaultValue="about" className="space-y-6">
+        <Tabs key={activeTab} defaultValue={activeTab} className="space-y-6">
           <TabsList className="w-full overflow-x-auto scrollbar-hide">
             <TabsTrigger value="about">Über uns</TabsTrigger>
             <TabsTrigger value="cars">
@@ -513,6 +516,7 @@ export const DealerDetailContent = ({
             <GarageFilters
               onFilterChange={handleFilterChange}
               dealerId={dealer.id}
+              initialFilters={initialFilters}
             />
 
             <div className="flex flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border relative">
@@ -521,9 +525,7 @@ export const DealerDetailContent = ({
                   <Loader2 className="animate-spin text-primary" />
                 </div>
               )}
-              <p className="font-semibold">
-                {totalCount} Fahrzeuge
-              </p>
+              <p className="font-semibold">{totalCount} Fahrzeuge</p>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground hidden sm:inline">
                   Sortieren nach:

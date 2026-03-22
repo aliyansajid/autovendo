@@ -235,6 +235,7 @@ import type { VehicleSearchParams } from "@/lib/schemas/vehicle.schema";
 interface GarageRichFiltersProps {
   onFilterChange: (filters: Partial<VehicleSearchParams>) => void;
   dealerId?: string;
+  initialFilters?: Partial<VehicleSearchParams>;
 }
 
 const DEFAULTS = {
@@ -246,22 +247,50 @@ const DEFAULTS = {
 export default function GarageRichFilters({
   onFilterChange,
   dealerId,
+  initialFilters = {},
 }: GarageRichFiltersProps) {
   const [isMakeModalOpen, setIsMakeModalOpen] = useState(false);
 
   // Filter States
-  const [selectedMakes, setSelectedMakes] = useState<string[]>([]);
-  const [yearRange, setYearRange] = useState<[number, number] | null>(null);
+  const [selectedMakes, setSelectedMakes] = useState<string[]>(
+    initialFilters.make || [],
+  );
+  const [yearRange, setYearRange] = useState<[number, number] | null>(
+    initialFilters.registrationFrom || initialFilters.registrationTo
+      ? [
+          initialFilters.registrationFrom || DEFAULTS.YEAR[0],
+          initialFilters.registrationTo || DEFAULTS.YEAR[1],
+        ]
+      : null,
+  );
   const [kilometerRange, setKilometerRange] = useState<[number, number] | null>(
-    null,
+    initialFilters.kilometerFrom || initialFilters.kilometerTo
+      ? [
+          initialFilters.kilometerFrom || DEFAULTS.KILOMETER[0],
+          initialFilters.kilometerTo || DEFAULTS.KILOMETER[1],
+        ]
+      : null,
   );
-  const [priceRange, setPriceRange] = useState<[number, number] | null>(null);
-  const [selectedBodyTypes, setSelectedBodyTypes] = useState<string[]>([]);
-  const [selectedFuels, setSelectedFuels] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number] | null>(
+    initialFilters.priceFrom || initialFilters.priceTo
+      ? [
+          initialFilters.priceFrom || DEFAULTS.PRICE[0],
+          initialFilters.priceTo || DEFAULTS.PRICE[1],
+        ]
+      : null,
+  );
+  const [selectedBodyTypes, setSelectedBodyTypes] = useState<string[]>(
+    (initialFilters.bodyType as string[]) || [],
+  );
+  const [selectedFuels, setSelectedFuels] = useState<string[]>(
+    (initialFilters.fuel as string[]) || [],
+  );
   const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>(
-    [],
+    (initialFilters.transmission as string[]) || [],
   );
-  const [selectedDrives, setSelectedDrives] = useState<string[]>([]);
+  const [selectedDrives, setSelectedDrives] = useState<string[]>(
+    (initialFilters.driveType as string[]) || [],
+  );
 
   // Debounce and Notify
   const filterValues = useMemo(() => {
