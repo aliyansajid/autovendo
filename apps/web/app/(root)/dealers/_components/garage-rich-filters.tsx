@@ -294,34 +294,82 @@ export default function GarageRichFilters({
 
   // Debounce and Notify
   const filterValues = useMemo(() => {
-    const filters: Partial<VehicleSearchParams> = {};
-    if (selectedMakes.length > 0) filters.make = selectedMakes;
+    // Preserve ALL initial filters initially (especially unmanaged ones like vehicleType, condition)
+    const filters: Partial<VehicleSearchParams> = { ...initialFilters };
 
+    // Overwrite with local UI state. 
+    // If local state is empty/null, we explicitly clear those keys to allow user to "reset" via this UI.
+    
+    // Make
+    if (selectedMakes.length > 0) {
+      filters.make = selectedMakes;
+    } else {
+      delete filters.make;
+    }
+
+    // Year
     if (yearRange) {
       filters.registrationFrom = yearRange[0];
       filters.registrationTo = yearRange[1];
+    } else {
+      delete filters.registrationFrom;
+      delete filters.registrationTo;
     }
+
+    // Kilometer
     if (kilometerRange) {
       filters.kilometerFrom = kilometerRange[0];
       if (kilometerRange[1] !== DEFAULTS.KILOMETER[1]) {
         filters.kilometerTo = kilometerRange[1];
+      } else {
+        delete filters.kilometerTo;
       }
+    } else {
+      delete filters.kilometerFrom;
+      delete filters.kilometerTo;
     }
+
+    // Price
     if (priceRange) {
       filters.priceFrom = priceRange[0];
       if (priceRange[1] !== DEFAULTS.PRICE[1]) {
         filters.priceTo = priceRange[1];
+      } else {
+        delete filters.priceTo;
       }
+    } else {
+      delete filters.priceFrom;
+      delete filters.priceTo;
     }
 
-    if (selectedBodyTypes.length > 0)
+    // Multi-selects
+    if (selectedBodyTypes.length > 0) {
       filters.bodyType = selectedBodyTypes as any;
-    if (selectedFuels.length > 0) filters.fuel = selectedFuels as any;
-    if (selectedTransmissions.length > 0)
+    } else {
+      delete filters.bodyType;
+    }
+
+    if (selectedFuels.length > 0) {
+      filters.fuel = selectedFuels as any;
+    } else {
+      delete filters.fuel;
+    }
+
+    if (selectedTransmissions.length > 0) {
       filters.transmission = selectedTransmissions as any;
-    if (selectedDrives.length > 0) filters.driveType = selectedDrives;
+    } else {
+      delete filters.transmission;
+    }
+
+    if (selectedDrives.length > 0) {
+      filters.driveType = selectedDrives;
+    } else {
+      delete filters.driveType;
+    }
+
     return filters;
   }, [
+    initialFilters,
     selectedMakes,
     yearRange,
     kilometerRange,
