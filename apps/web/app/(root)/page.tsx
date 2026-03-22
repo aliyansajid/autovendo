@@ -11,9 +11,12 @@ import {
   formatPrice,
   formatNumber,
   formatRegistrationDate,
-  formatEnumLabel,
 } from "@/lib/helpers/format";
 import { getImageUrl } from "@/lib/helpers/image";
+import {
+  CONDITION_LABELS,
+  FUEL_LABELS,
+} from "@/lib/constants/vehicle-constants";
 import type { VehicleListItem, ListingProps } from "@/types/vehicle";
 
 function vehicleToListingProps(item: VehicleListItem): ListingProps {
@@ -21,14 +24,17 @@ function vehicleToListingProps(item: VehicleListItem): ListingProps {
     id: item.id,
     image: getImageUrl(item.images[0]),
     badge: item.vehicleCondition
-      ? formatEnumLabel(item.vehicleCondition)
+      ? (CONDITION_LABELS[item.vehicleCondition.toUpperCase()] ??
+        item.vehicleCondition)
       : undefined,
     title: buildVehicleTitle(item.make, item.model, item.version),
     price: formatPrice(item.price),
     details: [
       formatRegistrationDate(item.registrationMonth, item.registrationYear),
       `${formatNumber(item.kilometer)} km`,
-      item.fuelType ? formatEnumLabel(item.fuelType) : "",
+      item.fuelType
+        ? (FUEL_LABELS[item.fuelType.toUpperCase()] ?? item.fuelType)
+        : "",
     ].filter(Boolean),
     garageName: item.dealer.companyName,
     garageId: item.dealer.id,

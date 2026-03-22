@@ -93,12 +93,12 @@ export function ListingListCard({
         </div>
 
         <div className="flex flex-col grow py-1 text-sm">
-          <div className="space-y-1">
-            <span className="text-sm font-semibold capitalize">
+          <div className="space-y-1.5">
+            <Badge variant="secondary" className="px-1.5 py-0 h-5 text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground border-none">
               {item.make}
-            </span>
-            <h2 className="text-lg font-bold">
-              {[item.model, item.version].filter(Boolean).join(" ") || title}
+            </Badge>
+            <h2 className="text-lg font-bold leading-tight">
+              {formatVehicleName(["", item.model, item.version])}
             </h2>
           </div>
 
