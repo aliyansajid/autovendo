@@ -56,6 +56,22 @@ export function BasicDataSection({
   const kilometerHistogramData = facets?.kilometerHistogram ?? [];
   const priceHistogramData = facets?.priceHistogram ?? [];
 
+  const PLACEHOLDER_HEIGHTS = [22, 35, 28, 45, 55, 40, 62, 75, 58, 80, 70, 85, 65, 50, 42, 60, 38, 30, 20, 15];
+
+  const normalizeHistogram = (data: { h: number }[]) => {
+    const nonZero = data.filter((d) => d.h > 0);
+    if (data.length <= 1 || nonZero.length <= 1) {
+      return PLACEHOLDER_HEIGHTS.map((h) => ({ h, _placeholder: true }));
+    }
+    const max = Math.max(...data.map((d) => d.h));
+    const min = Math.min(...data.map((d) => d.h));
+    if (max === min) return data.map((d) => ({ ...d, h: 60 }));
+    return data.map((d) => ({
+      ...d,
+      h: Math.max(8, Math.round(((d.h - min) / (max - min)) * 88) + 8),
+    }));
+  };
+
   const yearFrom = useWatch({ control, name: "year-from" });
   const yearTo = useWatch({ control, name: "year-to" });
   const kilometerFrom = useWatch({ control, name: "kilometer-from" });
@@ -172,23 +188,20 @@ export function BasicDataSection({
               </span>
             </div>
 
-            <div className="h-16 flex items-end justify-between gap-1">
-              {yearHistogramData.map(
-                (item: { year: number; h: number }, i: number) => {
+            <div className="h-16 flex items-end justify-between gap-[3px]">
+              {normalizeHistogram(yearHistogramData).map(
+                (item: { year?: number; h: number; _placeholder?: boolean }, i: number) => {
                   const yStart = yearRange?.[0] ?? yearMin;
                   const yEnd = yearRange?.[1] ?? yearMax;
-                  const isActive = item.year >= yStart && item.year <= yEnd;
+                  const isActive = !item._placeholder && item.year != null && item.year >= yStart && item.year <= yEnd;
                   return (
-                    <div key={i} className="w-full h-full bg-muted/10 rounded-t relative overflow-hidden">
-                      <div
-                        className={`absolute bottom-0 left-0 right-0 rounded-t transition-all duration-300 ${
-                          isActive
-                            ? "bg-primary"
-                            : "bg-primary/20"
-                        }`}
-                        style={{ height: `${Math.max(item.h, item.h > 0 ? 2 : 0)}%` }}
-                      ></div>
-                    </div>
+                    <div
+                      key={i}
+                      className={`flex-1 min-w-0 rounded-t transition-all duration-300 ${
+                        item._placeholder ? "bg-primary/10" : isActive ? "bg-primary/70" : "bg-primary/15"
+                      }`}
+                      style={{ height: `${item.h}%` }}
+                    />
                   );
                 },
               )}
@@ -232,23 +245,20 @@ export function BasicDataSection({
                 Zurücksetzen
               </span>
             </div>
-            <div className="h-16 flex items-end justify-between gap-1">
-              {kilometerHistogramData.map(
-                (item: { value: number; h: number }, i: number) => {
+            <div className="h-16 flex items-end justify-between gap-[3px]">
+              {normalizeHistogram(kilometerHistogramData).map(
+                (item: { value?: number; h: number; _placeholder?: boolean }, i: number) => {
                   const mStart = kilometerRange?.[0] ?? 0;
                   const mEnd = kilometerRange?.[1] ?? kmMax;
-                  const isActive = item.value >= mStart && item.value <= mEnd;
+                  const isActive = !item._placeholder && item.value != null && item.value >= mStart && item.value <= mEnd;
                   return (
-                    <div key={i} className="w-full h-full bg-muted/10 rounded-t relative overflow-hidden">
-                      <div
-                        className={`absolute bottom-0 left-0 right-0 rounded-t transition-all duration-300 ${
-                          isActive
-                            ? "bg-primary"
-                            : "bg-primary/20"
-                        }`}
-                        style={{ height: `${Math.max(item.h, item.h > 0 ? 2 : 0)}%` }}
-                      ></div>
-                    </div>
+                    <div
+                      key={i}
+                      className={`flex-1 min-w-0 rounded-t transition-all duration-300 ${
+                        item._placeholder ? "bg-primary/10" : isActive ? "bg-primary/70" : "bg-primary/15"
+                      }`}
+                      style={{ height: `${item.h}%` }}
+                    />
                   );
                 },
               )}
@@ -295,23 +305,20 @@ export function BasicDataSection({
               </span>
             </div>
 
-            <div className="h-16 flex items-end justify-between gap-1">
-              {priceHistogramData.map(
-                (item: { value: number; h: number }, i: number) => {
+            <div className="h-16 flex items-end justify-between gap-[3px]">
+              {normalizeHistogram(priceHistogramData).map(
+                (item: { value?: number; h: number; _placeholder?: boolean }, i: number) => {
                   const pStart = priceRange?.[0] ?? 0;
                   const pEnd = priceRange?.[1] ?? priceMax;
-                  const isActive = item.value >= pStart && item.value <= pEnd;
+                  const isActive = !item._placeholder && item.value != null && item.value >= pStart && item.value <= pEnd;
                   return (
-                    <div key={i} className="w-full h-full bg-muted/10 rounded-t relative overflow-hidden">
-                      <div
-                        className={`absolute bottom-0 left-0 right-0 rounded-t transition-all duration-300 ${
-                          isActive
-                            ? "bg-primary"
-                            : "bg-primary/20"
-                        }`}
-                        style={{ height: `${Math.max(item.h, item.h > 0 ? 2 : 0)}%` }}
-                      ></div>
-                    </div>
+                    <div
+                      key={i}
+                      className={`flex-1 min-w-0 rounded-t transition-all duration-300 ${
+                        item._placeholder ? "bg-primary/10" : isActive ? "bg-primary/70" : "bg-primary/15"
+                      }`}
+                      style={{ height: `${item.h}%` }}
+                    />
                   );
                 },
               )}
