@@ -68,10 +68,10 @@ function toDbEnum(value: string): string {
  * Build optimized WHERE clause for vehicle queries
  * Uses database indexes for optimal performance
  */
-export function buildWhereClause(
+export async function buildWhereClause(
   params: VehicleSearchParams,
   omitFilters: Partial<Record<keyof VehicleSearchParams, boolean>> = {},
-): Prisma.VehicleWhereInput {
+): Promise<Prisma.VehicleWhereInput> {
   const where: Prisma.VehicleWhereInput = {};
 
   // Text search - assumes full-text index on make, model, version
@@ -435,7 +435,7 @@ export async function getVehicles(rawParams: {
   const take = params.pageSize;
 
   // Build query
-  const where = buildWhereClause(params);
+  const where = await buildWhereClause(params);
   const orderBy = buildOrderBy(params.sort);
 
   // Execute queries in parallel for optimal performance
@@ -475,11 +475,11 @@ export async function getVehiclesWithFacets(rawParams: {
   const skip = (params.page - 1) * params.pageSize;
   const take = params.pageSize;
 
-  const where = buildWhereClause(params);
+  const where = await buildWhereClause(params);
   const orderBy = buildOrderBy(params.sort);
 
   // Facet base query (excludes make/model for cascading)
-  const facetBase = buildWhereClause(params, { make: true, model: true });
+  const facetBase = await buildWhereClause(params, { make: true, model: true });
 
   // Execute ALL queries in parallel for maximum performance
   const [
@@ -519,57 +519,72 @@ export async function getVehiclesWithFacets(rawParams: {
     }),
     prisma.vehicle.groupBy({
       by: ["fuelType"],
-      where: buildWhereClause(params, { fuel: true }),
+      where: await buildWhereClause(params, { fuel: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["transmissionType"],
-      where: buildWhereClause(params, { transmission: true }),
+      where: await buildWhereClause(params, { transmission: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["vehicleCondition"],
-      where: buildWhereClause(params, { condition: true }),
+      where: await buildWhereClause(params, { condition: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["vehicleType"],
-      where: buildWhereClause(params, { vehicleType: true }),
+      where: await buildWhereClause(params, { vehicleType: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["bodyType"],
-      where: buildWhereClause(params, { bodyType: true }),
+      where: await buildWhereClause(params, { bodyType: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["color"],
-      where: buildWhereClause(params, { color: true }),
+      where: await buildWhereClause(params, { color: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["interiorColor"],
-      where: buildWhereClause(params, { interiorColor: true }),
+      where: await buildWhereClause(params, { interiorColor: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["driveType"],
-      where: buildWhereClause(params, { driveType: true }),
+      where: await buildWhereClause(params, { driveType: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["energyLabel"],
-      where: buildWhereClause(params, { energyLabels: true }),
+      where: await buildWhereClause(params, { energyLabels: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["emissionStandard"],
-      where: buildWhereClause(params, { emissionStandards: true }),
+      where: await buildWhereClause(params, { emissionStandards: true }),
       _count: { _all: true },
     }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { metallic: true }), metallic: true } }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { inspectionPassed: true }), inspectionPassed: true } }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { hasWarranty: true }), warranty: { not: null } } }),
+    prisma.vehicle.count({
+      where: {
+        ...(await buildWhereClause(params, { metallic: true })),
+        metallic: true,
+      },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...(await buildWhereClause(params, { inspectionPassed: true })),
+        inspectionPassed: true,
+      },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...(await buildWhereClause(params, { hasWarranty: true })),
+        warranty: { not: null },
+      },
+    }),
   ]);
 
   // Normalize enum/body facet keys to frontend format (lowercase, hyphen) so filter UI matches
@@ -609,12 +624,24 @@ export async function getVehicleCountAndFacets(rawParams: {
   const parsed = parseSearchParams(rawParams);
   const params = VehicleSearchSchema.parse(parsed);
 
-  const where = buildWhereClause(params);
-  const facetBase = buildWhereClause(params, { make: true, model: true });
+  const where = await buildWhereClause(params);
+  const facetBase = await buildWhereClause(params, { make: true, model: true });
   // Pro histogram bases: ignore the specific range filter to keep chart stable
-  const yearBase = buildWhereClause(params, { registrationFrom: true, make: true, model: true });
-  const kmBase = buildWhereClause(params, { kilometerFrom: true, make: true, model: true });
-  const priceBase = buildWhereClause(params, { priceFrom: true, make: true, model: true });
+  const yearBase = await buildWhereClause(params, {
+    registrationFrom: true,
+    make: true,
+    model: true,
+  });
+  const kmBase = await buildWhereClause(params, {
+    kilometerFrom: true,
+    make: true,
+    model: true,
+  });
+  const priceBase = await buildWhereClause(params, {
+    priceFrom: true,
+    make: true,
+    model: true,
+  });
 
   const [
     total,
@@ -652,57 +679,72 @@ export async function getVehicleCountAndFacets(rawParams: {
     }),
     prisma.vehicle.groupBy({
       by: ["fuelType"],
-      where: buildWhereClause(params, { fuel: true }),
+      where: await buildWhereClause(params, { fuel: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["transmissionType"],
-      where: buildWhereClause(params, { transmission: true }),
+      where: await buildWhereClause(params, { transmission: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["vehicleCondition"],
-      where: buildWhereClause(params, { condition: true }),
+      where: await buildWhereClause(params, { condition: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["vehicleType"],
-      where: buildWhereClause(params, { vehicleType: true }),
+      where: await buildWhereClause(params, { vehicleType: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["bodyType"],
-      where: buildWhereClause(params, { bodyType: true }),
+      where: await buildWhereClause(params, { bodyType: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["color"],
-      where: buildWhereClause(params, { color: true }),
+      where: await buildWhereClause(params, { color: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["interiorColor"],
-      where: buildWhereClause(params, { interiorColor: true }),
+      where: await buildWhereClause(params, { interiorColor: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["driveType"],
-      where: buildWhereClause(params, { driveType: true }),
+      where: await buildWhereClause(params, { driveType: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["energyLabel"],
-      where: buildWhereClause(params, { energyLabels: true }),
+      where: await buildWhereClause(params, { energyLabels: true }),
       _count: { _all: true },
     }),
     prisma.vehicle.groupBy({
       by: ["emissionStandard"],
-      where: buildWhereClause(params, { emissionStandards: true }),
+      where: await buildWhereClause(params, { emissionStandards: true }),
       _count: { _all: true },
     }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { metallic: true }), metallic: true } }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { inspectionPassed: true }), inspectionPassed: true } }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { hasWarranty: true }), warranty: { not: null } } }),
+    prisma.vehicle.count({
+      where: {
+        ...(await buildWhereClause(params, { metallic: true })),
+        metallic: true,
+      },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...(await buildWhereClause(params, { inspectionPassed: true })),
+        inspectionPassed: true,
+      },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...(await buildWhereClause(params, { hasWarranty: true })),
+        warranty: { not: null },
+      },
+    }),
     prisma.vehicle.aggregate({ _max: { hp: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { kw: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { price: true }, where: priceBase }),

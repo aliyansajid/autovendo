@@ -315,7 +315,7 @@ export async function getDealerVehicles(
     const skip = (page - 1) * pageSize;
 
     const where = {
-      AND: [buildWhereClause(filters as VehicleSearchParams), { dealerId }],
+      AND: [await buildWhereClause(filters as VehicleSearchParams), { dealerId }],
     };
 
     const [vehicles, totalCount] = await Promise.all([
