@@ -346,7 +346,7 @@ export default function GarageRichFilters({
       return `${minStr} - ${maxStr}${unit}+`;
     }
 
-    return `${minStr}${unit} - ${maxStr}${unit}`;
+    return `${minStr} - ${maxStr}${unit}`;
   };
 
   const isRangeActive = (current: [number, number] | null) => {
@@ -425,7 +425,7 @@ export default function GarageRichFilters({
                 "Kilometerstand",
                 kilometerRange,
                 DEFAULTS.KILOMETER,
-                "km",
+                " km",
               )}
               <ChevronDown />
             </Button>
