@@ -310,6 +310,7 @@ export async function getDealerVehicles(
   page: number = 1,
   pageSize: number = 12,
   filters: Partial<VehicleSearchParams> = {},
+  sortBy: string = "newest",
 ): Promise<DealerVehiclesResult> {
   try {
     const skip = (page - 1) * pageSize;
@@ -318,12 +319,17 @@ export async function getDealerVehicles(
       AND: [await buildWhereClause(filters as VehicleSearchParams), { dealerId }],
     };
 
+    let orderBy: any = { createdAt: "desc" };
+    if (sortBy === "price_asc") orderBy = { price: "asc" };
+    if (sortBy === "price_desc") orderBy = { price: "desc" };
+    if (sortBy === "kilometer") orderBy = { kilometer: "asc" };
+
     const [vehicles, totalCount] = await Promise.all([
       prisma.vehicle.findMany({
         where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: "desc" },
+        orderBy,
         select: {
           id: true,
           make: true,

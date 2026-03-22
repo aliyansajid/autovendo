@@ -243,11 +243,11 @@ export default function GarageRichFilters({
 
   // Filter States
   const [selectedMakes, setSelectedMakes] = useState<string[]>([]);
-  const [yearRange, setYearRange] = useState<[number, number]>([1990, 2026]);
+  const [yearRange, setYearRange] = useState<[number, number]>([1900, 2026]);
   const [kilometerRange, setKilometerRange] = useState<[number, number]>([
     0, 200000,
   ]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 150000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
   const [selectedBodyTypes, setSelectedBodyTypes] = useState<string[]>([]);
   const [selectedFuels, setSelectedFuels] = useState<string[]>([]);
   const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>(
@@ -259,12 +259,12 @@ export default function GarageRichFilters({
   const filterValues = useMemo(() => {
     const filters: Partial<VehicleSearchParams> = {};
     if (selectedMakes.length > 0) filters.make = selectedMakes;
-    if (yearRange[0] !== 1990) filters.registrationFrom = yearRange[0];
+    if (yearRange[0] !== 1900) filters.registrationFrom = yearRange[0];
     if (yearRange[1] !== 2026) filters.registrationTo = yearRange[1];
     if (kilometerRange[0] !== 0) filters.kilometerFrom = kilometerRange[0];
     if (kilometerRange[1] !== 200000) filters.kilometerTo = kilometerRange[1];
     if (priceRange[0] !== 0) filters.priceFrom = priceRange[0];
-    if (priceRange[1] !== 150000) filters.priceTo = priceRange[1];
+    if (priceRange[1] !== 100000) filters.priceTo = priceRange[1];
     if (selectedBodyTypes.length > 0)
       filters.bodyType = selectedBodyTypes as any;
     if (selectedFuels.length > 0) filters.fuel = selectedFuels as any;
@@ -297,9 +297,9 @@ export default function GarageRichFilters({
 
   const resetAll = () => {
     setSelectedMakes([]);
-    setYearRange([1990, 2026]);
+    setYearRange([1900, 2026]);
     setKilometerRange([0, 200000]);
-    setPriceRange([0, 150000]);
+    setPriceRange([0, 100000]);
     setSelectedBodyTypes([]);
     setSelectedFuels([]);
     setSelectedTransmissions([]);
@@ -313,6 +313,7 @@ export default function GarageRichFilters({
     unit = "",
   ) => {
     if (current[0] === def[0] && current[1] === def[1]) return label;
+    if (current[1] === def[1]) return `${current[0]}${unit}+`;
     return `${current[0]}${unit} - ${current[1]}${unit}`;
   };
 
@@ -369,14 +370,14 @@ export default function GarageRichFilters({
                 isRangeActive(yearRange, [1990, 2026]),
               )}
             >
-              {formatRangeLabel("Jahr", yearRange, [1990, 2026])}
+              {formatRangeLabel("Jahr", yearRange, [1900, 2026])}
               <ChevronDown />
             </Button>
           </PopoverTrigger>
           <PopoverContent align="start" className="w-[300px]">
             <RangeFilter
               label="Jahr"
-              min={1990}
+              min={1900}
               max={2026}
               value={yearRange}
               onValueChange={setYearRange}
@@ -430,7 +431,7 @@ export default function GarageRichFilters({
             <RangeFilter
               label="Preis"
               min={0}
-              max={150000}
+              max={100000}
               unit="CHF"
               step={1000}
               value={priceRange}
@@ -542,7 +543,7 @@ export default function GarageRichFilters({
         {(selectedMakes.length > 0 ||
           isRangeActive(yearRange, [1990, 2026]) ||
           isRangeActive(kilometerRange, [0, 200000]) ||
-          isRangeActive(priceRange, [0, 150000]) ||
+          isRangeActive(priceRange, [0, 100000]) ||
           selectedBodyTypes.length > 0 ||
           selectedFuels.length > 0 ||
           selectedTransmissions.length > 0 ||

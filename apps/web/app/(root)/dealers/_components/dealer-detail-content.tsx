@@ -87,7 +87,10 @@ export const DealerDetailContent = ({
   const [totalCount, setTotalCount] = useState(initialVehicles.totalCount);
   const [hasMore, setHasMore] = useState(initialVehicles.hasMore);
   const [vehiclePage, setVehiclePage] = useState(1);
-  const [currentFilters, setCurrentFilters] = useState<Partial<VehicleSearchParams>>({});
+  const [currentFilters, setCurrentFilters] = useState<Partial<VehicleSearchParams>>(
+    {},
+  );
+  const [sortBy, setSortBy] = useState("newest");
   const [isLoadingMore, startLoadMore] = useTransition();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFiltering, startFilterTransition] = useTransition();
@@ -95,7 +98,13 @@ export const DealerDetailContent = ({
   function loadMore() {
     startLoadMore(async () => {
       const next = vehiclePage + 1;
-      const result = await getDealerVehicles(dealer.id, next, 12, currentFilters);
+      const result = await getDealerVehicles(
+        dealer.id,
+        next,
+        12,
+        currentFilters,
+        sortBy,
+      );
       setVehicles((prev) => [...prev, ...result.vehicles]);
       setHasMore(result.hasMore);
       setVehiclePage(next);
@@ -106,15 +115,38 @@ export const DealerDetailContent = ({
     (newFilters: Partial<VehicleSearchParams>) => {
       setCurrentFilters(newFilters);
       startFilterTransition(async () => {
-        const result = await getDealerVehicles(dealer.id, 1, 12, newFilters);
+        const result = await getDealerVehicles(
+          dealer.id,
+          1,
+          12,
+          newFilters,
+          sortBy,
+        );
         setVehicles(result.vehicles);
         setTotalCount(result.totalCount);
         setHasMore(result.hasMore);
         setVehiclePage(1);
       });
     },
-    [dealer.id],
+    [dealer.id, sortBy],
   );
+
+  const handleSortChange = (newSort: string) => {
+    setSortBy(newSort);
+    startFilterTransition(async () => {
+      const result = await getDealerVehicles(
+        dealer.id,
+        1,
+        12,
+        currentFilters,
+        newSort,
+      );
+      setVehicles(result.vehicles);
+      setTotalCount(result.totalCount);
+      setHasMore(result.hasMore);
+      setVehiclePage(1);
+    });
+  };
 
   const form = useForm<z.infer<typeof dealerContactSchema>>({
     resolver: zodResolver(dealerContactSchema),
@@ -491,7 +523,7 @@ export const DealerDetailContent = ({
                 <span className="text-sm text-muted-foreground hidden sm:inline">
                   Sortieren nach:
                 </span>
-                <Select defaultValue="newest">
+                <Select value={sortBy} onValueChange={handleSortChange}>
                   <SelectTrigger className="w-[140px] sm:w-[180px]">
                     <SelectValue />
                   </SelectTrigger>
