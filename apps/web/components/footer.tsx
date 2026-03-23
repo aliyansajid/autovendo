@@ -78,12 +78,12 @@ export const Footer = () => {
                 {t("sections.discover")}
               </h4>
               <ul className="space-y-2 text-sm">
-                <FooterLink href="about">{t("links.about")}</FooterLink>
-                <FooterLink href="insertionsregeln">
+                <FooterLink href="/about">{t("links.about")}</FooterLink>
+                <FooterLink href="/insertionsregeln">
                   {t("links.rules")}
                 </FooterLink>
-                <FooterLink href="pricing">{t("links.pricing")}</FooterLink>
-                <FooterLink href="contact">{t("links.contact")}</FooterLink>
+                <FooterLink href="/pricing">{t("links.pricing")}</FooterLink>
+                <FooterLink href="/contact">{t("links.contact")}</FooterLink>
               </ul>
             </div>
 
@@ -92,8 +92,8 @@ export const Footer = () => {
                 {t("sections.support")}
               </h4>
               <ul className="space-y-2 text-sm">
-                <FooterLink href="faq">{t("links.faq")}</FooterLink>
-                <FooterLink href="sicherheitshinweise">
+                <FooterLink href="/faq">{t("links.faq")}</FooterLink>
+                <FooterLink href="/sicherheitshinweise">
                   {t("links.safety")}
                 </FooterLink>
               </ul>
@@ -104,12 +104,12 @@ export const Footer = () => {
                 {t("sections.legal")}
               </h4>
               <ul className="space-y-2 text-sm">
-                <FooterLink href="datenschutz">{t("links.privacy")}</FooterLink>
-                <FooterLink href="agb">{t("links.terms")}</FooterLink>
-                <FooterLink href="privatsphaere">
+                <FooterLink href="/datenschutz">{t("links.privacy")}</FooterLink>
+                <FooterLink href="/agb">{t("links.terms")}</FooterLink>
+                <FooterLink href="/privatsphaere">
                   {t("links.privacySettings")}
                 </FooterLink>
-                <FooterLink href="impressum">{t("links.imprint")}</FooterLink>
+                <FooterLink href="/impressum">{t("links.imprint")}</FooterLink>
               </ul>
             </div>
 

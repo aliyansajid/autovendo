@@ -95,7 +95,7 @@ export const ForgotPasswordForm = () => {
               </Button>
               <FieldDescription className="text-center">
                 {t("rememberPassword")}&nbsp;
-                <Link href="login">{t("backToLogin")}</Link>
+                <Link href="/login">{t("backToLogin")}</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>
