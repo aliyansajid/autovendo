@@ -217,7 +217,26 @@ export function VehicleForm({
     },
   });
 
-  const { control, handleSubmit, trigger } = form;
+  const {
+    control,
+    handleSubmit,
+    trigger,
+    formState: { isDirty },
+  } = form;
+
+  const watchMake = useWatch({ control, name: "make" });
+
+  // Reset model when make changes in Edit Mode to ensure consistent state and force isDirty
+  useEffect(() => {
+    if (
+      vehicleId &&
+      watchMake &&
+      initialData?.make &&
+      watchMake !== initialData.make
+    ) {
+      form.setValue("model", "" as any, { shouldDirty: true });
+    }
+  }, [watchMake, vehicleId, initialData?.make, form]);
 
   // Determine whether submission should be blocked based on subscription state.
   // For new listings: block unless subscription is active.
@@ -241,7 +260,6 @@ export function VehicleForm({
     }
   };
 
-  const watchMake = useWatch({ control, name: "make" });
   const watchPrice = useWatch({ control, name: "price" });
   const watchKilometer = useWatch({ control, name: "kilometer" });
   const watchMonth = useWatch({ control, name: "registrationMonth" });
@@ -813,7 +831,7 @@ export function VehicleForm({
                 disabled={
                   isSubmitting ||
                   isSubmitBlocked ||
-                  (!!vehicleId && !form.formState.isDirty)
+                  (!!vehicleId && !isDirty)
                 }
               >
                 {isSubmitting ? (

@@ -40,7 +40,7 @@ export const ResetPasswordForm = () => {
 
   function onSubmit(values: z.infer<typeof resetPasswordSchema>) {
     if (!token) {
-      toast.error("Invalid or missing reset token");
+      toast.error("Ungültiger oder fehlender Reset-Token");
       return;
     }
 
@@ -51,7 +51,10 @@ export const ResetPasswordForm = () => {
       });
 
       if (error) {
-        toast.error(error.message ?? "Passwort konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.");
+        toast.error(
+          error.message ??
+            "Passwort konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut.",
+        );
         return;
       }
 
@@ -64,15 +67,15 @@ export const ResetPasswordForm = () => {
     return (
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Invalid Link</CardTitle>
+          <CardTitle className="text-xl">Ungültiger Link</CardTitle>
           <CardDescription>
-            The password reset link is invalid or has expired. Please request a
-            new one.
+            Der Link zum Zurücksetzen des Passworts ist ungültig oder
+            abgelaufen. Bitte fordern Sie einen neuen an.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild className="w-full">
-            <Link href="/forgot-password">Request New Link</Link>
+          <Button className="w-full" asChild>
+            <Link href="/forgot-password">Neuen Link anfordern</Link>
           </Button>
         </CardContent>
       </Card>
@@ -82,8 +85,10 @@ export const ResetPasswordForm = () => {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Set New Password</CardTitle>
-        <CardDescription>Please enter your new password below.</CardDescription>
+        <CardTitle className="text-xl">Neues Passwort festlegen</CardTitle>
+        <CardDescription>
+          Bitte geben Sie unten Ihr neues Passwort ein.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -93,7 +98,7 @@ export const ResetPasswordForm = () => {
               fieldType={FormFieldType.INPUT}
               inputType="password"
               name="password"
-              label="New Password"
+              label="Neues Passwort"
               placeholder="********"
               disabled={isPending}
             />
@@ -103,7 +108,7 @@ export const ResetPasswordForm = () => {
               fieldType={FormFieldType.INPUT}
               inputType="password"
               name="confirmPassword"
-              label="Confirm Password"
+              label="Passwort bestätigen"
               placeholder="********"
               disabled={isPending}
             />
@@ -113,10 +118,10 @@ export const ResetPasswordForm = () => {
                 {isPending ? (
                   <>
                     <Spinner />
-                    Resetting...
+                    Wird zurückgesetzt...
                   </>
                 ) : (
-                  "Reset Password"
+                  "Passwort zurücksetzen"
                 )}
               </Button>
             </Field>

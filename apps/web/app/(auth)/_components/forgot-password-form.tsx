@@ -45,7 +45,10 @@ export const ForgotPasswordForm = () => {
       });
 
       if (error) {
-        toast.error(error.message ?? "Link konnte nicht gesendet werden. Bitte versuchen Sie es erneut.");
+        toast.error(
+          error.message ??
+            "Link konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+        );
         return;
       }
 
@@ -56,10 +59,10 @@ export const ForgotPasswordForm = () => {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Forgot Password</CardTitle>
+        <CardTitle className="text-xl">Passwort vergessen</CardTitle>
         <CardDescription>
-          Enter your email address and we will send you a link to reset your
-          password
+          Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum
+          Zurücksetzen Ihres Passworts
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -70,8 +73,8 @@ export const ForgotPasswordForm = () => {
               fieldType={FormFieldType.INPUT}
               inputType="email"
               name="email"
-              label="Email"
-              placeholder="m@example.com"
+              label="E-Mail"
+              placeholder="m@beispiel.ch"
               disabled={isPending}
             />
 
@@ -80,14 +83,14 @@ export const ForgotPasswordForm = () => {
                 {isPending ? (
                   <>
                     <Spinner />
-                    Sending...
+                    Wird gesendet...
                   </>
                 ) : (
-                  "Send Reset Link"
+                  "Link zum Zurücksetzen senden"
                 )}
               </Button>
               <FieldDescription className="text-center">
-                Remember your password?&nbsp;<Link href="login">Login</Link>
+                Passwort gemerkt?&nbsp;<Link href="login">Anmelden</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>

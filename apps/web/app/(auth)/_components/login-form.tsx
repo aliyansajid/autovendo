@@ -48,7 +48,10 @@ export const LoginForm = () => {
       });
 
       if (error) {
-        toast.error(error.message ?? "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+        toast.error(
+          error.message ??
+            "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+        );
         return;
       }
     });
@@ -57,9 +60,10 @@ export const LoginForm = () => {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Welcome back</CardTitle>
+        <CardTitle className="text-xl">Willkommen zurück</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account
+          Geben Sie unten Ihre E-Mail-Adresse ein, um sich in Ihr Konto
+          einzuloggen
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -70,8 +74,8 @@ export const LoginForm = () => {
               fieldType={FormFieldType.INPUT}
               inputType="email"
               name="email"
-              label="Email"
-              placeholder="m@example.com"
+              label="E-Mail"
+              placeholder="m@beispiel.ch"
               disabled={isPending}
             />
 
@@ -80,7 +84,7 @@ export const LoginForm = () => {
               fieldType={FormFieldType.INPUT}
               inputType="password"
               name="password"
-              label="Password"
+              label="Passwort"
               placeholder="********"
               disabled={isPending}
             />
@@ -90,14 +94,14 @@ export const LoginForm = () => {
                 control={form.control}
                 fieldType={FormFieldType.CHECKBOX}
                 name="rememberme"
-                label="Remember Me"
+                label="Angemeldet bleiben"
                 disabled={isPending}
               />
               <Link
                 href="/forgot-password"
                 className="text-sm underline-offset-4 hover:text-primary hover:underline whitespace-nowrap"
               >
-                Forgot your password?
+                Passwort vergessen?
               </Link>
             </div>
 
@@ -106,10 +110,10 @@ export const LoginForm = () => {
                 {isPending ? (
                   <>
                     <Spinner />
-                    Logging in...
+                    Wird angemeldet...
                   </>
                 ) : (
-                  "Login"
+                  "Anmelden"
                 )}
               </Button>
             </Field>

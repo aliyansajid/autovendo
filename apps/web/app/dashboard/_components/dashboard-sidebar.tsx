@@ -65,14 +65,8 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/" className="relative flex items-center">
-                <Image
-                  src="/logo.svg"
-                  alt="AutoVendo"
-                  width={120}
-                  height={32}
-                  priority
-                />
+              <Link href="/">
+                <Image src="/logo.svg" alt="AutoVendo Logo" fill priority />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -81,11 +75,7 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
       <SidebarContent>
         <NavMain items={navItems} />
       </SidebarContent>
-      <SidebarFooter>
-        {user ? (
-          <NavUser user={user} />
-        ) : null}
-      </SidebarFooter>
+      <SidebarFooter>{user ? <NavUser user={user} /> : null}</SidebarFooter>
     </Sidebar>
   );
 }
