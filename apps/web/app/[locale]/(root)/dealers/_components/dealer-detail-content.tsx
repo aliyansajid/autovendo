@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { ListingListCard } from "@/app/(root)/cars/_components/listing-list-card";
+import { ListingListCard } from "@/app/[locale]/(root)/cars/_components/listing-list-card";
 import { Button } from "@repo/ui/src/components/button";
 import { Badge } from "@repo/ui/src/components/badge";
 import GarageFilters from "./garage-rich-filters";

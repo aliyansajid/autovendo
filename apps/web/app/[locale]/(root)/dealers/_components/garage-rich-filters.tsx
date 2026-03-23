@@ -9,7 +9,7 @@ import { Slider } from "@repo/ui/src/components/slider";
 import {
   MakeModelDialog,
   type MakeModelValue,
-} from "@/app/(root)/cars/_components/filters/make-model-dialog";
+} from "@/app/[locale]/(root)/cars/_components/filters/make-model-dialog";
 import {
   Popover,
   PopoverContent,
