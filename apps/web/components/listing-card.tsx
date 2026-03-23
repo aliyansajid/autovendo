@@ -11,10 +11,13 @@ import { Button } from "@repo/ui/components/button";
 import Image from "next/image";
 import { Heart } from "lucide-react";
 import { Separator } from "@repo/ui/components/separator";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ListingProps } from "@/types/vehicle";
+import { useTranslations } from "next-intl";
 
 export const ListingCard = ({ item }: { item: ListingProps }) => {
+  const t = useTranslations("ListingCard");
+
   return (
     <Link key={item.id} href={`/cars/${item.id}`} className="group">
       <Card
@@ -28,7 +31,6 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             priority={true}
-            fetchPriority="high"
           />
           {item.badge && (
             <Badge className="absolute top-2 right-2 bg-rating text-foreground font-semibold">
@@ -65,7 +67,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           <Button
             variant="outline"
             size="icon-sm"
-            aria-label="Save to favorites"
+            aria-label={t("saveToFavorites")}
           >
             <Heart className="text-muted-foreground" />
           </Button>

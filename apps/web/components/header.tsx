@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { PlusCircle, Menu, LayoutDashboard } from "lucide-react";
+import { PlusCircle, Menu, LayoutDashboard, LogOut } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -41,9 +40,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/src/components/dropdown-menu";
-import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Skeleton } from "@repo/ui/src/components/skeleton";
+import { useRouter, usePathname, Link } from "@/i18n/routing";
+import { useTranslations, useLocale } from "next-intl";
 
 const languages = [
   { label: "Deutsch", value: "de" },
@@ -53,13 +52,16 @@ const languages = [
 ];
 
 const navLinks = [
-  { href: "/advanced-search", label: "Erweiterte Suche" },
-  { href: "/dealers", label: "Händler suchen" },
-  { href: "/sell", label: "Verkaufen" },
-];
+  { href: "/advanced-search", labelKey: "nav.advancedSearch" },
+  { href: "/dealers", labelKey: "nav.dealers" },
+  { href: "/sell", labelKey: "nav.sell" },
+] as const;
 
 export const Header = () => {
+  const t = useTranslations("Header");
+  const locale = useLocale();
   const router = useRouter();
+  const pathname = usePathname();
   const { data: session, isPending } = authClient.useSession();
 
   const handleLogout = async () => {
@@ -70,6 +72,10 @@ export const Header = () => {
         },
       },
     });
+  };
+
+  const handleLanguageChange = (value: string) => {
+    router.replace(pathname, { locale: value });
   };
 
   return (
@@ -88,13 +94,13 @@ export const Header = () => {
 
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
-              {navLinks.map(({ href, label }) => (
+              {navLinks.map(({ href, labelKey }) => (
                 <NavigationMenuItem key={href}>
                   <NavigationMenuLink
                     asChild
                     className={navigationMenuTriggerStyle()}
                   >
-                    <Link href={href}>{label}</Link>
+                    <Link href={href}>{t(labelKey)}</Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               ))}
@@ -128,7 +134,7 @@ export const Header = () => {
                       className="flex items-center w-full"
                     >
                       <LayoutDashboard />
-                      <span>Dashboard</span>
+                      <span>{t("auth.dashboard")}</span>
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -140,20 +146,20 @@ export const Header = () => {
                     className="flex items-center w-full"
                   >
                     <LogOut />
-                    <span>Abmelden</span>
+                    <span>{t("auth.logout")}</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Button asChild className="bg-white text-primary hover:bg-white/90">
-              <Link href="/login">Login</Link>
+              <Link href="/login">{t("auth.login")}</Link>
             </Button>
           )}
 
-          <Select defaultValue="de">
+          <Select value={locale} onValueChange={handleLanguageChange}>
             <SelectTrigger className="w-32 bg-white/10 border-white/20 text-white hover:bg-white/20 [&_svg]:text-white!">
-              <SelectValue placeholder="Sprache" />
+              <SelectValue placeholder={t("languages.label")} />
             </SelectTrigger>
             <SelectContent>
               {languages.map((lang) => (
@@ -171,7 +177,7 @@ export const Header = () => {
               <Button
                 variant="outline"
                 size="icon"
-                aria-label="Open menu"
+                aria-label={t("nav.mobileMenuTitle")}
                 className="bg-white/10 border-white/20 text-white hover:bg-white/20"
               >
                 <Menu />
@@ -180,23 +186,23 @@ export const Header = () => {
 
             <SheetContent>
               <SheetHeader>
-                <SheetTitle>Menü</SheetTitle>
+                <SheetTitle>{t("nav.mobileMenuTitle")}</SheetTitle>
               </SheetHeader>
 
               <div className="flex flex-col gap-6 px-4">
                 <nav className="flex flex-col gap-4">
-                  {navLinks.map(({ href, label }) => (
+                  {navLinks.map(({ href, labelKey }) => (
                     <SheetClose asChild key={href}>
-                      <Link href={href}>{label}</Link>
+                      <Link href={href}>{t(labelKey)}</Link>
                     </SheetClose>
                   ))}
                 </nav>
 
                 <Separator />
 
-                <Select defaultValue="de">
+                <Select value={locale} onValueChange={handleLanguageChange}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Sprache" />
+                    <SelectValue placeholder={t("languages.label")} />
                   </SelectTrigger>
                   <SelectContent>
                     {languages.map((lang) => (
@@ -233,7 +239,7 @@ export const Header = () => {
                       >
                         <Link href="/dashboard">
                           <LayoutDashboard className="mr-2 h-4 w-4" />
-                          Dashboard
+                          {t("auth.dashboard")}
                         </Link>
                       </Button>
                     </SheetClose>
@@ -243,7 +249,7 @@ export const Header = () => {
                       className="w-full justify-start text-left"
                     >
                       <LogOut />
-                      Abmelden
+                      {t("auth.logout")}
                     </Button>
                   </div>
                 ) : (
@@ -251,7 +257,7 @@ export const Header = () => {
                     <Button asChild className="w-full">
                       <Link href="/login">
                         <PlusCircle />
-                        Login
+                        {t("auth.login")}
                       </Link>
                     </Button>
                   </SheetClose>

@@ -1,4 +1,5 @@
-import Link from "next/link";
+"use client";
+
 import Image from "next/image";
 import { Button } from "@repo/ui/src/components/button";
 import { Mail, MapPin, Phone, Send, MailIcon } from "lucide-react";
@@ -7,6 +8,8 @@ import {
   InputGroupInput,
   InputGroupAddon,
 } from "@repo/ui/src/components/input-group";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 interface FooterLinkProps {
   href: string;
@@ -14,6 +17,9 @@ interface FooterLinkProps {
 }
 
 export const Footer = () => {
+  const t = useTranslations("Footer");
+  const currentYear = new Date().getFullYear();
+
   return (
     <>
       <footer className="bg-muted">
@@ -31,39 +37,28 @@ export const Footer = () => {
               </Link>
 
               <p className="max-w-md text-sm text-muted-foreground leading-relaxed">
-                Entdecken Sie Ihr perfektes Fahrzeug in unserer Premium-Auswahl.
-                Wir bieten Tausende von zertifizierten Gebraucht- und Neuwagen
-                von europäischen Top-Marken zu unschlagbaren Preisen und mit
-                transparenter Historie.
+                {t("description")}
               </p>
 
               <p className="max-w-md text-xs text-muted-foreground leading-relaxed italic">
-                <strong>
-                  Autovendo.ch verzichtet bewusst auf Social Media.
-                </strong>
-                &nbsp; Bei uns stehen&nbsp;
-                <strong>
-                  direkter Kontakt, persönliche Erreichbarkeit und echte
-                  Gespräche
-                </strong>
-                &nbsp;im Mittelpunkt – von Mensch zu Mensch, nicht über Likes
-                oder Algorithmen.
+                {t.rich("socialMediaDisclaimer", {
+                  strong: (chunks) => <strong>{chunks}</strong>,
+                })}
               </p>
             </div>
 
             <div className="flex flex-col lg:items-end justify-center space-y-3">
               <h4 className="font-semibold text-base">
-                Bleiben Sie auf der Überholspur
+                {t("newsletter.title")}
               </h4>
               <p className="text-sm text-muted-foreground lg:text-right">
-                Abonnieren Sie unseren Newsletter für die neuesten Angebote,
-                Fahrzeug-News und exklusive Aktionen.
+                {t("newsletter.description")}
               </p>
               <form className="flex items-center w-full max-w-sm gap-3">
                 <InputGroup>
                   <InputGroupInput
                     type="email"
-                    placeholder="Ihre E-Mail-Adresse"
+                    placeholder={t("newsletter.placeholder")}
                   />
                   <InputGroupAddon>
                     <MailIcon />
@@ -71,7 +66,7 @@ export const Footer = () => {
                 </InputGroup>
                 <Button type="submit">
                   <Send />
-                  Abonnieren
+                  {t("newsletter.button")}
                 </Button>
               </form>
             </div>
@@ -80,47 +75,47 @@ export const Footer = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
             <div>
               <h4 className="font-semibold mb-4 uppercase tracking-wider text-xs">
-                Entdecken
+                {t("sections.discover")}
               </h4>
               <ul className="space-y-2 text-sm">
-                <FooterLink href="about">Über uns</FooterLink>
+                <FooterLink href="about">{t("links.about")}</FooterLink>
                 <FooterLink href="insertionsregeln">
-                  Insertionsregeln
+                  {t("links.rules")}
                 </FooterLink>
-                <FooterLink href="pricing">Preise</FooterLink>
-                <FooterLink href="contact">Kontakt</FooterLink>
+                <FooterLink href="pricing">{t("links.pricing")}</FooterLink>
+                <FooterLink href="contact">{t("links.contact")}</FooterLink>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold mb-4 uppercase tracking-wider text-xs">
-                Support
+                {t("sections.support")}
               </h4>
               <ul className="space-y-2 text-sm">
-                <FooterLink href="faq">FAQ</FooterLink>
+                <FooterLink href="faq">{t("links.faq")}</FooterLink>
                 <FooterLink href="sicherheitshinweise">
-                  Sicherheitshinweise
+                  {t("links.safety")}
                 </FooterLink>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold mb-4 uppercase tracking-wider text-xs">
-                Rechtliches
+                {t("sections.legal")}
               </h4>
               <ul className="space-y-2 text-sm">
-                <FooterLink href="datenschutz">Datenschutz</FooterLink>
-                <FooterLink href="agb">AGB</FooterLink>
+                <FooterLink href="datenschutz">{t("links.privacy")}</FooterLink>
+                <FooterLink href="agb">{t("links.terms")}</FooterLink>
                 <FooterLink href="privatsphaere">
-                  Privatsphäre-Einstellungen
+                  {t("links.privacySettings")}
                 </FooterLink>
-                <FooterLink href="impressum">Impressum</FooterLink>
+                <FooterLink href="impressum">{t("links.imprint")}</FooterLink>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold mb-4 uppercase tracking-wider text-xs">
-                Kontakt
+                {t("sections.contact")}
               </h4>
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-muted-foreground">
@@ -145,8 +140,7 @@ export const Footer = () => {
 
           <div className="flex items-center justify-center pt-6 border-t border-border">
             <p className="text-xs text-muted-foreground">
-              &copy; {new Date().getFullYear()} Autovendo. Alle Rechte
-              vorbehalten.
+              &copy; {currentYear} Autovendo. {t("copyright")}
             </p>
           </div>
         </div>
@@ -156,7 +150,7 @@ export const Footer = () => {
         href="https://wa.me/41793223520"
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Kontaktieren Sie uns auf WhatsApp"
+        aria-label={t("whatsappAriaLabel")}
         className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20ba5a] text-white w-14 h-14 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_10px_25px_rgba(0,0,0,0.35)] transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center"
       >
         <svg viewBox="0 0 32 32" className="w-7 h-7 fill-white">
