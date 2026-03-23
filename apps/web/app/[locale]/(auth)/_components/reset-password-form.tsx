@@ -15,13 +15,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@repo/auth/client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { createResetPasswordSchema } from "@/schema/auth-schema";
 import { useTranslations } from "next-intl";
 

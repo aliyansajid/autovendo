@@ -13,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@repo/ui/src/components/sidebar";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 
 interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {

@@ -28,7 +28,7 @@ import { ListingHeader } from "../_components/listing-header";
 import { SellerSection } from "../_components/seller-section";
 import { ReviewSection } from "../_components/review-section";
 import { Card, CardContent } from "@repo/ui/src/components/card";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { StickyActionBar } from "../_components/sticky-action-bar";
 import { EnergyLabel } from "../_components/energy-label";
 import {

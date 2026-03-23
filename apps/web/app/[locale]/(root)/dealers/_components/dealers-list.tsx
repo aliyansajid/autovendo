@@ -1,10 +1,11 @@
 "use client";
 
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@repo/ui/components/button";
 import { MapPin, ArrowRight, Search } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import {
   InputGroup,
   InputGroupAddon,

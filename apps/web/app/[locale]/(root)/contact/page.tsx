@@ -11,7 +11,7 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { Separator } from "@repo/ui/src/components/separator";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
 import { sendContactMessage } from "@/app/actions/contact.actions";
 import { Spinner } from "@repo/ui/src/components/spinner";

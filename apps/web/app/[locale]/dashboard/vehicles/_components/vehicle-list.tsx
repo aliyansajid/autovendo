@@ -15,7 +15,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { deleteVehicle, type SubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import {

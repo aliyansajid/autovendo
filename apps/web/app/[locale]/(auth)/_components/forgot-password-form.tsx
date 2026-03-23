@@ -20,7 +20,8 @@ import { authClient } from "@repo/auth/client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useLocale } from "next-intl";
 import {
   CustomFormField,
   FormFieldType,
@@ -30,6 +31,7 @@ import { useTranslations } from "next-intl";
 
 export const ForgotPasswordForm = () => {
   const t = useTranslations("ForgotPasswordForm");
+  const locale = useLocale();
   const tSchema = useTranslations("AuthSchema");
   const [isPending, startTransition] = useTransition();
 
@@ -49,7 +51,7 @@ export const ForgotPasswordForm = () => {
     startTransition(async () => {
       const { data, error } = await authClient.requestPasswordReset({
         email: values.email,
-        redirectTo: "/reset-password",
+        redirectTo: `/${locale}/reset-password`,
       });
 
       if (error) {

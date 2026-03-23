@@ -27,10 +27,10 @@ import {
   useSidebar,
 } from "@repo/ui/components/sidebar";
 import { authClient } from "@repo/auth/client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { useTransition } from "react";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 
 export function NavUser({

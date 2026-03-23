@@ -15,7 +15,7 @@ import { Badge } from "@repo/ui/src/components/badge";
 import { Progress } from "@repo/ui/src/components/progress";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { CreditCard, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";

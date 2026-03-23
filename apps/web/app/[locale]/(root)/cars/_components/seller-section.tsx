@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/src/components/card";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { LocationMap } from "./location-map";
 
 interface SellerSectionProps {

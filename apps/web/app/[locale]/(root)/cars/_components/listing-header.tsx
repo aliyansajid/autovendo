@@ -11,7 +11,7 @@ import {
   BreadcrumbSeparator,
 } from "@repo/ui/src/components/breadcrumb";
 import { Separator } from "@repo/ui/src/components/separator";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { formatVehicleName } from "@/lib/helpers/vehicle";
 
 interface ListingHeaderProps {

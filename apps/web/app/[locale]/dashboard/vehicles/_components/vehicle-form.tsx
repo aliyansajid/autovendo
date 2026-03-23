@@ -54,7 +54,7 @@ import {
   type SubscriptionStatus,
 } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { Loader2, AlertCircle, AlertTriangle } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@repo/ui/src/components/spinner";

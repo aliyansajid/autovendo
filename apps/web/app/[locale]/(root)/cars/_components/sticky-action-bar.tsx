@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Button } from "@repo/ui/components/button";
 import { Phone, Mail } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 interface StickyActionBarProps {
   price: number;

@@ -7,7 +7,7 @@ import {
 } from "@repo/ui/src/components/accordion";
 import { Button } from "@repo/ui/src/components/button";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 
 export default async function FaqPage() {

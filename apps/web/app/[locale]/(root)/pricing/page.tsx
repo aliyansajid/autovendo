@@ -1,7 +1,7 @@
 import { Separator } from "@repo/ui/src/components/separator";
 import { ArrowRight, CheckCircle2, Mail, Phone } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import {
   Table,
   TableBody,

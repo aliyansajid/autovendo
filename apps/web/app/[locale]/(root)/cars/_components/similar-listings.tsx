@@ -10,7 +10,7 @@ import {
   CarouselPrevious,
 } from "@repo/ui/components/carousel";
 import { Button } from "@repo/ui/components/button";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import type { ListingProps } from "@/types/vehicle";
 
 interface SimilarListingsProps {

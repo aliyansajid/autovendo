@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@repo/ui/src/components/card";
 import { ArrowRight, Star } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 interface Review {
   id: string;

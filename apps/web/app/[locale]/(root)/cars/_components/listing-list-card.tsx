@@ -6,7 +6,7 @@ import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import Image from "next/image";
 import { Check, Star, Phone } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Separator } from "@repo/ui/src/components/separator";
 import type { VehicleListItem } from "@/types/vehicle";
 import {

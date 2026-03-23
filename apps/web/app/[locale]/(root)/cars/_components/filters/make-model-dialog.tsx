@@ -24,7 +24,8 @@ import { ChevronRight, Search, ChevronLeft, Check, X } from "lucide-react";
 import { ScrollArea } from "@repo/ui/src/components/scroll-area";
 import { carMakes, popularCarMakes, carModels } from "@/constants/cars";
 import Image from "next/image";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 
 const formSchema = z.object({

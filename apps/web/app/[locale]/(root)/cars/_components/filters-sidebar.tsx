@@ -2,8 +2,9 @@
 
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { Link } from "@/i18n/routing";
+import { useRouter, usePathname } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useCallback } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@repo/ui/components/button";

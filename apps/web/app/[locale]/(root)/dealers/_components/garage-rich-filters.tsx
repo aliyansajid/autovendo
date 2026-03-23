@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Car, ChevronDown, CircleEllipsis, X } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
 import { Checkbox } from "@repo/ui/src/components/checkbox";
