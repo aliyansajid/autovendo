@@ -265,7 +265,10 @@ export default function PrivacyPage() {
             <p className="text-muted-foreground text-lg">
               Bei Fragen zum Datenschutz oder zur Bearbeitung deiner
               personenbezogenen Daten&nbsp;
-              <Link href="contact" className="text-primary hover:underline">
+              <Link
+                href="contact"
+                className="text-primary underline-offset-4 hover:underline"
+              >
                 kontaktiere uns
               </Link>
               &nbsp;bitte direkt.

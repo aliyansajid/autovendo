@@ -39,8 +39,8 @@ export function TechnicalDataSection({
   const cylinderTo = useWatch({ control, name: "cylinder-to" });
 
   // Compute dynamic slider limits from DB facets, rounded to nearest step
-  const maxPs = facets?.hpMax ? Math.ceil(facets.hpMax / 10) * 10 : 1500;
-  const maxKw = facets?.kwMax ? Math.ceil(facets.kwMax / 5) * 5 : 1000;
+  const maxPs = 1500;
+  const maxKw = 1000;
   const currentMax = powerType === "kw" ? maxKw : maxPs;
   const currentStep = powerType === "kw" ? 5 : 10;
   const currentUnit = powerType === "kw" ? "kW" : "PS";
@@ -72,10 +72,8 @@ export function TechnicalDataSection({
     if (getValues("power-to") !== nextTo) setValue("power-to", nextTo);
   }, [powerValue, currentMax, setValue, getValues]);
 
-  const cubicCapacityMax = facets?.cubicCapacityMax
-    ? Math.ceil(facets.cubicCapacityMax / 100) * 100
-    : 8000;
-  const cylindersMax = facets?.cylindersMax ?? 16;
+  const cubicCapacityMax = 8000;
+  const cylindersMax = 16;
   const capacityValue = watch("capacity");
   const cylinderValue = watch("cylinder");
 
@@ -344,7 +342,7 @@ export function TechnicalDataSection({
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="power-to"
                   inputGroupText={currentUnit}
-                  placeholder={`${currentMax}+`}
+                  placeholder={`${currentMax.toLocaleString("de-CH")}${powerValue?.[1] && powerValue[1] >= currentMax ? "+" : ""}`}
                 />
               </div>
             </CustomFormField>
@@ -385,7 +383,7 @@ export function TechnicalDataSection({
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="capacity-to"
                   inputGroupText="cm³"
-                  placeholder={`${cubicCapacityMax.toLocaleString("de-CH")}+`}
+                  placeholder={`${cubicCapacityMax.toLocaleString("de-CH")}${capacityValue?.[1] && capacityValue[1] >= cubicCapacityMax ? "+" : ""}`}
                 />
               </div>
             </CustomFormField>
@@ -424,7 +422,7 @@ export function TechnicalDataSection({
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="cylinder-to"
-                  placeholder={`${cylindersMax}+`}
+                  placeholder={`${cylindersMax}${cylinderValue?.[1] && cylinderValue[1] >= cylindersMax ? "+" : ""}`}
                 />
               </div>
             </CustomFormField>

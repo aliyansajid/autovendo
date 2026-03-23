@@ -16,6 +16,6 @@ export const contactFormSchema = z.object({
     .optional(),
   message: z
     .string()
-    .max(1000, "Nachricht darf maximal 1000 Zeichen lang sein")
+    .max(500, "Nachricht darf maximal 500 Zeichen lang sein")
     .optional(),
 });

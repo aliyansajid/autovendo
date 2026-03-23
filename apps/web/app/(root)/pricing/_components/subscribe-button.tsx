@@ -3,7 +3,6 @@
 import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/ui/src/components/button";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
@@ -23,7 +22,7 @@ export const SubscribeButton = ({
 
   const handleSubscribe = () => {
     if (!session) {
-      toast.error("Please login to choose a plan");
+      toast.error("Bitte melden Sie sich an, um ein Paket zu wählen");
       router.push(`/login?callbackUrl=/pricing`);
       return;
     }
@@ -36,7 +35,7 @@ export const SubscribeButton = ({
       });
 
       if (error) {
-        toast.error(error.message || "Something went wrong");
+        toast.error(error.message || "Etwas ist schiefgelaufen");
         return;
       }
 
@@ -53,14 +52,7 @@ export const SubscribeButton = ({
       disabled={isPending}
       onClick={handleSubscribe}
     >
-      {isPending ? (
-        <Spinner />
-      ) : (
-        <>
-          Paket wählen
-          <ArrowRight />
-        </>
-      )}
+      {isPending ? <Spinner /> : "Paket wählen"}
     </Button>
   );
 };

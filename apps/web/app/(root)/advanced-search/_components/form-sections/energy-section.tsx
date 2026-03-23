@@ -24,10 +24,8 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
   const emissionsFrom = useWatch({ control, name: "emissions-from" });
   const emissionsTo = useWatch({ control, name: "emissions-to" });
 
-  const consumptionMax = facets?.consumptionMax
-    ? Math.ceil(facets.consumptionMax * 10) / 10 + 0.1
-    : 30;
-  const co2Max = facets?.co2Max ? Math.ceil(facets.co2Max / 10) * 10 : 560;
+  const consumptionMax = 30;
+  const co2Max = 560;
 
   const consumptionValue = watch("consumption");
   const emissionsValue = watch("emissions");
@@ -129,20 +127,20 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               max={consumptionMax}
               step={0.1}
             >
-              <div className="flex gap-2">
+              <div className="flex gap-2 text-sm">
                 <CustomFormField
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="consumption-from"
                   placeholder="0"
-                  inputGroupText="1/100km"
+                  inputGroupText="l/100km"
                 />
                 <CustomFormField
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="consumption-to"
-                  placeholder={`${consumptionMax}+`}
-                  inputGroupText="1/100km"
+                  placeholder={`${consumptionMax.toLocaleString("de-CH")}${consumptionValue?.[1] && consumptionValue[1] >= consumptionMax ? "+" : ""}`}
+                  inputGroupText="l/100km"
                 />
               </div>
             </CustomFormField>
@@ -170,7 +168,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               max={co2Max}
               step={1}
             >
-              <div className="flex gap-2">
+              <div className="flex gap-2 text-sm">
                 <CustomFormField
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
@@ -182,7 +180,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="emissions-to"
-                  placeholder={`${co2Max}+`}
+                  placeholder={`${co2Max.toLocaleString("de-CH")}${emissionsValue?.[1] && emissionsValue[1] >= co2Max ? "+" : ""}`}
                   inputGroupText="g/km"
                 />
               </div>

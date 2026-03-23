@@ -14,7 +14,7 @@ const optionalImage = z
       typeof file === "string" ||
       (file instanceof File && ACCEPTED_IMAGE_TYPES.includes(file.type)),
     {
-      message: "Only PNG, JPG, JPEG, or WEBP images are allowed",
+      message: "Nur PNG, JPG, JPEG oder WEBP Bilder sind erlaubt",
     },
   )
   .optional()
@@ -23,7 +23,7 @@ const optionalImage = z
 const optionalString = z.string().optional().or(z.literal("")).nullable();
 
 const optionalUrl = z
-  .url("Please enter a valid URL")
+  .url("Bitte geben Sie eine gültige URL ein")
   .optional()
   .or(z.literal(""))
   .nullable();
@@ -32,52 +32,52 @@ export const dealerProfileSchema = z.object({
   // User fields
   name: z
     .string()
-    .min(3, "Name must be at least 3 characters")
-    .max(50, "Name must be at most 50 characters"),
-  email: z.email("Invalid email address"),
+    .min(3, "Name muss mindestens 3 Zeichen lang sein")
+    .max(50, "Name darf maximal 50 Zeichen lang sein"),
+  email: z.email("Ungültige E-Mail-Adresse"),
   image: optionalImage,
 
   // Dealer fields
   companyName: z
     .string()
-    .min(3, "Company name must be at least 3 characters")
-    .max(50, "Company name must be at most 50 characters"),
+    .min(3, "Firmenname muss mindestens 3 Zeichen lang sein")
+    .max(50, "Firmenname darf maximal 50 Zeichen lang sein"),
   description: optionalString,
   website: optionalUrl,
   logo: optionalImage,
   coverImage: optionalImage,
   streetAddress: z
     .string()
-    .min(5, "Address must be at least 5 characters")
-    .max(100, "Address must be at most 100 characters"),
+    .min(5, "Adresse muss mindestens 5 Zeichen lang sein")
+    .max(100, "Adresse darf maximal 100 Zeichen lang sein"),
   zipCode: z
     .string()
-    .min(4, "Zip code must be at least 4 characters")
-    .max(10, "Zip code must be at most 10 characters"),
+    .min(4, "Postleitzahl muss mindestens 4 Zeichen lang sein")
+    .max(10, "Postleitzahl darf maximal 10 Zeichen lang sein"),
   city: z
     .string()
-    .min(2, "City must be at least 2 characters")
-    .max(50, "City must be at most 50 characters"),
+    .min(2, "Stadt muss mindestens 2 Zeichen lang sein")
+    .max(50, "Stadt darf maximal 50 Zeichen lang sein"),
   country: z.literal("Switzerland"),
   uidNumber: z
     .string()
-    .min(1, "UID is required")
+    .min(1, "UID ist erforderlich")
     .regex(
       /^CHE[\s-]?\d{3}[\s.]?\d{3}[\s.]?\d{3}(?:\s?(MWST|TVA|IVA))?$/i,
-      "Invalid UID format (e.g. CHE-123.456.789 MWST)",
+      "Ungültiges UID-Format (z.B. CHE-123.456.789 MWST)",
     ),
   contactPerson: z
     .string()
-    .min(3, "Contact person must be at least 3 characters")
-    .max(50, "Contact person must be at most 50 characters"),
+    .min(3, "Kontaktperson muss mindestens 3 Zeichen lang sein")
+    .max(50, "Kontaktperson darf maximal 50 Zeichen lang sein"),
   phoneNumber: z
     .string()
-    .min(1, "Phone number is required")
+    .min(1, "Telefonnummer ist erforderlich")
     .regex(
       /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/,
-      "Invalid Swiss phone number format",
+      "Ungültiges Schweizer Telefonnummer-Format",
     ),
-  businessEmail: z.email("Invalid business email address"),
+  businessEmail: z.email("Ungültige geschäftliche E-Mail-Adresse"),
 
   // Opening Hours
   openingHours: z.array(

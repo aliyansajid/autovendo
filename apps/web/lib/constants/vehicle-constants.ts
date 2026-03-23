@@ -193,7 +193,7 @@ export const COLOR_OPTIONS = [
   { value: "yellow", label: "Gelb", hex: "#FFFF00" },
   {
     value: "other",
-    label: "Other",
+    label: "Andere",
     gradient:
       "repeating-linear-gradient(45deg, #ccc, #ccc 10px, #eee 10px, #eee 20px)",
   },

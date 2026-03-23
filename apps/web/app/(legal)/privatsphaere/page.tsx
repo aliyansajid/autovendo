@@ -1,7 +1,7 @@
 import { Separator } from "@repo/ui/src/components/separator";
 import { Button } from "@repo/ui/src/components/button";
 import Link from "next/link";
-import { CheckCircle2, Info } from "lucide-react";
+import { ArrowRight, CheckCircle2, Info } from "lucide-react";
 import { Badge } from "@repo/ui/src/components/badge";
 
 export default function PrivatsphaereEinstellungenPage() {
@@ -174,7 +174,10 @@ export default function PrivatsphaereEinstellungenPage() {
               findest du in unserer Datenschutzerklärung.
             </p>
             <Button asChild>
-              <Link href="datenschutz">Zur Datenschutzerklärung</Link>
+              <Link href="datenschutz">
+                Zur Datenschutzerklärung
+                <ArrowRight />
+              </Link>
             </Button>
           </section>
         </div>

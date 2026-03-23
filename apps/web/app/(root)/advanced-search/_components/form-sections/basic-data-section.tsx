@@ -32,14 +32,10 @@ export function BasicDataSection({
 }) {
   const { control, watch, setValue, getValues } = useFormContext();
 
-  const yearMin = facets?.yearMin ?? 1900;
-  const yearMax = facets?.yearMax ?? CURRENT_YEAR;
-  const kmMax = facets?.kilometerMax
-    ? Math.ceil(facets.kilometerMax / 1000) * 1000
-    : 400000;
-  const priceMax = facets?.priceMax
-    ? Math.ceil(facets.priceMax / 10000) * 10000
-    : 1000000;
+  const yearMin = 1900;
+  const yearMax = 2026;
+  const kmMax = 400000;
+  const priceMax = 1000000;
 
   const yearValue = watch("year");
   const kilometerValue = watch("kilometer");
@@ -230,7 +226,7 @@ export function BasicDataSection({
               max={yearMax}
               step={1}
             >
-              <div className="flex gap-2">
+              <div className="flex gap-2 text-sm">
                 <CustomFormField
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
@@ -298,7 +294,7 @@ export function BasicDataSection({
               max={kmMax}
               step={1000}
             >
-              <div className="flex gap-2">
+              <div className="flex gap-2 text-sm">
                 <CustomFormField
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
@@ -310,7 +306,7 @@ export function BasicDataSection({
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="kilometer-to"
-                  placeholder={`${kmMax.toLocaleString("de-CH")}+`}
+                  placeholder={`${kmMax.toLocaleString("de-CH")}${kilometerRange?.[1] && kilometerRange[1] >= kmMax ? "+" : ""}`}
                   inputGroupText="km"
                 />
               </div>
@@ -381,7 +377,7 @@ export function BasicDataSection({
                   control={control}
                   fieldType={FormFieldType.INPUT_GROUP}
                   name="price-to"
-                  placeholder={`${priceMax.toLocaleString("de-CH")}+`}
+                  placeholder={`${priceMax.toLocaleString("de-CH")}${priceRange?.[1] && priceRange[1] >= priceMax ? "+" : ""}`}
                   inputGroupText="CHF"
                 />
               </div>

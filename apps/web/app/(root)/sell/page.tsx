@@ -13,14 +13,13 @@ import {
   BarChart3,
   Users,
   type LucideIcon,
-  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 
 export default function SellPage() {
   return (
     <>
-      <section className="relative w-full bg-[url('https://images.pexels.com/photos/7144172/pexels-photo-7144172.jpeg')] bg-cover bg-position-[80%_20%]">
+      <section className="relative w-full bg-[url('/sell-bg.jpeg')] bg-cover bg-position-[80%_20%]">
         <div className="absolute inset-0 bg-black/40" />
 
         <div className="relative z-10 max-w-285 mx-auto px-4 py-12 sm:py-16">
@@ -35,7 +34,7 @@ export default function SellPage() {
 
           <div className="flex flex-col sm:flex-row gap-3">
             <Button asChild>
-              <Link href="/vehicle-form">Jetzt inserieren</Link>
+              <Link href="/dashboard/vehicles/new">Jetzt inserieren</Link>
             </Button>
             <Button variant="secondary" asChild>
               <Link href="/pricing">Händlerlösungen anzeigen</Link>
@@ -81,16 +80,12 @@ export default function SellPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button asChild>
-                <Link href="/vehicle-form">
+                <Link href="/dashboard/vehicles/new">
                   Erstellen Sie Ihr erstes Inserat
-                  <ArrowRight />
                 </Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link href="/pricing">
-                  So funktioniert&apos;s
-                  <ArrowRight />
-                </Link>
+                <Link href="/pricing">So funktioniert&apos;s</Link>
               </Button>
             </div>
           </CardContent>
@@ -277,16 +272,10 @@ export default function SellPage() {
           </p>
           <div className="flex gap-3">
             <Button asChild>
-              <Link href="/vehicle-form">
-                Jetzt starten
-                <ArrowRight />
-              </Link>
+              <Link href="/dashboard/vehicles/new">Jetzt starten</Link>
             </Button>
             <Button variant="secondary" asChild>
-              <Link href="/contact">
-                Verkaufsteam kontaktieren
-                <ArrowRight />
-              </Link>
+              <Link href="/contact">Verkaufsteam kontaktieren</Link>
             </Button>
           </div>
         </div>

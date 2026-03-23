@@ -286,7 +286,10 @@ export default function AGBPage() {
             <p className="text-muted-foreground text-lg">
               Bei Fragen zu diesen AGB oder zur Plattform kannst du uns
               jederzeit&nbsp;
-              <Link href="contact" className="text-primary hover:underline">
+              <Link
+                href="contact"
+                className="text-primary underline-offset-4 hover:underline"
+              >
                 kontaktieren
               </Link>
               .

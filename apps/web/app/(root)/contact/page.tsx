@@ -44,7 +44,10 @@ export default function ContactPage() {
 
       result.ok
         ? toast.success(result.message ?? "Nachricht erfolgreich gesendet.")
-        : toast.error(result.error ?? "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+        : toast.error(
+            result.error ??
+              "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+          );
       form.reset();
     });
   }

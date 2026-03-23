@@ -2,7 +2,7 @@ export const pricingTiers = [
   {
     name: "Bronze",
     price: "180.–",
-    period: "/ monat",
+    period: "/ Monat",
     description: "Ideal für kleinere Bestände.",
     features: [
       { name: "Bis zu 5 Fahrzeuge", included: true },
@@ -17,7 +17,7 @@ export const pricingTiers = [
   {
     name: "Silver",
     price: "280.–",
-    period: "/ monat",
+    period: "/ Monat",
     description: "Perfekt für wachsende Händler.",
     features: [
       { name: "Bis zu 10 Fahrzeuge", included: true },
@@ -32,7 +32,7 @@ export const pricingTiers = [
   {
     name: "Gold",
     price: "325.–",
-    period: "/ monat",
+    period: "/ Monat",
     description: "Für etablierte Händler.",
     features: [
       { name: "Bis zu 15 Fahrzeuge", included: true },
@@ -47,7 +47,7 @@ export const pricingTiers = [
   {
     name: "Diamond",
     price: "408.–",
-    period: "/ monat",
+    period: "/ Monat",
     description: "Für Händler mit höherem Volumen.",
     features: [
       { name: "Bis zu 25 Fahrzeuge", included: true },
