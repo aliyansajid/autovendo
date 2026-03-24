@@ -173,7 +173,7 @@ export const SearchForm = () => {
 
             <div className="flex justify-center md:justify-end">
               <Button variant="link" asChild>
-                <Link href="advanced-search">
+                <Link href="/advanced-search">
                   <Settings2 />
                   {t("advancedSearch")}
                 </Link>
