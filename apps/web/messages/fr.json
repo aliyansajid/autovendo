@@ -598,7 +598,109 @@
     "subtitle": "Trouvez des réponses rapides aux questions les plus importantes sur Autovendo.ch.",
     "noQuestion": "Votre question n'était pas là ?",
     "supportText": "Notre équipe d'assistance se fera un plaisir de vous aider. Contactez-nous à tout moment !",
-    "contactButton": "Nous contacter"
+    "contactButton": "Nous contacter",
+    "categories": [
+      {
+        "category": "Général",
+        "items": [
+          {
+            "question": "Qu'est-ce qu'Autovendo.ch ?",
+            "answer": "Autovendo.ch est une plateforme de vente en ligne spécialisée pour tous les concessionnaires automobiles en Suisse. Les concessionnaires peuvent facilement publier leurs véhicules et atteindre directement des acheteurs potentiels."
+          },
+          {
+            "question": "Qui peut utiliser Autovendo.ch ?",
+            "answer": "Autovendo.ch s'adresse exclusivement aux concessionnaires automobiles professionnels et aux garages. Les vendeurs privés ne sont pas autorisés sur cette plateforme."
+          },
+          {
+            "question": "Dans quelles régions Autovendo.ch est-il disponible ?",
+            "answer": "Autovendo.ch est axé sur le marché suisse. Les véhicules annoncés doivent se trouver en Suisse ou dans la Principauté de Liechtenstein."
+          },
+          {
+            "question": "Autovendo.ch convient-il également aux petits concessionnaires ?",
+            "answer": "Oui. Autovendo.ch est délibérément conçu pour que tous les concessionnaires – quels que soient leur taille ou leur emplacement – bénéficient des mêmes chances équitables."
+          },
+          {
+            "question": "En quoi Autovendo.ch diffère-t-il des autres plateformes ?",
+            "answer": "Nous misons sur des prix équitables, des processus simples et un support personnel au lieu de forfaits compliqués, de hotlines anonymes ou d'engagements à long terme."
+          }
+        ]
+      },
+      {
+        "category": "Annonces & Véhicules",
+        "items": [
+          {
+            "question": "Quels véhicules peuvent être annoncés ?",
+            "answer": "Seuls les véhicules en état de marche, correctement décrits et conformes aux réglementations légales en vigueur peuvent être annoncés."
+          },
+          {
+            "question": "Plusieurs véhicules peuvent-ils être annoncés simultanément ?",
+            "answer": "Oui. Les concessionnaires peuvent publier plusieurs véhicules en même temps – selon le forfait choisi."
+          },
+          {
+            "question": "Combien de temps une annonce reste-t-elle en ligne ?",
+            "answer": "La durée dépend du forfait réservé. Vous trouverez des détails à ce sujet dans la description du forfait respectif."
+          },
+          {
+            "question": "Puis-je modifier mon annonce ultérieurement ?",
+            "answer": "Oui. Les annonces peuvent être mises à jour, adaptées ou désactivées à tout moment."
+          },
+          {
+            "question": "Les annonces sont-elles vérifiées ?",
+            "answer": "Oui. Pour l'assurance qualité, nous nous réservons le droit de vérifier les annonces de manière aléatoire ou de poser des questions en cas d'incertitude."
+          }
+        ]
+      },
+      {
+        "category": "Coûts & Forfaits",
+        "items": [
+          {
+            "question": "Combien coûte l'utilisation d'Autovendo.ch ?",
+            "answer": "Autovendo.ch propose des prix clairs, transparents et compétitifs – sans frais cachés."
+          },
+          {
+            "question": "Y a-t-il des engagements contractuels à long terme ?",
+            "answer": "Non. Nos forfaits sont flexibles et peuvent être adaptés ou résiliés selon les besoins."
+          },
+          {
+            "question": "Y a-t-il des frais supplémentaires par véhicule vendu ?",
+            "answer": "Non. Autovendo.ch ne prélève aucune commission de vente."
+          },
+          {
+            "question": "Des modifications de prix sont-elles possibles ?",
+            "answer": "Oui. Les concessionnaires peuvent changer de forfait à tout moment si leurs besoins évoluent."
+          },
+          {
+            "question": "Vais-je recevoir une facture ?",
+            "answer": "Oui. Tous les paiements sont correctement documentés et facturés de manière transparente."
+          }
+        ]
+      },
+      {
+        "category": "Support & Sécurité",
+        "items": [
+          {
+            "question": "Comment puis-je joindre le support d'Autovendo.ch ?",
+            "answer": "Vous pouvez nous joindre directement et personnellement par téléphone ou par e-mail – sans boucles d'attente ni systèmes de tickets anonymes."
+          },
+          {
+            "question": "Comment Autovendo.ch protège-t-il contre la fraude ?",
+            "answer": "Nous misons sur des mesures de protection technique, des règles d'insertion claires et informons activement sur les pratiques d'achat et de vente sûres."
+          },
+          {
+            "question": "Que dois-je faire si je découvre une annonce suspecte ?",
+            "answer": "Veuillez nous signaler l'annonce immédiatement. Nous examinerons le cas rapidement et avec soin."
+          },
+          {
+            "question": "Mes données sont-elles en sécurité ?",
+            "answer": "Oui. La protection de vos données est notre priorité absolue. Toutes les données sont traitées conformément aux réglementations applicables en matière de protection des données."
+          },
+          {
+            "question": "Existe-t-il des fonctions de sécurité supplémentaires pour les concessionnaires ?",
+            "answer": "Oui. Pour les concessionnaires, nous recommandons notamment de fournir un numéro de téléphone mobile pour une sécurité accrue du compte."
+          }
+        ]
+      }
+    ]
   },
   "ContactPage": {
     "title": "Contact",
@@ -694,7 +796,69 @@
       "suffix": "C'est de la marge directe. Sans risque.",
       "switchText": "Passez maintenant à autovendo.ch et économisez plusieurs milliers de francs par an – avec un service personnalisé et des conditions équitables.",
       "contactButton": "Prendre contact sans engagement"
-    }
+    },
+    "tiers": [
+      {
+        "name": "Bronze",
+        "price": "180.–",
+        "period": "/ mois",
+        "description": "Idéal pour les petits stocks.",
+        "features": [
+          { "name": "Jusqu'à 5 véhicules", "included": true },
+          { "name": "Visibilité totale", "included": true },
+          { "name": "Support personnel", "included": true },
+          { "name": "Pas de frais cachés", "included": true },
+          { "name": "Durée flexible", "included": true }
+        ],
+        "buttonText": "Choisir le forfait",
+        "popular": false
+      },
+      {
+        "name": "Silver",
+        "price": "280.–",
+        "period": "/ mois",
+        "description": "Parfait pour les concessionnaires en croissance.",
+        "features": [
+          { "name": "Jusqu'à 10 véhicules", "included": true },
+          { "name": "Visibilité totale", "included": true },
+          { "name": "Support personnel", "included": true },
+          { "name": "Pas de frais cachés", "included": true },
+          { "name": "Durée flexible", "included": true }
+        ],
+        "buttonText": "Choisir le forfait",
+        "popular": false
+      },
+      {
+        "name": "Gold",
+        "price": "325.–",
+        "period": "/ mois",
+        "description": "Pour les concessionnaires établis.",
+        "features": [
+          { "name": "Jusqu'à 15 véhicules", "included": true },
+          { "name": "Visibilité totale", "included": true },
+          { "name": "Support personnel", "included": true },
+          { "name": "Pas de frais cachés", "included": true },
+          { "name": "Durée flexible", "included": true }
+        ],
+        "buttonText": "Choisir le forfait",
+        "popular": true
+      },
+      {
+        "name": "Diamond",
+        "price": "408.–",
+        "period": "/ mois",
+        "description": "Pour les concessionnaires à volume plus élevé.",
+        "features": [
+          { "name": "Jusqu'à 25 véhicules", "included": true },
+          { "name": "Visibilité totale", "included": true },
+          { "name": "Support personnel", "included": true },
+          { "name": "Pas de frais cachés", "included": true },
+          { "name": "Durée flexible", "included": true }
+        ],
+        "buttonText": "Choisir le forfait",
+        "popular": false
+      }
+    ]
   },
   "SubscribeButton": {
     "loginRequired": "Veuillez vous connecter pour choisir un forfait",

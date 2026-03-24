@@ -1,4 +1,3 @@
-import { faqData } from "@/constants/faq-data";
 import {
   Accordion,
   AccordionContent,
@@ -10,8 +9,19 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface FaqCategory {
+  category: string;
+  items: FaqItem[];
+}
+
 export default async function FaqPage() {
   const t = await getTranslations("FaqPage");
+  const categories = t.raw("categories") as FaqCategory[];
 
   return (
     <>
@@ -28,7 +38,7 @@ export default async function FaqPage() {
 
       <div className="w-full max-w-4xl mx-auto px-4 py-12">
         <div className="space-y-12">
-          {faqData.map((categoryGroup, index) => (
+          {categories.map((categoryGroup, index) => (
             <div key={index} className="space-y-6">
               <h2 className="text-2xl font-bold">{categoryGroup.category}</h2>
               <Accordion type="single" collapsible className="w-full">
@@ -37,10 +47,10 @@ export default async function FaqPage() {
                     key={faqIndex}
                     value={`item-${index}-${faqIndex}`}
                   >
-                    <AccordionTrigger className="flex items-center text-base lg:text-lg font-semibold hover:no-underline hover:text-primary transition-colors">
+                    <AccordionTrigger className="flex items-center text-base lg:text-lg font-semibold hover:no-underline hover:text-primary transition-colors text-left">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-base text-muted-foreground leading-relaxed">
+                    <AccordionContent className="text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -54,7 +64,7 @@ export default async function FaqPage() {
           <h3 className="text-xl font-bold">{t("noQuestion")}</h3>
           <p className="text-muted-foreground">{t("supportText")}</p>
           <Button asChild>
-            <Link href="contact">
+            <Link href="/contact">
               {t("contactButton")}
               <ArrowRight />
             </Link>

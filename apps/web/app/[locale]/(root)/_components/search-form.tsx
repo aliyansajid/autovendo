@@ -29,7 +29,7 @@ import { prices } from "@/constants";
 import { useTranslations } from "next-intl";
 
 const createFormSchema = (t: any) => z.object({
-  query: z.string().min(3, t("validation.queryMinLength")),
+  query: z.string().optional(),
   make: z.string().optional(),
   model: z.string().optional(),
   price: z.string().optional(),

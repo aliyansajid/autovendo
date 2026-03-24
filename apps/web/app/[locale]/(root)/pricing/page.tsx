@@ -10,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/src/components/table";
-import { pricingTiers } from "@/constants/pricing-tiers";
 import { Badge } from "@repo/ui/src/components/badge";
 import {
   Card,
@@ -24,8 +23,24 @@ import { XCircle } from "lucide-react";
 import { SubscribeButton } from "./_components/subscribe-button";
 import { getTranslations } from "next-intl/server";
 
+interface PricingFeature {
+  name: string;
+  included: boolean;
+}
+
+interface PricingTier {
+  name: string;
+  price: string;
+  period?: string;
+  description: string;
+  features: PricingFeature[];
+  buttonText: string;
+  popular: boolean;
+}
+
 export default async function PricingPage() {
   const t = await getTranslations("PricingPage");
+  const tiers = t.raw("tiers") as PricingTier[];
 
   return (
     <>
@@ -213,12 +228,14 @@ export default async function PricingPage() {
             </div>
 
             <p className="font-semibold text-foreground text-lg text-center leading-relaxed">
-              {t("partnershipText").split("\n").map((line, i) => (
-                <span key={i}>
-                  {line}
-                  {i === 0 && <br />}
-                </span>
-              ))}
+              {t("partnershipText")
+                .split("\n")
+                .map((line: string, i: number) => (
+                  <span key={i}>
+                    {line}
+                    {i === 0 && <br />}
+                  </span>
+                ))}
             </p>
           </div>
         </div>
@@ -228,7 +245,7 @@ export default async function PricingPage() {
         <section className="space-y-12">
           <h2 className="text-2xl font-bold text-center">{t("choosePlan")}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {pricingTiers.map((tier) => (
+            {tiers.map((tier: PricingTier) => (
               <Card
                 key={tier.name}
                 className={`${tier.popular ? "border-primary" : ""}`}
@@ -260,7 +277,7 @@ export default async function PricingPage() {
                     )}
                   </div>
                   <div className="space-y-4">
-                    {tier.features.map((feature) => (
+                    {tier.features.map((feature: PricingFeature) => (
                       <div
                         key={feature.name}
                         className="flex items-start gap-3"

@@ -598,7 +598,109 @@
     "subtitle": "Trova risposte rapide alle domande più importanti su Autovendo.ch.",
     "noQuestion": "Non ha trovato la sua domanda?",
     "supportText": "Il nostro team di assistenza è felice di aiutarla. Ci contatti in qualsiasi momento!",
-    "contactButton": "Contattaci"
+    "contactButton": "Contattaci",
+    "categories": [
+      {
+        "category": "Generale",
+        "items": [
+          {
+            "question": "Cos'è Autovendo.ch?",
+            "answer": "Autovendo.ch è una piattaforma di vendita online specializzata per tutti i rivenditori di auto in Svizzera. I rivenditori possono facilmente inserire i loro veicoli e raggiungere direttamente i potenziali acquirenti."
+          },
+          {
+            "question": "Chi può usare Autovendo.ch?",
+            "answer": "Autovendo.ch si rivolge esclusivamente ai rivenditori di auto commerciali e ai garage. I venditori privati non sono ammessi su questa piattaforma."
+          },
+          {
+            "question": "In quali regioni è disponibile Autovendo.ch?",
+            "answer": "Autovendo.ch si concentra sul mercato svizzero. I veicoli inseriti devono trovarsi in Svizzera o nel Principato del Liechtenstein."
+          },
+          {
+            "question": "Autovendo.ch è adatto anche ai piccoli rivenditori?",
+            "answer": "Sì. Autovendo.ch è deliberatamente progettato in modo che tutti i rivenditori – indipendentemente dalle dimensioni o dalla posizione – ricevano le stesse eque opportunità."
+          },
+          {
+            "question": "In cosa si differenzia Autovendo.ch dalle altre piattaforme?",
+            "answer": "Puntiamo su prezzi equi, processi semplici e supporto personale invece di pacchetti complicati, hotline anonime o impegni a lungo termine."
+          }
+        ]
+      },
+      {
+        "category": "Annunci & Veicoli",
+        "items": [
+          {
+            "question": "Quali veicoli possono essere inseriti?",
+            "answer": "Possono essere inseriti solo veicoli idonei alla circolazione, descritti correttamente e conformi alle normative legali vigenti."
+          },
+          {
+            "question": "Si possono inserire più veicoli contemporaneamente?",
+            "answer": "Sì. I rivenditori possono pubblicare più veicoli allo stesso tempo – a seconda del pacchetto scelto."
+          },
+          {
+            "question": "Quanto tempo rimane online un annuncio?",
+            "answer": "La durata dipende dal pacchetto prenotato. I dettagli si trovano nella descrizione del rispettivo pacchetto."
+          },
+          {
+            "question": "Posso modificare il mio annuncio in un secondo momento?",
+            "answer": "Sì. Gli annunci possono essere aggiornati, adattati o disattivati in qualsiasi momento."
+          },
+          {
+            "question": "Gli annunci vengono controllati?",
+            "answer": "Sì. Per la garanzia della qualità, ci riserviamo il diritto di controllare gli annunci a campione o di porre domande in caso di incertezze."
+          }
+        ]
+      },
+      {
+        "category": "Costi & Pacchetti",
+        "items": [
+          {
+            "question": "Quanto costa usare Autovendo.ch?",
+            "answer": "Autovendo.ch offre prezzi chiari, trasparenti e competitivi – senza costi nascosti."
+          },
+          {
+            "question": "Ci sono impegni contrattuali a lungo termine?",
+            "answer": "No. I nostri pacchetti sono flessibili e possono essere adattati o disdetti secondo le necessità."
+          },
+          {
+            "question": "Ci sono commissioni aggiuntive per ogni veicolo venduto?",
+            "answer": "No. Autovendo.ch non applica commissioni di vendita."
+          },
+          {
+            "question": "Sono possibili variazioni di prezzo?",
+            "answer": "Sì. I rivenditori possono cambiare il loro pacchetto in qualsiasi momento se le loro esigenze cambiano."
+          },
+          {
+            "question": "Riceverò una fattura?",
+            "answer": "Sì. Tutti i pagamenti sono correttamente documentati e fatturati in modo trasparente."
+          }
+        ]
+      },
+      {
+        "category": "Supporto & Sicurezza",
+        "items": [
+          {
+            "question": "Come posso raggiungere il supporto di Autovendo.ch?",
+            "answer": "Puoi raggiungerci direttamente e personalmente per telefono o e-mail – senza attese o sistemi di ticket anonimi."
+          },
+          {
+            "question": "In che modo Autovendo.ch protegge dalle frodi?",
+            "answer": "Puntiamo su misure di protezione tecnica, regole di inserimento chiare e informiamo attivamente sulle pratiche di acquisto e vendita sicure."
+          },
+          {
+            "question": "Cosa devo fare se scopro un annuncio sospetto?",
+            "answer": "Ti preghiamo di segnalarci immediatamente l'annuncio. Esamineremo il caso rapidamente e con cura."
+          },
+          {
+            "question": "I miei dati sono al sicuro?",
+            "answer": "Sì. La protezione dei tuoi dati è la nostra massima priorità. Tutti i dati vengono elaborati in conformità con le normative sulla protezione dei dati vigenti."
+          },
+          {
+            "question": "Esistono funzioni di sicurezza aggiuntive per i rivenditori?",
+            "answer": "Sì. Per i rivenditori raccomandiamo, tra l'altro, di fornire un numero di cellulare per una maggiore sicurezza dell'account."
+          }
+        ]
+      }
+    ]
   },
   "ContactPage": {
     "title": "Contatto",

@@ -37,12 +37,12 @@
     "links": {
       "about": "About Us",
       "rules": "Insertion Rules",
-      "pricing": "Prices",
+      "pricing": "Pricing",
       "contact": "Contact",
       "faq": "FAQ",
       "safety": "Safety Instructions",
-      "privacy": "Privacy",
-      "terms": "GTC",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
       "privacySettings": "Privacy Settings",
       "imprint": "Imprint"
     },
@@ -598,7 +598,109 @@
     "subtitle": "Find quick answers to the most important questions about Autovendo.ch.",
     "noQuestion": "Didn't find your question?",
     "supportText": "Our support team is happy to help. Contact us at any time!",
-    "contactButton": "Contact us"
+    "contactButton": "Contact us",
+    "categories": [
+      {
+        "category": "General",
+        "items": [
+          {
+            "question": "What is Autovendo.ch?",
+            "answer": "Autovendo.ch is a specialized online sales platform for all car dealers in Switzerland. Dealers can easily list their vehicles and reach potential buyers directly."
+          },
+          {
+            "question": "Who can use Autovendo.ch?",
+            "answer": "Autovendo.ch is aimed exclusively at commercial car dealers and garages. Private sellers are not permitted on this platform."
+          },
+          {
+            "question": "In which regions is Autovendo.ch available?",
+            "answer": "Autovendo.ch is focused on the Swiss market. Listed vehicles must be located in Switzerland or the Principality of Liechtenstein."
+          },
+          {
+            "question": "Is Autovendo.ch also suitable for small dealers?",
+            "answer": "Yes. Autovendo.ch is deliberately designed so that all dealers – regardless of size or location – receive the same fair opportunities."
+          },
+          {
+            "question": "How does Autovendo.ch differ from other platforms?",
+            "answer": "We focus on fair prices, simple processes and personal support instead of complicated packages, anonymous hotlines or long-term commitments."
+          }
+        ]
+      },
+      {
+        "category": "Listings & Vehicles",
+        "items": [
+          {
+            "question": "Which vehicles may be listed?",
+            "answer": "Only roadworthy, correctly described vehicles that comply with applicable legal regulations may be listed."
+          },
+          {
+            "question": "Can several vehicles be listed at the same time?",
+            "answer": "Yes. Dealers can publish several vehicles at the same time – depending on the chosen package."
+          },
+          {
+            "question": "How long does a listing stay online?",
+            "answer": "The duration depends on the booked package. Details can be found in the respective package description."
+          },
+          {
+            "question": "Can I edit my listing afterwards?",
+            "answer": "Yes. Listings can be updated, adjusted or deactivated at any time."
+          },
+          {
+            "question": "Are listings checked?",
+            "answer": "Yes. For quality assurance, we reserve the right to check listings randomly or ask questions if anything is unclear."
+          }
+        ]
+      },
+      {
+        "category": "Costs & Packages",
+        "items": [
+          {
+            "question": "How much does it cost to use Autovendo.ch?",
+            "answer": "Autovendo.ch offers clear, transparent and competitive prices – with no hidden fees."
+          },
+          {
+            "question": "Are there long-term contract commitments?",
+            "answer": "No. Our packages are flexible and can be adjusted or terminated as needed."
+          },
+          {
+            "question": "Are there additional fees per vehicle sold?",
+            "answer": "No. Autovendo.ch does not charge sales commissions."
+          },
+          {
+            "question": "Are price changes possible?",
+            "answer": "Yes. Dealers can change their package at any time if their needs change."
+          },
+          {
+            "question": "Will I receive an invoice?",
+            "answer": "Yes. All payments are correctly documented and transparently billed."
+          }
+        ]
+      },
+      {
+        "category": "Support & Security",
+        "items": [
+          {
+            "question": "How can I reach Autovendo.ch support?",
+            "answer": "You can reach us directly and personally by phone or email – without waiting loops or anonymous ticket systems."
+          },
+          {
+            "question": "How does Autovendo.ch protect against fraud?",
+            "answer": "We rely on technical protective measures, clear insertion rules and actively inform about safe buying and selling practices."
+          },
+          {
+            "question": "What should I do if I discover a suspicious listing?",
+            "answer": "Please report the listing to us immediately. We will investigate the case quickly and carefully."
+          },
+          {
+            "question": "Is my data safe?",
+            "answer": "Yes. Protecting your data is our top priority. All data is processed in accordance with applicable data protection regulations."
+          },
+          {
+            "question": "Are there additional security features for dealers?",
+            "answer": "Yes. For dealers, we recommend, among other things, providing a mobile number for additional account security."
+          }
+        ]
+      }
+    ]
   },
   "ContactPage": {
     "title": "Contact",
@@ -693,8 +795,70 @@
       "highlight": "over CHF 3,000 per year.",
       "suffix": "That is direct margin. Without risk.",
       "switchText": "Switch to autovendo.ch now and save several thousand francs per year – with personal service and fair conditions.",
-      "contactButton": "Get in touch with no obligation"
-    }
+      "contactButton": "Get in touch"
+    },
+    "tiers": [
+      {
+        "name": "Bronze",
+        "price": "180.–",
+        "period": "/ month",
+        "description": "Ideal for smaller inventories.",
+        "features": [
+          { "name": "Up to 5 vehicles", "included": true },
+          { "name": "Full visibility", "included": true },
+          { "name": "Personal support", "included": true },
+          { "name": "No hidden costs", "included": true },
+          { "name": "Flexible duration", "included": true }
+        ],
+        "buttonText": "Choose plan",
+        "popular": false
+      },
+      {
+        "name": "Silver",
+        "price": "280.–",
+        "period": "/ month",
+        "description": "Perfect for growing dealers.",
+        "features": [
+          { "name": "Up to 10 vehicles", "included": true },
+          { "name": "Full visibility", "included": true },
+          { "name": "Personal support", "included": true },
+          { "name": "No hidden costs", "included": true },
+          { "name": "Flexible duration", "included": true }
+        ],
+        "buttonText": "Choose plan",
+        "popular": false
+      },
+      {
+        "name": "Gold",
+        "price": "325.–",
+        "period": "/ month",
+        "description": "For established dealers.",
+        "features": [
+          { "name": "Up to 15 vehicles", "included": true },
+          { "name": "Full visibility", "included": true },
+          { "name": "Personal support", "included": true },
+          { "name": "No hidden costs", "included": true },
+          { "name": "Flexible duration", "included": true }
+        ],
+        "buttonText": "Choose plan",
+        "popular": true
+      },
+      {
+        "name": "Diamond",
+        "price": "408.–",
+        "period": "/ month",
+        "description": "For dealers with higher volume.",
+        "features": [
+          { "name": "Up to 25 vehicles", "included": true },
+          { "name": "Full visibility", "included": true },
+          { "name": "Personal support", "included": true },
+          { "name": "No hidden costs", "included": true },
+          { "name": "Flexible duration", "included": true }
+        ],
+        "buttonText": "Choose plan",
+        "popular": false
+      }
+    ]
   },
   "SubscribeButton": {
     "loginRequired": "Please log in to choose a package",
