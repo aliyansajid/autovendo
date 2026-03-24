@@ -35,7 +35,7 @@ export default async function CarsPage(props: {
 }) {
   const { locale } = await props.params;
   const searchParams = await props.searchParams;
-  const t = await getTranslations({ locale, namespace: "CarsPage" });
+  const t = await getTranslations({ locale, namespace: "AdvancedSearch.CarsPage" });
 
   // Get data from server action (cached)
   const { vehicles, total, totalPages, facets } =

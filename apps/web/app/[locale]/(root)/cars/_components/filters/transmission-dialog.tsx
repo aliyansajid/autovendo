@@ -30,8 +30,8 @@ export function TransmissionDialog({
 }: {
   counts?: Record<string, number>;
 }) {
-  const t = useTranslations("FiltersSidebar.dialogs.transmission");
-  const tCommon = useTranslations("FiltersSidebar.dialogs");
+  const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.transmission");
+  const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const tVehicle = useTranslations("Vehicle.transmissionTypes");
   const locale = useLocale();
 

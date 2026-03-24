@@ -30,8 +30,8 @@ export function FuelTypeDialog({
 }: {
   counts?: Record<string, number>;
 }) {
-  const t = useTranslations("FiltersSidebar.dialogs.fuel");
-  const tCommon = useTranslations("FiltersSidebar.dialogs");
+  const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.fuel");
+  const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const tVehicle = useTranslations("Vehicle.fuelTypes");
   const locale = useLocale();
   

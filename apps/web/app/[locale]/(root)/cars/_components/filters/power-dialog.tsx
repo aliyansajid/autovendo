@@ -28,9 +28,9 @@ const formSchema = z.object({
 });
 
 export function PowerDialog() {
-  const t = useTranslations("FiltersSidebar.dialogs.power");
-  const tCommon = useTranslations("FiltersSidebar.dialogs");
-  const tForm = useTranslations("FiltersSidebar");
+  const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.power");
+  const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
+  const tForm = useTranslations("AdvancedSearch.FiltersSidebar");
 
   const router = useRouter();
   const searchParams = useSearchParams();

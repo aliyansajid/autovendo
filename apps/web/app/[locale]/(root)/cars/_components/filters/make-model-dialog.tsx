@@ -75,8 +75,8 @@ export function MakeModelDialog({
   controlledOpen?: boolean;
   controlledOnOpenChange?: (open: boolean) => void;
 }) {
-  const t = useTranslations("FiltersSidebar.dialogs.makeModel");
-  const tCommon = useTranslations("FiltersSidebar.dialogs");
+  const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.makeModel");
+  const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const locale = useLocale();
 
   const isControlled = onChange !== undefined;

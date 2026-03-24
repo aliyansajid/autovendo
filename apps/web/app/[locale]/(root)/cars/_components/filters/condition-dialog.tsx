@@ -28,8 +28,8 @@ const formSchema = z.object({
 
 export function ConditionDialog({ resultCount }: { resultCount?: number }) {
   void resultCount;
-  const t = useTranslations("FiltersSidebar.dialogs.condition");
-  const tCommon = useTranslations("FiltersSidebar.dialogs");
+  const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.condition");
+  const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const tVehicle = useTranslations("Vehicle.conditions");
   
   const router = useRouter();

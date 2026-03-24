@@ -29,8 +29,8 @@ export function VehicleTypeDialog({
 }: {
   counts?: Record<string, number>;
 }) {
-  const t = useTranslations("FiltersSidebar.dialogs.vehicleType");
-  const tCommon = useTranslations("FiltersSidebar.dialogs");
+  const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.vehicleType");
+  const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const tVehicle = useTranslations("Vehicle");
   const locale = useLocale();
 

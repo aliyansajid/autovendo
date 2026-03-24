@@ -31,9 +31,9 @@ const formSchema = z.object({
 });
 
 export function EvDialog() {
-  const t = useTranslations("FiltersSidebar.dialogs.ev");
-  const tCommon = useTranslations("FiltersSidebar.dialogs");
-  const tSidebar = useTranslations("FiltersSidebar");
+  const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.ev");
+  const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
+  const tSidebar = useTranslations("AdvancedSearch.FiltersSidebar");
   const locale = useLocale();
 
   const router = useRouter();
