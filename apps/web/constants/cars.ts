@@ -410,51 +410,51 @@ export const carModels: Record<string, { value: string; label: string }[]> = {
 export const popularCarMakes = [
   {
     name: "Mercedes-Benz",
-    logo: "/mercedes-benz.png",
+    logo: "/brand-logos/mercedes-benz.png",
   },
   {
     name: "BMW",
-    logo: "/bmw.png",
+    logo: "/brand-logos/bmw.png",
   },
   {
     name: "Audi",
-    logo: "/audi.png",
+    logo: "/brand-logos/audi.png",
   },
   {
     name: "VW",
-    logo: "/vw.png",
+    logo: "/brand-logos/vw.png",
   },
   {
     name: "Porsche",
-    logo: "/porsche.png",
+    logo: "/brand-logos/porsche.png",
   },
   {
     name: "Toyota",
-    logo: "/toyota.png",
+    logo: "/brand-logos/toyota.png",
   },
   {
     name: "Ford",
-    logo: "/ford.png",
+    logo: "/brand-logos/ford.png",
   },
   {
     name: "Skoda",
-    logo: "/skoda.png",
+    logo: "/brand-logos/skoda.png",
   },
   {
     name: "Renault",
-    logo: "/renault.png",
+    logo: "/brand-logos/renault.png",
   },
   {
     name: "Volvo",
-    logo: "/volvo.png",
+    logo: "/brand-logos/volvo.png",
   },
   {
     name: "Fiat",
-    logo: "/fiat.png",
+    logo: "/brand-logos/fiat.png",
   },
   {
     name: "Seat",
-    logo: "/seat.png",
+    logo: "/brand-logos/seat.png",
   },
 ] as const;
 
