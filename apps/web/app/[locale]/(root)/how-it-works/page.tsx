@@ -68,7 +68,8 @@ export default async function HowItWorksPage() {
 
       <section className="max-w-4xl mx-auto px-4 py-16">
         <div className="relative space-y-24">
-          <div className="absolute left-[31px] top-12 bottom-12 w-px bg-slate-200 hidden md:block" />
+          {/* Vertical Line - stop before the last box by using a better height control */}
+          <div className="absolute left-[31px] top-8 bottom-32 w-px bg-slate-200 hidden md:block" />
           {steps.map((step, index) => (
             <div
               key={index}
@@ -81,20 +82,22 @@ export default async function HowItWorksPage() {
                 </div>
               </div>
 
-              <div className="space-y-2 group">
-                <h3 className="text-2xl font-bold tracking-tight group-hover:text-primary transition-colors">
-                  {step.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed max-w-2xl">
-                  {step.description}
-                </p>
+              <div className="space-y-4 pt-1 group">
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold tracking-tight group-hover:text-primary transition-colors">
+                    {step.title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed max-w-2xl">
+                    {step.description}
+                  </p>
+                </div>
+                {step.cta}
               </div>
-              {step.cta}
             </div>
           ))}
         </div>
 
-        <div className="mt-12 bg-secondary p-8 rounded-xl text-center space-y-4">
+        <div className="mt-16 bg-secondary p-8 rounded-xl text-center space-y-4">
           <h3 className="text-xl font-bold">Ready to grow your dealership?</h3>
           <p className="text-muted-foreground">
             Join the Swiss platform designed specifically for professional car
