@@ -6,6 +6,7 @@ import {
   CreditCard,
   PlusCircle,
   ArrowRight,
+  Download,
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
@@ -24,6 +25,7 @@ export default async function HowItWorksPage() {
             href="/The-AV-Final Autovendo Vertrag-pdf.pdf"
             download="The-AV-Final Autovendo Vertrag-pdf.pdf"
           >
+            <Download />
             {t("cta.download")}
           </Link>
         </Button>
@@ -79,35 +81,33 @@ export default async function HowItWorksPage() {
                 </div>
               </div>
 
-              <div className="space-y-4 pt-2 group">
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold tracking-tight group-hover:text-primary transition-colors">
-                    {step.title}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed max-w-2xl">
-                    {step.description}
-                  </p>
-                </div>
-                {step.cta}
+              <div className="space-y-2 group">
+                <h3 className="text-2xl font-bold tracking-tight group-hover:text-primary transition-colors">
+                  {step.title}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed max-w-2xl">
+                  {step.description}
+                </p>
               </div>
+              {step.cta}
             </div>
           ))}
         </div>
-      </section>
 
-      <div className="mt-12 bg-secondary p-8 rounded-xl text-center space-y-4">
-        <h3 className="text-xl font-bold">Ready to grow your dealership?</h3>
-        <p className="text-muted-foreground">
-          Join the Swiss platform designed specifically for professional car
-          dealers.
-        </p>
-        <Button asChild>
-          <Link href="/contact">
-            {t("cta.contact")}
-            <ArrowRight />
-          </Link>
-        </Button>
-      </div>
+        <div className="mt-12 bg-secondary p-8 rounded-xl text-center space-y-4">
+          <h3 className="text-xl font-bold">Ready to grow your dealership?</h3>
+          <p className="text-muted-foreground">
+            Join the Swiss platform designed specifically for professional car
+            dealers.
+          </p>
+          <Button asChild>
+            <Link href="/contact">
+              {t("cta.contact")}
+              <ArrowRight />
+            </Link>
+          </Button>
+        </div>
+      </section>
     </>
   );
 }
