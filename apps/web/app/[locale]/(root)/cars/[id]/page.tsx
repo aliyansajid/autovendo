@@ -5,7 +5,6 @@ import {
   getVehicleCached,
   getSimilarVehicles,
 } from "@/app/actions/vehicles.actions";
-import { DAY_ORDER } from "@/app/actions/dealer.actions";
 import { notFound } from "next/navigation";
 import { formatVehicleName } from "@/lib/helpers/vehicle";
 import { getImageUrl } from "@/lib/helpers/image";
@@ -35,6 +34,7 @@ import { StickyActionBar } from "../_components/sticky-action-bar";
 import { EnergyLabel } from "../_components/energy-label";
 import {
   DAY_LABELS,
+  DAY_ORDER,
   formatNumber,
   formatPrice,
   formatKilometers,

@@ -13,7 +13,7 @@ import type {
   DealerVehiclesResult,
   GooglePlaceData,
 } from "@/types/dealer";
-import { DAY_LABELS } from "@/lib/helpers/format";
+import { DAY_LABELS, DAY_ORDER } from "@/lib/helpers/format";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { buildWhereClause } from "./vehicles.actions";
 
@@ -21,15 +21,6 @@ import { buildWhereClause } from "./vehicles.actions";
 // Helpers
 // -----------------------------------------------------------------------------
 
-export const DAY_ORDER = [
-  "MONDAY",
-  "TUESDAY",
-  "WEDNESDAY",
-  "THURSDAY",
-  "FRIDAY",
-  "SATURDAY",
-  "SUNDAY",
-] as const;
 
 // Reverse map no longer needed as we use Enums directly in the form
 

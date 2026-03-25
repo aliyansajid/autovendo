@@ -88,6 +88,16 @@ export function formatCount(count: number): string {
   return formatNumber(count);
 }
 
+export const DAY_ORDER = [
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+  "SUNDAY",
+] as const;
+
 /**
  * Map DayOfWeek enum values to German day names
  */
