@@ -21,13 +21,10 @@ export default async function HowItWorksPage() {
       description: t("steps.step1.description"),
       cta: (
         <Button variant="outline" className="mt-4" asChild>
-          <Link
-            href="/The-AV-Final Autovendo Vertrag-pdf.pdf"
-            download="The-AV-Final Autovendo Vertrag-pdf.pdf"
-          >
+          <a href="/autovendo-vertrag.pdf" download="autovendo-vertrag.pdf">
             <Download />
             {t("cta.download")}
-          </Link>
+          </a>
         </Button>
       ),
     },
