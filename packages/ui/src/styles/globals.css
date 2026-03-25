@@ -127,3 +127,12 @@
   }
   scrollbar-width: none;
 }
+
+@keyframes shimmer {
+  0% { background-position: -250% 0; }
+  100% { background-position: 250% 0; }
+}
+
+.animate-shimmer {
+  animation: shimmer 5s infinite linear;
+}

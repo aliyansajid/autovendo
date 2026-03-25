@@ -51,7 +51,7 @@ export default async function HowItWorksPage() {
   return (
     <>
       <section className="relative w-full bg-[#0F172A] py-16 sm:py-24 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-from)_0%,_transparent_70%)] from-primary/20 to-transparent blur-3xl opacity-50" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,var(--tw-gradient-from)_0%,transparent_70%)] from-primary/20 to-transparent blur-3xl opacity-50" />
         
         <div className="relative z-10 max-w-285 mx-auto px-4 text-center">
           <h1 className="text-4xl sm:text-6xl font-extrabold text-white mb-6 tracking-tight">
@@ -97,7 +97,7 @@ export default async function HowItWorksPage() {
 
       <section className="max-w-285 mx-auto px-4 mb-20 sm:mb-32">
         <div className="bg-primary rounded-[3rem] p-8 sm:p-20 text-white text-center space-y-10 relative overflow-hidden shadow-2xl">
-          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.05)_50%,transparent_75%)] bg-[length:250%_250%] animate-[shimmer_5s_infinite_linear]" />
+          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.05)_50%,transparent_75%)] bg-size-[250%_250%] animate-shimmer" />
           
           <div className="space-y-4 relative z-10">
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">
@@ -123,13 +123,6 @@ export default async function HowItWorksPage() {
           </div>
         </div>
       </section>
-
-      <style jsx global>{`
-        @keyframes shimmer {
-          0% { background-position: -250% 0; }
-          100% { background-position: 250% 0; }
-        }
-      `}</style>
     </>
   );
 }
