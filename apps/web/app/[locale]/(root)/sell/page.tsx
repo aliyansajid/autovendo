@@ -85,7 +85,7 @@ export default async function SellPage() {
                 </Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link href="/pricing">{t("reach.ctaHow")}</Link>
+                <Link href="/how-it-works">{t("reach.ctaHow")}</Link>
               </Button>
             </div>
           </CardContent>

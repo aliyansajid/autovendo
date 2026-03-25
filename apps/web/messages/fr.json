@@ -39,6 +39,7 @@
       "rules": "Règles d'insertion",
       "pricing": "Prix",
       "contact": "Contact",
+      "howItWorks": "Comment ça marche",
       "faq": "FAQ",
       "safety": "Consignes de sécurité",
       "privacy": "Confidentialité",
@@ -1373,5 +1374,35 @@
   "ListingListCard": {
     "contact": "Contact",
     "allVehicles": "Tous les véhicules de ce concessionnaire"
+  },
+  "HowItWorksPage": {
+    "title": "Comment ça marche",
+    "subtitle": "Votre chemin vers une vente automobile réussie sur Autovendo.",
+    "steps": {
+      "step1": {
+        "title": "Télécharger & Signer le Contrat",
+        "description": "Téléchargez le contrat de concessionnaire officiel d'Autovendo, signez-le et renvoyez-le nous."
+      },
+      "step2": {
+        "title": "Création de Compte",
+        "description": "Nous vérifierons vos coordonnées et créerons votre compte de concessionnaire professionnel pour vous."
+      },
+      "step3": {
+        "title": "Configuration du Profil",
+        "description": "Connectez-vous et complétez votre profil de concessionnaire avec votre logo, votre image de couverture et votre description."
+      },
+      "step4": {
+        "title": "Choisir un Forfait",
+        "description": "Sélectionnez le forfait tarifaire qui correspond le mieux à la taille de votre inventaire."
+      },
+      "step5": {
+        "title": "Commencer à Vendre",
+        "description": "Commencez à lister vos véhicules et atteignez des milliers d'acheteurs potentiels en Suisse."
+      }
+    },
+    "cta": {
+      "download": "Télécharger le contrat",
+      "contact": "Contacter le support"
+    }
   }
 }

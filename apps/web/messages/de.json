@@ -39,6 +39,7 @@
       "rules": "Insertionsregeln",
       "pricing": "Preise",
       "contact": "Kontakt",
+      "howItWorks": "Wie es funktioniert",
       "faq": "FAQ",
       "safety": "Sicherheitshinweise",
       "privacy": "Datenschutz",
@@ -1373,5 +1374,35 @@
   "ListingListCard": {
     "contact": "Kontakt",
     "allVehicles": "Alle Fahrzeuge von diesem Händler"
+  },
+  "HowItWorksPage": {
+    "title": "Wie es funktioniert",
+    "subtitle": "Ihr Weg zum erfolgreichen Autoverkauf auf Autovendo.",
+    "steps": {
+      "step1": {
+        "title": "Vertrag herunterladen & unterzeichnen",
+        "description": "Laden Sie den offiziellen Autovendo-Händlervertrag herunter, unterzeichnen Sie ihn und senden Sie ihn an uns zurück."
+      },
+      "step2": {
+        "title": "Kontoerstellung",
+        "description": "Wir prüfen Ihre Angaben und erstellen Ihr professionelles Händlerkonto für Sie."
+      },
+      "step3": {
+        "title": "Profil-Setup",
+        "description": "Melden Sie sich an und vervollständigen Sie Ihr Händlerprofil mit Logo, Titelbild und Beschreibung."
+      },
+      "step4": {
+        "title": "Paket wählen",
+        "description": "Wählen Sie das Preispaket, das am besten zu Ihrer Bestandsgröße passt."
+      },
+      "step5": {
+        "title": "Verkauf starten",
+        "description": "Beginnen Sie mit dem Inserieren Ihrer Fahrzeuge und erreichen Sie Tausende potenzieller Käufer in der Schweiz."
+      }
+    },
+    "cta": {
+      "download": "Vertrag herunterladen",
+      "contact": "Support kontaktieren"
+    }
   }
 }

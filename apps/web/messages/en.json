@@ -39,6 +39,7 @@
       "rules": "Insertion Rules",
       "pricing": "Pricing",
       "contact": "Contact",
+      "howItWorks": "How it works",
       "faq": "FAQ",
       "safety": "Safety Instructions",
       "privacy": "Privacy Policy",
@@ -719,9 +720,9 @@
     "quickReplyText": "We usually respond to all enquiries within 24 hours. For urgent matters, please call us directly.",
     "formTitle": "Send us a message",
     "nameLabel": "Name",
-    "namePlaceholder": "Your full name",
+    "namePlaceholder": "John Doe",
     "emailFormLabel": "Email",
-    "emailPlaceholder": "your.email@example.com",
+    "emailPlaceholder": "m@example.com",
     "phoneFormLabel": "Phone",
     "subjectLabel": "Subject",
     "subjectPlaceholder": "What is it about?",
@@ -1373,5 +1374,35 @@
   "ListingListCard": {
     "contact": "Contact",
     "allVehicles": "All vehicles from this dealer"
+  },
+  "HowItWorksPage": {
+    "title": "How it Works",
+    "subtitle": "Your path to successful car sales on Autovendo.",
+    "steps": {
+      "step1": {
+        "title": "Download & Sign Contract",
+        "description": "Download the official Autovendo dealer contract, sign it, and send it back to us."
+      },
+      "step2": {
+        "title": "Account Creation",
+        "description": "We will verify your details and create your professional dealer account for you."
+      },
+      "step3": {
+        "title": "Profile Setup",
+        "description": "Log in and complete your dealer profile with your logo, cover image, and description."
+      },
+      "step4": {
+        "title": "Choose Package",
+        "description": "Select the pricing package that best fits your inventory size."
+      },
+      "step5": {
+        "title": "Start Selling",
+        "description": "Start listing your vehicles and reach thousands of potential buyers in Switzerland."
+      }
+    },
+    "cta": {
+      "download": "Download Contract",
+      "contact": "Contact Support"
+    }
   }
 }
