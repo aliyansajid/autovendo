@@ -6,23 +6,23 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { ListingListCard } from "@/app/[locale]/(root)/cars/_components/listing-list-card";
-import { Button } from "@repo/ui/src/components/button";
-import { Badge } from "@repo/ui/src/components/badge";
+import { Button } from "@repo/ui/components/button";
+import { Badge } from "@repo/ui/components/badge";
 import GarageFilters from "./garage-rich-filters";
-import { Separator } from "@repo/ui/src/components/separator";
+import { Separator } from "@repo/ui/components/separator";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@repo/ui/src/components/tabs";
+} from "@repo/ui/components/tabs";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@repo/ui/src/components/select";
+} from "@repo/ui/components/select";
 import {
   MapPin,
   Phone,
@@ -41,18 +41,18 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@repo/ui/src/components/card";
+} from "@repo/ui/components/card";
 import {
   Avatar,
   AvatarImage,
   AvatarFallback,
-} from "@repo/ui/src/components/avatar";
+} from "@repo/ui/components/avatar";
 import { Link } from "@/i18n/routing";
 import {
   CustomFormField,
   FormFieldType,
-} from "@repo/ui/src/components/custom-form-field";
-import { Field, FieldGroup } from "@repo/ui/src/components/field";
+} from "@repo/ui/components/custom-form-field";
+import { Field, FieldGroup } from "@repo/ui/components/field";
 import {
   Pagination,
   PaginationContent,
@@ -60,7 +60,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@repo/ui/src/components/pagination";
+} from "@repo/ui/components/pagination";
 import { getVehicleCountAndFacets } from "@/app/actions/vehicles.actions";
 import { formatCount } from "@/lib/helpers/format";
 import type {
@@ -74,7 +74,7 @@ import {
   sendDealerContactEmail,
   getDealerVehicles,
 } from "@/app/actions/dealer.actions";
-import { Spinner } from "@repo/ui/src/components/spinner";
+import { Spinner } from "@repo/ui/components/spinner";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";

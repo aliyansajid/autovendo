@@ -21,7 +21,7 @@ import { buildWhereClause } from "./vehicles.actions";
 // Helpers
 // -----------------------------------------------------------------------------
 
-const DAY_ORDER = [
+export const DAY_ORDER = [
   "MONDAY",
   "TUESDAY",
   "WEDNESDAY",

@@ -5,6 +5,7 @@ import {
   getVehicleCached,
   getSimilarVehicles,
 } from "@/app/actions/vehicles.actions";
+import { DAY_ORDER } from "@/app/actions/dealer.actions";
 import { notFound } from "next/navigation";
 import { formatVehicleName } from "@/lib/helpers/vehicle";
 import { getImageUrl } from "@/lib/helpers/image";
@@ -28,7 +29,7 @@ import { SimilarListings } from "../_components/similar-listings";
 import { ListingHeader } from "../_components/listing-header";
 import { SellerSection } from "../_components/seller-section";
 import { ReviewSection } from "../_components/review-section";
-import { Card, CardContent } from "@repo/ui/src/components/card";
+import { Card, CardContent } from "@repo/ui/components/card";
 import { Link } from "@/i18n/routing";
 import { StickyActionBar } from "../_components/sticky-action-bar";
 import { EnergyLabel } from "../_components/energy-label";
@@ -273,8 +274,13 @@ export default async function ListingPage({
       isOpen: boolean;
     }>;
   };
-  const openingHours =
-    dealerWithHours.openingHours?.map((oh) => {
+  const openingHours = [...(dealerWithHours.openingHours || [])]
+    .sort(
+      (a, b) =>
+        DAY_ORDER.indexOf(a.day as (typeof DAY_ORDER)[number]) -
+        DAY_ORDER.indexOf(b.day as (typeof DAY_ORDER)[number]),
+    )
+    .map((oh) => {
       const open = toDate(oh.openTime);
       const close = toDate(oh.closeTime);
       return {
@@ -284,7 +290,7 @@ export default async function ListingPage({
             ? `${open.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
             : "Geschlossen",
       };
-    }) ?? [];
+    });
 
   const dealerUser = (
     item.dealer as typeof item.dealer & { user?: { emailVerified: boolean } }

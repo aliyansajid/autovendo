@@ -15,7 +15,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@repo/ui/src/components/card";
+} from "@repo/ui/components/card";
 import { Link } from "@/i18n/routing";
 import { LocationMap } from "./location-map";
 
@@ -88,11 +88,6 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                     {seller.website}
                     <ExternalLink className="size-4" />
                   </Link>
-                )}
-                {seller.description && (
-                  <p className="text-sm text-muted-foreground whitespace-pre-line">
-                    {seller.description}
-                  </p>
                 )}
               </div>
 
