@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import { Button } from "@repo/ui/src/components/button";
+import { Button } from "@repo/ui/components/button";
 import {
   Card,
   CardHeader,
@@ -9,10 +9,10 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@repo/ui/src/components/card";
-import { Spinner } from "@repo/ui/src/components/spinner";
-import { Badge } from "@repo/ui/src/components/badge";
-import { Progress } from "@repo/ui/src/components/progress";
+} from "@repo/ui/components/card";
+import { Spinner } from "@repo/ui/components/spinner";
+import { Badge } from "@repo/ui/components/badge";
+import { Progress } from "@repo/ui/components/progress";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { Link } from "@/i18n/routing";

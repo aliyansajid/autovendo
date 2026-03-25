@@ -4,9 +4,9 @@ import { getDealerProfile } from "@/app/actions/dealer.actions";
 import { getVehicleById, getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";import { VehicleForm } from "../_components/vehicle-form";
 import { mapVehicleToForm } from "@/lib/helpers/vehicle";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@repo/ui/src/components/button";
+import { Button } from "@repo/ui/components/button";
 
 export default async function EditVehiclePage({
   params,

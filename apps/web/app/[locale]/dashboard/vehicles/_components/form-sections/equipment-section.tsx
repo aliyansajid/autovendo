@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@repo/ui/components/accordion";
-import { Label } from "@repo/ui/src/components/label";
+import { Label } from "@repo/ui/components/label";
 import { EquipmentEnum } from "@/constants";
 import { carExtrasEnum } from "@/constants/cars";
 import { utilityExtrasEnum } from "@/constants/commercial-vehicles";

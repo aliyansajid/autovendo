@@ -29,7 +29,7 @@ import {
 import { authClient } from "@repo/auth/client";
 import { useRouter } from "@/i18n/routing";
 import { useTransition } from "react";
-import { Spinner } from "@repo/ui/src/components/spinner";
+import { Spinner } from "@repo/ui/components/spinner";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 

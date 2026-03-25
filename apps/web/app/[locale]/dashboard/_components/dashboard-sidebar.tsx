@@ -12,7 +12,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@repo/ui/src/components/sidebar";
+} from "@repo/ui/components/sidebar";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 

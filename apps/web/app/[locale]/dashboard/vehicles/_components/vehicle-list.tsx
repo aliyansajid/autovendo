@@ -7,11 +7,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@repo/ui/src/components/table";
-import { Button } from "@repo/ui/src/components/button";
+} from "@repo/ui/components/table";
+import { Button } from "@repo/ui/components/button";
 import { Edit, Trash2, AlertTriangle } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { getImageUrl } from "@/lib/helpers/image";
 import { format } from "date-fns";
 import { deleteVehicle, type SubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
@@ -33,8 +34,8 @@ import {
   InputGroup,
   InputGroupInput,
   InputGroupAddon,
-} from "@repo/ui/src/components/input-group";
-import { Badge } from "@repo/ui/src/components/badge";
+} from "@repo/ui/components/input-group";
+import { Badge } from "@repo/ui/components/badge";
 import { useTranslations } from "next-intl";
 
 interface Vehicle {
@@ -145,11 +146,7 @@ export function VehicleList({
                   <div className="relative w-12 h-12 rounded-md overflow-hidden bg-muted">
                     {vehicle.images?.[0] ? (
                       <Image
-                        src={
-                          vehicle.images[0].startsWith("http")
-                            ? vehicle.images[0]
-                            : `${process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || ""}/${vehicle.images[0]}`
-                        }
+                        src={getImageUrl(vehicle.images[0])}
                         alt={`${vehicle.make} ${vehicle.model}`}
                         fill
                         className="object-cover"

@@ -4,29 +4,29 @@ import { z } from "zod";
 import { useForm, useFieldArray, useWatch, Control } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { dealerProfileSchema } from "@/schema/profile-schema";
-import { Button } from "@repo/ui/src/components/button";
+import { Button } from "@repo/ui/components/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@repo/ui/src/components/card";
-import { FieldGroup } from "@repo/ui/src/components/field";
+} from "@repo/ui/components/card";
+import { FieldGroup } from "@repo/ui/components/field";
 import {
   CustomFormField,
   FormFieldType,
-} from "@repo/ui/src/components/custom-form-field";
+} from "@repo/ui/components/custom-form-field";
 import { useTranslations } from "next-intl";
 import { authClient } from "@repo/auth/client";
 import { useTransition, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getPresignedUploadUrl } from "@/app/actions/storage.actions";
 import { updateDealerProfile } from "@/app/actions/dealer.actions";
-import { Spinner } from "@repo/ui/src/components/spinner";
+import { Spinner } from "@repo/ui/components/spinner";
 import { DealerProfile } from "@/types/dealer";
 import { swissCities } from "@/lib/constants/swiss-cities";
-import { SelectItem } from "@repo/ui/src/components/select";
+import { SelectItem } from "@repo/ui/components/select";
 
 // ---------------------------------------------------------------------------
 // Types

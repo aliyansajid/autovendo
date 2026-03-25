@@ -1,13 +1,13 @@
-import { Button } from "@repo/ui/src/components/button";
+import { Button } from "@repo/ui/components/button";
 import { Plus, AlertCircle, AlertTriangle } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { getDealerVehicles, getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { VehicleList } from "./_components/vehicle-list";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@repo/ui/src/components/alert";
+} from "@repo/ui/components/alert";
 import { format } from "date-fns";
 import { getTranslations } from "next-intl/server";
 

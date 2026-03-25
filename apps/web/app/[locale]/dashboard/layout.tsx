@@ -4,8 +4,8 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@repo/ui/src/components/sidebar";
-import { Separator } from "@repo/ui/src/components/separator";
+} from "@repo/ui/components/sidebar";
+import { Separator } from "@repo/ui/components/separator";
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import { DashboardBreadcrumb } from "./_components/dashboard-breadcrumb";
 

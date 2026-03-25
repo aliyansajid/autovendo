@@ -47,7 +47,7 @@ import {
   camperBodyTypeEnum,
   camperFuelTypeEnum,
 } from "@/constants/camper";
-import { Separator } from "@repo/ui/src/components/separator";
+import { Separator } from "@repo/ui/components/separator";
 
 export function BasicDataSection() {
   const t = useTranslations("VehicleFormSections");

@@ -44,7 +44,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@repo/ui/src/components/card";
+} from "@repo/ui/components/card";
 import { EquipmentSection } from "./form-sections/equipment-section";
 import {
   prepareVehicleListing,
@@ -57,12 +57,13 @@ import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
 import { Loader2, AlertCircle, AlertTriangle } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Spinner } from "@repo/ui/src/components/spinner";
+import { Spinner } from "@repo/ui/components/spinner";
+import { getImageUrl } from "@/lib/helpers/image";
 import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@repo/ui/src/components/alert";
+} from "@repo/ui/components/alert";
 import { format } from "date-fns";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -721,9 +722,9 @@ export function VehicleForm({
                           {/* Using standard img tag to prevent Next.js Image component failing on blob:// URLs */}
                           <img
                             src={
-                              src.startsWith("blob:") || src.startsWith("http")
+                              src.startsWith("blob:")
                                 ? src
-                                : `${process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || ""}/${src}`
+                                : getImageUrl(src)
                             }
                             alt={`Review ${index}`}
                             className="object-cover w-full h-full rounded-md"

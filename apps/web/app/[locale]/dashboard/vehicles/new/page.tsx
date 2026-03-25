@@ -3,9 +3,9 @@ import { headers } from "next/headers";
 import { getDealerProfile } from "@/app/actions/dealer.actions";
 import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { VehicleForm } from "../_components/vehicle-form";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@repo/ui/src/components/button";
+import { Button } from "@repo/ui/components/button";
 
 export default async function AddNewVehiclePage() {
   const session = await auth.api.getSession({

@@ -6,9 +6,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@repo/ui/src/components/card";
-import { Badge } from "@repo/ui/src/components/badge";
-import { Progress } from "@repo/ui/src/components/progress";
+} from "@repo/ui/components/card";
+import { Badge } from "@repo/ui/components/badge";
+import { Progress } from "@repo/ui/components/progress";
 import { Car, CreditCard, Users } from "lucide-react";
 import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { getTranslations } from "next-intl/server";

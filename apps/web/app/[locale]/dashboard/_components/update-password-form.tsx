@@ -1,25 +1,25 @@
 "use client";
 
-import { Button } from "@repo/ui/src/components/button";
+import { Button } from "@repo/ui/components/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@repo/ui/src/components/card";
-import { FieldGroup, Field } from "@repo/ui/src/components/field";
+} from "@repo/ui/components/card";
+import { FieldGroup, Field } from "@repo/ui/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@repo/auth/client";
 import { toast } from "sonner";
 import { useTransition } from "react";
-import { Spinner } from "@repo/ui/src/components/spinner";
+import { Spinner } from "@repo/ui/components/spinner";
 import {
   CustomFormField,
   FormFieldType,
-} from "@repo/ui/src/components/custom-form-field";
+} from "@repo/ui/components/custom-form-field";
 import { updatePasswordSchema } from "@/schema/auth-schema";
 import { useTranslations } from "next-intl";
 
@@ -45,9 +45,7 @@ export const UpdatePasswordForm = () => {
       });
 
       if (error) {
-        toast.error(
-          error.message || t("errorDefault"),
-        );
+        toast.error(error.message || t("errorDefault"));
         return;
       }
 
@@ -60,9 +58,7 @@ export const UpdatePasswordForm = () => {
     <Card>
       <CardHeader>
         <CardTitle>{t("cardTitle")}</CardTitle>
-        <CardDescription>
-          {t("cardDesc")}
-        </CardDescription>
+        <CardDescription>{t("cardDesc")}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -95,7 +91,10 @@ export const UpdatePasswordForm = () => {
               disabled={isPending}
             />
             <Field>
-              <Button type="submit" disabled={isPending || !form.formState.isDirty}>
+              <Button
+                type="submit"
+                disabled={isPending || !form.formState.isDirty}
+              >
                 {isPending ? (
                   <>
                     <Spinner />

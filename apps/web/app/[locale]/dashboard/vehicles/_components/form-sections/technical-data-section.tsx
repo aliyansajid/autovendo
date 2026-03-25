@@ -18,7 +18,7 @@ import {
   ChargingPlugTypeStandardEnum,
   ChargingPlugTypeFastEnum,
 } from "@/constants";
-import { Separator } from "@repo/ui/src/components/separator";
+import { Separator } from "@repo/ui/components/separator";
 
 export function TechnicalDataSection() {
   const t = useTranslations("VehicleFormSections");
