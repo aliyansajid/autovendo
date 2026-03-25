@@ -8,10 +8,6 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "assets.autoscout24.ch",
-      },
-      {
-        protocol: "https",
         hostname: "cdn.autovendo.ch",
       },
     ],

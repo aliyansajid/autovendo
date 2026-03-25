@@ -410,51 +410,51 @@ export const carModels: Record<string, { value: string; label: string }[]> = {
 export const popularCarMakes = [
   {
     name: "Mercedes-Benz",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/mercedes-benz.df6b0bf0.png?w=320&q=75",
+    logo: "/mercedes-benz.png",
   },
   {
     name: "BMW",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/bmw.d80d5e29.png?w=320&q=75",
+    logo: "/bmw.png",
   },
   {
     name: "Audi",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/audi.04e8f0dc.png?w=320&q=75",
+    logo: "/audi.png",
   },
   {
     name: "VW",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/vw.81540e42.png?w=320&q=75",
+    logo: "/vw.png",
   },
   {
     name: "Porsche",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/porsche.0adcb83f.png?w=320&q=75",
+    logo: "/porsche.png",
   },
   {
     name: "Toyota",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/toyota.9a8f48b4.png?w=320&q=75",
+    logo: "/toyota.png",
   },
   {
     name: "Ford",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/ford.8ebffc41.png?w=320&q=75",
+    logo: "/ford.png",
   },
   {
     name: "Skoda",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/skoda.f1c9e839.png?w=320&q=75",
+    logo: "/skoda.png",
   },
   {
     name: "Renault",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/renault.35f93614.png?w=320&q=75",
+    logo: "/renault.png",
   },
   {
     name: "Volvo",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/volvo.b9d848a4.png?w=320&q=75",
+    logo: "/volvo.png",
   },
   {
     name: "Fiat",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/fiat.2c8b543a.png?w=320&q=75",
+    logo: "/fiat.png",
   },
   {
     name: "Seat",
-    logo: "https://assets.autoscout24.ch/l/_next/static/media/seat.8a3b4153.png?w=320&q=75",
+    logo: "/seat.png",
   },
 ] as const;
 
