@@ -71,11 +71,11 @@ export default async function HowItWorksPage() {
           {steps.map((step, index) => (
             <div
               key={index}
-              className="relative flex flex-col md:flex-row gap-8 md:gap-16 items-center"
+              className="relative flex flex-col md:flex-row gap-8 md:gap-16 items-start"
             >
               {/* Vertical Line - only for steps before the last one */}
               {index !== steps.length - 1 && (
-                <div className="absolute left-[31px] top-12 h-40 w-px bg-slate-200 hidden md:block" />
+                <div className="absolute left-[31px] top-8 h-[calc(100%+6rem)] w-px bg-slate-200 hidden md:block" />
               )}
               <div className="relative z-10 flex items-center justify-center w-[64px] h-[64px] rounded-2xl bg-white border border-border shadow-sm text-primary shrink-0 transition-all hover:scale-105 hover:shadow-md">
                 <step.icon size={32} strokeWidth={1.5} />
@@ -84,7 +84,7 @@ export default async function HowItWorksPage() {
                 </div>
               </div>
 
-              <div className="space-y-4 group grow">
+              <div className="space-y-4 pt-1 group grow">
                 <div className="space-y-2">
                   <h3 className="text-2xl font-bold tracking-tight">
                     {step.title}
