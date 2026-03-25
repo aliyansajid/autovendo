@@ -31,9 +31,7 @@ const DAY_ORDER = [
   "SUNDAY",
 ] as const;
 
-const REVERSE_DAY_LABELS: Record<string, string> = Object.entries(
-  DAY_LABELS,
-).reduce((acc, [key, value]) => ({ ...acc, [value]: key }), {});
+// Reverse map no longer needed as we use Enums directly in the form
 
 function toTimeString(date: Date | string | null): string {
   if (!date) return "";
@@ -115,7 +113,7 @@ export async function updateDealerProfile(
       await prisma.openingHour.createMany({
         data: values.openingHours.map((oh) => ({
           dealerId: dealer.id,
-          day: REVERSE_DAY_LABELS[oh.day] as any,
+          day: oh.day as any,
           isOpen: oh.isOpen,
           openTime: parseTimeString(oh.openTime),
           closeTime: parseTimeString(oh.closeTime),

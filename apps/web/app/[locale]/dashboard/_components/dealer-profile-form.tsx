@@ -184,20 +184,19 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       businessEmail: initialData?.businessEmail || "",
       openingHours: initialData?.openingHours?.length
         ? initialData.openingHours.map((oh) => ({
-            day:
-              oh.day.charAt(0).toUpperCase() + oh.day.slice(1).toLowerCase(),
+            day: oh.day,
             isOpen: oh.isOpen,
             openTime: oh.openTime || "08:00",
             closeTime: oh.closeTime || "18:00",
           }))
         : [
-            { day: "Montag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "Dienstag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "Mittwoch", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "Donnerstag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "Freitag", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "Samstag", isOpen: false, openTime: "08:00", closeTime: "18:00" },
-            { day: "Sonntag", isOpen: false, openTime: "08:00", closeTime: "18:00" },
+            { day: "MONDAY", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "TUESDAY", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "WEDNESDAY", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "THURSDAY", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "FRIDAY", isOpen: true, openTime: "08:00", closeTime: "18:00" },
+            { day: "SATURDAY", isOpen: false, openTime: "08:00", closeTime: "18:00" },
+            { day: "SUNDAY", isOpen: false, openTime: "08:00", closeTime: "18:00" },
           ],
     },
   });

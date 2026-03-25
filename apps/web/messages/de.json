@@ -1064,13 +1064,13 @@
     "saving": "Speichert...",
     "save": "Profil speichern",
     "days": {
-      "Montag": "Montag",
-      "Dienstag": "Dienstag",
-      "Mittwoch": "Mittwoch",
-      "Donnerstag": "Donnerstag",
-      "Freitag": "Freitag",
-      "Samstag": "Samstag",
-      "Sonntag": "Sonntag"
+      "MONDAY": "Montag",
+      "TUESDAY": "Dienstag",
+      "WEDNESDAY": "Mittwoch",
+      "THURSDAY": "Donnerstag",
+      "FRIDAY": "Freitag",
+      "SATURDAY": "Samstag",
+      "SUNDAY": "Sonntag"
     },
     "uploadFailed": "Datei-Upload fehlgeschlagen.",
     "userUpdateError": "Benutzerinformationen konnten nicht aktualisiert werden.",
