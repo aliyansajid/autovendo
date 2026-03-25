@@ -68,13 +68,15 @@ export default async function HowItWorksPage() {
 
       <section className="max-w-4xl mx-auto px-4 py-16">
         <div className="relative space-y-24">
-          {/* Vertical Line - stop before the last box by using a better height control */}
-          <div className="absolute left-[31px] top-8 bottom-32 w-px bg-slate-200 hidden md:block" />
           {steps.map((step, index) => (
             <div
               key={index}
-              className="relative flex flex-col md:flex-row gap-8 md:gap-16 items-start"
+              className="relative flex flex-col md:flex-row gap-8 md:gap-16 items-center"
             >
+              {/* Vertical Line - only for steps before the last one */}
+              {index !== steps.length - 1 && (
+                <div className="absolute left-[31px] top-12 h-40 w-px bg-slate-200 hidden md:block" />
+              )}
               <div className="relative z-10 flex items-center justify-center w-[64px] h-[64px] rounded-2xl bg-white border border-border shadow-sm text-primary shrink-0 transition-all hover:scale-105 hover:shadow-md">
                 <step.icon size={32} strokeWidth={1.5} />
                 <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center shadow-lg border-2 border-white">
@@ -82,9 +84,9 @@ export default async function HowItWorksPage() {
                 </div>
               </div>
 
-              <div className="space-y-4 pt-1 group">
+              <div className="space-y-4 group grow">
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-bold tracking-tight group-hover:text-primary transition-colors">
+                  <h3 className="text-2xl font-bold tracking-tight">
                     {step.title}
                   </h3>
                   <p className="text-muted-foreground leading-relaxed max-w-2xl">
