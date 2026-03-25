@@ -19,9 +19,9 @@ import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import {
   CustomFormField,
   FormFieldType,
-} from "@repo/ui/src/components/custom-form-field";
+} from "@repo/ui/components/custom-form-field";
 import { ChevronRight, Search, ChevronLeft, Check, X } from "lucide-react";
-import { ScrollArea } from "@repo/ui/src/components/scroll-area";
+import { ScrollArea } from "@repo/ui/components/scroll-area";
 import { carMakes, popularCarMakes, carModels } from "@/constants/cars";
 import Image from "next/image";
 import { useRouter, usePathname } from "@/i18n/routing";
@@ -67,14 +67,11 @@ interface MakeModelDialogProps {
 
 export function MakeModelDialog({
   makeCounts,
-  controlledOpen,
-  controlledOnOpenChange,
+  open,
+  onOpenChange,
   value,
   onChange,
-}: MakeModelDialogProps & {
-  controlledOpen?: boolean;
-  controlledOnOpenChange?: (open: boolean) => void;
-}) {
+}: MakeModelDialogProps) {
   const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.makeModel");
   const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const locale = useLocale();
@@ -217,10 +214,10 @@ export function MakeModelDialog({
       : [];
 
   // Open / close handling
-  const isOpen = isControlled ? (controlledOpen ?? false) : uncontrolledOpen;
+  const isOpen = isControlled ? (open ?? false) : uncontrolledOpen;
   const handleOpenChange = (next: boolean) => {
     if (isControlled) {
-      controlledOnOpenChange?.(next);
+      onOpenChange?.(next);
     } else {
       setUncontrolledOpen(next);
     }

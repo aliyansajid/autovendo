@@ -29,7 +29,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@repo/ui/src/components/card";
+} from "@repo/ui/components/card";
 import { ConditionDialog } from "./filters/condition-dialog";
 import { FuelTypeDialog } from "./filters/fuel-type-dialog";
 import { VehicleTypeDialog } from "./filters/vehicle-type-dialog";

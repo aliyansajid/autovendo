@@ -3,13 +3,13 @@
 import { useFormContext } from "react-hook-form";
 import { useState } from "react";
 import { PlusCircle, X } from "lucide-react";
-import { Button } from "@repo/ui/src/components/button";
+import { Button } from "@repo/ui/components/button";
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@repo/ui/src/components/accordion";
-import { Badge } from "@repo/ui/src/components/badge";
+} from "@repo/ui/components/accordion";
+import { Badge } from "@repo/ui/components/badge";
 import {
   MakeModelDialog,
   type MakeModelValue,

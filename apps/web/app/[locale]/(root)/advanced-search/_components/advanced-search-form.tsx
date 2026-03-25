@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Car, Truck, Caravan, X } from "lucide-react";
-import { Button } from "@repo/ui/src/components/button";
-import { Accordion } from "@repo/ui/src/components/accordion";
-import { Separator } from "@repo/ui/src/components/separator";
+import { Button } from "@repo/ui/components/button";
+import { Accordion } from "@repo/ui/components/accordion";
+import { Separator } from "@repo/ui/components/separator";
 import { z } from "zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

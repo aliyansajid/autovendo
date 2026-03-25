@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { Link } from "@/i18n/routing";
 import { Car, ChevronDown, CircleEllipsis, X } from "lucide-react";
-import { Button } from "@repo/ui/src/components/button";
-import { Checkbox } from "@repo/ui/src/components/checkbox";
-import { Slider } from "@repo/ui/src/components/slider";
+import { Button } from "@repo/ui/components/button";
+import { Checkbox } from "@repo/ui/components/checkbox";
+import { Slider } from "@repo/ui/components/slider";
 import {
   MakeModelDialog,
   type MakeModelValue,
@@ -17,17 +17,17 @@ import {
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
-} from "@repo/ui/src/components/popover";
+} from "@repo/ui/components/popover";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
   InputGroupInput,
-} from "@repo/ui/src/components/input-group";
+} from "@repo/ui/components/input-group";
 import { TransmissionTypeEnum, DriveTypeEnum } from "@/constants";
 import { carBodyTypeEnum, carFuelTypeEnum } from "@/constants/cars";
 import { formatNumber } from "@/lib/helpers/format";
-import { FieldLabel } from "@repo/ui/src/components/field";
+import { FieldLabel } from "@repo/ui/components/field";
 
 // Utility for classes
 function cn(...inputs: (string | undefined | null | false)[]) {
