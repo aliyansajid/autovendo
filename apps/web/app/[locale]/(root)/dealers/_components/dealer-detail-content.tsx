@@ -78,6 +78,7 @@ import { Spinner } from "@repo/ui/src/components/spinner";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { getImageUrl } from "@/lib/helpers/image";
 
 interface DealerDetailContentProps {
   dealer: DealerDetail;
@@ -208,7 +209,7 @@ export const DealerDetailContent = ({
         {dealer.coverImage && (
           <div className="h-40 md:h-56 lg:h-64 w-full relative">
             <Image
-              src={dealer.coverImage}
+              src={getImageUrl(dealer.coverImage)}
               alt={`${dealer.companyName} Cover`}
               fill
               className="object-cover"
@@ -226,7 +227,7 @@ export const DealerDetailContent = ({
               <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
                 <Avatar className="size-20 md:size-32 shadow-md shrink-0">
                   <AvatarImage
-                    src={dealer.logo ?? undefined}
+                    src={getImageUrl(dealer.logo)}
                     className="object-cover"
                   />
                   <AvatarFallback className="text-2xl font-bold">

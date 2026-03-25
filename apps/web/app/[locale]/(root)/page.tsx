@@ -60,11 +60,11 @@ export default async function HomePage() {
   const garages = dealersResult.dealers.map((d) => ({
     id: d.id,
     name: d.companyName,
-    image: d.logo
-      ? d.logo.startsWith("http")
-        ? d.logo
-        : getImageUrl(d.logo)
-      : "/placeholder-car.jpg",
+    image: d.coverImage 
+      ? getImageUrl(d.coverImage)
+      : d.logo
+        ? getImageUrl(d.logo)
+        : "/placeholder-car.jpg",
     garageLocation: d.streetAddress || d.city,
   }));
 

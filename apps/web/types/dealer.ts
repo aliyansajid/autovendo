@@ -7,6 +7,7 @@ export interface DealerListItem {
   city: string;
   zipCode: string;
   logo: string | null;
+  coverImage: string | null;
 }
 
 export interface DealerListResult {

@@ -228,6 +228,7 @@ export async function getDealers({
           city: true,
           zipCode: true,
           logo: true,
+          coverImage: true,
         },
       }),
       prisma.dealer.count({ where }),
