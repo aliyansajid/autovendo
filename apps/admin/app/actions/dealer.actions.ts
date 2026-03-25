@@ -6,9 +6,7 @@ import { prisma } from "@repo/db";
 import { revalidatePath } from "next/cache";
 import { dealerSchema } from "@/schema";
 
-export async function createDealerAction(
-  formData: z.infer<typeof dealerSchema>,
-) {
+export async function createDealer(formData: z.infer<typeof dealerSchema>) {
   try {
     const validatedData = dealerSchema.parse(formData);
 

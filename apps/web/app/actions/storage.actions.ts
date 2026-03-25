@@ -7,20 +7,17 @@ import { StorageService } from "@repo/storage";
  * Request a presigned URL to upload a file directly to R2.
  */
 export async function getPresignedUploadUrl({
-  country,
   dealerId,
   type,
   filename,
   contentType,
 }: {
-  country: string;
   dealerId: string;
   type: "branding" | "profiles" | "listing";
   filename: string;
   contentType: string;
 }) {
   const key = StorageService.formatDealerPath(
-    country,
     dealerId,
     type,
     filename,

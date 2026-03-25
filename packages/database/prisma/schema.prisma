@@ -295,7 +295,7 @@ model Vehicle {
   energyLabel          EnergyLabel?
   typeApproval         String?
   wheelbase            Int?
-  vin                  String?      @map("vehicleIdentificationNumber")
+  vin                  String?           @map("vehicleIdentificationNumber")
   emptyWeight          Int?
   loadCapacity         Int?
   serialNumber         String?
@@ -337,7 +337,6 @@ model Vehicle {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("vehicle")
   @@index([dealerId, createdAt])
   @@index([vehicleType])
   @@index([fuelType])
@@ -348,6 +347,7 @@ model Vehicle {
   @@index([createdAt])
   @@index([vehicleType, fuelType, price])
   @@index([vehicleCondition, kilometer])
+  @@map("vehicle")
 }
 
 enum DayOfWeek {

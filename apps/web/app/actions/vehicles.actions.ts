@@ -1176,7 +1176,6 @@ export async function getPresignedUrls(
   const urls = await Promise.all(
     files.map(async (file) => {
       const key = StorageService.formatDealerPath(
-        country,
         dealer.id,
         "listing",
         file.name,

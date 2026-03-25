@@ -216,7 +216,6 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
 
   const uploadFile = async (file: File, type: "branding" | "profiles") => {
     const res = await getPresignedUploadUrl({
-      country: "ch",
       dealerId: initialData?.id || "temp",
       type,
       filename: file.name,

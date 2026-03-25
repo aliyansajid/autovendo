@@ -10,18 +10,42 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import { getImageUrl } from "@/lib/helpers/image";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@repo/ui/src/components/avatar";
 
 export const dynamic = "force-dynamic";
 
+interface DealerListItem {
+  id: string;
+  logo: string | null;
+  companyName: string;
+  contactPerson: string;
+  businessEmail: string;
+  phoneNumber: string;
+  city: string;
+  createdAt: Date;
+}
+
 export default async function DealersPage() {
-  const dealers = await prisma.dealer.findMany({
-    include: {
-      user: true,
+  const dealers = (await prisma.dealer.findMany({
+    select: {
+      id: true,
+      logo: true,
+      companyName: true,
+      contactPerson: true,
+      businessEmail: true,
+      phoneNumber: true,
+      city: true,
+      createdAt: true,
     },
     orderBy: {
       createdAt: "desc",
     },
-  });
+  })) as DealerListItem[];
 
   return (
     <div className="flex-1 space-y-6">
@@ -39,9 +63,11 @@ export default async function DealersPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[80px]">Logo</TableHead>
               <TableHead>Company</TableHead>
               <TableHead>Contact Person</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
               <TableHead>City</TableHead>
               <TableHead>Created At</TableHead>
             </TableRow>
@@ -49,18 +75,27 @@ export default async function DealersPage() {
           <TableBody>
             {dealers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={7} className="h-24 text-center">
                   No dealers found.
                 </TableCell>
               </TableRow>
             ) : (
               dealers.map((dealer) => (
                 <TableRow key={dealer.id}>
+                  <TableCell>
+                    <Avatar>
+                      <AvatarImage src={getImageUrl(dealer.logo)} />
+                      <AvatarFallback>
+                        {dealer.companyName.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </TableCell>
                   <TableCell className="font-medium">
                     {dealer.companyName}
                   </TableCell>
                   <TableCell>{dealer.contactPerson}</TableCell>
-                  <TableCell>{dealer.user.email}</TableCell>
+                  <TableCell>{dealer.businessEmail}</TableCell>
+                  <TableCell>{dealer.phoneNumber}</TableCell>
                   <TableCell>{dealer.city}</TableCell>
                   <TableCell>
                     {new Date(dealer.createdAt).toLocaleDateString()}

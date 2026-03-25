@@ -24,7 +24,7 @@ export class StorageService {
     this.publicDomain = config.publicDomain;
     this.client = new S3Client({
       region: "auto",
-      endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
+      endpoint: `https://${config.accountId}.eu.r2.cloudflarestorage.com`,
       credentials: {
         accessKeyId: config.accessKeyId,
         secretAccessKey: config.secretAccessKey,
@@ -65,7 +65,7 @@ export class StorageService {
       Bucket: this.bucket,
       Key: key,
     });
-    
+
     await this.client.send(command);
     return true;
   }
@@ -87,7 +87,6 @@ export class StorageService {
    * Helper to format dealer paths.
    */
   static formatDealerPath(
-    country: string,
     dealerId: string,
     type: "branding" | "profiles" | "listing",
     filename: string,
@@ -96,7 +95,6 @@ export class StorageService {
     const timestamp = Math.floor(Date.now() / 1000);
     const sanitizedName = filename.replace(/\s+/g, "-").toLowerCase();
     const subPath = subfolder ? `/${subfolder}` : "";
-    // Note: 'type' will be 'listing' for vehicles
-    return `dealers/${country.toLowerCase()}/${dealerId}/${type}${subPath}/${timestamp}_${sanitizedName}`;
+    return `${dealerId}/${type}${subPath}/${timestamp}_${sanitizedName}`;
   }
 }

@@ -19,10 +19,10 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import { createDealerAction } from "@/app/actions/dealer.actions";
+import { createDealer } from "@/app/actions/dealer.actions";
 import { PlusCircle } from "lucide-react";
 import { dealerSchema } from "@/schema";
-import { swissCities } from "@/lib/swiss-data";
+import { swissCities } from "@/lib/swiss-cities";
 import { SelectItem } from "@repo/ui/components/select";
 
 export function DealerForm() {
@@ -48,7 +48,7 @@ export function DealerForm() {
 
   function onSubmit(data: z.infer<typeof dealerSchema>) {
     startTransition(async () => {
-      const result = await createDealerAction(data);
+      const result = await createDealer(data);
       if (result.error) {
         toast.error(result.error);
         return;
@@ -167,8 +167,8 @@ export function DealerForm() {
                   disabled={isPending}
                 >
                   {swissCities.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city}
+                    <SelectItem key={city.value} value={city.value}>
+                      {city.label}
                     </SelectItem>
                   ))}
                 </CustomFormField>
@@ -186,6 +186,7 @@ export function DealerForm() {
               <CustomFormField
                 control={form.control}
                 fieldType={FormFieldType.INPUT}
+                inputType="tel"
                 name="phoneNumber"
                 label="Phone Number"
                 placeholder="+41 79 123 45 67"

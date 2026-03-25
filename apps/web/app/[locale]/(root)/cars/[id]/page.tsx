@@ -7,6 +7,7 @@ import {
 } from "@/app/actions/vehicles.actions";
 import { notFound } from "next/navigation";
 import { formatVehicleName } from "@/lib/helpers/vehicle";
+import { getImageUrl } from "@/lib/helpers/image";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import { ImageGallery } from "../_components/image-gallery";
@@ -99,16 +100,9 @@ export default async function ListingPage({
 
   if (!item) notFound();
 
-  const r2Domain = process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN || "";
-  const getFullImageUrl = (key: string | undefined) => {
-    if (!key) return "/placeholder-car.jpg";
-    if (key.startsWith("http")) return key;
-    return `${r2Domain}/${key.startsWith("/") ? key.slice(1) : key}`;
-  };
-
   const title = formatVehicleName([item.make, item.model, item.version]);
   const price = item.price;
-  const images = item.images.map(getFullImageUrl);
+  const images = item.images.map((img: any) => getImageUrl(img));
 
   // unstable_cache serializes Date objects to strings — must re-wrap
   const toDate = (v: Date | string | null | undefined): Date | null =>
@@ -301,7 +295,7 @@ export default async function ListingPage({
     name: item.dealer.companyName,
     address: `${item.dealer.streetAddress}, ${item.dealer.zipCode} ${item.dealer.city}`,
     phone: item.dealer.phoneNumber ?? undefined,
-    logo: item.dealer.logo ? getFullImageUrl(item.dealer.logo) : undefined,
+    logo: item.dealer.logo ? getImageUrl(item.dealer.logo) : undefined,
     website: item.dealer.website ?? undefined,
     contactPerson: item.dealer.contactPerson ?? undefined,
     businessEmail: item.dealer.businessEmail ?? undefined,
@@ -329,7 +323,7 @@ export default async function ListingPage({
     badge: sim.vehicleCondition
       ? (CONDITION_LABELS[sim.vehicleCondition] ?? sim.vehicleCondition)
       : undefined,
-    image: getFullImageUrl(sim.images[0]),
+    image: getImageUrl(sim.images[0]),
   }));
 
   return (
