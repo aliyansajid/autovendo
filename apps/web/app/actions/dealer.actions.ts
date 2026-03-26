@@ -54,29 +54,42 @@ export async function updateDealerProfile(
 ) {
   try {
     // 1. Fetch current data to check for image changes
-    const existingDealer = await prisma.dealer.findUnique({
+    const existingData = await prisma.dealer.findUnique({
       where: { userId },
-      select: { logo: true, coverImage: true },
+      select: {
+        logo: true,
+        coverImage: true,
+        user: { select: { image: true } },
+      },
     });
 
     const imagesToDelete: string[] = [];
 
     // Check logo
     if (
-      existingDealer?.logo &&
-      values.logo !== existingDealer.logo &&
+      existingData?.logo &&
+      values.logo !== existingData.logo &&
       (typeof values.logo === "string" || values.logo === null)
     ) {
-      imagesToDelete.push(existingDealer.logo);
+      imagesToDelete.push(existingData.logo);
     }
 
     // Check coverImage
     if (
-      existingDealer?.coverImage &&
-      values.coverImage !== existingDealer.coverImage &&
+      existingData?.coverImage &&
+      values.coverImage !== existingData.coverImage &&
       (typeof values.coverImage === "string" || values.coverImage === null)
     ) {
-      imagesToDelete.push(existingDealer.coverImage);
+      imagesToDelete.push(existingData.coverImage);
+    }
+
+    // Check user profile image
+    if (
+      existingData?.user?.image &&
+      values.image !== existingData.user.image &&
+      (typeof values.image === "string" || values.image === null)
+    ) {
+      imagesToDelete.push(existingData.user.image);
     }
 
     // 2. Delete old files from storage
@@ -157,7 +170,7 @@ export async function updateDealerProfile(
     }
 
     revalidatePath("/dashboard/settings/profile");
-    return { success: true, message: "Profile updated successfully" };
+    return { success: true };
   } catch (error) {
     console.error("Failed to update dealer profile:", error);
     return { success: false, error: "An unexpected error occurred." };

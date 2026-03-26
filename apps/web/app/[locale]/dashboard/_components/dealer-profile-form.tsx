@@ -235,12 +235,18 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   };
 
   function onSubmit(values: FormValues) {
+    if (!initialData?.user?.id) {
+      toast.error(t("missingUser"));
+      return;
+    }
+
     startTransition(async () => {
       try {
         let imageUrl = values.image;
         let logoUrl = values.logo;
         let coverImageUrl = values.coverImage;
 
+        // 1. Upload new files if any
         if (values.image instanceof File) {
           imageUrl = await uploadFile(values.image, "profiles");
         }
@@ -251,9 +257,23 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           coverImageUrl = await uploadFile(values.coverImage, "branding");
         }
 
-        // User name / profile image update
+        // 2. Update Dealer Profile (Server Action) first
+        // This handles R2 cleanup by comparing with current DB state
+        const result = await updateDealerProfile(initialData.user.id, {
+          ...values,
+          image: (imageUrl as string) || null,
+          logo: (logoUrl as string) || null,
+          coverImage: (coverImageUrl as string) || null,
+        });
+
+        if (!result.success) {
+          toast.error(result.error || t("profileUpdateError"));
+          return;
+        }
+
+        // 3. Update User fields via Better Auth (Client Side)
         const userUpdates: { name?: string; image?: string } = {};
-        if ((values.name || "") !== (initialData?.user?.name || "")) {
+        if (values.name !== (initialData?.user?.name || "")) {
           userUpdates.name = values.name;
         }
         if ((imageUrl as string | null) !== (initialData?.user?.image || null)) {
@@ -263,14 +283,12 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         if (Object.keys(userUpdates).length > 0) {
           const { error } = await authClient.updateUser(userUpdates);
           if (error) {
-            toast.error(
-              error.message || t("userUpdateError"),
-            );
+            toast.error(error.message || t("userUpdateError"));
             return;
           }
         }
 
-        // Email change (sends confirmation)
+        // 4. Handle Email Change
         if (values.email !== initialData?.user?.email) {
           const { error } = await authClient.changeEmail({
             newEmail: values.email,
@@ -278,44 +296,23 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           });
 
           if (error) {
-            toast.error(
-              error.message || t("emailChangeError"),
-            );
+            toast.error(error.message || t("emailChangeError"));
             return;
           }
 
           toast.info(t("emailConfirmation"));
         }
 
-        if (!initialData?.user?.id) {
-          toast.error(t("missingUser"));
-          return;
-        }
-
-        const result = await updateDealerProfile(initialData.user.id, {
+        // 5. Final Success
+        toast.success(t("profileUpdateSuccess"));
+        form.reset({
           ...values,
-          image: (imageUrl as string) || null,
-          logo: (logoUrl as string) || null,
-          coverImage: (coverImageUrl as string) || null,
+          image: imageUrl as string | undefined,
+          logo: logoUrl as string | undefined,
+          coverImage: coverImageUrl as string | undefined,
         });
-
-        if (result.success) {
-          toast.success(result.message || t("profileUpdateSuccess"));
-          form.reset({
-            ...values,
-            image: imageUrl as string | undefined,
-            logo: logoUrl as string | undefined,
-            coverImage: coverImageUrl as string | undefined,
-          });
-        } else {
-          toast.error(
-            result.error || t("profileUpdateError"),
-          );
-        }
       } catch (error: any) {
-        toast.error(
-          error?.message || t("unexpectedError"),
-        );
+        toast.error(error?.message || t("unexpectedError"));
       }
     });
   }
