@@ -5,7 +5,6 @@ import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { VehicleForm } from "../_components/vehicle-form";
 import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@repo/ui/components/button";
 
 export default async function AddNewVehiclePage() {
   const session = await auth.api.getSession({
@@ -13,7 +12,7 @@ export default async function AddNewVehiclePage() {
   });
 
   const [dealerProfile, subscriptionStatus] = await Promise.all([
-    session?.user?.id ? getDealerProfile(session.user.id) : null,
+    session?.user?.id ? getDealerProfile() : null,
     getVehicleSubscriptionStatus(),
   ]);
 
@@ -36,7 +35,10 @@ export default async function AddNewVehiclePage() {
           </p>
         </div>
       </div>
-      <VehicleForm dealerProfile={dealerProfile} subscriptionStatus={subscriptionStatus} />
+      <VehicleForm
+        dealerProfile={dealerProfile}
+        subscriptionStatus={subscriptionStatus}
+      />
     </div>
   );
 }
