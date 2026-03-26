@@ -17,7 +17,8 @@
       "en": "English",
       "fr": "Français",
       "it": "Italiano"
-    }
+    },
+    "logoAlt": "Logo AutoVendo"
   },
   "Footer": {
     "description": "Découvrez votre véhicule idéal dans notre sélection premium. Nous proposons des milliers de voitures d'occasion et neuves certifiées des meilleures marques européennes à des prix imbattables et avec un historique transparent.",
@@ -541,6 +542,15 @@
     "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
     "currentPasswordRequired": "Le mot de passe actuel est requis",
     "newPasswordMinLength": "Le nouveau mot de passe doit comporter au moins 8 caractères"
+  },
+  "AuthErrors": {
+    "INVALID_EMAIL_OR_PASSWORD": "E-mail ou mot de passe invalide",
+    "USER_NOT_FOUND": "Utilisateur non trouvé",
+    "EMAIL_NOT_VERIFIED": "E-mail non vérifié",
+    "TOO_MANY_REQUESTS": "Trop de requêtes. Veuillez réessayer plus tard.",
+    "INVALID_TOKEN": "Jeton invalide ou expiré",
+    "SESSION_EXPIRED": "Session expirée. Veuillez vous reconnecter.",
+    "UNKNOWN_ERROR": "Une erreur inconnue s'est produite. Veuillez réessayer."
   },
   "ProfileSchema": {
     "invalidEmail": "Adresse e-mail invalide",

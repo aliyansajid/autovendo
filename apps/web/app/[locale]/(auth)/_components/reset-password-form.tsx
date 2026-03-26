@@ -28,6 +28,7 @@ import { useTranslations } from "next-intl";
 
 export const ResetPasswordForm = () => {
   const t = useTranslations("ResetPasswordForm");
+  const tAuthErrors = useTranslations("AuthErrors");
   const tSchema = useTranslations("AuthSchema");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -60,7 +61,8 @@ export const ResetPasswordForm = () => {
       });
 
       if (error) {
-        toast.error(error.message ?? t("errorDefault"));
+        const errorCode = (error as any).code || "UNKNOWN_ERROR";
+        toast.error(tAuthErrors(errorCode) || error.message || t("errorDefault"));
         return;
       }
 

@@ -31,6 +31,7 @@ import { useTranslations } from "next-intl";
 
 export const ForgotPasswordForm = () => {
   const t = useTranslations("ForgotPasswordForm");
+  const tAuthErrors = useTranslations("AuthErrors");
   const locale = useLocale();
   const tSchema = useTranslations("AuthSchema");
   const [isPending, startTransition] = useTransition();
@@ -55,11 +56,12 @@ export const ForgotPasswordForm = () => {
       });
 
       if (error) {
-        toast.error(error.message ?? t("errorDefault"));
+        const errorCode = (error as any).code || "UNKNOWN_ERROR";
+        toast.error(tAuthErrors(errorCode) || error.message || t("errorDefault"));
         return;
       }
 
-      toast.success(data.message ?? t("successDefault"));
+      toast.success(data?.message ?? t("successDefault"));
     });
   }
 

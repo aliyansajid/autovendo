@@ -27,6 +27,7 @@ import { useTranslations } from "next-intl";
 
 export const LoginForm = () => {
   const t = useTranslations("LoginForm");
+  const tAuthErrors = useTranslations("AuthErrors");
   const tSchema = useTranslations("AuthSchema");
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
@@ -53,7 +54,9 @@ export const LoginForm = () => {
       });
 
       if (error) {
-        toast.error(error.message ?? t("errorDefault"));
+        // Better Auth returns error codes in some versions/configs, or we fallback to statusText or message
+        const errorCode = (error as any).code || "UNKNOWN_ERROR";
+        toast.error(tAuthErrors(errorCode) || error.message || t("errorDefault"));
         return;
       }
     });

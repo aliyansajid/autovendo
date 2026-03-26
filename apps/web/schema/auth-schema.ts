@@ -39,34 +39,34 @@ export const createUpdatePasswordSchema = (t: TFn) =>
 
 // Static fallbacks for non-i18n contexts
 export const loginSchema = z.object({
-  email: z.email("Ungültige E-Mail-Adresse"),
-  password: z.string().min(1, "Passwort ist erforderlich"),
+  email: z.email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
   rememberme: z.boolean(),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.email("Ungültige E-Mail-Adresse"),
+  email: z.email("Invalid email address"),
 });
 
 export const resetPasswordSchema = z
   .object({
-    password: z.string().min(8, "Passwort muss mindestens 8 Zeichen lang sein"),
+    password: z.string().min(8, "Password must be at least 8 characters long"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwörter stimmen nicht überein",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
 export const updatePasswordSchema = z
   .object({
-    currentPassword: z.string().min(1, "Aktuelles Passwort ist erforderlich"),
+    currentPassword: z.string().min(1, "Current password is required"),
     newPassword: z
       .string()
-      .min(8, "Neues Passwort muss mindestens 8 Zeichen lang sein"),
+      .min(8, "New password must be at least 8 characters long"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwörter stimmen nicht überein",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });

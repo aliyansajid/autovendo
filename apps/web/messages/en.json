@@ -17,7 +17,8 @@
       "en": "English",
       "fr": "Français",
       "it": "Italiano"
-    }
+    },
+    "logoAlt": "AutoVendo Logo"
   },
   "Footer": {
     "description": "Discover your perfect vehicle in our premium selection. We offer thousands of certified used and new cars from top European brands at unbeatable prices and with transparent history.",
@@ -541,6 +542,15 @@
     "passwordsDoNotMatch": "Passwords do not match",
     "currentPasswordRequired": "Current password is required",
     "newPasswordMinLength": "New password must be at least 8 characters long"
+  },
+  "AuthErrors": {
+    "INVALID_EMAIL_OR_PASSWORD": "Invalid email or password",
+    "USER_NOT_FOUND": "User not found",
+    "EMAIL_NOT_VERIFIED": "Email not verified",
+    "TOO_MANY_REQUESTS": "Too many requests. Please try again later.",
+    "INVALID_TOKEN": "Invalid or expired token",
+    "SESSION_EXPIRED": "Session expired. Please log in again.",
+    "UNKNOWN_ERROR": "An unknown error occurred. Please try again."
   },
   "ProfileSchema": {
     "invalidEmail": "Invalid email address",
