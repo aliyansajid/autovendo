@@ -35,6 +35,7 @@
       "legal": "Legal",
       "contact": "Contact"
     },
+    "address": "Bielstrasse 78,\n2555 Brügg / BE, Switzerland",
     "links": {
       "about": "About Us",
       "rules": "Insertion Rules",
@@ -807,7 +808,9 @@
     "contactInfo": "Contact information",
     "emailLabel": "Email",
     "phoneLabel": "Phone",
+    "phoneContent": "+41 (0)79 322 35 20",
     "addressLabel": "Address",
+    "addressContent": "Bielstrasse 78,\n2555 Brügg / BE, Switzerland",
     "hoursLabel": "Opening hours",
     "hours": {
       "weekdays": "Monday – Friday: 09:00 – 19:00",
@@ -846,6 +849,7 @@
       "monthlySavings": "Monthly savings"
     },
     "tableRows": {
+      "ca": "approx.",
       "bronzeVehicles": "Up to 5 vehicles",
       "silverVehicles": "Up to 10 vehicles",
       "goldVehicles": "Up to 15 vehicles",
@@ -1528,7 +1532,9 @@
     },
     "cta": {
       "download": "Download Contract",
-      "contact": "Contact Support"
+      "contact": "Contact Support",
+      "readyTitle": "Ready to grow your dealership?",
+      "readySubtitle": "Join the Swiss platform designed specifically for professional car dealers."
     }
   }
 }

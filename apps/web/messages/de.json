@@ -35,6 +35,7 @@
       "legal": "Rechtliches",
       "contact": "Kontakt"
     },
+    "address": "Bielstrasse 78,\n2555 Brügg / BE, Schweiz",
     "links": {
       "about": "Über uns",
       "rules": "Insertionsregeln",
@@ -807,7 +808,9 @@
     "contactInfo": "Kontaktinformationen",
     "emailLabel": "E-Mail",
     "phoneLabel": "Telefon",
+    "phoneContent": "+41 (0)79 322 35 20",
     "addressLabel": "Adresse",
+    "addressContent": "Bielstrasse 78,\n2555 Brügg / BE, Schweiz",
     "hoursLabel": "Öffnungszeiten",
     "hours": {
       "weekdays": "Montag - Freitag: 09:00 - 19:00",
@@ -846,10 +849,11 @@
       "monthlySavings": "Monatliche Einsparung"
     },
     "tableRows": {
-      "bronzeVehicles": "Bis zu 5 Fahrzeuge",
-      "silverVehicles": "Bis zu 10 Fahrzeuge",
-      "goldVehicles": "Bis zu 15 Fahrzeuge",
-      "diamondVehicles": "Bis zu 25 Fahrzeuge",
+      "ca": "ca.",
+      "bronzeVehicles": "Bis 5 Fahrzeuge",
+      "silverVehicles": "Bis 10 Fahrzeuge",
+      "goldVehicles": "Bis 15 Fahrzeuge",
+      "diamondVehicles": "Bis 25 Fahrzeuge",
       "bronzeSavings": "ca. 30% günstiger",
       "silverSavings": "ca. 30% günstiger",
       "goldSavings": "ca. 35% günstiger",
@@ -1523,12 +1527,14 @@
       },
       "step5": {
         "title": "Verkauf starten",
-        "description": "Beginnen Sie mit dem Inserieren Ihrer Fahrzeuge und erreichen Sie Tausende potenzieller Käufer in der Schweiz."
+        "description": "Erfasse deine Fahrzeuge und erreiche monatlich tausende potenzielle Käufer in der Schweiz."
       }
     },
     "cta": {
       "download": "Vertrag herunterladen",
-      "contact": "Support kontaktieren"
+      "contact": "Support kontaktieren",
+      "readyTitle": "Bereit, Ihr Autohaus wachsen zu lassen?",
+      "readySubtitle": "Schliessen Sie sich der Schweizer Plattform an, die speziell für professionelle Autohändler entwickelt wurde."
     }
   }
 }

@@ -94,10 +94,10 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold mb-1">{t("phoneLabel")}</h3>
                     <Link
-                      href="tel:+41793223520"
+                      href={`tel:${t("phoneContent").replace(/\s/g, "")}`}
                       className="text-primary underline-offset-4 hover:underline"
                     >
-                      +41 (0)79 322 35 20
+                      {t("phoneContent")}
                     </Link>
                   </div>
                 </div>
@@ -106,10 +106,8 @@ export default function ContactPage() {
                   <MapPin className="size-5 text-primary shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold mb-1">{t("addressLabel")}</h3>
-                    <p className="text-muted-foreground">
-                      Bielstrasse 78,
-                      <br />
-                      2555 Brugg / BE, Switzerland
+                    <p className="text-muted-foreground whitespace-pre-line">
+                      {t("addressContent")}
                     </p>
                   </div>
                 </div>

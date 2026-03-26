@@ -97,10 +97,9 @@ export default async function HowItWorksPage() {
         </div>
 
         <div className="mt-16 bg-secondary p-8 rounded-xl text-center space-y-4">
-          <h3 className="text-xl font-bold">Ready to grow your dealership?</h3>
+          <h3 className="text-xl font-bold">{t("cta.readyTitle")}</h3>
           <p className="text-muted-foreground">
-            Join the Swiss platform designed specifically for professional car
-            dealers.
+            {t("cta.readySubtitle")}
           </p>
           <Button asChild>
             <Link href="/contact">

@@ -16,7 +16,11 @@ import { getImageUrl } from "@/lib/helpers/image";
 import type { VehicleListItem, ListingProps } from "@/types/vehicle";
 import { getTranslations } from "next-intl/server";
 
-export default async function HomePage() {
+export default async function HomePage(props: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await props.params;
+
   const [vehiclesResult, dealersResult, tVehicle] = await Promise.all([
     getVehicles({ pageSize: "12", sort: "created-desc" }).catch(() => ({
       vehicles: [],
@@ -37,10 +41,10 @@ export default async function HomePage() {
         ? tVehicle(`conditions.${item.vehicleCondition.toUpperCase()}`)
         : undefined,
       title: buildVehicleTitle(item.make, item.model, item.version),
-      price: formatPrice(item.price),
+      price: formatPrice(item.price, locale),
       details: [
         formatRegistrationDate(item.registrationMonth, item.registrationYear),
-        `${formatNumber(item.kilometer)} km`,
+        `${formatNumber(item.kilometer, locale)} km`,
         item.fuelType
           ? tVehicle(`fuelTypes.${item.fuelType.toUpperCase()}`)
           : "",

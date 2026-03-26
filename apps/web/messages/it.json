@@ -33,8 +33,9 @@
       "discover": "Scopri",
       "support": "Supporto",
       "legal": "Legale",
-      "contact": "Contatti"
+      "contact": "Contatto"
     },
+    "address": "Bielstrasse 78,\n2555 Brügg / BE, Svizzera",
     "links": {
       "about": "Chi siamo",
       "rules": "Regole di inserzione",
@@ -808,6 +809,8 @@
     "emailLabel": "E-mail",
     "phoneLabel": "Telefono",
     "addressLabel": "Indirizzo",
+    "addressContent": "Bielstrasse 78,\n2555 Brügg / BE, Svizzera",
+    "phoneContent": "+41 (0)79 322 35 20",
     "hoursLabel": "Orari di apertura",
     "hours": {
       "weekdays": "Lunedì – Venerdì: 09:00 – 19:00",
@@ -846,14 +849,15 @@
       "monthlySavings": "Risparmio mensile"
     },
     "tableRows": {
+      "ca": "ca.",
       "bronzeVehicles": "Fino a 5 veicoli",
       "silverVehicles": "Fino a 10 veicoli",
       "goldVehicles": "Fino a 15 veicoli",
       "diamondVehicles": "Fino a 25 veicoli",
-      "bronzeSavings": "circa 30% più economico",
-      "silverSavings": "circa 30% più economico",
-      "goldSavings": "circa 35% più economico",
-      "diamondSavings": "circa 40% più economico"
+      "bronzeSavings": "ca. 30% in meno",
+      "silverSavings": "ca. 30% in meno",
+      "goldSavings": "ca. 35% in meno",
+      "diamondSavings": "ca. 40% in meno"
     },
     "largerDealers": {
       "title": "Più di 25 veicoli",
@@ -1395,8 +1399,6 @@
     "warrantyPlaceholder": "Seleziona garanzia",
     "warrantyDuration": "Durata garanzia (mesi)",
     "warrantyStartDate": "Data inizio garanzia",
-    "mainInspectionPassed": "Revisione superata",
-    "lastInspectionDate": "Ultima revisione (MFK)",
     "datePlaceholder": "Seleziona data",
     "warrantyStartDateLabel": "Data di inizio",
     "warrantyDurationLabel": "Durata",
@@ -1522,13 +1524,15 @@
         "description": "Seleziona il pacchetto di prezzi che meglio si adatta alle dimensioni del tuo inventario."
       },
       "step5": {
-        "title": "Inizia a Vendere",
-        "description": "Inizia a inserzionare i tuoi veicoli e raggiungi migliaia di potenziali acquirenti in Svizzera."
+        "title": "Inizia a vendere",
+        "description": "Inizia a pubblicare i tuoi veicoli e raggiungi migliaia di potenziali acquirenti in Svizzera."
       }
     },
     "cta": {
       "download": "Scarica il contratto",
-      "contact": "Contatta il supporto"
+      "contact": "Contatta il supporto",
+      "readyTitle": "Pronto a far crescere la tua concessionaria?",
+      "readySubtitle": "Unisciti alla piattaforma svizzera progettata specificamente per i professionisti del settore auto."
     }
   }
 }

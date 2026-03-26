@@ -2,14 +2,6 @@ import { Separator } from "@repo/ui/src/components/separator";
 import { ArrowRight, CheckCircle2, Mail, Phone } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
 import { Link } from "@/i18n/routing";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@repo/ui/src/components/table";
 import { Badge } from "@repo/ui/src/components/badge";
 import {
   Card,
@@ -22,6 +14,7 @@ import {
 import { XCircle } from "lucide-react";
 import { SubscribeButton } from "./_components/subscribe-button";
 import { getTranslations } from "next-intl/server";
+import { formatPrice } from "@/lib/helpers/format";
 
 interface PricingFeature {
   name: string;
@@ -38,9 +31,17 @@ interface PricingTier {
   popular: boolean;
 }
 
-export default async function PricingPage() {
+export default async function PricingPage(props: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await props.params;
   const t = await getTranslations("PricingPage");
-  const tiers = t.raw("tiers") as PricingTier[];
+  const rawTiers = (await t.raw("tiers")) as PricingTier[];
+  
+  const tiers = rawTiers.map((tier) => ({
+    ...tier,
+    price: formatPrice(Number(tier.price.replace(/[^\d.-]/g, "")), locale),
+  }));
 
   return (
     <>
@@ -74,50 +75,85 @@ export default async function PricingPage() {
           <Separator />
 
           <section className="space-y-6">
-            <h2 className="text-2xl font-bold">{t("comparisonTitle")}</h2>
-
-            <div className="rounded-xl border overflow-hidden">
-              <Table>
-                <TableHeader className="bg-muted/50">
-                  <TableRow>
-                    <TableHead className="font-bold">{t("tableHeaders.package")}</TableHead>
-                    <TableHead className="font-bold">{t("tableHeaders.vehicles")}</TableHead>
-                    <TableHead className="font-bold">{t("tableHeaders.price")}</TableHead>
-                    <TableHead className="font-bold">{t("tableHeaders.savings")}</TableHead>
-                    <TableHead className="font-bold">{t("tableHeaders.monthlySavings")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="font-semibold">Bronze</TableCell>
-                    <TableCell>{t("tableRows.bronzeVehicles")}</TableCell>
-                    <TableCell className="font-bold text-primary">CHF 180.–</TableCell>
-                    <TableCell className="text-green-600 font-medium">{t("tableRows.bronzeSavings")}</TableCell>
-                    <TableCell>ca. CHF 75.–</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-semibold">Silver</TableCell>
-                    <TableCell>{t("tableRows.silverVehicles")}</TableCell>
-                    <TableCell className="font-bold text-primary">CHF 280.–</TableCell>
-                    <TableCell className="text-green-600 font-medium">{t("tableRows.silverSavings")}</TableCell>
-                    <TableCell>ca. CHF 120.–</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-semibold">Gold</TableCell>
-                    <TableCell>{t("tableRows.goldVehicles")}</TableCell>
-                    <TableCell className="font-bold text-primary">CHF 325.–</TableCell>
-                    <TableCell className="text-green-600 font-medium">{t("tableRows.goldSavings")}</TableCell>
-                    <TableCell>ca. CHF 175.–</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-semibold">Diamond</TableCell>
-                    <TableCell>{t("tableRows.diamondVehicles")}</TableCell>
-                    <TableCell className="font-bold text-primary">CHF 408.–</TableCell>
-                    <TableCell className="text-green-600 font-medium">{t("tableRows.diamondSavings")}</TableCell>
-                    <TableCell>ca. CHF 270.–</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">
+              {t("comparisonTitle")}
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse bg-white rounded-xl shadow-sm border border-border">
+                <thead>
+                  <tr className="bg-muted/50 border-b border-border">
+                    <th className="p-4 text-left font-bold text-sm">
+                      {t("tableHeaders.package")}
+                    </th>
+                    <th className="p-4 text-left font-bold text-sm">
+                      {t("tableHeaders.vehicles")}
+                    </th>
+                    <th className="p-4 text-left font-bold text-primary text-sm">
+                      {t("tableHeaders.price")}
+                    </th>
+                    <th className="p-4 text-left font-bold text-green-600 text-sm">
+                      {t("tableHeaders.savings")}
+                    </th>
+                    <th className="p-4 text-left font-bold text-sm">
+                      {t("tableHeaders.monthlySavings")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  <tr>
+                    <td className="p-4 font-semibold">Bronze</td>
+                    <td className="p-4">{t("tableRows.bronzeVehicles")}</td>
+                    <td className="p-4 font-bold text-primary">
+                      {formatPrice(180, locale)}
+                    </td>
+                    <td className="p-4 font-medium text-green-600">
+                      {t("tableRows.bronzeSavings")}
+                    </td>
+                    <td className="p-4 text-muted-foreground">
+                      {t("tableRows.ca")} {formatPrice(75, locale)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-4 font-semibold">Silver</td>
+                    <td className="p-4">{t("tableRows.silverVehicles")}</td>
+                    <td className="p-4 font-bold text-primary">
+                      {formatPrice(280, locale)}
+                    </td>
+                    <td className="p-4 font-medium text-green-600">
+                      {t("tableRows.silverSavings")}
+                    </td>
+                    <td className="p-4 text-muted-foreground">
+                      {t("tableRows.ca")} {formatPrice(115, locale)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-4 font-semibold">Gold</td>
+                    <td className="p-4">{t("tableRows.goldVehicles")}</td>
+                    <td className="p-4 font-bold text-primary">
+                      {formatPrice(325, locale)}
+                    </td>
+                    <td className="p-4 font-medium text-green-600">
+                      {t("tableRows.goldSavings")}
+                    </td>
+                    <td className="p-4 text-muted-foreground">
+                      {t("tableRows.ca")} {formatPrice(175, locale)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-4 font-semibold">Diamond</td>
+                    <td className="p-4">{t("tableRows.diamondVehicles")}</td>
+                    <td className="p-4 font-bold text-primary">
+                      {formatPrice(408, locale)}
+                    </td>
+                    <td className="p-4 font-medium text-green-600">
+                      {t("tableRows.diamondSavings")}
+                    </td>
+                    <td className="p-4 text-muted-foreground">
+                      {t("tableRows.ca")} {formatPrice(270, locale)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </section>
 
@@ -245,24 +281,18 @@ export default async function PricingPage() {
         <section className="space-y-12">
           <h2 className="text-2xl font-bold text-center">{t("choosePlan")}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {tiers.map((tier: PricingTier) => (
+            {tiers.map((tier) => (
               <Card
                 key={tier.name}
                 className={`${tier.popular ? "border-primary" : ""}`}
               >
                 <CardHeader>
-                  {tier.popular ? (
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl font-bold">
-                        {tier.name}
-                      </CardTitle>
-                      <Badge>{t("popular")}</Badge>
-                    </div>
-                  ) : (
+                  <div className="flex items-center justify-between">
                     <CardTitle className="text-xl font-bold">
                       {tier.name}
                     </CardTitle>
-                  )}
+                    {tier.popular && <Badge>{t("popular")}</Badge>}
+                  </div>
                   <CardDescription>{tier.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 space-y-6">

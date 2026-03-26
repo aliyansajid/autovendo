@@ -35,6 +35,7 @@
       "legal": "Juridique",
       "contact": "Contact"
     },
+    "address": "Bielstrasse 78,\n2555 Brügg / BE, Suisse",
     "links": {
       "about": "À propos de nous",
       "rules": "Règles d'insertion",
@@ -807,7 +808,9 @@
     "contactInfo": "Informations de contact",
     "emailLabel": "E-mail",
     "phoneLabel": "Téléphone",
+    "phoneContent": "+41 (0)79 322 35 20",
     "addressLabel": "Adresse",
+    "addressContent": "Bielstrasse 78,\n2555 Brügg / BE, Suisse",
     "hoursLabel": "Heures d'ouverture",
     "hours": {
       "weekdays": "Lundi – Vendredi : 09h00 – 19h00",
@@ -846,14 +849,15 @@
       "monthlySavings": "Économies mensuelles"
     },
     "tableRows": {
+      "ca": "env.",
       "bronzeVehicles": "Jusqu'à 5 véhicules",
       "silverVehicles": "Jusqu'à 10 véhicules",
       "goldVehicles": "Jusqu'à 15 véhicules",
       "diamondVehicles": "Jusqu'à 25 véhicules",
-      "bronzeSavings": "env. 30 % moins cher",
-      "silverSavings": "env. 30 % moins cher",
-      "goldSavings": "env. 35 % moins cher",
-      "diamondSavings": "env. 40 % moins cher"
+      "bronzeSavings": "env. 30% moins cher",
+      "silverSavings": "env. 30% moins cher",
+      "goldSavings": "env. 35% moins cher",
+      "diamondSavings": "env. 40% moins cher"
     },
     "largerDealers": {
       "title": "Plus de 25 véhicules",
@@ -1395,8 +1399,6 @@
     "warrantyPlaceholder": "Sélectionner la garantie",
     "warrantyDuration": "Durée de la garantie (mois)",
     "warrantyStartDate": "Date de début de garantie",
-    "mainInspectionPassed": "Contrôle technique passé",
-    "lastInspectionDate": "Dernier contrôle (MFK)",
     "datePlaceholder": "Sélectionner une date",
     "warrantyStartDateLabel": "Date de début",
     "warrantyDurationLabel": "Durée",
@@ -1522,13 +1524,15 @@
         "description": "Sélectionnez le forfait tarifaire qui correspond le mieux à la taille de votre inventaire."
       },
       "step5": {
-        "title": "Commencer à Vendre",
+        "title": "Commencer à vendre",
         "description": "Commencez à lister vos véhicules et atteignez des milliers d'acheteurs potentiels en Suisse."
       }
     },
     "cta": {
       "download": "Télécharger le contrat",
-      "contact": "Contacter le support"
+      "contact": "Contactez le support",
+      "readyTitle": "Prêt à faire croître votre concession ?",
+      "readySubtitle": "Rejoignez la plateforme suisse conçue spécifiquement pour les concessionnaires automobiles professionnels."
     }
   }
 }

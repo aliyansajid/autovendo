@@ -123,10 +123,8 @@ export const Footer = () => {
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-muted-foreground">
                   <MapPin className="size-4 text-muted-foreground mt-0.5" />
-                  <span>
-                    Bielstrasse 78,
-                    <br />
-                    2555 Brugg / BE, Switzerland
+                  <span className="whitespace-pre-line">
+                    {t("address")}
                   </span>
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
