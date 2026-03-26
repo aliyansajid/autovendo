@@ -1032,6 +1032,14 @@
     "errorToast": "Nachricht konnte nicht gesendet werden.",
     "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten."
   },
+  "DealerContactSchema": {
+    "nameMinLength": "Name ist erforderlich",
+    "nameMaxLength": "Name darf maximal 50 Zeichen lang sein",
+    "phoneRequired": "Telefon ist erforderlich",
+    "invalidPhoneFormat": "Ungültige Schweizer Telefonnummer",
+    "invalidEmail": "Ungültige E-Mail-Adresse",
+    "messageMaxLength": "Nachricht darf maximal 1000 Zeichen lang sein"
+  },
   "GarageFilters": {
     "reset": "Zurücksetzen",
     "yearLabel": "Jahr",

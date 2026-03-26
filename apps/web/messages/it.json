@@ -1032,6 +1032,14 @@
     "errorToast": "Il messaggio non ha potuto essere inviato.",
     "unexpectedError": "Si è verificato un errore imprevisto."
   },
+  "DealerContactSchema": {
+    "nameMinLength": "Il nome è obbligatorio",
+    "nameMaxLength": "Il nome può contenere un massimo di 50 caratteri",
+    "phoneRequired": "Il numero di telefono è obbligatorio",
+    "invalidPhoneFormat": "Numero di telefono svizzero non valido",
+    "invalidEmail": "Indirizzo e-mail non valido",
+    "messageMaxLength": "Il messaggio può contenere un massimo di 1000 caratteri"
+  },
   "GarageFilters": {
     "reset": "Azzera",
     "yearLabel": "Anno",

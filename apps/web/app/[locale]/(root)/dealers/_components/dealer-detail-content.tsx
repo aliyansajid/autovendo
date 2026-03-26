@@ -69,7 +69,7 @@ import type {
   GooglePlaceData,
 } from "@/types/dealer";
 import type { VehicleFacets, VehicleListItem } from "@/types/vehicle";
-import { dealerContactSchema } from "@/schema/dealer-contact-schema";
+import { createDealerContactSchema } from "@/schema/dealer-contact-schema";
 import {
   sendDealerContactEmail,
   getDealerVehicles,
@@ -79,6 +79,7 @@ import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getImageUrl } from "@/lib/helpers/image";
+import { useMemo } from "react";
 
 interface DealerDetailContentProps {
   dealer: DealerDetail;
@@ -94,6 +95,7 @@ export const DealerDetailContent = ({
   initialFilters = {},
 }: DealerDetailContentProps) => {
   const t = useTranslations("DealerDetail");
+  const tSchema = useTranslations("DealerContactSchema");
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") || "about";
   const [isPending, startTransition] = useTransition();
@@ -177,12 +179,17 @@ export const DealerDetailContent = ({
     });
   };
 
-  const form = useForm<z.infer<typeof dealerContactSchema>>({
-    resolver: zodResolver(dealerContactSchema),
+  const contactSchema = useMemo(
+    () => createDealerContactSchema(tSchema),
+    [tSchema]
+  );
+  
+  const form = useForm<z.infer<typeof contactSchema>>({
+    resolver: zodResolver(contactSchema),
     defaultValues: { name: "", phone: "", email: "", message: "" },
   });
 
-  function onSubmit(values: z.infer<typeof dealerContactSchema>) {
+  function onSubmit(values: z.infer<typeof contactSchema>) {
     startTransition(async () => {
       try {
         const result = await sendDealerContactEmail(dealer.id, values);

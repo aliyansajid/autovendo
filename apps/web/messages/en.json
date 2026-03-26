@@ -1032,6 +1032,14 @@
     "errorToast": "Message could not be sent.",
     "unexpectedError": "An unexpected error occurred."
   },
+  "DealerContactSchema": {
+    "nameMinLength": "Name is required",
+    "nameMaxLength": "Name can be a maximum of 50 characters",
+    "phoneRequired": "Phone number is required",
+    "invalidPhoneFormat": "Invalid Swiss phone number",
+    "invalidEmail": "Invalid email address",
+    "messageMaxLength": "Message can be a maximum of 1000 characters"
+  },
   "GarageFilters": {
     "reset": "Reset",
     "yearLabel": "Year",
