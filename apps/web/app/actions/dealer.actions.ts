@@ -16,6 +16,7 @@ import type {
 import { DAY_LABELS, DAY_ORDER } from "@/lib/helpers/format";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { buildWhereClause } from "./vehicles.actions";
+import { storage } from "@/lib/helpers/storage";
 
 // -----------------------------------------------------------------------------
 // Helpers
@@ -52,6 +53,49 @@ export async function updateDealerProfile(
   values: z.infer<typeof dealerProfileSchema>,
 ) {
   try {
+    // 1. Fetch current data to check for image changes
+    const existingDealer = await prisma.dealer.findUnique({
+      where: { userId },
+      select: { logo: true, coverImage: true },
+    });
+
+    const imagesToDelete: string[] = [];
+
+    // Check logo
+    if (
+      existingDealer?.logo &&
+      values.logo !== existingDealer.logo &&
+      (typeof values.logo === "string" || values.logo === null)
+    ) {
+      imagesToDelete.push(existingDealer.logo);
+    }
+
+    // Check coverImage
+    if (
+      existingDealer?.coverImage &&
+      values.coverImage !== existingDealer.coverImage &&
+      (typeof values.coverImage === "string" || values.coverImage === null)
+    ) {
+      imagesToDelete.push(existingDealer.coverImage);
+    }
+
+    // 2. Delete old files from storage
+    if (imagesToDelete.length > 0) {
+      await Promise.all(
+        imagesToDelete.map(async (url) => {
+          try {
+            const urlObj = new URL(url);
+            const key = urlObj.pathname.startsWith("/")
+              ? urlObj.pathname.substring(1)
+              : urlObj.pathname;
+            await storage.deleteFile(key);
+          } catch (e) {
+            console.error(`Failed to delete old dealer image: ${url}`, e);
+          }
+        }),
+      );
+    }
+
     const dealer = await prisma.dealer.upsert({
       where: { userId },
       create: {
