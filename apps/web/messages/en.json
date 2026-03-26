@@ -1099,6 +1099,16 @@
     "pageSubtitle": "Manage your listed vehicles and their status.",
     "newListing": "New Listing"
   },
+  "NewVehiclePage": {
+    "back": "Back to Overview",
+    "title": "List Vehicle",
+    "subtitle": "Enter the details of your vehicle to list it on the marketplace."
+  },
+  "EditVehiclePage": {
+    "back": "Back to Overview",
+    "title": "Edit Listing",
+    "subtitle": "Update the details of your vehicle."
+  },
   "ProfilePage": {
     "title": "Profile Settings",
     "subtitle": "Manage your personal data and dealer information."

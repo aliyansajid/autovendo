@@ -8,11 +8,11 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@repo/ui/components/alert";
-import { format } from "date-fns";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getFormatter } from "next-intl/server";
 
 export default async function VehiclesPage() {
   const t = await getTranslations("VehiclesPage");
+  const format = await getFormatter();
 
   const [vehicles, subscriptionStatus] = await Promise.all([
     getDealerVehicles(),
@@ -36,10 +36,18 @@ export default async function VehiclesPage() {
             <AlertDescription>
               {t("expiredGraceDescription")}{" "}
               <strong>
-                {format(new Date(subscriptionStatus.graceEnd), "dd.MM.yyyy")}
+                {format.dateTime(new Date(subscriptionStatus.graceEnd), {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
               </strong>{" "}
               {t("expiredDescription", {
-                date: format(new Date(subscriptionStatus.graceEnd), "dd.MM.yyyy"),
+                date: format.dateTime(new Date(subscriptionStatus.graceEnd), {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                }),
               })}
             </AlertDescription>
           </Alert>
@@ -57,7 +65,14 @@ export default async function VehiclesPage() {
               ? t("noSubDescription")
               : t("expiredDescription", {
                   date: subscriptionStatus.graceEnd
-                    ? format(new Date(subscriptionStatus.graceEnd), "dd.MM.yyyy")
+                     ? format.dateTime(
+                         new Date(subscriptionStatus.graceEnd),
+                         {
+                           day: "2-digit",
+                           month: "2-digit",
+                           year: "numeric",
+                         },
+                       )
                     : "",
                 })}
           </AlertDescription>

@@ -5,8 +5,10 @@ import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { VehicleForm } from "../_components/vehicle-form";
 import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 export default async function AddNewVehiclePage() {
+  const t = await getTranslations("NewVehiclePage");
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -24,14 +26,13 @@ export default async function AddNewVehiclePage() {
           className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors w-fit"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Zurück zur Übersicht
+          {t("back")}
         </Link>
 
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold">Fahrzeug inserieren</h1>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Geben Sie die Details Ihres Fahrzeugs ein, um es auf dem Marktplatz
-            zu inserieren.
+            {t("subtitle")}
           </p>
         </div>
       </div>

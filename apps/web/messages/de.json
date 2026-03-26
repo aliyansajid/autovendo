@@ -1099,6 +1099,16 @@
     "pageSubtitle": "Verwalten Sie Ihre inserierten Fahrzeuge und deren Status.",
     "newListing": "Neues Inserat"
   },
+  "NewVehiclePage": {
+    "back": "Zurück zur Übersicht",
+    "title": "Fahrzeug inserieren",
+    "subtitle": "Geben Sie die Details Ihres Fahrzeugs ein, um es auf dem Marktplatz zu inserieren."
+  },
+  "EditVehiclePage": {
+    "back": "Zurück zur Übersicht",
+    "title": "Inserat bearbeiten",
+    "subtitle": "Aktualisieren Sie die Details Ihres Fahrzeugs."
+  },
   "ProfilePage": {
     "title": "Profileinstellungen",
     "subtitle": "Verwalten Sie Ihre persönlichen Daten und Händlerinformationen."

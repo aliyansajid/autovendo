@@ -10,12 +10,14 @@ import { mapVehicleToForm } from "@/lib/helpers/vehicle";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 export default async function EditVehiclePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const t = await getTranslations("EditVehiclePage");
   const { id } = await params;
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -41,13 +43,13 @@ export default async function EditVehiclePage({
           className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors w-fit"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Zurück zur Übersicht
+          {t("back")}
         </Link>
 
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold">Inserat bearbeiten</h1>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Aktualisieren Sie die Details Ihres Fahrzeugs.
+            {t("subtitle")}
           </p>
         </div>
       </div>

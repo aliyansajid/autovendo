@@ -36,7 +36,7 @@ import {
   InputGroupAddon,
 } from "@repo/ui/components/input-group";
 import { Badge } from "@repo/ui/components/badge";
-import { useTranslations } from "next-intl";
+import { useTranslations, useFormatter } from "next-intl";
 
 interface Vehicle {
   id: string;
@@ -61,6 +61,7 @@ export function VehicleList({
   subscriptionStatus?: SubscriptionStatus;
 }) {
   const t = useTranslations("VehicleList");
+  const format = useFormatter();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -105,7 +106,13 @@ export function VehicleList({
           <div className="flex items-start gap-3 rounded-lg border border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20 px-4 py-3 text-sm text-yellow-900 dark:text-yellow-400">
             <AlertTriangle className="mt-0.5 size-4 shrink-0 text-yellow-500" />
             <p>
-              {t("graceWarning", { date: format(new Date(subscriptionStatus.graceEnd), "dd.MM.yyyy") })}
+              {t("graceWarning", {
+                date: format.dateTime(new Date(subscriptionStatus.graceEnd), {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                }),
+              })}
             </p>
           </div>
         )}
@@ -170,10 +177,13 @@ export function VehicleList({
                   </span>
                 </TableCell>
                 <TableCell className="font-semibold whitespace-nowrap">
-                  CHF {vehicle.price.toLocaleString("de-CH")}
+                  {format.number(vehicle.price, {
+                    style: "currency",
+                    currency: "CHF",
+                  })}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {vehicle.kilometer.toLocaleString("de-CH")} km
+                  {format.number(vehicle.kilometer)} km
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
                   {vehicle.registrationMonth.toString().padStart(2, "0")}/
@@ -186,7 +196,11 @@ export function VehicleList({
                   {vehicle.color.toLowerCase()}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {format(new Date(vehicle.createdAt), "dd.MM.yyyy")}
+                  {format.dateTime(new Date(vehicle.createdAt), {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end">

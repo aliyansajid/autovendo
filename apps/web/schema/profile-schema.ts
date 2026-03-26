@@ -11,7 +11,7 @@ const ACCEPTED_IMAGE_TYPES = [
 
 const createOptionalImage = (t: TFn) =>
   z
-    .union([z.instanceof(File), z.string().url()])
+    .union([z.instanceof(File), z.url()])
     .refine(
       (file) =>
         typeof file === "string" ||

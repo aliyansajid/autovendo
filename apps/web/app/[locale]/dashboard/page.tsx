@@ -11,10 +11,11 @@ import { Badge } from "@repo/ui/components/badge";
 import { Progress } from "@repo/ui/components/progress";
 import { Car, CreditCard, Users } from "lucide-react";
 import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getFormatter } from "next-intl/server";
 
 export default async function DashboardPage() {
   const t = await getTranslations("DashboardPage");
+  const format = await getFormatter();
 
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -76,7 +77,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="text-2xl font-bold">
-              {subscriptionStatus.currentCount}
+              {format.number(subscriptionStatus.currentCount)}
             </div>
             {subscriptionStatus.type !== "no_subscription" ? (
               <>
@@ -90,8 +91,8 @@ export default async function DashboardPage() {
                 />
                 <p className="text-xs text-muted-foreground">
                   {t("usedSlots", {
-                    current: subscriptionStatus.currentCount,
-                    max: subscriptionStatus.maxVehicles,
+                    current: format.number(subscriptionStatus.currentCount),
+                    max: format.number(subscriptionStatus.maxVehicles),
                   })}
                 </p>
               </>
@@ -111,7 +112,7 @@ export default async function DashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
+            <div className="text-2xl font-bold">{format.number(0)}</div>
             <p className="text-xs text-muted-foreground">
               {t("visitorsSubtitle")}
             </p>

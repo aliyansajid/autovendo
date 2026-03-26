@@ -1099,6 +1099,16 @@
     "pageSubtitle": "Gérez vos véhicules publiés et leur statut.",
     "newListing": "Nouvelle Annonce"
   },
+  "NewVehiclePage": {
+    "back": "Retour à l'aperçu",
+    "title": "Publier un véhicule",
+    "subtitle": "Saisissez les détails de votre véhicule pour le publier sur le marché."
+  },
+  "EditVehiclePage": {
+    "back": "Retour à l'aperçu",
+    "title": "Modifier l'annonce",
+    "subtitle": "Mettez à jour les détails de votre véhicule."
+  },
   "ProfilePage": {
     "title": "Paramètres du Profil",
     "subtitle": "Gérez vos données personnelles et informations de concessionnaire."
