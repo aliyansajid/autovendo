@@ -22,6 +22,7 @@ import { Separator } from "@repo/ui/components/separator";
 
 export function TechnicalDataSection() {
   const t = useTranslations("VehicleFormSections");
+  const t_vehicle = useTranslations("Vehicle");
   const { control } = useFormContext();
   const fuelType = useWatch({ control, name: "fuelType" });
   const batteryOwnership = useWatch({ control, name: "batteryOwnership" });
@@ -99,30 +100,30 @@ export function TechnicalDataSection() {
           )}
 
           {(showCombustionOrMild || showHydrogen) && (
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              inputType="number"
-              name="cubicCapacity"
-              label={t("displacement")}
-              inputGroupText="cm³"
-              placeholder="0"
-            />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="cubicCapacity"
+                label={t("displacement")}
+                inputGroupText={t("units.ccm")}
+                placeholder="0"
+              />
           )}
 
           {(showCombustionOrMild ||
             showFullHybrid ||
             showHydrogen ||
             showPluginHybrid) && (
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              inputType="number"
-              name="co2Emission"
-              label={t("co2")}
-              inputGroupText="g/km"
-              placeholder="0"
-            />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="co2Emission"
+                label={t("co2")}
+                inputGroupText={t("units.gkm")}
+                placeholder="0"
+              />
           )}
 
           <div className="grid grid-cols-2 gap-3">
@@ -134,14 +135,14 @@ export function TechnicalDataSection() {
               label={t("ps")}
               placeholder="0"
             />
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.INPUT}
-              inputType="number"
-              name="kw"
-              label="kW"
-              placeholder="0"
-            />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT}
+                inputType="number"
+                name="kw"
+                label={t("units.kw")}
+                placeholder="0"
+              />
           </div>
 
           <CustomFormField
@@ -175,45 +176,45 @@ export function TechnicalDataSection() {
           />
 
           <div className="grid grid-cols-2 gap-3">
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              inputType="number"
-              name="emptyWeight"
-              label={t("emptyWeight")}
-              inputGroupText="kg"
-              placeholder="0"
-            />
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              inputType="number"
-              name="loadCapacity"
-              label={t("payload")}
-              inputGroupText="kg"
-              placeholder="0"
-            />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="emptyWeight"
+                label={t("emptyWeight")}
+                inputGroupText={t("units.kg")}
+                placeholder="0"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="loadCapacity"
+                label={t("payload")}
+                inputGroupText={t("units.kg")}
+                placeholder="0"
+              />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              inputType="number"
-              name="towingCapacityBraked"
-              label={t("towingCapacity")}
-              inputGroupText="kg"
-              placeholder="0"
-            />
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              inputType="number"
-              name="wheelbase"
-              label={t("wheelbase")}
-              inputGroupText="mm"
-              placeholder="0"
-            />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="towingCapacityBraked"
+                label={t("towingCapacity")}
+                inputGroupText={t("units.kg")}
+                placeholder="0"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="wheelbase"
+                label={t("wheelbase")}
+                inputGroupText={t("units.mm")}
+                placeholder="0"
+              />
           </div>
 
           {(showElectric || showFullHybrid || showPluginHybrid) && (
@@ -224,7 +225,7 @@ export function TechnicalDataSection() {
                 inputType="number"
                 name="range"
                 label={t("range")}
-                inputGroupText="km"
+                inputGroupText={t("units.km")}
                 placeholder="0"
               />
               <CustomFormField
@@ -233,7 +234,7 @@ export function TechnicalDataSection() {
                 inputType="number"
                 name="batteryCapacity"
                 label={t("batteryCapacity")}
-                inputGroupText="kWh"
+                inputGroupText={t("units.kwh")}
                 placeholder="0"
               />
 
@@ -249,22 +250,22 @@ export function TechnicalDataSection() {
                     >
                       {BatteryOwnershipEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {e.label}
+                          {t_vehicle(`batteryOwnership.${e.value.toUpperCase().replace(/-/g, "_")}`)}
                         </SelectItem>
                       ))}
                     </CustomFormField>
                   </div>
 
                   {batteryOwnership === "battery-rent-required" && (
-                    <CustomFormField
-                      control={control}
-                      fieldType={FormFieldType.INPUT_GROUP}
-                      inputType="number"
-                      name="batteryRentalMonth"
-                      label={t("batteryRental")}
-                      inputGroupText="CHF/Mt."
-                      placeholder="0"
-                    />
+                      <CustomFormField
+                        control={control}
+                        fieldType={FormFieldType.INPUT_GROUP}
+                        inputType="number"
+                        name="batteryRentalMonth"
+                        label={t("batteryRental")}
+                        inputGroupText={t("units.chf_month")}
+                        placeholder="0"
+                      />
                   )}
 
                   <div className="grid grid-cols-2 gap-3">
@@ -277,7 +278,7 @@ export function TechnicalDataSection() {
                     >
                       {ChargingPlugTypeStandardEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {e.label}
+                          {t_vehicle(`chargingStandardAC.${e.value.toUpperCase().replace(/-/g, "_")}`)}
                         </SelectItem>
                       ))}
                     </CustomFormField>
@@ -291,7 +292,7 @@ export function TechnicalDataSection() {
                     >
                       {ChargingPlugTypeFastEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {e.label}
+                          {t_vehicle(`chargingStandardDC.${e.value.toUpperCase().replace(/-/g, "_")}`)}
                         </SelectItem>
                       ))}
                     </CustomFormField>
@@ -303,7 +304,7 @@ export function TechnicalDataSection() {
                     inputType="number"
                     name="chargingPower"
                     label={t("chargingPower")}
-                    inputGroupText="kW"
+                    inputGroupText={t("units.kw")}
                     placeholder="0"
                   />
                 </>

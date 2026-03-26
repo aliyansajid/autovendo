@@ -36,11 +36,11 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-bold">
           {t("welcomeTitle", { name: session!.user.name })}
         </h1>
-        <p className="text-muted-foreground">{t("welcomeSubtitle")}</p>
+        <p className="text-sm text-muted-foreground">{t("welcomeSubtitle")}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -81,7 +81,11 @@ export default async function DashboardPage() {
             {subscriptionStatus.type !== "no_subscription" ? (
               <>
                 <Progress
-                  value={(subscriptionStatus.currentCount / subscriptionStatus.maxVehicles) * 100}
+                  value={
+                    (subscriptionStatus.currentCount /
+                      subscriptionStatus.maxVehicles) *
+                    100
+                  }
                   className="h-1.5"
                 />
                 <p className="text-xs text-muted-foreground">

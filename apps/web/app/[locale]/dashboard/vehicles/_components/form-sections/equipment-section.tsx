@@ -1,4 +1,5 @@
 import { useFormContext, useWatch } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import {
   CustomFormField,
   FormFieldType,
@@ -17,6 +18,8 @@ import { truckExtrasEnum } from "@/constants/truck";
 import { camperExtrasEnum } from "@/constants/camper";
 
 export function EquipmentSection() {
+  const t = useTranslations("VehicleFormSections");
+  const t_vehicle = useTranslations("Vehicle");
   const { control } = useFormContext();
   const vehicleType = useWatch({ control, name: "vehicleType" });
 
@@ -38,7 +41,7 @@ export function EquipmentSection() {
     >
       <AccordionItem value="equipment">
         <AccordionTrigger className="flex items-center text-xl text-primary font-bold cursor-pointer hover:no-underline">
-          Ausstattung & Extras
+          {t("equipmentTitle")}
         </AccordionTrigger>
         <AccordionContent className="space-y-6 px-1">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-y-3 pt-6">
@@ -48,14 +51,14 @@ export function EquipmentSection() {
                 control={control}
                 fieldType={FormFieldType.CHECKBOX}
                 name={`equipment.${item.value}`}
-                label={item.label}
+                label={t_vehicle(`equipment.${item.value}`)}
               />
             ))}
           </div>
 
           <div className="space-y-4 pt-4">
             <Label className="text-lg text-primary font-semibold">
-              Zusatz-Extras
+              {t("additionalExtras")}
             </Label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-y-3">
               {activeExtrasEnum.map((extra) => (
@@ -64,7 +67,7 @@ export function EquipmentSection() {
                   control={control}
                   fieldType={FormFieldType.CHECKBOX}
                   name={`extras.${extra.value}`}
-                  label={extra.label}
+                  label={t_vehicle(`extras.${extra.value}`)}
                 />
               ))}
             </div>

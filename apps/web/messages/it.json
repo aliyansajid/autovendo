@@ -274,6 +274,31 @@
       "furniture-transporter": "Trasportatore di mobili",
       "school-bus": "Scuolabus",
       "winch": "Verricello"
+    },
+    "brandGroups": {
+      "topBrands": "Top-Marken",
+      "allBrands": "Alle Marken"
+    },
+    "batteryOwnership": {
+      "BATTERY_INCLUDED": "Batteria inclusa nel prezzo d'acquisto",
+      "BATTERY_RENT_REQUIRED": "La batteria richiede un noleggio aggiuntivo"
+    },
+    "chargingStandardAC": {
+      "TYPE_1": "Tipo 1",
+      "TYPE_2": "Tipo 2"
+    },
+    "chargingStandardDC": {
+      "CCS": "CCS",
+      "CSS_2": "CSS-2",
+      "CHADEMO": "CHAdeMO",
+      "SUPERCHARGER": "Supercharger"
+    },
+    "priceRating": {
+      "excellent": "Prezzo eccellente",
+      "veryGood": "Ottimo prezzo",
+      "good": "Buon prezzo",
+      "fair": "Prezzo equo",
+      "overpriced": "Prezzo elevato"
     }
   },
   "FeaturedListings": {
@@ -516,6 +541,69 @@
     "passwordsDoNotMatch": "Le password non corrispondono",
     "currentPasswordRequired": "La password attuale è obbligatoria",
     "newPasswordMinLength": "La nuova password deve contenere almeno 8 caratteri"
+  },
+  "ProfileSchema": {
+    "invalidEmail": "Indirizzo e-mail non valido",
+    "invalidImageType": "Sono consentite solo immagini PNG, JPG, JPEG o WEBP",
+    "invalidUrl": "Inserisca un URL valido",
+    "nameMinLength": "Il nome deve contenere almeno 3 caratteri",
+    "nameMaxLength": "Il nome deve contenere al massimo 50 caratteri",
+    "companyNameMinLength": "Il nome dell'azienda deve contenere almeno 3 caratteri",
+    "companyNameMaxLength": "Il nome dell'azienda deve contenere al massimo 50 caratteri",
+    "addressMinLength": "L'indirizzo deve contenere almeno 5 caratteri",
+    "addressMaxLength": "L'indirizzo deve contenere al massimo 100 caratteri",
+    "zipCodeMinLength": "Il codice postale deve contenere almeno 4 caratteri",
+    "zipCodeMaxLength": "Il codice postale deve contenere al massimo 10 caratteri",
+    "cityMinLength": "La città deve contenere almeno 2 caratteri",
+    "cityMaxLength": "La città deve contenere al massimo 50 caratteri",
+    "uidRequired": "L'UID è obbligatorio",
+    "invalidUidFormat": "Formato UID non valido (CHE-XXX.XXX.XXX)",
+    "contactPersonMinLength": "La persona di contatto deve contenere almeno 3 caratteri",
+    "contactPersonMaxLength": "La persona di contatto deve contenere al massimo 50 caratteri",
+    "phoneRequired": "Il numero di telefono è obbligatorio",
+    "invalidPhoneFormat": "Formato del numero di telefono svizzero non valido"
+  },
+  "VehicleSchema": {
+    "negativeError": "Il valore non può essere negativo",
+    "vehicleTypeRequired": "Seleziona un tipo di veicolo.",
+    "invalidType": "Tipo non valido",
+    "makeRequired": "Seleziona una marca.",
+    "invalidMake": "Marca non valida",
+    "invalidGearTransmission": "Cambio/trasmissione non valido",
+    "invalidTransmissionType": "Tipo di trasmissione non valido",
+    "invalidDriveType": "Tipo di trazione non valido",
+    "bodyTypeRequired": "Seleziona una carrozzeria.",
+    "invalidBodyType": "Carrozzeria non valida",
+    "invalidFuelType": "Carburante non valido",
+    "colorRequired": "Seleziona un colore.",
+    "invalidColor": "Colore non valido",
+    "invalidInteriorColor": "Colore interno non valido",
+    "invalidCondition": "Stato non valido",
+    "monthRequired": "Il mese è obbligatorio",
+    "yearRequired": "L'anno è obbligatorio",
+    "kilometerRequired": "Il chilometraggio è obbligatorio",
+    "negativeKilometerError": "Il chilometraggio non può essere negativo",
+    "invalidWarranty": "Garanzia non valida",
+    "priceRequired": "Il prezzo è obbligatorio",
+    "negativePriceError": "Il prezzo non può essere negativo",
+    "invalidEnergyLabel": "Etichetta energia non valida",
+    "invalidBatteryOwnership": "Modello di proprietà della batteria non valido",
+    "invalidChargingAC": "Tipo di spina di ricarica (AC) non valido",
+    "invalidChargingDC": "Tipo di spina di ricarica (DC) non valido",
+    "invalidEmissionStandard": "Standard di emissione non valido",
+    "invalidEquipmentKey": "Chiave equipaggiamento non valida",
+    "invalidExtrasKey": "Chiave extra non valida",
+    "invalidImageType": "Sono consentite solo immagini PNG, JPG, JPEG o WEBP",
+    "fileTooLarge": "Il file deve essere al massimo di 10 MB",
+    "minImagesError": "Sono richieste almeno 5 immagini",
+    "maxImagesError": "Sono consentite al massimo 10 immagini",
+    "invalidEmail": "Indirizzo e-mail non valido"
+  },
+  "Common": {
+    "errorDefault": "Si è verificato un errore. Riprova.",
+    "dealerNotFound": "Profilo del rivenditore non trovato.",
+    "emailSendError": "Impossibile inviare l'e-mail.",
+    "isClosed": "Chiuso"
   },
   "SellPage": {
     "hero": {
@@ -1241,6 +1329,7 @@
     "uploadDoNotClose": "Si prega di non chiudere questa finestra fino al completamento del processo.",
     "errorUploadPrep": "Errore nella preparazione del caricamento",
     "errorUploadFailed": "Caricamento non riuscito per {filename}",
+    "errorLimitReached": "Limite raggiunto: il tuo abbonamento attuale non consente l'inserimento di altri veicoli.",
     "errorGeneric": "Qualcosa è andato storto. Controlla la tua connessione Internet e riprova."
   },
   "VehicleFormSections": {
@@ -1369,7 +1458,24 @@
     "combustionEnginePower": "Potenza motore termico (CV)",
     "electricMotorPower": "Potenza motore elettrico (CV)",
     "furtherInfo": "Ulteriori informazioni",
-    "typeApprovalPlaceholder": "es. 1MA123"
+    "typeApprovalPlaceholder": "es. 1MA123",
+    "mediaLimitError": "È consentito un massimo di 10 immagini",
+    "mediaMinNeeded": "Mancano ancora {count} immagini (minimo 5)",
+    "mediaClickUpload": "Clicca qui per caricare le foto",
+    "mediaPreview": "Anteprima",
+    "additionalExtras": "Extra aggiuntivi",
+    "units": {
+      "km": "km",
+      "ps": "CV",
+      "kw": "kW",
+      "ccm": "cm³",
+      "gkm": "g/km",
+      "kg": "kg",
+      "mm": "mm",
+      "kwh": "kWh",
+      "chf": "CHF",
+      "chf_month": "CHF/mese"
+    }
   },
   "ListingListCard": {
     "contact": "Contatta",

@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { useForm, useFieldArray, useWatch, Control } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { dealerProfileSchema } from "@/schema/profile-schema";
+import { createDealerProfileSchema } from "@/schema/profile-schema";
 import { Button } from "@repo/ui/components/button";
 import {
   Card,
@@ -32,7 +32,7 @@ import { SelectItem } from "@repo/ui/components/select";
 // Types
 // ---------------------------------------------------------------------------
 
-type FormValues = z.infer<typeof dealerProfileSchema>;
+type FormValues = z.infer<ReturnType<typeof createDealerProfileSchema>>;
 
 // ---------------------------------------------------------------------------
 // useObjectUrl — creates an object URL for File inputs and revokes on cleanup
@@ -163,8 +163,11 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   const t = useTranslations("DealerProfileForm");
   const [isPending, startTransition] = useTransition();
 
+  const tSchema = useTranslations("ProfileSchema");
+  const schema = createDealerProfileSchema(tSchema);
+
   const form = useForm<FormValues>({
-    resolver: zodResolver(dealerProfileSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       name: initialData?.user?.name || "",
       email: initialData?.user?.email || "",
@@ -259,7 +262,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
 
         // 2. Update Dealer Profile (Server Action) first
         // This handles R2 cleanup by comparing with current DB state
-        const result = await updateDealerProfile(initialData.user.id, {
+        const result = await updateDealerProfile({
           ...values,
           image: (imageUrl as string) || null,
           logo: (logoUrl as string) || null,

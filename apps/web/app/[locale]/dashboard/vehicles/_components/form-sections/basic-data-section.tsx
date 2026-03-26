@@ -51,6 +51,7 @@ import { Separator } from "@repo/ui/components/separator";
 
 export function BasicDataSection() {
   const t = useTranslations("VehicleFormSections");
+  const t_vehicle = useTranslations("Vehicle");
   const { control } = useFormContext();
 
   const vehicleType = useWatch({ control, name: "vehicleType" });
@@ -146,7 +147,7 @@ export function BasicDataSection() {
             >
               {VehicleTypeEnum.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {type.label}
+                  {t_vehicle(`types.${type.value}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -168,9 +169,12 @@ export function BasicDataSection() {
                   );
                   uniqueItems.forEach((make) => seen.add(make.value));
                   if (uniqueItems.length === 0) return null;
+                  
+                  const groupKey = group.label === "Top-Marken" ? "topBrands" : "allBrands";
+                  
                   return (
                     <SelectGroup key={group.label}>
-                      <SelectLabel>{group.label}</SelectLabel>
+                      <SelectLabel>{t_vehicle(`brandGroups.${groupKey}`)}</SelectLabel>
                       {uniqueItems.map((make) => (
                         <SelectItem key={make.value} value={make.value}>
                           {make.label}
@@ -211,7 +215,7 @@ export function BasicDataSection() {
             >
               {GearTransmissionEnum.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {type.label}
+                  {t_vehicle(`transmissionTypes.${type.value.toUpperCase()}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -224,22 +228,22 @@ export function BasicDataSection() {
               placeholder={t("transmissionTypePlaceholder")}
               disabled={!gearTransmission}
             >
-              {TransmissionTypeEnum.filter((t) => {
+              {TransmissionTypeEnum.filter((t_type) => {
                 if (!gearTransmission) return true;
                 if (gearTransmission === "automatic") {
                   return [
                     "automatic",
                     "automatic-stepless",
                     "semi-automatic",
-                  ].includes(t.value);
+                  ].includes(t_type.value);
                 }
                 if (gearTransmission === "manual") {
-                  return t.value === "manual";
+                  return t_type.value === "manual";
                 }
                 return true;
               }).map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {type.label}
+                  {t_vehicle(`transmissionTypes.${type.value.toUpperCase().replace(/-/g, "_")}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -277,7 +281,7 @@ export function BasicDataSection() {
             {activeBodyTypeEnum.map(
               (type: { value: string; label: string }) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {type.label}
+                  {t_vehicle(`types.${type.value}`)}
                 </SelectItem>
               ),
             )}
@@ -293,7 +297,7 @@ export function BasicDataSection() {
             {activeFuelTypeEnum.map(
               (type: { value: string; label: string }) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {type.label}
+                  {t_vehicle(`fuelTypes.${type.value.toUpperCase().replace(/-/g, "_")}`)}
                 </SelectItem>
               ),
             )}
@@ -308,7 +312,7 @@ export function BasicDataSection() {
           >
             {ColorEnum.map((color) => (
               <SelectItem key={color.value} value={color.value}>
-                {color.label}
+                {t_vehicle(`colors.${color.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -322,7 +326,7 @@ export function BasicDataSection() {
           >
             {ColorEnum.map((color) => (
               <SelectItem key={color.value} value={color.value}>
-                {color.label}
+                {t_vehicle(`colors.${color.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -352,7 +356,7 @@ export function BasicDataSection() {
           >
             {VehicleConditionEnum.map((c: { value: string; label: string }) => (
               <SelectItem key={c.value} value={c.value}>
-                {c.label}
+                {t_vehicle(`conditions.${c.value.toUpperCase().replace(/-/g, "_")}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -410,9 +414,9 @@ export function BasicDataSection() {
             label={t("warranty")}
             placeholder={t("warrantyPlaceholder")}
           >
-            {WarrantyEnum.map((warranty) => (
-              <SelectItem key={warranty.value} value={warranty.value}>
-                {warranty.label}
+            {WarrantyEnum.map((warranty_item) => (
+              <SelectItem key={warranty_item.value} value={warranty_item.value}>
+                {t_vehicle(`warranty.${warranty_item.value.replace(/-/g, "_")}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -477,7 +481,7 @@ export function BasicDataSection() {
             inputType="number"
             name="price"
             label={t("salePrice")}
-            inputGroupText="CHF"
+            inputGroupText={t("units.chf")}
             placeholder={t("pricePlaceholder")}
           />
           <CustomFormField
@@ -486,7 +490,7 @@ export function BasicDataSection() {
             inputType="number"
             name="newPrice"
             label={t("newPrice")}
-            inputGroupText="CHF"
+            inputGroupText={t("units.chf")}
             placeholder={t("newPricePlaceholder")}
           />
         </AccordionContent>

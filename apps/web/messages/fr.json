@@ -274,6 +274,31 @@
       "furniture-transporter": "Transporteur de meubles",
       "school-bus": "Bus scolaire",
       "winch": "Treuil"
+    },
+    "brandGroups": {
+      "topBrands": "Top Marques",
+      "allBrands": "Toutes les Marques"
+    },
+    "batteryOwnership": {
+      "BATTERY_INCLUDED": "Batterie incluse dans le prix d'achat",
+      "BATTERY_RENT_REQUIRED": "La batterie nécessite une location supplémentaire"
+    },
+    "chargingStandardAC": {
+      "TYPE_1": "Type 1",
+      "TYPE_2": "Type 2"
+    },
+    "chargingStandardDC": {
+      "CCS": "CCS",
+      "CSS_2": "CSS-2",
+      "CHADEMO": "CHAdeMO",
+      "SUPERCHARGER": "Superchargeur"
+    },
+    "priceRating": {
+      "excellent": "Prix excellent",
+      "veryGood": "Très bon prix",
+      "good": "Bon prix",
+      "fair": "Prix correct",
+      "overpriced": "Prix élevé"
     }
   },
   "FeaturedListings": {
@@ -516,6 +541,69 @@
     "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
     "currentPasswordRequired": "Le mot de passe actuel est requis",
     "newPasswordMinLength": "Le nouveau mot de passe doit comporter au moins 8 caractères"
+  },
+  "ProfileSchema": {
+    "invalidEmail": "Adresse e-mail invalide",
+    "invalidImageType": "Seules les images PNG, JPG, JPEG ou WEBP sont autorisées",
+    "invalidUrl": "Veuillez saisir une URL valide",
+    "nameMinLength": "Le nom doit comporter au moins 3 caractères",
+    "nameMaxLength": "Le nom doit comporter au maximum 50 caractères",
+    "companyNameMinLength": "Le nom de l'entreprise doit comporter au moins 3 caractères",
+    "companyNameMaxLength": "Le nom de l'entreprise doit comporter au maximum 50 caractères",
+    "addressMinLength": "L'adresse doit comporter au moins 5 caractères",
+    "addressMaxLength": "L'adresse doit comporter au maximum 100 caractères",
+    "zipCodeMinLength": "Le code postal doit comporter au moins 4 caractères",
+    "zipCodeMaxLength": "Le code postal doit comporter au maximum 10 caractères",
+    "cityMinLength": "La ville doit comporter au moins 2 caractères",
+    "cityMaxLength": "La ville doit comporter au maximum 50 caractères",
+    "uidRequired": "L'UID est requis",
+    "invalidUidFormat": "Format UID invalide (CHE-XXX.XXX.XXX)",
+    "contactPersonMinLength": "La personne de contact doit comporter au moins 3 caractères",
+    "contactPersonMaxLength": "La personne de contact doit comporter au maximum 50 caractères",
+    "phoneRequired": "Le numéro de téléphone est requis",
+    "invalidPhoneFormat": "Format de numéro de téléphone suisse invalide"
+  },
+  "VehicleSchema": {
+    "negativeError": "La valeur ne peut pas être négative",
+    "vehicleTypeRequired": "Veuillez sélectionner un type de véhicule.",
+    "invalidType": "Type invalide",
+    "makeRequired": "Veuillez sélectionner une marque.",
+    "invalidMake": "Marque invalide",
+    "invalidGearTransmission": "Boîte de vitesses/transmission invalide",
+    "invalidTransmissionType": "Type de transmission invalide",
+    "invalidDriveType": "Type de traction invalide",
+    "bodyTypeRequired": "Veuillez sélectionner une carrosserie.",
+    "invalidBodyType": "Carrosserie invalide",
+    "invalidFuelType": "Carburant invalide",
+    "colorRequired": "Veuillez sélectionner une couleur.",
+    "invalidColor": "Couleur invalide",
+    "invalidInteriorColor": "Couleur intérieure invalide",
+    "invalidCondition": "État invalide",
+    "monthRequired": "Le mois est requis",
+    "yearRequired": "L'année est requise",
+    "kilometerRequired": "Le kilométrage est requis",
+    "negativeKilometerError": "Le kilométrage ne peut pas être négatif",
+    "invalidWarranty": "Garantie invalide",
+    "priceRequired": "Le prix est requis",
+    "negativePriceError": "Le prix ne peut pas être négatif",
+    "invalidEnergyLabel": "Étiquette-énergie invalide",
+    "invalidBatteryOwnership": "Modèle de propriété de la batterie invalide",
+    "invalidChargingAC": "Type de prise de charge (AC) invalide",
+    "invalidChargingDC": "Type de prise de charge (DC) invalide",
+    "invalidEmissionStandard": "Norme d'émission invalide",
+    "invalidEquipmentKey": "Clé d'équipement invalide",
+    "invalidExtrasKey": "Clé d'options invalide",
+    "invalidImageType": "Seules les images PNG, JPG, JPEG ou WEBP sont autorisées",
+    "fileTooLarge": "Le fichier ne doit pas dépasser 10 Mo",
+    "minImagesError": "Au moins 5 images sont requises",
+    "maxImagesError": "Au maximum 10 images sont autorisées",
+    "invalidEmail": "Adresse e-mail invalide"
+  },
+  "Common": {
+    "errorDefault": "Une erreur est survenue. Veuillez réessayer.",
+    "dealerNotFound": "Profil du concessionnaire introuvable.",
+    "emailSendError": "L'e-mail n'a pas pu être envoyé.",
+    "isClosed": "Fermé"
   },
   "SellPage": {
     "hero": {
@@ -1241,6 +1329,7 @@
     "uploadDoNotClose": "Veuillez ne pas fermer cette fenêtre tant que le processus n'est pas terminé.",
     "errorUploadPrep": "Erreur lors de la préparation du téléchargement",
     "errorUploadFailed": "Échec du téléchargement pour {filename}",
+    "errorLimitReached": "Limite atteinte : votre abonnement actuel ne permet pas d'ajouter plus de véhicules.",
     "errorGeneric": "Une erreur s'est produite. Veuillez vérifier votre connexion Internet et réessayer."
   },
   "VehicleFormSections": {
@@ -1369,7 +1458,24 @@
     "combustionEnginePower": "Puissance moteur thermique (Ch)",
     "electricMotorPower": "Puissance moteur électrique (Ch)",
     "furtherInfo": "Informations supplémentaires",
-    "typeApprovalPlaceholder": "ex. 1MA123"
+    "typeApprovalPlaceholder": "ex. 1MA123",
+    "mediaLimitError": "Maximum de 10 images autorisé",
+    "mediaMinNeeded": "Encore {count} images nécessaires (Minimum 5)",
+    "mediaClickUpload": "Cliquez ici pour télécharger des photos",
+    "mediaPreview": "Aperçu",
+    "additionalExtras": "Extras supplémentaires",
+    "units": {
+      "km": "km",
+      "ps": "Ch",
+      "kw": "kW",
+      "ccm": "cm³",
+      "gkm": "g/km",
+      "kg": "kg",
+      "mm": "mm",
+      "kwh": "kWh",
+      "chf": "CHF",
+      "chf_month": "CHF/mois"
+    }
   },
   "ListingListCard": {
     "contact": "Contact",

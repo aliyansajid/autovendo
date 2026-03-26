@@ -274,6 +274,31 @@
       "furniture-transporter": "Möbeltransporter",
       "school-bus": "Schulbus",
       "winch": "Seilwinde"
+    },
+    "brandGroups": {
+      "topBrands": "Top-Marken",
+      "allBrands": "Alle Marken"
+    },
+    "batteryOwnership": {
+      "BATTERY_INCLUDED": "Batterie im Kaufpreis enthalten",
+      "BATTERY_RENT_REQUIRED": "Batteriemiete zusätzlich erforderlich"
+    },
+    "chargingStandardAC": {
+      "TYPE_1": "Typ 1",
+      "TYPE_2": "Typ 2"
+    },
+    "chargingStandardDC": {
+      "CCS": "CCS",
+      "CSS_2": "CSS-2",
+      "CHADEMO": "CHAdeMO",
+      "SUPERCHARGER": "Supercharger"
+    },
+    "priceRating": {
+      "excellent": "Ausgezeichneter Preis",
+      "veryGood": "Sehr guter Preis",
+      "good": "Guter Preis",
+      "fair": "Fairer Preis",
+      "overpriced": "Überhöhter Preis"
     }
   },
   "FeaturedListings": {
@@ -516,6 +541,69 @@
     "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
     "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
     "newPasswordMinLength": "Neues Passwort muss mindestens 8 Zeichen lang sein"
+  },
+  "ProfileSchema": {
+    "invalidEmail": "Ungültige E-Mail-Adresse",
+    "invalidImageType": "Nur PNG, JPG, JPEG oder WEBP Bilder sind erlaubt",
+    "invalidUrl": "Bitte geben Sie eine gültige URL ein",
+    "nameMinLength": "Name muss mindestens 3 Zeichen lang sein",
+    "nameMaxLength": "Name darf maximal 50 Zeichen lang sein",
+    "companyNameMinLength": "Firmenname muss mindestens 3 Zeichen lang sein",
+    "companyNameMaxLength": "Firmenname darf maximal 50 Zeichen lang sein",
+    "addressMinLength": "Adresse muss mindestens 5 Zeichen lang sein",
+    "addressMaxLength": "Adresse darf maximal 100 Zeichen lang sein",
+    "zipCodeMinLength": "Postleitzahl muss mindestens 4 Zeichen lang sein",
+    "zipCodeMaxLength": "Postleitzahl darf maximal 10 Zeichen lang sein",
+    "cityMinLength": "Stadt muss mindestens 2 Zeichen lang sein",
+    "cityMaxLength": "Stadt darf maximal 50 Zeichen lang sein",
+    "uidRequired": "UID ist erforderlich",
+    "invalidUidFormat": "Ungültiges UID-Format (CHE-XXX.XXX.XXX)",
+    "contactPersonMinLength": "Kontaktperson muss mindestens 3 Zeichen lang sein",
+    "contactPersonMaxLength": "Kontaktperson darf maximal 50 Zeichen lang sein",
+    "phoneRequired": "Telefonnummer ist erforderlich",
+    "invalidPhoneFormat": "Ungültiges Schweizer Telefonnummer-Format"
+  },
+  "VehicleSchema": {
+    "negativeError": "Wert darf nicht negativ sein",
+    "vehicleTypeRequired": "Bitte wählen Sie einen Fahrzeugtyp.",
+    "invalidType": "Ungültiger Typ",
+    "makeRequired": "Bitte wählen Sie eine Marke.",
+    "invalidMake": "Ungültige Marke",
+    "invalidGearTransmission": "Ungültiges Getriebe",
+    "invalidTransmissionType": "Ungültiger Getriebetyp",
+    "invalidDriveType": "Ungültiger Antrieb",
+    "bodyTypeRequired": "Bitte wählen Sie eine Karosserie.",
+    "invalidBodyType": "Ungültige Karosserie",
+    "invalidFuelType": "Ungültiger Treibstoff",
+    "colorRequired": "Bitte wählen Sie eine Farbe.",
+    "invalidColor": "Ungültige Farbe",
+    "invalidInteriorColor": "Ungültige Innenfarbe",
+    "invalidCondition": "Ungültiger Zustand",
+    "monthRequired": "Monat ist erforderlich",
+    "yearRequired": "Jahr ist erforderlich",
+    "kilometerRequired": "Kilometerstand ist erforderlich",
+    "negativeKilometerError": "Kilometerstand darf nicht negativ sein",
+    "invalidWarranty": "Ungültige Garantie",
+    "priceRequired": "Preis ist erforderlich",
+    "negativePriceError": "Preis darf nicht negativ sein",
+    "invalidEnergyLabel": "Ungültiges Label",
+    "invalidBatteryOwnership": "Ungültiges Modell",
+    "invalidChargingAC": "Ungültiger Stecker",
+    "invalidChargingDC": "Ungültiger Stecker",
+    "invalidEmissionStandard": "Ungültiger Emissionsstandard",
+    "invalidEquipmentKey": "Ungültige Ausstattungstaste",
+    "invalidExtrasKey": "Ungültige Extras-Taste",
+    "invalidImageType": "Nur PNG, JPG, JPEG oder WEBP Bilder sind erlaubt",
+    "fileTooLarge": "Datei darf maximal 10MB groß sein",
+    "minImagesError": "Mindestens 5 Bilder sind erforderlich",
+    "maxImagesError": "Maximal 10 Bilder sind erlaubt",
+    "invalidEmail": "Ungültige E-Mail-Adresse"
+  },
+  "Common": {
+    "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "dealerNotFound": "Händlerprofil nicht gefunden.",
+    "emailSendError": "E-Mail konnte nicht gesendet werden.",
+    "isClosed": "Geschlossen"
   },
   "SellPage": {
     "hero": {
@@ -1241,6 +1329,7 @@
     "uploadDoNotClose": "Bitte schließe dieses Fenster nicht, bis der Vorgang abgeschlossen ist.",
     "errorUploadPrep": "Fehler bei der Upload-Vorbereitung",
     "errorUploadFailed": "Upload fehlgeschlagen für {filename}",
+    "errorLimitReached": "Limit erreicht: Ihr aktuelles Abo erlaubt keine weiteren Fahrzeuge.",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
   },
   "VehicleFormSections": {
@@ -1369,7 +1458,24 @@
     "combustionEnginePower": "Verbrennungsmotor PS",
     "electricMotorPower": "Elektromotor PS",
     "furtherInfo": "Weitere Informationen",
-    "typeApprovalPlaceholder": "z.B. 1MA123"
+    "typeApprovalPlaceholder": "z.B. 1MA123",
+    "mediaLimitError": "Maximal 10 Bilder sind erlaubt",
+    "mediaMinNeeded": "Noch {count} weitere Bilder benötigt (Mindestens 5)",
+    "mediaClickUpload": "Klicken Sie hier, um Fotos hochzuladen",
+    "mediaPreview": "Vorschau",
+    "additionalExtras": "Zusatz-Extras",
+    "units": {
+      "km": "km",
+      "ps": "PS",
+      "kw": "kW",
+      "ccm": "cm³",
+      "gkm": "g/km",
+      "kg": "kg",
+      "mm": "mm",
+      "kwh": "kWh",
+      "chf": "CHF",
+      "chf_month": "CHF/Mt."
+    }
   },
   "ListingListCard": {
     "contact": "Kontakt",

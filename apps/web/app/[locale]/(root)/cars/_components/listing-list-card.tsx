@@ -42,7 +42,8 @@ export function ListingListCard({
   item,
   showDealerLink = true,
 }: ListingListCardProps) {
-  const t = useTranslations("ListingListCard");
+  const t = useTranslations();
+  const tCard = useTranslations("ListingListCard");
   // Use helpers for ALL formatting
   const title = formatVehicleName([item.make, item.model, item.version]);
   const formattedPrice = formatPrice(item.price);
@@ -137,7 +138,7 @@ export function ListingListCard({
                           : "text-green-600"
                     }`}
                   >
-                    {item.priceRating.label}
+                    {t(`Vehicle.priceRating.${item.priceRating.label}` as any)}
                   </span>
                 </div>
               )}
@@ -208,7 +209,7 @@ export function ListingListCard({
             <Button asChild className="relative z-20">
               <Link href={`tel:${item.dealer.phoneNumber}`}>
                 <Phone />
-                {t("contact")}
+                {tCard("contact")}
               </Link>
             </Button>
           </div>
@@ -218,7 +219,7 @@ export function ListingListCard({
               href={`/dealers/${item.dealer.id}`}
               className="mt-4 text-sm text-primary font-medium underline-offset-4 hover:underline relative z-20"
             >
-              {t("allVehicles")}
+              {tCard("allVehicles")}
             </Link>
           )}
         </div>

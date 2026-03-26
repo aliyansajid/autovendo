@@ -8,7 +8,9 @@ import { getTranslations } from "next-intl/server";
 export default async function SubscriptionPage() {
   const t = await getTranslations("SubscriptionPage");
 
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   const [subscriptions, subscriptionStatus] = await Promise.all([
     prisma.subscription.findMany({

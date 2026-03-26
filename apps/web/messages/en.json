@@ -274,6 +274,31 @@
       "furniture-transporter": "Furniture Transporter",
       "school-bus": "School Bus",
       "winch": "Winch"
+    },
+    "brandGroups": {
+      "topBrands": "Top Brands",
+      "allBrands": "All Brands"
+    },
+    "batteryOwnership": {
+      "BATTERY_INCLUDED": "Battery included in the purchase price",
+      "BATTERY_RENT_REQUIRED": "Battery requires an additional rent"
+    },
+    "chargingStandardAC": {
+      "TYPE_1": "Type 1",
+      "TYPE_2": "Type 2"
+    },
+    "chargingStandardDC": {
+      "CCS": "CCS",
+      "CSS_2": "CSS-2",
+      "CHADEMO": "CHAdeMO",
+      "SUPERCHARGER": "Supercharger"
+    },
+    "priceRating": {
+      "excellent": "Excellent price",
+      "veryGood": "Very good price",
+      "good": "Good price",
+      "fair": "Fair price",
+      "overpriced": "Overpriced"
     }
   },
   "FeaturedListings": {
@@ -516,6 +541,69 @@
     "passwordsDoNotMatch": "Passwords do not match",
     "currentPasswordRequired": "Current password is required",
     "newPasswordMinLength": "New password must be at least 8 characters long"
+  },
+  "ProfileSchema": {
+    "invalidEmail": "Invalid email address",
+    "invalidImageType": "Only PNG, JPG, JPEG or WEBP images are allowed",
+    "invalidUrl": "Please enter a valid URL",
+    "nameMinLength": "Name must be at least 3 characters long",
+    "nameMaxLength": "Name must be maximum 50 characters long",
+    "companyNameMinLength": "Company name must be at least 3 characters long",
+    "companyNameMaxLength": "Company name must be maximum 50 characters long",
+    "addressMinLength": "Address must be at least 5 characters long",
+    "addressMaxLength": "Address must be maximum 100 characters long",
+    "zipCodeMinLength": "Zip code must be at least 4 characters long",
+    "zipCodeMaxLength": "Zip code must be maximum 10 characters long",
+    "cityMinLength": "City must be at least 2 characters long",
+    "cityMaxLength": "City must be maximum 50 characters long",
+    "uidRequired": "UID is required",
+    "invalidUidFormat": "Invalid UID format (CHE-XXX.XXX.XXX)",
+    "contactPersonMinLength": "Contact person must be at least 3 characters long",
+    "contactPersonMaxLength": "Contact person must be maximum 50 characters long",
+    "phoneRequired": "Phone number is required",
+    "invalidPhoneFormat": "Invalid Swiss phone number format"
+  },
+  "VehicleSchema": {
+    "negativeError": "Value cannot be negative",
+    "vehicleTypeRequired": "Please select a vehicle type.",
+    "invalidType": "Invalid type",
+    "makeRequired": "Please select a make.",
+    "invalidMake": "Invalid make",
+    "invalidGearTransmission": "Invalid gear/transmission",
+    "invalidTransmissionType": "Invalid transmission type",
+    "invalidDriveType": "Invalid drive type",
+    "bodyTypeRequired": "Please select a body type.",
+    "invalidBodyType": "Invalid body type",
+    "invalidFuelType": "Invalid fuel type",
+    "colorRequired": "Please select a color.",
+    "invalidColor": "Invalid color",
+    "invalidInteriorColor": "Invalid interior color",
+    "invalidCondition": "Invalid condition",
+    "monthRequired": "Month is required",
+    "yearRequired": "Year is required",
+    "kilometerRequired": "Kilometer reading is required",
+    "negativeKilometerError": "Kilometer reading cannot be negative",
+    "invalidWarranty": "Invalid warranty",
+    "priceRequired": "Price is required",
+    "negativePriceError": "Price cannot be negative",
+    "invalidEnergyLabel": "Invalid energy label",
+    "invalidBatteryOwnership": "Invalid battery ownership model",
+    "invalidChargingAC": "Invalid charging plug (AC)",
+    "invalidChargingDC": "Invalid charging plug (DC)",
+    "invalidEmissionStandard": "Invalid emission standard",
+    "invalidEquipmentKey": "Invalid equipment key",
+    "invalidExtrasKey": "Invalid extras key",
+    "invalidImageType": "Only PNG, JPG, JPEG or WEBP images are allowed",
+    "fileTooLarge": "File must be maximum 10MB",
+    "minImagesError": "At least 5 images are required",
+    "maxImagesError": "Maximum 10 images are allowed",
+    "invalidEmail": "Invalid email address"
+  },
+  "Common": {
+    "errorDefault": "An error occurred. Please try again.",
+    "dealerNotFound": "Dealer profile not found.",
+    "emailSendError": "Email could not be sent.",
+    "isClosed": "Closed"
   },
   "SellPage": {
     "hero": {
@@ -1241,6 +1329,7 @@
     "uploadDoNotClose": "Please do not close this window until the process is complete.",
     "errorUploadPrep": "Error preparing upload",
     "errorUploadFailed": "Upload failed for {filename}",
+    "errorLimitReached": "Limit reached: Your current subscription does not allow more vehicles.",
     "errorGeneric": "Something went wrong. Please check your internet connection and try again."
   },
   "VehicleFormSections": {
@@ -1369,7 +1458,24 @@
     "combustionEnginePower": "Combustion Engine HP",
     "electricMotorPower": "Electric Motor HP",
     "furtherInfo": "Further Information",
-    "typeApprovalPlaceholder": "e.g. 1MA123"
+    "typeApprovalPlaceholder": "e.g. 1MA123",
+    "mediaLimitError": "Maximum of 10 images allowed",
+    "mediaMinNeeded": "{count} more images needed (Minimum 5)",
+    "mediaClickUpload": "Click here to upload photos",
+    "mediaPreview": "Preview",
+    "additionalExtras": "Additional Extras",
+    "units": {
+      "km": "km",
+      "ps": "HP",
+      "kw": "kW",
+      "ccm": "cc",
+      "gkm": "g/km",
+      "kg": "kg",
+      "mm": "mm",
+      "kwh": "kWh",
+      "chf": "CHF",
+      "chf_month": "CHF/mo."
+    }
   },
   "ListingListCard": {
     "contact": "Contact",

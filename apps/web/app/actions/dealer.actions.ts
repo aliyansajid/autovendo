@@ -1,7 +1,13 @@
 "use server";
 
-import { prisma } from "@repo/db";
-import { dealerProfileSchema } from "@/schema/profile-schema";
+import { prisma, DayOfWeek } from "@repo/db";
+import { auth } from "@repo/auth";
+import { headers } from "next/headers";
+import {
+  createDealerProfileSchema,
+  dealerProfileSchema,
+} from "@/schema/profile-schema";
+import { getTranslations } from "next-intl/server";
 import { dealerContactSchema } from "@/schema/dealer-contact-schema";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
@@ -21,7 +27,6 @@ import { storage } from "@/lib/helpers/storage";
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
-
 
 // Reverse map no longer needed as we use Enums directly in the form
 
@@ -49,17 +54,32 @@ function parseTimeString(time: string | null | undefined): Date | null {
 // -----------------------------------------------------------------------------
 
 export async function updateDealerProfile(
-  userId: string,
   values: z.infer<typeof dealerProfileSchema>,
 ) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) return { success: false, error: "Unauthorized" };
+  const userId = session.user.id;
+
+  const tSchema = await getTranslations("ProfileSchema");
+  const schema = createDealerProfileSchema(tSchema);
+
   try {
+    const validatedValues = schema.parse(values);
+
     // 1. Fetch current data to check for image changes
     const existingData = await prisma.dealer.findUnique({
       where: { userId },
       select: {
         logo: true,
         coverImage: true,
-        user: { select: { image: true } },
+        user: {
+          select: {
+            image: true,
+          },
+        },
       },
     });
 
@@ -113,55 +133,60 @@ export async function updateDealerProfile(
       where: { userId },
       create: {
         userId,
-        companyName: values.companyName,
-        description: values.description,
-        website: values.website,
-        logo: typeof values.logo === "string" ? values.logo : undefined,
-        streetAddress: values.streetAddress,
-        zipCode: values.zipCode,
-        city: values.city,
-        country: values.country,
-        uidNumber: values.uidNumber,
-        contactPerson: values.contactPerson,
-        phoneNumber: values.phoneNumber,
-        businessEmail: values.businessEmail,
+        companyName: validatedValues.companyName,
+        description: validatedValues.description,
+        website: validatedValues.website,
+        logo:
+          typeof validatedValues.logo === "string"
+            ? validatedValues.logo
+            : undefined,
+        streetAddress: validatedValues.streetAddress,
+        zipCode: validatedValues.zipCode,
+        city: validatedValues.city,
+        country: validatedValues.country,
+        uidNumber: validatedValues.uidNumber,
+        contactPerson: validatedValues.contactPerson,
+        phoneNumber: validatedValues.phoneNumber,
+        businessEmail: validatedValues.businessEmail,
         coverImage:
-          typeof values.coverImage === "string" ? values.coverImage : undefined,
+          typeof validatedValues.coverImage === "string"
+            ? validatedValues.coverImage
+            : undefined,
       },
       update: {
-        companyName: values.companyName,
-        description: values.description,
-        website: values.website,
+        companyName: validatedValues.companyName,
+        description: validatedValues.description,
+        website: validatedValues.website,
         logo:
-          typeof values.logo === "string"
-            ? values.logo
-            : values.logo === null
+          typeof validatedValues.logo === "string"
+            ? validatedValues.logo
+            : validatedValues.logo === null
               ? null
               : undefined,
         coverImage:
-          typeof values.coverImage === "string"
-            ? values.coverImage
-            : values.coverImage === null
+          typeof validatedValues.coverImage === "string"
+            ? validatedValues.coverImage
+            : validatedValues.coverImage === null
               ? null
               : undefined,
-        streetAddress: values.streetAddress,
-        zipCode: values.zipCode,
-        city: values.city,
-        country: values.country,
-        uidNumber: values.uidNumber,
-        contactPerson: values.contactPerson,
-        phoneNumber: values.phoneNumber,
-        businessEmail: values.businessEmail,
+        streetAddress: validatedValues.streetAddress,
+        zipCode: validatedValues.zipCode,
+        city: validatedValues.city,
+        country: validatedValues.country,
+        uidNumber: validatedValues.uidNumber,
+        contactPerson: validatedValues.contactPerson,
+        phoneNumber: validatedValues.phoneNumber,
+        businessEmail: validatedValues.businessEmail,
       },
     });
 
     await prisma.openingHour.deleteMany({ where: { dealerId: dealer.id } });
 
-    if (values.openingHours?.length) {
+    if (validatedValues.openingHours?.length) {
       await prisma.openingHour.createMany({
-        data: values.openingHours.map((oh) => ({
+        data: validatedValues.openingHours.map((oh) => ({
           dealerId: dealer.id,
-          day: oh.day as any,
+          day: oh.day as DayOfWeek,
           isOpen: oh.isOpen,
           openTime: parseTimeString(oh.openTime),
           closeTime: parseTimeString(oh.closeTime),
@@ -173,7 +198,7 @@ export async function updateDealerProfile(
     return { success: true };
   } catch (error) {
     console.error("Failed to update dealer profile:", error);
-    return { success: false, error: "An unexpected error occurred." };
+    return { success: false, error: "errorDefault" };
   }
 }
 
@@ -181,15 +206,23 @@ export async function updateDealerProfile(
 // Dashboard: get dealer profile
 // -----------------------------------------------------------------------------
 
-export async function getDealerProfile(
-  userId: string,
-): Promise<DealerProfile | null> {
+export async function getDealerProfile(): Promise<DealerProfile | null> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return null;
+  const userId = session.user.id;
   const dealer = await prisma.dealer.findUnique({
     where: { userId },
     select: {
       id: true,
       userId: true,
-      user: { select: { id: true, name: true, email: true, image: true } },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+        },
+      },
       companyName: true,
       description: true,
       website: true,
@@ -204,7 +237,12 @@ export async function getDealerProfile(
       businessEmail: true,
       coverImage: true,
       openingHours: {
-        select: { day: true, isOpen: true, openTime: true, closeTime: true },
+        select: {
+          day: true,
+          isOpen: true,
+          openTime: true,
+          closeTime: true,
+        },
       },
     },
   });
@@ -350,7 +388,7 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
           hours:
             oh.isOpen && oh.openTime && oh.closeTime
               ? `${toTimeString(new Date(oh.openTime))} – ${toTimeString(new Date(oh.closeTime))}`
-              : "Geschlossen",
+              : "isClosed",
         })),
     };
   } catch (error) {
@@ -456,7 +494,7 @@ export async function sendDealerContactEmail(
       select: { businessEmail: true, companyName: true },
     });
 
-    if (!dealer) return { success: false, error: "Händler nicht gefunden." };
+    if (!dealer) return { success: false, error: "dealerNotFound" };
 
     const result = await sendEmail({
       to: dealer.businessEmail,
@@ -472,13 +510,13 @@ export async function sendDealerContactEmail(
     });
 
     if (!result.success) {
-      return { success: false, error: "E-Mail konnte nicht gesendet werden." };
+      return { success: false, error: "emailSendError" };
     }
 
     return { success: true };
   } catch (error) {
     console.error("Failed to send dealer contact email:", error);
-    return { success: false, error: "Ein Fehler ist aufgetreten." };
+    return { success: false, error: "errorDefault" };
   }
 }
 

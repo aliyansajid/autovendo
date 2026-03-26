@@ -9,21 +9,14 @@ import { Separator } from "@repo/ui/components/separator";
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import { DashboardBreadcrumb } from "./_components/dashboard-breadcrumb";
 
-import { redirect } from "../../../i18n/routing";
-
 export default async function DashboardLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session) {
-    redirect({ href: "/login", locale });
-  }
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   return (
     <SidebarProvider>

@@ -39,6 +39,8 @@ import {
   camperExtrasEnum,
 } from "@/constants/camper";
 
+type TFn = (key: string) => string;
+
 const VALID_VEHICLE_TYPES = VehicleTypeEnum.map((v) => v.value) as string[];
 const VALID_GEAR_TRANSMISSIONS = GearTransmissionEnum.map(
   (v) => v.value,
@@ -112,189 +114,200 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 // --- Helpers ---
 
-const optionalNonNegativeNumber = z.preprocess(
-  (val) => (val === "" || val === undefined ? undefined : Number(val)),
-  z.number().min(0, "Wert darf nicht negativ sein").optional(),
-);
+const createOptionalNonNegativeNumber = (t: TFn) =>
+  z.preprocess(
+    (val) => (val === "" || val === undefined ? undefined : Number(val)),
+    z.number().min(0, t("negativeError")).optional(),
+  );
 
 const enumField = (validValues: string[], errorMsg: string) =>
   z.string().refine((val) => !val || validValues.includes(val), errorMsg);
 
 // --- Schema ---
 
-export const vehicleFormSchema = z.object({
-  // Vehicle Type (Mandatory)
-  vehicleType: z
-    .string({ error: "Bitte wählen Sie einen Fahrzeugtyp." })
-    .refine((val) => VALID_VEHICLE_TYPES.includes(val), "Ungültiger Typ"),
+export const createVehicleFormSchema = (t: TFn) =>
+  z.object({
+    // Vehicle Type (Mandatory)
+    vehicleType: z
+      .string({ error: t("vehicleTypeRequired") })
+      .refine((val) => VALID_VEHICLE_TYPES.includes(val), t("invalidType")),
 
-  // Vehicle Features (Mandatory: make, bodyType, color)
-  make: z
-    .string({ error: "Bitte wählen Sie eine Marke." })
-    .refine((val) => VALID_MAKES.includes(val), "Ungültige Marke"),
-  model: z.string().optional(),
-  version: z.string().optional(),
-  gearTransmission: enumField(
-    VALID_GEAR_TRANSMISSIONS,
-    "Ungültiges Getriebe",
-  ).optional(),
-  transmissionType: enumField(
-    VALID_TRANSMISSION_TYPES,
-    "Ungültiger Getriebetyp",
-  ).optional(),
-  driveType: enumField(VALID_DRIVE_TYPES, "Ungültiger Antrieb").optional(),
-  bodyType: z
-    .string({ error: "Bitte wählen Sie eine Karosserie." })
-    .refine((val) => VALID_BODY_TYPES.includes(val), "Ungültige Karosserie"),
-  fuelType: enumField(VALID_FUEL_TYPES, "Ungültiger Treibstoff").optional(),
-  color: z
-    .string({ error: "Bitte wählen Sie eine Farbe." })
-    .refine((val) => VALID_COLORS.includes(val), "Ungültige Farbe"),
-  interiorColor: enumField(VALID_COLORS, "Ungültige Innenfarbe").optional(),
-  metallic: z.boolean().default(false),
+    // Vehicle Features (Mandatory: make, bodyType, color)
+    make: z
+      .string({ error: t("makeRequired") })
+      .refine((val) => VALID_MAKES.includes(val), t("invalidMake")),
+    model: z.string().optional(),
+    version: z.string().optional(),
+    gearTransmission: enumField(
+      VALID_GEAR_TRANSMISSIONS,
+      t("invalidGearTransmission"),
+    ).optional(),
+    transmissionType: enumField(
+      VALID_TRANSMISSION_TYPES,
+      t("invalidTransmissionType"),
+    ).optional(),
+    driveType: enumField(VALID_DRIVE_TYPES, t("invalidDriveType")).optional(),
+    bodyType: z
+      .string({ error: t("bodyTypeRequired") })
+      .refine((val) => VALID_BODY_TYPES.includes(val), t("invalidBodyType")),
+    fuelType: enumField(VALID_FUEL_TYPES, t("invalidFuelType")).optional(),
+    color: z
+      .string({ error: t("colorRequired") })
+      .refine((val) => VALID_COLORS.includes(val), t("invalidColor")),
+    interiorColor: enumField(
+      VALID_COLORS,
+      t("invalidInteriorColor"),
+    ).optional(),
+    metallic: z.boolean().default(false),
 
-  // State (Mandatory: registrationMonth, registrationYear, kilometer)
-  vehicleCondition: enumField(
-    VALID_CONDITIONS,
-    "Ungültiger Zustand",
-  ).optional(),
-  lastInspectionDate: z.date().optional(),
-  registrationMonth: z.coerce
-    .number({ error: "Monat ist erforderlich" })
-    .min(1)
-    .max(12),
-  registrationYear: z.coerce
-    .number({ error: "Jahr ist erforderlich" })
-    .min(1900)
-    .max(new Date().getFullYear()),
-  inspectionPassed: z.boolean().default(false),
-  kilometer: z.preprocess(
-    (val) => (val === "" || val === undefined ? undefined : Number(val)),
-    z
-      .number({ error: "Kilometerstand ist erforderlich" })
-      .min(0, "Kilometerstand darf nicht negativ sein"),
-  ),
-
-  // Warranty
-  warranty: enumField(VALID_WARRANTIES, "Ungültige Garantie").optional(),
-  warrantyStartDate: z.date().optional(),
-  duration: optionalNonNegativeNumber,
-  maxKm: optionalNonNegativeNumber,
-
-  // Price (Mandatory)
-  price: z.preprocess(
-    (val) => (val === "" || val === undefined ? undefined : Number(val)),
-    z
-      .number({ error: "Preis ist erforderlich" })
-      .min(0, "Preis darf nicht negativ sein"),
-  ),
-  newPrice: optionalNonNegativeNumber,
-
-  // Technical Data
-  doors: optionalNonNegativeNumber,
-  seats: optionalNonNegativeNumber,
-  hp: optionalNonNegativeNumber,
-  kw: optionalNonNegativeNumber,
-  energyLabel: enumField(VALID_ENERGY_LABELS, "Ungültiges Label").optional(),
-  typeApproval: z.string().optional(),
-  wheelbase: optionalNonNegativeNumber,
-  vehicleIdentificationNumber: z.string().optional(),
-  emptyWeight: optionalNonNegativeNumber,
-  loadCapacity: optionalNonNegativeNumber,
-  serialNumber: z.string().optional(),
-  height: optionalNonNegativeNumber,
-  width: optionalNonNegativeNumber,
-  length: optionalNonNegativeNumber,
-  towingCapacityBraked: optionalNonNegativeNumber,
-
-  // Combustion / Hybrid
-  consumptionCity: optionalNonNegativeNumber,
-  consumptionCountry: optionalNonNegativeNumber,
-  consumptionTotal: optionalNonNegativeNumber,
-  cubicCapacity: optionalNonNegativeNumber,
-  co2Emission: optionalNonNegativeNumber,
-  cylinders: optionalNonNegativeNumber,
-  numberOfGears: optionalNonNegativeNumber,
-
-  // Electric
-  range: optionalNonNegativeNumber,
-  batteryCapacity: optionalNonNegativeNumber,
-  batteryRentalMonth: optionalNonNegativeNumber,
-  powerConsumption: optionalNonNegativeNumber,
-  batteryOwnership: enumField(
-    VALID_BATTERY_OWNERSHIPS,
-    "Ungültiges Modell",
-  ).optional(),
-  chargingPlugTypeStandard: enumField(
-    VALID_CHARGING_AC,
-    "Ungültiger Stecker",
-  ).optional(),
-  chargingPlugTypeFast: enumField(
-    VALID_CHARGING_DC,
-    "Ungültiger Stecker",
-  ).optional(),
-  chargingPower: optionalNonNegativeNumber,
-  combustionEnginePowerHp: optionalNonNegativeNumber,
-  electricMotorPowerHp: optionalNonNegativeNumber,
-  emissionStandard: enumField(
-    VALID_EMISSION_STANDARDS,
-    "Ungültiger Emissionsstandard",
-  ).optional(),
-
-  vehicleDescription: z.string().optional(),
-
-  // Equipment & Extras
-  equipment: z
-    .record(z.string(), z.boolean().optional())
-    .refine(
-      (val) =>
-        Object.keys(val).every((key) => VALID_EQUIPMENT_KEYS.includes(key)),
-      "Ungültige Ausstattungstaste",
-    )
-    .optional(),
-  extras: z
-    .record(z.string(), z.boolean().optional())
-    .refine(
-      (val) => Object.keys(val).every((key) => VALID_EXTRAS_KEYS.includes(key)),
-      "Ungültige Extras-Taste",
-    )
-    .optional(),
-
-  // Images with MIME type validation
-  images: z
-    .array(
+    // State (Mandatory: registrationMonth, registrationYear, kilometer)
+    vehicleCondition: enumField(
+      VALID_CONDITIONS,
+      t("invalidCondition"),
+    ).optional(),
+    lastInspectionDate: z.date().optional(),
+    registrationMonth: z.coerce
+      .number({ error: t("monthRequired") })
+      .min(1)
+      .max(12),
+    registrationYear: z.coerce
+      .number({ error: t("yearRequired") })
+      .min(1900)
+      .max(new Date().getFullYear()),
+    inspectionPassed: z.boolean().default(false),
+    kilometer: z.preprocess(
+      (val) => (val === "" || val === undefined ? undefined : Number(val)),
       z
-        .union([z.instanceof(File), z.string()])
-        .refine(
-          (file) =>
-            typeof file === "string" ||
-            (file instanceof File && ACCEPTED_IMAGE_TYPES.includes(file.type)),
-          {
-            message: "Nur PNG, JPG, JPEG oder WEBP Bilder sind erlaubt",
-          },
-        )
-        .refine(
-          (file) =>
-            typeof file === "string" ||
-            (file instanceof File && file.size <= MAX_FILE_SIZE),
-          {
-            message: "Datei darf maximal 10MB groß sein",
-          },
-        ),
-    )
-    .min(5, "Mindestens 5 Bilder sind erforderlich")
-    .max(10, "Maximal 10 Bilder sind erlaubt")
-    .optional(),
+        .number({ error: t("kilometerRequired") })
+        .min(0, t("negativeKilometerError")),
+    ),
 
-  // Contact Details
-  companyName: z.string().optional(),
-  businessEmail: z
-    .string()
-    .email("Ungültige E-Mail-Adresse")
-    .optional()
-    .or(z.literal("")),
-  phoneNumber: z.string().optional(),
-  address: z.string().optional(),
-  zipCode: z.string().optional(),
-  city: z.string().optional(),
-});
+    // Warranty
+    warranty: enumField(VALID_WARRANTIES, t("invalidWarranty")).optional(),
+    warrantyStartDate: z.date().optional(),
+    duration: createOptionalNonNegativeNumber(t),
+    maxKm: createOptionalNonNegativeNumber(t),
+
+    // Price (Mandatory)
+    price: z.preprocess(
+      (val) => (val === "" || val === undefined ? undefined : Number(val)),
+      z.number({ error: t("priceRequired") }).min(0, t("negativePriceError")),
+    ),
+    newPrice: createOptionalNonNegativeNumber(t),
+
+    // Technical Data
+    doors: createOptionalNonNegativeNumber(t),
+    seats: createOptionalNonNegativeNumber(t),
+    hp: createOptionalNonNegativeNumber(t),
+    kw: createOptionalNonNegativeNumber(t),
+    energyLabel: enumField(
+      VALID_ENERGY_LABELS,
+      t("invalidEnergyLabel"),
+    ).optional(),
+    typeApproval: z.string().optional(),
+    wheelbase: createOptionalNonNegativeNumber(t),
+    vehicleIdentificationNumber: z.string().optional(),
+    emptyWeight: createOptionalNonNegativeNumber(t),
+    loadCapacity: createOptionalNonNegativeNumber(t),
+    serialNumber: z.string().optional(),
+    height: createOptionalNonNegativeNumber(t),
+    width: createOptionalNonNegativeNumber(t),
+    length: createOptionalNonNegativeNumber(t),
+    towingCapacityBraked: createOptionalNonNegativeNumber(t),
+
+    // Combustion / Hybrid
+    consumptionCity: createOptionalNonNegativeNumber(t),
+    consumptionCountry: createOptionalNonNegativeNumber(t),
+    consumptionTotal: createOptionalNonNegativeNumber(t),
+    cubicCapacity: createOptionalNonNegativeNumber(t),
+    co2Emission: createOptionalNonNegativeNumber(t),
+    cylinders: createOptionalNonNegativeNumber(t),
+    numberOfGears: createOptionalNonNegativeNumber(t),
+
+    // Electric
+    range: createOptionalNonNegativeNumber(t),
+    batteryCapacity: createOptionalNonNegativeNumber(t),
+    batteryRentalMonth: createOptionalNonNegativeNumber(t),
+    powerConsumption: createOptionalNonNegativeNumber(t),
+    batteryOwnership: enumField(
+      VALID_BATTERY_OWNERSHIPS,
+      t("invalidBatteryOwnership"),
+    ).optional(),
+    chargingPlugTypeStandard: enumField(
+      VALID_CHARGING_AC,
+      t("invalidChargingAC"),
+    ).optional(),
+    chargingPlugTypeFast: enumField(
+      VALID_CHARGING_DC,
+      t("invalidChargingDC"),
+    ).optional(),
+    chargingPower: createOptionalNonNegativeNumber(t),
+    combustionEnginePowerHp: createOptionalNonNegativeNumber(t),
+    electricMotorPowerHp: createOptionalNonNegativeNumber(t),
+    emissionStandard: enumField(
+      VALID_EMISSION_STANDARDS,
+      t("invalidEmissionStandard"),
+    ).optional(),
+
+    vehicleDescription: z.string().optional(),
+
+    // Equipment & Extras
+    equipment: z
+      .record(z.string(), z.boolean().optional())
+      .refine(
+        (val) =>
+          Object.keys(val).every((key) => VALID_EQUIPMENT_KEYS.includes(key)),
+        t("invalidEquipmentKey"),
+      )
+      .optional(),
+    extras: z
+      .record(z.string(), z.boolean().optional())
+      .refine(
+        (val) =>
+          Object.keys(val).every((key) => VALID_EXTRAS_KEYS.includes(key)),
+        t("invalidExtrasKey"),
+      )
+      .optional(),
+
+    // Images with MIME type validation
+    images: z
+      .array(
+        z
+          .union([z.instanceof(File), z.string()])
+          .refine(
+            (file) =>
+              typeof file === "string" ||
+              (file instanceof File &&
+                ACCEPTED_IMAGE_TYPES.includes(file.type)),
+            {
+              message: t("invalidImageType"),
+            },
+          )
+          .refine(
+            (file) =>
+              typeof file === "string" ||
+              (file instanceof File && file.size <= MAX_FILE_SIZE),
+            {
+              message: t("fileTooLarge"),
+            },
+          ),
+      )
+      .min(5, t("minImagesError"))
+      .max(10, t("maxImagesError"))
+      .optional(),
+
+    // Contact Details
+    companyName: z.string().optional(),
+    businessEmail: z
+      .string()
+      .email(t("invalidEmail"))
+      .optional()
+      .or(z.literal("")),
+    phoneNumber: z.string().optional(),
+    address: z.string().optional(),
+    zipCode: z.string().optional(),
+    city: z.string().optional(),
+  });
+
+// Static fallback
+export const vehicleFormSchema = createVehicleFormSchema((key) => key);

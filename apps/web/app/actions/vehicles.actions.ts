@@ -10,13 +10,33 @@
 
 import { unstable_cache, revalidatePath } from "next/cache";
 import { prisma } from "@repo/db";
-import type { Prisma } from "@repo/db";
+import type {
+  Prisma,
+  VehicleType,
+  FuelType,
+  GearTransmission,
+  TransmissionType,
+  DriveType,
+  Color,
+  VehicleCondition,
+  Warranty,
+  EnergyLabel,
+  EmissionStandard,
+  BatteryOwnership,
+  ChargingPlugTypeStandard,
+  ChargingPlugTypeFast,
+} from "@repo/db";
 import { auth } from "@repo/auth";
+import { z } from "zod";
 import { headers } from "next/headers";
 import { createId } from "@paralleldrive/cuid2";
 import { storage } from "@/lib/helpers/storage";
 import { StorageService } from "@repo/storage";
-import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
+import {
+  createVehicleFormSchema,
+  vehicleFormSchema,
+} from "@/schema/vehicle-form-schema";
+import { getTranslations } from "next-intl/server";
 import {
   type VehicleListItem,
   type VehicleDetails,
@@ -235,7 +255,7 @@ export async function buildWhereClause(
 
   // Multi-select filters - uses IN operator with index
   if (!omitFilters.fuel && params.fuel && params.fuel.length > 0) {
-    where.fuelType = { in: params.fuel.map(toDbEnum) as any };
+    where.fuelType = { in: params.fuel.map(toDbEnum) as FuelType[] };
   }
 
   if (
@@ -243,7 +263,9 @@ export async function buildWhereClause(
     params.transmission &&
     params.transmission.length > 0
   ) {
-    where.transmissionType = { in: params.transmission.map(toDbEnum) as any };
+    where.transmissionType = {
+      in: params.transmission.map(toDbEnum) as TransmissionType[],
+    };
   }
 
   if (
@@ -251,7 +273,9 @@ export async function buildWhereClause(
     params.condition &&
     params.condition.length > 0
   ) {
-    where.vehicleCondition = { in: params.condition.map(toDbEnum) as any };
+    where.vehicleCondition = {
+      in: params.condition.map(toDbEnum) as VehicleCondition[],
+    };
   }
 
   if (
@@ -259,7 +283,9 @@ export async function buildWhereClause(
     params.vehicleType &&
     params.vehicleType.length > 0
   ) {
-    where.vehicleType = { in: params.vehicleType.map(toDbEnum) as any };
+    where.vehicleType = {
+      in: params.vehicleType.map(toDbEnum) as VehicleType[],
+    };
   }
 
   // Body type (Karosserie) - string field; match case-insensitively for DB uppercase/lowercase
@@ -274,7 +300,7 @@ export async function buildWhereClause(
   }
 
   if (!omitFilters.color && params.color && params.color.length > 0) {
-    where.color = { in: params.color.map(toDbEnum) as any };
+    where.color = { in: params.color.map(toDbEnum) as Color[] };
   }
 
   // Boolean filter
@@ -288,7 +314,7 @@ export async function buildWhereClause(
     params.driveType &&
     params.driveType.length > 0
   ) {
-    where.driveType = { in: params.driveType.map(toDbEnum) as any };
+    where.driveType = { in: params.driveType.map(toDbEnum) as DriveType[] };
   }
 
   // Cubic capacity (Hubraum)
@@ -335,7 +361,9 @@ export async function buildWhereClause(
     params.energyLabels &&
     params.energyLabels.length > 0
   ) {
-    where.energyLabel = { in: params.energyLabels.map(toDbEnum) as any };
+    where.energyLabel = {
+      in: params.energyLabels.map(toDbEnum) as EnergyLabel[],
+    };
   }
 
   // Emission standard (Euronorm)
@@ -345,7 +373,7 @@ export async function buildWhereClause(
     params.emissionStandards.length > 0
   ) {
     where.emissionStandard = {
-      in: params.emissionStandards.map(toDbEnum) as any,
+      in: params.emissionStandards.map(toDbEnum) as EmissionStandard[],
     };
   }
 
@@ -370,7 +398,7 @@ export async function buildWhereClause(
     params.interiorColor &&
     params.interiorColor.length > 0
   ) {
-    where.interiorColor = { in: params.interiorColor.map(toDbEnum) as any };
+    where.interiorColor = { in: params.interiorColor.map(toDbEnum) as Color[] };
   }
 
   // Days listed (createdAt >= now - N days)
@@ -491,13 +519,11 @@ async function fetchAvgPriceMap(): Promise<Map<string, number>> {
 /** Compare vehicle price against market average for same make+model. */
 function computePriceRating(price: number, avgPrice: number): PriceRating {
   const pct = (price - avgPrice) / avgPrice;
-  if (pct > 0.2) return { label: "Überteuert", bars: 1, sentiment: "red" };
-  if (pct > 0.05)
-    return { label: "Fairer Preis", bars: 2, sentiment: "yellow" };
-  if (pct > -0.05) return { label: "Guter Preis", bars: 3, sentiment: "green" };
-  if (pct > -0.2)
-    return { label: "Sehr guter Preis", bars: 4, sentiment: "green" };
-  return { label: "Ausgezeichnet", bars: 5, sentiment: "green" };
+  if (pct > 0.2) return { label: "overpriced", bars: 1, sentiment: "red" };
+  if (pct > 0.05) return { label: "fair", bars: 2, sentiment: "yellow" };
+  if (pct > -0.05) return { label: "good", bars: 3, sentiment: "green" };
+  if (pct > -0.2) return { label: "veryGood", bars: 4, sentiment: "green" };
+  return { label: "excellent", bars: 5, sentiment: "green" };
 }
 
 function attachPriceRatings(
@@ -981,17 +1007,98 @@ export async function getVehicleCountAndFacets(rawParams: {
 export async function getVehicle(id: string): Promise<VehicleDetails | null> {
   if (!id) return null;
 
-  return await prisma.vehicle.findUnique({
+  return (await prisma.vehicle.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      price: true,
+      kilometer: true,
+      registrationMonth: true,
+      registrationYear: true,
+      make: true,
+      model: true,
+      version: true,
+      fuelType: true,
+      transmissionType: true,
+      gearTransmission: true,
+      bodyType: true,
+      color: true,
+      interiorColor: true,
+      metallic: true,
+      vehicleCondition: true,
+      lastInspectionDate: true,
+      inspectionPassed: true,
+      warranty: true,
+      warrantyStartDate: true,
+      duration: true,
+      maxKm: true,
+      doors: true,
+      seats: true,
+      hp: true,
+      kw: true,
+      energyLabel: true,
+      typeApproval: true,
+      wheelbase: true,
+      vin: true,
+      emptyWeight: true,
+      loadCapacity: true,
+      serialNumber: true,
+      height: true,
+      width: true,
+      length: true,
+      towingCapacityBraked: true,
+      cubicCapacity: true,
+      co2Emission: true,
+      cylinders: true,
+      numberOfGears: true,
+      emissionStandard: true,
+      consumptionCity: true,
+      consumptionCountry: true,
+      consumptionTotal: true,
+      range: true,
+      batteryCapacity: true,
+      batteryRentalMonth: true,
+      powerConsumption: true,
+      batteryOwnership: true,
+      chargingPlugTypeStandard: true,
+      chargingPlugTypeFast: true,
+      chargingPower: true,
+      combustionEnginePowerHp: true,
+      electricMotorPowerHp: true,
+      vehicleDescription: true,
+      equipment: true,
+      extras: true,
+      images: true,
+      createdAt: true,
       dealer: {
-        include: {
-          openingHours: { orderBy: { day: "asc" } },
+        select: {
+          id: true,
+          companyName: true,
+          description: true,
+          website: true,
+          logo: true,
+          coverImage: true,
+          streetAddress: true,
+          zipCode: true,
+          city: true,
+          country: true,
+          phoneNumber: true,
+          businessEmail: true,
+          googlePlaceId: true,
           user: { select: { emailVerified: true } },
+          openingHours: {
+            select: {
+              day: true,
+              isOpen: true,
+              openTime: true,
+              closeTime: true,
+            },
+            orderBy: { day: "asc" },
+          },
         },
       },
     },
-  });
+  })) as unknown as VehicleDetails;
 }
 
 /**
@@ -1192,7 +1299,7 @@ export async function getPresignedUrls(
 
 export async function createVehicle(
   listingId: string,
-  formData: any,
+  formData: z.infer<typeof vehicleFormSchema>,
   imageKeys: string[],
 ) {
   const session = await auth.api.getSession({
@@ -1205,13 +1312,16 @@ export async function createVehicle(
 
   const dealer = await prisma.dealer.findUnique({
     where: { userId: session.user.id },
+    select: { id: true },
   });
 
   if (!dealer) {
     throw new Error("Dealer profile not found");
   }
 
-  const validatedData = vehicleFormSchema.parse(formData);
+  const tSchema = await getTranslations("VehicleSchema");
+  const schema = createVehicleFormSchema(tSchema);
+  const validatedData = schema.parse(formData);
 
   const subscription = await prisma.subscription.findFirst({
     where: {
@@ -1219,6 +1329,7 @@ export async function createVehicle(
       status: { in: ["active", "trialing", "past_due"] },
     },
     orderBy: { periodEnd: "desc" },
+    select: { plan: true },
   });
 
   const planName = subscription?.plan?.toLowerCase() || "";
@@ -1230,7 +1341,7 @@ export async function createVehicle(
 
   if (currentCount >= maxVehicles) {
     return {
-      error: `Limit erreicht: Ihr aktuelles Abo (${subscription?.plan || "Kein Abo"}) erlaubt maximal ${maxVehicles} Fahrzeuge.`,
+      error: "limitReached",
     };
   }
 
@@ -1238,44 +1349,44 @@ export async function createVehicle(
     data: {
       id: listingId,
       dealerId: dealer.id,
-      vehicleType: validatedData.vehicleType.toUpperCase() as any,
+      vehicleType: validatedData.vehicleType.toUpperCase() as VehicleType,
       make: validatedData.make,
       model: validatedData.model || null,
       version: validatedData.version || null,
       bodyType: validatedData.bodyType,
       fuelType: validatedData.fuelType
-        ? (validatedData.fuelType.toUpperCase().replace(/-/g, "_") as any)
+        ? (validatedData.fuelType.toUpperCase().replace(/-/g, "_") as FuelType)
         : null,
       registrationMonth: validatedData.registrationMonth,
       registrationYear: validatedData.registrationYear,
       kilometer: validatedData.kilometer,
       price: validatedData.price,
       newPrice: validatedData.newPrice || null,
-      color: validatedData.color.toUpperCase() as any,
+      color: validatedData.color.toUpperCase() as Color,
       gearTransmission: validatedData.gearTransmission
-        ? (validatedData.gearTransmission.toUpperCase() as any)
+        ? (validatedData.gearTransmission.toUpperCase() as GearTransmission)
         : null,
       transmissionType: validatedData.transmissionType
         ? (validatedData.transmissionType
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as TransmissionType)
         : null,
       driveType: validatedData.driveType
-        ? (validatedData.driveType.toUpperCase() as any)
+        ? (validatedData.driveType.toUpperCase() as DriveType)
         : null,
       interiorColor: validatedData.interiorColor
-        ? (validatedData.interiorColor.toUpperCase() as any)
+        ? (validatedData.interiorColor.toUpperCase() as Color)
         : null,
       metallic: validatedData.metallic,
       vehicleCondition: validatedData.vehicleCondition
         ? (validatedData.vehicleCondition
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as VehicleCondition)
         : null,
       lastInspectionDate: validatedData.lastInspectionDate || null,
       inspectionPassed: validatedData.inspectionPassed,
       warranty: validatedData.warranty
-        ? (validatedData.warranty.toUpperCase().replace(/-/g, "_") as any)
+        ? (validatedData.warranty.toUpperCase().replace(/-/g, "_") as Warranty)
         : null,
       warrantyStartDate: validatedData.warrantyStartDate || null,
       duration: validatedData.duration || null,
@@ -1285,7 +1396,7 @@ export async function createVehicle(
       hp: validatedData.hp || null,
       kw: validatedData.kw || null,
       energyLabel: validatedData.energyLabel
-        ? (validatedData.energyLabel.toUpperCase() as any)
+        ? (validatedData.energyLabel.toUpperCase() as EnergyLabel)
         : null,
       typeApproval: validatedData.typeApproval || null,
       wheelbase: validatedData.wheelbase || null,
@@ -1304,7 +1415,7 @@ export async function createVehicle(
       emissionStandard: validatedData.emissionStandard
         ? (validatedData.emissionStandard
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as EmissionStandard)
         : null,
       consumptionCity: validatedData.consumptionCity || null,
       consumptionCountry: validatedData.consumptionCountry || null,
@@ -1316,17 +1427,17 @@ export async function createVehicle(
       batteryOwnership: validatedData.batteryOwnership
         ? (validatedData.batteryOwnership
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as BatteryOwnership)
         : null,
       chargingPlugTypeStandard: validatedData.chargingPlugTypeStandard
         ? (validatedData.chargingPlugTypeStandard
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as ChargingPlugTypeStandard)
         : null,
       chargingPlugTypeFast: validatedData.chargingPlugTypeFast
         ? (validatedData.chargingPlugTypeFast
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as ChargingPlugTypeFast)
         : null,
       chargingPower: validatedData.chargingPower || null,
       combustionEnginePowerHp: validatedData.combustionEnginePowerHp || null,
@@ -1353,6 +1464,7 @@ export async function getDealerVehicles() {
 
   const dealer = await prisma.dealer.findUnique({
     where: { userId: session.user.id },
+    select: { id: true },
   });
 
   if (!dealer) {
@@ -1362,9 +1474,10 @@ export async function getDealerVehicles() {
   const vehicles = await prisma.vehicle.findMany({
     where: { dealerId: dealer.id },
     orderBy: { createdAt: "desc" },
+    select: VEHICLE_LIST_SELECT,
   });
 
-  return vehicles;
+  return vehicles as VehicleListItem[];
 }
 
 export async function getVehicleById(id: string) {
@@ -1378,6 +1491,7 @@ export async function getVehicleById(id: string) {
 
   const dealer = await prisma.dealer.findUnique({
     where: { userId: session.user.id },
+    select: { id: true },
   });
 
   if (!dealer) {
@@ -1396,7 +1510,7 @@ export async function getVehicleById(id: string) {
 
 export async function updateVehicle(
   vehicleId: string,
-  formData: any,
+  formData: z.infer<typeof vehicleFormSchema>,
   imageKeys: string[],
 ) {
   const session = await auth.api.getSession({
@@ -1415,7 +1529,9 @@ export async function updateVehicle(
     throw new Error("Dealer profile not found");
   }
 
-  const validatedData = vehicleFormSchema.parse(formData);
+  const tSchema = await getTranslations("VehicleSchema");
+  const schema = createVehicleFormSchema(tSchema);
+  const validatedData = schema.parse(formData);
 
   const existingVehicle = await prisma.vehicle.findUnique({
     where: { id: vehicleId, dealerId: dealer.id },
@@ -1445,44 +1561,44 @@ export async function updateVehicle(
       dealerId: dealer.id,
     },
     data: {
-      vehicleType: validatedData.vehicleType.toUpperCase() as any,
+      vehicleType: validatedData.vehicleType.toUpperCase() as VehicleType,
       make: validatedData.make,
       model: validatedData.model || null,
       version: validatedData.version || null,
       bodyType: validatedData.bodyType,
       fuelType: validatedData.fuelType
-        ? (validatedData.fuelType.toUpperCase().replace(/-/g, "_") as any)
+        ? (validatedData.fuelType.toUpperCase().replace(/-/g, "_") as FuelType)
         : null,
       registrationMonth: validatedData.registrationMonth,
       registrationYear: validatedData.registrationYear,
       kilometer: validatedData.kilometer,
       price: validatedData.price,
       newPrice: validatedData.newPrice || null,
-      color: validatedData.color.toUpperCase() as any,
+      color: validatedData.color.toUpperCase() as Color,
       gearTransmission: validatedData.gearTransmission
-        ? (validatedData.gearTransmission.toUpperCase() as any)
+        ? (validatedData.gearTransmission.toUpperCase() as GearTransmission)
         : null,
       transmissionType: validatedData.transmissionType
         ? (validatedData.transmissionType
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as TransmissionType)
         : null,
       driveType: validatedData.driveType
-        ? (validatedData.driveType.toUpperCase() as any)
+        ? (validatedData.driveType.toUpperCase() as DriveType)
         : null,
       interiorColor: validatedData.interiorColor
-        ? (validatedData.interiorColor.toUpperCase() as any)
+        ? (validatedData.interiorColor.toUpperCase() as Color)
         : null,
       metallic: validatedData.metallic,
       vehicleCondition: validatedData.vehicleCondition
         ? (validatedData.vehicleCondition
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as VehicleCondition)
         : null,
       lastInspectionDate: validatedData.lastInspectionDate || null,
       inspectionPassed: validatedData.inspectionPassed,
       warranty: validatedData.warranty
-        ? (validatedData.warranty.toUpperCase().replace("-", "_") as any)
+        ? (validatedData.warranty.toUpperCase().replace("-", "_") as Warranty)
         : null,
       warrantyStartDate: validatedData.warrantyStartDate || null,
       duration: validatedData.duration || null,
@@ -1492,7 +1608,7 @@ export async function updateVehicle(
       hp: validatedData.hp || null,
       kw: validatedData.kw || null,
       energyLabel: validatedData.energyLabel
-        ? (validatedData.energyLabel.toUpperCase() as any)
+        ? (validatedData.energyLabel.toUpperCase() as EnergyLabel)
         : null,
       typeApproval: validatedData.typeApproval || null,
       wheelbase: validatedData.wheelbase || null,
@@ -1511,7 +1627,7 @@ export async function updateVehicle(
       emissionStandard: validatedData.emissionStandard
         ? (validatedData.emissionStandard
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as EmissionStandard)
         : null,
       consumptionCity: validatedData.consumptionCity || null,
       consumptionCountry: validatedData.consumptionCountry || null,
@@ -1523,17 +1639,17 @@ export async function updateVehicle(
       batteryOwnership: validatedData.batteryOwnership
         ? (validatedData.batteryOwnership
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as BatteryOwnership)
         : null,
       chargingPlugTypeStandard: validatedData.chargingPlugTypeStandard
         ? (validatedData.chargingPlugTypeStandard
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as ChargingPlugTypeStandard)
         : null,
       chargingPlugTypeFast: validatedData.chargingPlugTypeFast
         ? (validatedData.chargingPlugTypeFast
             .toUpperCase()
-            .replace(/-/g, "_") as any)
+            .replace(/-/g, "_") as ChargingPlugTypeFast)
         : null,
       chargingPower: validatedData.chargingPower || null,
       combustionEnginePowerHp: validatedData.combustionEnginePowerHp || null,
@@ -1560,6 +1676,7 @@ export async function deleteVehicle(id: string) {
 
   const dealer = await prisma.dealer.findUnique({
     where: { userId: session.user.id },
+    select: { id: true },
   });
 
   if (!dealer) {
@@ -1579,7 +1696,10 @@ export async function deleteVehicle(id: string) {
         try {
           await storage.deleteFile(key);
         } catch (e) {
-          console.error(`Failed to delete image during vehicle deletion: ${key}`, e);
+          console.error(
+            `Failed to delete image during vehicle deletion: ${key}`,
+            e,
+          );
         }
       }),
     );

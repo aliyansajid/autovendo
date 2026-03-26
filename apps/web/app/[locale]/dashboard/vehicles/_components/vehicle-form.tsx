@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@repo/ui/lib/utils";
-import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
+import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
 import { DealerProfile } from "@/types/dealer";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
@@ -38,7 +38,6 @@ import { ContactSection } from "./form-sections/contact-section";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
-import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -55,19 +54,12 @@ import {
 } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
-import { Loader2, AlertCircle, AlertTriangle } from "lucide-react";
+import { AlertCircle, AlertTriangle } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
 import { getImageUrl } from "@/lib/helpers/image";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@repo/ui/components/alert";
+import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/alert";
 import { format } from "date-fns";
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const VEHICLE_DATA_MAP: Record<string, any> = {
   car: {
@@ -123,7 +115,7 @@ export function VehicleForm({
   subscriptionStatus,
 }: {
   dealerProfile: DealerProfile | null;
-  initialData?: z.infer<typeof vehicleFormSchema>;
+  initialData?: z.infer<ReturnType<typeof createVehicleFormSchema>>;
   vehicleId?: string;
   subscriptionStatus?: SubscriptionStatus;
 }) {
@@ -149,8 +141,11 @@ export function VehicleForm({
   const [uploadStatus, setUploadStatus] = useState<string>("");
   const totalSteps = 4;
 
-  const form = useForm<z.infer<typeof vehicleFormSchema>>({
-    resolver: zodResolver(vehicleFormSchema) as any,
+  const tSchema = useTranslations("VehicleSchema");
+  const schema = createVehicleFormSchema(tSchema);
+
+  const form = useForm<z.infer<ReturnType<typeof createVehicleFormSchema>>>({
+    resolver: zodResolver(schema) as any,
     defaultValues: {
       vehicleType: "car",
       model: undefined,
@@ -240,6 +235,84 @@ export function VehicleForm({
       form.setValue("model", "" as any, { shouldDirty: true });
     }
   }, [watchMake, vehicleId, initialData?.make, form]);
+
+  const fuelType = useWatch({ control, name: "fuelType" });
+  const prevFuelTypeRef = useRef<string | undefined>(initialData?.fuelType);
+
+  // Clear irrelevant technical fields when fuel type changes
+  useEffect(() => {
+    if (
+      fuelType &&
+      prevFuelTypeRef.current &&
+      fuelType !== prevFuelTypeRef.current
+    ) {
+      const showElectric = fuelType === "electric";
+      const showHydrogen = fuelType === "hydrogen";
+      const showCombustionOrMild = [
+        "petrol",
+        "diesel",
+        "mhev-petrol",
+        "mhev-diesel",
+      ].includes(fuelType);
+      const showFullHybrid = ["hev-petrol", "hev-diesel", "hybrid"].includes(
+        fuelType,
+      );
+      const showPluginHybrid = ["phev-petrol", "phev-diesel"].includes(
+        fuelType,
+      );
+
+      // Reset combustion/hydrogen specific fields
+      if (
+        !(
+          showCombustionOrMild ||
+          showHydrogen ||
+          showFullHybrid ||
+          showPluginHybrid
+        )
+      ) {
+        form.setValue("cubicCapacity", "" as any);
+        form.setValue("cylinders", "" as any);
+      }
+
+      // Reset consumption fields
+      if (!(showCombustionOrMild || showFullHybrid || showPluginHybrid)) {
+        form.setValue("consumptionCity", "" as any);
+        form.setValue("consumptionCountry", "" as any);
+        form.setValue("consumptionTotal", "" as any);
+      }
+
+      // Reset CO2 emission
+      if (
+        !(
+          showCombustionOrMild ||
+          showFullHybrid ||
+          showHydrogen ||
+          showPluginHybrid
+        )
+      ) {
+        form.setValue("co2Emission", "" as any);
+      }
+
+      // Reset EV specific fields
+      if (!(showElectric || showFullHybrid || showPluginHybrid)) {
+        form.setValue("range", "" as any);
+        form.setValue("batteryCapacity", "" as any);
+        form.setValue("batteryRentalMonth", "" as any);
+        form.setValue("powerConsumption", "" as any);
+        form.setValue("batteryOwnership", undefined);
+        form.setValue("chargingPlugTypeStandard", undefined);
+        form.setValue("chargingPlugTypeFast", undefined);
+        form.setValue("chargingPower", "" as any);
+      }
+
+      // Reset hybrid specific fields
+      if (!(showFullHybrid || showPluginHybrid)) {
+        form.setValue("combustionEnginePowerHp", "" as any);
+        form.setValue("electricMotorPowerHp", "" as any);
+      }
+    }
+    prevFuelTypeRef.current = fuelType;
+  }, [fuelType, form]);
 
   // Determine whether submission should be blocked based on subscription state.
   // For new listings: block unless subscription is active.
@@ -377,7 +450,7 @@ export function VehicleForm({
     return false;
   };
 
-  function onSubmit(data: z.infer<typeof vehicleFormSchema>) {
+  function onSubmit(data: z.infer<ReturnType<typeof createVehicleFormSchema>>) {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -442,7 +515,9 @@ export function VehicleForm({
                 );
 
                 if (!success) {
-                  throw new Error(t("errorUploadFailed", { filename: file.name }));
+                  throw new Error(
+                    t("errorUploadFailed", { filename: file.name }),
+                  );
                 }
                 return key;
               });
@@ -495,11 +570,14 @@ export function VehicleForm({
           (error.message.includes("Datei") ||
             error.message.includes("Dateityp") ||
             error.message.includes("Upload-Vorbereitung") ||
+            error.message === "limitReached" ||
             error.message.includes("Limit"));
 
         toast.error(
           isValidationError && error instanceof Error
-            ? error.message
+            ? error.message === "limitReached"
+              ? t("errorLimitReached")
+              : error.message
             : t("errorGeneric"),
         );
         setUploadStatus("");
@@ -540,7 +618,13 @@ export function VehicleForm({
         <Alert variant="destructive">
           <AlertCircle />
           <AlertTitle>{t("quotaExhaustedTitle")}</AlertTitle>
-          <AlertDescription>{t("quotaExhaustedDesc", { plan: subscriptionStatus.plan, current: subscriptionStatus.currentCount, max: subscriptionStatus.maxVehicles })}</AlertDescription>
+          <AlertDescription>
+            {t("quotaExhaustedDesc", {
+              plan: subscriptionStatus.plan,
+              current: subscriptionStatus.currentCount,
+              max: subscriptionStatus.maxVehicles,
+            })}
+          </AlertDescription>
         </Alert>
       )}
 
@@ -550,7 +634,14 @@ export function VehicleForm({
           <Alert className="border-yellow-500 bg-yellow-50 text-yellow-900 dark:bg-yellow-950/20 dark:text-yellow-400 [&>svg]:text-yellow-500">
             <AlertTriangle />
             <AlertTitle>{t("expiredWarningTitle")}</AlertTitle>
-            <AlertDescription>{t("expiredWarningDesc", { date: format(new Date(subscriptionStatus.graceEnd), "dd.MM.yyyy") })}</AlertDescription>
+            <AlertDescription>
+              {t("expiredWarningDesc", {
+                date: format(
+                  new Date(subscriptionStatus.graceEnd),
+                  "dd.MM.yyyy",
+                ),
+              })}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -643,7 +734,9 @@ export function VehicleForm({
                 <CardContent className="grid gap-6">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8 text-sm">
                     <div className="space-y-1">
-                      <p className="text-muted-foreground">{t("makeModelLabel")}</p>
+                      <p className="text-muted-foreground">
+                        {t("makeModelLabel")}
+                      </p>
                       <p className="font-bold text-base">
                         {
                           activeMakes
@@ -658,7 +751,9 @@ export function VehicleForm({
                     </div>
 
                     <div className="space-y-1">
-                      <p className="text-muted-foreground">{t("versionLabel")}</p>
+                      <p className="text-muted-foreground">
+                        {t("versionLabel")}
+                      </p>
                       <p className="font-bold text-base">
                         {form.getValues("version") || "-"}
                       </p>
@@ -672,14 +767,18 @@ export function VehicleForm({
                     </div>
 
                     <div className="space-y-1">
-                      <p className="text-muted-foreground">{t("kilometerLabel")}</p>
+                      <p className="text-muted-foreground">
+                        {t("kilometerLabel")}
+                      </p>
                       <p className="font-bold text-base">
                         {form.getValues("kilometer")} km
                       </p>
                     </div>
 
                     <div className="space-y-1">
-                      <p className="text-muted-foreground">{t("firstRegistrationLabel")}</p>
+                      <p className="text-muted-foreground">
+                        {t("firstRegistrationLabel")}
+                      </p>
                       <p className="font-bold text-base">
                         {form.getValues("registrationMonth")} /{" "}
                         {form.getValues("registrationYear")}
@@ -687,7 +786,9 @@ export function VehicleForm({
                     </div>
 
                     <div className="space-y-1">
-                      <p className="text-muted-foreground">{t("bodyTypeLabel")}</p>
+                      <p className="text-muted-foreground">
+                        {t("bodyTypeLabel")}
+                      </p>
                       <p className="font-bold text-base">
                         {getLabel(
                           form.getValues("bodyType"),
@@ -722,9 +823,7 @@ export function VehicleForm({
                           {/* Using standard img tag to prevent Next.js Image component failing on blob:// URLs */}
                           <img
                             src={
-                              src.startsWith("blob:")
-                                ? src
-                                : getImageUrl(src)
+                              src.startsWith("blob:") ? src : getImageUrl(src)
                             }
                             alt={`Review ${index}`}
                             className="object-cover w-full h-full rounded-md"
@@ -771,7 +870,9 @@ export function VehicleForm({
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-muted-foreground mb-2">{t("contactLabel")}</p>
+                      <p className="text-muted-foreground mb-2">
+                        {t("contactLabel")}
+                      </p>
                       <p className="font-bold text-base">
                         {form.getValues("phoneNumber") || "-"}
                       </p>
@@ -815,9 +916,7 @@ export function VehicleForm({
                 key="submit-button"
                 type="submit"
                 disabled={
-                  isSubmitting ||
-                  isSubmitBlocked ||
-                  (!!vehicleId && !isDirty)
+                  isSubmitting || isSubmitBlocked || (!!vehicleId && !isDirty)
                 }
               >
                 {isSubmitting ? (
