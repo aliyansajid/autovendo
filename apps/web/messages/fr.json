@@ -1064,13 +1064,13 @@
     "saving": "Enregistrement...",
     "save": "Enregistrer le Profil",
     "days": {
-      "Montag": "Lundi",
-      "Dienstag": "Mardi",
-      "Mittwoch": "Mercredi",
-      "Donnerstag": "Jeudi",
-      "Freitag": "Vendredi",
-      "Samstag": "Samedi",
-      "Sonntag": "Dimanche"
+      "MONDAY": "Lundi",
+      "TUESDAY": "Mardi",
+      "WEDNESDAY": "Mercredi",
+      "THURSDAY": "Jeudi",
+      "FRIDAY": "Vendredi",
+      "SATURDAY": "Samedi",
+      "SUNDAY": "Dimanche"
     },
     "uploadFailed": "Échec du téléchargement du fichier.",
     "userUpdateError": "Impossible de mettre à jour les informations utilisateur.",

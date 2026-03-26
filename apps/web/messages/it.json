@@ -1064,13 +1064,13 @@
     "saving": "Salvataggio...",
     "save": "Salva Profilo",
     "days": {
-      "Montag": "Lunedì",
-      "Dienstag": "Martedì",
-      "Mittwoch": "Mercoledì",
-      "Donnerstag": "Giovedì",
-      "Freitag": "Venerdì",
-      "Samstag": "Sabato",
-      "Sonntag": "Domenica"
+      "MONDAY": "Lunedì",
+      "TUESDAY": "Martedì",
+      "WEDNESDAY": "Mercoledì",
+      "THURSDAY": "Giovedì",
+      "FRIDAY": "Venerdì",
+      "SATURDAY": "Sabato",
+      "SUNDAY": "Domenica"
     },
     "uploadFailed": "Caricamento file fallito.",
     "userUpdateError": "Impossibile aggiornare le informazioni utente.",
