@@ -38,7 +38,7 @@ export function MediaSection({
 
       const newPreviews = files.map((file) => URL.createObjectURL(file));
       setPreviewImages((prev) => [...prev, ...newPreviews]);
-      setValue("images", [...currentImages, ...files]);
+      setValue("images", [...currentImages, ...files], { shouldDirty: true });
     }
   };
 
@@ -54,6 +54,7 @@ export function MediaSection({
       setValue(
         "images",
         currentImages.filter((_, i) => i !== index),
+        { shouldDirty: true }
       );
     }
   };
