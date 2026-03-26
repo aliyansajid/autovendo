@@ -1,12 +1,15 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { getDealerProfile } from "@/app/actions/dealer.actions";
-import { getVehicleById, getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";import { VehicleForm } from "../_components/vehicle-form";
+import {
+  getVehicleById,
+  getVehicleSubscriptionStatus,
+} from "@/app/actions/vehicles.actions";
+import { VehicleForm } from "../_components/vehicle-form";
 import { mapVehicleToForm } from "@/lib/helpers/vehicle";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@repo/ui/components/button";
 
 export default async function EditVehiclePage({
   params,
@@ -19,7 +22,7 @@ export default async function EditVehiclePage({
   });
 
   const [dealerProfile, vehicle, subscriptionStatus] = await Promise.all([
-    session?.user?.id ? getDealerProfile(session.user.id) : null,
+    session?.user?.id ? getDealerProfile() : null,
     getVehicleById(id),
     getVehicleSubscriptionStatus(),
   ]);

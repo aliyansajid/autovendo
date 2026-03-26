@@ -70,7 +70,7 @@ export const createDealerProfileSchema = (t: TFn) =>
         /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/,
         t("invalidPhoneFormat"),
       ),
-    businessEmail: z.string().email(t("invalidEmail")),
+    businessEmail: z.email(t("invalidEmail")),
 
     // Opening Hours
     openingHours: z.array(
