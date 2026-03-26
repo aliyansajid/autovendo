@@ -1127,7 +1127,7 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
   };
 }
 
-export async function prepareVehicleListing() {
+export async function prepareVehicleListing(existingVehicleId?: string) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -1145,7 +1145,7 @@ export async function prepareVehicleListing() {
   }
 
   return {
-    listingId: createId(),
+    listingId: existingVehicleId || createId(),
     country: "ch",
     dealerId: dealer.id,
   };
@@ -1564,6 +1564,25 @@ export async function deleteVehicle(id: string) {
 
   if (!dealer) {
     throw new Error("Dealer profile not found");
+  }
+
+  // Fetch the vehicle to get its images before deleting
+  const vehicle = await prisma.vehicle.findUnique({
+    where: { id, dealerId: dealer.id },
+    select: { images: true },
+  });
+
+  if (vehicle && vehicle.images.length > 0) {
+    // Delete all images from storage
+    await Promise.all(
+      vehicle.images.map(async (key) => {
+        try {
+          await storage.deleteFile(key);
+        } catch (e) {
+          console.error(`Failed to delete image during vehicle deletion: ${key}`, e);
+        }
+      }),
+    );
   }
 
   await prisma.vehicle.delete({

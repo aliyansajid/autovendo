@@ -392,7 +392,7 @@ export function VehicleForm({
         setUploadProgress(10);
 
         // Phase 1: Prepare
-        const { listingId } = await prepareVehicleListing();
+        const { listingId } = await prepareVehicleListing(vehicleId);
 
         // Phase 2: Separate new files and existing keys
         const images = data.images || [];
