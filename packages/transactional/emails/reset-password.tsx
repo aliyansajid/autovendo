@@ -3,7 +3,6 @@ import {
   Button,
   Container,
   Head,
-  Heading,
   Hr,
   Html,
   Img,
@@ -12,63 +11,9 @@ import {
   Text,
 } from "@react-email/components";
 
-interface ResetPasswordEmailProps {
-  userEmail: string;
-  resetPasswordUrl: string;
-}
-
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL
-  : "https://autovendo.ch";
-
-export const ResetPasswordEmail = ({
-  userEmail,
-  resetPasswordUrl,
-}: ResetPasswordEmailProps) => (
-  <Html>
-    <Head />
-    <Preview>Reset your Autovendo password</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={logoSection}>
-          <Img
-            src={`${baseUrl}/email-logo.png`}
-            width="200"
-            alt="Autovendo"
-            style={logo}
-          />
-        </Section>
-        <Heading style={h1}>Password reset request</Heading>
-        <Text style={text}>Hello,</Text>
-        <Text style={text}>
-          We received a request to reset the password for your Autovendo account
-          associated with <strong>{userEmail}</strong>.
-        </Text>
-        <Text style={text}>
-          To choose a new password and regain access to your account, please
-          click the button below. This link will expire in 1 hour for your
-          security.
-        </Text>
-        <Section style={btnContainer}>
-          <Button style={button} href={resetPasswordUrl}>
-            Reset Password
-          </Button>
-        </Section>
-        <Text style={text}>
-          If you did not request a password reset, please ignore this email or
-          contact support if you have concerns.
-        </Text>
-        <Text style={text}>The Autovendo Team</Text>
-        <Hr style={hr} />
-        <Text style={footer}>
-          This is an automated message from autovendo.ch
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-);
-
-export default ResetPasswordEmail;
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 
 const main = {
   backgroundColor: "#f9fafb",
@@ -90,14 +35,6 @@ const logoSection = {
 
 const logo = {
   margin: "0 auto",
-};
-
-const h1 = {
-  color: "#111827",
-  fontSize: "24px",
-  fontWeight: "600",
-  textAlign: "center" as const,
-  margin: "30px 0",
 };
 
 const text = {
@@ -131,5 +68,96 @@ const hr = {
 const footer = {
   color: "#9ca3af",
   fontSize: "12px",
+  lineHeight: "18px",
   textAlign: "center" as const,
+  margin: "4px 0 0 0",
 };
+
+// ---------------------------------------------------------------------------
+// Utils
+// ---------------------------------------------------------------------------
+
+const getLocalizedUrl = (url: string, locale?: string) => {
+  if (!locale) return url;
+  try {
+    const urlObj = new URL(url);
+    // If the URL already contains the locale prefix, don't add it again
+    if (
+      urlObj.pathname.startsWith(`/${locale}/`) ||
+      urlObj.pathname === `/${locale}`
+    ) {
+      return url;
+    }
+    urlObj.pathname = `/${locale}${urlObj.pathname}`;
+    return urlObj.toString();
+  } catch (e) {
+    return url;
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+interface ResetPasswordEmailProps {
+  userEmail: string;
+  resetPasswordUrl: string;
+  locale?: string;
+}
+
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+  ? process.env.NEXT_PUBLIC_APP_URL
+  : "https://autovendo.ch";
+
+export const ResetPasswordEmail = ({
+  userEmail,
+  resetPasswordUrl,
+  locale,
+}: ResetPasswordEmailProps) => {
+  const localizedUrl = getLocalizedUrl(resetPasswordUrl, locale);
+
+  return (
+    <Html>
+      <Head />
+      <Preview>Reset your Autovendo password</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={logoSection}>
+            <Img
+              src={`${baseUrl}/email-logo.png`}
+              width="200"
+              alt="Autovendo"
+              style={logo}
+            />
+          </Section>
+          <Text style={text}>Hello,</Text>
+          <Text style={text}>
+            We received a request to reset the password for your Autovendo
+            account associated with <strong>{userEmail}</strong>.
+          </Text>
+          <Text style={text}>
+            To choose a new password and regain access to your account, please
+            click the button below. This link will expire in 1 hour for your
+            security.
+          </Text>
+          <Section style={btnContainer}>
+            <Button style={button} href={localizedUrl}>
+              Reset Password
+            </Button>
+          </Section>
+          <Text style={text}>
+            If you did not request a password reset, please ignore this email or
+            contact support if you have concerns.
+          </Text>
+          <Text style={text}>The Autovendo Team</Text>
+          <Hr style={hr} />
+          <Text style={footer}>
+            This is an automated message from autovendo.ch
+          </Text>
+        </Container>
+      </Body>
+    </Html>
+  );
+};
+
+export default ResetPasswordEmail;

@@ -20,7 +20,7 @@ export interface DealerListResult {
 export interface DealerOpeningHour {
   day: string;
   isOpen: boolean;
-  hours: string;
+  hours: string | null;
 }
 
 export interface DealerDetail {

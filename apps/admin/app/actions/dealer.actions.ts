@@ -51,6 +51,7 @@ export async function createDealer(formData: z.infer<typeof dealerSchema>) {
         template: DealerWelcomeEmail({
           dealerName: validatedData.name,
           loginUrl: `${process.env.NEXT_PUBLIC_APP_URL}/login`,
+          locale: "de",
         }),
       });
     } catch (emailError) {

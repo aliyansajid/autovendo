@@ -19,7 +19,7 @@ import type {
   DealerVehiclesResult,
   GooglePlaceData,
 } from "@/types/dealer";
-import { DAY_LABELS, DAY_ORDER } from "@/lib/helpers/format";
+import { DAY_ORDER } from "@/lib/helpers/format";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { buildWhereClause } from "./vehicles.actions";
 import { storage } from "@/lib/helpers/storage";
@@ -383,12 +383,12 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
             DAY_ORDER.indexOf(b.day as (typeof DAY_ORDER)[number]),
         )
         .map((oh) => ({
-          day: DAY_LABELS[oh.day] ?? oh.day,
+          day: oh.day,
           isOpen: oh.isOpen,
           hours:
             oh.isOpen && oh.openTime && oh.closeTime
               ? `${toTimeString(new Date(oh.openTime))} – ${toTimeString(new Date(oh.closeTime))}`
-              : "isClosed",
+              : null,
         })),
     };
   } catch (error) {
@@ -498,7 +498,7 @@ export async function sendDealerContactEmail(
 
     const result = await sendEmail({
       to: dealer.businessEmail,
-      subject: `Neue Kontaktanfrage von ${data.name} – autovendo.ch`,
+      subject: `New contact request from ${data.name} – autovendo.ch`,
       replyTo: data.email,
       template: DealerContactEmail({
         dealerName: dealer.companyName,

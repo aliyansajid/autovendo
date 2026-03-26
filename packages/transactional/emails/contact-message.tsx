@@ -41,7 +41,6 @@ export const ContactMessage = ({
             style={logo}
           />
         </Section>
-        <Heading style={h1}>New contact request</Heading>
         <Section style={section}>
           <Text style={label}>Name</Text>
           <Text style={value}>{name}</Text>

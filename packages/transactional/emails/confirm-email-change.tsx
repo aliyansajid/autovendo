@@ -3,7 +3,6 @@ import {
   Button,
   Container,
   Head,
-  Heading,
   Hr,
   Html,
   Img,
@@ -12,66 +11,9 @@ import {
   Text,
 } from "@react-email/components";
 
-interface ConfirmEmailChangeEmailProps {
-  currentEmail: string;
-  newEmail: string;
-  confirmUrl: string;
-}
-
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL
-  : "https://autovendo.ch";
-
-export const ConfirmEmailChangeEmail = ({
-  currentEmail,
-  newEmail,
-  confirmUrl,
-}: ConfirmEmailChangeEmailProps) => (
-  <Html>
-    <Head />
-    <Preview>Approve your Autovendo email change</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={logoSection}>
-          <Img
-            src={`${baseUrl}/email-logo.png`}
-            width="200"
-            alt="Autovendo"
-            style={logo}
-          />
-        </Section>
-        <Heading style={h1}>Confirm your email change</Heading>
-        <Text style={text}>Hello,</Text>
-        <Text style={text}>
-          You have requested a change to the email address associated with your
-          Autovendo account from <strong>{currentEmail}</strong> to{" "}
-          <strong>{newEmail}</strong>.
-        </Text>
-        <Text style={text}>
-          To confirm this change and transition your account to the new address,
-          please click the button below. After approval, you will receive a
-          verification link at your new address to complete the process.
-        </Text>
-        <Section style={btnContainer}>
-          <Button style={button} href={confirmUrl}>
-            Approve Change
-          </Button>
-        </Section>
-        <Text style={text}>
-          If you did not request this change, please ignore this email or
-          contact support.
-        </Text>
-        <Text style={text}>The Autovendo Team</Text>
-        <Hr style={hr} />
-        <Text style={footer}>
-          This is an automated message from autovendo.ch
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-);
-
-export default ConfirmEmailChangeEmail;
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 
 const main = {
   backgroundColor: "#f9fafb",
@@ -93,14 +35,6 @@ const logoSection = {
 
 const logo = {
   margin: "0 auto",
-};
-
-const h1 = {
-  color: "#111827",
-  fontSize: "24px",
-  fontWeight: "600",
-  textAlign: "center" as const,
-  margin: "30px 0",
 };
 
 const text = {
@@ -134,5 +68,100 @@ const hr = {
 const footer = {
   color: "#9ca3af",
   fontSize: "12px",
+  lineHeight: "18px",
   textAlign: "center" as const,
+  margin: "4px 0 0 0",
 };
+
+// ---------------------------------------------------------------------------
+// Utils
+// ---------------------------------------------------------------------------
+
+const getLocalizedUrl = (url: string, locale?: string) => {
+  if (!locale) return url;
+  try {
+    const urlObj = new URL(url);
+    // If the URL already contains the locale prefix, don't add it again
+    if (
+      urlObj.pathname.startsWith(`/${locale}/`) ||
+      urlObj.pathname === `/${locale}`
+    ) {
+      return url;
+    }
+    urlObj.pathname = `/${locale}${urlObj.pathname}`;
+    return urlObj.toString();
+  } catch (e) {
+    return url;
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+interface ConfirmEmailChangeEmailProps {
+  currentEmail: string;
+  newEmail: string;
+  confirmUrl: string;
+  locale?: string;
+}
+
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+  ? process.env.NEXT_PUBLIC_APP_URL
+  : "https://autovendo.ch";
+
+export const ConfirmEmailChangeEmail = ({
+  currentEmail,
+  newEmail,
+  confirmUrl,
+  locale,
+}: ConfirmEmailChangeEmailProps) => {
+  const localizedUrl = getLocalizedUrl(confirmUrl, locale);
+
+  return (
+    <Html>
+      <Head />
+      <Preview>Approve your Autovendo email change</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={logoSection}>
+            <Img
+              src={`${baseUrl}/email-logo.png`}
+              width="200"
+              alt="Autovendo"
+              style={logo}
+            />
+          </Section>
+          <Text style={text}>Hello,</Text>
+          <Text style={text}>
+            You have requested a change to the email address associated with
+            your Autovendo account from <strong>{currentEmail}</strong> to{" "}
+            <strong>{newEmail}</strong>.
+          </Text>
+          <Text style={text}>
+            To confirm this change and transition your account to the new
+            address, please click the button below. After approval, you will
+            receive a verification link at your new address to complete the
+            process.
+          </Text>
+          <Section style={btnContainer}>
+            <Button style={button} href={localizedUrl}>
+              Approve Change
+            </Button>
+          </Section>
+          <Text style={text}>
+            If you did not request this change, please ignore this email or
+            contact support.
+          </Text>
+          <Text style={text}>The Autovendo Team</Text>
+          <Hr style={hr} />
+          <Text style={footer}>
+            This is an automated message from autovendo.ch
+          </Text>
+        </Container>
+      </Body>
+    </Html>
+  );
+};
+
+export default ConfirmEmailChangeEmail;

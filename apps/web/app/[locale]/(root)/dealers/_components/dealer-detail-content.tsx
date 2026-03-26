@@ -95,6 +95,7 @@ export const DealerDetailContent = ({
   initialFilters = {},
 }: DealerDetailContentProps) => {
   const t = useTranslations("DealerDetail");
+  const tForm = useTranslations("DealerProfileForm");
   const tSchema = useTranslations("DealerContactSchema");
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") || "about";
@@ -405,12 +406,12 @@ export const DealerDetailContent = ({
                         className="flex justify-between p-4 border-b last:border-0 hover:bg-muted/30"
                       >
                         <span className="font-medium text-muted-foreground">
-                          {item.day}
+                          {tForm(`days.${item.day}`)}
                         </span>
                         <span
                           className={`font-semibold ${!item.isOpen ? "text-muted-foreground" : ""}`}
                         >
-                          {item.hours}
+                          {item.hours ?? tForm("isClosed")}
                         </span>
                       </div>
                     ))}

@@ -3,7 +3,6 @@ import {
   Button,
   Container,
   Head,
-  Heading,
   Hr,
   Html,
   Img,
@@ -12,59 +11,9 @@ import {
   Text,
 } from "@react-email/components";
 
-interface VerifyEmailProps {
-  userEmail: string;
-  verificationUrl: string;
-}
-
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL
-  : "https://autovendo.ch";
-
-export const VerifyEmail = ({
-  userEmail,
-  verificationUrl,
-}: VerifyEmailProps) => (
-  <Html>
-    <Head />
-    <Preview>Verify your Autovendo email address</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={logoSection}>
-          <Img
-            src={`${baseUrl}/email-logo.png`}
-            width="200"
-            alt="Autovendo"
-            style={logo}
-          />
-        </Section>
-        <Heading style={h1}>Verify your email address</Heading>
-        <Text style={text}>Hello,</Text>
-        <Text style={text}>
-          Thank you for joining Autovendo. To ensure the security of your
-          account and activate your access, please verify your email address (
-          <strong>{userEmail}</strong>) by clicking the button below.
-        </Text>
-        <Section style={btnContainer}>
-          <Button style={button} href={verificationUrl}>
-            Verify Email
-          </Button>
-        </Section>
-        <Text style={text}>
-          If you did not request this verification, you can safely ignore this
-          email.
-        </Text>
-        <Text style={text}>The Autovendo Team</Text>
-        <Hr style={hr} />
-        <Text style={footer}>
-          This is an automated message from autovendo.ch
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-);
-
-export default VerifyEmail;
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 
 const main = {
   backgroundColor: "#f9fafb",
@@ -86,14 +35,6 @@ const logoSection = {
 
 const logo = {
   margin: "0 auto",
-};
-
-const h1 = {
-  color: "#111827",
-  fontSize: "24px",
-  fontWeight: "600",
-  textAlign: "center" as const,
-  margin: "30px 0",
 };
 
 const text = {
@@ -127,5 +68,92 @@ const hr = {
 const footer = {
   color: "#9ca3af",
   fontSize: "12px",
+  lineHeight: "18px",
   textAlign: "center" as const,
+  margin: "4px 0 0 0",
 };
+
+// ---------------------------------------------------------------------------
+// Utils
+// ---------------------------------------------------------------------------
+
+const getLocalizedUrl = (url: string, locale?: string) => {
+  if (!locale) return url;
+  try {
+    const urlObj = new URL(url);
+    // If the URL already contains the locale prefix, don't add it again
+    if (
+      urlObj.pathname.startsWith(`/${locale}/`) ||
+      urlObj.pathname === `/${locale}`
+    ) {
+      return url;
+    }
+    urlObj.pathname = `/${locale}${urlObj.pathname}`;
+    return urlObj.toString();
+  } catch (e) {
+    return url;
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+interface VerifyEmailProps {
+  userEmail: string;
+  verificationUrl: string;
+  locale?: string;
+}
+
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+  ? process.env.NEXT_PUBLIC_APP_URL
+  : "https://autovendo.ch";
+
+export const VerifyEmail = ({
+  userEmail,
+  verificationUrl,
+  locale,
+}: VerifyEmailProps) => {
+  const localizedUrl = getLocalizedUrl(verificationUrl, locale);
+
+  return (
+    <Html>
+      <Head />
+      <Preview>Verify your Autovendo email address</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={logoSection}>
+            <Img
+              src={`${baseUrl}/email-logo.png`}
+              width="200"
+              alt="Autovendo"
+              style={logo}
+            />
+          </Section>
+          <Text style={text}>Hello,</Text>
+          <Text style={text}>
+            Thank you for joining Autovendo. To ensure the security of your
+            account and activate your access, please verify your email address (
+            <strong>{userEmail}</strong>) by clicking the button below.
+          </Text>
+          <Section style={btnContainer}>
+            <Button style={button} href={localizedUrl}>
+              Verify Email
+            </Button>
+          </Section>
+          <Text style={text}>
+            If you did not request this verification, you can safely ignore this
+            email.
+          </Text>
+          <Text style={text}>The Autovendo Team</Text>
+          <Hr style={hr} />
+          <Text style={footer}>
+            This is an automated message from autovendo.ch
+          </Text>
+        </Container>
+      </Body>
+    </Html>
+  );
+};
+
+export default VerifyEmail;

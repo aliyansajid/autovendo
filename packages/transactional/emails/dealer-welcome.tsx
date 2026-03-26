@@ -3,7 +3,6 @@ import {
   Button,
   Container,
   Head,
-  Heading,
   Hr,
   Html,
   Img,
@@ -12,64 +11,9 @@ import {
   Text,
 } from "@react-email/components";
 
-interface DealerWelcomeEmailProps {
-  dealerName: string;
-  loginUrl: string;
-}
-
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL
-  : "https://autovendo.ch";
-
-export const DealerWelcomeEmail = ({
-  dealerName,
-  loginUrl,
-}: DealerWelcomeEmailProps) => (
-  <Html>
-    <Head />
-    <Preview>Welcome to Autovendo - Your account is ready</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={logoSection}>
-          <Img
-            src={`${baseUrl}/email-logo.png`}
-            width="200"
-            alt="Autovendo"
-            style={logo}
-          />
-        </Section>
-        <Heading style={h1}>Welcome to Autovendo</Heading>
-        <Text style={text}>Hello {dealerName},</Text>
-        <Text style={text}>
-          We are pleased to welcome you to Autovendo. Your dealer account has
-          been successfully set up and is now ready for use.
-        </Text>
-        <Text style={text}>
-          To get started, please log in to our portal using the link below. For
-          your security, we recommend that you <strong>change your temporary password</strong> immediately after your first login. We also encourage you to
-          complete your business profile to ensure your listings receive maximum
-          visibility.
-        </Text>
-        <Section style={btnContainer}>
-          <Button style={button} href={loginUrl}>
-            Log In to Your Account
-          </Button>
-        </Section>
-        <Text style={text}>
-          We look forward to a successful partnership.
-          <br />
-          The Autovendo Team
-        </Text>
-        <Hr style={hr} />
-        <Text style={footer}>
-          This is an automated message from autovendo.ch
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-);
-
-export default DealerWelcomeEmail;
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 
 const main = {
   backgroundColor: "#f9fafb",
@@ -91,14 +35,6 @@ const logoSection = {
 
 const logo = {
   margin: "0 auto",
-};
-
-const h1 = {
-  color: "#111827",
-  fontSize: "24px",
-  fontWeight: "600",
-  textAlign: "center" as const,
-  margin: "30px 0",
 };
 
 const text = {
@@ -132,5 +68,98 @@ const hr = {
 const footer = {
   color: "#9ca3af",
   fontSize: "12px",
+  lineHeight: "18px",
   textAlign: "center" as const,
+  margin: "4px 0 0 0",
 };
+
+// ---------------------------------------------------------------------------
+// Utils
+// ---------------------------------------------------------------------------
+
+const getLocalizedUrl = (url: string, locale?: string) => {
+  if (!locale) return url;
+  try {
+    const urlObj = new URL(url);
+    // If the URL already contains the locale prefix, don't add it again
+    if (
+      urlObj.pathname.startsWith(`/${locale}/`) ||
+      urlObj.pathname === `/${locale}`
+    ) {
+      return url;
+    }
+    urlObj.pathname = `/${locale}${urlObj.pathname}`;
+    return urlObj.toString();
+  } catch (e) {
+    return url;
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+interface DealerWelcomeEmailProps {
+  dealerName: string;
+  loginUrl: string;
+  locale?: string;
+}
+
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+  ? process.env.NEXT_PUBLIC_APP_URL
+  : "https://autovendo.ch";
+
+export const DealerWelcomeEmail = ({
+  dealerName,
+  loginUrl,
+  locale,
+}: DealerWelcomeEmailProps) => {
+  const localizedUrl = getLocalizedUrl(loginUrl, locale);
+
+  return (
+    <Html>
+      <Head />
+      <Preview>Welcome to Autovendo - Your account is ready</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={logoSection}>
+            <Img
+              src={`${baseUrl}/email-logo.png`}
+              width="200"
+              alt="Autovendo"
+              style={logo}
+            />
+          </Section>
+          <Text style={text}>Hello {dealerName},</Text>
+          <Text style={text}>
+            We are pleased to welcome you to Autovendo. Your dealer account has
+            been successfully set up and is now ready for use.
+          </Text>
+          <Text style={text}>
+            To get started, please log in to our portal using the link below.
+            For your security, we recommend that you{" "}
+            <strong>change your temporary password</strong> immediately after
+            your first login. We also encourage you to complete your business
+            profile to ensure your listings receive maximum visibility.
+          </Text>
+          <Section style={btnContainer}>
+            <Button style={button} href={localizedUrl}>
+              Log In to Your Account
+            </Button>
+          </Section>
+          <Text style={text}>
+            We look forward to a successful partnership.
+            <br />
+            The Autovendo Team
+          </Text>
+          <Hr style={hr} />
+          <Text style={footer}>
+            This is an automated message from autovendo.ch
+          </Text>
+        </Container>
+      </Body>
+    </Html>
+  );
+};
+
+export default DealerWelcomeEmail;

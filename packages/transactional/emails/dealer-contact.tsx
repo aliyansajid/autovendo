@@ -43,9 +43,8 @@ export const DealerContactEmail = ({
           />
         </Section>
 
-        <Heading style={h1}>New contact request</Heading>
         <Text style={subtitle}>
-          A new message has been sent to <strong>{dealerName}</strong> via
+          You have received a new message from <strong>{senderName}</strong> via
           autovendo.ch.
         </Text>
 
@@ -84,7 +83,8 @@ export const DealerContactEmail = ({
         <Hr style={hr} />
 
         <Text style={footer}>
-          To reply, simply click "Reply" – your response will go directly to {senderName} ({senderEmail}).
+          To reply, simply click "Reply" – your response will go directly to{" "}
+          {senderName} ({senderEmail}).
         </Text>
         <Text style={footer}>
           This is an automated message from autovendo.ch
