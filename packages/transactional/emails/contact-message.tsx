@@ -5,6 +5,7 @@ import {
   Heading,
   Hr,
   Html,
+  Img,
   Section,
   Text,
 } from "@react-email/components";
@@ -17,6 +18,10 @@ export interface ContactMessageProps {
   message?: string;
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+  ? process.env.NEXT_PUBLIC_APP_URL
+  : "https://autovendo.ch";
+
 export const ContactMessage = ({
   name,
   email,
@@ -28,33 +33,43 @@ export const ContactMessage = ({
     <Head />
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Neue Kontaktanfrage</Heading>
+        <Section style={logoSection}>
+          <Img
+            src={`${baseUrl}/email-logo.png`}
+            width="200"
+            alt="Autovendo"
+            style={logo}
+          />
+        </Section>
+        <Heading style={h1}>New contact request</Heading>
         <Section style={section}>
           <Text style={label}>Name</Text>
           <Text style={value}>{name}</Text>
         </Section>
         <Section style={section}>
-          <Text style={label}>E-Mail</Text>
+          <Text style={label}>Email</Text>
           <Text style={value}>{email}</Text>
         </Section>
         <Section style={section}>
-          <Text style={label}>Telefon</Text>
+          <Text style={label}>Phone</Text>
           <Text style={value}>{phone}</Text>
         </Section>
         {subject ? (
           <Section style={section}>
-            <Text style={label}>Betreff</Text>
+            <Text style={label}>Subject</Text>
             <Text style={value}>{subject}</Text>
           </Section>
         ) : null}
         {message ? (
           <Section style={section}>
-            <Text style={label}>Nachricht</Text>
+            <Text style={label}>Message</Text>
             <Text style={value}>{message}</Text>
           </Section>
         ) : null}
         <Hr style={hr} />
-        <Text style={footer}>Gesendet über das Kontaktformular auf autovendo.ch</Text>
+        <Text style={footer}>
+          This is an automated message from autovendo.ch
+        </Text>
       </Container>
     </Body>
   </Html>
@@ -72,15 +87,23 @@ const container = {
   backgroundColor: "#ffffff",
   margin: "0 auto",
   padding: "40px 20px",
-  borderRadius: "8px",
-  boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
+};
+
+const logoSection = {
+  textAlign: "center" as const,
+  marginBottom: "32px",
+};
+
+const logo = {
+  margin: "0 auto",
 };
 
 const h1 = {
   color: "#111827",
   fontSize: "24px",
   fontWeight: "600",
-  margin: "0 0 24px 0",
+  textAlign: "center" as const,
+  margin: "30px 0",
 };
 
 const section = {
@@ -105,10 +128,11 @@ const value = {
 
 const hr = {
   borderColor: "#e5e7eb",
-  margin: "24px 0",
+  margin: "32px 0",
 };
 
 const footer = {
   color: "#9ca3af",
   fontSize: "12px",
+  textAlign: "center" as const,
 };

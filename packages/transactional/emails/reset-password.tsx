@@ -18,8 +18,8 @@ interface ResetPasswordEmailProps {
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? `https://${process.env.NEXT_PUBLIC_APP_URL}`
-  : "";
+  ? process.env.NEXT_PUBLIC_APP_URL
+  : "https://autovendo.ch";
 
 export const ResetPasswordEmail = ({
   userEmail,
@@ -32,22 +32,22 @@ export const ResetPasswordEmail = ({
       <Container style={container}>
         <Section style={logoSection}>
           <Img
-            src={`${baseUrl}/static/logo.png`}
-            width="140"
-            height="40"
+            src={`${baseUrl}/email-logo.png`}
+            width="200"
             alt="Autovendo"
             style={logo}
           />
         </Section>
-        <Heading style={h1}>Password Reset Request</Heading>
+        <Heading style={h1}>Password reset request</Heading>
         <Text style={text}>Hello,</Text>
         <Text style={text}>
           We received a request to reset the password for your Autovendo account
           associated with <strong>{userEmail}</strong>.
         </Text>
         <Text style={text}>
-          Click the button below to choose a new password. This link will expire
-          in 1 hour.
+          To choose a new password and regain access to your account, please
+          click the button below. This link will expire in 1 hour for your
+          security.
         </Text>
         <Section style={btnContainer}>
           <Button style={button} href={resetPasswordUrl}>
@@ -78,10 +78,9 @@ const main = {
 
 const container = {
   backgroundColor: "#ffffff",
+  border: "1px solid #e5e7eb",
   margin: "0 auto",
   padding: "40px 20px",
-  borderRadius: "8px",
-  boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
 };
 
 const logoSection = {
@@ -114,8 +113,7 @@ const btnContainer = {
 };
 
 const button = {
-  backgroundColor: "#000000",
-  borderRadius: "6px",
+  backgroundColor: "#003f88",
   color: "#fff",
   fontSize: "16px",
   fontWeight: "500",

@@ -19,7 +19,7 @@ interface ConfirmEmailChangeEmailProps {
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? `https://${process.env.NEXT_PUBLIC_APP_URL}`
+  ? process.env.NEXT_PUBLIC_APP_URL
   : "https://autovendo.ch";
 
 export const ConfirmEmailChangeEmail = ({
@@ -33,18 +33,24 @@ export const ConfirmEmailChangeEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Section style={logoSection}>
-          <Img src={`${baseUrl}/email-logo.png`} alt="Autovendo" style={logo} />
+          <Img
+            src={`${baseUrl}/email-logo.png`}
+            width="200"
+            alt="Autovendo"
+            style={logo}
+          />
         </Section>
-        <Heading style={h1}>Approve Email Change</Heading>
+        <Heading style={h1}>Confirm your email change</Heading>
         <Text style={text}>Hello,</Text>
         <Text style={text}>
-          We received a request to change the email address for your Autovendo
-          account associated with <strong>{currentEmail}</strong> to{" "}
+          You have requested a change to the email address associated with your
+          Autovendo account from <strong>{currentEmail}</strong> to{" "}
           <strong>{newEmail}</strong>.
         </Text>
         <Text style={text}>
-          To confirm this change, please click the button below. After approval,
-          you will receive a verification link at your new email address.
+          To confirm this change and transition your account to the new address,
+          please click the button below. After approval, you will receive a
+          verification link at your new address to complete the process.
         </Text>
         <Section style={btnContainer}>
           <Button style={button} href={confirmUrl}>
@@ -75,10 +81,9 @@ const main = {
 
 const container = {
   backgroundColor: "#ffffff",
+  border: "1px solid #e5e7eb",
   margin: "0 auto",
   padding: "40px 20px",
-  borderRadius: "8px",
-  boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
 };
 
 const logoSection = {
@@ -111,8 +116,7 @@ const btnContainer = {
 };
 
 const button = {
-  backgroundColor: "#000000",
-  borderRadius: "6px",
+  backgroundColor: "#003f88",
   color: "#fff",
   fontSize: "16px",
   fontWeight: "500",

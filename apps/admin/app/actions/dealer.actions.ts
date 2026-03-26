@@ -47,7 +47,7 @@ export async function createDealer(formData: z.infer<typeof dealerSchema>) {
 
       await sendEmail({
         to: validatedData.email,
-        subject: "Welcome to Autovendo - Your Dealer Account is Ready",
+        subject: "Welcome to Autovendo",
         template: DealerWelcomeEmail({
           dealerName: validatedData.name,
           loginUrl: `${process.env.NEXT_PUBLIC_APP_URL}/login`,

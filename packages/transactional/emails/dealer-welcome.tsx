@@ -18,8 +18,8 @@ interface DealerWelcomeEmailProps {
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? `https://${process.env.NEXT_PUBLIC_APP_URL}`
-  : "";
+  ? process.env.NEXT_PUBLIC_APP_URL
+  : "https://autovendo.ch";
 
 export const DealerWelcomeEmail = ({
   dealerName,
@@ -32,9 +32,8 @@ export const DealerWelcomeEmail = ({
       <Container style={container}>
         <Section style={logoSection}>
           <Img
-            src={`${baseUrl}/static/logo.png`}
-            width="140"
-            height="40"
+            src={`${baseUrl}/email-logo.png`}
+            width="200"
             alt="Autovendo"
             style={logo}
           />
@@ -42,8 +41,14 @@ export const DealerWelcomeEmail = ({
         <Heading style={h1}>Welcome to Autovendo</Heading>
         <Text style={text}>Hello {dealerName},</Text>
         <Text style={text}>
-          An administrator has created a dealer account for you. You can now log
-          in to the portal to manage your listings and business details.
+          We are pleased to welcome you to Autovendo. Your dealer account has
+          been successfully set up and is now ready for use.
+        </Text>
+        <Text style={text}>
+          To get started, please log in to our portal using the link below. For
+          your security, we recommend that you <strong>change your temporary password</strong> immediately after your first login. We also encourage you to
+          complete your business profile to ensure your listings receive maximum
+          visibility.
         </Text>
         <Section style={btnContainer}>
           <Button style={button} href={loginUrl}>
@@ -51,7 +56,7 @@ export const DealerWelcomeEmail = ({
           </Button>
         </Section>
         <Text style={text}>
-          Thank you for choosing Autovendo.
+          We look forward to a successful partnership.
           <br />
           The Autovendo Team
         </Text>
@@ -74,10 +79,9 @@ const main = {
 
 const container = {
   backgroundColor: "#ffffff",
+  border: "1px solid #e5e7eb",
   margin: "0 auto",
   padding: "40px 20px",
-  borderRadius: "8px",
-  boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
 };
 
 const logoSection = {
@@ -110,8 +114,7 @@ const btnContainer = {
 };
 
 const button = {
-  backgroundColor: "#000000",
-  borderRadius: "6px",
+  backgroundColor: "#003f88",
   color: "#fff",
   fontSize: "16px",
   fontWeight: "500",
