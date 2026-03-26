@@ -40,19 +40,6 @@ import {
   formatKilometers,
 } from "@/lib/helpers/format";
 import type { ListingProps } from "@/types/vehicle";
-import {
-  FUEL_LABELS,
-  TRANSMISSION_LABELS,
-  DRIVE_LABELS,
-  CONDITION_LABELS,
-  VEHICLE_TYPE_LABELS,
-  COLOR_LABELS,
-  BATTERY_OWNERSHIP_LABELS,
-  CHARGING_STANDARD_LABELS,
-  CHARGING_FAST_LABELS,
-  WARRANTY_LABELS,
-  EMISSION_LABELS,
-} from "@/lib/constants/vehicle-constants";
 import { KeyDetailCard } from "../_components/key-detail-card";
 import { ListingSection } from "../_components/listing-section";
 import { ListingDataGrid } from "../_components/listing-data-grid";
@@ -96,10 +83,18 @@ export default async function ListingPage({
   params: Promise<{ id: string }>;
 }) {
   const t = await getTranslations("VehicleDetail");
+  const tVehicle = await getTranslations("Vehicle");
   const { id } = await params;
   const item = await getVehicleCached(id);
 
   if (!item) notFound();
+
+  const getLabel = (namespace: string, key: string | null | undefined) => {
+    if (!key) return undefined;
+    const formattedKey = `${namespace}.${key.toUpperCase().replace(/-/g, "_")}`;
+    // @ts-ignore
+    return tVehicle.has(formattedKey) ? tVehicle(formattedKey) : key;
+  };
 
   const title = formatVehicleName([item.make, item.model, item.version]);
   const price = item.price;
@@ -111,12 +106,12 @@ export default async function ListingPage({
 
   // ── Derived formatted values ──
   const fuelLabel = item.fuelType
-    ? (FUEL_LABELS[item.fuelType] ?? item.fuelType)
+    ? getLabel("fuelTypes", item.fuelType)
     : undefined;
   const transmissionLabel = item.transmissionType
-    ? (TRANSMISSION_LABELS[item.transmissionType] ?? item.transmissionType)
+    ? getLabel("transmissionTypes", item.transmissionType)
     : item.gearTransmission
-      ? (TRANSMISSION_LABELS[item.gearTransmission] ?? item.gearTransmission)
+      ? getLabel("transmissionTypes", item.gearTransmission)
       : undefined;
   const powerLabel =
     item.kw != null || item.hp != null
@@ -130,116 +125,113 @@ export default async function ListingPage({
 
   // ── Data sections ──
   const basicData = filterObj({
-    Karosserie: f(item.bodyType),
-    Ausführung: f(item.version),
-    Fahrzeugtyp: item.vehicleType
-      ? (VEHICLE_TYPE_LABELS[item.vehicleType] ?? item.vehicleType)
+    [t("basicDataKeys.bodyType")]: f(item.bodyType),
+    [t("basicDataKeys.version")]: f(item.version),
+    [t("basicDataKeys.vehicleType")]: item.vehicleType
+      ? getLabel("types", item.vehicleType)
       : undefined,
-    Zustand: item.vehicleCondition
-      ? (CONDITION_LABELS[item.vehicleCondition] ?? item.vehicleCondition)
+    [t("basicDataKeys.condition")]: item.vehicleCondition
+      ? getLabel("conditions", item.vehicleCondition)
       : undefined,
-    Antrieb: item.driveType
-      ? (DRIVE_LABELS[item.driveType] ?? item.driveType)
+    [t("basicDataKeys.driveType")]: item.driveType
+      ? getLabel("driveTypes", item.driveType)
       : undefined,
-    Sitzplätze: n(item.seats),
-    Türen: n(item.doors),
-    "Angebots-Nr.": item.id.slice(-8),
+    [t("basicDataKeys.seats")]: n(item.seats),
+    [t("basicDataKeys.doors")]: n(item.doors),
+    [t("basicDataKeys.offerNumber")]: item.id.slice(-8),
   });
 
   const vehicleHistory = filterObj({
-    Kilometerstand: formatKilometers(item.kilometer),
-    Erstzulassung: `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
+    [t("vehicleHistoryKeys.kilometer")]: formatKilometers(item.kilometer),
+    [t("vehicleHistoryKeys.firstRegistration")]: `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
   });
 
   const lastInspectionDate = toDate(item.lastInspectionDate);
   const warrantyStartDate = toDate(item.warrantyStartDate);
 
   const inspectionAndWarranty = filterObj({
-    "Letzte MFK": lastInspectionDate
+    [t("inspectionWarrantyKeys.lastInspection")]: lastInspectionDate
       ? lastInspectionDate.toLocaleDateString("de-CH")
       : undefined,
-    "MFK bestanden":
+    [t("inspectionWarrantyKeys.inspectionPassed")]:
       lastInspectionDate != null
         ? item.inspectionPassed
-          ? "Ja"
-          : "Nein"
+          ? t("yes")
+          : t("no")
         : undefined,
-    Garantieart: item.warranty
-      ? (WARRANTY_LABELS[item.warranty] ?? item.warranty)
+    [t("inspectionWarrantyKeys.warrantyType")]: item.warranty
+      ? getLabel("warranty", item.warranty)
       : undefined,
-    "Garantie ab": warrantyStartDate
+    [t("inspectionWarrantyKeys.warrantyFrom")]: warrantyStartDate
       ? warrantyStartDate.toLocaleDateString("de-CH")
       : undefined,
-    Garantiedauer:
-      item.duration != null ? `${item.duration} Monate` : undefined,
-    "Garantie max. km": n(item.maxKm, "km"),
+    [t("inspectionWarrantyKeys.warrantyDuration")]:
+      item.duration != null ? `${item.duration} ${t("months")}` : undefined,
+    [t("inspectionWarrantyKeys.warrantyMaxKm")]: n(item.maxKm, "km"),
   });
 
   const technicalData = filterObj({
-    Leistung: powerLabel,
-    Getriebe: transmissionLabel,
-    Hubraum: n(item.cubicCapacity, "ccm"),
-    Gänge: n(item.numberOfGears),
-    Zylinder: n(item.cylinders),
-    Leergewicht: n(item.emptyWeight, "kg"),
-    Nutzlast: n(item.loadCapacity, "kg"),
-    Radstand: n(item.wheelbase, "mm"),
-    Länge: n(item.length, "mm"),
-    Breite: n(item.width, "mm"),
-    Höhe: n(item.height, "mm"),
-    "Anhängelast gebremst": n(item.towingCapacityBraked, "kg"),
+    [t("technicalDataKeys.power")]: powerLabel,
+    [t("technicalDataKeys.transmission")]: transmissionLabel,
+    [t("technicalDataKeys.cubicCapacity")]: n(item.cubicCapacity, "ccm"),
+    [t("technicalDataKeys.gears")]: n(item.numberOfGears),
+    [t("technicalDataKeys.cylinders")]: n(item.cylinders),
+    [t("technicalDataKeys.emptyWeight")]: n(item.emptyWeight, "kg"),
+    [t("technicalDataKeys.loadCapacity")]: n(item.loadCapacity, "kg"),
+    [t("technicalDataKeys.wheelbase")]: n(item.wheelbase, "mm"),
+    [t("technicalDataKeys.length")]: n(item.length, "mm"),
+    [t("technicalDataKeys.width")]: n(item.width, "mm"),
+    [t("technicalDataKeys.height")]: n(item.height, "mm"),
+    [t("technicalDataKeys.towingCapacityBraked")]: n(item.towingCapacityBraked, "kg"),
   });
 
   const energyData = filterObj({
-    Schadstoffklasse: item.emissionStandard
-      ? (EMISSION_LABELS[item.emissionStandard] ?? item.emissionStandard)
+    [t("energyConsumptionKeys.emissionStandard")]: item.emissionStandard
+      ? getLabel("emissions", item.emissionStandard)
       : undefined,
-    Treibstoff: fuelLabel,
-    "CO₂-Emissionen (komb.)": n(item.co2Emission, "g/km"),
-    "Verbrauch Stadt": fl(item.consumptionCity, "l/100km"),
-    "Verbrauch Land": fl(item.consumptionCountry, "l/100km"),
-    "Verbrauch kombiniert": fl(item.consumptionTotal, "l/100km"),
+    [t("energyConsumptionKeys.fuelType")]: fuelLabel,
+    [t("energyConsumptionKeys.co2Emission")]: n(item.co2Emission, "g/km"),
+    [t("energyConsumptionKeys.consumptionCity")]: fl(item.consumptionCity, "l/100km"),
+    [t("energyConsumptionKeys.consumptionCountry")]: fl(item.consumptionCountry, "l/100km"),
+    [t("energyConsumptionKeys.consumptionTotal")]: fl(item.consumptionTotal, "l/100km"),
   });
 
   const electricData = filterObj({
-    Reichweite: n(item.range, "km"),
-    Batteriekapazität: fl(item.batteryCapacity, "kWh"),
-    Batteriemiete:
+    [t("electricDataKeys.range")]: n(item.range, "km"),
+    [t("electricDataKeys.batteryCapacity")]: fl(item.batteryCapacity, "kWh"),
+    [t("electricDataKeys.batteryRental")]:
       item.batteryRentalMonth != null
-        ? `${formatNumber(item.batteryRentalMonth)} CHF/Monat`
+        ? `${formatNumber(item.batteryRentalMonth)} CHF/${t("months")}`
         : undefined,
-    Stromverbrauch: fl(item.powerConsumption, "kWh/100km"),
-    Batterieeigentum: item.batteryOwnership
-      ? (BATTERY_OWNERSHIP_LABELS[item.batteryOwnership] ??
-        item.batteryOwnership)
+    [t("electricDataKeys.powerConsumption")]: fl(item.powerConsumption, "kWh/100km"),
+    [t("electricDataKeys.batteryOwnership")]: item.batteryOwnership
+      ? getLabel("batteryOwnership", item.batteryOwnership)
       : undefined,
-    "Ladeanschluss (Standard)": item.chargingPlugTypeStandard
-      ? (CHARGING_STANDARD_LABELS[item.chargingPlugTypeStandard] ??
-        item.chargingPlugTypeStandard)
+    [t("electricDataKeys.chargingStandard")]: item.chargingPlugTypeStandard
+      ? getLabel("chargingStandardAC", item.chargingPlugTypeStandard)
       : undefined,
-    Schnellladeanschluss: item.chargingPlugTypeFast
-      ? (CHARGING_FAST_LABELS[item.chargingPlugTypeFast] ??
-        item.chargingPlugTypeFast)
+    [t("electricDataKeys.chargingFast")]: item.chargingPlugTypeFast
+      ? getLabel("chargingStandardDC", item.chargingPlugTypeFast)
       : undefined,
-    Ladeleistung: fl(item.chargingPower, "kW"),
-    Verbrennungsmotor:
+    [t("electricDataKeys.chargingPower")]: fl(item.chargingPower, "kW"),
+    [t("electricDataKeys.combustionEngine")]:
       item.combustionEnginePowerHp != null
         ? `${formatNumber(item.combustionEnginePowerHp)} PS`
         : undefined,
-    "E-Motor":
+    [t("electricDataKeys.electricMotor")]:
       item.electricMotorPowerHp != null
         ? `${formatNumber(item.electricMotorPowerHp)} PS`
         : undefined,
   });
 
   const colourAndUpholstery = filterObj({
-    Außenfarbe: item.color
-      ? (COLOR_LABELS[item.color] ?? item.color)
+    [t("colourUpholsteryKeys.exteriorColor")]: item.color
+      ? getLabel("colors", item.color)
       : undefined,
-    Innenfarbe: item.interiorColor
-      ? (COLOR_LABELS[item.interiorColor] ?? item.interiorColor)
+    [t("colourUpholsteryKeys.interiorColor")]: item.interiorColor
+      ? getLabel("colors", item.interiorColor)
       : undefined,
-    Lackierung: item.metallic ? "Metallic" : "Uni",
+    [t("colourUpholsteryKeys.paint")]: item.metallic ? t("metallic") : t("uni"),
   });
 
   const identifiers = filterObj({
@@ -321,13 +313,13 @@ export default async function ListingPage({
     details: [
       `${String(sim.registrationMonth).padStart(2, "0")}/${sim.registrationYear}`,
       formatKilometers(sim.kilometer),
-      sim.fuelType ? (FUEL_LABELS[sim.fuelType] ?? sim.fuelType) : undefined,
+      sim.fuelType ? getLabel("fuelTypes", sim.fuelType) : undefined,
     ].filter((d): d is string => d != null && d !== ""),
     garageName: sim.dealer.companyName,
     garageId: sim.dealer.id,
     garageLocation: `${sim.dealer.city}, CH`,
     badge: sim.vehicleCondition
-      ? (CONDITION_LABELS[sim.vehicleCondition] ?? sim.vehicleCondition)
+      ? getLabel("conditions", sim.vehicleCondition)
       : undefined,
     image: getImageUrl(sim.images[0]),
   }));

@@ -13,21 +13,13 @@ import {
   formatPrice,
   formatNumber,
   formatRegistrationDate,
-  formatEnumLabel,
 } from "@/lib/helpers/format";
 import { getImageUrl } from "@/lib/helpers/image";
 import {
-  buildVehicleTitle,
   extractEquipment,
   formatEquipmentLabel,
   formatVehicleName,
 } from "@/lib/helpers/vehicle";
-import {
-  CONDITION_LABELS,
-  FUEL_LABELS,
-} from "@/lib/constants/vehicle-constants";
-
-// Centralized labels now imported from vehicle-constants
 
 export interface ListingListCardProps {
   item: VehicleListItem;
@@ -44,6 +36,14 @@ export function ListingListCard({
 }: ListingListCardProps) {
   const t = useTranslations();
   const tCard = useTranslations("ListingListCard");
+  const tVehicle = useTranslations("Vehicle");
+
+  const getVehicleLabel = (namespace: string, key: string | null | undefined) => {
+    if (!key) return undefined;
+    const formattedKey = `${namespace}.${key.toUpperCase().replace(/-/g, "_")}`;
+    return tVehicle.has(formattedKey as any) ? tVehicle(formattedKey as any) : key;
+  };
+
   // Use helpers for ALL formatting
   const title = formatVehicleName([item.make, item.model, item.version]);
   const formattedPrice = formatPrice(item.price);
@@ -74,8 +74,7 @@ export function ListingListCard({
             />
             {item.vehicleCondition && (
               <Badge className="absolute top-2 left-2 bg-rating text-foreground font-semibold text-xs">
-                {CONDITION_LABELS[item.vehicleCondition] ??
-                  item.vehicleCondition}
+                {getVehicleLabel("conditions", item.vehicleCondition)}
               </Badge>
             )}
           </div>
@@ -160,7 +159,7 @@ export function ListingListCard({
               </>
             )}
             {item.fuelType && (
-              <span>{FUEL_LABELS[item.fuelType] ?? item.fuelType}</span>
+              <span>{getVehicleLabel("fuelTypes", item.fuelType)}</span>
             )}
           </div>
 
@@ -174,7 +173,7 @@ export function ListingListCard({
             {equipmentList.length === 0 && (
               <div className="flex items-center gap-2">
                 <Check className="size-4" />
-                <span>Gepflegter Zustand</span>
+                <span>{tCard("wellMaintained")}</span>
               </div>
             )}
           </div>

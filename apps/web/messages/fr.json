@@ -261,6 +261,31 @@
       "reinforced-suspension": "Suspension renforcée",
       "additional-instruments": "Instruments supplémentaires"
     },
+    "warranty": {
+      "FROM_DELIVERY": "À partir de la livraison",
+      "FROM_FIRST_REGISTRATION": "À partir de la première immatriculation",
+      "FROM_DATE": "À partir de la date"
+    },
+    "emissions": {
+      "EURO_1": "Euro 1",
+      "EURO_2": "Euro 2",
+      "EURO_3": "Euro 3",
+      "EURO_4": "Euro 4",
+      "EURO_5": "Euro 5",
+      "EURO_5_PLUS": "Euro 5+",
+      "EURO_6": "Euro 6",
+      "EURO_6A": "Euro 6a",
+      "EURO_6B": "Euro 6b",
+      "EURO_6C": "Euro 6c",
+      "EURO_6D": "Euro 6d",
+      "EURO_6D_ISC": "Euro 6d ISC",
+      "EURO_6D_ISC_FCM": "Euro 6d ISC FCM",
+      "EURO_6D_TEMP": "Euro 6d-temp",
+      "EURO_6D_TEMP_EVAP": "Euro 6d-temp EVAP",
+      "EURO_6D_TEMP_EVAP_ISC": "Euro 6d-temp EVAP ISC",
+      "EURO_6D_TEMP_ISC": "Euro 6d-temp ISC",
+      "EURO_6E": "Euro 6e"
+    },
     "extras": {
       "8-tyres": "8 pneus",
       "accessible-for-disabled": "Accessible aux handicapés",
@@ -1509,7 +1534,8 @@
   },
   "ListingListCard": {
     "contact": "Contact",
-    "allVehicles": "Tous les véhicules de ce concessionnaire"
+    "allVehicles": "Tous les véhicules de ce concessionnaire",
+    "wellMaintained": "Bon état général"
   },
   "HowItWorksPage": {
     "title": "Comment ça marche",

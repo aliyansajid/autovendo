@@ -20,7 +20,7 @@ interface ConfirmEmailChangeEmailProps {
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL
   ? `https://${process.env.NEXT_PUBLIC_APP_URL}`
-  : "";
+  : "https://autovendo.ch";
 
 export const ConfirmEmailChangeEmail = ({
   currentEmail,
@@ -33,13 +33,7 @@ export const ConfirmEmailChangeEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Section style={logoSection}>
-          <Img
-            src={`${baseUrl}/static/logo.png`}
-            width="140"
-            height="40"
-            alt="Autovendo"
-            style={logo}
-          />
+          <Img src={`${baseUrl}/email-logo.png`} alt="Autovendo" style={logo} />
         </Section>
         <Heading style={h1}>Approve Email Change</Heading>
         <Text style={text}>Hello,</Text>
