@@ -1349,7 +1349,73 @@
     "reviewCount": "({count} Bewertungen)",
     "phone": "Telefon",
     "contact": "Kontaktieren",
-    "allVehicles": "Alle Fahrzeuge dieses Händlers"
+    "allVehicles": "Alle Fahrzeuge dieses Händlers",
+    "yes": "Ja",
+    "no": "Nein",
+    "months": "Monate",
+    "metallic": "Metallic",
+    "uni": "Uni",
+    "basicDataKeys": {
+      "bodyType": "Aufbauart",
+      "version": "Version",
+      "vehicleType": "Fahrzeugtyp",
+      "condition": "Zustand",
+      "driveType": "Antrieb",
+      "seats": "Sitze",
+      "doors": "Türen",
+      "offerNumber": "Angebotsnummer"
+    },
+    "vehicleHistoryKeys": {
+      "kilometer": "Kilometerstand",
+      "firstRegistration": "Erstzulassung"
+    },
+    "inspectionWarrantyKeys": {
+      "lastInspection": "Letzte MFK",
+      "inspectionPassed": "Ab MFK",
+      "warrantyType": "Garantie",
+      "warrantyFrom": "Garantiestart",
+      "warrantyDuration": "Garantiedauer",
+      "warrantyMaxKm": "Max KM Garantie"
+    },
+    "technicalDataKeys": {
+      "power": "Leistung",
+      "transmission": "Getriebe",
+      "cubicCapacity": "Hubraum",
+      "gears": "Gänge",
+      "cylinders": "Zylinder",
+      "emptyWeight": "Leergewicht",
+      "loadCapacity": "Nutzlast",
+      "wheelbase": "Radstand",
+      "length": "Länge",
+      "width": "Breite",
+      "height": "Höhe",
+      "towingCapacityBraked": "Anhängelast gebremst"
+    },
+    "energyConsumptionKeys": {
+      "emissionStandard": "Emissionsstandard",
+      "fuelType": "Treibstoff",
+      "co2Emission": "CO2-Emissionen",
+      "consumptionCity": "Verbrauch innerorts",
+      "consumptionCountry": "Verbrauch ausserorts",
+      "consumptionTotal": "Verbrauch total"
+    },
+    "electricDataKeys": {
+      "range": "Reichweite (Elektrisch)",
+      "batteryCapacity": "Batteriekapazität",
+      "batteryRental": "Batteriemiete",
+      "powerConsumption": "Energieverbrauch",
+      "batteryOwnership": "Batteriemodell",
+      "chargingStandard": "Ladestandard AC",
+      "chargingFast": "Ladestandard DC",
+      "chargingPower": "Ladeleistung",
+      "combustionEngine": "Leistung Verbrennungsmotor",
+      "electricMotor": "Leistung Elektromotor"
+    },
+    "colourUpholsteryKeys": {
+      "exteriorColor": "Aussenfarbe",
+      "interiorColor": "Innenfarbe",
+      "paint": "Lack"
+    }
   },
   "VehicleForm": {
     "step1": "Fahrzeugdaten",

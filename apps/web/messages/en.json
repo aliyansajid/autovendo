@@ -1345,7 +1345,73 @@
     "reviewCount": "({count} reviews)",
     "phone": "Phone",
     "contact": "Contact",
-    "allVehicles": "All vehicles from this dealer"
+    "allVehicles": "All vehicles from this dealer",
+    "yes": "Yes",
+    "no": "No",
+    "months": "Months",
+    "metallic": "Metallic",
+    "uni": "Uni",
+    "basicDataKeys": {
+      "bodyType": "Body Type",
+      "version": "Version",
+      "vehicleType": "Vehicle Type",
+      "condition": "Condition",
+      "driveType": "Drive Type",
+      "seats": "Seats",
+      "doors": "Doors",
+      "offerNumber": "Offer Number"
+    },
+    "vehicleHistoryKeys": {
+      "kilometer": "Mileage",
+      "firstRegistration": "First Registration"
+    },
+    "inspectionWarrantyKeys": {
+      "lastInspection": "Last Inspection (MFK)",
+      "inspectionPassed": "Inspection Passed",
+      "warrantyType": "Warranty Type",
+      "warrantyFrom": "Warranty From",
+      "warrantyDuration": "Warranty Duration",
+      "warrantyMaxKm": "Warranty Max km"
+    },
+    "technicalDataKeys": {
+      "power": "Power",
+      "transmission": "Transmission",
+      "cubicCapacity": "Cubic Capacity",
+      "gears": "Gears",
+      "cylinders": "Cylinders",
+      "emptyWeight": "Empty Weight",
+      "loadCapacity": "Load Capacity",
+      "wheelbase": "Wheelbase",
+      "length": "Length",
+      "width": "Width",
+      "height": "Height",
+      "towingCapacityBraked": "Towing Capacity (Braked)"
+    },
+    "energyConsumptionKeys": {
+      "emissionStandard": "Emission Standard",
+      "fuelType": "Fuel Type",
+      "co2Emission": "CO2 Emissions",
+      "consumptionCity": "Fuel Consumption (City)",
+      "consumptionCountry": "Fuel Consumption (Country)",
+      "consumptionTotal": "Fuel Consumption (Total)"
+    },
+    "electricDataKeys": {
+      "range": "Electric Range",
+      "batteryCapacity": "Battery Capacity",
+      "batteryRental": "Battery Rental",
+      "powerConsumption": "Power Consumption",
+      "batteryOwnership": "Battery Ownership",
+      "chargingStandard": "Charging Standard AC",
+      "chargingFast": "Charging Standard DC",
+      "chargingPower": "Charging Power",
+      "combustionEngine": "Combustion Engine Power",
+      "electricMotor": "Electric Motor Power"
+    },
+    "colourUpholsteryKeys": {
+      "exteriorColor": "Exterior Color",
+      "interiorColor": "Interior Color",
+      "paint": "Paint"
+    }
   },
   "VehicleForm": {
     "step1": "Vehicle Data",
