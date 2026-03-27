@@ -88,6 +88,9 @@ const VEHICLE_LIST_SELECT = {
   hp: true,
   fuelType: true,
   vehicleCondition: true,
+  bodyType: true,
+  color: true,
+  createdAt: true,
   images: true,
   equipment: true, // Only if needed for listing
   dealer: {

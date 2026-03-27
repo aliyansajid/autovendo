@@ -189,10 +189,10 @@ export function VehicleList({
                   {vehicle.registrationYear}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap capitalize">
-                  {vehicle.bodyType.replace(/-/g, " ")}
+                  {vehicle.bodyType?.replace(/-/g, " ") || "-"}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap capitalize">
-                  {vehicle.color.toLowerCase()}
+                  {vehicle.color?.toLowerCase() || "-"}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
                   {format.dateTime(new Date(vehicle.createdAt), {

@@ -19,6 +19,9 @@ export interface VehicleListItem {
   hp: number | null;
   fuelType: string | null;
   vehicleCondition: string | null;
+  bodyType: string;
+  color: string;
+  createdAt: Date;
   images: string[];
   equipment: Prisma.JsonValue | null;
   priceRating?: PriceRating;
