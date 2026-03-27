@@ -13,8 +13,10 @@ import { Edit, Trash2, AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { getImageUrl } from "@/lib/helpers/image";
-import { format } from "date-fns";
-import { deleteVehicle, type SubscriptionStatus } from "@/app/actions/vehicles.actions";
+import {
+  deleteVehicle,
+  type SubscriptionStatus,
+} from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
 import { useState, useMemo } from "react";
@@ -66,8 +68,7 @@ export function VehicleList({
   const [searchQuery, setSearchQuery] = useState("");
 
   const isExpiredGraceDone =
-    subscriptionStatus?.type === "expired" &&
-    subscriptionStatus.isGraceExpired;
+    subscriptionStatus?.type === "expired" && subscriptionStatus.isGraceExpired;
 
   const filteredVehicles = useMemo(() => {
     if (!searchQuery) return vehicles;
@@ -84,9 +85,7 @@ export function VehicleList({
     return (
       <div className="text-center py-20 border-2 border-dashed rounded-lg bg-muted/20">
         <h3 className="text-lg font-semibold">{t("emptyTitle")}</h3>
-        <p className="text-muted-foreground mb-6">
-          {t("emptyText")}
-        </p>
+        <p className="text-muted-foreground mb-6">{t("emptyText")}</p>
         {!isExpiredGraceDone &&
           subscriptionStatus?.type !== "no_subscription" &&
           subscriptionStatus?.type !== "quota_exhausted" && (

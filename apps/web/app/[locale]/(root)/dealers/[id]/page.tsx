@@ -6,7 +6,8 @@ import {
 import { notFound } from "next/navigation";
 import { DealerDetailContent } from "../_components/dealer-detail-content";
 import { parseSearchParams } from "@/lib/helpers/vehicle";
-import { VehicleSearchSchema } from "@/schema/vehicle-search-schema";
+import { createVehicleSearchSchema } from "@/schema/vehicle-search-schema";
+import { getTranslations } from "next-intl/server";
 
 export default async function DealerPage({
   params,
@@ -18,7 +19,9 @@ export default async function DealerPage({
   const [{ id }, sp] = await Promise.all([params, searchParams]);
 
   const parsedFilters = parseSearchParams(sp);
-  const filters = VehicleSearchSchema.parse(parsedFilters);
+  const t_schema = await getTranslations("VehicleSearchSchema");
+  const schema = createVehicleSearchSchema(t_schema);
+  const filters = schema.parse(parsedFilters);
   const dealer = await getDealerById(id);
 
   if (!dealer) {

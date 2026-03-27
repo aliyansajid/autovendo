@@ -34,7 +34,6 @@ import { storage } from "@/lib/helpers/storage";
 import { StorageService } from "@repo/storage";
 import {
   createVehicleFormSchema,
-  vehicleFormSchema,
 } from "@/schema/vehicle-form-schema";
 import { getTranslations } from "next-intl/server";
 import {
@@ -45,7 +44,7 @@ import {
   type PriceRating,
 } from "@/types/vehicle";
 import {
-  VehicleSearchSchema,
+  createVehicleSearchSchema,
   type VehicleSearchParams,
 } from "@/schema/vehicle-search-schema";
 
@@ -552,7 +551,9 @@ export async function getVehicles(rawParams: {
 }): Promise<PaginatedVehicles> {
   // Parse and validate search params
   const parsed = parseSearchParams(rawParams);
-  const params = VehicleSearchSchema.parse(parsed);
+  const t = await getTranslations("VehicleSearchSchema");
+  const schema = createVehicleSearchSchema(t);
+  const params = schema.parse(parsed);
 
   // Calculate pagination
   const skip = (params.page - 1) * params.pageSize;
@@ -594,7 +595,9 @@ export async function getVehiclesWithFacets(rawParams: {
   [key: string]: string | string[] | undefined;
 }): Promise<PaginatedVehicles> {
   const parsed = parseSearchParams(rawParams);
-  const params = VehicleSearchSchema.parse(parsed);
+  const t = await getTranslations("VehicleSearchSchema");
+  const schema = createVehicleSearchSchema(t);
+  const params = schema.parse(parsed);
 
   const skip = (params.page - 1) * params.pageSize;
   const take = params.pageSize;
@@ -756,7 +759,9 @@ export async function getVehicleCountAndFacets(rawParams: {
   [key: string]: string | string[] | undefined;
 }): Promise<{ total: number; facets: VehicleFacets }> {
   const parsed = parseSearchParams(rawParams);
-  const params = VehicleSearchSchema.parse(parsed);
+  const t = await getTranslations("VehicleSearchSchema");
+  const schema = createVehicleSearchSchema(t);
+  const params = schema.parse(parsed);
 
   const where = await buildWhereClause(params);
   const facetBase = await buildWhereClause(params, { make: true, model: true });
@@ -1299,9 +1304,12 @@ export async function getPresignedUrls(
 
 export async function createVehicle(
   listingId: string,
-  formData: z.infer<typeof vehicleFormSchema>,
+  formData: any,
   imageKeys: string[],
 ) {
+  const t = await getTranslations("VehicleSchema");
+  const schema = createVehicleFormSchema(t);
+  const validatedData = schema.parse(formData);
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -1318,10 +1326,6 @@ export async function createVehicle(
   if (!dealer) {
     throw new Error("Dealer profile not found");
   }
-
-  const tSchema = await getTranslations("VehicleSchema");
-  const schema = createVehicleFormSchema(tSchema);
-  const validatedData = schema.parse(formData);
 
   const subscription = await prisma.subscription.findFirst({
     where: {
@@ -1510,7 +1514,7 @@ export async function getVehicleById(id: string) {
 
 export async function updateVehicle(
   vehicleId: string,
-  formData: z.infer<typeof vehicleFormSchema>,
+  formData: any,
   imageKeys: string[],
 ) {
   const session = await auth.api.getSession({

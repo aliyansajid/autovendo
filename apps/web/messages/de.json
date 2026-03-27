@@ -141,7 +141,10 @@
     },
     "types": {
       "bus": "Bus",
-      "car": "Reisebus",
+      "car": "Personenwagen",
+      "utility": "Nutzfahrzeug",
+      "truck": "Lastwagen",
+      "camper": "Wohnmobil",
       "cabriolet": "Cabriolet",
       "coupe": "Coupé",
       "small-car": "Kleinwagen",
@@ -418,6 +421,10 @@
           "28-days": "28 Tage"
         }
       }
+    },
+    "AdvancedSearchSchema": {
+      "negativeError": "Wert darf nicht negativ sein",
+      "invalidNumber": "Ungültige Zahl"
     },
     "CarsPage": {
       "title": "Fahrzeuge finden",

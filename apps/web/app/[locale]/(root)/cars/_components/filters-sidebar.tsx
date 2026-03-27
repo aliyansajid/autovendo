@@ -2,6 +2,7 @@
 
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Link } from "@/i18n/routing";
 import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
@@ -38,11 +39,9 @@ import { PowerDialog } from "./filters/power-dialog";
 import { EvDialog } from "./filters/ev-dialog";
 import { MakeModelDialog } from "./filters/make-model-dialog";
 import type { VehicleFacets } from "@/types/vehicle";
-import {
-  vehicleFiltersSchema,
-  type VehicleFiltersValues,
-} from "@/schema/vehicle-filters-schema";
+import { createVehicleFiltersSchema } from "@/schema/vehicle-filters-schema";
 import { useTranslations, useLocale } from "next-intl";
+import { useMemo } from "react";
 
 export const FiltersSidebar = ({
   onClose,
@@ -58,6 +57,13 @@ export const FiltersSidebar = ({
   const t = useTranslations("AdvancedSearch.FiltersSidebar");
   const tVehicle = useTranslations("Vehicle");
   const locale = useLocale();
+
+  const t_schema = useTranslations("VehicleSchema");
+  const schema = useMemo(
+    () => createVehicleFiltersSchema(t_schema),
+    [t_schema],
+  );
+  type Values = z.infer<typeof schema>;
 
   // Use variables to avoid lint warnings if passed but unused
   void onClose;
@@ -96,8 +102,8 @@ export const FiltersSidebar = ({
     };
   }, [searchParams]);
 
-  const form = useForm<VehicleFiltersValues>({
-    resolver: zodResolver(vehicleFiltersSchema),
+  const form = useForm<Values>({
+    resolver: zodResolver(schema),
     defaultValues: getInitialValues(),
   });
 
@@ -108,7 +114,7 @@ export const FiltersSidebar = ({
 
   // Handle URL updates
   const updateUrl = useCallback(
-    (values: VehicleFiltersValues) => {
+    (values: Values) => {
       const params = new URLSearchParams(window.location.search);
 
       const equipment: string[] = [];
@@ -230,16 +236,19 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>{t("condition")}</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(
-                  watchCondition,
-                  [
-                    { value: "NEW", label: tVehicle("conditions.NEW") },
-                    { value: "DEMONSTRATION", label: tVehicle("conditions.DEMONSTRATION") },
-                    { value: "PRE_REGISTERED", label: tVehicle("conditions.PRE_REGISTERED") },
-                    { value: "USED", label: tVehicle("conditions.USED") },
-                    { value: "OLDTIMER", label: tVehicle("conditions.OLDTIMER") },
-                  ],
-                )}
+                {renderSelectedText(watchCondition, [
+                  { value: "NEW", label: tVehicle("conditions.NEW") },
+                  {
+                    value: "DEMONSTRATION",
+                    label: tVehicle("conditions.DEMONSTRATION"),
+                  },
+                  {
+                    value: "PRE_REGISTERED",
+                    label: tVehicle("conditions.PRE_REGISTERED"),
+                  },
+                  { value: "USED", label: tVehicle("conditions.USED") },
+                  { value: "OLDTIMER", label: tVehicle("conditions.OLDTIMER") },
+                ])}
                 <ConditionDialog resultCount={resultCount} />
               </div>
             </div>
@@ -334,7 +343,9 @@ export const FiltersSidebar = ({
                   <SelectItem value="any">{t("any")}</SelectItem>
                   {KILOMETER_OPTIONS.map((m) => (
                     <SelectItem key={m.value} value={m.value}>
-                      {Number(m.value) === 0 ? "0 km" : `${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(Number(m.value))} km`}
+                      {Number(m.value) === 0
+                        ? "0 km"
+                        : `${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(Number(m.value))} km`}
                     </SelectItem>
                   ))}
                 </CustomFormField>
@@ -347,7 +358,9 @@ export const FiltersSidebar = ({
                   <SelectItem value="any">{t("any")}</SelectItem>
                   {KILOMETER_OPTIONS.map((m) => (
                     <SelectItem key={m.value} value={m.value}>
-                      {Number(m.value) === 0 ? "0 km" : `${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(Number(m.value))} km`}
+                      {Number(m.value) === 0
+                        ? "0 km"
+                        : `${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(Number(m.value))} km`}
                     </SelectItem>
                   ))}
                 </CustomFormField>
@@ -362,8 +375,17 @@ export const FiltersSidebar = ({
                 {renderSelectedText(
                   watchFuel,
                   [
-                    "PETROL", "DIESEL", "ELECTRIC", "HYBRID", "GAS", "HYDROGEN", "OTHER"
-                  ].map(v => ({ value: v, label: tVehicle(`fuelTypes.${v}`) })),
+                    "PETROL",
+                    "DIESEL",
+                    "ELECTRIC",
+                    "HYBRID",
+                    "GAS",
+                    "HYDROGEN",
+                    "OTHER",
+                  ].map((v) => ({
+                    value: v,
+                    label: tVehicle(`fuelTypes.${v}`),
+                  })),
                 )}
                 <FuelTypeDialog counts={facets?.fuelType} />
               </div>
@@ -372,10 +394,13 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>{t("power")}</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchPower, POWER_OPTIONS.map(o => ({
-                  value: o.value,
-                  label: t("from") + " " + o.label.replace("ab ", "")
-                })))}
+                {renderSelectedText(
+                  watchPower,
+                  POWER_OPTIONS.map((o) => ({
+                    value: o.value,
+                    label: t("from") + " " + o.label.replace("ab ", ""),
+                  })),
+                )}
                 <PowerDialog />
               </div>
             </div>
@@ -386,8 +411,16 @@ export const FiltersSidebar = ({
                 {renderSelectedText(
                   watchBodyType,
                   [
-                    "bus", "cabriolet", "coupe", "small-car", "estate", "minivan", "saloon", "pickup", "suv"
-                  ].map(v => ({ value: v, label: tVehicle(`types.${v}`) })),
+                    "bus",
+                    "cabriolet",
+                    "coupe",
+                    "small-car",
+                    "estate",
+                    "minivan",
+                    "saloon",
+                    "pickup",
+                    "suv",
+                  ].map((v) => ({ value: v, label: tVehicle(`types.${v}`) })),
                 )}
                 <VehicleTypeDialog counts={facets?.bodyType} />
               </div>
@@ -409,9 +442,10 @@ export const FiltersSidebar = ({
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(
                   watchTransmission,
-                  [
-                    "MANUAL", "AUTOMATIC", "SEMI_AUTOMATIC"
-                  ].map(v => ({ value: v, label: tVehicle(`transmissionTypes.${v}`) })),
+                  ["MANUAL", "AUTOMATIC", "SEMI_AUTOMATIC"].map((v) => ({
+                    value: v,
+                    label: tVehicle(`transmissionTypes.${v}`),
+                  })),
                 )}
                 <TransmissionDialog counts={facets?.transmissionType} />
               </div>

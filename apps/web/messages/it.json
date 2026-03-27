@@ -141,7 +141,10 @@
     },
     "types": {
       "bus": "Bus",
-      "car": "Autobus turistico",
+      "car": "Autovettura",
+      "utility": "Veicolo commerciale",
+      "truck": "Camion",
+      "camper": "Camper",
       "cabriolet": "Cabriolet",
       "coupe": "Coupé",
       "small-car": "Utilitaria",

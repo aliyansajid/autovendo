@@ -9,83 +9,88 @@ import {
   SORT_OPTIONS,
 } from "@/lib/constants/vehicle-constants";
 
-export const VehicleSearchSchema = z.object({
-  // Pagination
-  page: z.number().int().min(1).default(1),
-  pageSize: z.number().int().min(1).max(100).default(10),
+type TFn = (key: string) => string;
 
-  // Sorting
-  sort: z.enum(SORT_OPTIONS).default("relevance"),
+export const createVehicleSearchSchema = (t: TFn) =>
+  z.object({
+    // Pagination
+    page: z.number().int().min(1).default(1),
+    pageSize: z.number().int().min(1).max(100).default(10),
 
-  // Text search
-  search: z.string().trim().default(""),
+    // Sorting
+    sort: z.enum(SORT_OPTIONS).default("relevance"),
 
-  // Filters (multi-select)
-  make: z.array(z.string().trim()).optional(),
-  model: z.array(z.string().trim()).optional(),
-  excludeMake: z.array(z.string().trim()).optional(),
-  excludeModel: z.array(z.string().trim()).optional(),
+    // Text search
+    search: z.string().trim().default(""),
 
-  priceFrom: z.number().int().nonnegative().optional(),
-  priceTo: z.number().int().nonnegative().optional(),
+    // Filters (multi-select)
+    make: z.array(z.string().trim()).optional(),
+    model: z.array(z.string().trim()).optional(),
+    excludeMake: z.array(z.string().trim()).optional(),
+    excludeModel: z.array(z.string().trim()).optional(),
 
-  registrationFrom: z.number().int().min(1900).max(2100).optional(),
-  registrationTo: z.number().int().min(1900).max(2100).optional(),
+    priceFrom: z.number().int().nonnegative().optional(),
+    priceTo: z.number().int().nonnegative().optional(),
 
-  kilometerFrom: z.number().int().nonnegative().optional(),
-  kilometerTo: z.number().int().nonnegative().optional(),
+    registrationFrom: z.number().int().min(1900).max(2100).optional(),
+    registrationTo: z.number().int().min(1900).max(2100).optional(),
 
-  powerFrom: z.number().int().nonnegative().optional(),
-  powerTo: z.number().int().nonnegative().optional(),
+    kilometerFrom: z.number().int().nonnegative().optional(),
+    kilometerTo: z.number().int().nonnegative().optional(),
 
-  // Multi-select filters
-  fuel: z.array(z.enum(FUEL_TYPES)).optional(),
-  transmission: z.array(z.enum(TRANSMISSION_TYPES)).optional(),
-  condition: z.array(z.enum(VEHICLE_CONDITIONS)).optional(),
-  vehicleType: z.array(z.enum(VEHICLE_TYPES)).optional(),
-  bodyType: z.array(z.enum(BODY_TYPES)).optional(),
-  color: z.array(z.enum(COLORS)).optional(),
-  equipment: z.array(z.string()).optional(),
+    powerFrom: z.number().int().nonnegative().optional(),
+    powerTo: z.number().int().nonnegative().optional(),
 
-  // Special filters
-  evs: z.enum(["only_ev", "no_ev"]).optional(),
-  metallic: z.boolean().optional(),
+    // Multi-select filters
+    fuel: z.array(z.enum(FUEL_TYPES)).optional(),
+    transmission: z.array(z.enum(TRANSMISSION_TYPES)).optional(),
+    condition: z.array(z.enum(VEHICLE_CONDITIONS)).optional(),
+    vehicleType: z.array(z.enum(VEHICLE_TYPES)).optional(),
+    bodyType: z.array(z.enum(BODY_TYPES)).optional(),
+    color: z.array(z.enum(COLORS)).optional(),
+    equipment: z.array(z.string()).optional(),
 
-  // kW-based power filter (separate from hp/powerFrom/powerTo)
-  kwFrom: z.number().int().nonnegative().optional(),
-  kwTo: z.number().int().nonnegative().optional(),
+    // Special filters
+    evs: z.enum(["only_ev", "no_ev"]).optional(),
+    metallic: z.boolean().optional(),
 
-  // Interior color
-  interiorColor: z.array(z.string()).optional(),
+    // kW-based power filter (separate from hp/powerFrom/powerTo)
+    kwFrom: z.number().int().nonnegative().optional(),
+    kwTo: z.number().int().nonnegative().optional(),
 
-  // Days since listed
-  daysListed: z.number().int().positive().optional(),
+    // Interior color
+    interiorColor: z.array(z.string()).optional(),
 
-  // Drive type
-  driveType: z.array(z.string()).optional(),
+    // Days since listed
+    daysListed: z.number().int().positive().optional(),
 
-  // Engine / capacity
-  cubicCapacityFrom: z.number().int().nonnegative().optional(),
-  cubicCapacityTo: z.number().int().nonnegative().optional(),
-  cylindersFrom: z.number().int().nonnegative().optional(),
-  cylindersTo: z.number().int().nonnegative().optional(),
+    // Drive type
+    driveType: z.array(z.string()).optional(),
 
-  // Consumption / emissions
-  consumptionFrom: z.number().nonnegative().optional(),
-  consumptionTo: z.number().nonnegative().optional(),
-  co2From: z.number().int().nonnegative().optional(),
-  co2To: z.number().int().nonnegative().optional(),
+    // Engine / capacity
+    cubicCapacityFrom: z.number().int().nonnegative().optional(),
+    cubicCapacityTo: z.number().int().nonnegative().optional(),
+    cylindersFrom: z.number().int().nonnegative().optional(),
+    cylindersTo: z.number().int().nonnegative().optional(),
 
-  // Energy & emission standard
-  energyLabels: z.array(z.string()).optional(),
-  emissionStandards: z.array(z.string()).optional(),
+    // Consumption / emissions
+    consumptionFrom: z.number().nonnegative().optional(),
+    consumptionTo: z.number().nonnegative().optional(),
+    co2From: z.number().int().nonnegative().optional(),
+    co2To: z.number().int().nonnegative().optional(),
 
-  // Inspection / warranty
-  inspectionPassed: z.boolean().optional(),
-  hasWarranty: z.boolean().optional(),
+    // Energy & emission standard
+    energyLabels: z.array(z.string()).optional(),
+    emissionStandards: z.array(z.string()).optional(),
 
-  // Dealer context (for dealer-specific advanced search)
-  dealerId: z.string().optional(),
-});
+    // Inspection / warranty
+    inspectionPassed: z.boolean().optional(),
+    hasWarranty: z.boolean().optional(),
 
-export type VehicleSearchParams = z.infer<typeof VehicleSearchSchema>;
+    // Dealer context (for dealer-specific advanced search)
+    dealerId: z.string().optional(),
+  });
+
+export type VehicleSearchParams = z.infer<
+  ReturnType<typeof createVehicleSearchSchema>
+>;

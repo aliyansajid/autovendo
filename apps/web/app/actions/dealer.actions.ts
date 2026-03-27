@@ -5,10 +5,9 @@ import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import {
   createDealerProfileSchema,
-  dealerProfileSchema,
 } from "@/schema/profile-schema";
 import { getTranslations } from "next-intl/server";
-import { dealerContactSchema } from "@/schema/dealer-contact-schema";
+import { createDealerContactSchema } from "@/schema/dealer-contact-schema";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { sendEmail, DealerContactEmail } from "@repo/transactional";
@@ -54,7 +53,7 @@ function parseTimeString(time: string | null | undefined): Date | null {
 // -----------------------------------------------------------------------------
 
 export async function updateDealerProfile(
-  values: z.infer<typeof dealerProfileSchema>,
+  values: any,
 ) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -486,9 +485,12 @@ export async function getDealerVehicles(
 
 export async function sendDealerContactEmail(
   dealerId: string,
-  data: z.infer<typeof dealerContactSchema>,
+  data: any,
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    const tSchema = await getTranslations("ContactSchema");
+    const schema = createDealerContactSchema(tSchema);
+    const validatedData = schema.parse(data);
     const dealer = await prisma.dealer.findUnique({
       where: { id: dealerId },
       select: { businessEmail: true, companyName: true },
@@ -498,14 +500,14 @@ export async function sendDealerContactEmail(
 
     const result = await sendEmail({
       to: dealer.businessEmail,
-      subject: `New contact request from ${data.name} – autovendo.ch`,
-      replyTo: data.email,
+      subject: `New contact request from ${validatedData.name} – autovendo.ch`,
+      replyTo: validatedData.email,
       template: DealerContactEmail({
         dealerName: dealer.companyName,
-        senderName: data.name,
-        senderEmail: data.email,
-        senderPhone: data.phone,
-        message: data.message || "",
+        senderName: validatedData.name,
+        senderEmail: validatedData.email,
+        senderPhone: validatedData.phone,
+        message: validatedData.message || "",
       }),
     });
 

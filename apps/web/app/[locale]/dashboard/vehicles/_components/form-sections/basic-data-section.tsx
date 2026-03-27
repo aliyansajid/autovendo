@@ -266,7 +266,7 @@ export function BasicDataSection() {
           >
             {DriveTypeEnum.map((type) => (
               <SelectItem key={type.value} value={type.value}>
-                {type.label}
+                {t_vehicle(`driveTypes.${type.value.toUpperCase().replace(/-/g, "_")}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -416,7 +416,7 @@ export function BasicDataSection() {
           >
             {WarrantyEnum.map((warranty_item) => (
               <SelectItem key={warranty_item.value} value={warranty_item.value}>
-                {t_vehicle(`warranty.${warranty_item.value.replace(/-/g, "_")}`)}
+                {t_vehicle(`warranty.${warranty_item.value.replace(/-/g, "_").toUpperCase()}`)}
               </SelectItem>
             ))}
           </CustomFormField>

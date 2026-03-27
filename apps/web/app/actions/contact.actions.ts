@@ -4,14 +4,16 @@ import sendEmail from "@repo/transactional";
 import ContactMessage from "@repo/transactional/emails/contact-message";
 import React from "react";
 import { z } from "zod";
-import { contactFormSchema } from "@/schema/contact-schema";
+import { createContactFormSchema } from "@/schema/contact-schema";
+import { getTranslations } from "next-intl/server";
 
 const CONTACT_EMAIL = "info@autovendo.ch";
 
-export async function sendContactMessage(
-  input: z.infer<typeof contactFormSchema>,
-) {
-  const { name, email, phone, subject, message } = input;
+export async function sendContactMessage(input: any) {
+  const t = await getTranslations("ContactSchema");
+  const schema = createContactFormSchema(t);
+  const validatedInput = schema.parse(input);
+  const { name, email, phone, subject, message } = validatedInput;
 
   const result = await sendEmail({
     to: CONTACT_EMAIL,

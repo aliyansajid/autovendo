@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { DealersList } from "./_components/dealers-list";
 import { getDealers } from "@/app/actions/dealer.actions";
-import { dealerSearchSchema } from "@/schema/dealer-search-schema";
+import { createDealerSearchSchema } from "@/schema/dealer-search-schema";
 import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +13,9 @@ export default async function DealersPage(props: {
   const t = await getTranslations("DealersPage");
 
   // Parse and validate search params
-  const query = dealerSearchSchema.parse(searchParams);
+  const t_schema = await getTranslations("DealerSearchSchema");
+  const schema = createDealerSearchSchema(t_schema);
+  const query = schema.parse(searchParams);
 
   const initialData = await getDealers({
     searchQuery: query.q,

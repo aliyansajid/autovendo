@@ -5,7 +5,7 @@ type TFn = (key: string) => string;
 export const createContactFormSchema = (t: TFn) =>
   z.object({
     name: z.string().min(3, t("nameMin")).max(50, t("nameMax")),
-    email: z.email(t("invalidEmail")),
+    email: z.string().email(t("invalidEmail")),
     phone: z
       .string()
       .min(1, t("phoneRequired"))
@@ -13,24 +13,3 @@ export const createContactFormSchema = (t: TFn) =>
     subject: z.string().max(100, t("subjectMax")).optional(),
     message: z.string().max(500, t("messageMax")).optional(),
   });
-
-// Static fallback for non-i18n contexts
-export const contactFormSchema = z.object({
-  name: z
-    .string()
-    .min(3, "Name muss mindestens 3 Zeichen lang sein")
-    .max(50, "Name darf maximal 50 Zeichen lang sein"),
-  email: z.email("Ungültige E-Mail-Adresse"),
-  phone: z
-    .string()
-    .min(1, "Telefonnummer ist erforderlich")
-    .regex(/^(\+41|0041|0)[0-9\s.-]{8,}$/, "Ungültige Schweizer Telefonnummer"),
-  subject: z
-    .string()
-    .max(100, "Betreff darf maximal 100 Zeichen lang sein")
-    .optional(),
-  message: z
-    .string()
-    .max(500, "Nachricht darf maximal 500 Zeichen lang sein")
-    .optional(),
-});

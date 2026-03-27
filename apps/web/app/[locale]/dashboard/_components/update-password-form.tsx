@@ -20,15 +20,19 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
-import { updatePasswordSchema } from "@/schema/auth-schema";
+import { createUpdatePasswordSchema } from "@/schema/auth-schema";
 import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
 export const UpdatePasswordForm = () => {
   const [isPending, startTransition] = useTransition();
   const t = useTranslations("UpdatePasswordForm");
+  const t_schema = useTranslations("AuthSchema");
+  
+  const schema = useMemo(() => createUpdatePasswordSchema(t_schema), [t_schema]);
 
-  const form = useForm<z.infer<typeof updatePasswordSchema>>({
-    resolver: zodResolver(updatePasswordSchema),
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       currentPassword: "",
       newPassword: "",
@@ -36,7 +40,7 @@ export const UpdatePasswordForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof updatePasswordSchema>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const { error } = await authClient.changePassword({
         currentPassword: values.currentPassword,

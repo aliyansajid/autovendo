@@ -38,8 +38,10 @@ export default async function SubscriptionPage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+        </div>
       </div>
       <SubscriptionCard
         subscriptions={serialized}

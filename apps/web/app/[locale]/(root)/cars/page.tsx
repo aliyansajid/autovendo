@@ -19,7 +19,7 @@ import {
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
 import { getVehiclesWithFacetsCached } from "@/app/actions/vehicles.actions";
-import { VehicleSearchSchema } from "@/schema/vehicle-search-schema";
+import { createVehicleSearchSchema } from "@/schema/vehicle-search-schema";
 import { parseSearchParams } from "@/lib/helpers/vehicle";
 import { ListingControls } from "./_components/listing-controls";
 import { formatCount } from "@/lib/helpers/format";
@@ -35,7 +35,15 @@ export default async function CarsPage(props: {
 }) {
   const { locale } = await props.params;
   const searchParams = await props.searchParams;
-  const t = await getTranslations({ locale, namespace: "AdvancedSearch.CarsPage" });
+  const t = await getTranslations({
+    locale,
+    namespace: "AdvancedSearch.CarsPage",
+  });
+  const t_schema = await getTranslations({
+    locale,
+    namespace: "VehicleSearchSchema",
+  });
+  const schema = createVehicleSearchSchema(t_schema);
 
   // Get data from server action (cached)
   const { vehicles, total, totalPages, facets } =
@@ -43,7 +51,7 @@ export default async function CarsPage(props: {
 
   // Parse for UI needs
   const parsed = parseSearchParams(searchParams);
-  const query = VehicleSearchSchema.parse(parsed);
+  const query = schema.parse(parsed);
 
   // Helper to build pagination URLs
   function buildUrl(

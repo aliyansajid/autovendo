@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Car, Truck, Caravan, X } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import { Accordion } from "@repo/ui/components/accordion";
@@ -9,7 +9,7 @@ import { z } from "zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useRouter } from "@/i18n/routing";
-import { advancedSearchFormSchema } from "@/schema/advanced-search-schema";
+import { createAdvancedSearchFormSchema } from "@/schema/advanced-search-schema";
 import { MakeModelSection } from "./form-sections/make-model-section";
 import { BasicDataSection } from "./form-sections/basic-data-section";
 import { TechnicalDataSection } from "./form-sections/technical-data-section";
@@ -42,12 +42,14 @@ function paramsToQueryString(
 
 export const AdvancedSearchForm = () => {
   const t = useTranslations("AdvancedSearch");
+  const t_schema = useTranslations("AdvancedSearchSchema");
+  const schema = useMemo(() => createAdvancedSearchFormSchema(t_schema), [t_schema]);
   const router = useRouter();
   const searchParams = useSearchParams();
   const dealerId = searchParams.get("dealer");
 
-  const form = useForm<z.infer<typeof advancedSearchFormSchema>>({
-    resolver: zodResolver(advancedSearchFormSchema) as any,
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema) as any,
     defaultValues: { make: [], powerType: "ps", daysListed: "any" },
   });
 
@@ -108,7 +110,7 @@ export const AdvancedSearchForm = () => {
     };
   }, [form, vehicleType, dealerId]);
 
-  function onSubmit(data: z.infer<typeof advancedSearchFormSchema>) {
+  function onSubmit(data: z.infer<typeof schema>) {
     const params = buildSearchParams(
       data as Record<string, unknown>,
       vehicleType,

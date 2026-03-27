@@ -11,7 +11,6 @@ import { Dispatch, SetStateAction } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@repo/ui/components/button";
 import { toast } from "sonner";
-import { vehicleFormSchema } from "@/schema/vehicle-form-schema";
 import { z } from "zod";
 
 export function MediaSection({
@@ -22,8 +21,7 @@ export function MediaSection({
   setPreviewImages: Dispatch<SetStateAction<string[]>>;
 }) {
   const t = useTranslations("VehicleFormSections");
-  const { setValue, watch, formState } =
-    useFormContext<z.infer<typeof vehicleFormSchema>>();
+  const { setValue, watch, formState } = useFormContext<any>();
 
   // We purposefully do not revoke blob URLs on component unmount because the review step uses them.
   // Instead, we only revoke them when the user explicitly removes an image.

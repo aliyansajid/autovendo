@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-} from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -14,7 +9,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -30,7 +24,6 @@ import { authClient } from "@repo/auth/client";
 import { useRouter } from "@/i18n/routing";
 import { useTransition } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
-import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 
 export function NavUser({
@@ -102,23 +95,9 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link href="/dashboard/settings/profile">
-                  <BadgeCheck />
-                  {t("account")}
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/dashboard/subscription">
-                  <CreditCard />
-                  {t("subscription")}
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+
             <DropdownMenuItem onClick={handleLogout} disabled={isSigningOut}>
-              {isSigningOut ? <Spinner className="size-4" /> : <LogOut />}
+              {isSigningOut ? <Spinner /> : <LogOut />}
               {t("logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -309,5 +309,6 @@ export const createVehicleFormSchema = (t: TFn) =>
     city: z.string().optional(),
   });
 
-// Static fallback
-export const vehicleFormSchema = createVehicleFormSchema((key) => key);
+export type VehicleFormValues = z.infer<
+  ReturnType<typeof createVehicleFormSchema>
+>;
