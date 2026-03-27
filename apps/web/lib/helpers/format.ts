@@ -6,11 +6,24 @@
  */
 
 /**
+ * Map base locale to Swiss-specific locale for formatting
+ */
+export function getCHLocale(locale: string): string {
+  const mapping: Record<string, string> = {
+    de: "de-CH",
+    fr: "fr-CH",
+    it: "it-CH",
+    en: "en-CH",
+  };
+  return mapping[locale] || locale || "de-CH";
+}
+
+/**
  * Format price in Swiss Francs (CHF 1'234.00)
  */
 export function formatPrice(price: number, locale: string = "de-CH"): string {
-  // Use "de-CH" for Swiss Francs formatting as baseline for CHF
-  return new Intl.NumberFormat(locale === "de" ? "de-CH" : locale, {
+  const chLocale = getCHLocale(locale);
+  return new Intl.NumberFormat(chLocale, {
     style: "currency",
     currency: "CHF",
     minimumFractionDigits: 0,
@@ -23,7 +36,8 @@ export function formatNumber(
   locale: string = "de-CH",
 ): string {
   if (num === null || num === undefined) return "0";
-  return new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(num);
+  const chLocale = getCHLocale(locale);
+  return new Intl.NumberFormat(chLocale).format(num);
 }
 
 /**
