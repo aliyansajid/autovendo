@@ -1639,5 +1639,12 @@
       "readyTitle": "Ready to grow your dealership?",
       "readySubtitle": "Join the Swiss platform designed specifically for professional car dealers."
     }
+  },
+  "NotFound": {
+    "title": "404 - Page Not Found",
+    "description": "The page you are looking for has either been moved, deleted, or never existed.",
+    "button": "Back to Home",
+    "metaTitle": "404 - Page Not Found | AutoVendo",
+    "metaDescription": "Sorry, the requested page could not be found on AutoVendo."
   }
 }

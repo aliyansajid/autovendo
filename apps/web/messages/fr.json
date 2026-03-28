@@ -1571,5 +1571,12 @@
       "readyTitle": "Prêt à faire croître votre concession ?",
       "readySubtitle": "Rejoignez la plateforme suisse conçue spécifiquement pour les concessionnaires automobiles professionnels."
     }
+  },
+  "NotFound": {
+    "title": "404 - Page non trouvée",
+    "description": "La page que vous recherchez a été déplacée, supprimée ou n'a jamais existé.",
+    "button": "Retour à l'accueil",
+    "metaTitle": "404 - Page non trouvée | AutoVendo",
+    "metaDescription": "Désolé, la page demandée n'a pas pu être trouvée sur AutoVendo."
   }
 }

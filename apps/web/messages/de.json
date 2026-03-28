@@ -1644,5 +1644,12 @@
       "readyTitle": "Bereit, Ihr Autohaus wachsen zu lassen?",
       "readySubtitle": "Schliessen Sie sich der Schweizer Plattform an, die speziell für professionelle Autohändler entwickelt wurde."
     }
+  },
+  "NotFound": {
+    "title": "404 - Seite nicht gefunden",
+    "description": "Die von Ihnen gesuchte Seite wurde verschoben, gelöscht oder hat nie existiert.",
+    "button": "Zurück zur Startseite",
+    "metaTitle": "404 - Seite nicht gefunden | AutoVendo",
+    "metaDescription": "Entschuldigung, die angeforderte Seite konnte auf AutoVendo nicht gefunden werden."
   }
 }

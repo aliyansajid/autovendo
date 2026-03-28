@@ -1571,5 +1571,12 @@
       "readyTitle": "Pronto a far crescere la tua concessionaria?",
       "readySubtitle": "Unisciti alla piattaforma svizzera progettata specificamente per i professionisti del settore auto."
     }
+  },
+  "NotFound": {
+    "title": "404 - Pagina non trovata",
+    "description": "La pagina che stai cercando è stata spostata, eliminata o non è mai esistita.",
+    "button": "Torna alla Home",
+    "metaTitle": "404 - Pagina non trovata | AutoVendo",
+    "metaDescription": "Spiacenti, la pagina richiesta non è stata trovata su AutoVendo."
   }
 }
