@@ -1,7 +1,13 @@
 import "@repo/ui/globals.css";
-import { Link } from "@/i18n/routing";
+import Link from "next/link";
 import { MoveLeft, CarFront } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "404 - Page Not Found | AutoVendo",
+  description: "The page you are looking for does not exist on AutoVendo.",
+};
 
 export default function RootNotFound() {
   return (
@@ -30,7 +36,7 @@ export default function RootNotFound() {
           </div>
 
           <Button className="w-full group" asChild>
-            <Link href="/">
+            <Link href="/de">
               <MoveLeft />
               Back to Safety
             </Link>
