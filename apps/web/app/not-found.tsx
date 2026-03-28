@@ -1,6 +1,6 @@
 import "@repo/ui/globals.css";
 import Link from "next/link";
-import { MoveLeft, CarFront } from "lucide-react";
+import { MoveLeft, CarFront, AlertCircle } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import type { Metadata } from "next";
 
@@ -12,39 +12,50 @@ export const metadata: Metadata = {
 export default function RootNotFound() {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen flex items-center justify-center p-4">
-        <div className="max-w-md w-full text-center space-y-8">
-          <div className="flex justify-center">
-            <div className="relative">
-              <div className="absolute -inset-4 bg-primary/20 blur-2xl rounded-full animate-pulse" />
-              <div className="relative bg-background border p-6 rounded-2xl shadow-xl">
-                <CarFront className="w-12 h-12 text-primary mx-auto" />
+      <body className="antialiased selection:bg-primary/20 selection:text-primary min-h-screen">
+        <div className="relative flex flex-col items-center justify-center min-h-screen px-4 py-20 text-center overflow-hidden bg-background">
+          {/* Premium Background Elements */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10" />
+          <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-primary/10 rounded-full blur-[100px] -z-10 animate-pulse" />
+          
+          <div className="w-full max-w-lg">
+            <div className="relative bg-background/60 backdrop-blur-2xl border border-border/50 rounded-3xl p-10 md:p-16 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] transition-all duration-700 hover:shadow-[0_48px_96px_-24px_rgba(0,0,0,0.15)] flex flex-col items-center group">
+              
+              <div className="relative flex items-center justify-center w-24 h-24 rounded-2xl bg-primary/10 mb-8 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-inner">
+                <CarFront className="w-12 h-12 text-primary" />
+                <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-background border shadow-sm flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5 text-destructive animate-pulse" />
+                </div>
               </div>
+              
+              <div className="space-y-4 mb-10">
+                <h1 className="text-8xl md:text-9xl font-black tracking-tighter bg-linear-to-b from-foreground to-foreground/30 bg-clip-text text-transparent select-none">
+                  404
+                </h1>
+                
+                <div className="space-y-2">
+                  <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Page Not Found</h2>
+                  <p className="text-muted-foreground text-lg max-w-xs mx-auto leading-relaxed">
+                    The requested resource could not be found at this address.
+                  </p>
+                </div>
+              </div>
+
+              <Button className="w-full h-14 text-lg rounded-xl shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98] group" asChild>
+                <Link href="/de">
+                  <MoveLeft className="mr-3 h-5 w-5 transition-transform group-hover:-translate-x-1" />
+                  Back to Safety
+                </Link>
+              </Button>
+            </div>
+            
+            {/* Footer Branding */}
+            <div className="mt-12 flex items-center justify-center gap-4 text-sm font-medium tracking-[0.2em] text-muted-foreground uppercase opacity-40 select-none">
+              <span className="h-px w-8 bg-current" />
+              <span>AutoVendo.ch</span>
+              <span className="h-px w-8 bg-current" />
             </div>
           </div>
-
-          <div className="space-y-2">
-            <h1 className="text-8xl font-black tracking-tighter bg-linear-to-b from-foreground to-foreground/50 bg-clip-text text-transparent">
-              404
-            </h1>
-            <h2 className="text-2xl font-bold tracking-tight">
-              Page Not Found
-            </h2>
-            <p className="text-muted-foreground leading-relaxed max-w-xs mx-auto">
-              The requested resource could not be found at this address.
-            </p>
-          </div>
-
-          <Button className="w-full group" asChild>
-            <Link href="/de">
-              <MoveLeft />
-              Back to Safety
-            </Link>
-          </Button>
-
-          <footer className="pt-8 text-xs text-muted-foreground uppercase tracking-widest opacity-50">
-            AutoVendo.ch
-          </footer>
         </div>
       </body>
     </html>
