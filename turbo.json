@@ -25,7 +25,8 @@
     "R2_BUCKET_NAME",
     "R2_PUBLIC_DOMAIN",
     "NEXT_PUBLIC_APP_URL",
-    "NEXT_PUBLIC_R2_PUBLIC_DOMAIN"
+    "NEXT_PUBLIC_R2_PUBLIC_DOMAIN",
+    "REDIS_URL"
   ],
   "tasks": {
     "build": {

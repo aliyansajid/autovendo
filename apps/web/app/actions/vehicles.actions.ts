@@ -8,7 +8,13 @@
  * Optimized for thousands of vehicles with proper indexing and caching
  */
 
-import { unstable_cache, revalidatePath } from "next/cache";
+import { revalidatePath } from "next/cache";
+import {
+  cacheGet,
+  cacheSet,
+  cacheDelete,
+  cacheDeletePattern,
+} from "@/lib/cache";
 import { prisma } from "@repo/db";
 import type {
   Prisma,
@@ -32,9 +38,7 @@ import { headers } from "next/headers";
 import { createId } from "@paralleldrive/cuid2";
 import { storage } from "@/lib/helpers/storage";
 import { StorageService } from "@repo/storage";
-import {
-  createVehicleFormSchema,
-} from "@/schema/vehicle-form-schema";
+import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
 import { getTranslations } from "next-intl/server";
 import {
   type VehicleListItem,
@@ -553,44 +557,47 @@ function attachPriceRatings(
  * Internal core logic for vehicle fetching (Pure, no getTranslations)
  * This is the function that is actually cached
  */
-const _getVehicles = unstable_cache(
-  async (params: VehicleSearchParams) => {
-    // Calculate pagination
-    const skip = (params.page - 1) * params.pageSize;
-    const take = params.pageSize;
+async function _getVehicles(params: VehicleSearchParams) {
+  const cacheKey = `vehicles:list:${JSON.stringify(params)}`;
+  const cached = await cacheGet<PaginatedVehicles>(cacheKey);
+  if (cached) return cached;
 
-    // Build query
-    const [where, orderBy] = await Promise.all([
-      buildWhereClause(params),
-      Promise.resolve(buildOrderBy(params.sort)),
-    ]);
+  // Calculate pagination
+  const skip = (params.page - 1) * params.pageSize;
+  const take = params.pageSize;
 
-    // Execute queries in parallel for optimal performance
-    const [total, vehicles, avgMap] = await Promise.all([
-      prisma.vehicle.count({ where }),
-      prisma.vehicle.findMany({
-        where,
-        orderBy,
-        skip,
-        take,
-        select: VEHICLE_LIST_SELECT,
-      }),
-      fetchAvgPriceMap(),
-    ]);
+  // Build query
+  const [where, orderBy] = await Promise.all([
+    buildWhereClause(params),
+    Promise.resolve(buildOrderBy(params.sort)),
+  ]);
 
-    const totalPages = Math.ceil(total / params.pageSize);
+  // Execute queries in parallel for optimal performance
+  const [total, vehicles, avgMap] = await Promise.all([
+    prisma.vehicle.count({ where }),
+    prisma.vehicle.findMany({
+      where,
+      orderBy,
+      skip,
+      take,
+      select: VEHICLE_LIST_SELECT,
+    }),
+    fetchAvgPriceMap(),
+  ]);
 
-    return {
-      vehicles: attachPriceRatings(vehicles, avgMap),
-      total,
-      page: params.page,
-      pageSize: params.pageSize,
-      totalPages,
-    };
-  },
-  ["vehicles-list"],
-  { revalidate: 60, tags: ["vehicles"] },
-);
+  const totalPages = Math.ceil(total / params.pageSize);
+
+  const result: PaginatedVehicles = {
+    vehicles: attachPriceRatings(vehicles, avgMap),
+    total,
+    page: params.page,
+    pageSize: params.pageSize,
+    totalPages,
+  };
+
+  await cacheSet(cacheKey, result, 60);
+  return result;
+}
 
 /**
  * Public action for fetching vehicles
@@ -604,7 +611,6 @@ export async function getVehicles(rawParams: {
   const schema = createVehicleSearchSchema(t);
   const params = schema.parse(parsed);
 
-  // We use JSON.stringify for the cache key generation in unstable_cache correctly
   return _getVehicles(params);
 }
 
@@ -615,165 +621,168 @@ export async function getVehicles(rawParams: {
 /**
  * Internal core logic for fetching vehicles with facets (Pure)
  */
-const _getVehiclesWithFacets = unstable_cache(
-  async (params: VehicleSearchParams) => {
-    const skip = (params.page - 1) * params.pageSize;
-    const take = params.pageSize;
+async function _getVehiclesWithFacets(params: VehicleSearchParams) {
+  const cacheKey = `vehicles:facets:${JSON.stringify(params)}`;
+  const cached = await cacheGet<PaginatedVehicles>(cacheKey);
+  if (cached) return cached;
 
-    const [where, orderBy, facetBase] = await Promise.all([
-      buildWhereClause(params),
-      Promise.resolve(buildOrderBy(params.sort)),
-      buildWhereClause(params, { make: true, model: true }),
-    ]);
+  const skip = (params.page - 1) * params.pageSize;
+  const take = params.pageSize;
 
-    // Execute ALL queries in parallel for maximum performance
-    const [
-      total,
-      vehicles,
-      avgMap,
-      makeRows,
-      fuelRows,
-      transmissionRows,
-      conditionRows,
-      typeRows,
-      bodyTypeRows,
-      colorRows,
-      interiorColorRows,
-      driveTypeRows,
-      energyLabelRows,
-      emissionStandardRows,
-      metallicCount,
-      inspectionPassedCount,
-      hasWarrantyCount,
-    ] = await Promise.all([
-      prisma.vehicle.count({ where }),
-      prisma.vehicle.findMany({
-        where,
-        orderBy,
-        skip,
-        take,
-        select: VEHICLE_LIST_SELECT,
-      }),
-      fetchAvgPriceMap(),
-      // Facet aggregations - each excludes its own filter
-      prisma.vehicle.groupBy({
-        by: ["make"],
-        where: facetBase,
-        _count: { _all: true },
-        orderBy: { make: "asc" },
-      }),
-      prisma.vehicle.groupBy({
-        by: ["fuelType"],
-        where: await buildWhereClause(params, { fuel: true }),
-        _count: { _all: true },
-      }),
-      prisma.vehicle.groupBy({
-        by: ["transmissionType"],
-        where: await buildWhereClause(params, { transmission: true }),
-        _count: { _all: true },
-      }),
-      prisma.vehicle.groupBy({
-        by: ["vehicleCondition"],
-        where: await buildWhereClause(params, { condition: true }),
-        _count: { _all: true },
-      }),
-      prisma.vehicle.groupBy({
-        by: ["vehicleType"],
-        where: await buildWhereClause(params, { vehicleType: true }),
-        _count: { _all: true },
-      }),
-      prisma.vehicle.groupBy({
-        by: ["bodyType"],
-        where: await buildWhereClause(params, { bodyType: true }),
-        _count: { _all: true },
-      }),
-      prisma.vehicle.groupBy({
-        by: ["color"],
-        where: await buildWhereClause(params, { color: true }),
-        _count: { _all: true },
-      }),
-      prisma.vehicle.groupBy({
-        by: ["interiorColor"],
-        where: await buildWhereClause(params, { interiorColor: true }),
-        _count: { _all: true },
-      }),
-      prisma.vehicle.groupBy({
-        by: ["driveType"],
-        where: await buildWhereClause(params, { driveType: true }),
-        _count: { _all: true },
-      }),
-      prisma.vehicle.groupBy({
-        by: ["energyLabel"],
-        where: await buildWhereClause(params, { energyLabels: true }),
-        _count: { _all: true },
-      }),
-      prisma.vehicle.groupBy({
-        by: ["emissionStandard"],
-        where: await buildWhereClause(params, { emissionStandards: true }),
-        _count: { _all: true },
-      }),
-      prisma.vehicle.count({
-        where: {
-          ...(await buildWhereClause(params, { metallic: true })),
-          metallic: true,
-        },
-      }),
-      prisma.vehicle.count({
-        where: {
-          ...(await buildWhereClause(params, { inspectionPassed: true })),
-          inspectionPassed: true,
-        },
-      }),
-      prisma.vehicle.count({
-        where: {
-          ...(await buildWhereClause(params, { hasWarranty: true })),
-          warranty: { not: null },
-        },
-      }),
-    ]);
+  const [where, orderBy, facetBase] = await Promise.all([
+    buildWhereClause(params),
+    Promise.resolve(buildOrderBy(params.sort)),
+    buildWhereClause(params, { make: true, model: true }),
+  ]);
 
-    const totalPages = Math.ceil(total / params.pageSize);
+  // Execute ALL queries in parallel for maximum performance
+  const [
+    total,
+    vehicles,
+    avgMap,
+    makeRows,
+    fuelRows,
+    transmissionRows,
+    conditionRows,
+    typeRows,
+    bodyTypeRows,
+    colorRows,
+    interiorColorRows,
+    driveTypeRows,
+    energyLabelRows,
+    emissionStandardRows,
+    metallicCount,
+    inspectionPassedCount,
+    hasWarrantyCount,
+  ] = await Promise.all([
+    prisma.vehicle.count({ where }),
+    prisma.vehicle.findMany({
+      where,
+      orderBy,
+      skip,
+      take,
+      select: VEHICLE_LIST_SELECT,
+    }),
+    fetchAvgPriceMap(),
+    // Facet aggregations - each excludes its own filter
+    prisma.vehicle.groupBy({
+      by: ["make"],
+      where: facetBase,
+      _count: { _all: true },
+      orderBy: { make: "asc" },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["fuelType"],
+      where: await buildWhereClause(params, { fuel: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["transmissionType"],
+      where: await buildWhereClause(params, { transmission: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["vehicleCondition"],
+      where: await buildWhereClause(params, { condition: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["vehicleType"],
+      where: await buildWhereClause(params, { vehicleType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["bodyType"],
+      where: await buildWhereClause(params, { bodyType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["color"],
+      where: await buildWhereClause(params, { color: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["interiorColor"],
+      where: await buildWhereClause(params, { interiorColor: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["driveType"],
+      where: await buildWhereClause(params, { driveType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["energyLabel"],
+      where: await buildWhereClause(params, { energyLabels: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["emissionStandard"],
+      where: await buildWhereClause(params, { emissionStandards: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...(await buildWhereClause(params, { metallic: true })),
+        metallic: true,
+      },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...(await buildWhereClause(params, { inspectionPassed: true })),
+        inspectionPassed: true,
+      },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...(await buildWhereClause(params, { hasWarranty: true })),
+        warranty: { not: null },
+      },
+    }),
+  ]);
 
-    // Normalize enum/body facet keys to frontend format (lowercase, hyphen) so filter UI matches
-    const facets: VehicleFacets = {
-      make: toLowerFacetKeys(toFacetCounts(makeRows, "make")),
-      fuelType: toFrontendFacetKeys(toFacetCounts(fuelRows, "fuelType")),
-      transmissionType: toFrontendFacetKeys(
-        toFacetCounts(transmissionRows, "transmissionType"),
-      ),
-      vehicleCondition: toFrontendFacetKeys(
-        toFacetCounts(conditionRows, "vehicleCondition"),
-      ),
-      vehicleType: toFrontendFacetKeys(toFacetCounts(typeRows, "vehicleType")),
-      bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
-      color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
-      interiorColor: toFrontendFacetKeys(
-        toFacetCounts(interiorColorRows, "interiorColor"),
-      ),
-      driveType: toFrontendFacetKeys(toFacetCounts(driveTypeRows, "driveType")),
-      energyLabel: toFrontendFacetKeys(
-        toFacetCounts(energyLabelRows, "energyLabel"),
-      ),
-      emissionStandard: toFrontendFacetKeys(
-        toFacetCounts(emissionStandardRows, "emissionStandard"),
-      ),
-      metallic: metallicCount,
-      inspectionPassed: inspectionPassedCount,
-      hasWarranty: hasWarrantyCount,
-    };
+  const totalPages = Math.ceil(total / params.pageSize);
 
-    return {
-      vehicles: attachPriceRatings(vehicles, avgMap),
-      total,
-      page: params.page,
-      pageSize: params.pageSize,
-      totalPages,
-      facets,
-    };
-  },
-  ["vehicles-with-facets"],
-  { revalidate: 60, tags: ["vehicles", "facets"] },
-);
+  // Normalize enum/body facet keys to frontend format (lowercase, hyphen) so filter UI matches
+  const facets: VehicleFacets = {
+    make: toLowerFacetKeys(toFacetCounts(makeRows, "make")),
+    fuelType: toFrontendFacetKeys(toFacetCounts(fuelRows, "fuelType")),
+    transmissionType: toFrontendFacetKeys(
+      toFacetCounts(transmissionRows, "transmissionType"),
+    ),
+    vehicleCondition: toFrontendFacetKeys(
+      toFacetCounts(conditionRows, "vehicleCondition"),
+    ),
+    vehicleType: toFrontendFacetKeys(toFacetCounts(typeRows, "vehicleType")),
+    bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
+    color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
+    interiorColor: toFrontendFacetKeys(
+      toFacetCounts(interiorColorRows, "interiorColor"),
+    ),
+    driveType: toFrontendFacetKeys(toFacetCounts(driveTypeRows, "driveType")),
+    energyLabel: toFrontendFacetKeys(
+      toFacetCounts(energyLabelRows, "energyLabel"),
+    ),
+    emissionStandard: toFrontendFacetKeys(
+      toFacetCounts(emissionStandardRows, "emissionStandard"),
+    ),
+    metallic: metallicCount,
+    inspectionPassed: inspectionPassedCount,
+    hasWarranty: hasWarrantyCount,
+  };
+
+  const result: PaginatedVehicles = {
+    vehicles: attachPriceRatings(vehicles, avgMap),
+    total,
+    page: params.page,
+    pageSize: params.pageSize,
+    totalPages,
+    facets,
+  };
+
+  await cacheSet(cacheKey, result, 60);
+  return result;
+}
 
 /**
  * Public action for fetching vehicles with facets
@@ -1157,10 +1166,14 @@ export async function getVehiclesWithFacetsCached(rawParams: {
  * Cached single vehicle for RSC
  */
 export async function getVehicleCached(id: string) {
-  return unstable_cache(async () => getVehicle(id), [`vehicle:${id}`], {
-    revalidate: 300, // Cache for 5 minutes
-    tags: ["vehicles", `vehicle:${id}`],
-  })();
+  const cacheKey = `vehicle:${id}`;
+  const cached =
+    await cacheGet<Awaited<ReturnType<typeof getVehicle>>>(cacheKey);
+  if (cached) return cached;
+
+  const result = await getVehicle(id);
+  if (result) await cacheSet(cacheKey, result, 300);
+  return result;
 }
 
 /**
@@ -1481,6 +1494,7 @@ export async function createVehicle(
     },
   });
 
+  await cacheDeletePattern("vehicles:*");
   revalidatePath("/dashboard/vehicles");
   return listingId;
 }
@@ -1693,6 +1707,10 @@ export async function updateVehicle(
     },
   });
 
+  await Promise.all([
+    cacheDeletePattern("vehicles:*"),
+    cacheDelete(`vehicle:${vehicleId}`),
+  ]);
   revalidatePath("/dashboard/vehicles");
   return vehicleId;
 }
@@ -1744,6 +1762,10 @@ export async function deleteVehicle(id: string) {
     },
   });
 
+  await Promise.all([
+    cacheDeletePattern("vehicles:*"),
+    cacheDelete(`vehicle:${id}`),
+  ]);
   revalidatePath("/dashboard/vehicles");
   return { success: true };
 }
