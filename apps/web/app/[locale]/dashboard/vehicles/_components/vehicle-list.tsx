@@ -38,7 +38,13 @@ import {
   InputGroupAddon,
 } from "@repo/ui/components/input-group";
 import { Badge } from "@repo/ui/components/badge";
-import { useTranslations, useFormatter } from "next-intl";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
+import {
+  formatPrice,
+  formatNumber,
+  formatDateTime,
+} from "@/lib/helpers/format";
 
 interface Vehicle {
   id: string;
@@ -63,7 +69,8 @@ export function VehicleList({
   subscriptionStatus?: SubscriptionStatus;
 }) {
   const t = useTranslations("VehicleList");
-  const format = useFormatter();
+  const params = useParams();
+  const locale = (params.locale as string) || "de";
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -106,11 +113,15 @@ export function VehicleList({
             <AlertTriangle className="mt-0.5 size-4 shrink-0 text-yellow-500" />
             <p>
               {t("graceWarning", {
-                date: format.dateTime(new Date(subscriptionStatus.graceEnd), {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                }),
+                date: formatDateTime(
+                  new Date(subscriptionStatus.graceEnd),
+                  locale,
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  },
+                ),
               })}
             </p>
           </div>
@@ -176,13 +187,10 @@ export function VehicleList({
                   </span>
                 </TableCell>
                 <TableCell className="font-semibold whitespace-nowrap">
-                  {format.number(vehicle.price, {
-                    style: "currency",
-                    currency: "CHF",
-                  })}
+                  {formatPrice(vehicle.price, locale)}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {format.number(vehicle.kilometer)} km
+                  {formatNumber(vehicle.kilometer, locale)} km
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
                   {vehicle.registrationMonth.toString().padStart(2, "0")}/
@@ -195,7 +203,7 @@ export function VehicleList({
                   {vehicle.color?.toLowerCase() || "-"}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {format.dateTime(new Date(vehicle.createdAt), {
+                  {formatDateTime(new Date(vehicle.createdAt), locale, {
                     day: "2-digit",
                     month: "2-digit",
                     year: "numeric",

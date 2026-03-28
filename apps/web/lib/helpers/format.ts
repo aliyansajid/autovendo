@@ -110,6 +110,23 @@ export function formatCount(count: number, locale: string = "de-CH"): string {
   return formatNumber(count, locale);
 }
 
+/**
+ * Format date time following Swiss standards
+ */
+export function formatDateTime(
+  date: Date | string | number,
+  locale: string = "de-CH",
+  options: Intl.DateTimeFormatOptions = {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  },
+): string {
+  const chLocale = getCHLocale(locale);
+  const d = typeof date === "string" || typeof date === "number" ? new Date(date) : date;
+  return new Intl.DateTimeFormat(chLocale, options).format(d);
+}
+
 export const DAY_ORDER = [
   "MONDAY",
   "TUESDAY",

@@ -36,7 +36,13 @@ import { TechnicalDataSection } from "./form-sections/technical-data-section";
 import { MediaSection } from "./form-sections/media-section";
 import { ContactSection } from "./form-sections/contact-section";
 import { useState, useTransition } from "react";
-import { useTranslations, useFormatter } from "next-intl";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
+import {
+  formatPrice,
+  formatNumber,
+  formatDateTime,
+} from "@/lib/helpers/format";
 import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
 import {
   Card,
@@ -119,7 +125,8 @@ export function VehicleForm({
   subscriptionStatus?: SubscriptionStatus;
 }) {
   const t = useTranslations("VehicleForm");
-  const format = useFormatter();
+  const params = useParams();
+  const locale = (params.locale as string) || "de";
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [currentStep, setCurrentStep] = useState(1);
@@ -636,11 +643,15 @@ export function VehicleForm({
             <AlertTitle>{t("expiredWarningTitle")}</AlertTitle>
             <AlertDescription>
               {t("expiredWarningDesc", {
-                date: format.dateTime(new Date(subscriptionStatus.graceEnd), {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                }),
+                date: formatDateTime(
+                  new Date(subscriptionStatus.graceEnd),
+                  locale,
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  },
+                ),
               })}
             </AlertDescription>
           </Alert>
@@ -763,10 +774,7 @@ export function VehicleForm({
                     <div className="space-y-1">
                       <p className="text-muted-foreground">{t("priceLabel")}</p>
                       <p className="font-bold text-base">
-                        {format.number(form.getValues("price"), {
-                          style: "currency",
-                          currency: "CHF",
-                        })}
+                        {formatPrice(form.getValues("price"), locale)}
                       </p>
                     </div>
 
@@ -775,7 +783,7 @@ export function VehicleForm({
                         {t("kilometerLabel")}
                       </p>
                       <p className="font-bold text-base">
-                        {format.number(form.getValues("kilometer"))} km
+                        {formatNumber(form.getValues("kilometer"), locale)} km
                       </p>
                     </div>
 

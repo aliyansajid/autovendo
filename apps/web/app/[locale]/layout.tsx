@@ -5,7 +5,6 @@ import { Toaster } from "@repo/ui/src/components/sonner";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { getCHLocale } from "@/lib/helpers/format";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -88,14 +87,13 @@ export default async function RootLayout({
   }
 
   const messages = await getMessages();
-  const formattingLocale = getCHLocale(locale);
 
   return (
     <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextIntlClientProvider messages={messages} locale={formattingLocale}>
+        <NextIntlClientProvider messages={messages} locale={locale}>
           <main>{children}</main>
         </NextIntlClientProvider>
         <Toaster richColors position="top-center" />
