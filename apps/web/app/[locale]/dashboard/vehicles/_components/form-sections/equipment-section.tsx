@@ -51,7 +51,7 @@ export function EquipmentSection() {
                 control={control}
                 fieldType={FormFieldType.CHECKBOX}
                 name={`equipment.${item.value}`}
-                label={t_vehicle(`equipment.${item.value}`)}
+                label={t_vehicle(`equipment.${item.value.toUpperCase().replace(/-/g, "_")}`)}
               />
             ))}
           </div>
@@ -67,7 +67,7 @@ export function EquipmentSection() {
                   control={control}
                   fieldType={FormFieldType.CHECKBOX}
                   name={`extras.${extra.value}`}
-                  label={t_vehicle(`extras.${extra.value}`)}
+                  label={t_vehicle(`extras.${extra.value.toUpperCase().replace(/-/g, "_")}`)}
                 />
               ))}
             </div>

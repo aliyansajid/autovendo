@@ -515,7 +515,7 @@ export function BasicDataSection({
                     control={control}
                     fieldType={FormFieldType.CHECKBOX}
                     name={`bodyType-${type.value}`}
-                    label={tVehicle(`types.${type.value}`)}
+                    label={tVehicle(`types.${type.value.toUpperCase()}`)}
                   />
                   <span className="text-sm text-muted-foreground">
                     {formatCount(count ?? 0)}

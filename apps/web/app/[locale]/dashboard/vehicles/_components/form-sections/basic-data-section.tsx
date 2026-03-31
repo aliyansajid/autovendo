@@ -147,7 +147,7 @@ export function BasicDataSection() {
             >
               {VehicleTypeEnum.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(`types.${type.value}`)}
+                  {t_vehicle(`types.${type.value.toUpperCase()}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -281,7 +281,7 @@ export function BasicDataSection() {
             {activeBodyTypeEnum.map(
               (type: { value: string; label: string }) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(`types.${type.value}`)}
+                  {t_vehicle(`types.${type.value.toUpperCase()}`)}
                 </SelectItem>
               ),
             )}
@@ -312,7 +312,7 @@ export function BasicDataSection() {
           >
             {ColorEnum.map((color) => (
               <SelectItem key={color.value} value={color.value}>
-                {t_vehicle(`colors.${color.value}`)}
+                {t_vehicle(`colors.${color.value.toUpperCase()}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -326,7 +326,7 @@ export function BasicDataSection() {
           >
             {ColorEnum.map((color) => (
               <SelectItem key={color.value} value={color.value}>
-                {t_vehicle(`colors.${color.value}`)}
+                {t_vehicle(`colors.${color.value.toUpperCase()}`)}
               </SelectItem>
             ))}
           </CustomFormField>
