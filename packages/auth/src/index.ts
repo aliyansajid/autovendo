@@ -9,32 +9,6 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-02-25.clover",
 });
 
-// Helper to extract locale from referer or headers
-const getLocale = async () => {
-  let locale = "de"; // Default to 'de'
-  try {
-    // Attempt to get headers from Next.js if available
-    const { headers } = await import("next/headers");
-    const headerStack = await headers();
-    const referer = headerStack.get("referer");
-
-    if (referer) {
-      const url = new URL(referer);
-      const parts = url.pathname.split("/");
-      // Check if the first segment is one of our supported locales
-      if (
-        parts[1] &&
-        ["de", "en", "fr", "it"].includes(parts[1].toLowerCase())
-      ) {
-        locale = parts[1].toLowerCase();
-      }
-    }
-  } catch {
-    // Fallback if headers() is not available (e.g. outside of request context or non-Next.js environment)
-  }
-  return locale;
-};
-
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL ?? "https://autovendo.ch",
   database: prismaAdapter(prisma, {
@@ -45,7 +19,6 @@ export const auth = betterAuth({
     enabled: true,
     disableSignUp: true,
     sendResetPassword: async ({ user, url }) => {
-      const locale = await getLocale();
       const { sendEmail } = await import("@repo/transactional");
       const { ResetPasswordEmail } =
         await import("@repo/transactional/emails/reset-password");
@@ -55,7 +28,6 @@ export const auth = betterAuth({
         template: ResetPasswordEmail({
           userEmail: user.email,
           resetPasswordUrl: url,
-          locale,
         }),
       });
     },
@@ -63,7 +35,6 @@ export const auth = betterAuth({
 
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
-      const locale = await getLocale();
       const { sendEmail } = await import("@repo/transactional");
       const { VerifyEmail } =
         await import("@repo/transactional/emails/verify-email");
@@ -73,7 +44,6 @@ export const auth = betterAuth({
         template: VerifyEmail({
           userEmail: user.email,
           verificationUrl: url,
-          locale,
         }),
       });
     },
@@ -83,7 +53,6 @@ export const auth = betterAuth({
     changeEmail: {
       enabled: true,
       sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
-        const locale = await getLocale();
         const { sendEmail } = await import("@repo/transactional");
         const { ConfirmEmailChangeEmail } =
           await import("@repo/transactional/emails/confirm-email-change");
@@ -94,7 +63,6 @@ export const auth = betterAuth({
             currentEmail: user.email,
             newEmail: newEmail,
             confirmUrl: url,
-            locale,
           }),
         });
       },
