@@ -41,8 +41,9 @@ export function ListingListCard({
 
   const getVehicleLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
-    const formattedKey = `${namespace}.${key.toUpperCase().replace(/-/g, "_")}`;
-    return tVehicle.has(formattedKey as any) ? tVehicle(formattedKey as any) : key;
+    const formattedKey = `${namespace}.${key.toUpperCase().replace(/-/g, "_")}` as any;
+    const translated = tVehicle(formattedKey);
+    return translated !== formattedKey ? translated : key;
   };
 
   // Use helpers for ALL formatting
@@ -169,9 +170,18 @@ export function ListingListCard({
               <div key={eq} className="flex items-center gap-2">
                 <Check className="size-4" />
                 <span>
-                  {tVehicle.has(`equipment.${eq.toUpperCase()}` as any)
-                    ? tVehicle(`equipment.${eq.toUpperCase()}` as any)
-                    : formatEquipmentLabel(eq)}
+                  {(() => {
+                    const normalizedEq = eq
+                      .replace(/([a-z])([A-Z])/g, "$1_$2")
+                      .toUpperCase()
+                      .replace(/[-]/g, "_");
+                    const translationKey = `equipment.${normalizedEq}` as any;
+                    const translated = tVehicle(translationKey);
+                    // If next-intl returns the key itself, it means translation was not found
+                    return translated !== translationKey
+                      ? translated
+                      : formatEquipmentLabel(eq);
+                  })()}
                 </span>
               </div>
             ))}

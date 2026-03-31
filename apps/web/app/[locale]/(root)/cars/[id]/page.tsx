@@ -93,7 +93,11 @@ export default async function ListingPage({
 
   const getLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
-    const formattedKey = `${namespace}.${key.toUpperCase().replace(/-/g, "_")}`;
+    const normalizedKey = key
+      .replace(/([a-z])([A-Z])/g, "$1_$2")
+      .toUpperCase()
+      .replace(/[-]/g, "_");
+    const formattedKey = `${namespace}.${normalizedKey}`;
     // @ts-ignore
     return tVehicle.has(formattedKey) ? tVehicle(formattedKey) : key;
   };
