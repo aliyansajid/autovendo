@@ -191,6 +191,7 @@ export const DealerDetailContent = ({
   });
 
   function onSubmit(values: z.infer<typeof contactSchema>) {
+    setIsSubmitting(true);
     startTransition(async () => {
       try {
         const result = await sendDealerContactEmail(dealer.id, values);
@@ -203,6 +204,8 @@ export const DealerDetailContent = ({
         }
       } catch (error) {
         toast.error(t("unexpectedError"));
+      } finally {
+        setIsSubmitting(false);
       }
     });
   }

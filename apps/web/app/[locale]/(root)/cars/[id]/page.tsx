@@ -245,14 +245,14 @@ export default async function ListingPage({
   const equipmentList = item.equipment
     ? Object.entries(item.equipment as Record<string, unknown>)
         .filter(([_, v]) => v === true)
-        .map(([k]) => k.replace(/([A-Z])/g, " $1").trim())
+        .map(([k]) => getLabel("equipment", k) || k)
     : [];
 
   const extrasList =
     item.extras != null && typeof item.extras === "object"
       ? Object.entries(item.extras as Record<string, unknown>)
           .filter(([_, v]) => v === true)
-          .map(([k]) => k.replace(/([A-Z])/g, " $1").trim())
+          .map(([k]) => getLabel("extras", k) || k)
       : [];
 
   const description =

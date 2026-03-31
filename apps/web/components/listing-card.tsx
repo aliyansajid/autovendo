@@ -14,6 +14,7 @@ import { Separator } from "@repo/ui/components/separator";
 import { Link } from "@/i18n/routing";
 import { ListingProps } from "@/types/vehicle";
 import { useTranslations } from "next-intl";
+import { formatVehicleName } from "@/lib/helpers/vehicle";
 
 export const ListingCard = ({ item }: { item: ListingProps }) => {
   const t = useTranslations("ListingCard");
@@ -40,7 +41,9 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
         </CardHeader>
 
         <CardContent className="space-y-3">
-          <h2 className="text-lg font-bold truncate">{item.title}</h2>
+          <h2 className="text-lg font-bold truncate">
+            {formatVehicleName([item.title])}
+          </h2>
           <p className="text-xl font-bold text-primary">{item.price}</p>
           <Separator />
           <div className="flex flex-wrap items-center text-sm text-muted-foreground gap-y-1">

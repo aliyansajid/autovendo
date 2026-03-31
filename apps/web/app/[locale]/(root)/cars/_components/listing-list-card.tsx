@@ -168,7 +168,11 @@ export function ListingListCard({
             {equipmentList.map((eq) => (
               <div key={eq} className="flex items-center gap-2">
                 <Check className="size-4" />
-                <span>{formatEquipmentLabel(eq)}</span>
+                <span>
+                  {tVehicle.has(`equipment.${eq.toUpperCase()}` as any)
+                    ? tVehicle(`equipment.${eq.toUpperCase()}` as any)
+                    : formatEquipmentLabel(eq)}
+                </span>
               </div>
             ))}
             {equipmentList.length === 0 && (
