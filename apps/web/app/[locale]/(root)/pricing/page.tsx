@@ -4,6 +4,14 @@ import { Button } from "@repo/ui/src/components/button";
 import { Link } from "@/i18n/routing";
 import { Badge } from "@repo/ui/src/components/badge";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@repo/ui/src/components/table";
+import {
   Card,
   CardHeader,
   CardTitle,
@@ -78,82 +86,82 @@ export default async function PricingPage(props: {
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
               {t("comparisonTitle")}
             </h2>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse bg-white rounded-xl shadow-sm border border-border">
-                <thead>
-                  <tr className="bg-muted/50 border-b border-border">
-                    <th className="p-4 text-left font-bold text-sm">
+            <div className="rounded-xl border overflow-hidden">
+              <Table>
+                <TableHeader className="bg-muted/50">
+                  <TableRow>
+                    <TableHead className="font-bold">
                       {t("tableHeaders.package")}
-                    </th>
-                    <th className="p-4 text-left font-bold text-sm">
+                    </TableHead>
+                    <TableHead className="font-bold">
                       {t("tableHeaders.vehicles")}
-                    </th>
-                    <th className="p-4 text-left font-bold text-primary text-sm">
+                    </TableHead>
+                    <TableHead className="font-bold">
                       {t("tableHeaders.price")}
-                    </th>
-                    <th className="p-4 text-left font-bold text-green-600 text-sm">
+                    </TableHead>
+                    <TableHead className="font-bold">
                       {t("tableHeaders.savings")}
-                    </th>
-                    <th className="p-4 text-left font-bold text-sm">
+                    </TableHead>
+                    <TableHead className="font-bold">
                       {t("tableHeaders.monthlySavings")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  <tr>
-                    <td className="p-4 font-semibold">Bronze</td>
-                    <td className="p-4">{t("tableRows.bronzeVehicles")}</td>
-                    <td className="p-4 font-bold text-primary">
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-semibold">Bronze</TableCell>
+                    <TableCell>{t("tableRows.bronzeVehicles")}</TableCell>
+                    <TableCell className="font-bold text-primary">
                       {formatPrice(180, locale)}
-                    </td>
-                    <td className="p-4 font-medium text-green-600">
+                    </TableCell>
+                    <TableCell className="text-green-600 font-medium">
                       {t("tableRows.bronzeSavings")}
-                    </td>
-                    <td className="p-4 text-muted-foreground">
+                    </TableCell>
+                    <TableCell>
                       {t("tableRows.ca")} {formatPrice(75, locale)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="p-4 font-semibold">Silver</td>
-                    <td className="p-4">{t("tableRows.silverVehicles")}</td>
-                    <td className="p-4 font-bold text-primary">
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Silver</TableCell>
+                    <TableCell>{t("tableRows.silverVehicles")}</TableCell>
+                    <TableCell className="font-bold text-primary">
                       {formatPrice(280, locale)}
-                    </td>
-                    <td className="p-4 font-medium text-green-600">
+                    </TableCell>
+                    <TableCell className="text-green-600 font-medium">
                       {t("tableRows.silverSavings")}
-                    </td>
-                    <td className="p-4 text-muted-foreground">
+                    </TableCell>
+                    <TableCell>
                       {t("tableRows.ca")} {formatPrice(115, locale)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="p-4 font-semibold">Gold</td>
-                    <td className="p-4">{t("tableRows.goldVehicles")}</td>
-                    <td className="p-4 font-bold text-primary">
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Gold</TableCell>
+                    <TableCell>{t("tableRows.goldVehicles")}</TableCell>
+                    <TableCell className="font-bold text-primary">
                       {formatPrice(325, locale)}
-                    </td>
-                    <td className="p-4 font-medium text-green-600">
+                    </TableCell>
+                    <TableCell className="text-green-600 font-medium">
                       {t("tableRows.goldSavings")}
-                    </td>
-                    <td className="p-4 text-muted-foreground">
+                    </TableCell>
+                    <TableCell>
                       {t("tableRows.ca")} {formatPrice(175, locale)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="p-4 font-semibold">Diamond</td>
-                    <td className="p-4">{t("tableRows.diamondVehicles")}</td>
-                    <td className="p-4 font-bold text-primary">
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Diamond</TableCell>
+                    <TableCell>{t("tableRows.diamondVehicles")}</TableCell>
+                    <TableCell className="font-bold text-primary">
                       {formatPrice(408, locale)}
-                    </td>
-                    <td className="p-4 font-medium text-green-600">
+                    </TableCell>
+                    <TableCell className="text-green-600 font-medium">
                       {t("tableRows.diamondSavings")}
-                    </td>
-                    <td className="p-4 text-muted-foreground">
+                    </TableCell>
+                    <TableCell>
                       {t("tableRows.ca")} {formatPrice(270, locale)}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </div>
           </section>
 
