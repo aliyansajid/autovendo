@@ -1,4 +1,3 @@
-import * as React from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,7 +18,7 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 const formSchema = z.object({
@@ -31,7 +30,7 @@ export function ConditionDialog({ resultCount }: { resultCount?: number }) {
   const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.condition");
   const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const tVehicle = useTranslations("Vehicle.conditions");
-  
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -50,7 +49,7 @@ export function ConditionDialog({ resultCount }: { resultCount?: number }) {
     });
   }, [searchParams, form]);
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleSubmit = (data: z.infer<typeof formSchema>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -84,32 +83,30 @@ export function ConditionDialog({ resultCount }: { resultCount?: number }) {
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <FieldGroup>
-          <DialogHeader>
-            <DialogTitle>{t("title")}</DialogTitle>
-            <DialogDescription>
-              {t("description")}
-            </DialogDescription>
-          </DialogHeader>
-          
+          <FieldGroup>
+            <DialogHeader>
+              <DialogTitle>{t("title")}</DialogTitle>
+              <DialogDescription>{t("description")}</DialogDescription>
+            </DialogHeader>
+
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.CHECKBOX_GROUP}
               name="condition"
-              className="flex-col"
+              className="grid grid-cols-2 gap-3"
               options={conditionOptions}
             />
-         
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
-              {tCommon("cancel")}
-            </Button>
-            <Button type="submit">{tCommon("apply")}</Button>
-          </DialogFooter>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                {tCommon("cancel")}
+              </Button>
+              <Button type="submit">{tCommon("apply")}</Button>
+            </DialogFooter>
           </FieldGroup>
         </form>
       </DialogContent>

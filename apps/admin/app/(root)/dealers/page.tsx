@@ -98,7 +98,7 @@ export default async function DealersPage() {
                   <TableCell>{dealer.phoneNumber}</TableCell>
                   <TableCell>{dealer.city}</TableCell>
                   <TableCell>
-                    {new Date(dealer.createdAt).toLocaleDateString()}
+                    {new Date(dealer.createdAt).toLocaleDateString("de-CH")}
                   </TableCell>
                 </TableRow>
               ))

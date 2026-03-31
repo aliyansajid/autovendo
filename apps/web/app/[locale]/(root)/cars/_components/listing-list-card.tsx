@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Card, CardContent } from "@repo/ui/components/card";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
@@ -37,6 +37,7 @@ export function ListingListCard({
   const t = useTranslations();
   const tCard = useTranslations("ListingListCard");
   const tVehicle = useTranslations("Vehicle");
+  const locale = useLocale();
 
   const getVehicleLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
@@ -46,8 +47,8 @@ export function ListingListCard({
 
   // Use helpers for ALL formatting
   const title = formatVehicleName([item.make, item.model, item.version]);
-  const formattedPrice = formatPrice(item.price);
-  const formattedKm = formatNumber(item.kilometer);
+  const formattedPrice = formatPrice(item.price, locale);
+  const formattedKm = formatNumber(item.kilometer, locale);
   const registrationDate = formatRegistrationDate(
     item.registrationMonth,
     item.registrationYear,
@@ -152,8 +153,8 @@ export function ListingListCard({
             {item.kw !== null && item.kw !== undefined && (
               <>
                 <span>
-                  {formatNumber(item.kw)} kW
-                  {item.hp ? ` (${formatNumber(item.hp)} PS)` : ""}
+                  {formatNumber(item.kw, locale)} kW
+                  {item.hp ? ` (${formatNumber(item.hp, locale)} PS)` : ""}
                 </span>
                 <span className="text-muted-foreground">•</span>
               </>

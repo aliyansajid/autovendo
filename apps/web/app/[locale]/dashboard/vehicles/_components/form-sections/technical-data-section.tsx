@@ -74,7 +74,7 @@ export function TechnicalDataSection() {
           </div>
 
           {(showCombustionOrMild || showFullHybrid || showPluginHybrid) && (
-            <div className="space-y-2">
+            <div className="flex flex-col gap-3">
               <Label>{t("consumption")}</Label>
               <div className="grid grid-cols-3 gap-3">
                 <CustomFormField
@@ -100,30 +100,30 @@ export function TechnicalDataSection() {
           )}
 
           {(showCombustionOrMild || showHydrogen) && (
-              <CustomFormField
-                control={control}
-                fieldType={FormFieldType.INPUT_GROUP}
-                inputType="number"
-                name="cubicCapacity"
-                label={t("displacement")}
-                inputGroupText={t("units.ccm")}
-                placeholder="0"
-              />
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT_GROUP}
+              inputType="number"
+              name="cubicCapacity"
+              label={t("displacement")}
+              inputGroupText={t("units.ccm")}
+              placeholder="0"
+            />
           )}
 
           {(showCombustionOrMild ||
             showFullHybrid ||
             showHydrogen ||
             showPluginHybrid) && (
-              <CustomFormField
-                control={control}
-                fieldType={FormFieldType.INPUT_GROUP}
-                inputType="number"
-                name="co2Emission"
-                label={t("co2")}
-                inputGroupText={t("units.gkm")}
-                placeholder="0"
-              />
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT_GROUP}
+              inputType="number"
+              name="co2Emission"
+              label={t("co2")}
+              inputGroupText={t("units.gkm")}
+              placeholder="0"
+            />
           )}
 
           <div className="grid grid-cols-2 gap-3">
@@ -135,14 +135,14 @@ export function TechnicalDataSection() {
               label={t("ps")}
               placeholder="0"
             />
-              <CustomFormField
-                control={control}
-                fieldType={FormFieldType.INPUT}
-                inputType="number"
-                name="kw"
-                label={t("units.kw")}
-                placeholder="0"
-              />
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT}
+              inputType="number"
+              name="kw"
+              label={t("units.kw")}
+              placeholder="0"
+            />
           </div>
 
           <CustomFormField
@@ -176,45 +176,45 @@ export function TechnicalDataSection() {
           />
 
           <div className="grid grid-cols-2 gap-3">
-              <CustomFormField
-                control={control}
-                fieldType={FormFieldType.INPUT_GROUP}
-                inputType="number"
-                name="emptyWeight"
-                label={t("emptyWeight")}
-                inputGroupText={t("units.kg")}
-                placeholder="0"
-              />
-              <CustomFormField
-                control={control}
-                fieldType={FormFieldType.INPUT_GROUP}
-                inputType="number"
-                name="loadCapacity"
-                label={t("payload")}
-                inputGroupText={t("units.kg")}
-                placeholder="0"
-              />
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT_GROUP}
+              inputType="number"
+              name="emptyWeight"
+              label={t("emptyWeight")}
+              inputGroupText={t("units.kg")}
+              placeholder="0"
+            />
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT_GROUP}
+              inputType="number"
+              name="loadCapacity"
+              label={t("payload")}
+              inputGroupText={t("units.kg")}
+              placeholder="0"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-              <CustomFormField
-                control={control}
-                fieldType={FormFieldType.INPUT_GROUP}
-                inputType="number"
-                name="towingCapacityBraked"
-                label={t("towingCapacity")}
-                inputGroupText={t("units.kg")}
-                placeholder="0"
-              />
-              <CustomFormField
-                control={control}
-                fieldType={FormFieldType.INPUT_GROUP}
-                inputType="number"
-                name="wheelbase"
-                label={t("wheelbase")}
-                inputGroupText={t("units.mm")}
-                placeholder="0"
-              />
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT_GROUP}
+              inputType="number"
+              name="towingCapacityBraked"
+              label={t("towingCapacity")}
+              inputGroupText={t("units.kg")}
+              placeholder="0"
+            />
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT_GROUP}
+              inputType="number"
+              name="wheelbase"
+              label={t("wheelbase")}
+              inputGroupText={t("units.mm")}
+              placeholder="0"
+            />
           </div>
 
           {(showElectric || showFullHybrid || showPluginHybrid) && (
@@ -250,22 +250,24 @@ export function TechnicalDataSection() {
                     >
                       {BatteryOwnershipEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {t_vehicle(`batteryOwnership.${e.value.toUpperCase().replace(/-/g, "_")}`)}
+                          {t_vehicle(
+                            `batteryOwnership.${e.value.toUpperCase().replace(/-/g, "_")}`,
+                          )}
                         </SelectItem>
                       ))}
                     </CustomFormField>
                   </div>
 
                   {batteryOwnership === "battery-rent-required" && (
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.INPUT_GROUP}
-                        inputType="number"
-                        name="batteryRentalMonth"
-                        label={t("batteryRental")}
-                        inputGroupText={t("units.chf_month")}
-                        placeholder="0"
-                      />
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.INPUT_GROUP}
+                      inputType="number"
+                      name="batteryRentalMonth"
+                      label={t("batteryRental")}
+                      inputGroupText={t("units.chf_month")}
+                      placeholder="0"
+                    />
                   )}
 
                   <div className="grid grid-cols-2 gap-3">
@@ -278,7 +280,9 @@ export function TechnicalDataSection() {
                     >
                       {ChargingPlugTypeStandardEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {t_vehicle(`chargingStandardAC.${e.value.toUpperCase().replace(/-/g, "_")}`)}
+                          {t_vehicle(
+                            `chargingStandardAC.${e.value.toUpperCase().replace(/-/g, "_")}`,
+                          )}
                         </SelectItem>
                       ))}
                     </CustomFormField>
@@ -292,7 +296,9 @@ export function TechnicalDataSection() {
                     >
                       {ChargingPlugTypeFastEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {t_vehicle(`chargingStandardDC.${e.value.toUpperCase().replace(/-/g, "_")}`)}
+                          {t_vehicle(
+                            `chargingStandardDC.${e.value.toUpperCase().replace(/-/g, "_")}`,
+                          )}
                         </SelectItem>
                       ))}
                     </CustomFormField>

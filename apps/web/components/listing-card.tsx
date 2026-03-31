@@ -43,7 +43,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           <h2 className="text-lg font-bold truncate">{item.title}</h2>
           <p className="text-xl font-bold text-primary">{item.price}</p>
           <Separator />
-          <div className="flex items-center text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center text-sm text-muted-foreground gap-y-1">
             {item.details.map((detail, i) => (
               <span key={i} className="flex items-center">
                 {detail}
