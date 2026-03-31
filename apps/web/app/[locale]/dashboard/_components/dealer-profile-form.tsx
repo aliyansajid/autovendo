@@ -17,7 +17,7 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { authClient } from "@repo/auth/client";
 import { useTransition, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -161,6 +161,7 @@ interface DealerProfileFormProps {
 
 export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   const t = useTranslations("DealerProfileForm");
+  const locale = useLocale();
   const [isPending, startTransition] = useTransition();
 
   const tSchema = useTranslations("ProfileSchema");
@@ -295,7 +296,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         if (values.email !== initialData?.user?.email) {
           const { error } = await authClient.changeEmail({
             newEmail: values.email,
-            callbackURL: "/dashboard/settings/profile",
+            callbackURL: `/${locale}/dashboard/settings/profile`,
           });
 
           if (error) {
