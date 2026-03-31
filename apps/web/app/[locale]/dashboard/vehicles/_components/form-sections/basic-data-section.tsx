@@ -147,7 +147,7 @@ export function BasicDataSection() {
             >
               {VehicleTypeEnum.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(`types.${type.value.toUpperCase()}`)}
+                  {t_vehicle(`types.${type.value.toUpperCase().replace(/-/g, "_")}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -281,7 +281,7 @@ export function BasicDataSection() {
             {activeBodyTypeEnum.map(
               (type: { value: string; label: string }) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(`types.${type.value.toUpperCase()}`)}
+                  {t_vehicle(`types.${type.value.toUpperCase().replace(/-/g, "_")}`)}
                 </SelectItem>
               ),
             )}
