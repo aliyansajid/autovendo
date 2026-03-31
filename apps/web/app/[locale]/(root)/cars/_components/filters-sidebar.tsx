@@ -420,7 +420,7 @@ export const FiltersSidebar = ({
                     "saloon",
                     "pickup",
                     "suv",
-                  ].map((v) => ({ value: v, label: tVehicle(`types.${v}`) })),
+                  ].map((v) => ({ value: v, label: tVehicle(`types.${v.toUpperCase().replace(/-/g, "_")}`) })),
                 )}
                 <VehicleTypeDialog counts={facets?.bodyType} />
               </div>
@@ -464,7 +464,7 @@ export const FiltersSidebar = ({
               <div className="flex flex-wrap gap-1">
                 {COLOR_OPTIONS.map((color) => {
                   const isSelected = watchColor.includes(color.value);
-                  const colorLabel = tVehicle(`colors.${color.value}`);
+                  const colorLabel = tVehicle(`colors.${color.value.toUpperCase()}`);
                   return (
                     <div
                       key={color.value}
@@ -511,7 +511,7 @@ export const FiltersSidebar = ({
                       control={form.control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={value}
-                      label={tVehicle(`equipment.${value}`)}
+                      label={tVehicle(`equipment.${value.toUpperCase().replace(/-/g, "_")}`)}
                     />
                   ))}
               </div>

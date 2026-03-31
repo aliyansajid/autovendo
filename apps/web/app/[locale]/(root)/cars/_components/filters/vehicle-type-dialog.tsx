@@ -77,7 +77,7 @@ export function VehicleTypeDialog({
     "bus", "cabriolet", "coupe", "small-car", "estate", "minivan", "saloon", "pickup", "suv"
   ].map((value) => {
     const count = counts?.[value];
-    const label = tVehicle(`types.${value}`);
+    const label = tVehicle(`types.${value.toUpperCase().replace(/-/g, "_")}`);
     return {
       label: count !== undefined ? `${label} (${formatCount(count)})` : label,
       value: value,
