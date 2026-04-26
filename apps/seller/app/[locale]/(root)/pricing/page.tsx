@@ -45,7 +45,7 @@ export default async function PricingPage(props: {
   const { locale } = await props.params;
   const t = await getTranslations("PricingPage");
   const rawTiers = (await t.raw("tiers")) as PricingTier[];
-  
+
   const tiers = rawTiers.map((tier) => ({
     ...tier,
     price: formatPrice(Number(tier.price.replace(/[^\d.-]/g, "")), locale),
@@ -71,7 +71,7 @@ export default async function PricingPage(props: {
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
                 <span className="font-semibold text-foreground">
-                  autovendo.ch
+                  autosolo.ch
                 </span>
                 &nbsp;{t("introText1")}
               </p>
@@ -174,7 +174,9 @@ export default async function PricingPage(props: {
                 <h3 className="text-xl font-bold mb-2">
                   {t("largerDealers.subtitle")}
                 </h3>
-                <p className="text-lg font-medium">{t("largerDealers.tagline")}</p>
+                <p className="text-lg font-medium">
+                  {t("largerDealers.tagline")}
+                </p>
               </div>
               <div className="space-y-4 text-muted-foreground text-lg">
                 <p>{t("largerDealers.description1")}</p>
@@ -184,10 +186,14 @@ export default async function PricingPage(props: {
               <Separator className="bg-primary/20" />
 
               <div className="space-y-4">
-                <h3 className="text-xl font-bold">{t("largerDealers.personalTitle")}</h3>
+                <h3 className="text-xl font-bold">
+                  {t("largerDealers.personalTitle")}
+                </h3>
                 <div className="space-y-4 text-muted-foreground text-lg">
                   <p>{t("largerDealers.personalDesc1")}</p>
-                  <p className="font-medium text-foreground">{t("largerDealers.personalDesc2")}</p>
+                  <p className="font-medium text-foreground">
+                    {t("largerDealers.personalDesc2")}
+                  </p>
                   <p>{t("largerDealers.personalDesc3")}</p>
                 </div>
                 <div className="pt-4 flex flex-col sm:flex-row gap-3">
