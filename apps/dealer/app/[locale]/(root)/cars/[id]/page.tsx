@@ -89,7 +89,7 @@ export default async function ListingPage({
   const { id, locale } = await params;
   const item = await getVehicleCached(id);
 
-  if (!item) notFound();
+  if (!item || !item.dealer) notFound();
 
   const getLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
@@ -310,7 +310,7 @@ export default async function ListingPage({
     reviewCount: 0,
   };
 
-  const similarItems = await getSimilarVehicles(item.dealerId, item.id);
+  const similarItems = await getSimilarVehicles(item.dealerId!, item.id);
 
   const similarListings: ListingProps[] = similarItems.map((sim) => ({
     id: sim.id,
