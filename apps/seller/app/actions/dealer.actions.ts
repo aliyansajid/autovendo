@@ -331,7 +331,7 @@ export async function sendDealerContactEmail(
 
     const result = await sendEmail({
       to: dealer.businessEmail,
-      subject: `New contact request from ${validatedData.name} – autovendo.ch`,
+      subject: `New contact request from ${validatedData.name} – autosolo.ch`,
       replyTo: validatedData.email,
       template: DealerContactEmail({
         dealerName: dealer.companyName,
