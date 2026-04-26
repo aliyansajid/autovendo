@@ -1,18 +1,19 @@
 "use client";
 
-import { UserPlus, CreditCard, Car, MessageCircle } from "lucide-react";
+import { UserPlus, CreditCard, Car, MessageCircle, type LucideProps } from "lucide-react";
 import { useTranslations } from "next-intl";
+import type { ForwardRefExoticComponent, RefAttributes } from "react";
 
-const icons = [UserPlus, CreditCard, Car, MessageCircle];
+type LucideIcon = ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
 
 export function HowItWorks() {
   const t = useTranslations("HowItWorksSection");
 
-  const steps = [
-    { icon: icons[0], title: t("step1.title"), description: t("step1.description") },
-    { icon: icons[1], title: t("step2.title"), description: t("step2.description") },
-    { icon: icons[2], title: t("step3.title"), description: t("step3.description") },
-    { icon: icons[3], title: t("step4.title"), description: t("step4.description") },
+  const steps: { icon: LucideIcon; title: string; description: string }[] = [
+    { icon: UserPlus, title: t("step1.title"), description: t("step1.description") },
+    { icon: CreditCard, title: t("step2.title"), description: t("step2.description") },
+    { icon: Car, title: t("step3.title"), description: t("step3.description") },
+    { icon: MessageCircle, title: t("step4.title"), description: t("step4.description") },
   ];
 
   return (
