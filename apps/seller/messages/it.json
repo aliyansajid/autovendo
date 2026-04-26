@@ -1,0 +1,1648 @@
+{
+  "Header": {
+    "nav": {
+      "advancedSearch": "Ricerca avanzata",
+      "dealers": "Trova concessionari",
+      "sell": "Vendi",
+      "mobileMenuTitle": "Menu"
+    },
+    "auth": {
+      "login": "Login",
+      "logout": "Logout",
+      "dashboard": "Dashboard"
+    },
+    "languages": {
+      "label": "Lingua",
+      "de": "Deutsch",
+      "en": "English",
+      "fr": "Français",
+      "it": "Italiano"
+    },
+    "logoAlt": "Logo AutoVendo"
+  },
+  "Footer": {
+    "description": "Scopri il tuo veicolo perfetto nella nostra selezione premium. Offriamo migliaia di auto usate e nuove certificate dei migliori marchi europei a prezzi imbattibili e con una storia trasparente.",
+    "socialMediaDisclaimer": "Autovendo.ch evita consapevolmente i social media. Ci concentriamo sul contatto diretto, l'accessibilità personale e le conversazioni reali – da persona a persona, non attraverso like o algoritmi.",
+    "newsletter": {
+      "title": "Resta in corsia di sorpasso",
+      "description": "Iscriviti alla nostra newsletter per le ultime offerte, novità sui veicoli e promozioni esclusive.",
+      "placeholder": "Il tuo indirizzo e-mail",
+      "button": "Iscriviti"
+    },
+    "sections": {
+      "discover": "Scopri",
+      "support": "Supporto",
+      "legal": "Legale",
+      "contact": "Contatto"
+    },
+    "address": "Bielstrasse 78,\n2555 Brügg / BE, Svizzera",
+    "links": {
+      "about": "Chi siamo",
+      "rules": "Regole di inserzione",
+      "pricing": "Prezzi",
+      "contact": "Contatto",
+      "howItWorks": "Come funziona",
+      "faq": "FAQ",
+      "safety": "Istruzioni di sicurezza",
+      "privacy": "Privacy",
+      "terms": "CGV",
+      "privacySettings": "Impostazioni privacy",
+      "imprint": "Note legali"
+    },
+    "whatsappAriaLabel": "Contattaci su WhatsApp",
+    "copyright": "Tutti i diritti riservati."
+  },
+  "About": {
+    "title": "Chi siamo - Autovendo.ch",
+    "subtitle": "Giusto. Trasparente. Semplice. Umano.",
+    "description": "Autovendo.ch è la piattaforma di vendita per tutti i concessionari auto in Svizzera. Abbiamo sviluppato Autovendo con un obiettivo chiaro: rendere la vendita di veicoli semplice, efficiente e corretta — senza inutili oneri amministrativi.",
+    "features": {
+      "efficiency": {
+        "title": "Efficienza & Struttura",
+        "description": "Gestione semplice, processi chiari e visibilità mirata per i vostri veicoli."
+      },
+      "humanity": {
+        "title": "Umanità",
+        "description": "Contatto personale, interesse genuino e interazione rispettosa in ogni momento."
+      },
+      "reliability": {
+        "title": "Affidabilità",
+        "description": "Accessibile, semplice e sempre al tuo fianco con un approccio orientato alle soluzioni."
+      },
+      "transparency": {
+        "title": "Trasparenza",
+        "description": "Prezzi chiari e competitivi senza costi nascosti o pacchetti forzati."
+      }
+    }
+  },
+  "SearchForm": {
+    "title": "Trova veicoli usati e nuovi",
+    "tabs": {
+      "buy": "Comprare",
+      "sell": "Vendere"
+    },
+    "fields": {
+      "query": {
+        "label": "Ricerca",
+        "placeholder": "Cerca..."
+      },
+      "make": "Marca",
+      "model": "Modello",
+      "price": "Prezzo",
+      "registrationFrom": "Prima immatricolazione da"
+    },
+    "button": "Cerca",
+    "advancedSearch": "Ricerca avanzata",
+    "validation": {
+      "queryMinLength": "Cerca almeno 3 caratteri"
+    }
+  },
+  "Vehicle": {
+    "conditions": {
+      "NEW": "Nuovo",
+      "DEMONSTRATION": "Dimostrativo",
+      "PRE_REGISTERED": "Nuova immatricolazione",
+      "USED": "Usato",
+      "OLDTIMER": "D'epoca",
+      "CLASSIC": "D'epoca",
+      "PRE_OWNED": "Usato"
+    },
+    "fuelTypes": {
+      "PETROL": "Benzina",
+      "DIESEL": "Diesel",
+      "ELECTRIC": "Elettrico",
+      "ETHANOL_PETROL": "Etanolo/Benzina",
+      "CNG_PETROL": "Metano/Benzina",
+      "LPG_PETROL": "GPL/Benzina",
+      "MHEV_DIESEL": "Mild Hybrid Diesel",
+      "MHEV_PETROL": "Mild Hybrid Benzina",
+      "PHEV_DIESEL": "Ibrido plug-in Diesel",
+      "PHEV_PETROL": "Ibrido plug-in Benzina",
+      "HEV_DIESEL": "Ibrido Diesel",
+      "HEV_PETROL": "Ibrido Benzina",
+      "HYDROGEN": "Idrogeno",
+      "HYBRID": "Ibrido",
+      "GAS": "Gas",
+      "OTHER": "Altro"
+    },
+    "transmissionTypes": {
+      "MANUAL": "Manuale",
+      "AUTOMATIC": "Automatico",
+      "AUTOMATIC_STEPLESS": "Continuo",
+      "SEMI_AUTOMATIC": "Semiautomatico"
+    },
+    "driveTypes": {
+      "FRONT": "Trazione anteriore",
+      "REAR": "Trazione posteriore",
+      "ALL": "4x4",
+      "FRONT_WHEEL": "Trazione anteriore",
+      "REAR_WHEEL": "Trazione posteriore",
+      "ALL_WHEEL": "4x4"
+    },
+    "types": {
+      "bus": "Bus",
+      "car": "Autovettura",
+      "utility": "Veicolo commerciale",
+      "truck": "Camion",
+      "camper": "Camper",
+      "cabriolet": "Cabriolet",
+      "coupe": "Coupé",
+      "small-car": "Utilitaria",
+      "estate": "Station wagon",
+      "minivan": "Monovolume",
+      "saloon": "Berlina",
+      "pickup": "Pick-up",
+      "suv": "SUV / Fuoristrada",
+      "bridge": "Ponte",
+      "bridge-double-cab": "Ponte con doppia cabina",
+      "chassis-cab": "Telaio cabina",
+      "box": "Furgone",
+      "box-glazed": "Furgone vetrato",
+      "box-double-cab": "Furgone doppia cabina",
+      "tipper": "Ribaltabile",
+      "platform": "Piattaforma",
+      "semi-trailer": "Semi-rimorchio",
+      "cab-over": "Doppia cabina",
+      "tourist-bus": "Autobus turistico",
+      "alcove": "Mansardato",
+      "trailer": "Rimorchio",
+      "integrated": "Integrale",
+      "cab": "Cabina",
+      "other": "Altro",
+      "semi-integrated": "Semintegrale",
+      "motorhome": "Camper",
+      "caravan": "Caravan"
+    },
+    "colors": {
+      "anthracite": "Antracite",
+      "beige": "Beige",
+      "black": "Nero",
+      "blue": "Blu",
+      "bordeaux": "Bordeaux",
+      "brown": "Marrone",
+      "gold": "Oro",
+      "gray": "Grigio",
+      "green": "Verde",
+      "multicoloured": "Multicolore",
+      "orange": "Arancione",
+      "pink": "Rosa",
+      "red": "Rosso",
+      "silver": "Argento",
+      "turquoise": "Turchese",
+      "violet": "Viola",
+      "white": "Bianco",
+      "yellow": "Giallo",
+      "other": "Altro"
+    },
+    "equipment": {
+      "360_CAMERA": "Telecamera a 360°",
+      "ABS": "ABS",
+      "ADAPTIVE_HEADLIGHTS": "Fari adattivi",
+      "ADAPTIVE_CRUISE_CONTROL": "Regolatore di velocità adattivo",
+      "ALARM_SYSTEM": "Sistema di allarme",
+      "ALLOY_WHEELS": "Cerchi in lega",
+      "ANDROID_AUTO": "Android Auto",
+      "TOW_HITCH": "Gancio di traino",
+      "TOW_HITCH_REMOVABLE": "Gancio di traino rimovibile",
+      "TOW_HITCH_SWIVELING": "Gancio di traino girevole",
+      "TOW_HITCH_FIXED": "Gancio di traino fisso",
+      "APPLE_CARPLAY": "Apple CarPlay",
+      "HEATED_SEATS": "Sedili riscaldati",
+      "VENTILATED_SEATS": "Sedili ventilati",
+      "BLUETOOTH": "Interfaccia Bluetooth",
+      "BRAKE_ASSIST": "Assistente di frenata",
+      "CHROME_ELEMENTS": "Elementi cromati",
+      "DAB_RADIO": "Radio DAB",
+      "ANTI_THEFT": "Dispositivo antifurto",
+      "DIFFERENTIAL_LOCK": "Bloccaggio del differenziale",
+      "ELECTRIC_WINDOWS": "Alzacristalli elettrici",
+      "ELECTRIC_TAILGATE": "Portellone elettrico",
+      "ELECTRIC_SEAT_ADJUSTMENT": "Regolazione elettrica dei sedili",
+      "GULL_WING_DOORS": "Porte ad ala di gabbiano",
+      "HANDS_FREE": "Sistema vivavoce",
+      "FLOOR": "Pavimento",
+      "ROOF_RACK": "Portapacchi",
+      "HARDTOP": "Hardtop",
+      "HEAD_UP_DISPLAY": "Head-up Display",
+      "CUSTOM_EXHAUST": "Sistema di scarico personalizzato",
+      "ISOFIX": "Isofix",
+      "AIR_CONDITIONING": "Climatizzatore",
+      "AUTOMATIC_CLIMATE_CONTROL": "Climatizzatore automatico",
+      "TRUNK": "Baule",
+      "SPEAKERS": "Altoparlanti",
+      "AIR_SUSPENSION": "Sospensioni pneumatiche",
+      "NAVIGATION_SYSTEM": "Sistema di navigazione",
+      "NAVIGATION": "Navigazione",
+      "PORTABLE_NAVIGATION": "Sistema di navigazione portatile",
+      "PANORAMIC_ROOF": "Tetto panoramico",
+      "PARKING_ASSIST": "Assistenza al parcheggio",
+      "PARKING_SENSORS_REAR": "Sensori di parcheggio posteriori",
+      "PARKING_SENSORS_FRONT": "Sensori di parcheggio anteriori",
+      "BACKREST_PROTECTION": "Protezione dello schienale",
+      "BACKUP_CAMERA": "Telecamera per la retromarcia",
+      "HEADLIGHTS": "Fari",
+      "LASER_HEADLIGHTS": "Fari laser",
+      "LED_HEADLIGHTS": "Fari a LED",
+      "XENON_HEADLIGHTS": "Fari allo xeno",
+      "SUNROOF": "Tetto apribile",
+      "SLIDING_DOOR": "Porta scorrevole",
+      "KEYLESS_ENTRY_START": "Accesso/Avviamento senza chiave",
+      "FAST_CHARGING": "Ricarica rapida",
+      "SEAT_COVERS": "Coprisedili",
+      "ALCANTARA": "Alcantara",
+      "FABRIC_SEATS": "Sedili in tessuto",
+      "LEATHER": "Pelle",
+      "PARTIAL_LEATHER_SEATS": "Sedili in pelle parziale",
+      "SPECIAL_PAINT": "Vernice speciale",
+      "SPORT_SEATS": "Sedili sportivi",
+      "LANE_KEEP_ASSIST": "Assistente per il mantenimento della corsia",
+      "ESP": "Controllo di stabilità (ESP)",
+      "AUXILIARY_HEATING": "Riscaldamento ausiliario",
+      "START_STOP_SYSTEM": "Sistema start-stop",
+      "CRUISE_CONTROL": "Regolatore di velocità",
+      "BLIND_SPOT_ASSIST": "Assistente per l'angolo morto",
+      "REINFORCED_SUSPENSION": "Sospensioni rinforzate",
+      "ADDITIONAL_INSTRUMENTS": "Strumenti supplementari"
+    },
+    "warranty": {
+      "FROM_DELIVERY": "Dalla consegna",
+      "FROM_FIRST_REGISTRATION": "Dalla prima immatricolazione",
+      "FROM_DATE": "Dalla data"
+    },
+    "emissions": {
+      "EURO_1": "Euro 1",
+      "EURO_2": "Euro 2",
+      "EURO_3": "Euro 3",
+      "EURO_4": "Euro 4",
+      "EURO_5": "Euro 5",
+      "EURO_5_PLUS": "Euro 5+",
+      "EURO_6": "Euro 6",
+      "EURO_6A": "Euro 6a",
+      "EURO_6B": "Euro 6b",
+      "EURO_6C": "Euro 6c",
+      "EURO_6D": "Euro 6d",
+      "EURO_6D_ISC": "Euro 6d ISC",
+      "EURO_6D_ISC_FCM": "Euro 6d ISC FCM",
+      "EURO_6D_TEMP": "Euro 6d-temp",
+      "EURO_6D_TEMP_EVAP": "Euro 6d-temp EVAP",
+      "EURO_6D_TEMP_EVAP_ISC": "Euro 6d-temp EVAP ISC",
+      "EURO_6D_TEMP_ISC": "Euro 6d-temp ISC",
+      "EURO_6E": "Euro 6e"
+    },
+    "extras": {
+      "8_TYRES": "8 pneumatici",
+      "ACCESSIBLE_FOR_DISABLED": "Accessibile ai disabili",
+      "DIRECT_IMPORT": "Importazione diretta / parallela",
+      "RACE_CAR": "Auto da corsa",
+      "TUNING": "Tuning",
+      "ACCIDENT_VEHICLE": "Veicolo incidentato",
+      "CAR_TRANSPORTER": "Trasportatore di auto",
+      "TARPAULIN": "Telone",
+      "TAIL_LIFT": "Sponda caricatrice",
+      "CRANE": "Gru",
+      "REFRIGERATOR": "Furgone frigorifero",
+      "FURNITURE_TRANSPORTER": "Trasportatore di mobili",
+      "SCHOOL_BUS": "Scuolabus",
+      "WINCH": "Verricello"
+    },
+    "brandGroups": {
+      "topBrands": "Top-Marken",
+      "allBrands": "Alle Marken"
+    },
+    "batteryOwnership": {
+      "BATTERY_INCLUDED": "Batteria inclusa nel prezzo d'acquisto",
+      "BATTERY_RENT_REQUIRED": "La batteria richiede un noleggio aggiuntivo"
+    },
+    "chargingStandardAC": {
+      "TYPE_1": "Tipo 1",
+      "TYPE_2": "Tipo 2"
+    },
+    "chargingStandardDC": {
+      "CCS": "CCS",
+      "CSS_2": "CSS-2",
+      "CHADEMO": "CHAdeMO",
+      "SUPERCHARGER": "Supercharger"
+    },
+    "priceRating": {
+      "excellent": "Prezzo eccellente",
+      "veryGood": "Ottimo prezzo",
+      "good": "Buon prezzo",
+      "fair": "Prezzo equo",
+      "overpriced": "Prezzo elevato"
+    }
+  },
+  "FeaturedListings": {
+    "title": "Ultimi veicoli",
+    "emptyState": "Al momento non sono presenti veicoli.",
+    "showMore": "Mostra di più",
+    "showLess": "Mostra meno"
+  },
+  "FeaturedGarage": {
+    "title": "Garage in primo piano",
+    "emptyState": "Al momento non ci sono garage registrati.",
+    "button": "Al garage"
+  },
+  "ListingCard": {
+    "saveToFavorites": "Aggiungi ai preferiti"
+  },
+  "AdvancedSearch": {
+    "title": "Filtri",
+    "close": "Chiudi",
+    "showVehicles": "{count, plural, =0 {Non mostrare veicoli} one {Mostra # veicolo} other {Mostra # veicoli}}",
+    "showVehiclesSimple": "Mostra veicoli",
+    "vehicleTypes": {
+      "car": "Autovettura",
+      "camper": "Camper",
+      "utility": "Veicolo commerciale",
+      "truck": "Camion"
+    },
+    "sections": {
+      "makeModel": {
+        "title": "Marca & Modello",
+        "addMake": "Aggiungi marca",
+        "includeVehicles": "Includi veicoli",
+        "excludeVehicles": "Escludi veicoli",
+        "noSelections": "Nessun veicolo selezionato."
+      },
+      "basic": {
+        "title": "Dati di base",
+        "year": "Anno",
+        "kilometer": "Chilometraggio",
+        "price": "Prezzo",
+        "condition": "Stato",
+        "inspectionAndWarranty": "Collaudo & Garanzia",
+        "bodyType": "Carrosseria",
+        "reset": "Ripristina",
+        "inspectionPassed": "Collaudato",
+        "hasWarranty": "Con garanzia"
+      },
+      "tech": {
+        "title": "Dati tecnici",
+        "fuel": "Carburante",
+        "transmission": "Cambio",
+        "drive": "Trazione",
+        "power": "Potenza",
+        "capacity": "Cilindrata",
+        "cylinder": "Cilindri"
+      },
+      "equipment": {
+        "title": "Equipaggiamento"
+      },
+      "extras": {
+        "title": "Extras"
+      },
+      "appearance": {
+        "title": "Colore",
+        "exteriorColor": "Colore esterno",
+        "interiorColor": "Colore interno",
+        "reset": "Ripristina",
+        "metallic": "Metallizzato"
+      },
+      "energy": {
+        "title": "Energia & Ambiente",
+        "consumption": "Consumo",
+        "emissions": "Emissioni di CO2",
+        "efficiency": "Efficienza energetica",
+        "euroNorm": "Norme Euro",
+        "reset": "Ripristina"
+      },
+      "more": {
+        "title": "Altri filtri",
+        "daysListed": "Durata dell'annuncio",
+        "reset": "Ripristina",
+        "options": {
+          "any": "Qualsiasi",
+          "1-day": "1 giorno",
+          "2-days": "2 giorni",
+          "3-days": "3 giorni",
+          "5-days": "5 giorni",
+          "7-days": "7 giorni",
+          "14-days": "14 giorni",
+          "28-days": "28 giorni"
+        }
+      }
+    },
+    "CarsPage": {
+      "title": "Trova veicoli",
+      "subtitle": "Scopri la nostra vasta gamma di veicoli",
+      "offers": "Offerte",
+      "noVehicles": "Nessun veicolo trovato.",
+      "sort": {
+        "relevance": "Ordinamento predefinito",
+        "price-asc": "Prezzo (dal più basso)",
+        "price-desc": "Prezzo (dal più alto)",
+        "kilometer-asc": "Chilometraggio (dal più basso)",
+        "kilometer-desc": "Chilometraggio (dal più alto)",
+        "registration-asc": "Immatricolazione (più vecchia)",
+        "registration-desc": "Immatricolazione (più recente)",
+        "created-asc": "Annunci (più vecchi)",
+        "created-desc": "Annunci (più recenti)"
+      }
+    },
+    "FiltersSidebar": {
+      "title": "Altri filtri",
+      "moreFilters": "Altri filtri",
+      "any": "Qualsiasi",
+      "selected": "{count} selezionati",
+      "condition": "Stato del veicolo",
+      "makeModel": "Marca, Modello",
+      "price": "Prezzo",
+      "from": "da",
+      "to": "a",
+      "registration": "Prima immatricolazione",
+      "mileage": "Chilometraggio",
+      "fuel": "Tipo di carburante",
+      "power": "Potenza",
+      "vehicleType": "Tipo di veicolo",
+      "evs": "Auto elettriche",
+      "evOptions": {
+        "only_ev": "Solo auto elettriche",
+        "no_ev": "Nessuna auto elettrica"
+      },
+      "transmission": "Cambio",
+      "exteriorColor": "Colore esterno",
+      "metallic": "Metallizzato",
+      "equipment": "Equipaggiamento",
+      "more": "Altro...",
+      "dialogs": {
+        "change": "modifica",
+        "apply": "Applica",
+        "cancel": "Annulla",
+        "condition": {
+          "title": "Condizioni",
+          "description": "Selezionare lo stato del veicolo desiderato."
+        },
+        "fuel": {
+          "title": "Tipo di carburante",
+          "description": "Selezionare i tipi di carburante desiderati."
+        },
+        "vehicleType": {
+          "title": "Tipo di veicolo",
+          "description": "Selezionare i tipi di veicolo desiderati."
+        },
+        "transmission": {
+          "title": "Tipo di cambio",
+          "description": "Selezionare i tipi di cambio desiderati."
+        },
+        "power": {
+          "title": "Potenza",
+          "description": "Selezionare la potenza desiderata."
+        },
+        "ev": {
+          "title": "Veicolo elettrico",
+          "description": "Filtra per capacità della batteria, autonomia e tempo di ricarica.",
+          "batteryCapacity": "Capacità della batteria",
+          "range": "Autonomia",
+          "chargeTime": "Tempo di ricarica (fino a)",
+          "fastChargeTime": "Tempo di ricarica rapida (fino a)",
+          "minutes": "Minuti",
+          "fromLabel": "da"
+        },
+        "makeModel": {
+          "title": "Marca & Modello",
+          "description": "Selezionare le marche e i modelli desiderati.",
+          "excludeCars": "Escludi veicoli",
+          "modelsFor": "Seleziona i modelli per {make}.",
+          "excludeSelect": "Seleziona i veicoli da escludere.",
+          "includeSelect": "Seleziona i veicoli da includere.",
+          "searchPlaceholder": "Cerca",
+          "backToMakes": "Torna alle marche",
+          "noModelsFound": "Nessun modello trovato.",
+          "popularMakes": "Marche più cercate",
+          "allMakes": "Tutte le marche",
+          "titleWithModels": "{make} – Modelli"
+        }
+      }
+    }
+  },
+  "ImageGallery": {
+    "openFullscreen": "Apri a schermo intero",
+    "previousImage": "Immagine precedente",
+    "nextImage": "Immagine successiva"
+  },
+  "ListingControls": {
+    "searchPlaceholder": "Cerca…",
+    "searchAriaLabel": "Cerca veicoli",
+    "sortAriaLabel": "Ordina",
+    "sortPlaceholder": "Ordina per"
+  },
+  "LoginForm": {
+    "title": "Bentornato",
+    "description": "Inserisca il suo indirizzo e-mail qui sotto per accedere al suo account",
+    "email": "E-mail",
+    "emailPlaceholder": "m@esempio.ch",
+    "password": "Password",
+    "rememberMe": "Rimani connesso",
+    "forgotPassword": "Password dimenticata?",
+    "submitting": "Accesso in corso...",
+    "submit": "Accedi",
+    "errorDefault": "Si è verificato un errore. Riprovi."
+  },
+  "ForgotPasswordForm": {
+    "title": "Password dimenticata",
+    "description": "Inserisca il suo indirizzo e-mail e le invieremo un link per reimpostare la password",
+    "email": "E-mail",
+    "emailPlaceholder": "m@esempio.ch",
+    "submitting": "Invio in corso...",
+    "submit": "Invia link di reimpostazione",
+    "rememberPassword": "Ricorda la password?",
+    "backToLogin": "Accedi",
+    "errorDefault": "Il link non ha potuto essere inviato. Riprovi.",
+    "successDefault": "Link inviato con successo."
+  },
+  "ResetPasswordForm": {
+    "invalidTokenToast": "Token di reimpostazione non valido o mancante",
+    "errorDefault": "La password non ha potuto essere reimpostata. Riprovi.",
+    "successReset": "Password reimpostata con successo.",
+    "invalidLinkTitle": "Link non valido",
+    "invalidLinkDescription": "Il link per la reimpostazione della password non è valido o è scaduto. Ne richieda uno nuovo.",
+    "requestNewLink": "Richiedi un nuovo link",
+    "title": "Imposta una nuova password",
+    "description": "Inserisca la sua nuova password qui sotto.",
+    "newPassword": "Nuova password",
+    "confirmPassword": "Conferma password",
+    "submitting": "Reimpostazione in corso...",
+    "submit": "Reimposta password"
+  },
+  "AuthSchema": {
+    "invalidEmail": "Indirizzo e-mail non valido",
+    "passwordRequired": "La password è obbligatoria",
+    "passwordMinLength": "La password deve contenere almeno 8 caratteri",
+    "passwordsDoNotMatch": "Le password non corrispondono",
+    "currentPasswordRequired": "La password attuale è obbligatoria",
+    "newPasswordMinLength": "La nuova password deve contenere almeno 8 caratteri"
+  },
+  "AuthErrors": {
+    "INVALID_EMAIL_OR_PASSWORD": "E-mail o password non validi",
+    "USER_NOT_FOUND": "Utente non trovato",
+    "EMAIL_NOT_VERIFIED": "E-mail non verificata",
+    "TOO_MANY_REQUESTS": "Troppe richieste. Per favore riprova più tardi.",
+    "INVALID_TOKEN": "Token non valido o scaduto",
+    "SESSION_EXPIRED": "Sessione scaduta. Per favore effettua di nuovo il login.",
+    "UNKNOWN_ERROR": "Si è verificato un errore sconosciuto. Riprova."
+  },
+  "ProfileSchema": {
+    "invalidEmail": "Indirizzo e-mail non valido",
+    "invalidImageType": "Sono consentite solo immagini PNG, JPG, JPEG o WEBP",
+    "invalidUrl": "Inserisca un URL valido",
+    "nameMinLength": "Il nome deve contenere almeno 3 caratteri",
+    "nameMaxLength": "Il nome deve contenere al massimo 50 caratteri",
+    "companyNameMinLength": "Il nome dell'azienda deve contenere almeno 3 caratteri",
+    "companyNameMaxLength": "Il nome dell'azienda deve contenere al massimo 50 caratteri",
+    "addressMinLength": "L'indirizzo deve contenere almeno 5 caratteri",
+    "addressMaxLength": "L'indirizzo deve contenere al massimo 100 caratteri",
+    "zipCodeMinLength": "Il codice postale deve contenere almeno 4 caratteri",
+    "zipCodeMaxLength": "Il codice postale deve contenere al massimo 10 caratteri",
+    "cityMinLength": "La città deve contenere almeno 2 caratteri",
+    "cityMaxLength": "La città deve contenere al massimo 50 caratteri",
+    "uidRequired": "L'UID è obbligatorio",
+    "invalidUidFormat": "Formato UID non valido (CHE-XXX.XXX.XXX)",
+    "contactPersonMinLength": "La persona di contatto deve contenere almeno 3 caratteri",
+    "contactPersonMaxLength": "La persona di contatto deve contenere al massimo 50 caratteri",
+    "phoneRequired": "Il numero di telefono è obbligatorio",
+    "invalidPhoneFormat": "Formato del numero di telefono svizzero non valido"
+  },
+  "VehicleSchema": {
+    "negativeError": "Il valore non può essere negativo",
+    "vehicleTypeRequired": "Seleziona un tipo di veicolo.",
+    "invalidType": "Tipo non valido",
+    "makeRequired": "Seleziona una marca.",
+    "invalidMake": "Marca non valida",
+    "invalidGearTransmission": "Cambio/trasmissione non valido",
+    "invalidTransmissionType": "Tipo di trasmissione non valido",
+    "invalidDriveType": "Tipo di trazione non valido",
+    "bodyTypeRequired": "Seleziona una carrozzeria.",
+    "invalidBodyType": "Carrozzeria non valida",
+    "invalidFuelType": "Carburante non valido",
+    "colorRequired": "Seleziona un colore.",
+    "invalidColor": "Colore non valido",
+    "invalidInteriorColor": "Colore interno non valido",
+    "invalidCondition": "Stato non valido",
+    "monthRequired": "Il mese è obbligatorio",
+    "yearRequired": "L'anno è obbligatorio",
+    "kilometerRequired": "Il chilometraggio è obbligatorio",
+    "negativeKilometerError": "Il chilometraggio non può essere negativo",
+    "invalidWarranty": "Garanzia non valida",
+    "priceRequired": "Il prezzo è obbligatorio",
+    "negativePriceError": "Il prezzo non può essere negativo",
+    "invalidEnergyLabel": "Etichetta energia non valida",
+    "invalidBatteryOwnership": "Modello di proprietà della batteria non valido",
+    "invalidChargingAC": "Tipo di spina di ricarica (AC) non valido",
+    "invalidChargingDC": "Tipo di spina di ricarica (DC) non valido",
+    "invalidEmissionStandard": "Standard di emissione non valido",
+    "invalidEquipmentKey": "Chiave equipaggiamento non valida",
+    "invalidExtrasKey": "Chiave extra non valida",
+    "invalidImageType": "Sono consentite solo immagini PNG, JPG, JPEG o WEBP",
+    "fileTooLarge": "Il file deve essere al massimo di 10 MB",
+    "minImagesError": "Sono richieste almeno 5 immagini",
+    "maxImagesError": "Sono consentite al massimo 10 immagini",
+    "invalidEmail": "Indirizzo e-mail non valido"
+  },
+  "Common": {
+    "errorDefault": "Si è verificato un errore. Riprova.",
+    "dealerNotFound": "Profilo del rivenditore non trovato.",
+    "emailSendError": "Impossibile inviare l'e-mail.",
+    "isClosed": "Chiuso"
+  },
+  "SellPage": {
+    "hero": {
+      "title": "Il partner dei concessionari professionisti",
+      "subtitle": "Autovendo — Pubblichi il suo stock sul più grande marketplace svizzero.",
+      "ctaList": "Pubblica ora",
+      "ctaPricing": "Visualizza soluzioni per concessionari"
+    },
+    "reach": {
+      "title": "Raggiunga più acquirenti",
+      "titleHighlight": "in modo efficiente",
+      "titleSuffix": "ed efficace",
+      "cardTitle": "Pubblicità professionale per concessionari",
+      "cardSubtitle": "MASSIMA VISIBILITÀ • LEAD DI QUALITÀ",
+      "cardDescription": "Presenti il suo stock a milioni di potenziali acquirenti ogni mese. Autovendo offre strumenti professionali pensati appositamente per le esigenze delle concessionarie svizzere moderne.",
+      "badge": "Oltre 500 concessionari in Svizzera si fidano di noi",
+      "ctaFirst": "Crei la sua prima inserzione",
+      "ctaHow": "Come funziona"
+    },
+    "advantages": {
+      "title": "I suoi vantaggi con",
+      "titleHighlight": "Autovendo per concessionari",
+      "performanceTitle": "Performance & Crescita",
+      "efficiencyTitle": "Efficienza & Strumenti",
+      "features": {
+        "leads": "Lead di qualità: richieste dirette da acquirenti seri pronti all'acquisto.",
+        "reach": "Portata massima: i suoi veicoli vengono presentati in modo prominente sul nostro portale ad alto traffico.",
+        "regional": "Targeting regionale: raggiunga in modo efficace gli acquirenti locali nella sua regione specifica.",
+        "brand": "Autorità del brand: le pagine dedicate ai concessionari aiutano a costruire fiducia con i potenziali clienti.",
+        "sync": "Sincronizzazione dello stock: importi automaticamente il suo stock dai comuni sistemi DMS.",
+        "smart": "Smart Listing: risparmi tempo grazie ai dati tecnici automatici e alle informazioni energetiche.",
+        "tracking": "Monitoraggio delle performance: controlli le statistiche delle sue inserzioni e ottimizzi la sua strategia.",
+        "leads2": "Gestione dei lead: gestisca tutte le richieste dei clienti in un unico dashboard centrale."
+      }
+    },
+    "services": {
+      "title": "Supportiamo la sua",
+      "titleHighlight": "attività quotidiana",
+      "sync": {
+        "title": "Sincronizzazione dello stock",
+        "description": "Integrazione fluida nel suo sistema di gestione concessionari esistente."
+      },
+      "autoFill": {
+        "title": "Compilazione automatica dei dati",
+        "description": "Il nostro sistema la supporta nell'inserimento dei dettagli tecnici e degli equipaggiamenti."
+      },
+      "compliance": {
+        "title": "Conformità",
+        "description": "Garantiamo che tutte le inserzioni soddisfino i requisiti legali relativi alle etichette energetiche e alle emissioni CO2."
+      },
+      "leads": {
+        "title": "Lead verificati",
+        "description": "Riceva lead di qualità direttamente da acquirenti svizzeri interessati."
+      }
+    },
+    "photos": {
+      "title": "Una presentazione professionale",
+      "titleHighlight": "aumenta",
+      "titleSuffix": "il suo successo",
+      "tip1Title": "Ambiente coerente",
+      "tip1Description": "Utilizzi il suo showroom o un luogo neutro per costruire un brand di concessionario professionale.",
+      "tip2Title": "Tour completo",
+      "tip2Description": "Mostri ogni angolazione, inclusi i dettagli degli interni e le caratteristiche del modello.",
+      "tip3Title": "Interni & extra",
+      "tip3Description": "Documenti con precisione gli equipaggiamenti di pregio e le condizioni dell'abitacolo.",
+      "expertTip": "Consiglio degli esperti: foto coerenti e di alta qualità costruiscono una fiducia duratura nel suo brand di concessionario."
+    },
+    "cta": {
+      "title": "Pronto ad aumentare il suo",
+      "titleHighlight": "volume di vendite",
+      "titleSuffix": "?",
+      "subtitle": "Elenchi il suo stock su Autovendo",
+      "subtitleBadge": "PROFESSIONALE • SCALABILE • EFFICACE",
+      "description": "Entri a far parte della rete professionale dei concessionari svizzeri. I nostri pacchetti sono progettati per aiutare le concessionarie di ogni dimensione ad avere successo nel mercato digitale.",
+      "ctaStart": "Inizia ora",
+      "ctaContact": "Contatta il team di vendita"
+    }
+  },
+  "FaqPage": {
+    "title": "Domande frequenti",
+    "subtitle": "Trova risposte rapide alle domande più importanti su Autovendo.ch.",
+    "noQuestion": "Non ha trovato la sua domanda?",
+    "supportText": "Il nostro team di assistenza è felice di aiutarla. Ci contatti in qualsiasi momento!",
+    "contactButton": "Contattaci",
+    "categories": [
+      {
+        "category": "Generale",
+        "items": [
+          {
+            "question": "Cos'è Autovendo.ch?",
+            "answer": "Autovendo.ch è una piattaforma di vendita online specializzata per tutti i rivenditori di auto in Svizzera. I rivenditori possono facilmente inserire i loro veicoli e raggiungere direttamente i potenziali acquirenti."
+          },
+          {
+            "question": "Chi può usare Autovendo.ch?",
+            "answer": "Autovendo.ch si rivolge esclusivamente ai rivenditori di auto commerciali e ai garage. I venditori privati non sono ammessi su questa piattaforma."
+          },
+          {
+            "question": "In quali regioni è disponibile Autovendo.ch?",
+            "answer": "Autovendo.ch si concentra sul mercato svizzero. I veicoli inseriti devono trovarsi in Svizzera o nel Principato del Liechtenstein."
+          },
+          {
+            "question": "Autovendo.ch è adatto anche ai piccoli rivenditori?",
+            "answer": "Sì. Autovendo.ch è deliberatamente progettato in modo che tutti i rivenditori – indipendentemente dalle dimensioni o dalla posizione – ricevano le stesse eque opportunità."
+          },
+          {
+            "question": "In cosa si differenzia Autovendo.ch dalle altre piattaforme?",
+            "answer": "Puntiamo su prezzi equi, processi semplici e supporto personale invece di pacchetti complicati, hotline anonime o impegni a lungo termine."
+          }
+        ]
+      },
+      {
+        "category": "Annunci & Veicoli",
+        "items": [
+          {
+            "question": "Quali veicoli possono essere inseriti?",
+            "answer": "Possono essere inseriti solo veicoli idonei alla circolazione, descritti correttamente e conformi alle normative legali vigenti."
+          },
+          {
+            "question": "Si possono inserire più veicoli contemporaneamente?",
+            "answer": "Sì. I rivenditori possono pubblicare più veicoli allo stesso tempo – a seconda del pacchetto scelto."
+          },
+          {
+            "question": "Quanto tempo rimane online un annuncio?",
+            "answer": "La durata dipende dal pacchetto prenotato. I dettagli si trovano nella descrizione del rispettivo pacchetto."
+          },
+          {
+            "question": "Posso modificare il mio annuncio in un secondo momento?",
+            "answer": "Sì. Gli annunci possono essere aggiornati, adattati o disattivati in qualsiasi momento."
+          },
+          {
+            "question": "Gli annunci vengono controllati?",
+            "answer": "Sì. Per la garanzia della qualità, ci riserviamo il diritto di controllare gli annunci a campione o di porre domande in caso di incertezze."
+          }
+        ]
+      },
+      {
+        "category": "Costi & Pacchetti",
+        "items": [
+          {
+            "question": "Quanto costa usare Autovendo.ch?",
+            "answer": "Autovendo.ch offre prezzi chiari, trasparenti e competitivi – senza costi nascosti."
+          },
+          {
+            "question": "Ci sono impegni contrattuali a lungo termine?",
+            "answer": "No. I nostri pacchetti sono flessibili e possono essere adattati o disdetti secondo le necessità."
+          },
+          {
+            "question": "Ci sono commissioni aggiuntive per ogni veicolo venduto?",
+            "answer": "No. Autovendo.ch non applica commissioni di vendita."
+          },
+          {
+            "question": "Sono possibili variazioni di prezzo?",
+            "answer": "Sì. I rivenditori possono cambiare il loro pacchetto in qualsiasi momento se le loro esigenze cambiano."
+          },
+          {
+            "question": "Riceverò una fattura?",
+            "answer": "Sì. Tutti i pagamenti sono correttamente documentati e fatturati in modo trasparente."
+          }
+        ]
+      },
+      {
+        "category": "Supporto & Sicurezza",
+        "items": [
+          {
+            "question": "Come posso raggiungere il supporto di Autovendo.ch?",
+            "answer": "Puoi raggiungerci direttamente e personalmente per telefono o e-mail – senza attese o sistemi di ticket anonimi."
+          },
+          {
+            "question": "In che modo Autovendo.ch protegge dalle frodi?",
+            "answer": "Puntiamo su misure di protezione tecnica, regole di inserimento chiare e informiamo attivamente sulle pratiche di acquisto e vendita sicure."
+          },
+          {
+            "question": "Cosa devo fare se scopro un annuncio sospetto?",
+            "answer": "Ti preghiamo di segnalarci immediatamente l'annuncio. Esamineremo il caso rapidamente e con cura."
+          },
+          {
+            "question": "I miei dati sono al sicuro?",
+            "answer": "Sì. La protezione dei tuoi dati è la nostra massima priorità. Tutti i dati vengono elaborati in conformità con le normative sulla protezione dei dati vigenti."
+          },
+          {
+            "question": "Esistono funzioni di sicurezza aggiuntive per i rivenditori?",
+            "answer": "Sì. Per i rivenditori raccomandiamo, tra l'altro, di fornire un numero di cellulare per una maggiore sicurezza dell'account."
+          }
+        ]
+      }
+    ]
+  },
+  "ContactPage": {
+    "title": "Contatto",
+    "subtitle": "Siamo a sua disposizione. Prenda contatto con noi – saremo lieti di ricevere il suo messaggio.",
+    "contactInfo": "Informazioni di contatto",
+    "emailLabel": "E-mail",
+    "phoneLabel": "Telefono",
+    "addressLabel": "Indirizzo",
+    "addressContent": "Bielstrasse 78,\n2555 Brügg / BE, Svizzera",
+    "phoneContent": "+41 (0)79 322 35 20",
+    "hoursLabel": "Orari di apertura",
+    "hours": {
+      "weekdays": "Lunedì – Venerdì: 09:00 – 19:00",
+      "saturday": "Sabato: 09:00 – 12:00",
+      "sunday": "Domenica: Chiuso"
+    },
+    "quickReplyTitle": "Risposta rapida",
+    "quickReplyText": "Di norma rispondiamo a tutte le richieste entro 24 ore. Per questioni urgenti, la preghiamo di chiamarci direttamente.",
+    "formTitle": "Inviateci un messaggio",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Il suo nome completo",
+    "emailFormLabel": "E-mail",
+    "emailPlaceholder": "sua.email@esempio.com",
+    "phoneFormLabel": "Telefono",
+    "subjectLabel": "Oggetto",
+    "subjectPlaceholder": "Di cosa si tratta?",
+    "messageLabel": "Messaggio",
+    "messagePlaceholder": "Ci scriva il suo messaggio...",
+    "submitting": "Invio in corso...",
+    "submit": "Invia messaggio",
+    "successDefault": "Messaggio inviato con successo.",
+    "errorDefault": "Si è verificato un errore. Riprovi."
+  },
+  "PricingPage": {
+    "title": "Più visibilità. Più servizio. Meno costi.",
+    "subtitle": "Perché pagare il 30–40% in più – quando con autovendo.ch ottiene un supporto più personale e la massima trasparenza?",
+    "noOverpriced": "Basta con le piattaforme troppo costose.",
+    "introText1": "autovendo.ch offre ai concessionari controllo, equità e un vero supporto personale – a condizioni nettamente migliori. Il commercio automobilistico è già abbastanza impegnativo. La sua piattaforma di inserzioni dovrebbe supportarla – non erodere il suo margine.",
+    "introText2": "autovendo.ch offre prezzi equi, interlocutori diretti e piena trasparenza. Nessun costo nascosto. Nessuna logica aziendale. Solo una vera partnership.",
+    "comparisonTitle": "Prezzi equi – Confronto diretto",
+    "tableHeaders": {
+      "package": "Pacchetto",
+      "vehicles": "Veicoli simultanei",
+      "price": "autovendo.ch",
+      "savings": "Risparmio vs. leader di mercato*",
+      "monthlySavings": "Risparmio mensile"
+    },
+    "tableRows": {
+      "ca": "ca.",
+      "bronzeVehicles": "Fino a 5 veicoli",
+      "silverVehicles": "Fino a 10 veicoli",
+      "goldVehicles": "Fino a 15 veicoli",
+      "diamondVehicles": "Fino a 25 veicoli",
+      "bronzeSavings": "ca. 30% in meno",
+      "silverSavings": "ca. 30% in meno",
+      "goldSavings": "ca. 35% in meno",
+      "diamondSavings": "ca. 40% in meno"
+    },
+    "largerDealers": {
+      "title": "Più di 25 veicoli",
+      "subtitle": "Per concessionari più grandi con 25+ veicoli",
+      "tagline": "Soluzioni individuali. Prezzi individuali.",
+      "description1": "Gestisce una concessionaria più grande con oltre 25 veicoli in stock? Creiamo per Lei un'offerta su misura – garantita più economica dei prezzi standard delle piattaforme.",
+      "description2": "Analizziamo il suo stock attuale e le sue esigenze e le presentiamo una soluzione trasparente ed equa con un reale potenziale di risparmio.",
+      "personalTitle": "Personale. Diretto. Sul posto.",
+      "personalDesc1": "Siamo lieti di venire da Lei di persona e portare un prospetto dettagliato dei prezzi. Le spieghiamo tutto nei dettagli – apertamente, onestamente e senza impegno.",
+      "personalDesc2": "Basta una telefonata.",
+      "personalDesc3": "O ci invii una e-mail e concordi un appuntamento. Siamo a portata di telefono.",
+      "callButton": "Fissare un appuntamento telefonico",
+      "emailButton": "Scrivere un'e-mail"
+    },
+    "whyPay": {
+      "title": "Perché pagare di più?",
+      "reach": "Stessa portata.",
+      "contact": "Interlocutore personale.",
+      "response": "Tempi di risposta più rapidi.",
+      "flexible": "Soluzioni flessibili per concessionari.",
+      "noCorp": "Nessuna struttura aziendale.",
+      "fair": "Prezzi equi."
+    },
+    "weAre": {
+      "title": "Siamo:",
+      "efficient": "Più efficienti",
+      "dealerOriented": "Orientati ai concessionari",
+      "personal": "Personali",
+      "transparent": "Trasparenti",
+      "swiss": "Direttamente svizzeri"
+    },
+    "partnershipText": "Con autovendo.ch non investe in pubblicità. Investe in una partnership.\nIl suo margine appartiene a Lei – non alla piattaforma.",
+    "choosePlan": "Scelga il suo pacchetto",
+    "popular": "Popolare",
+    "example": {
+      "label": "Esempio di calcolo:",
+      "text": "Un concessionario con 25 veicoli risparmia con autovendo.ch",
+      "highlight": "oltre CHF 3'000.– all'anno.",
+      "suffix": "È margine diretto. Senza rischi.",
+      "switchText": "Passi ora ad autovendo.ch e risparmi diverse migliaia di franchi all'anno – con servizio personale e condizioni eque.",
+      "contactButton": "Contattare senza impegno"
+    },
+    "tiers": [
+      {
+        "name": "Bronze",
+        "price": "180.–",
+        "period": "/ mese",
+        "description": "Ideale per inventari ridotti.",
+        "features": [
+          { "name": "Fino a 5 veicoli", "included": true },
+          { "name": "Piena visibilità", "included": true },
+          { "name": "Supporto personale", "included": true },
+          { "name": "Nessun costo nascosto", "included": true },
+          { "name": "Durata flessibile", "included": true }
+        ],
+        "buttonText": "Scegli pacchetto",
+        "popular": false
+      },
+      {
+        "name": "Silver",
+        "price": "280.–",
+        "period": "/ mese",
+        "description": "Perfetto per concessionari in crescita.",
+        "features": [
+          { "name": "Fino a 10 veicoli", "included": true },
+          { "name": "Piena visibilità", "included": true },
+          { "name": "Supporto personale", "included": true },
+          { "name": "Nessun costo nascosto", "included": true },
+          { "name": "Durata flessibile", "included": true }
+        ],
+        "buttonText": "Scegli pacchetto",
+        "popular": false
+      },
+      {
+        "name": "Gold",
+        "price": "325.–",
+        "period": "/ mese",
+        "description": "Per concessionari affermati.",
+        "features": [
+          { "name": "Fino a 15 veicoli", "included": true },
+          { "name": "Piena visibilità", "included": true },
+          { "name": "Supporto personale", "included": true },
+          { "name": "Nessun costo nascosto", "included": true },
+          { "name": "Durata flessibile", "included": true }
+        ],
+        "buttonText": "Scegli pacchetto",
+        "popular": true
+      },
+      {
+        "name": "Diamond",
+        "price": "408.–",
+        "period": "/ mese",
+        "description": "Per concessionari con volumi elevati.",
+        "features": [
+          { "name": "Fino a 25 veicoli", "included": true },
+          { "name": "Piena visibilità", "included": true },
+          { "name": "Supporto personale", "included": true },
+          { "name": "Nessun costo nascosto", "included": true },
+          { "name": "Durata flessibile", "included": true }
+        ],
+        "buttonText": "Scegli pacchetto",
+        "popular": false
+      }
+    ]
+  },
+  "SubscribeButton": {
+    "loginRequired": "Effettui il login per scegliere un pacchetto",
+    "errorDefault": "Qualcosa è andato storto",
+    "choosePlan": "Scegli pacchetto"
+  },
+  "ContactSchema": {
+    "nameMin": "Il nome deve contenere almeno 3 caratteri",
+    "nameMax": "Il nome non può superare i 50 caratteri",
+    "invalidEmail": "Indirizzo e-mail non valido",
+    "phoneRequired": "Il numero di telefono è obbligatorio",
+    "invalidPhone": "Numero di telefono svizzero non valido",
+    "subjectMax": "L'oggetto non può superare i 100 caratteri",
+    "messageMax": "Il messaggio non può superare i 500 caratteri"
+  },
+  "DealersPage": {
+    "title": "Scopra i nostri concessionari",
+    "subtitle": "Dalle sportive esclusive alle auto familiari affidabili – trova il veicolo giusto presso i nostri concessionari verificati."
+  },
+  "DealersList": {
+    "title": "I nostri concessionari",
+    "subtitle": "Trovi il concessionario giusto vicino a Lei.",
+    "searchPlaceholder": "Cerca concessionari...",
+    "notFoundTitle": "Nessun concessionario trovato",
+    "notFoundDescription": "Nessun concessionario corrisponde a \"{query}\".",
+    "resetSearch": "Azzera la ricerca",
+    "emptyTitle": "Nessun concessionario registrato",
+    "emptyDescription": "Desidera offrire i suoi veicoli come concessionario?",
+    "becomeDealer": "Diventa concessionario"
+  },
+  "DealerDetail": {
+    "phoneButton": "Telefono",
+    "emailButton": "E-mail",
+    "tabAbout": "Chi siamo",
+    "tabCars": "Veicoli",
+    "tabRatings": "Recensioni",
+    "aboutTitle": "Informazioni su {name}",
+    "noDescription": "Questo concessionario non ha ancora aggiunto una descrizione.",
+    "currentOffers": "Offerte attuali",
+    "ratingsTitle": "Recensioni",
+    "googleRatings": "Recensioni Google",
+    "reviewsCount": "{count} recensioni",
+    "openingHours": "Orari di apertura",
+    "noOpeningHours": "Nessun orario di apertura disponibile. Contatti il concessionario direttamente.",
+    "contactTitle": "Contatto",
+    "sendMessage": "Invia messaggio",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Mario Rossi",
+    "phoneLabel": "Telefono",
+    "emailLabel": "E-mail",
+    "messageLabel": "Messaggio",
+    "messagePlaceholder": "Sono interessato/a a...",
+    "submitting": "Invio in corso",
+    "vehiclesCount": "{count} veicoli",
+    "sortBy": "Ordina per:",
+    "sortNewest": "Più recenti",
+    "sortPriceAsc": "Prezzo: crescente",
+    "sortPriceDesc": "Prezzo: decrescente",
+    "sortMileage": "Chilometraggio",
+    "noVehicles": "Questo concessionario non ha ancora inserito veicoli.",
+    "ratingsOverview": "Panoramica recensioni",
+    "customerReviews": "Recensioni clienti",
+    "noReviews": "Nessuna recensione disponibile.",
+    "moreOnGoogle": "Altro su Google",
+    "noRatings": "Nessuna recensione disponibile",
+    "noRatingsDescription": "Questo concessionario non ha ancora collegato recensioni Google.",
+    "successToast": "Messaggio inviato! Il concessionario la ricontatterà.",
+    "errorToast": "Il messaggio non ha potuto essere inviato.",
+    "unexpectedError": "Si è verificato un errore imprevisto."
+  },
+  "DealerContactSchema": {
+    "nameMinLength": "Il nome è obbligatorio",
+    "nameMaxLength": "Il nome può contenere un massimo di 50 caratteri",
+    "phoneRequired": "Il numero di telefono è obbligatorio",
+    "invalidPhoneFormat": "Numero di telefono svizzero non valido",
+    "invalidEmail": "Indirizzo e-mail non valido",
+    "messageMaxLength": "Il messaggio può contenere un massimo di 1000 caratteri"
+  },
+  "GarageFilters": {
+    "reset": "Azzera",
+    "yearLabel": "Anno",
+    "mileageLabel": "Chilometraggio",
+    "priceLabel": "Prezzo",
+    "bodyTypeLabel": "Tipo di carrozzeria",
+    "fuelLabel": "Carburante",
+    "transmissionLabel": "Trasmissione",
+    "driveLabel": "Trazione",
+    "selectedCount": "{count} selezionati",
+    "makeModelLabel": "Marca & Modello",
+    "makeModelSelected": "{count} marche/modelli",
+    "resetAll": "Azzera filtri",
+    "moreFilters": "Altri filtri"
+  },
+  "AboutPage": {
+    "heroTitle": "Chi è Autovendo.ch",
+    "heroSubtitle": "Giusto. Trasparente. Semplice. Umano.",
+    "heroPlatform": "Autovendo.ch è la piattaforma di vendita per tutti i concessionari auto in Svizzera.",
+    "missionTitle": "La Nostra Missione",
+    "missionText1": "Abbiamo sviluppato Autovendo con un obiettivo chiaro: rendere la vendita di veicoli semplice, efficiente ed equa – senza inutili oneri amministrativi, costi nascosti o processi complicati.",
+    "missionText2": "Soprattutto oggi sappiamo:",
+    "missionText3": "Pubblicare annunci non deve essere costoso, ma deve essere efficace. Il tempo è limitato, i costi aumentano – tanto più importante è una piattaforma che anticipa, ascolta e supporta.",
+    "humanTitle": "Più della Tecnologia – Si Tratta di Persone",
+    "humanText1": "Su Autovendo.ch non si tratta solo di tecnologia, numeri o algoritmi.",
+    "humanText2": "Si tratta di voi, dei vostri veicoli e dei vostri clienti.",
+    "humanText3": "Ascoltiamo, comprendiamo le sfide della vita quotidiana del concessionario e siamo disponibili per voi personalmente in qualsiasi momento. Cordiali, rispettosi e orientati alle soluzioni.",
+    "reachableTitle": "Personalmente Raggiungibile – Senza Deviazioni",
+    "reachableText1": "Su Autovendo.ch parlate direttamente con noi.",
+    "reachableText2": "Nessun team di supporto anonimo. Nessun labirinto burocratico.",
+    "reachableText3": "Potete semplicemente prendere il telefono o scriverci – ascoltiamo, consigliamo onestamente e aiutiamo rapidamente. Proprio come ci si aspetta da un partner affidabile.",
+    "pricingTitle": "Giusto, Competitivo e Trasparente",
+    "pricingText1": "Siamo convinti: buona visibilità e inserzioni efficienti non devono essere costose.",
+    "pricingIntro": "I nostri prezzi sono:",
+    "pricingFeature1": "chiari e trasparenti",
+    "pricingFeature2": "competitivi",
+    "pricingFeature3": "facili da calcolare",
+    "pricingText2": "Senza costi nascosti, senza pacchetti forzati. Investite dove conta: nella vendita dei vostri veicoli.",
+    "whyTitle": "Perché Autovendo.ch?",
+    "whyText": "Perché capiamo di cosa hanno davvero bisogno i concessionari auto oggi.",
+    "whyConnect": "Autovendo.ch combina:",
+    "efficiencyTitle": "Efficienza & Struttura",
+    "efficiencyDesc": "gestione semplice, processi chiari, visibilità mirata",
+    "humanityTitle": "Umanità",
+    "humanityDesc": "contatto personale, interesse genuino, interazione rispettosa",
+    "reliabilityTitle": "Affidabilità",
+    "reliabilityDesc": "raggiungibile, semplice, orientato alle soluzioni",
+    "whyAllDealers": "Tutti i concessionari auto sono i benvenuti qui – indipendentemente da dimensioni, posizione o esperienza. Ognuno viene trattato equamente e ha la stessa possibilità di presentare i propri veicoli in modo ottimale.",
+    "closingTitle": "In Breve",
+    "closingText1": "Autovendo.ch rende la vendita semplice, equa e umana.",
+    "closingText2": "Ci adattiamo ai tempi, ascoltiamo e sviluppiamo la piattaforma insieme ai concessionari."
+  },
+  "DashboardPage": {
+    "welcomeTitle": "Bentornato, {name}!",
+    "welcomeSubtitle": "Gestite il vostro commercio di veicoli e il vostro abbonamento in un unico posto.",
+    "activePlan": "Piano Attivo",
+    "noSubscription": "Nessun Abbonamento",
+    "statusTrialing": "Prova",
+    "statusActive": "Attivo",
+    "vehiclesTitle": "Veicoli",
+    "usedSlots": "{current} di {max} annunci utilizzati",
+    "postedVehicles": "Veicoli Pubblicati",
+    "visitorsTitle": "Visitatori",
+    "visitorsSubtitle": "Visualizzazioni dei vostri annunci",
+    "recentActivity": "Attività Recente",
+    "noActivity": "Nessuna attività ancora.",
+    "quickAccess": "Accesso Rapido",
+    "frequentFeatures": "Funzioni frequentemente utilizzate"
+  },
+  "VehiclesPage": {
+    "expiredTitle": "Abbonamento scaduto",
+    "expiredDescription": "Il vostro abbonamento è scaduto. I vostri annunci saranno disattivati il {date}. Rinnovate il vostro abbonamento per rimanere attivi.",
+    "noSubTitle": "Nessun abbonamento attivo",
+    "noSubDescription": "Non avete un abbonamento attivo. Scegliete un piano per pubblicare veicoli.",
+    "expiredGraceDescription": "Il vostro abbonamento è scaduto e i vostri annunci sono stati disattivati. Rinnovate il vostro abbonamento.",
+    "quotaTitle": "Quota annunci esaurita",
+    "quotaDescription": "Avete raggiunto la quota massima del vostro piano ({plan}) ({current}/{max} annunci). Aggiornate il vostro abbonamento.",
+    "pageTitle": "Tutti i Veicoli",
+    "pageSubtitle": "Gestite i vostri veicoli pubblicati e il loro stato.",
+    "newListing": "Nuovo Annuncio"
+  },
+  "NewVehiclePage": {
+    "back": "Torna alla panoramica",
+    "title": "Pubblica Veicolo",
+    "subtitle": "Inserisci i dettagli del tuo veicolo per pubblicarlo sul mercato."
+  },
+  "EditVehiclePage": {
+    "back": "Torna alla panoramica",
+    "title": "Modifica Annuncio",
+    "subtitle": "Aggiorna i dettagli del tuo veicolo."
+  },
+  "ProfilePage": {
+    "title": "Impostazioni Profilo",
+    "subtitle": "Gestite i vostri dati personali e le informazioni del concessionario."
+  },
+  "ChangePasswordPage": {
+    "title": "Cambia Password",
+    "subtitle": "Aggiornate la vostra password per una migliore sicurezza dell'account."
+  },
+  "SubscriptionPage": {
+    "title": "Abbonamento",
+    "subtitle": "Gestite il vostro piano e i dettagli di fatturazione."
+  },
+  "DealerProfileForm": {
+    "personalTitle": "Informazioni Personali",
+    "personalDesc": "I vostri dati account di base.",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Mario Rossi",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "mario@esempio.ch",
+    "profileImageLabel": "Foto Profilo",
+    "profileImageAlt": "Anteprima foto profilo",
+    "companyTitle": "Informazioni sull'Azienda",
+    "companyDesc": "I vostri dettagli aziendali e di contatto.",
+    "companyNameLabel": "Nome Azienda",
+    "companyNamePlaceholder": "ACME Srl",
+    "uidLabel": "Numero UID",
+    "websiteLabel": "Sito Web",
+    "logoLabel": "Logo Aziendale",
+    "logoAlt": "Anteprima logo aziendale",
+    "coverLabel": "Immagine di Copertina",
+    "coverAlt": "Anteprima immagine di copertina",
+    "businessEmailLabel": "E-mail Aziendale",
+    "phoneLabel": "Numero di Telefono",
+    "contactPersonLabel": "Persona di Contatto",
+    "addressTitle": "Indirizzo",
+    "addressDesc": "Dove si trova la vostra azienda.",
+    "streetLabel": "Via e Numero Civico",
+    "streetPlaceholder": "Via Principale 123",
+    "zipLabel": "CAP",
+    "cityLabel": "Città",
+    "cityPlaceholder": "Seleziona città",
+    "descriptionTitle": "Descrizione",
+    "descriptionDesc": "Parlateci della vostra azienda.",
+    "descriptionLabel": "Descrizione",
+    "descriptionPlaceholder": "Parlateci della vostra azienda...",
+    "openingHoursTitle": "Orari di Apertura",
+    "openingHoursDesc": "Quando siete disponibili.",
+    "isOpen": "Aperto",
+    "isClosed": "Chiuso",
+    "noOpeningHours": "Nessun orario di apertura definito.",
+    "saving": "Salvataggio...",
+    "save": "Salva Profilo",
+    "days": {
+      "MONDAY": "Lunedì",
+      "TUESDAY": "Martedì",
+      "WEDNESDAY": "Mercoledì",
+      "THURSDAY": "Giovedì",
+      "FRIDAY": "Venerdì",
+      "SATURDAY": "Sabato",
+      "SUNDAY": "Domenica"
+    },
+    "uploadFailed": "Caricamento file fallito.",
+    "userUpdateError": "Impossibile aggiornare le informazioni utente.",
+    "emailChangeError": "Impossibile avviare la modifica dell'e-mail.",
+    "emailConfirmation": "Un'e-mail di conferma è stata inviata al vostro nuovo indirizzo e-mail.",
+    "missingUser": "Le informazioni utente mancano.",
+    "profileUpdateSuccess": "Profilo aggiornato con successo.",
+    "profileUpdateError": "Impossibile aggiornare il profilo aziendale.",
+    "unexpectedError": "Si è verificato un errore. Riprovate."
+  },
+  "UpdatePasswordForm": {
+    "cardTitle": "Cambia Password",
+    "cardDesc": "Aggiornate la vostra password per proteggere il vostro account.",
+    "currentPassword": "Password Attuale",
+    "newPassword": "Nuova Password",
+    "confirmPassword": "Conferma Password",
+    "saving": "Salvataggio...",
+    "save": "Salva Password",
+    "errorDefault": "Impossibile aggiornare la password.",
+    "successDefault": "Password aggiornata con successo."
+  },
+  "NavUser": {
+    "account": "Account",
+    "subscription": "Abbonamento",
+    "logout": "Disconnetti"
+  },
+  "NavMain": {
+    "platform": "Piattaforma"
+  },
+  "SubscriptionCard": {
+    "cardTitle": "Abbonamento",
+    "cardDesc": "Gestite il vostro abbonamento e i dettagli di fatturazione.",
+    "cancelAtPeriodEnd": "Annullamento a fine periodo",
+    "nextBilling": "Prossima fatturazione: {date}",
+    "activeSubscription": "Abbonamento Attivo",
+    "statusTrialing": "Prova",
+    "statusActive": "Attivo",
+    "noSubscription": "Nessun abbonamento attivo",
+    "viewPlans": "Visualizza Piani",
+    "quota": "Quota Annunci",
+    "quotaUsed": "{current} / {max} utilizzati",
+    "billingError": "Impossibile aprire il portale di fatturazione.",
+    "billingOpening": "Apertura...",
+    "manageBilling": "Gestisci Fatturazione"
+  },
+  "DashboardSidebar": {
+    "overview": "Panoramica",
+    "vehicles": "Veicoli",
+    "subscription": "Abbonamento",
+    "settings": "Impostazioni",
+    "profile": "Profilo",
+    "changePassword": "Cambia Password"
+  },
+  "Unauthorized": {
+    "title": "Accesso Negato",
+    "description": "Accedete al vostro account per accedere alla dashboard.",
+    "login": "Accedi",
+    "goHome": "Vai alla Home"
+  },
+  "SellerSection": {
+    "title": "Venditore",
+    "reviewCount": "({count} recensioni)",
+    "allVehicles": "Tutti i veicoli di questo concessionario",
+    "openingHours": "Orari di Apertura",
+    "noOpeningHours": "Nessun orario di apertura disponibile."
+  },
+  "ReviewSection": {
+    "title": "Recensioni",
+    "reviewCount": "({count} recensioni)",
+    "noReviews": "Ancora nessuna recensione.",
+    "showAll": "Mostra tutte le recensioni"
+  },
+  "SimilarListings": {
+    "title": "Potrebbe Interessarvi Anche",
+    "showAll": "Mostra tutto"
+  },
+  "StickyActionBar": {
+    "contact": "Contatta",
+    "phone": "Telefono"
+  },
+  "VehicleList": {
+    "graceWarning": "I vostri annunci saranno disattivati il {date} se non rinnovate il vostro abbonamento.",
+    "searchPlaceholder": "Cerca per marca, modello o versione...",
+    "colImage": "Immagine",
+    "colVehicle": "Veicolo",
+    "colPrice": "Prezzo",
+    "colKilometer": "Chilometraggio",
+    "colRegistration": "Immatricolazione",
+    "colBody": "Carrozzeria",
+    "colColor": "Colore",
+    "colCreated": "Creato il",
+    "colActions": "Azioni",
+    "emptyTitle": "Nessun veicolo trovato",
+    "emptyText": "Non avete ancora pubblicato alcun veicolo.",
+    "newListing": "Crea Nuovo Annuncio",
+    "inactive": "Inattivo",
+    "noImage": "Nessuna immagine",
+    "deleteTitle": "Eliminare l'annuncio?",
+    "deleteDesc": "Questa azione non può essere annullata. L'annuncio verrà eliminato definitivamente dal nostro database.",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "deleteSuccess": "Annuncio eliminato con successo!",
+    "deleteError": "Errore durante l'eliminazione dell'annuncio."
+  },
+  "VehicleDetail": {
+    "transmission": "Trasmissione",
+    "firstRegistration": "Prima immatricolazione",
+    "sellerType": "Venditore",
+    "dealer": "Concessionario",
+    "basicData": "Dati di base",
+    "vehicleHistory": "Storia del veicolo",
+    "inspectionWarranty": "Ispezione & Garanzia",
+    "technicalData": "Dati tecnici",
+    "energyConsumption": "Consumo di energia",
+    "energyEfficiency": "Classe di efficienza energetica",
+    "electricData": "Dati elettrici",
+    "colourUpholstery": "Colore e selleria",
+    "identifiers": "Numeri di identificazione",
+    "equipment": "Equipaggiamento",
+    "extras": "Extra",
+    "description": "Descrizione del veicolo",
+    "newPrice": "Prezzo nuovo:",
+    "verifiedDealer": "Concessionario verificato",
+    "reviewCount": "({count} recensioni)",
+    "phone": "Telefono",
+    "contact": "Contatto",
+    "allVehicles": "Tutti i veicoli di questo concessionario",
+    "yes": "Sì",
+    "no": "No",
+    "months": "Mesi",
+    "metallic": "Metallizzato",
+    "uni": "Uni",
+    "basicDataKeys": {
+      "bodyType": "Carrozzeria",
+      "version": "Versione",
+      "vehicleType": "Tipo di veicolo",
+      "condition": "Condizione",
+      "driveType": "Trazione",
+      "seats": "Posti",
+      "doors": "Porte",
+      "offerNumber": "Numero d'offerta"
+    },
+    "vehicleHistoryKeys": {
+      "kilometer": "Chilometraggio",
+      "firstRegistration": "Prima immatricolazione"
+    },
+    "inspectionWarrantyKeys": {
+      "lastInspection": "Ultima ispezione (MFK)",
+      "inspectionPassed": "Collaudato",
+      "warrantyType": "Tipo di garanzia",
+      "warrantyFrom": "Garanzia da",
+      "warrantyDuration": "Durata garanzia",
+      "warrantyMaxKm": "Km max garanzia"
+    },
+    "technicalDataKeys": {
+      "power": "Potenza",
+      "transmission": "Trasmissione",
+      "cubicCapacity": "Cilindrata",
+      "gears": "Marce",
+      "cylinders": "Cilindri",
+      "emptyWeight": "Peso a vuoto",
+      "loadCapacity": "Carico utile",
+      "wheelbase": "Passo",
+      "length": "Lunghezza",
+      "width": "Larghezza",
+      "height": "Altezza",
+      "towingCapacityBraked": "Capacità di traino (frenata)"
+    },
+    "energyConsumptionKeys": {
+      "emissionStandard": "Standard sulle emissioni",
+      "fuelType": "Tipo di carburante",
+      "co2Emission": "Emissioni di CO2",
+      "consumptionCity": "Consumo (urbano)",
+      "consumptionCountry": "Consumo (extra-urbano)",
+      "consumptionTotal": "Consumo (totale)"
+    },
+    "electricDataKeys": {
+      "range": "Autonomia elettrica",
+      "batteryCapacity": "Capacità della batteria",
+      "batteryRental": "Noleggio batteria",
+      "powerConsumption": "Consumo di energia",
+      "batteryOwnership": "Modello batteria",
+      "chargingStandard": "Standard di ricarica AC",
+      "chargingFast": "Standard di ricarica DC",
+      "chargingPower": "Potenza di ricarica",
+      "combustionEngine": "Potenza motore termico",
+      "electricMotor": "Potenza motore elettrico"
+    },
+    "colourUpholsteryKeys": {
+      "exteriorColor": "Colore esterno",
+      "interiorColor": "Colore interno",
+      "paint": "Vernice"
+    }
+  },
+  "VehicleForm": {
+    "step1": "Dati del veicolo",
+    "step2": "Foto",
+    "step3": "Dati di contatto",
+    "step4": "Anteprima",
+    "noSubscriptionTitle": "Nessun abbonamento attivo",
+    "noSubscriptionDesc": "Non avete un abbonamento attivo. Scegliete un piano per pubblicare veicoli.",
+    "quotaExhaustedTitle": "Quota annunci esaurita",
+    "quotaExhaustedDesc": "Avete raggiunto la quota massima del vostro piano ({plan}) ({current}/{max} annunci). Aggiornate il vostro abbonamento.",
+    "expiredWarningTitle": "Abbonamento scaduto",
+    "expiredWarningDesc": "Il vostro abbonamento è scaduto. Gli annunci saranno disattivati il {date}. Rinnovate il vostro abbonamento.",
+    "expiredGraceTitle": "Abbonamento scaduto",
+    "expiredGraceDesc": "Il vostro abbonamento è scaduto e i vostri annunci sono stati disattivati. Rinnovate il vostro abbonamento per essere nuovamente attivi.",
+    "successUpdate": "Annuncio aggiornato con successo!",
+    "successPublish": "Annuncio pubblicato con successo!",
+    "back": "Indietro",
+    "next": "Avanti",
+    "save": "Salva",
+    "publish": "Pubblica annuncio",
+    "preview": "Anteprima",
+    "contactLabel": "Contatto",
+    "privatePerson": "Privato",
+    "summaryTitle": "Riepilogo",
+    "edit": "Modifica",
+    "makeModelLabel": "Marca & Modello",
+    "versionLabel": "Versione",
+    "priceLabel": "Prezzo",
+    "kilometerLabel": "Chilometraggio",
+    "firstRegistrationLabel": "Prima immatricolazione",
+    "bodyTypeLabel": "Carrozzeria",
+    "photosTitle": "Foto",
+    "noPhotosUploaded": "Nessuna foto caricata",
+    "companyDataTitle": "Dati aziendali",
+    "companyAddressLabel": "Azienda & Indirizzo",
+    "processingText": "Elaborazione in corso...",
+    "uploadStatusPreparing": "Preparazione dell'annuncio...",
+    "uploadStatusGettingUrls": "Ottenimento delle autorizzazioni di caricamento...",
+    "uploadStatusUploading": "Caricamento delle immagini...",
+    "uploadStatusSaving": "Salvataggio dei dati...",
+    "uploadDoNotClose": "Si prega di non chiudere questa finestra fino al completamento del processo.",
+    "errorUploadPrep": "Errore nella preparazione del caricamento",
+    "errorUploadFailed": "Caricamento non riuscito per {filename}",
+    "errorLimitReached": "Limite raggiunto: il tuo abbonamento attuale non consente l'inserimento di altri veicoli.",
+    "errorGeneric": "Qualcosa è andato storto. Controlla la tua connessione Internet e riprova."
+  },
+  "VehicleFormSections": {
+    "vehicleFeatures": "Caratteristiche del veicolo",
+    "vehicleType": "Tipo di veicolo",
+    "vehicleTypePlaceholder": "Seleziona tipo",
+    "make": "Marca",
+    "makePlaceholder": "Seleziona marca",
+    "model": "Modello",
+    "modelPlaceholder": "Seleziona modello",
+    "transmission": "Cambio",
+    "transmissionPlaceholder": "Seleziona cambio",
+    "transmissionType": "Tipo di cambio",
+    "transmissionTypePlaceholder": "Seleziona tipo",
+    "version": "Versione",
+    "versionPlaceholder": "Versione (es. GT Sky)",
+    "driveType": "Trazione",
+    "driveTypePlaceholder": "Seleziona trazione",
+    "bodyType": "Tipo di carrozzeria",
+    "bodyTypePlaceholder": "Seleziona carrozzeria",
+    "fuelType": "Tipo di carburante",
+    "fuelTypePlaceholder": "Seleziona carburante",
+    "color": "Colore",
+    "colorPlaceholder": "Seleziona colore",
+    "interiorColor": "Colore interni",
+    "interiorColorPlaceholder": "Seleziona colore interni",
+    "metallic": "Metallizzato",
+    "condition": "Stato & Prezzo",
+    "vehicleCondition": "Stato del veicolo",
+    "vehicleConditionPlaceholder": "Seleziona stato",
+    "registrationMonth": "Mese",
+    "registrationMonthPlaceholder": "Mese",
+    "registrationYear": "Prima immatricolazione (anno)",
+    "registrationYearPlaceholder": "Seleziona anno",
+    "kilometer": "Chilometraggio",
+    "kilometerPlaceholder": "es. 12500",
+    "price": "Prezzo (CHF)",
+    "pricePlaceholder": "es. 25000",
+    "newPrice": "Prezzo nuovo (CHF)",
+    "newPricePlaceholder": "es. 45000",
+    "warrantyTitle": "Garanzia & Revisione",
+    "warranty": "Garanzia",
+    "warrantyPlaceholder": "Seleziona garanzia",
+    "warrantyDuration": "Durata garanzia (mesi)",
+    "warrantyStartDate": "Data inizio garanzia",
+    "datePlaceholder": "Seleziona data",
+    "warrantyStartDateLabel": "Data di inizio",
+    "warrantyDurationLabel": "Durata",
+    "warrantyDurationMonths": "Mesi",
+    "maxKm": "Max km",
+    "priceSection": "Prezzo",
+    "salePrice": "Prezzo di vendita",
+    "months": {
+      "1": "Gennaio",
+      "2": "Febbraio",
+      "3": "Marzo",
+      "4": "Aprile",
+      "5": "Maggio",
+      "6": "Giugno",
+      "7": "Luglio",
+      "8": "Agosto",
+      "9": "Settembre",
+      "10": "Ottobre",
+      "11": "Novembre",
+      "12": "Dicembre"
+    },
+    "technicalData": "Dati tecnici",
+    "power": "Potenza (CV)",
+    "powerPlaceholder": "es. 150",
+    "displacement": "Cilindrata (cc)",
+    "displacementPlaceholder": "es. 1600",
+    "cylinders": "Cilindri",
+    "cylindersPlaceholder": "es. 4",
+    "doors": "Porte",
+    "seats": "Posti",
+    "euroNorm": "Norma Euro",
+    "co2": "Emissioni CO₂ (g/km)",
+    "co2Placeholder": "es. 120",
+    "consumption": "Consumo (l/100km)",
+    "consumptionPlaceholder": "es. 6.5",
+    "energyEfficiency": "Efficienza energetica",
+    "typeApproval": "Omologazione",
+    "emptyWeight": "Peso a vuoto (kg)",
+    "payload": "Carico utile (kg)",
+    "towingCapacity": "Capacità di traino (kg)",
+    "wheelbase": "Passo (mm)",
+    "range": "Autonomia (km)",
+    "batteryCapacity": "Capacità batteria (kWh)",
+    "batteryOwnership": "Noleggio batteria",
+    "batteryOwnershipPlaceholder": "Seleziona",
+    "chargingStandard": "Standard di ricarica",
+    "chargingStandardPlaceholder": "Seleziona",
+    "chargingPower": "Potenza di ricarica (kW)",
+    "fastChargingStandard": "Standard di ricarica rapida",
+    "fastChargingStandardPlaceholder": "Seleziona",
+    "description": "Descrizione",
+    "descriptionPlaceholder": "Descrivi il veicolo...",
+    "contactInfo": "Informazioni di contatto",
+    "contactInfoDesc": "I vostri dati aziendali memorizzati per questo annuncio",
+    "editProfile": "Modifica profilo",
+    "company": "Azienda",
+    "companyPlaceholder": "Nome azienda dal profilo",
+    "businessEmail": "E-mail aziendale",
+    "businessEmailPlaceholder": "email@esempio.ch",
+    "businessPhone": "Telefono aziendale",
+    "street": "Via",
+    "streetPlaceholder": "Via",
+    "zip": "CAP",
+    "city": "Città",
+    "contactNote": "Nota: Queste informazioni verranno visualizzate nel vostro annuncio. Se desiderate modificare i dati, aggiornate le impostazioni del vostro profilo.",
+    "mediaTitle": "Foto del veicolo",
+    "mediaDesc": "Caricate le foto del vostro veicolo",
+    "equipmentTitle": "Equipaggiamento & Extra",
+    "consumptionCity": "Città",
+    "consumptionCountry": "Extraurbano",
+    "consumptionTotal": "Misto",
+    "ps": "CV",
+    "vin": "Nr. telaio (VIN)",
+    "vinPlaceholder": "Inserire VIN",
+    "batteryRental": "Noleggio batteria (CHF/mese)",
+    "chargingStandardAC": "Tipo spina AC",
+    "chargingStandardDC": "Tipo spina DC",
+    "selectTypePlaceholder": "Seleziona tipo",
+    "combustionEnginePower": "Potenza motore termico (CV)",
+    "electricMotorPower": "Potenza motore elettrico (CV)",
+    "furtherInfo": "Ulteriori informazioni",
+    "typeApprovalPlaceholder": "es. 1MA123",
+    "mediaLimitError": "È consentito un massimo di 10 immagini",
+    "mediaMinNeeded": "Mancano ancora {count} immagini (minimo 5)",
+    "mediaClickUpload": "Clicca qui per caricare le foto",
+    "mediaPreview": "Anteprima",
+    "additionalExtras": "Extra aggiuntivi",
+    "units": {
+      "km": "km",
+      "ps": "CV",
+      "kw": "kW",
+      "ccm": "cm³",
+      "gkm": "g/km",
+      "kg": "kg",
+      "mm": "mm",
+      "kwh": "kWh",
+      "chf": "CHF",
+      "chf_month": "CHF/mese"
+    }
+  },
+  "ListingListCard": {
+    "contact": "Contatta",
+    "allVehicles": "Tutti i veicoli di questo concessionario",
+    "wellMaintained": "Ottime condizioni"
+  },
+  "HowItWorksPage": {
+    "title": "Come funziona",
+    "subtitle": "Il tuo percorso verso una vendita di auto di successo su Autovendo.",
+    "steps": {
+      "step1": {
+        "title": "Scarica e Firma il Contratto",
+        "description": "Scarica il contratto ufficiale per concessionari Autovendo, firmalo e rispediscilo a noi."
+      },
+      "step2": {
+        "title": "Creazione dell'Account",
+        "description": "Verificheremo i tuoi dati e creeremo per te il tuo account professionale da concessionario."
+      },
+      "step3": {
+        "title": "Configurazione del Profilo",
+        "description": "Accedi e completa il tuo profilo da concessionario con il tuo logo, l'immagine di copertina e la descrizione."
+      },
+      "step4": {
+        "title": "Scegli il Pacchetto",
+        "description": "Seleziona il pacchetto di prezzi che meglio si adatta alle dimensioni del tuo inventario."
+      },
+      "step5": {
+        "title": "Inizia a vendere",
+        "description": "Inizia a pubblicare i tuoi veicoli e raggiungi migliaia di potenziali acquirenti in Svizzera."
+      }
+    },
+    "cta": {
+      "download": "Scarica il contratto",
+      "contact": "Contatta il supporto",
+      "readyTitle": "Pronto a far crescere la tua concessionaria?",
+      "readySubtitle": "Unisciti alla piattaforma svizzera progettata specificamente per i professionisti del settore auto."
+    }
+  },
+  "NotFound": {
+    "title": "404 - Pagina non trovata",
+    "description": "La pagina che stai cercando è stata spostata, eliminata o non è mai esistita.",
+    "button": "Torna alla Home",
+    "metaTitle": "404 - Pagina non trovata | AutoVendo",
+    "metaDescription": "Spiacenti, la pagina richiesta non è stata trovata su AutoVendo."
+  }
+}

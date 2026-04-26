@@ -25,6 +25,7 @@ model User {
 
   stripeCustomerId String?
   dealer           Dealer?
+  seller           Seller?
 
   @@unique([email])
   @@map("user")
@@ -125,6 +126,28 @@ model Dealer {
 
   @@index([companyName])
   @@map("dealer")
+}
+
+model Seller {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName     String
+  lastName      String
+  phoneNumber   String
+  email         String
+  image         String?
+  streetAddress String
+  zipCode       String
+  city          String
+  country       String   @default("Switzerland")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  vehicles Vehicle[]
+
+  @@index([lastName])
+  @@map("seller")
 }
 
 enum VehicleType {
@@ -254,8 +277,10 @@ enum EmissionStandard {
 
 model Vehicle {
   id          String      @id @default(cuid())
-  dealerId    String
-  dealer      Dealer      @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  dealerId    String?
+  dealer      Dealer?     @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  sellerId    String?
+  seller      Seller?     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   vehicleType VehicleType
 
   // Basic Data
@@ -338,6 +363,7 @@ model Vehicle {
   updatedAt DateTime @updatedAt
 
   @@index([dealerId, createdAt])
+  @@index([sellerId, createdAt])
   @@index([vehicleType])
   @@index([fuelType])
   @@index([vehicleCondition])

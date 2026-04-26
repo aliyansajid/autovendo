@@ -17,7 +17,6 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
-    disableSignUp: true,
     sendResetPassword: async ({ user, url }) => {
       const { sendEmail } = await import("@repo/transactional");
       const { ResetPasswordEmail } =

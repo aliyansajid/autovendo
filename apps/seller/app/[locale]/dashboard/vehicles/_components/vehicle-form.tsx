@@ -1,0 +1,972 @@
+"use client";
+
+import { z } from "zod";
+import { useForm, useWatch, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { cn } from "@repo/ui/lib/utils";
+import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
+import { DealerProfile } from "@/types/dealer";
+import { Button } from "@repo/ui/components/button";
+import { Separator } from "@repo/ui/components/separator";
+import {
+  carMakes,
+  carModels,
+  carBodyTypeEnum,
+  carFuelTypeEnum,
+} from "@/constants/cars";
+import {
+  utilityMakes,
+  utilityModels,
+  utilityBodyTypeEnum,
+  utilityFuelTypeEnum,
+} from "@/constants/commercial-vehicles";
+import {
+  truckMakes,
+  truckModels,
+  truckBodyTypeEnum,
+  truckFuelTypeEnum,
+} from "@/constants/truck";
+import {
+  camperMakes,
+  camperBodyTypeEnum,
+  camperFuelTypeEnum,
+} from "@/constants/camper";
+import { BasicDataSection } from "./form-sections/basic-data-section";
+import { TechnicalDataSection } from "./form-sections/technical-data-section";
+import { MediaSection } from "./form-sections/media-section";
+import { ContactSection } from "./form-sections/contact-section";
+import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
+import {
+  formatPrice,
+  formatNumber,
+  formatDateTime,
+} from "@/lib/helpers/format";
+import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/components/card";
+import { EquipmentSection } from "./form-sections/equipment-section";
+import {
+  prepareVehicleListing,
+  getPresignedUrls,
+  createVehicle,
+  updateVehicle,
+  type SubscriptionStatus,
+} from "@/app/actions/vehicles.actions";
+import { toast } from "sonner";
+import { useRouter } from "@/i18n/routing";
+import { AlertCircle, AlertTriangle } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { Spinner } from "@repo/ui/components/spinner";
+import { getImageUrl } from "@/lib/helpers/image";
+import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/alert";
+
+const VEHICLE_DATA_MAP: Record<string, any> = {
+  car: {
+    makes: carMakes,
+    models: carModels,
+    bodyTypes: carBodyTypeEnum,
+    fuelTypes: carFuelTypeEnum,
+  },
+  utility: {
+    makes: utilityMakes,
+    models: utilityModels,
+    bodyTypes: utilityBodyTypeEnum,
+    fuelTypes: utilityFuelTypeEnum,
+  },
+  truck: {
+    makes: truckMakes,
+    models: truckModels,
+    bodyTypes: truckBodyTypeEnum,
+    fuelTypes: truckFuelTypeEnum,
+  },
+  camper: {
+    makes: camperMakes,
+    models: {},
+    bodyTypes: camperBodyTypeEnum,
+    fuelTypes: camperFuelTypeEnum,
+  },
+};
+
+const STEP_FIELDS: Record<number, any[]> = {
+  1: [
+    "vehicleType",
+    "make",
+    "model",
+    "version",
+    "price",
+    "kilometer",
+    "registrationMonth",
+    "registrationYear",
+    "bodyType",
+    "fuelType",
+    "color",
+    "vehicleCondition",
+  ],
+  2: ["images"],
+  3: ["equipment", "extras"],
+  4: [],
+};
+
+export function VehicleForm({
+  dealerProfile,
+  initialData,
+  vehicleId,
+  subscriptionStatus,
+}: {
+  dealerProfile: DealerProfile | null;
+  initialData?: z.infer<ReturnType<typeof createVehicleFormSchema>>;
+  vehicleId?: string;
+  subscriptionStatus?: SubscriptionStatus;
+}) {
+  const t = useTranslations("VehicleForm");
+  const params = useParams();
+  const locale = (params.locale as string) || "de";
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [currentStep, setCurrentStep] = useState(1);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
+  const [previewImages, setPreviewImages] = useState<string[]>(
+    (initialData?.images as string[]) || [],
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const totalSteps = 4;
+
+  const tSchema = useTranslations("VehicleSchema");
+  const schema = createVehicleFormSchema(tSchema);
+
+  const form = useForm<z.infer<ReturnType<typeof createVehicleFormSchema>>>({
+    resolver: zodResolver(schema) as any,
+    defaultValues: {
+      vehicleType: "car",
+      model: undefined,
+      version: "",
+      kilometer: "" as any,
+      price: "" as any,
+      newPrice: "" as any,
+      registrationMonth: "" as any,
+      registrationYear: "" as any,
+      bodyType: "" as any,
+      fuelType: "" as any,
+      color: "" as any,
+      interiorColor: "" as any,
+      metallic: false,
+      gearTransmission: "",
+      transmissionType: "",
+      driveType: "",
+      vehicleCondition: "",
+      lastInspectionDate: undefined,
+      inspectionPassed: false,
+      warranty: undefined,
+      duration: "" as any,
+      maxKm: "" as any,
+      warrantyStartDate: undefined,
+      doors: "" as any,
+      seats: "" as any,
+      hp: "" as any,
+      kw: "" as any,
+      energyLabel: undefined,
+      typeApproval: "",
+      wheelbase: "" as any,
+      vehicleIdentificationNumber: "",
+      emptyWeight: "" as any,
+      loadCapacity: "" as any,
+      serialNumber: "",
+      height: "" as any,
+      width: "" as any,
+      length: "" as any,
+      towingCapacityBraked: "" as any,
+      cubicCapacity: "" as any,
+      co2Emission: "" as any,
+      cylinders: "" as any,
+      numberOfGears: "" as any,
+      range: "" as any,
+      batteryCapacity: "" as any,
+      batteryRentalMonth: "" as any,
+      powerConsumption: "" as any,
+      batteryOwnership: undefined,
+      chargingPlugTypeStandard: undefined,
+      chargingPlugTypeFast: undefined,
+      chargingPower: "" as any,
+      combustionEnginePowerHp: "" as any,
+      electricMotorPowerHp: "" as any,
+      emissionStandard: undefined,
+      vehicleDescription: "",
+      equipment: {},
+      extras: {},
+      ...(initialData || {}),
+      // Ensure dealer info is always populated if not already present in initialData
+      companyName: initialData?.companyName || dealerProfile?.companyName || "",
+      businessEmail:
+        initialData?.businessEmail || dealerProfile?.businessEmail || "",
+      phoneNumber: initialData?.phoneNumber || dealerProfile?.phoneNumber || "",
+      address: initialData?.address || dealerProfile?.streetAddress || "",
+      zipCode: initialData?.zipCode || dealerProfile?.zipCode || "",
+      city: initialData?.city || dealerProfile?.city || "",
+    },
+  });
+
+  const {
+    control,
+    handleSubmit,
+    trigger,
+    formState: { isDirty },
+  } = form;
+
+  const watchMake = useWatch({ control, name: "make" });
+
+  // Reset model when make changes in Edit Mode to ensure consistent state and force isDirty
+  useEffect(() => {
+    if (
+      vehicleId &&
+      watchMake &&
+      initialData?.make &&
+      watchMake !== initialData.make
+    ) {
+      form.setValue("model", "" as any, { shouldDirty: true });
+    }
+  }, [watchMake, vehicleId, initialData?.make, form]);
+
+  const fuelType = useWatch({ control, name: "fuelType" });
+  const prevFuelTypeRef = useRef<string | undefined>(initialData?.fuelType);
+
+  // Clear irrelevant technical fields when fuel type changes
+  useEffect(() => {
+    if (
+      fuelType &&
+      prevFuelTypeRef.current &&
+      fuelType !== prevFuelTypeRef.current
+    ) {
+      const showElectric = fuelType === "electric";
+      const showHydrogen = fuelType === "hydrogen";
+      const showCombustionOrMild = [
+        "petrol",
+        "diesel",
+        "mhev-petrol",
+        "mhev-diesel",
+      ].includes(fuelType);
+      const showFullHybrid = ["hev-petrol", "hev-diesel", "hybrid"].includes(
+        fuelType,
+      );
+      const showPluginHybrid = ["phev-petrol", "phev-diesel"].includes(
+        fuelType,
+      );
+
+      // Reset combustion/hydrogen specific fields
+      if (
+        !(
+          showCombustionOrMild ||
+          showHydrogen ||
+          showFullHybrid ||
+          showPluginHybrid
+        )
+      ) {
+        form.setValue("cubicCapacity", "" as any);
+        form.setValue("cylinders", "" as any);
+      }
+
+      // Reset consumption fields
+      if (!(showCombustionOrMild || showFullHybrid || showPluginHybrid)) {
+        form.setValue("consumptionCity", "" as any);
+        form.setValue("consumptionCountry", "" as any);
+        form.setValue("consumptionTotal", "" as any);
+      }
+
+      // Reset CO2 emission
+      if (
+        !(
+          showCombustionOrMild ||
+          showFullHybrid ||
+          showHydrogen ||
+          showPluginHybrid
+        )
+      ) {
+        form.setValue("co2Emission", "" as any);
+      }
+
+      // Reset EV specific fields
+      if (!(showElectric || showFullHybrid || showPluginHybrid)) {
+        form.setValue("range", "" as any);
+        form.setValue("batteryCapacity", "" as any);
+        form.setValue("batteryRentalMonth", "" as any);
+        form.setValue("powerConsumption", "" as any);
+        form.setValue("batteryOwnership", undefined);
+        form.setValue("chargingPlugTypeStandard", undefined);
+        form.setValue("chargingPlugTypeFast", undefined);
+        form.setValue("chargingPower", "" as any);
+      }
+
+      // Reset hybrid specific fields
+      if (!(showFullHybrid || showPluginHybrid)) {
+        form.setValue("combustionEnginePowerHp", "" as any);
+        form.setValue("electricMotorPowerHp", "" as any);
+      }
+    }
+    prevFuelTypeRef.current = fuelType;
+  }, [fuelType, form]);
+
+  // Determine whether submission should be blocked based on subscription state.
+  // For new listings: block unless subscription is active.
+  // For edits: only block when the grace period after expiry has already passed.
+  const isSubmitBlocked = subscriptionStatus
+    ? vehicleId
+      ? subscriptionStatus.type === "expired" &&
+        subscriptionStatus.isGraceExpired
+      : subscriptionStatus.type !== "active"
+    : false;
+
+  const handleNext = async () => {
+    const fields = STEP_FIELDS[currentStep] || [];
+
+    // Validate all fields defined for the current step
+    const isStepValid = await trigger(fields as any[]);
+
+    if (isStepValid) {
+      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const watchPrice = useWatch({ control, name: "price" });
+  const watchKilometer = useWatch({ control, name: "kilometer" });
+  const watchMonth = useWatch({ control, name: "registrationMonth" });
+  const watchYear = useWatch({ control, name: "registrationYear" });
+  const watchBodyType = useWatch({ control, name: "bodyType" });
+  const watchColor = useWatch({ control, name: "color" });
+  const watchImages = useWatch({ control, name: "images" });
+
+  const isStep1Complete =
+    !!watchMake &&
+    watchPrice !== undefined &&
+    watchPrice !== null &&
+    String(watchPrice) !== "" &&
+    watchKilometer !== undefined &&
+    watchKilometer !== null &&
+    String(watchKilometer) !== "" &&
+    !!watchMonth &&
+    !!watchYear &&
+    !!watchBodyType &&
+    !!watchColor;
+
+  const isStep2Complete =
+    watchImages && watchImages.length >= 5 && watchImages.length <= 10;
+
+  const isNextDisabled =
+    currentStep === 1
+      ? !isStep1Complete
+      : currentStep === 2
+        ? !isStep2Complete
+        : false;
+
+  const handleBack = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+    window.scrollTo(0, 0);
+  };
+
+  const vehicleType = useWatch({ control, name: "vehicleType" });
+
+  const vehicleData = VEHICLE_DATA_MAP[vehicleType] || VEHICLE_DATA_MAP.car;
+
+  const activeMakes = vehicleData.makes as ReadonlyArray<{
+    label: string;
+    items: ReadonlyArray<{ value: string; label: string }>;
+  }>;
+  const activeModels: Record<string, { value: string; label: string }[]> =
+    vehicleData.models as any;
+  const activeBodyTypeEnum = vehicleData.bodyTypes;
+
+  const uploadWithRetry = async (
+    url: string,
+    file: File,
+    onProgress?: (progress: number) => void,
+    signal?: AbortSignal,
+    retries = 3,
+  ): Promise<boolean> => {
+    for (let i = 0; i < retries; i++) {
+      if (signal?.aborted) throw new Error("Upload aborted");
+
+      try {
+        return await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", url);
+          xhr.setRequestHeader("Content-Type", file.type);
+
+          if (signal) {
+            signal.addEventListener("abort", () => {
+              xhr.abort();
+              reject(new Error("Upload aborted"));
+            });
+          }
+
+          if (xhr.upload && onProgress) {
+            xhr.upload.onprogress = (event) => {
+              if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                onProgress(percentComplete);
+              }
+            };
+          }
+
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve(true);
+            } else {
+              reject(new Error(`Upload failed with status ${xhr.status}`));
+            }
+          };
+
+          xhr.onerror = () => reject(new Error("XHR request failed"));
+          xhr.send(file);
+        });
+      } catch (error) {
+        if (error instanceof Error && error.message === "Upload aborted") {
+          throw error;
+        }
+
+        const delay = Math.min(1000 * 2 ** i + Math.random() * 500, 8000); // Exponential backoff with jitter
+
+        if (process.env.NODE_ENV !== "production") {
+          console.error(
+            `[Upload] Attempt ${i + 1} failed for ${file.name} (Retrying in ${delay}ms):`,
+            error,
+          );
+        }
+
+        if (i === retries - 1) throw error;
+        // Wait before retry
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+
+    return false;
+  };
+
+  function onSubmit(data: z.infer<ReturnType<typeof createVehicleFormSchema>>) {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    startTransition(async () => {
+      // Create a fresh abort controller for this submission
+      abortControllerRef.current = new AbortController();
+      const signal = abortControllerRef.current.signal;
+
+      try {
+        setUploadStatus(t("uploadStatusPreparing"));
+        setUploadProgress(10);
+
+        // Phase 1: Prepare
+        const { listingId } = await prepareVehicleListing(vehicleId);
+
+        // Phase 2: Separate new files and existing keys
+        const images = data.images || [];
+        const newFiles = images.filter((img) => img instanceof File) as File[];
+        const existingKeys = images.filter(
+          (img) => typeof img === "string",
+        ) as string[];
+
+        let finalImageKeys = [...existingKeys];
+
+        if (newFiles.length > 0) {
+          setUploadStatus(t("uploadStatusGettingUrls"));
+          const presignedData = await getPresignedUrls(
+            listingId,
+            newFiles.map((f) => ({ name: f.name, type: f.type })),
+          );
+
+          if (presignedData.length !== newFiles.length) {
+            throw new Error(t("errorUploadPrep"));
+          }
+
+          // Phase 2: Upload Files in parallel (concurrency limit 3)
+          setUploadStatus(t("uploadStatusUploading"));
+          const newlyUploadedKeys: string[] = [];
+          const progresses = new Array(newFiles.length).fill(0);
+          const CONCURRENCY_LIMIT = 3;
+
+          // Helper for limited parallel processing
+          const uploadInChunks = async () => {
+            const results: string[] = [];
+            for (let i = 0; i < newFiles.length; i += CONCURRENCY_LIMIT) {
+              const chunk = newFiles.slice(i, i + CONCURRENCY_LIMIT);
+              const chunkPromises = chunk.map(async (file, chunkIndex) => {
+                const globalIndex = i + chunkIndex;
+                const { url, key } = presignedData[globalIndex]!;
+
+                const success = await uploadWithRetry(
+                  url,
+                  file,
+                  (filePercent) => {
+                    progresses[globalIndex] = filePercent;
+                    const totalUploadProgress =
+                      progresses.reduce((a, b) => a + b, 0) / newFiles.length;
+                    setUploadProgress(10 + totalUploadProgress * 0.8);
+                  },
+                  signal,
+                );
+
+                if (!success) {
+                  throw new Error(
+                    t("errorUploadFailed", { filename: file.name }),
+                  );
+                }
+                return key;
+              });
+
+              const chunkResults = await Promise.all(chunkPromises);
+              results.push(...chunkResults);
+            }
+            return results;
+          };
+
+          const uploadedKeys = await uploadInChunks();
+          newlyUploadedKeys.push(...uploadedKeys);
+          finalImageKeys = [...existingKeys, ...newlyUploadedKeys];
+        } else {
+          // No new files, skip to 90%
+          setUploadProgress(90);
+        }
+
+        // Phase 3: Create or Update Vehicle in DB
+        setUploadStatus(t("uploadStatusSaving"));
+        setUploadProgress(95);
+
+        // Remove images from data to avoid exceeding 1MB Server Action limit
+        const { images: _, ...submitData } = data;
+        if (vehicleId) {
+          await updateVehicle(vehicleId, submitData, finalImageKeys);
+          toast.success(t("successUpdate"));
+        } else {
+          const result = await createVehicle(
+            listingId,
+            submitData,
+            finalImageKeys,
+          );
+          if (typeof result === "object" && result && "error" in result) {
+            throw new Error(result.error as string);
+          }
+          toast.success(t("successPublish"));
+        }
+
+        setUploadProgress(100);
+        router.push("/dashboard/vehicles");
+      } catch (error) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error("Submission failed:", error);
+        }
+
+        // Show specific message for validation errors, generic for system errors
+        const isValidationError =
+          error instanceof Error &&
+          (error.message.includes("Datei") ||
+            error.message.includes("Dateityp") ||
+            error.message.includes("Upload-Vorbereitung") ||
+            error.message === "limitReached" ||
+            error.message.includes("Limit"));
+
+        toast.error(
+          isValidationError && error instanceof Error
+            ? error.message === "limitReached"
+              ? t("errorLimitReached")
+              : error.message
+            : t("errorGeneric"),
+        );
+        setUploadStatus("");
+        setUploadProgress(0);
+      } finally {
+        setIsSubmitting(false);
+      }
+    });
+  }
+
+  const steps = [
+    { id: 1, label: t("step1") },
+    { id: 2, label: t("step2") },
+    { id: 3, label: t("step3") },
+    { id: 4, label: t("step4") },
+  ];
+
+  const getLabel = (
+    value: string | undefined,
+    options: readonly { value: string; label: string }[],
+  ) => {
+    if (!value) return "-";
+    return options.find((o) => o.value === value)?.label || value;
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Subscription status banners */}
+      {subscriptionStatus?.type === "no_subscription" && (
+        <Alert variant="destructive">
+          <AlertCircle />
+          <AlertTitle>{t("noSubscriptionTitle")}</AlertTitle>
+          <AlertDescription>{t("noSubscriptionDesc")}</AlertDescription>
+        </Alert>
+      )}
+
+      {subscriptionStatus?.type === "quota_exhausted" && (
+        <Alert variant="destructive">
+          <AlertCircle />
+          <AlertTitle>{t("quotaExhaustedTitle")}</AlertTitle>
+          <AlertDescription>
+            {t("quotaExhaustedDesc", {
+              plan: subscriptionStatus.plan,
+              current: subscriptionStatus.currentCount,
+              max: subscriptionStatus.maxVehicles,
+            })}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {subscriptionStatus?.type === "expired" &&
+        !subscriptionStatus.isGraceExpired &&
+        subscriptionStatus.graceEnd && (
+          <Alert className="border-yellow-500 bg-yellow-50 text-yellow-900 dark:bg-yellow-950/20 dark:text-yellow-400 [&>svg]:text-yellow-500">
+            <AlertTriangle />
+            <AlertTitle>{t("expiredWarningTitle")}</AlertTitle>
+            <AlertDescription>
+              {t("expiredWarningDesc", {
+                date: formatDateTime(
+                  new Date(subscriptionStatus.graceEnd),
+                  locale,
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  },
+                ),
+              })}
+            </AlertDescription>
+          </Alert>
+        )}
+
+      {subscriptionStatus?.type === "expired" &&
+        subscriptionStatus.isGraceExpired && (
+          <Alert variant="destructive">
+            <AlertCircle />
+            <AlertTitle>{t("expiredGraceTitle")}</AlertTitle>
+            <AlertDescription>{t("expiredGraceDesc")}</AlertDescription>
+          </Alert>
+        )}
+
+      <div className="flex justify-between items-start w-full max-w-3xl mx-auto mb-8 isolate">
+        {steps.map((step, index) => {
+          const isActive = currentStep >= step.id;
+          const isCurrent = currentStep === step.id;
+          const isCompleted = currentStep > step.id;
+
+          return (
+            <div key={step.id} className="contents">
+              <div className="flex flex-col items-center gap-2 z-10 w-32">
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 font-semibold bg-background",
+                    isActive
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border text-muted-foreground",
+                    isCurrent && "ring-4 ring-primary/20",
+                  )}
+                >
+                  {isCompleted ? <Check /> : step.id}
+                </div>
+                <span
+                  className={cn(
+                    "text-xs font-medium",
+                    isActive ? "text-primary" : "text-muted-foreground",
+                  )}
+                >
+                  {step.label}
+                </span>
+              </div>
+              {index < steps.length - 1 && (
+                <Separator
+                  className={cn(
+                    "flex-1 transition-colors duration-500 mt-5 -translate-y-1/2",
+                    currentStep > step.id ? "bg-primary" : "",
+                  )}
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
+          {currentStep === 1 && (
+            <div className="space-y-6">
+              <BasicDataSection />
+              <Separator />
+              <EquipmentSection />
+              <Separator />
+              <TechnicalDataSection />
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <MediaSection
+              previewImages={previewImages}
+              setPreviewImages={setPreviewImages}
+            />
+          )}
+
+          {currentStep === 3 && <ContactSection />}
+
+          {currentStep === 4 && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader className="flex justify-between items-center">
+                  <CardTitle>{t("summaryTitle")}</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentStep(1)}
+                    className="text-primary"
+                  >
+                    {t("edit")}
+                  </Button>
+                </CardHeader>
+                <CardContent className="grid gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8 text-sm">
+                    <div className="space-y-1">
+                      <p className="text-muted-foreground">
+                        {t("makeModelLabel")}
+                      </p>
+                      <p className="font-bold text-base">
+                        {
+                          activeMakes
+                            .flatMap((g) => g.items)
+                            .find((m) => m.value === form.getValues("make"))
+                            ?.label
+                        }{" "}
+                        {activeModels[form.getValues("make")]?.find(
+                          (m: any) => m.value === form.getValues("model"),
+                        )?.label || form.getValues("model")}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="text-muted-foreground">
+                        {t("versionLabel")}
+                      </p>
+                      <p className="font-bold text-base">
+                        {form.getValues("version") || "-"}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="text-muted-foreground">{t("priceLabel")}</p>
+                      <p className="font-bold text-base">
+                        {formatPrice(form.getValues("price"), locale)}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="text-muted-foreground">
+                        {t("kilometerLabel")}
+                      </p>
+                      <p className="font-bold text-base">
+                        {formatNumber(form.getValues("kilometer"), locale)} km
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="text-muted-foreground">
+                        {t("firstRegistrationLabel")}
+                      </p>
+                      <p className="font-bold text-base">
+                        {form.getValues("registrationMonth")} /{" "}
+                        {form.getValues("registrationYear")}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="text-muted-foreground">
+                        {t("bodyTypeLabel")}
+                      </p>
+                      <p className="font-bold text-base">
+                        {getLabel(
+                          form.getValues("bodyType"),
+                          activeBodyTypeEnum,
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex justify-between items-center">
+                  <CardTitle>{t("photosTitle")}</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentStep(2)}
+                    className="text-primary"
+                  >
+                    {t("edit")}
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {previewImages.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                      {previewImages.map((src, index) => (
+                        <div
+                          key={index}
+                          className="relative aspect-video rounded-lg overflow-hidden border shadow-sm bg-muted flex items-center justify-center p-1"
+                        >
+                          {/* Using standard img tag to prevent Next.js Image component failing on blob:// URLs */}
+                          <img
+                            src={
+                              src.startsWith("blob:") ? src : getImageUrl(src)
+                            }
+                            alt={`Review ${index}`}
+                            className="object-cover w-full h-full rounded-md"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 border-2 border-dashed rounded-lg bg-muted/20">
+                      <p className="text-muted-foreground">
+                        {t("noPhotosUploaded")}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex justify-between items-center">
+                  <CardTitle>{t("companyDataTitle")}</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentStep(3)}
+                    className="text-primary"
+                  >
+                    {t("edit")}
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 text-sm">
+                    <div className="space-y-1">
+                      <p className="text-muted-foreground mb-2">
+                        {t("companyAddressLabel")}
+                      </p>
+                      <p className="font-bold text-base">
+                        {form.getValues("companyName") || t("privatePerson")}
+                      </p>
+                      <p className="text-muted-foreground">
+                        {form.getValues("address") || "-"}
+                      </p>
+                      <p className="text-muted-foreground">
+                        {form.getValues("zipCode")} {form.getValues("city")}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-muted-foreground mb-2">
+                        {t("contactLabel")}
+                      </p>
+                      <p className="font-bold text-base">
+                        {form.getValues("phoneNumber") || "-"}
+                      </p>
+                      <p className="text-muted-foreground">
+                        {form.getValues("businessEmail") || "-"}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          <div className="flex justify-between pt-8 border-t">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleBack}
+              disabled={currentStep === 1}
+              className={cn(currentStep === 1 && "invisible")}
+            >
+              <ArrowLeft />
+              {t("back")}
+            </Button>
+
+            {currentStep < totalSteps ? (
+              <Button
+                key="next-button"
+                type="button"
+                disabled={isNextDisabled}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNext();
+                }}
+              >
+                {t("next")}
+                <ArrowRight />
+              </Button>
+            ) : (
+              <Button
+                key="submit-button"
+                type="submit"
+                disabled={
+                  isSubmitting || isSubmitBlocked || (!!vehicleId && !isDirty)
+                }
+              >
+                {isSubmitting ? (
+                  <>
+                    <Spinner />
+                    {t("processingText")}
+                  </>
+                ) : (
+                  <>
+                    {t("publish")}
+                    <Send />
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
+
+          {isSubmitting && (
+            <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+              <div className="bg-card border p-8 rounded-xl shadow-lg max-w-md w-full space-y-4">
+                <div className="flex justify-between items-center text-sm font-medium">
+                  <span>{uploadStatus}</span>
+                  <span>{Math.round(uploadProgress)}%</span>
+                </div>
+                <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
+                  <div
+                    className="bg-primary h-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground text-center">
+                  {t("uploadDoNotClose")}
+                </p>
+              </div>
+            </div>
+          )}
+        </form>
+      </FormProvider>
+    </div>
+  );
+}
