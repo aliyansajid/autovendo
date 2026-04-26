@@ -17,8 +17,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://autovendo.ch"),
-  title: "AutoVendo - Find Your Perfect Vehicle",
+  metadataBase: new URL("https://autosolo.ch"),
+  title: "AutoSolo - Find Your Perfect Vehicle",
   description:
     "Discover used and new vehicles across Europe. Search thousands of cars from top brands including Audi, BMW, Mercedes-Benz, and more. Find your dream car today.",
   keywords: [
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: "AutoVendo - Find Your Perfect Vehicle",
     description:
       "Discover used and new vehicles across Europe. Search thousands of cars from top brands including Audi, BMW, Mercedes-Benz, and more.",
-    url: "https://autovendo.ch",
+    url: "https://autosolo.ch",
     siteName: "Autovendo",
     images: [
       {
