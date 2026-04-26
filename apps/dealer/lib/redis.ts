@@ -23,10 +23,6 @@ function createRedis(): Redis | null {
 }
 
 export function getRedis(): Redis | null {
-  if (process.env.NODE_ENV === "production") {
-    return createRedis();
-  }
-
   if (!global._redis) {
     global._redis = createRedis();
   }
