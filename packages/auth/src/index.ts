@@ -71,6 +71,8 @@ export const auth = betterAuth({
   trustedOrigins: [
     "https://autovendo.ch",
     "https://www.autovendo.ch",
+    "https://autosolo.ch",
+    "https://www.autosolo.ch",
     "https://admin.autovendo.ch",
   ],
 
