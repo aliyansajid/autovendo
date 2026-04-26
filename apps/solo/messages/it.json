@@ -935,11 +935,26 @@
         "period": "/ mese",
         "description": "Ideale per inventari ridotti.",
         "features": [
-          { "name": "Fino a 5 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
+          {
+            "name": "Fino a 5 veicoli",
+            "included": true
+          },
+          {
+            "name": "Piena visibilità",
+            "included": true
+          },
+          {
+            "name": "Supporto personale",
+            "included": true
+          },
+          {
+            "name": "Nessun costo nascosto",
+            "included": true
+          },
+          {
+            "name": "Durata flessibile",
+            "included": true
+          }
         ],
         "buttonText": "Scegli pacchetto",
         "popular": false
@@ -950,11 +965,26 @@
         "period": "/ mese",
         "description": "Perfetto per concessionari in crescita.",
         "features": [
-          { "name": "Fino a 10 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
+          {
+            "name": "Fino a 10 veicoli",
+            "included": true
+          },
+          {
+            "name": "Piena visibilità",
+            "included": true
+          },
+          {
+            "name": "Supporto personale",
+            "included": true
+          },
+          {
+            "name": "Nessun costo nascosto",
+            "included": true
+          },
+          {
+            "name": "Durata flessibile",
+            "included": true
+          }
         ],
         "buttonText": "Scegli pacchetto",
         "popular": false
@@ -965,11 +995,26 @@
         "period": "/ mese",
         "description": "Per concessionari affermati.",
         "features": [
-          { "name": "Fino a 15 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
+          {
+            "name": "Fino a 15 veicoli",
+            "included": true
+          },
+          {
+            "name": "Piena visibilità",
+            "included": true
+          },
+          {
+            "name": "Supporto personale",
+            "included": true
+          },
+          {
+            "name": "Nessun costo nascosto",
+            "included": true
+          },
+          {
+            "name": "Durata flessibile",
+            "included": true
+          }
         ],
         "buttonText": "Scegli pacchetto",
         "popular": true
@@ -980,11 +1025,26 @@
         "period": "/ mese",
         "description": "Per concessionari con volumi elevati.",
         "features": [
-          { "name": "Fino a 25 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
+          {
+            "name": "Fino a 25 veicoli",
+            "included": true
+          },
+          {
+            "name": "Piena visibilità",
+            "included": true
+          },
+          {
+            "name": "Supporto personale",
+            "included": true
+          },
+          {
+            "name": "Nessun costo nascosto",
+            "included": true
+          },
+          {
+            "name": "Durata flessibile",
+            "included": true
+          }
         ],
         "buttonText": "Scegli pacchetto",
         "popular": false
@@ -1644,5 +1704,87 @@
     "button": "Torna alla Home",
     "metaTitle": "404 - Pagina non trovata | AutoVendo",
     "metaDescription": "Spiacenti, la pagina richiesta non è stata trovata su AutoVendo."
+  },
+  "SignupForm": {
+    "title": "Crea un account",
+    "description": "Inserisci i tuoi dati per creare il tuo account",
+    "name": "Nome completo",
+    "namePlaceholder": "Mario Rossi",
+    "email": "E-mail",
+    "emailPlaceholder": "m@esempio.com",
+    "password": "Password",
+    "confirmPassword": "Conferma password",
+    "submitting": "Creazione account...",
+    "submit": "Crea account",
+    "alreadyHaveAccount": "Hai già un account?",
+    "signIn": "Accedi",
+    "errorDefault": "Si è verificato un errore. Riprova."
+  },
+  "SellerProfileForm": {
+    "personalTitle": "Informazioni personali",
+    "personalDesc": "I tuoi dati account di base.",
+    "nameLabel": "Nome visualizzato",
+    "namePlaceholder": "Mario Rossi",
+    "emailLabel": "E-mail account",
+    "emailPlaceholder": "mario@esempio.com",
+    "profileImageLabel": "Foto profilo",
+    "sellerTitle": "Informazioni di contatto",
+    "sellerDesc": "Il tuo nome e i tuoi contatti mostrati agli acquirenti.",
+    "firstNameLabel": "Nome",
+    "firstNamePlaceholder": "Mario",
+    "lastNameLabel": "Cognome",
+    "lastNamePlaceholder": "Rossi",
+    "phoneLabel": "Numero di telefono",
+    "contactEmailLabel": "E-mail di contatto",
+    "addressTitle": "Indirizzo",
+    "addressDesc": "La tua posizione.",
+    "streetLabel": "Via e numero civico",
+    "streetPlaceholder": "Via Principale 123",
+    "zipLabel": "CAP",
+    "cityLabel": "Città",
+    "cityPlaceholder": "Seleziona città",
+    "saving": "Salvataggio...",
+    "save": "Salva profilo",
+    "missingUser": "Informazioni utente mancanti.",
+    "userUpdateError": "Impossibile aggiornare le informazioni utente.",
+    "emailChangeError": "Impossibile avviare il cambio e-mail.",
+    "emailConfirmation": "Un'e-mail di conferma è stata inviata al nuovo indirizzo.",
+    "profileUpdateSuccess": "Profilo aggiornato con successo.",
+    "profileUpdateError": "Impossibile aggiornare il profilo.",
+    "unexpectedError": "Si è verificato un errore. Riprova."
+  },
+  "BrandsSection": {
+    "title": "Cerca per marca"
+  },
+  "HowItWorksSection": {
+    "title": "Come funziona",
+    "subtitle": "Pubblica il tuo annuncio e raggiungi migliaia di acquirenti in Svizzera.",
+    "step1": {
+      "title": "Crea un account",
+      "description": "Registrati gratuitamente in pochi secondi – nessuna burocrazia."
+    },
+    "step2": {
+      "title": "Scegli un pacchetto",
+      "description": "Seleziona il piano adatto e attiva i tuoi crediti per gli annunci."
+    },
+    "step3": {
+      "title": "Pubblica la tua auto",
+      "description": "Carica foto, aggiungi dettagli e pubblica il tuo annuncio subito."
+    },
+    "step4": {
+      "title": "Ricevi contatti",
+      "description": "Gli acquirenti interessati ti contattano direttamente via telefono o e-mail."
+    }
+  },
+  "SellCta": {
+    "title": "Pronto a vendere la tua auto?",
+    "subtitle": "Unisciti a migliaia di venditori privati su AutoSolo e trova subito un acquirente.",
+    "cta": "Inizia a vendere",
+    "browse": "Sfoglia gli annunci",
+    "perk": {
+      "free": "Registrazione gratuita, senza costi nascosti",
+      "fast": "Pubblica la tua auto in meno di 5 minuti",
+      "direct": "Gli acquirenti ti contattano direttamente"
+    }
   }
 }

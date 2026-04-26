@@ -935,11 +935,26 @@
         "period": "/ mois",
         "description": "Idéal pour les petits stocks.",
         "features": [
-          { "name": "Jusqu'à 5 véhicules", "included": true },
-          { "name": "Visibilité totale", "included": true },
-          { "name": "Support personnel", "included": true },
-          { "name": "Pas de frais cachés", "included": true },
-          { "name": "Durée flexible", "included": true }
+          {
+            "name": "Jusqu'à 5 véhicules",
+            "included": true
+          },
+          {
+            "name": "Visibilité totale",
+            "included": true
+          },
+          {
+            "name": "Support personnel",
+            "included": true
+          },
+          {
+            "name": "Pas de frais cachés",
+            "included": true
+          },
+          {
+            "name": "Durée flexible",
+            "included": true
+          }
         ],
         "buttonText": "Choisir le forfait",
         "popular": false
@@ -950,11 +965,26 @@
         "period": "/ mois",
         "description": "Parfait pour les concessionnaires en croissance.",
         "features": [
-          { "name": "Jusqu'à 10 véhicules", "included": true },
-          { "name": "Visibilité totale", "included": true },
-          { "name": "Support personnel", "included": true },
-          { "name": "Pas de frais cachés", "included": true },
-          { "name": "Durée flexible", "included": true }
+          {
+            "name": "Jusqu'à 10 véhicules",
+            "included": true
+          },
+          {
+            "name": "Visibilité totale",
+            "included": true
+          },
+          {
+            "name": "Support personnel",
+            "included": true
+          },
+          {
+            "name": "Pas de frais cachés",
+            "included": true
+          },
+          {
+            "name": "Durée flexible",
+            "included": true
+          }
         ],
         "buttonText": "Choisir le forfait",
         "popular": false
@@ -965,11 +995,26 @@
         "period": "/ mois",
         "description": "Pour les concessionnaires établis.",
         "features": [
-          { "name": "Jusqu'à 15 véhicules", "included": true },
-          { "name": "Visibilité totale", "included": true },
-          { "name": "Support personnel", "included": true },
-          { "name": "Pas de frais cachés", "included": true },
-          { "name": "Durée flexible", "included": true }
+          {
+            "name": "Jusqu'à 15 véhicules",
+            "included": true
+          },
+          {
+            "name": "Visibilité totale",
+            "included": true
+          },
+          {
+            "name": "Support personnel",
+            "included": true
+          },
+          {
+            "name": "Pas de frais cachés",
+            "included": true
+          },
+          {
+            "name": "Durée flexible",
+            "included": true
+          }
         ],
         "buttonText": "Choisir le forfait",
         "popular": true
@@ -980,11 +1025,26 @@
         "period": "/ mois",
         "description": "Pour les concessionnaires à volume plus élevé.",
         "features": [
-          { "name": "Jusqu'à 25 véhicules", "included": true },
-          { "name": "Visibilité totale", "included": true },
-          { "name": "Support personnel", "included": true },
-          { "name": "Pas de frais cachés", "included": true },
-          { "name": "Durée flexible", "included": true }
+          {
+            "name": "Jusqu'à 25 véhicules",
+            "included": true
+          },
+          {
+            "name": "Visibilité totale",
+            "included": true
+          },
+          {
+            "name": "Support personnel",
+            "included": true
+          },
+          {
+            "name": "Pas de frais cachés",
+            "included": true
+          },
+          {
+            "name": "Durée flexible",
+            "included": true
+          }
         ],
         "buttonText": "Choisir le forfait",
         "popular": false
@@ -1644,5 +1704,87 @@
     "button": "Retour à l'accueil",
     "metaTitle": "404 - Page non trouvée | AutoVendo",
     "metaDescription": "Désolé, la page demandée n'a pas pu être trouvée sur AutoVendo."
+  },
+  "SignupForm": {
+    "title": "Créer un compte",
+    "description": "Entrez vos informations pour créer votre compte",
+    "name": "Nom complet",
+    "namePlaceholder": "Jean Dupont",
+    "email": "E-mail",
+    "emailPlaceholder": "m@exemple.com",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "submitting": "Création du compte...",
+    "submit": "Créer un compte",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "signIn": "Se connecter",
+    "errorDefault": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "SellerProfileForm": {
+    "personalTitle": "Informations personnelles",
+    "personalDesc": "Vos informations de compte de base.",
+    "nameLabel": "Nom affiché",
+    "namePlaceholder": "Jean Dupont",
+    "emailLabel": "E-mail du compte",
+    "emailPlaceholder": "jean@exemple.com",
+    "profileImageLabel": "Photo de profil",
+    "sellerTitle": "Informations de contact",
+    "sellerDesc": "Votre nom et vos coordonnées affichés aux acheteurs.",
+    "firstNameLabel": "Prénom",
+    "firstNamePlaceholder": "Jean",
+    "lastNameLabel": "Nom de famille",
+    "lastNamePlaceholder": "Dupont",
+    "phoneLabel": "Numéro de téléphone",
+    "contactEmailLabel": "E-mail de contact",
+    "addressTitle": "Adresse",
+    "addressDesc": "Votre localisation.",
+    "streetLabel": "Rue et numéro",
+    "streetPlaceholder": "Rue Principale 123",
+    "zipLabel": "Code postal",
+    "cityLabel": "Ville",
+    "cityPlaceholder": "Sélectionner une ville",
+    "saving": "Enregistrement...",
+    "save": "Enregistrer le profil",
+    "missingUser": "Informations utilisateur manquantes.",
+    "userUpdateError": "Impossible de mettre à jour les informations utilisateur.",
+    "emailChangeError": "Impossible d'initier le changement d'e-mail.",
+    "emailConfirmation": "Un e-mail de confirmation a été envoyé à votre nouvelle adresse.",
+    "profileUpdateSuccess": "Profil mis à jour avec succès.",
+    "profileUpdateError": "Impossible de mettre à jour le profil.",
+    "unexpectedError": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "BrandsSection": {
+    "title": "Rechercher par marque"
+  },
+  "HowItWorksSection": {
+    "title": "Comment ça marche",
+    "subtitle": "Publiez votre annonce et touchez des milliers d'acheteurs en Suisse.",
+    "step1": {
+      "title": "Créer un compte",
+      "description": "Inscrivez-vous gratuitement en quelques secondes – sans paperasse."
+    },
+    "step2": {
+      "title": "Choisir un forfait",
+      "description": "Sélectionnez le plan qui vous convient et activez vos crédits d'annonce."
+    },
+    "step3": {
+      "title": "Publier votre voiture",
+      "description": "Téléchargez des photos, ajoutez des détails et publiez instantanément."
+    },
+    "step4": {
+      "title": "Être contacté",
+      "description": "Les acheteurs intéressés vous contactent directement par téléphone ou e-mail."
+    }
+  },
+  "SellCta": {
+    "title": "Prêt à vendre votre voiture ?",
+    "subtitle": "Rejoignez des milliers de vendeurs particuliers sur AutoSolo et trouvez vite un acheteur.",
+    "cta": "Commencer à vendre",
+    "browse": "Parcourir les annonces",
+    "perk": {
+      "free": "Inscription gratuite, sans frais cachés",
+      "fast": "Publiez votre voiture en moins de 5 minutes",
+      "direct": "Les acheteurs vous contactent directement"
+    }
   }
 }

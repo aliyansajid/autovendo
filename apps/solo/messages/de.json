@@ -264,7 +264,6 @@
       "REINFORCED_SUSPENSION": "Verstärkte Federung",
       "ADDITIONAL_INSTRUMENTS": "Zusätzliche Instrumente"
     },
-
     "warranty": {
       "FROM_DELIVERY": "Ab Lieferung",
       "FROM_FIRST_REGISTRATION": "Ab Erstzulassung",
@@ -940,11 +939,26 @@
         "period": "/ Monat",
         "description": "Ideal für kleinere Bestände.",
         "features": [
-          { "name": "Bis zu 5 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
+          {
+            "name": "Bis zu 5 Fahrzeuge",
+            "included": true
+          },
+          {
+            "name": "Volle Sichtbarkeit",
+            "included": true
+          },
+          {
+            "name": "Persönlicher Support",
+            "included": true
+          },
+          {
+            "name": "Keine versteckten Kosten",
+            "included": true
+          },
+          {
+            "name": "Laufzeit flexibel",
+            "included": true
+          }
         ],
         "buttonText": "Paket wählen",
         "popular": false
@@ -955,11 +969,26 @@
         "period": "/ Monat",
         "description": "Perfekt für wachsende Händler.",
         "features": [
-          { "name": "Bis zu 10 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
+          {
+            "name": "Bis zu 10 Fahrzeuge",
+            "included": true
+          },
+          {
+            "name": "Volle Sichtbarkeit",
+            "included": true
+          },
+          {
+            "name": "Persönlicher Support",
+            "included": true
+          },
+          {
+            "name": "Keine versteckten Kosten",
+            "included": true
+          },
+          {
+            "name": "Laufzeit flexibel",
+            "included": true
+          }
         ],
         "buttonText": "Paket wählen",
         "popular": false
@@ -970,11 +999,26 @@
         "period": "/ Monat",
         "description": "Für etablierte Händler.",
         "features": [
-          { "name": "Bis zu 15 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
+          {
+            "name": "Bis zu 15 Fahrzeuge",
+            "included": true
+          },
+          {
+            "name": "Volle Sichtbarkeit",
+            "included": true
+          },
+          {
+            "name": "Persönlicher Support",
+            "included": true
+          },
+          {
+            "name": "Keine versteckten Kosten",
+            "included": true
+          },
+          {
+            "name": "Laufzeit flexibel",
+            "included": true
+          }
         ],
         "buttonText": "Paket wählen",
         "popular": true
@@ -985,11 +1029,26 @@
         "period": "/ Monat",
         "description": "Für Händler mit höherem Volumen.",
         "features": [
-          { "name": "Bis zu 25 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
+          {
+            "name": "Bis zu 25 Fahrzeuge",
+            "included": true
+          },
+          {
+            "name": "Volle Sichtbarkeit",
+            "included": true
+          },
+          {
+            "name": "Persönlicher Support",
+            "included": true
+          },
+          {
+            "name": "Keine versteckten Kosten",
+            "included": true
+          },
+          {
+            "name": "Laufzeit flexibel",
+            "included": true
+          }
         ],
         "buttonText": "Paket wählen",
         "popular": false
@@ -1651,5 +1710,87 @@
     "button": "Zurück zur Startseite",
     "metaTitle": "404 - Seite nicht gefunden | AutoVendo",
     "metaDescription": "Entschuldigung, die angeforderte Seite konnte auf AutoVendo nicht gefunden werden."
+  },
+  "SignupForm": {
+    "title": "Konto erstellen",
+    "description": "Geben Sie Ihre Daten ein, um Ihr Konto zu erstellen",
+    "name": "Vollständiger Name",
+    "namePlaceholder": "Max Mustermann",
+    "email": "E-Mail",
+    "emailPlaceholder": "m@example.com",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "submitting": "Konto wird erstellt...",
+    "submit": "Konto erstellen",
+    "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+    "signIn": "Anmelden",
+    "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "SellerProfileForm": {
+    "personalTitle": "Persönliche Informationen",
+    "personalDesc": "Ihre grundlegenden Kontodaten.",
+    "nameLabel": "Anzeigename",
+    "namePlaceholder": "Max Mustermann",
+    "emailLabel": "Konto-E-Mail",
+    "emailPlaceholder": "max@beispiel.com",
+    "profileImageLabel": "Profilfoto",
+    "sellerTitle": "Kontaktinformationen",
+    "sellerDesc": "Ihr Name und Ihre Kontaktdaten für Käufer.",
+    "firstNameLabel": "Vorname",
+    "firstNamePlaceholder": "Max",
+    "lastNameLabel": "Nachname",
+    "lastNamePlaceholder": "Mustermann",
+    "phoneLabel": "Telefonnummer",
+    "contactEmailLabel": "Kontakt-E-Mail",
+    "addressTitle": "Adresse",
+    "addressDesc": "Ihr Standort.",
+    "streetLabel": "Strasse und Hausnummer",
+    "streetPlaceholder": "Hauptstrasse 123",
+    "zipLabel": "Postleitzahl",
+    "cityLabel": "Stadt",
+    "cityPlaceholder": "Stadt auswählen",
+    "saving": "Wird gespeichert...",
+    "save": "Profil speichern",
+    "missingUser": "Benutzerinformationen fehlen.",
+    "userUpdateError": "Benutzerinformationen konnten nicht aktualisiert werden.",
+    "emailChangeError": "E-Mail-Änderung konnte nicht eingeleitet werden.",
+    "emailConfirmation": "Eine Bestätigungs-E-Mail wurde an Ihre neue E-Mail-Adresse gesendet.",
+    "profileUpdateSuccess": "Profil erfolgreich aktualisiert.",
+    "profileUpdateError": "Profil konnte nicht aktualisiert werden.",
+    "unexpectedError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "BrandsSection": {
+    "title": "Nach Marke suchen"
+  },
+  "HowItWorksSection": {
+    "title": "So funktioniert es",
+    "subtitle": "Inserieren Sie Ihr Auto und erreichen Sie Tausende von Käufern in der Schweiz.",
+    "step1": {
+      "title": "Konto erstellen",
+      "description": "Kostenlos in Sekunden registrieren – kein Papierkram erforderlich."
+    },
+    "step2": {
+      "title": "Paket wählen",
+      "description": "Wählen Sie den passenden Plan und aktivieren Sie Ihre Inseratskredit."
+    },
+    "step3": {
+      "title": "Auto inserieren",
+      "description": "Fotos hochladen, Details hinzufügen und Inserat sofort veröffentlichen."
+    },
+    "step4": {
+      "title": "Kontakt erhalten",
+      "description": "Interessierte Käufer kontaktieren Sie direkt per Telefon oder E-Mail."
+    }
+  },
+  "SellCta": {
+    "title": "Bereit, Ihr Auto zu verkaufen?",
+    "subtitle": "Schliessen Sie sich Tausenden von Privatverkäufern auf AutoSolo an und finden Sie schnell einen Käufer.",
+    "cta": "Jetzt inserieren",
+    "browse": "Inserate durchsuchen",
+    "perk": {
+      "free": "Kostenlos registrieren, keine versteckten Gebühren",
+      "fast": "Auto in unter 5 Minuten inserieren",
+      "direct": "Käufer kontaktieren Sie direkt"
+    }
   }
 }
