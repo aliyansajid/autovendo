@@ -540,7 +540,9 @@
     "forgotPassword": "Passwort vergessen?",
     "submitting": "Wird angemeldet...",
     "submit": "Anmelden",
-    "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "noAccount": "Noch kein Konto?",
+    "signUp": "Registrieren"
   },
   "ForgotPasswordForm": {
     "title": "Passwort vergessen",

@@ -536,7 +536,9 @@
     "forgotPassword": "Mot de passe oublié ?",
     "submitting": "Connexion en cours...",
     "submit": "Se connecter",
-    "errorDefault": "Une erreur est survenue. Veuillez réessayer."
+    "errorDefault": "Une erreur est survenue. Veuillez réessayer.",
+    "noAccount": "Pas encore de compte ?",
+    "signUp": "S'inscrire"
   },
   "ForgotPasswordForm": {
     "title": "Mot de passe oublié",

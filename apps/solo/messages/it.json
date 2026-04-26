@@ -536,7 +536,9 @@
     "forgotPassword": "Password dimenticata?",
     "submitting": "Accesso in corso...",
     "submit": "Accedi",
-    "errorDefault": "Si è verificato un errore. Riprovi."
+    "errorDefault": "Si è verificato un errore. Riprovi.",
+    "noAccount": "Non hai un account?",
+    "signUp": "Registrati"
   },
   "ForgotPasswordForm": {
     "title": "Password dimenticata",
