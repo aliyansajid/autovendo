@@ -19,7 +19,7 @@ export async function sendContactMessage(input: any) {
     to: CONTACT_EMAIL,
     subject: subject?.trim()
       ? `Kontaktanfrage: ${subject.trim()}`
-      : "Kontaktanfrage von autovendo.ch",
+      : "Kontaktanfrage von autosolo.ch",
     template: React.createElement(ContactMessage, {
       name: name.trim(),
       email: email.trim(),
