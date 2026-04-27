@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+import { buildMetadata, PAGE_META } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { Separator } from "@repo/ui/src/components/separator";
 import { ArrowRight, CheckCircle2, Mail, Phone } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
@@ -39,20 +42,61 @@ interface PricingTier {
   popular: boolean;
 }
 
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return buildMetadata(locale, "/pricing", PAGE_META.pricing);
+}
+
 export default async function PricingPage(props: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await props.params;
   const t = await getTranslations("PricingPage");
   const rawTiers = (await t.raw("tiers")) as PricingTier[];
-  
+
   const tiers = rawTiers.map((tier) => ({
     ...tier,
     price: formatPrice(Number(tier.price.replace(/[^\d.-]/g, "")), locale),
   }));
 
+  const pricingSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "AutoVendo Händlerpakete",
+    description:
+      "Faire Inserate-Pakete für Autohändler in der Schweiz – günstiger als AutoScout24",
+    itemListElement: rawTiers.map((tier, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Offer",
+        name: `AutoVendo ${tier.name}`,
+        description: tier.description,
+        price: Number(tier.price.replace(/[^\d.-]/g, "")),
+        priceCurrency: "CHF",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: Number(tier.price.replace(/[^\d.-]/g, "")),
+          priceCurrency: "CHF",
+          unitCode: "MON",
+          unitText: "Monat",
+        },
+        availability: "https://schema.org/InStock",
+        url: `https://autovendo.ch/${locale}/pricing`,
+        seller: {
+          "@type": "Organization",
+          name: "AutoVendo",
+          url: "https://autovendo.ch",
+        },
+      },
+    })),
+  };
+
   return (
     <>
+      <JsonLd data={pricingSchema} />
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto px-4 py-12">
           <div className="text-center text-white space-y-4">
@@ -174,7 +218,9 @@ export default async function PricingPage(props: {
                 <h3 className="text-xl font-bold mb-2">
                   {t("largerDealers.subtitle")}
                 </h3>
-                <p className="text-lg font-medium">{t("largerDealers.tagline")}</p>
+                <p className="text-lg font-medium">
+                  {t("largerDealers.tagline")}
+                </p>
               </div>
               <div className="space-y-4 text-muted-foreground text-lg">
                 <p>{t("largerDealers.description1")}</p>
@@ -184,10 +230,14 @@ export default async function PricingPage(props: {
               <Separator className="bg-primary/20" />
 
               <div className="space-y-4">
-                <h3 className="text-xl font-bold">{t("largerDealers.personalTitle")}</h3>
+                <h3 className="text-xl font-bold">
+                  {t("largerDealers.personalTitle")}
+                </h3>
                 <div className="space-y-4 text-muted-foreground text-lg">
                   <p>{t("largerDealers.personalDesc1")}</p>
-                  <p className="font-medium text-foreground">{t("largerDealers.personalDesc2")}</p>
+                  <p className="font-medium text-foreground">
+                    {t("largerDealers.personalDesc2")}
+                  </p>
                   <p>{t("largerDealers.personalDesc3")}</p>
                 </div>
                 <div className="pt-4 flex flex-col sm:flex-row gap-3">

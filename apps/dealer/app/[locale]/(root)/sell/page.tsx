@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { buildMetadata, PAGE_META } from "@/lib/seo";
 import { Badge } from "@repo/ui/src/components/badge";
 import { Button } from "@repo/ui/src/components/button";
 import { Card, CardContent } from "@repo/ui/src/components/card";
@@ -16,6 +18,13 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return buildMetadata(locale, "/sell", PAGE_META.sell);
+}
 
 export default async function SellPage() {
   const t = await getTranslations("SellPage");
@@ -114,10 +123,22 @@ export default async function SellPage() {
                 <Separator />
 
                 <ul className="space-y-4">
-                  <FeatureItem isIncluded={true} text={t("advantages.features.leads")} />
-                  <FeatureItem isIncluded={true} text={t("advantages.features.reach")} />
-                  <FeatureItem isIncluded={true} text={t("advantages.features.regional")} />
-                  <FeatureItem isIncluded={true} text={t("advantages.features.brand")} />
+                  <FeatureItem
+                    isIncluded={true}
+                    text={t("advantages.features.leads")}
+                  />
+                  <FeatureItem
+                    isIncluded={true}
+                    text={t("advantages.features.reach")}
+                  />
+                  <FeatureItem
+                    isIncluded={true}
+                    text={t("advantages.features.regional")}
+                  />
+                  <FeatureItem
+                    isIncluded={true}
+                    text={t("advantages.features.brand")}
+                  />
                 </ul>
               </div>
 
@@ -132,10 +153,22 @@ export default async function SellPage() {
                 <Separator />
 
                 <ul className="space-y-4">
-                  <FeatureItem isIncluded={true} text={t("advantages.features.sync")} />
-                  <FeatureItem isIncluded={true} text={t("advantages.features.smart")} />
-                  <FeatureItem isIncluded={true} text={t("advantages.features.tracking")} />
-                  <FeatureItem isIncluded={true} text={t("advantages.features.leads2")} />
+                  <FeatureItem
+                    isIncluded={true}
+                    text={t("advantages.features.sync")}
+                  />
+                  <FeatureItem
+                    isIncluded={true}
+                    text={t("advantages.features.smart")}
+                  />
+                  <FeatureItem
+                    isIncluded={true}
+                    text={t("advantages.features.tracking")}
+                  />
+                  <FeatureItem
+                    isIncluded={true}
+                    text={t("advantages.features.leads2")}
+                  />
                 </ul>
               </div>
             </div>

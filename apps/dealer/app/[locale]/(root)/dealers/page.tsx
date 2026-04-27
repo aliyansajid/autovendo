@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { buildMetadata, PAGE_META } from "@/lib/seo";
 import { Suspense } from "react";
 import { DealersList } from "./_components/dealers-list";
 import { getDealers } from "@/app/actions/dealer.actions";
@@ -5,6 +7,13 @@ import { createDealerSearchSchema } from "@/schema/dealer-search-schema";
 import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return buildMetadata(locale, "/dealers", PAGE_META.dealers);
+}
 
 export default async function DealersPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

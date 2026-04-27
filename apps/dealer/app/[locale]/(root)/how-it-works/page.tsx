@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+import { buildMetadata, PAGE_META } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { Button } from "@repo/ui/src/components/button";
 import {
   FileText,
@@ -10,6 +13,13 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return buildMetadata(locale, "/how-it-works", PAGE_META.howItWorks);
+}
 
 export default async function HowItWorksPage() {
   const t = await getTranslations("HowItWorksPage");
@@ -50,8 +60,22 @@ export default async function HowItWorksPage() {
     },
   ];
 
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: t("title"),
+    description: t("subtitle"),
+    step: steps.map((step, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      name: step.title,
+      text: step.description,
+    })),
+  };
+
   return (
     <>
+      <JsonLd data={howToSchema} />
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto px-4 py-12">
           <div className="text-center text-white space-y-4">
@@ -98,9 +122,7 @@ export default async function HowItWorksPage() {
 
         <div className="mt-16 bg-secondary p-8 rounded-xl text-center space-y-4">
           <h3 className="text-xl font-bold">{t("cta.readyTitle")}</h3>
-          <p className="text-muted-foreground">
-            {t("cta.readySubtitle")}
-          </p>
+          <p className="text-muted-foreground">{t("cta.readySubtitle")}</p>
           <Button asChild>
             <Link href="/contact">
               {t("cta.contact")}

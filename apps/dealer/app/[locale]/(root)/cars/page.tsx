@@ -1,5 +1,7 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
+import { buildMetadata, PAGE_META } from "@/lib/seo";
 import { Suspense } from "react";
 import { FiltersSidebar } from "./_components/filters-sidebar";
 import { ListingListCard } from "./_components/listing-list-card";
@@ -24,6 +26,13 @@ import { parseSearchParams } from "@/lib/helpers/vehicle";
 import { ListingControls } from "./_components/listing-controls";
 import { formatCount } from "@/lib/helpers/format";
 import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return buildMetadata(locale, "/cars", PAGE_META.cars);
+}
 
 /**
  * Cars List Page - Pure UI Component

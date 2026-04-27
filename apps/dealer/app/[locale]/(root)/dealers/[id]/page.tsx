@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+import { buildAlternates } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import { getImageUrl } from "@/lib/helpers/image";
 import {
   getDealerById,
   getDealerVehicles,
@@ -9,14 +13,49 @@ import { parseSearchParams } from "@/lib/helpers/vehicle";
 import { createVehicleSearchSchema } from "@/schema/vehicle-search-schema";
 import { getTranslations } from "next-intl/server";
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string; locale: string }>;
+}): Promise<Metadata> {
+  const { id, locale } = await params;
+  const dealer = await getDealerById(id);
+  if (!dealer) return {};
+
+  const location = [dealer.zipCode, dealer.city].filter(Boolean).join(" ");
+  const title = `${dealer.companyName}${location ? ` – ${location}` : ""} | AutoVendo`;
+  const description = `${dealer.companyName} in ${dealer.city ?? "der Schweiz"}: Gebrauchtwagen und Occasionen kaufen. Alle Inserate und Kontakt auf autovendo.ch.`;
+  const ogImage = dealer.logo
+    ? getImageUrl(dealer.logo)
+    : "/web-app-manifest-512x512.png";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      images: [{ url: ogImage, width: 512, height: 512, alt: dealer.companyName }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
+    alternates: buildAlternates(locale, `/dealers/${id}`),
+  };
+}
+
 export default async function DealerPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const [{ id }, sp] = await Promise.all([params, searchParams]);
+  const [{ id, locale }, sp] = await Promise.all([params, searchParams]);
 
   const parsedFilters = parseSearchParams(sp);
   const t_schema = await getTranslations("VehicleSearchSchema");
@@ -35,12 +74,63 @@ export default async function DealerPage({
       : Promise.resolve(null),
   ]);
 
+  const dealerSchema = {
+    "@context": "https://schema.org",
+    "@type": "AutoDealer",
+    name: dealer.companyName,
+    url: dealer.website ?? `https://autovendo.ch/${locale}/dealers/${dealer.id}`,
+    telephone: dealer.phoneNumber ?? undefined,
+    description: dealer.description ?? undefined,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: dealer.streetAddress ?? undefined,
+      postalCode: dealer.zipCode ?? undefined,
+      addressLocality: dealer.city ?? undefined,
+      addressCountry: "CH",
+    },
+    sameAs: dealer.website ? [dealer.website] : undefined,
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "AutoVendo",
+        item: `https://autovendo.ch/${locale}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name:
+          locale === "fr"
+            ? "Concessionnaires"
+            : locale === "it"
+              ? "Concessionari"
+              : "Händler",
+        item: `https://autovendo.ch/${locale}/dealers`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: dealer.companyName,
+        item: `https://autovendo.ch/${locale}/dealers/${dealer.id}`,
+      },
+    ],
+  };
+
   return (
-    <DealerDetailContent
-      dealer={dealer}
-      initialVehicles={initialVehicles}
-      googleData={googleData}
-      initialFilters={filters}
-    />
+    <>
+      <JsonLd data={dealerSchema} />
+      <JsonLd data={breadcrumbSchema} />
+      <DealerDetailContent
+        dealer={dealer}
+        initialVehicles={initialVehicles}
+        googleData={googleData}
+        initialFilters={filters}
+      />
+    </>
   );
 }

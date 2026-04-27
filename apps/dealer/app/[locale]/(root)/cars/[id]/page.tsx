@@ -1,5 +1,8 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
+import { buildAlternates } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { getTranslations } from "next-intl/server";
 import {
   getVehicleCached,
@@ -75,6 +78,61 @@ function filterObj(
   return Object.fromEntries(
     Object.entries(obj).filter((e): e is [string, string] => e[1] != null),
   );
+}
+
+// ─── SEO ──────────────────────────────────────────────────────────────────────
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string; locale: string }>;
+}): Promise<Metadata> {
+  const { id, locale } = await params;
+  const item = await getVehicleCached(id);
+  if (!item) return {};
+
+  const name = [item.make, item.model, item.version].filter(Boolean).join(" ");
+  const priceFormatted = item.price
+    ? `CHF ${item.price.toLocaleString("de-CH")}`
+    : null;
+  const kmFormatted = item.kilometer
+    ? `${item.kilometer.toLocaleString("de-CH")} km`
+    : null;
+
+  const title = [name, priceFormatted, item.registrationYear]
+    .filter(Boolean)
+    .join(" – ");
+  const description = [
+    item.dealer ? `${name} kaufen bei ${item.dealer.companyName}` : name,
+    kmFormatted,
+    item.fuelType,
+    item.dealer?.city ? `in ${item.dealer.city}` : null,
+    "auf autovendo.ch.",
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const ogImage = item.images[0] ? getImageUrl(item.images[0]) : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: ogImage
+        ? [{ url: ogImage, alt: name }]
+        : [{ url: "/web-app-manifest-512x512.png", width: 1200, height: 630 }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+    alternates: buildAlternates(locale, `/cars/${id}`),
+  };
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -330,8 +388,71 @@ export default async function ListingPage({
     image: getImageUrl(sim.images[0]),
   }));
 
+  const vehicleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Car",
+    name: title,
+    brand: item.make ? { "@type": "Brand", name: item.make } : undefined,
+    model: item.model ?? undefined,
+    vehicleModelDate: item.registrationYear?.toString() ?? undefined,
+    mileageFromOdometer: item.kilometer
+      ? { "@type": "QuantitativeValue", value: item.kilometer, unitCode: "KMT" }
+      : undefined,
+    fuelType: fuelLabel ?? undefined,
+    driveWheelConfiguration: item.driveType ?? undefined,
+    vehicleTransmission: transmissionLabel ?? undefined,
+    color: item.color ?? undefined,
+    vehicleIdentificationNumber: item.vin ?? undefined,
+    offers: {
+      "@type": "Offer",
+      price: item.price,
+      priceCurrency: "CHF",
+      availability: "https://schema.org/InStock",
+      url: `https://autovendo.ch/${locale}/cars/${item.id}`,
+      seller: {
+        "@type": "AutoDealer",
+        name: item.dealer.companyName,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: item.dealer.streetAddress ?? undefined,
+          postalCode: item.dealer.zipCode ?? undefined,
+          addressLocality: item.dealer.city ?? undefined,
+          addressCountry: "CH",
+        },
+      },
+    },
+    image: images[0] ?? undefined,
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "AutoVendo",
+        item: `https://autovendo.ch/${locale}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: locale === "fr" ? "Voitures" : locale === "it" ? "Auto" : "Fahrzeuge",
+        item: `https://autovendo.ch/${locale}/cars`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: title,
+        item: `https://autovendo.ch/${locale}/cars/${item.id}`,
+      },
+    ],
+  };
+
   return (
     <div className="max-w-285 mx-auto px-4 py-12">
+      <JsonLd data={vehicleSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <ListingHeader
         make={item.make}
         model={item.model || ""}

@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+import { buildMetadata, PAGE_META } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import {
   Accordion,
   AccordionContent,
@@ -19,12 +22,35 @@ interface FaqCategory {
   items: FaqItem[];
 }
 
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return buildMetadata(locale, "/faq", PAGE_META.faq);
+}
+
 export default async function FaqPage() {
   const t = await getTranslations("FaqPage");
   const categories = t.raw("categories") as FaqCategory[];
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: categories.flatMap((cat) =>
+      cat.items.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      })),
+    ),
+  };
+
   return (
     <>
+      <JsonLd data={faqSchema} />
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto px-4 py-12">
           <div className="text-center text-white space-y-4">

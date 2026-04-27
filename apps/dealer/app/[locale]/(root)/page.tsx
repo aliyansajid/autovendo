@@ -1,5 +1,8 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
+import { buildMetadata, PAGE_META } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { SearchForm } from "./_components/search-form";
 import { FeaturedListings } from "./_components/featured-listings";
 import { FeaturedGarage } from "./_components/featured-garage";
@@ -15,6 +18,13 @@ import {
 import { getImageUrl } from "@/lib/helpers/image";
 import type { VehicleListItem, ListingProps } from "@/types/vehicle";
 import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return buildMetadata(locale, "", PAGE_META.home);
+}
 
 export default async function HomePage(props: {
   params: Promise<{ locale: string }>;
@@ -64,7 +74,7 @@ export default async function HomePage(props: {
   const garages = dealersResult.dealers.map((d) => ({
     id: d.id,
     name: d.companyName,
-    image: d.coverImage 
+    image: d.coverImage
       ? getImageUrl(d.coverImage)
       : d.logo
         ? getImageUrl(d.logo)
@@ -72,8 +82,40 @@ export default async function HomePage(props: {
     garageLocation: d.streetAddress || d.city,
   }));
 
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "AutoVendo",
+    url: "https://autovendo.ch",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `https://autovendo.ch/${locale}/cars?search={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "AutoVendo",
+    url: "https://autovendo.ch",
+    logo: "https://autovendo.ch/logo.svg",
+    sameAs: ["https://autovendo.ch"],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+41793223520",
+      contactType: "customer service",
+      availableLanguage: ["German", "French", "Italian", "English"],
+    },
+  };
+
   return (
     <>
+      <JsonLd data={websiteSchema} />
+      <JsonLd data={organizationSchema} />
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto px-4 py-12">
           <SearchForm />
