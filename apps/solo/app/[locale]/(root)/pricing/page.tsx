@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+import { buildMetadata, PAGE_META } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { Separator } from "@repo/ui/src/components/separator";
 import { ArrowRight, CheckCircle2, Mail, Phone } from "lucide-react";
 import { Button } from "@repo/ui/src/components/button";
@@ -39,6 +42,13 @@ interface PricingTier {
   popular: boolean;
 }
 
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return buildMetadata(locale, "/pricing", PAGE_META.pricing);
+}
+
 export default async function PricingPage(props: {
   params: Promise<{ locale: string }>;
 }) {
@@ -51,8 +61,42 @@ export default async function PricingPage(props: {
     price: formatPrice(Number(tier.price.replace(/[^\d.-]/g, "")), locale),
   }));
 
+  const pricingSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "AutoSolo Inserate-Pakete",
+    description:
+      "Faire Inserate-Pakete für private Autoverkäufer in der Schweiz – günstiger als AutoScout24",
+    itemListElement: rawTiers.map((tier, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Offer",
+        name: `AutoSolo ${tier.name}`,
+        description: tier.description,
+        price: Number(tier.price.replace(/[^\d.-]/g, "")),
+        priceCurrency: "CHF",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: Number(tier.price.replace(/[^\d.-]/g, "")),
+          priceCurrency: "CHF",
+          unitCode: "MON",
+          unitText: "Monat",
+        },
+        availability: "https://schema.org/InStock",
+        url: `https://autosolo.ch/${locale}/pricing`,
+        seller: {
+          "@type": "Organization",
+          name: "AutoSolo",
+          url: "https://autosolo.ch",
+        },
+      },
+    })),
+  };
+
   return (
     <>
+      <JsonLd data={pricingSchema} />
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto px-4 py-12">
           <div className="text-center text-white space-y-4">

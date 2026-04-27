@@ -1,5 +1,8 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
+import { buildMetadata, PAGE_META } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 import { SearchForm } from "./_components/search-form";
 import { FeaturedListings } from "./_components/featured-listings";
 import { HowItWorks } from "./_components/how-it-works";
@@ -14,6 +17,13 @@ import {
 import { getImageUrl } from "@/lib/helpers/image";
 import type { VehicleListItem, ListingProps } from "@/types/vehicle";
 import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return buildMetadata(locale, "", PAGE_META.home);
+}
 
 export default async function HomePage(props: {
   params: Promise<{ locale: string }>;
@@ -64,8 +74,39 @@ export default async function HomePage(props: {
     vehicleToListingProps,
   );
 
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "AutoSolo",
+    url: "https://autosolo.ch",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `https://autosolo.ch/${locale}/cars?search={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "AutoSolo",
+    url: "https://autosolo.ch",
+    logo: "https://autosolo.ch/logo.svg",
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+41793223520",
+      contactType: "customer service",
+      availableLanguage: ["German", "French", "Italian", "English"],
+    },
+  };
+
   return (
     <>
+      <JsonLd data={websiteSchema} />
+      <JsonLd data={organizationSchema} />
       <div className="bg-linear-to-r from-primary to-primary/80">
         <div className="w-full max-w-285 mx-auto px-4 py-12">
           <SearchForm />

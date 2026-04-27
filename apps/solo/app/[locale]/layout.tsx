@@ -17,62 +17,70 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://autosolo.ch"),
-  title: "AutoSolo - Find Your Perfect Vehicle",
-  description:
-    "Discover used and new vehicles across Europe. Search thousands of cars from top brands including Audi, BMW, Mercedes-Benz, and more. Find your dream car today.",
-  keywords: [
-    "cars",
-    "used cars",
-    "new cars",
-    "buy cars",
-    "sell cars",
-    "auto",
-    "vehicle",
-    "Autovendo",
-    "Switzerland",
-    "Europe",
-  ],
-  openGraph: {
-    title: "AutoVendo - Find Your Perfect Vehicle",
+const OG_LOCALE: Record<string, string> = {
+  de: "de_CH",
+  en: "en_US",
+  fr: "fr_CH",
+  it: "it_CH",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    metadataBase: new URL("https://autosolo.ch"),
+    title: {
+      default: "Auto privat kaufen & verkaufen Schweiz | AutoSolo",
+      template: "%s",
+    },
     description:
-      "Discover used and new vehicles across Europe. Search thousands of cars from top brands including Audi, BMW, Mercedes-Benz, and more.",
-    url: "https://autosolo.ch",
-    siteName: "Autovendo",
-    images: [
-      {
-        url: "/web-app-manifest-512x512.png",
-        width: 512,
-        height: 512,
-        alt: "Autovendo Logo",
-      },
+      "Tausende Gebrauchtwagen von Privatverkäufern in der Schweiz. Günstig Auto kaufen ohne Händleraufschlag – direkt von privat auf autosolo.ch.",
+    keywords: [
+      "auto privat kaufen schweiz",
+      "gebrauchtwagen von privat schweiz",
+      "auto verkaufen schweiz privat",
+      "privatinserat auto schweiz",
+      "occasion von privat kaufen",
+      "auto privat verkaufen schweiz",
+      "autosolo",
+      "gebrauchtwagen privat schweiz",
+      "occasion privat schweiz",
     ],
-    locale: "de_CH",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AutoVendo - Find Your Perfect Vehicle",
-    description:
-      "Discover used and new vehicles across Europe. Search thousands of cars from top brands including Audi, BMW, Mercedes-Benz, and more.",
-    images: ["/web-app-manifest-512x512.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+    openGraph: {
+      siteName: "AutoSolo",
+      images: [
+        {
+          url: "/web-app-manifest-512x512.png",
+          width: 1200,
+          height: 630,
+          alt: "AutoSolo – Auto privat kaufen & verkaufen Schweiz",
+        },
+      ],
+      locale: OG_LOCALE[locale] ?? "de_CH",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-  },
-  other: {
-    "apple-mobile-web-app-title": "AutoVendo",
-  },
-};
+    other: {
+      "apple-mobile-web-app-title": "AutoSolo",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

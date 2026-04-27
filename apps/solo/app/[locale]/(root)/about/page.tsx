@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
+import { buildMetadata, PAGE_META } from "@/lib/seo";
 import { Separator } from "@repo/ui/src/components/separator";
 import { CheckCircle2 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata(props: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await props.params;
+  return buildMetadata(locale, "/about", PAGE_META.about);
+}
 
 export default async function AboutPage() {
   const t = await getTranslations("AboutPage");
