@@ -202,7 +202,7 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
 
     if (!dealer) return null;
 
-    return {
+    const result = {
       id: dealer.id,
       companyName: dealer.companyName,
       description: dealer.description ?? null,
