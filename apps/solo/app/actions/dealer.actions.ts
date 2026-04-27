@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { createDealerContactSchema } from "@/schema/dealer-contact-schema";
 import { sendEmail, DealerContactEmail } from "@repo/transactional";
+import { cacheGet, cacheSet } from "@/lib/cache";
 import type {
   DealerProfile,
   DealerListResult,
@@ -103,6 +104,10 @@ export async function getDealers({
   page?: number;
   pageSize?: number;
 }): Promise<DealerListResult> {
+  const cacheKey = `dealers:list:${searchQuery}:${page}:${pageSize}`;
+  const cached = await cacheGet<DealerListResult>(cacheKey);
+  if (cached) return cached;
+
   try {
     const skip = (page - 1) * pageSize;
 
@@ -148,12 +153,14 @@ export async function getDealers({
       prisma.dealer.count({ where }),
     ]);
 
-    return {
+    const result = {
       dealers,
       totalCount,
       totalPages: Math.ceil(totalCount / pageSize),
       currentPage: page,
     };
+    await cacheSet(cacheKey, result, 60);
+    return result;
   } catch (error) {
     console.error("Failed to fetch dealers:", error);
     return { dealers: [], totalCount: 0, totalPages: 0, currentPage: page };
@@ -165,6 +172,10 @@ export async function getDealers({
 // -----------------------------------------------------------------------------
 
 export async function getDealerById(id: string): Promise<DealerDetail | null> {
+  const cacheKey = `dealer:${id}`;
+  const cached = await cacheGet<DealerDetail>(cacheKey);
+  if (cached) return cached;
+
   try {
     const dealer = await prisma.dealer.findUnique({
       where: { id },
@@ -221,6 +232,8 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
               : null,
         })),
     };
+    await cacheSet(cacheKey, result, 300);
+    return result;
   } catch (error) {
     console.error("Failed to fetch dealer by id:", error);
     return null;
@@ -238,6 +251,10 @@ export async function getDealerVehicles(
   filters: Partial<VehicleSearchParams> = {},
   sortBy: string = "newest",
 ): Promise<DealerVehiclesResult> {
+  const cacheKey = `dealer:vehicles:${dealerId}:${page}:${pageSize}:${sortBy}:${JSON.stringify(filters)}`;
+  const cached = await cacheGet<DealerVehiclesResult>(cacheKey);
+  if (cached) return cached;
+
   try {
     const skip = (page - 1) * pageSize;
 
@@ -288,13 +305,15 @@ export async function getDealerVehicles(
       prisma.vehicle.count({ where }),
     ]);
 
-    return {
+    const result = {
       vehicles: vehicles as any,
       totalCount,
       totalPages: Math.ceil(totalCount / pageSize),
       currentPage: page,
       hasMore: skip + vehicles.length < totalCount,
     };
+    await cacheSet(cacheKey, result, 60);
+    return result;
   } catch (error) {
     console.error("Failed to fetch dealer vehicles:", error);
     return {
