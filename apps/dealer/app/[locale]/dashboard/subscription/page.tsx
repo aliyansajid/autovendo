@@ -20,10 +20,10 @@ import { BillingPortalButton } from "./_components/billing-portal-button";
 import { SubscribeButton } from "@/app/[locale]/(root)/pricing/_components/subscribe-button";
 
 const PLANS = [
-  { name: "Bronze", key: "bronze", price: 180, listings: 5 },
-  { name: "Silver", key: "silver", price: 280, listings: 10 },
+  { name: "Bronze", key: "bronze", price: 180, listings: 5, popular: false },
+  { name: "Silver", key: "silver", price: 280, listings: 10, popular: false },
   { name: "Gold", key: "gold", price: 325, listings: 15, popular: true },
-  { name: "Diamond", key: "diamond", price: 408, listings: 25 },
+  { name: "Diamond", key: "diamond", price: 408, listings: 25, popular: false },
 ] as const;
 
 export default async function SubscriptionPage() {
