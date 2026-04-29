@@ -17,6 +17,7 @@ import {
   BatteryOwnershipEnum,
   ChargingPlugTypeStandardEnum,
   ChargingPlugTypeFastEnum,
+  EmissionStandardEnum,
 } from "@/constants";
 import { Separator } from "@repo/ui/components/separator";
 
@@ -73,6 +74,57 @@ export function TechnicalDataSection() {
             />
           </div>
 
+          <div className="grid grid-cols-2 gap-3">
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT}
+              inputType="number"
+              name="numberOfGears"
+              label={t("numberOfGears")}
+              placeholder={t("numberOfGearsPlaceholder")}
+            />
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT}
+              name="serialNumber"
+              label={t("serialNumber")}
+              placeholder={t("serialNumberPlaceholder")}
+            />
+          </div>
+
+          <div className="col-span-2">
+            <Label>{t("dimensions")}</Label>
+            <div className="grid grid-cols-3 gap-3 mt-3">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="length"
+                label={t("length")}
+                inputGroupText={t("units.mm")}
+                placeholder="0"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="width"
+                label={t("width")}
+                inputGroupText={t("units.mm")}
+                placeholder="0"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="height"
+                label={t("height")}
+                inputGroupText={t("units.mm")}
+                placeholder="0"
+              />
+            </div>
+          </div>
+
           {(showCombustionOrMild || showFullHybrid || showPluginHybrid) && (
             <div className="flex flex-col gap-3">
               <Label>{t("consumption")}</Label>
@@ -100,15 +152,41 @@ export function TechnicalDataSection() {
           )}
 
           {(showCombustionOrMild || showHydrogen) && (
+            <>
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="cubicCapacity"
+                label={t("displacement")}
+                inputGroupText={t("units.ccm")}
+                placeholder="0"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT}
+                inputType="number"
+                name="cylinders"
+                label={t("cylinders")}
+                placeholder={t("cylindersPlaceholder")}
+              />
+            </>
+          )}
+
+          {(showCombustionOrMild || showFullHybrid || showPluginHybrid || showHydrogen) && (
             <CustomFormField
               control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              inputType="number"
-              name="cubicCapacity"
-              label={t("displacement")}
-              inputGroupText={t("units.ccm")}
-              placeholder="0"
-            />
+              fieldType={FormFieldType.SELECT}
+              name="emissionStandard"
+              label={t("euroNorm")}
+              placeholder={t("selectTypePlaceholder")}
+            >
+              {EmissionStandardEnum.map((e) => (
+                <SelectItem key={e.value} value={e.value}>
+                  {e.label}
+                </SelectItem>
+              ))}
+            </CustomFormField>
           )}
 
           {(showCombustionOrMild ||
@@ -235,6 +313,15 @@ export function TechnicalDataSection() {
                 name="batteryCapacity"
                 label={t("batteryCapacity")}
                 inputGroupText={t("units.kwh")}
+                placeholder="0"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                inputType="number"
+                name="powerConsumption"
+                label={t("powerConsumption")}
+                inputGroupText="kWh/100km"
                 placeholder="0"
               />
 

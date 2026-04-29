@@ -597,56 +597,58 @@ export const DealerDetailContent = ({
               </div>
             )}
 
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (vehiclePage > 1) handlePageChange(vehiclePage - 1);
-                    }}
-                    className={
-                      vehiclePage <= 1
-                        ? "pointer-events-none opacity-50"
-                        : "cursor-pointer"
-                    }
-                  />
-                </PaginationItem>
-
-                {Array.from({ length: totalPages || 1 }).map((_, i) => (
-                  <PaginationItem key={i}>
-                    <PaginationLink
+            {totalPages > 1 && (
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
                       href="#"
-                      isActive={vehiclePage === i + 1}
                       onClick={(e) => {
                         e.preventDefault();
-                        handlePageChange(i + 1);
+                        if (vehiclePage > 1) handlePageChange(vehiclePage - 1);
                       }}
-                      className="cursor-pointer"
-                    >
-                      {i + 1}
-                    </PaginationLink>
+                      className={
+                        vehiclePage <= 1
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
                   </PaginationItem>
-                ))}
 
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (vehiclePage < totalPages)
-                        handlePageChange(vehiclePage + 1);
-                    }}
-                    className={
-                      vehiclePage >= totalPages || totalPages === 0
-                        ? "pointer-events-none opacity-50"
-                        : "cursor-pointer"
-                    }
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+                  {Array.from({ length: totalPages }).map((_, i) => (
+                    <PaginationItem key={i}>
+                      <PaginationLink
+                        href="#"
+                        isActive={vehiclePage === i + 1}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handlePageChange(i + 1);
+                        }}
+                        className="cursor-pointer"
+                      >
+                        {i + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (vehiclePage < totalPages)
+                          handlePageChange(vehiclePage + 1);
+                      }}
+                      className={
+                        vehiclePage >= totalPages
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
           </TabsContent>
 
           <TabsContent value="ratings">

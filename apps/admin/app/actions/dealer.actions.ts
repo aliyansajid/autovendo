@@ -24,6 +24,11 @@ export async function createDealer(formData: z.infer<typeof dealerSchema>) {
       return { error: "Failed to create authentication account" };
     }
 
+    await prisma.user.update({
+      where: { id: newUser.user.id },
+      data: { emailVerified: true },
+    });
+
     // 2. Create Dealer Record
     await prisma.dealer.create({
       data: {

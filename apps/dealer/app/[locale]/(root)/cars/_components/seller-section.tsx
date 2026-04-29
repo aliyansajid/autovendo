@@ -29,7 +29,6 @@ interface SellerSectionProps {
     website?: string;
     phone: string;
     address: string;
-    contactPerson?: string;
     businessEmail?: string;
     description?: string;
     openingHours?: { day: string; hours: string }[];

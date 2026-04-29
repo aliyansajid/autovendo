@@ -144,6 +144,7 @@ export default async function ListingPage({
 }) {
   const t = await getTranslations("VehicleDetail");
   const tVehicle = await getTranslations("Vehicle");
+  const tProfile = await getTranslations("DashboardProfile");
   const { id, locale } = await params;
   const item = await getVehicleCached(id);
 
@@ -202,7 +203,6 @@ export default async function ListingPage({
       : undefined,
     [t("basicDataKeys.seats")]: n(item.seats, "", locale),
     [t("basicDataKeys.doors")]: n(item.doors, "", locale),
-    [t("basicDataKeys.offerNumber")]: item.id.slice(-8),
   });
 
   const vehicleHistory = filterObj({
@@ -340,11 +340,12 @@ export default async function ListingPage({
       const open = toDate(oh.openTime);
       const close = toDate(oh.closeTime);
       return {
-        day: DAY_LABELS[oh.day] ?? oh.day,
+        // @ts-ignore
+        day: tProfile.has(`days.${oh.day}`) ? tProfile(`days.${oh.day}`) : (DAY_LABELS[oh.day] ?? oh.day),
         hours:
           oh.isOpen && open != null && close != null
             ? `${open.toLocaleTimeString(getCHLocale(locale), { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString(getCHLocale(locale), { hour: "2-digit", minute: "2-digit" })}`
-            : "Geschlossen",
+            : tProfile("isClosed"),
       };
     });
 
@@ -359,7 +360,6 @@ export default async function ListingPage({
     phone: item.dealer.phoneNumber ?? undefined,
     logo: item.dealer.logo ? getImageUrl(item.dealer.logo) : undefined,
     website: item.dealer.website ?? undefined,
-    contactPerson: item.dealer.contactPerson ?? undefined,
     businessEmail: item.dealer.businessEmail ?? undefined,
     description: item.dealer.description ?? undefined,
     openingHours: openingHours.length > 0 ? openingHours : undefined,
@@ -477,7 +477,7 @@ export default async function ListingPage({
                 icon={
                   <Gauge className="text-muted-foreground" strokeWidth={1.5} />
                 }
-                label="Kilometerstand"
+                label={t("vehicleHistoryKeys.kilometer")}
                 value={formatKilometers(item.kilometer, locale)}
               />
               {powerLabel && (
@@ -485,7 +485,7 @@ export default async function ListingPage({
                   icon={
                     <Zap className="text-muted-foreground" strokeWidth={1.5} />
                   }
-                  label="Leistung"
+                  label={t("technicalDataKeys.power")}
                   value={powerLabel}
                 />
               )}
@@ -494,7 +494,7 @@ export default async function ListingPage({
                   icon={
                     <Fuel className="text-muted-foreground" strokeWidth={1.5} />
                   }
-                  label="Treibstoff"
+                  label={t("energyConsumptionKeys.fuelType")}
                   value={fuelLabel}
                 />
               )}

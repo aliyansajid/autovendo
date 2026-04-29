@@ -67,11 +67,11 @@ export function ConditionDialog({ resultCount }: { resultCount?: number }) {
   };
 
   const conditionOptions = [
-    { value: "NEW", label: tVehicle("NEW") },
-    { value: "DEMONSTRATION", label: tVehicle("DEMONSTRATION") },
-    { value: "PRE_REGISTERED", label: tVehicle("PRE_REGISTERED") },
-    { value: "USED", label: tVehicle("USED") },
-    { value: "OLDTIMER", label: tVehicle("OLDTIMER") },
+    { value: "new", label: tVehicle("NEW") },
+    { value: "demonstration", label: tVehicle("DEMONSTRATION") },
+    { value: "pre-registered", label: tVehicle("PRE_REGISTERED") },
+    { value: "used", label: tVehicle("USED") },
+    { value: "oldtimer", label: tVehicle("OLDTIMER") },
   ];
 
   return (
