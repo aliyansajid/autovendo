@@ -57,7 +57,7 @@ export async function getBillingData(): Promise<{
     amount: inv.amount_paid,
     currency: inv.currency,
     status: inv.status ?? "unknown",
-    pdfUrl: inv.invoice_pdf,
+    pdfUrl: inv.invoice_pdf ?? null,
   }));
 
   return { paymentMethod, invoices: mappedInvoices };
