@@ -1,6 +1,7 @@
 import { auth, stripeClient } from "@repo/auth";
 import { prisma } from "@repo/db";
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 export type PaymentMethod = {
   brand: string;
@@ -17,23 +18,25 @@ export type Invoice = {
   currency: string;
   status: string;
   pdfUrl: string | null;
+  hostedUrl: string | null;
 };
+
+async function getStripeCustomerId(): Promise<string | null> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) return null;
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { stripeCustomerId: true },
+  });
+  return user?.stripeCustomerId ?? null;
+}
 
 export async function getBillingData(): Promise<{
   paymentMethod: PaymentMethod | null;
   invoices: Invoice[];
 }> {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user?.id) return { paymentMethod: null, invoices: [] };
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { stripeCustomerId: true },
-  });
-
-  if (!user?.stripeCustomerId) return { paymentMethod: null, invoices: [] };
-
-  const customerId = user.stripeCustomerId;
+  const customerId = await getStripeCustomerId();
+  if (!customerId) return { paymentMethod: null, invoices: [] };
 
   const [paymentMethods, invoices] = await Promise.all([
     stripeClient.paymentMethods.list({ customer: customerId, type: "card" }),
@@ -42,12 +45,7 @@ export async function getBillingData(): Promise<{
 
   const pm = paymentMethods.data[0]?.card ?? null;
   const paymentMethod: PaymentMethod | null = pm
-    ? {
-        brand: pm.brand,
-        last4: pm.last4,
-        expMonth: pm.exp_month,
-        expYear: pm.exp_year,
-      }
+    ? { brand: pm.brand, last4: pm.last4, expMonth: pm.exp_month, expYear: pm.exp_year }
     : null;
 
   const mappedInvoices: Invoice[] = invoices.data.map((inv) => ({
@@ -58,7 +56,67 @@ export async function getBillingData(): Promise<{
     currency: inv.currency,
     status: inv.status ?? "unknown",
     pdfUrl: inv.invoice_pdf ?? null,
+    hostedUrl: inv.hosted_invoice_url ?? null,
   }));
 
   return { paymentMethod, invoices: mappedInvoices };
+}
+
+export async function cancelSubscription(): Promise<void> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const sub = await prisma.subscription.findFirst({
+    where: { referenceId: session.user.id, status: { in: ["active", "trialing"] } },
+    orderBy: { periodEnd: "desc" },
+  });
+
+  if (!sub?.stripeSubscriptionId) throw new Error("No active subscription");
+
+  await stripeClient.subscriptions.update(sub.stripeSubscriptionId, {
+    cancel_at_period_end: true,
+  });
+
+  await prisma.subscription.update({
+    where: { id: sub.id },
+    data: { cancelAtPeriodEnd: true },
+  });
+
+  revalidatePath("/dashboard/subscription");
+}
+
+export async function restoreSubscription(): Promise<void> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const sub = await prisma.subscription.findFirst({
+    where: { referenceId: session.user.id, status: { in: ["active", "trialing"] } },
+    orderBy: { periodEnd: "desc" },
+  });
+
+  if (!sub?.stripeSubscriptionId) throw new Error("No active subscription");
+
+  await stripeClient.subscriptions.update(sub.stripeSubscriptionId, {
+    cancel_at_period_end: false,
+  });
+
+  await prisma.subscription.update({
+    where: { id: sub.id },
+    data: { cancelAtPeriodEnd: false, cancelAt: null },
+  });
+
+  revalidatePath("/dashboard/subscription");
+}
+
+export async function createPaymentUpdateUrl(returnUrl: string): Promise<string> {
+  const customerId = await getStripeCustomerId();
+  if (!customerId) throw new Error("No Stripe customer");
+
+  const portalSession = await stripeClient.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: returnUrl,
+    flow_data: { type: "payment_method_update" },
+  });
+
+  return portalSession.url;
 }
