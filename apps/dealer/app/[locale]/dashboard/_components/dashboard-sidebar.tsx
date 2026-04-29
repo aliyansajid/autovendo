@@ -40,7 +40,7 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
       isActive: true,
     },
     {
-      title: t("subscription"),
+      title: t("billing"),
       url: "/dashboard/subscription",
       icon: CreditCard,
     },

@@ -30,10 +30,18 @@ export const SubscribeButton = ({
     }
 
     startTransition(async () => {
+      const { data: subscriptions } = await authClient.subscription.list();
+      const activeSubscription = subscriptions?.find(
+        (sub: any) => sub.status === "active" || sub.status === "trialing",
+      );
+
       const { data, error } = await authClient.subscription.upgrade({
         plan: planName.toLowerCase(),
         successUrl: `${window.location.origin}/profile?success=true`,
         cancelUrl: `${window.location.origin}/pricing`,
+        ...(activeSubscription?.stripeSubscriptionId && {
+          subscriptionId: activeSubscription.stripeSubscriptionId,
+        }),
       });
 
       if (error) {
