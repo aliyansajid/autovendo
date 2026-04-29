@@ -1,7 +1,6 @@
 import { auth, stripeClient } from "@repo/auth";
 import { prisma } from "@repo/db";
 import { headers } from "next/headers";
-import { revalidatePath } from "next/cache";
 
 export type PaymentMethod = {
   brand: string;
@@ -62,60 +61,13 @@ export async function getBillingData(): Promise<{
   return { paymentMethod, invoices: mappedInvoices };
 }
 
-export async function cancelSubscription(): Promise<void> {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user?.id) throw new Error("Unauthorized");
-
-  const sub = await prisma.subscription.findFirst({
-    where: { referenceId: session.user.id, status: { in: ["active", "trialing"] } },
-    orderBy: { periodEnd: "desc" },
-  });
-
-  if (!sub?.stripeSubscriptionId) throw new Error("No active subscription");
-
-  await stripeClient.subscriptions.update(sub.stripeSubscriptionId, {
-    cancel_at_period_end: true,
-  });
-
-  await prisma.subscription.update({
-    where: { id: sub.id },
-    data: { cancelAtPeriodEnd: true },
-  });
-
-  revalidatePath("/dashboard/subscription");
-}
-
-export async function restoreSubscription(): Promise<void> {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user?.id) throw new Error("Unauthorized");
-
-  const sub = await prisma.subscription.findFirst({
-    where: { referenceId: session.user.id, status: { in: ["active", "trialing"] } },
-    orderBy: { periodEnd: "desc" },
-  });
-
-  if (!sub?.stripeSubscriptionId) throw new Error("No active subscription");
-
-  await stripeClient.subscriptions.update(sub.stripeSubscriptionId, {
-    cancel_at_period_end: false,
-  });
-
-  await prisma.subscription.update({
-    where: { id: sub.id },
-    data: { cancelAtPeriodEnd: false, cancelAt: null },
-  });
-
-  revalidatePath("/dashboard/subscription");
-}
-
-export async function createPaymentUpdateUrl(returnUrl: string): Promise<string> {
+export async function createBillingPortalUrl(returnUrl: string): Promise<string> {
   const customerId = await getStripeCustomerId();
   if (!customerId) throw new Error("No Stripe customer");
 
   const portalSession = await stripeClient.billingPortal.sessions.create({
     customer: customerId,
     return_url: returnUrl,
-    flow_data: { type: "payment_method_update" },
   });
 
   return portalSession.url;

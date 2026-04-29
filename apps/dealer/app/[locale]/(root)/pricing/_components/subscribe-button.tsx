@@ -11,11 +11,19 @@ import { useTranslations } from "next-intl";
 interface SubscribeButtonProps {
   planName: string;
   variant?: "default" | "outline";
+  label?: string;
+  successUrl?: string;
+  cancelUrl?: string;
+  className?: string;
 }
 
 export const SubscribeButton = ({
   planName,
   variant = "default",
+  label,
+  successUrl,
+  cancelUrl,
+  className = "w-full",
 }: SubscribeButtonProps) => {
   const t = useTranslations("SubscribeButton");
   const router = useRouter();
@@ -35,10 +43,15 @@ export const SubscribeButton = ({
         (sub: any) => sub.status === "active" || sub.status === "trialing",
       );
 
+      const toAbsolute = (url: string | undefined, fallback: string) => {
+        if (!url) return `${window.location.origin}${fallback}`;
+        return url.startsWith("http") ? url : `${window.location.origin}${url}`;
+      };
+
       const { data, error } = await authClient.subscription.upgrade({
         plan: planName.toLowerCase(),
-        successUrl: `${window.location.origin}/profile?success=true`,
-        cancelUrl: `${window.location.origin}/pricing`,
+        successUrl: toAbsolute(successUrl, "/pricing?success=true"),
+        cancelUrl: toAbsolute(cancelUrl, "/pricing"),
         ...(activeSubscription?.stripeSubscriptionId && {
           subscriptionId: activeSubscription.stripeSubscriptionId,
         }),
@@ -57,12 +70,12 @@ export const SubscribeButton = ({
 
   return (
     <Button
-      className="w-full"
+      className={className}
       variant={variant}
       disabled={isPending}
       onClick={handleSubscribe}
     >
-      {isPending ? <Spinner /> : t("choosePlan")}
+      {isPending ? <Spinner /> : (label ?? t("choosePlan"))}
     </Button>
   );
 };

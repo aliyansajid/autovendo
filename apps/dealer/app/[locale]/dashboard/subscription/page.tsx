@@ -5,9 +5,8 @@ import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { getBillingData } from "@/app/actions/billing.actions";
 import { getTranslations, getFormatter } from "next-intl/server";
 import { Badge } from "@repo/ui/components/badge";
-import { Progress } from "@repo/ui/components/progress";
-import { Separator } from "@repo/ui/components/separator";
 import { Button } from "@repo/ui/components/button";
+import { Progress } from "@repo/ui/components/progress";
 import {
   Table,
   TableBody,
@@ -16,25 +15,16 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import { Link } from "@/i18n/routing";
-import {
-  CreditCard,
-  AlertTriangle,
-  ArrowUpRight,
-  Download,
-  ExternalLink,
-  Receipt,
-} from "lucide-react";
-import { CancelButton } from "./_components/cancel-button";
-import { RestoreButton } from "./_components/restore-button";
-import { UpdatePaymentButton } from "./_components/update-payment-button";
+import { CreditCard, ExternalLink, Download, Receipt, CheckCircle2 } from "lucide-react";
+import { BillingPortalButton } from "./_components/billing-portal-button";
+import { SubscribeButton } from "@/app/[locale]/(root)/pricing/_components/subscribe-button";
 
-const PLAN_PRICES: Record<string, number> = {
-  bronze: 180,
-  silver: 280,
-  gold: 325,
-  diamond: 408,
-};
+const PLANS = [
+  { name: "Bronze", key: "bronze", price: 180, listings: 5 },
+  { name: "Silver", key: "silver", price: 280, listings: 10 },
+  { name: "Gold", key: "gold", price: 325, listings: 15, popular: true },
+  { name: "Diamond", key: "diamond", price: 408, listings: 25 },
+] as const;
 
 export default async function SubscriptionPage() {
   const t = await getTranslations("BillingPage");
@@ -54,16 +44,17 @@ export default async function SubscriptionPage() {
   const activeSubscription = subscriptions.find(
     (s) => s.status === "active" || s.status === "trialing",
   );
-  const canceledSubscription = !activeSubscription
-    ? subscriptions.find((s) => s.status === "canceled")
-    : null;
 
-  const planName = activeSubscription?.plan?.toLowerCase() ?? "";
-  const planPrice = PLAN_PRICES[planName] ?? null;
+  const currentPlanKey = activeSubscription?.plan?.toLowerCase() ?? null;
+  const currentPlan = PLANS.find((p) => p.key === currentPlanKey) ?? null;
+
   const quotaPct =
     subscriptionStatus.maxVehicles > 0
       ? (subscriptionStatus.currentCount / subscriptionStatus.maxVehicles) * 100
       : 0;
+
+  const hasAnySubscription = subscriptions.length > 0;
+  const showPlanCards = true; // always show plan selection/upgrade section
 
   return (
     <div className="space-y-6">
@@ -73,115 +64,42 @@ export default async function SubscriptionPage() {
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      {/* Cancellation warning */}
-      {activeSubscription?.cancelAtPeriodEnd && activeSubscription.periodEnd && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border border-yellow-500/40 bg-yellow-500/5">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="size-5 text-yellow-500 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium text-yellow-700 dark:text-yellow-400">
-                {t("cancelWarning")}
-              </p>
-              <p className="text-sm text-yellow-600/80 dark:text-yellow-400/70">
-                {t("cancelWarningDate", {
-                  date: format.dateTime(activeSubscription.periodEnd, {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  }),
-                })}
-              </p>
-            </div>
-          </div>
-          <RestoreButton label={t("keepSubscription")} />
-        </div>
-      )}
-
-      {/* No subscription */}
-      {!activeSubscription && !canceledSubscription && (
-        <div className="rounded-lg border border-dashed p-10 text-center space-y-3">
-          <p className="font-medium">{t("noSubscription")}</p>
-          <p className="text-sm text-muted-foreground">{t("noSubscriptionDesc")}</p>
-          <Button asChild className="mt-2">
-            <Link href="/pricing">{t("choosePlan")}</Link>
-          </Button>
-        </div>
-      )}
-
-      {/* Canceled — offer resubscribe */}
-      {canceledSubscription && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border border-destructive/30 bg-destructive/5">
-          <div>
-            <p className="font-medium text-destructive">{t("subExpired")}</p>
-            {canceledSubscription.endedAt && (
-              <p className="text-sm text-muted-foreground">
-                {t("subExpiredOn", {
-                  date: format.dateTime(canceledSubscription.endedAt, {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  }),
-                })}
-              </p>
-            )}
-          </div>
-          <Button asChild>
-            <Link href="/pricing">{t("resubscribe")}</Link>
-          </Button>
-        </div>
-      )}
-
-      {/* Plan & Usage */}
-      {activeSubscription && (
+      {/* Current Plan + Usage */}
+      {activeSubscription && currentPlan ? (
         <div className="rounded-lg border divide-y">
-          {/* Plan info */}
           <div className="p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold capitalize">{planName} Plan</h2>
+                <h2 className="text-xl font-bold capitalize">{currentPlan.name} Plan</h2>
                 <Badge className="bg-green-500 hover:bg-green-600">
                   {activeSubscription.status === "trialing"
                     ? t("statusTrialing")
                     : t("statusActive")}
                 </Badge>
               </div>
-              {planPrice && (
-                <p className="text-sm text-muted-foreground">
-                  {format.number(planPrice, {
-                    style: "currency",
-                    currency: "CHF",
-                    minimumFractionDigits: 0,
-                  })}{" "}
-                  / {t("month")}
-                  {activeSubscription.periodEnd && !activeSubscription.cancelAtPeriodEnd && (
-                    <span>
-                      {" · "}
-                      {t("nextBilling", {
-                        date: format.dateTime(activeSubscription.periodEnd, {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        }),
-                      })}
-                    </span>
-                  )}
-                </p>
-              )}
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/pricing">
-                  {t("upgradePlan")}
-                  <ArrowUpRight className="size-4" />
-                </Link>
-              </Button>
-              {!activeSubscription.cancelAtPeriodEnd && (
-                <CancelButton label={t("cancelSubscription")} />
-              )}
+              <p className="text-sm text-muted-foreground">
+                {format.number(currentPlan.price, {
+                  style: "currency",
+                  currency: "CHF",
+                  minimumFractionDigits: 0,
+                })}{" "}
+                / {t("month")}
+                {activeSubscription.periodEnd && (
+                  <span>
+                    {" · "}
+                    {t("nextBilling", {
+                      date: format.dateTime(activeSubscription.periodEnd, {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      }),
+                    })}
+                  </span>
+                )}
+              </p>
             </div>
           </div>
 
-          {/* Usage */}
           <div className="p-6 space-y-3">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">{t("listings")}</span>
@@ -195,39 +113,111 @@ export default async function SubscriptionPage() {
             </p>
           </div>
         </div>
+      ) : (
+        <div className="rounded-lg border border-dashed p-8 text-center space-y-2">
+          <p className="font-semibold">{t("noSubscription")}</p>
+          <p className="text-sm text-muted-foreground">{t("noSubscriptionDesc")}</p>
+        </div>
+      )}
+
+      {/* Plan Cards — upgrade or subscribe */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold">
+            {activeSubscription ? t("upgradePlanTitle") : t("selectPlanTitle")}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {activeSubscription ? t("upgradePlanSubtitle") : t("selectPlanSubtitle")}
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {PLANS.map((plan) => {
+            const isCurrent = plan.key === currentPlanKey;
+            return (
+              <div
+                key={plan.key}
+                className={`rounded-lg border p-5 flex flex-col gap-4 ${
+                  isCurrent ? "border-primary bg-primary/5" : ""
+                } ${plan.popular && !isCurrent ? "border-primary/50" : ""}`}
+              >
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-base">{plan.name}</span>
+                    {isCurrent && (
+                      <Badge variant="outline" className="text-xs border-primary text-primary">
+                        {t("currentPlan")}
+                      </Badge>
+                    )}
+                    {plan.popular && !isCurrent && (
+                      <Badge className="text-xs">Popular</Badge>
+                    )}
+                  </div>
+                  <p className="text-2xl font-bold">
+                    CHF {plan.price}
+                    <span className="text-sm font-normal text-muted-foreground">/{t("month")}</span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <CheckCircle2 className="size-4 text-primary shrink-0" />
+                  {t("listingsCount", { count: plan.listings })}
+                </div>
+                {isCurrent ? (
+                  <Button variant="outline" className="w-full" disabled>
+                    {t("currentPlan")}
+                  </Button>
+                ) : (
+                  <SubscribeButton
+                    planName={plan.name}
+                    variant={plan.popular ? "default" : "outline"}
+                    successUrl={`/dashboard/subscription`}
+                    cancelUrl={`/dashboard/subscription`}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Billing Portal */}
+      {hasAnySubscription && (
+        <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <p className="font-semibold">{t("billingPortalTitle")}</p>
+            <p className="text-sm text-muted-foreground">{t("billingPortalDesc")}</p>
+          </div>
+          <div className="shrink-0">
+            <BillingPortalButton />
+          </div>
+        </div>
       )}
 
       {/* Payment Method */}
-      <div className="rounded-lg border divide-y">
-        <div className="px-6 py-4 flex items-center justify-between">
-          <div>
-            <p className="font-semibold">{t("paymentTitle")}</p>
-            <p className="text-sm text-muted-foreground">{t("paymentDesc")}</p>
-          </div>
-          {activeSubscription && <UpdatePaymentButton label={t("updatePayment")} />}
+      <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <p className="font-semibold">{t("paymentTitle")}</p>
+          <p className="text-sm text-muted-foreground">{t("paymentDesc")}</p>
         </div>
-        <div className="px-6 py-4">
-          {billingData.paymentMethod ? (
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-md border bg-muted/50">
-                <CreditCard className="size-5 text-muted-foreground" />
-              </div>
-              <div>
-                <p className="font-medium capitalize">
-                  {billingData.paymentMethod.brand} •••• {billingData.paymentMethod.last4}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {t("cardExpiry", {
-                    month: String(billingData.paymentMethod.expMonth).padStart(2, "0"),
-                    year: billingData.paymentMethod.expYear,
-                  })}
-                </p>
-              </div>
+        {billingData.paymentMethod ? (
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-md border bg-muted/50">
+              <CreditCard className="size-5 text-muted-foreground" />
             </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">{t("noPaymentMethod")}</p>
-          )}
-        </div>
+            <div>
+              <p className="font-medium capitalize">
+                {billingData.paymentMethod.brand} •••• {billingData.paymentMethod.last4}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {t("cardExpiry", {
+                  month: String(billingData.paymentMethod.expMonth).padStart(2, "0"),
+                  year: billingData.paymentMethod.expYear,
+                })}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">{t("noPaymentMethod")}</p>
+        )}
       </div>
 
       {/* Invoices */}
@@ -286,8 +276,8 @@ export default async function SubscriptionPage() {
                       {invoice.hostedUrl && (
                         <Button variant="ghost" size="sm" asChild>
                           <a href={invoice.hostedUrl} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="size-4" />
-                            <span className="sr-only">{t("view")}</span>
+                            <ExternalLink className="size-4 mr-1" />
+                            {t("view")}
                           </a>
                         </Button>
                       )}
