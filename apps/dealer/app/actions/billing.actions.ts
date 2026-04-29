@@ -1,3 +1,5 @@
+"use server";
+
 import { auth, stripeClient } from "@repo/auth";
 import { prisma } from "@repo/db";
 import { headers } from "next/headers";
