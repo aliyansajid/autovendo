@@ -112,3 +112,4 @@ export const auth = betterAuth({
 });
 
 export { toNextJsHandler } from "better-auth/next-js";
+export { stripeClient };

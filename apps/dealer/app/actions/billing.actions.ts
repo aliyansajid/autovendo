@@ -1,11 +1,6 @@
-import { auth } from "@repo/auth";
+import { auth, stripeClient } from "@repo/auth";
 import { prisma } from "@repo/db";
 import { headers } from "next/headers";
-import Stripe from "stripe";
-
-const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
 
 export type PaymentMethod = {
   brand: string;
