@@ -1,14 +1,18 @@
 import { Button } from "@repo/ui/components/button";
-import { Plus, AlertCircle } from "lucide-react";
+import { Plus, AlertCircle, AlertCircleIcon } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { getDealerVehicles, getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
+import {
+  getDealerVehicles,
+  getVehicleSubscriptionStatus,
+} from "@/app/actions/vehicles.actions";
 import { VehicleList } from "./_components/vehicle-list";
+import { getTranslations } from "next-intl/server";
 import {
   Alert,
+  AlertAction,
   AlertDescription,
   AlertTitle,
-} from "@repo/ui/components/alert";
-import { getTranslations } from "next-intl/server";
+} from "@repo/ui/src/components/alert";
 
 export default async function VehiclesPage() {
   const t = await getTranslations("VehiclesPage");
@@ -29,42 +33,38 @@ export default async function VehiclesPage() {
       {(subscriptionStatus.type === "no_subscription" ||
         subscriptionStatus.type === "expired") && (
         <Alert variant="destructive">
-          <AlertCircle className="size-4" />
+          <AlertCircleIcon />
           <AlertTitle>{t("noSubTitle")}</AlertTitle>
-          <AlertDescription className="space-y-3">
-            <p>
-              {subscriptionStatus.type === "no_subscription"
-                ? t("noSubDescription")
-                : t("expiredGraceDescription")}
-            </p>
-            <Button asChild size="sm" variant="outline">
-              <Link href="/dashboard/subscription">
-                {t("subscribeNow")}
-              </Link>
-            </Button>
+          <AlertDescription>
+            {subscriptionStatus.type === "no_subscription"
+              ? t("noSubDescription")
+              : t("expiredGraceDescription")}
           </AlertDescription>
+          <AlertAction>
+            <Button size="xs" variant="outline" asChild>
+              <Link href="/dashboard/subscription">{t("subscribeNow")}</Link>
+            </Button>
+          </AlertAction>
         </Alert>
       )}
 
       {/* Quota exhausted */}
       {subscriptionStatus.type === "quota_exhausted" && (
         <Alert variant="destructive">
-          <AlertCircle className="size-4" />
+          <AlertCircleIcon />
           <AlertTitle>{t("quotaTitle")}</AlertTitle>
-          <AlertDescription className="space-y-3">
-            <p>
-              {t("quotaDescription", {
-                plan: subscriptionStatus.plan,
-                current: subscriptionStatus.currentCount,
-                max: subscriptionStatus.maxVehicles,
-              })}
-            </p>
-            <Button asChild size="sm" variant="outline">
-              <Link href="/dashboard/subscription">
-                {t("upgradePlan")}
-              </Link>
-            </Button>
+          <AlertDescription>
+            {t("quotaDescription", {
+              plan: subscriptionStatus.plan,
+              current: subscriptionStatus.currentCount,
+              max: subscriptionStatus.maxVehicles,
+            })}
           </AlertDescription>
+          <AlertAction>
+            <Button size="xs" variant="outline" asChild>
+              <Link href="/dashboard/subscription">{t("upgradePlan")}</Link>
+            </Button>
+          </AlertAction>
         </Alert>
       )}
 
@@ -76,13 +76,13 @@ export default async function VehiclesPage() {
 
         {isBlocked ? (
           <Button disabled>
-            <Plus className="mr-2 size-4" />
+            <Plus />
             {t("newListing")}
           </Button>
         ) : (
           <Button asChild>
             <Link href="/dashboard/vehicles/new">
-              <Plus className="mr-2 size-4" />
+              <Plus />
               {t("newListing")}
             </Link>
           </Button>

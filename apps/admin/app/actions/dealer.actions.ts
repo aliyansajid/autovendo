@@ -377,3 +377,37 @@ export async function removeUser(userId: string) {
     return { success: false, error: "Failed to remove user" };
   }
 }
+
+export async function revokeSession(sessionToken: string) {
+  try {
+    const { headers } = await import("next/headers");
+    await auth.api.revokeUserSession({
+      body: {
+        sessionToken,
+      },
+      headers: await headers(),
+    });
+    revalidatePath("/dealers");
+    return { success: true, message: "Session revoked successfully" };
+  } catch (error) {
+    console.error("Revoke session error:", error);
+    return { success: false, error: "Failed to revoke session" };
+  }
+}
+
+export async function revokeAllSessions(userId: string) {
+  try {
+    const { headers } = await import("next/headers");
+    await auth.api.revokeUserSessions({
+      body: {
+        userId,
+      },
+      headers: await headers(),
+    });
+    revalidatePath("/dealers");
+    return { success: true, message: "All sessions revoked successfully" };
+  } catch (error) {
+    console.error("Revoke all sessions error:", error);
+    return { success: false, error: "Failed to revoke sessions" };
+  }
+}

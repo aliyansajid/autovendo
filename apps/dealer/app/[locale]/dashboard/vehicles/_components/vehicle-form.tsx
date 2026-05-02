@@ -43,7 +43,13 @@ import {
   formatNumber,
   formatDateTime,
 } from "@/lib/helpers/format";
-import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
+import {
+  AlertCircleIcon,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Send,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -64,7 +70,13 @@ import { AlertCircle, AlertTriangle } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
 import { getImageUrl } from "@/lib/helpers/image";
-import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/alert";
+import {
+  Alert,
+  AlertAction,
+  AlertDescription,
+  AlertTitle,
+} from "@repo/ui/components/alert";
+import Link from "next/link";
 
 const VEHICLE_DATA_MAP: Record<string, any> = {
   car: {
@@ -615,56 +627,39 @@ export function VehicleForm({
       {/* Subscription status banners */}
       {subscriptionStatus?.type === "no_subscription" && (
         <Alert variant="destructive">
-          <AlertCircle />
-          <AlertTitle>{t("noSubscriptionTitle")}</AlertTitle>
-          <AlertDescription>{t("noSubscriptionDesc")}</AlertDescription>
+          <AlertCircleIcon />
+          <AlertTitle>{t("noSubTitle")}</AlertTitle>
+          <AlertDescription>
+            {subscriptionStatus.type === "no_subscription"
+              ? t("noSubDescription")
+              : t("expiredGraceDescription")}
+          </AlertDescription>
+          <AlertAction>
+            <Button size="xs" variant="outline" asChild>
+              <Link href="/dashboard/subscription">{t("subscribeNow")}</Link>
+            </Button>
+          </AlertAction>
         </Alert>
       )}
 
       {subscriptionStatus?.type === "quota_exhausted" && (
         <Alert variant="destructive">
-          <AlertCircle />
-          <AlertTitle>{t("quotaExhaustedTitle")}</AlertTitle>
+          <AlertCircleIcon />
+          <AlertTitle>{t("quotaTitle")}</AlertTitle>
           <AlertDescription>
-            {t("quotaExhaustedDesc", {
+            {t("quotaDescription", {
               plan: subscriptionStatus.plan,
               current: subscriptionStatus.currentCount,
               max: subscriptionStatus.maxVehicles,
             })}
           </AlertDescription>
+          <AlertAction>
+            <Button size="xs" variant="outline" asChild>
+              <Link href="/dashboard/subscription">{t("upgradePlan")}</Link>
+            </Button>
+          </AlertAction>
         </Alert>
       )}
-
-      {subscriptionStatus?.type === "expired" &&
-        !subscriptionStatus.isGraceExpired &&
-        subscriptionStatus.graceEnd && (
-          <Alert className="border-yellow-500 bg-yellow-50 text-yellow-900 dark:bg-yellow-950/20 dark:text-yellow-400 [&>svg]:text-yellow-500">
-            <AlertTriangle />
-            <AlertTitle>{t("expiredWarningTitle")}</AlertTitle>
-            <AlertDescription>
-              {t("expiredWarningDesc", {
-                date: formatDateTime(
-                  new Date(subscriptionStatus.graceEnd),
-                  locale,
-                  {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  },
-                ),
-              })}
-            </AlertDescription>
-          </Alert>
-        )}
-
-      {subscriptionStatus?.type === "expired" &&
-        subscriptionStatus.isGraceExpired && (
-          <Alert variant="destructive">
-            <AlertCircle />
-            <AlertTitle>{t("expiredGraceTitle")}</AlertTitle>
-            <AlertDescription>{t("expiredGraceDesc")}</AlertDescription>
-          </Alert>
-        )}
 
       <div className="flex justify-between items-start w-full max-w-3xl mx-auto mb-8 isolate">
         {steps.map((step, index) => {

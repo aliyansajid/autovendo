@@ -21,6 +21,8 @@ import {
   Trash2,
   UserRoundSearch,
   UserMinus,
+  Eye,
+  Activity,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -91,7 +93,6 @@ export function DealerListActions({
     await authClient.admin.stopImpersonating(undefined, {
       onSuccess: () => {
         toast.success("Stopped impersonating");
-        window.location.reload();
       },
     });
   };
@@ -107,6 +108,18 @@ export function DealerListActions({
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
+          <DropdownMenuItem asChild>
+            <Link href={`/dealers/${dealerId}`}>
+              <Eye className="size-4" />
+              View Details
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={`/dealers/${dealerId}#sessions`}>
+              <Activity className="size-4" />
+              Manage Sessions
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href={`/dealers/${dealerId}/edit`}>
               <Pencil className="size-4" />
