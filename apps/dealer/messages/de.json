@@ -1491,6 +1491,8 @@
     "expiredWarningDesc": "Ihr Abonnement ist abgelaufen. Inserate werden am {date} deaktiviert. Bitte erneuern Sie Ihr Abo.",
     "expiredGraceTitle": "Abonnement abgelaufen",
     "expiredGraceDesc": "Ihr Abonnement ist abgelaufen und Ihre Inserate wurden deaktiviert. Bitte erneuern Sie Ihr Abo, um wieder aktiv zu sein.",
+    "subscribeNow": "Jetzt abonnieren",
+    "upgradePlan": "Plan upgraden",
     "successUpdate": "Inserat erfolgreich aktualisiert!",
     "successPublish": "Inserat erfolgreich veröffentlicht!",
     "back": "Zurück",

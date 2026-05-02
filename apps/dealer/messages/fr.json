@@ -1484,6 +1484,8 @@
     "expiredWarningDesc": "Votre abonnement a expiré. Les annonces seront désactivées le {date}. Veuillez renouveler votre abonnement.",
     "expiredGraceTitle": "Abonnement expiré",
     "expiredGraceDesc": "Votre abonnement a expiré et vos annonces ont été désactivées. Veuillez renouveler votre abonnement pour être à nouveau actif.",
+    "subscribeNow": "S'abonner maintenant",
+    "upgradePlan": "Changer de plan",
     "successUpdate": "Annonce mise à jour avec succès !",
     "successPublish": "Annonce publiée avec succès !",
     "back": "Retour",

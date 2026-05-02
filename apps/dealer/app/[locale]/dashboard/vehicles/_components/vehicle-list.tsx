@@ -106,27 +106,6 @@ export function VehicleList({
 
   return (
     <div className="space-y-4">
-      {subscriptionStatus?.type === "expired" &&
-        !subscriptionStatus.isGraceExpired &&
-        subscriptionStatus.graceEnd && (
-          <div className="flex items-start gap-3 rounded-lg border border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20 px-4 py-3 text-sm text-yellow-900 dark:text-yellow-400">
-            <AlertTriangle className="mt-0.5 size-4 shrink-0 text-yellow-500" />
-            <p>
-              {t("graceWarning", {
-                date: formatDateTime(
-                  new Date(subscriptionStatus.graceEnd),
-                  locale,
-                  {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  },
-                ),
-              })}
-            </p>
-          </div>
-        )}
-
       <InputGroup className="sm:max-w-sm">
         <InputGroupInput
           placeholder={t("searchPlaceholder")}
@@ -138,7 +117,7 @@ export function VehicleList({
         </InputGroupAddon>
       </InputGroup>
 
-      <div className="rounded-md border bg-card">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -155,10 +134,7 @@ export function VehicleList({
           </TableHeader>
           <TableBody>
             {filteredVehicles.map((vehicle) => (
-              <TableRow
-                key={vehicle.id}
-                className={isExpiredGraceDone ? "opacity-50" : undefined}
-              >
+              <TableRow key={vehicle.id}>
                 <TableCell>
                   <div className="relative w-12 h-12 rounded-md overflow-hidden bg-muted">
                     {vehicle.images?.[0] ? (
@@ -175,16 +151,9 @@ export function VehicleList({
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="font-medium whitespace-nowrap">
-                  <span className="flex items-center gap-2">
-                    {vehicle.make}
-                    {vehicle.model ? ` ${vehicle.model}` : ""}
-                    {isExpiredGraceDone && (
-                      <Badge variant="secondary" className="text-xs">
-                        {t("inactive")}
-                      </Badge>
-                    )}
-                  </span>
+                <TableCell className="flex items-center gap-2 font-medium whitespace-nowrap">
+                  {vehicle.make}
+                  {vehicle.model ? ` ${vehicle.model}` : ""}
                 </TableCell>
                 <TableCell className="font-semibold whitespace-nowrap">
                   {formatPrice(vehicle.price, locale)}
@@ -211,7 +180,7 @@ export function VehicleList({
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end">
-                    <Button variant="ghost" size="icon-sm" asChild>
+                    <Button variant="ghost" size="icon" asChild>
                       <Link href={`/dashboard/vehicles/${vehicle.id}`}>
                         <Edit />
                       </Link>
@@ -220,7 +189,7 @@ export function VehicleList({
                       <AlertDialogTrigger asChild>
                         <Button
                           variant="ghost"
-                          size="icon-sm"
+                          size="icon"
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
                         >
                           <Trash2 />

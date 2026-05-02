@@ -74,19 +74,12 @@ export default async function VehiclesPage() {
           <p className="text-sm text-muted-foreground">{t("pageSubtitle")}</p>
         </div>
 
-        {isBlocked ? (
-          <Button disabled>
+        <Button disabled={isBlocked} asChild>
+          <Link href="/dashboard/vehicles/new">
             <Plus />
             {t("newListing")}
-          </Button>
-        ) : (
-          <Button asChild>
-            <Link href="/dashboard/vehicles/new">
-              <Plus />
-              {t("newListing")}
-            </Link>
-          </Button>
-        )}
+          </Link>
+        </Button>
       </div>
 
       <VehicleList

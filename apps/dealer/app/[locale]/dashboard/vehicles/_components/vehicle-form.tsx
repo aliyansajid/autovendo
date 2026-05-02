@@ -628,12 +628,8 @@ export function VehicleForm({
       {subscriptionStatus?.type === "no_subscription" && (
         <Alert variant="destructive">
           <AlertCircleIcon />
-          <AlertTitle>{t("noSubTitle")}</AlertTitle>
-          <AlertDescription>
-            {subscriptionStatus.type === "no_subscription"
-              ? t("noSubDescription")
-              : t("expiredGraceDescription")}
-          </AlertDescription>
+          <AlertTitle>{t("noSubscriptionTitle")}</AlertTitle>
+          <AlertDescription>{t("noSubscriptionDesc")}</AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>
               <Link href="/dashboard/subscription">{t("subscribeNow")}</Link>
@@ -645,9 +641,9 @@ export function VehicleForm({
       {subscriptionStatus?.type === "quota_exhausted" && (
         <Alert variant="destructive">
           <AlertCircleIcon />
-          <AlertTitle>{t("quotaTitle")}</AlertTitle>
+          <AlertTitle>{t("quotaExhaustedTitle")}</AlertTitle>
           <AlertDescription>
-            {t("quotaDescription", {
+            {t("quotaExhaustedDesc", {
               plan: subscriptionStatus.plan,
               current: subscriptionStatus.currentCount,
               max: subscriptionStatus.maxVehicles,

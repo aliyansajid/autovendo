@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Button } from "@repo/ui/src/components/button";
 
 export default async function EditVehiclePage({
   params,
@@ -38,19 +39,15 @@ export default async function EditVehiclePage({
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4">
-        <Link
-          href="/dashboard/vehicles"
-          className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors w-fit"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {t("back")}
-        </Link>
-
+        <Button variant={"link"} asChild>
+          <Link href="/dashboard/vehicles">
+            <ArrowLeft />
+            {t("back")}
+          </Link>
+        </Button>
         <div className="space-y-1">
           <h1 className="text-2xl font-bold">{t("title")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("subtitle")}
-          </p>
+          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
       </div>
       <VehicleForm

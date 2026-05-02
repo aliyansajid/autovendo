@@ -1484,6 +1484,8 @@
     "expiredWarningDesc": "Il vostro abbonamento è scaduto. Gli annunci saranno disattivati il {date}. Rinnovate il vostro abbonamento.",
     "expiredGraceTitle": "Abbonamento scaduto",
     "expiredGraceDesc": "Il vostro abbonamento è scaduto e i vostri annunci sono stati disattivati. Rinnovate il vostro abbonamento per essere nuovamente attivi.",
+    "subscribeNow": "Abbonati ora",
+    "upgradePlan": "Aggiorna piano",
     "successUpdate": "Annuncio aggiornato con successo!",
     "successPublish": "Annuncio pubblicato con successo!",
     "back": "Indietro",

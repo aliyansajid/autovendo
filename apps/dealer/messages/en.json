@@ -1488,6 +1488,8 @@
     "expiredWarningDesc": "Your subscription has expired. Listings will be deactivated on {date}. Please renew your subscription.",
     "expiredGraceTitle": "Subscription Expired",
     "expiredGraceDesc": "Your subscription has expired and your listings have been deactivated. Please renew your subscription to be active again.",
+    "subscribeNow": "Subscribe Now",
+    "upgradePlan": "Upgrade Plan",
     "successUpdate": "Listing updated successfully!",
     "successPublish": "Listing published successfully!",
     "back": "Back",

@@ -57,8 +57,8 @@ export function DeletePlanButton({ id }: { id: string }) {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
+            variant={"destructive"}
             onClick={onDelete}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             disabled={isPending}
           >
             {isPending ? (
