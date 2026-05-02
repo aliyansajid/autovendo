@@ -19,17 +19,17 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { FieldGroup } from "@repo/ui/components/field";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldTitle,
+} from "@repo/ui/components/field";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { Switch } from "@repo/ui/components/switch";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormDescription,
-} from "@repo/ui/components/form";
+import { Form, FormField } from "@repo/ui/components/form";
 import { useForm } from "react-hook-form";
 
 interface PlanFormDialogProps {
@@ -102,7 +102,7 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
                 placeholder="Plan details..."
                 disabled={isPending}
               />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <CustomFormField
                   control={form.control as any}
                   fieldType={FormFieldType.INPUT}
@@ -132,31 +132,41 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
               />
 
               <FormField
-                control={form.control as any}
+                control={form.control}
                 name="popular"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                    <div className="space-y-0.5">
-                      <FormLabel>Popular Plan</FormLabel>
-                      <FormDescription>
-                        Show a "Popular" badge on this plan.
-                      </FormDescription>
-                    </div>
-                    <FormControl>
+                  <FieldLabel htmlFor="switch-popular">
+                    <Field orientation="horizontal">
+                      <FieldContent>
+                        <FieldTitle>Popular Plan</FieldTitle>
+                        <FieldDescription>
+                          Show a "Popular" badge on this plan.
+                        </FieldDescription>
+                      </FieldContent>
                       <Switch
+                        id="switch-popular"
                         checked={field.value}
                         onCheckedChange={field.onChange}
                         disabled={isPending}
                       />
-                    </FormControl>
-                  </FormItem>
+                    </Field>
+                  </FieldLabel>
                 )}
               />
             </FieldGroup>
 
             <DialogFooter>
               <Button type="submit" disabled={isPending}>
-                {isPending ? <Spinner /> : plan ? "Update Plan" : "Create Plan"}
+                {isPending ? (
+                  <>
+                    <Spinner />
+                    {plan ? "Updating..." : "Creating..."}
+                  </>
+                ) : plan ? (
+                  "Update Plan"
+                ) : (
+                  "Create Plan"
+                )}
               </Button>
             </DialogFooter>
           </form>

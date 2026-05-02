@@ -33,7 +33,7 @@ export const dealerSchema = z.object({
     .min(1, "UID is required")
     .regex(
       /^CHE[\s-]?\d{3}[\s.]?\d{3}[\s.]?\d{3}(?:\s?(MWST|TVA|IVA))?$/i,
-      "Invalid UID format (e.g. CHE-123.456.789 MWST)"
+      "Invalid UID format (e.g. CHE-123.456.789 MWST)",
     ),
   contactPerson: z
     .string()
@@ -44,15 +44,18 @@ export const dealerSchema = z.object({
     .min(1, "Phone number is required")
     .regex(
       /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/,
-      "Invalid Swiss phone number format"
+      "Invalid Swiss phone number format",
     ),
   businessEmail: z.email("Please enter a valid email"),
 });
 
 export const updateDealerSchema = dealerSchema.extend({
-  password: z.string().min(8, "Password must be at least 8 characters").optional().or(z.literal("")),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .optional()
+    .or(z.literal("")),
 });
-
 
 export const planSchema = z.object({
   name: z.string().min(1, "Name is required"),

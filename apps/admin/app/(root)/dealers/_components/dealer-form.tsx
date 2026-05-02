@@ -152,7 +152,7 @@ export function DealerForm({ initialData, dealerId }: DealerFormProps) {
           <CardTitle>Contact & Address</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FieldGroup>
               <CustomFormField
                 control={form.control}
@@ -162,7 +162,7 @@ export function DealerForm({ initialData, dealerId }: DealerFormProps) {
                 placeholder="Main Street 1"
                 disabled={isPending}
               />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <CustomFormField
                   control={form.control}
                   fieldType={FormFieldType.INPUT}
@@ -212,11 +212,7 @@ export function DealerForm({ initialData, dealerId }: DealerFormProps) {
       </Card>
 
       <div className="flex justify-end">
-        <Button
-          type="submit"
-          disabled={isPending}
-          className="w-full md:w-auto gap-2"
-        >
+        <Button type="submit" disabled={isPending} className="w-full md:w-auto">
           {isPending ? (
             <>
               <Spinner />

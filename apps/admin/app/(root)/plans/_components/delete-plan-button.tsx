@@ -61,7 +61,14 @@ export function DeletePlanButton({ id }: { id: string }) {
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             disabled={isPending}
           >
-            {isPending ? <Spinner /> : "Delete Plan"}
+            {isPending ? (
+              <>
+                <Spinner />
+                Deleting...
+              </>
+            ) : (
+              "Delete Plan"
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
