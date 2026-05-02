@@ -921,6 +921,8 @@
     "partnershipText": "With autovendo.ch, you are not investing in advertising. You are investing in a partnership.\nYour margin belongs to you – not the platform.",
     "choosePlan": "Choose your package",
     "popular": "Popular",
+    "month": "month",
+    "vehiclesIncluded": "vehicles included",
     "example": {
       "label": "Example calculation:",
       "text": "A dealer with 25 vehicles saves with autovendo.ch",

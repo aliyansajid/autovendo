@@ -26,21 +26,8 @@ import { XCircle } from "lucide-react";
 import { PricingButton } from "./_components/pricing-button";
 import { getTranslations } from "next-intl/server";
 import { formatPrice } from "@/lib/helpers/format";
+import { prisma } from "@repo/db";
 
-interface PricingFeature {
-  name: string;
-  included: boolean;
-}
-
-interface PricingTier {
-  name: string;
-  price: string;
-  period?: string;
-  description: string;
-  features: PricingFeature[];
-  buttonText: string;
-  popular: boolean;
-}
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -54,12 +41,11 @@ export default async function PricingPage(props: {
 }) {
   const { locale } = await props.params;
   const t = await getTranslations("PricingPage");
-  const rawTiers = (await t.raw("tiers")) as PricingTier[];
 
-  const tiers = rawTiers.map((tier) => ({
-    ...tier,
-    price: formatPrice(Number(tier.price.replace(/[^\d.-]/g, "")), locale),
-  }));
+  const plans = await prisma.plan.findMany({
+    orderBy: { price: "asc" },
+    select: { name: true, price: true, description: true, limits: true, popular: true },
+  });
 
   const pricingSchema = {
     "@context": "https://schema.org",
@@ -67,18 +53,18 @@ export default async function PricingPage(props: {
     name: "AutoVendo Händlerpakete",
     description:
       "Faire Inserate-Pakete für Autohändler in der Schweiz – günstiger als AutoScout24",
-    itemListElement: rawTiers.map((tier, index) => ({
+    itemListElement: plans.map((plan, index) => ({
       "@type": "ListItem",
       position: index + 1,
       item: {
         "@type": "Offer",
-        name: `AutoVendo ${tier.name}`,
-        description: tier.description,
-        price: Number(tier.price.replace(/[^\d.-]/g, "")),
+        name: `AutoVendo ${plan.name}`,
+        description: plan.description,
+        price: plan.price / 100,
         priceCurrency: "CHF",
         priceSpecification: {
           "@type": "UnitPriceSpecification",
-          price: Number(tier.price.replace(/[^\d.-]/g, "")),
+          price: plan.price / 100,
           priceCurrency: "CHF",
           unitCode: "MON",
           unitText: "Monat",
@@ -339,59 +325,36 @@ export default async function PricingPage(props: {
         <section className="space-y-12">
           <h2 className="text-2xl font-bold text-center">{t("choosePlan")}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {tiers.map((tier) => (
+            {plans.map((plan) => (
               <Card
-                key={tier.name}
-                className={`${tier.popular ? "border-primary" : ""}`}
+                key={plan.name}
+                className={`${plan.popular ? "border-primary" : ""}`}
               >
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-xl font-bold">
-                      {tier.name}
+                      {plan.name}
                     </CardTitle>
-                    {tier.popular && <Badge>{t("popular")}</Badge>}
+                    {plan.popular && <Badge>{t("popular")}</Badge>}
                   </div>
-                  <CardDescription>{tier.description}</CardDescription>
+                  <CardDescription>{plan.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 space-y-6">
                   <div className="flex items-baseline gap-1">
                     <span className="text-3xl font-bold text-primary">
-                      {tier.price}
+                      {formatPrice(plan.price / 100, locale)}
                     </span>
-                    {tier.period && (
-                      <span className="text-muted-foreground">
-                        {tier.period}
-                      </span>
-                    )}
+                    <span className="text-muted-foreground">/ {t("month")}</span>
                   </div>
-                  <div className="space-y-4">
-                    {tier.features.map((feature: PricingFeature) => (
-                      <div
-                        key={feature.name}
-                        className="flex items-start gap-3"
-                      >
-                        {feature.included ? (
-                          <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
-                        ) : (
-                          <XCircle className="size-5 text-muted-foreground shrink-0 mt-0.5" />
-                        )}
-                        <span
-                          className={
-                            feature.included
-                              ? "text-foreground"
-                              : "text-muted-foreground"
-                          }
-                        >
-                          {feature.name}
-                        </span>
-                      </div>
-                    ))}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <CheckCircle2 className="size-4 text-primary shrink-0" />
+                    <span>{(plan.limits as any)?.vehicles} {t("vehiclesIncluded")}</span>
                   </div>
                 </CardContent>
                 <CardFooter>
                   <PricingButton
                     label={t("getStarted")}
-                    variant={tier.popular ? "default" : "outline"}
+                    variant={plan.popular ? "default" : "outline"}
                   />
                 </CardFooter>
               </Card>

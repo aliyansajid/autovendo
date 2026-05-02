@@ -1,4 +1,4 @@
-import { Plus, Edit } from "lucide-react";
+import { Plus, Edit, Badge } from "lucide-react";
 import { prisma } from "@repo/db";
 import { Button } from "@repo/ui/components/button";
 import {
@@ -58,9 +58,9 @@ export default async function PlansPage() {
                   <TableCell className="font-medium">
                     {plan.name}
                     {plan.popular && (
-                      <span className="ml-2 inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                      <Badge className="ml-2 bg-blue-100 text-blue-800">
                         Popular
-                      </span>
+                      </Badge>
                     )}
                   </TableCell>
                   <TableCell>{(plan.price / 100).toFixed(2)}</TableCell>
@@ -71,12 +71,12 @@ export default async function PlansPage() {
                     {(plan.limits as any)?.vehicles ?? 0} vehicles
                   </TableCell>
                   <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                    <Badge className="bg-green-100 text-green-800">
                       Active
-                    </span>
+                    </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end">
                       <PlanFormDialog plan={plan}>
                         <Button variant="ghost" size="icon">
                           <Edit />

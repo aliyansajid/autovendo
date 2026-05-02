@@ -36,54 +36,34 @@ import { SubscribeButton } from "./_components/subscribe-button";
 import { SubscriptionActions } from "./_components/subscription-actions";
 import { formatPrice } from "@/lib/helpers/format";
 
-interface PricingFeature {
-  name: string;
-  included: boolean;
-}
-
-interface PricingTier {
-  name: string;
-  price: string;
-  period?: string;
-  description: string;
-  features: PricingFeature[];
-  buttonText: string;
-  popular: boolean;
-}
-
 export default async function SubscriptionPage(props: {
   params: Promise<{ locale: string }>;
 }) {
   const t = await getTranslations("BillingPage");
-  const tp = await getTranslations("PricingPage");
   const format = await getFormatter();
   const { locale } = await props.params;
 
   const session = await auth.api.getSession({ headers: await headers() });
 
-  const [subscriptions, subscriptionStatus, billingData] = await Promise.all([
+  const [subscriptions, subscriptionStatus, billingData, plans] = await Promise.all([
     prisma.subscription.findMany({
       where: { referenceId: session!.user.id },
       orderBy: { periodEnd: "desc" },
     }),
     getVehicleSubscriptionStatus(),
     getBillingData(),
+    prisma.plan.findMany({
+      orderBy: { price: "asc" },
+      select: { name: true, price: true, description: true, limits: true, popular: true },
+    }),
   ]);
 
   const activeSubscription = subscriptions.find(
     (s) => s.status === "active" || s.status === "trialing",
   );
 
-  const rawTiers = (await tp.raw("tiers")) as PricingTier[];
-
-  const tiers = rawTiers.map((tier) => ({
-    ...tier,
-    price: formatPrice(Number(tier.price.replace(/[^\d.-]/g, "")), locale),
-  }));
-
   const currentPlanKey = activeSubscription?.plan?.toLowerCase() ?? null;
-  const currentTier =
-    tiers.find((t) => t.name.toLowerCase() === currentPlanKey) ?? null;
+  const currentPlan = plans.find((p) => p.name.toLowerCase() === currentPlanKey) ?? null;
 
   const quotaPct =
     subscriptionStatus.maxVehicles > 0
@@ -107,7 +87,7 @@ export default async function SubscriptionPage(props: {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-bold capitalize">
-                  {currentTier?.name ?? activeSubscription.plan} Plan
+                  {currentPlan?.name ?? activeSubscription.plan} Plan
                 </h2>
                 <Badge className="bg-green-500 hover:bg-green-600">
                   {activeSubscription.status === "trialing"
@@ -116,7 +96,10 @@ export default async function SubscriptionPage(props: {
                 </Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                {currentTier?.price ?? activeSubscription.plan} / {t("month")}
+                {currentPlan
+                  ? formatPrice(currentPlan.price / 100, locale)
+                  : activeSubscription.plan}{" "}
+                / {t("month")}
                 {activeSubscription.periodEnd && (
                   <span>
                     {" · "}
@@ -190,19 +173,19 @@ export default async function SubscriptionPage(props: {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {tiers.map((tier) => (
+          {plans.map((plan) => (
             <Card
-              key={tier.name}
-              className={`${tier.popular ? "border-primary" : ""}`}
+              key={plan.name}
+              className={`${plan.popular ? "border-primary" : ""}`}
             >
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xl font-bold">
-                    {tier.name}
+                    {plan.name}
                   </CardTitle>
                   <div className="flex gap-2">
                     {activeSubscription?.plan?.toLowerCase() ===
-                      tier.name.toLowerCase() && (
+                      plan.name.toLowerCase() && (
                       <Badge
                         variant="outline"
                         className="text-xs border-primary text-primary"
@@ -210,51 +193,33 @@ export default async function SubscriptionPage(props: {
                         {t("currentPlan")}
                       </Badge>
                     )}
-                    {tier.popular && <Badge>{t("popular")}</Badge>}
+                    {plan.popular && <Badge>{t("popular")}</Badge>}
                   </div>
                 </div>
-                <CardDescription>{tier.description}</CardDescription>
+                <CardDescription>{plan.description}</CardDescription>
               </CardHeader>
               <CardContent className="flex-1 space-y-6">
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold text-primary">
-                    {tier.price}
+                    {formatPrice(plan.price / 100, locale)}
                   </span>
-                  {tier.period && (
-                    <span className="text-muted-foreground">{tier.period}</span>
-                  )}
+                  <span className="text-muted-foreground">/ {t("month")}</span>
                 </div>
-                <div className="space-y-4">
-                  {tier.features.map((feature: PricingFeature) => (
-                    <div key={feature.name} className="flex items-start gap-3">
-                      {feature.included ? (
-                        <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
-                      ) : (
-                        <XCircle className="size-5 text-muted-foreground shrink-0 mt-0.5" />
-                      )}
-                      <span
-                        className={
-                          feature.included
-                            ? "text-foreground"
-                            : "text-muted-foreground"
-                        }
-                      >
-                        {feature.name}
-                      </span>
-                    </div>
-                  ))}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <CheckCircle2 className="size-4 text-primary shrink-0" />
+                  <span>{(plan.limits as any)?.vehicles} vehicles</span>
                 </div>
               </CardContent>
               <CardFooter>
                 {activeSubscription?.plan?.toLowerCase() ===
-                tier.name.toLowerCase() ? (
+                plan.name.toLowerCase() ? (
                   <Button variant="outline" className="w-full" disabled>
                     {t("currentPlan")}
                   </Button>
                 ) : (
                   <SubscribeButton
-                    planName={tier.name}
-                    variant={tier.popular ? "default" : "outline"}
+                    planName={plan.name}
+                    variant={plan.popular ? "default" : "outline"}
                     successUrl={`/dashboard/subscription`}
                     cancelUrl={`/dashboard/subscription`}
                   />
