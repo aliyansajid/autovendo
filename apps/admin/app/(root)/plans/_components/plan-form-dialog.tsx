@@ -50,6 +50,8 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
       priceId: plan?.priceId || "",
       vehicles: (plan?.limits as any)?.vehicles || 5,
       popular: plan?.popular || false,
+      hasTrial: plan?.hasTrial || false,
+      trialDays: plan?.trialDays || 14,
     },
   });
 
@@ -153,6 +155,41 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
                   </FieldLabel>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="hasTrial"
+                render={({ field }) => (
+                  <FieldLabel htmlFor="switch-hasTrial">
+                    <Field orientation="horizontal">
+                      <FieldContent>
+                        <FieldTitle>Free Trial</FieldTitle>
+                        <FieldDescription>
+                          Enable a free trial period for this plan.
+                        </FieldDescription>
+                      </FieldContent>
+                      <Switch
+                        id="switch-hasTrial"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={isPending}
+                      />
+                    </Field>
+                  </FieldLabel>
+                )}
+              />
+
+              {form.watch("hasTrial") && (
+                <CustomFormField
+                  control={form.control as any}
+                  fieldType={FormFieldType.INPUT}
+                  inputType="number"
+                  name="trialDays"
+                  label="Trial Duration (Days)"
+                  placeholder="14"
+                  disabled={isPending}
+                />
+              )}
             </FieldGroup>
 
             <DialogFooter>

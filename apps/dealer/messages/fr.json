@@ -919,6 +919,7 @@
       "swiss": "Directement suisses"
     },
     "partnershipText": "Avec autovendo.ch, vous n'investissez pas dans la publicité. Vous investissez dans un partenariat.\nVotre marge vous appartient – pas à la plateforme.",
+    "trialDaysLabel": "{days} jours d'essai gratuit",
     "choosePlan": "Choisissez votre forfait",
     "popular": "Populaire",
     "example": {
@@ -1128,7 +1129,7 @@
     "noSubscription": "Pas d'abonnement",
     "statusTrialing": "Essai",
     "statusActive": "Actif",
-    "vehiclesTitle": "Véhicules",
+    "trialDaysLabel": "{days} jours d'essai gratuit",
     "usedSlots": "{current} sur {max} annonces utilisées",
     "postedVehicles": "Véhicules publiés",
     "visitorsTitle": "Visiteurs",
@@ -1180,6 +1181,7 @@
     "popular": "Populaire",
     "getStarted": "Commencer",
     "month": "mois",
+    "trialEndsAt": "Votre essai se termine le {date}",
     "nextBilling": "Prochaine facturation : {date}",
     "noSubscription": "Aucun abonnement actif",
     "noSubscriptionDesc": "Choisissez un plan pour commencer à publier vos véhicules.",

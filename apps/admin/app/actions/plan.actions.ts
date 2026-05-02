@@ -23,6 +23,8 @@ export async function createPlan(formData: z.infer<typeof planSchema>) {
         priceId: validatedData.priceId,
         limits: { vehicles: validatedData.vehicles },
         popular: validatedData.popular,
+        hasTrial: validatedData.hasTrial,
+        trialDays: validatedData.hasTrial ? validatedData.trialDays : null,
       },
     });
 
@@ -50,6 +52,8 @@ export async function updatePlan(
         priceId: validatedData.priceId,
         limits: { vehicles: validatedData.vehicles },
         popular: validatedData.popular,
+        hasTrial: validatedData.hasTrial,
+        trialDays: validatedData.hasTrial ? validatedData.trialDays : null,
       },
     });
 

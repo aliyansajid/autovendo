@@ -64,6 +64,8 @@ export const planSchema = z.object({
   priceId: z.string().min(1, "Price ID is required"),
   vehicles: z.coerce.number().min(1, "At least 1 vehicle required"),
   popular: z.boolean().default(false),
+  hasTrial: z.boolean().default(false),
+  trialDays: z.coerce.number().min(1, "Trial duration must be at least 1 day").optional(),
 });
 
 export const roleSchema = z.object({

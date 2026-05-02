@@ -49,6 +49,8 @@ export default async function PricingPage(props: {
       description: true,
       limits: true,
       popular: true,
+      hasTrial: true,
+      trialDays: true,
     },
   });
 
@@ -353,11 +355,22 @@ export default async function PricingPage(props: {
                       / {t("month")}
                     </span>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-foreground">
-                      {(plan.limits as any)?.vehicles} {t("vehiclesIncluded")}
-                    </span>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
+                      <span className="text-foreground">
+                        {(plan.limits as any)?.vehicles} {t("vehiclesIncluded")}
+                      </span>
+                    </div>
+
+                    {plan.hasTrial && plan.trialDays && (
+                      <div className="flex items-start gap-2 text-green-600 font-medium">
+                        <CheckCircle2 className="size-5 shrink-0 mt-0.5" />
+                        <span>
+                          {t("trialDaysLabel", { days: plan.trialDays })}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
                 <CardFooter>

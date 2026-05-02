@@ -928,6 +928,7 @@
     "popular": "Beliebt",
     "month": "Monat",
     "vehiclesIncluded": "Fahrzeuge inklusive",
+    "trialDaysLabel": "{days} Tage kostenloser Testzugang",
     "example": {
       "label": "Beispielrechnung:",
       "text": "Ein Händler mit 25 Fahrzeugen spart bei autovendo.ch",
@@ -1187,6 +1188,7 @@
     "popular": "Beliebt",
     "getStarted": "Jetzt starten",
     "month": "Monat",
+    "trialEndsAt": "Ihr Testzugang endet am {date}",
     "nextBilling": "Nächste Abrechnung: {date}",
     "noSubscription": "Kein aktives Abonnement",
     "noSubscriptionDesc": "Wählen Sie einen Plan, um Ihre Fahrzeuge zu inserieren.",

@@ -108,6 +108,8 @@ model Plan {
   priceId     String   @unique
   limits      Json     // e.g., {"vehicles": 5}
   popular     Boolean  @default(false)
+  hasTrial    Boolean  @default(false)
+  trialDays   Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

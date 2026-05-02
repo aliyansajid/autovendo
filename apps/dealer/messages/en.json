@@ -923,6 +923,7 @@
     "popular": "Popular",
     "month": "month",
     "vehiclesIncluded": "vehicles included",
+    "trialDaysLabel": "{days}-day free trial",
     "example": {
       "label": "Example calculation:",
       "text": "A dealer with 25 vehicles saves with autovendo.ch",
@@ -1184,6 +1185,7 @@
     "popular": "Popular",
     "getStarted": "Get started",
     "month": "month",
+    "trialEndsAt": "Your trial ends on {date}",
     "nextBilling": "Next billing: {date}",
     "noSubscription": "No active subscription",
     "noSubscriptionDesc": "Choose a plan to start listing your vehicles.",

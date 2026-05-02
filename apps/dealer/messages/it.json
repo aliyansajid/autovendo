@@ -919,6 +919,7 @@
       "swiss": "Direttamente svizzeri"
     },
     "partnershipText": "Con autovendo.ch non investe in pubblicità. Investe in una partnership.\nIl suo margine appartiene a Lei – non alla piattaforma.",
+    "trialDaysLabel": "{days} giorni di prova gratuita",
     "choosePlan": "Scelga il suo pacchetto",
     "popular": "Popolare",
     "example": {
@@ -1180,6 +1181,8 @@
     "popular": "Popolare",
     "getStarted": "Inizia",
     "month": "mese",
+    "trialEndsAt": "La tua prova termina il {date}",
+    "trialDaysLabel": "{days} giorni di prova gratuita",
     "nextBilling": "Prossima fatturazione: {date}",
     "noSubscription": "Nessun abbonamento attivo",
     "noSubscriptionDesc": "Scegliete un piano per iniziare a pubblicare i vostri veicoli.",

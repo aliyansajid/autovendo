@@ -61,6 +61,8 @@ export default async function SubscriptionPage(props: {
           description: true,
           limits: true,
           popular: true,
+          hasTrial: true,
+          trialDays: true,
         },
       }),
     ]);
@@ -131,6 +133,19 @@ export default async function SubscriptionPage(props: {
               </div>
             )}
           </div>
+          {activeSubscription.status === "trialing" &&
+            activeSubscription.trialEnd && (
+              <div className="px-6 py-3 bg-primary/10 text-primary text-sm font-medium">
+                {t("trialEndsAt", {
+                  date: format.dateTime(activeSubscription.trialEnd, {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  }),
+                })}
+              </div>
+            )}
+
           {activeSubscription.cancelAtPeriodEnd &&
             activeSubscription.periodEnd && (
               <div className="px-6 py-3 bg-destructive/10 text-destructive text-sm font-medium">
@@ -214,11 +229,22 @@ export default async function SubscriptionPage(props: {
                   </span>
                   <span className="text-muted-foreground">/ {t("month")}</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
-                  <span className="text-foreground">
-                    {(plan.limits as any)?.vehicles} vehicles
-                  </span>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-foreground">
+                      {(plan.limits as any)?.vehicles} {t("listingsCount", { count: (plan.limits as any)?.vehicles })}
+                    </span>
+                  </div>
+
+                  {plan.hasTrial && plan.trialDays && (
+                    <div className="flex items-start gap-2 text-green-600 font-medium">
+                      <CheckCircle2 className="size-5 shrink-0 mt-0.5" />
+                      <span>
+                        {t("trialDaysLabel", { days: plan.trialDays })}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </CardContent>
               <CardFooter>

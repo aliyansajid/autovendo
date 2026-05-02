@@ -90,6 +90,12 @@ export const auth = betterAuth({
             name: plan.name,
             priceId: plan.priceId,
             limits: plan.limits as Record<string, any>,
+            freeTrial:
+              plan.hasTrial && plan.trialDays
+                ? {
+                    days: plan.trialDays,
+                  }
+                : undefined,
           }));
         },
       },
