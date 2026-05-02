@@ -104,7 +104,7 @@ model Plan {
   id          String   @id @default(cuid())
   name        String   @unique
   description String?
-  price       Int      // Price in cents/rappen (e.g., 18000 for 180.00 CHF)
+  price       Float    // Price in CHF (e.g., 180, 19.99)
   priceId     String   @unique
   limits      Json     // e.g., {"vehicles": 5}
   popular     Boolean  @default(false)

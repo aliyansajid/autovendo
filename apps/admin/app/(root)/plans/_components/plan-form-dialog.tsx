@@ -46,7 +46,7 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
     defaultValues: {
       name: plan?.name || "",
       description: plan?.description || "",
-      price: plan?.price ? plan.price / 100 : 0,
+      price: plan?.price || 0,
       priceId: plan?.priceId || "",
       vehicles: (plan?.limits as any)?.vehicles || 5,
       popular: plan?.popular || false,

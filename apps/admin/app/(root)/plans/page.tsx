@@ -59,10 +59,17 @@ export default async function PlansPage() {
                   <TableCell className="font-medium">
                     {plan.name}
                     {plan.popular && (
-                      <Badge className="ml-2" variant="secondary">Popular</Badge>
+                      <Badge className="ml-2" variant="secondary">
+                        Popular
+                      </Badge>
                     )}
                   </TableCell>
-                  <TableCell>{(plan.price / 100).toFixed(2)}</TableCell>
+                  <TableCell>
+                    {new Intl.NumberFormat("de-CH", {
+                      style: "currency",
+                      currency: "CHF",
+                    }).format(plan.price)}
+                  </TableCell>
                   <TableCell className="font-mono text-xs">
                     {plan.priceId}
                   </TableCell>
@@ -70,7 +77,9 @@ export default async function PlansPage() {
                     {(plan.limits as any)?.vehicles ?? 0} vehicles
                   </TableCell>
                   <TableCell>
-                    <Badge className="bg-green-500 hover:bg-green-600 text-white">Active</Badge>
+                    <Badge className="bg-green-500 hover:bg-green-600 text-white">
+                      Active
+                    </Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end">

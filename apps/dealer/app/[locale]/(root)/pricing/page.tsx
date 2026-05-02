@@ -28,7 +28,6 @@ import { getTranslations } from "next-intl/server";
 import { formatPrice } from "@/lib/helpers/format";
 import { prisma } from "@repo/db";
 
-
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
@@ -44,7 +43,13 @@ export default async function PricingPage(props: {
 
   const plans = await prisma.plan.findMany({
     orderBy: { price: "asc" },
-    select: { name: true, price: true, description: true, limits: true, popular: true },
+    select: {
+      name: true,
+      price: true,
+      description: true,
+      limits: true,
+      popular: true,
+    },
   });
 
   const pricingSchema = {
@@ -60,11 +65,11 @@ export default async function PricingPage(props: {
         "@type": "Offer",
         name: `AutoVendo ${plan.name}`,
         description: plan.description,
-        price: plan.price / 100,
+        price: plan.price,
         priceCurrency: "CHF",
         priceSpecification: {
           "@type": "UnitPriceSpecification",
-          price: plan.price / 100,
+          price: plan.price,
           priceCurrency: "CHF",
           unitCode: "MON",
           unitText: "Monat",
@@ -342,11 +347,13 @@ export default async function PricingPage(props: {
                 <CardContent className="flex-1 space-y-6">
                   <div className="flex items-baseline gap-1">
                     <span className="text-3xl font-bold text-primary">
-                      {formatPrice(plan.price / 100, locale)}
+                      {formatPrice(plan.price, locale)}
                     </span>
-                    <span className="text-muted-foreground">/ {t("month")}</span>
+                    <span className="text-muted-foreground">
+                      / {t("month")}
+                    </span>
                   </div>
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-2">
                     <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
                     <span className="text-foreground">
                       {(plan.limits as any)?.vehicles} {t("vehiclesIncluded")}

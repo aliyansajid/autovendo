@@ -19,7 +19,7 @@ export async function createPlan(formData: z.infer<typeof planSchema>) {
       data: {
         name: validatedData.name,
         description: validatedData.description,
-        price: validatedData.price * 100,
+        price: validatedData.price,
         priceId: validatedData.priceId,
         limits: { vehicles: validatedData.vehicles },
         popular: validatedData.popular,
@@ -46,7 +46,7 @@ export async function updatePlan(
       data: {
         name: validatedData.name,
         description: validatedData.description,
-        price: validatedData.price * 100,
+        price: validatedData.price,
         priceId: validatedData.priceId,
         limits: { vehicles: validatedData.vehicles },
         popular: validatedData.popular,

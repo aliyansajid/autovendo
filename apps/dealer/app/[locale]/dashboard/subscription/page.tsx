@@ -45,25 +45,33 @@ export default async function SubscriptionPage(props: {
 
   const session = await auth.api.getSession({ headers: await headers() });
 
-  const [subscriptions, subscriptionStatus, billingData, plans] = await Promise.all([
-    prisma.subscription.findMany({
-      where: { referenceId: session!.user.id },
-      orderBy: { periodEnd: "desc" },
-    }),
-    getVehicleSubscriptionStatus(),
-    getBillingData(),
-    prisma.plan.findMany({
-      orderBy: { price: "asc" },
-      select: { name: true, price: true, description: true, limits: true, popular: true },
-    }),
-  ]);
+  const [subscriptions, subscriptionStatus, billingData, plans] =
+    await Promise.all([
+      prisma.subscription.findMany({
+        where: { referenceId: session!.user.id },
+        orderBy: { periodEnd: "desc" },
+      }),
+      getVehicleSubscriptionStatus(),
+      getBillingData(),
+      prisma.plan.findMany({
+        orderBy: { price: "asc" },
+        select: {
+          name: true,
+          price: true,
+          description: true,
+          limits: true,
+          popular: true,
+        },
+      }),
+    ]);
 
   const activeSubscription = subscriptions.find(
     (s) => s.status === "active" || s.status === "trialing",
   );
 
   const currentPlanKey = activeSubscription?.plan?.toLowerCase() ?? null;
-  const currentPlan = plans.find((p) => p.name.toLowerCase() === currentPlanKey) ?? null;
+  const currentPlan =
+    plans.find((p) => p.name.toLowerCase() === currentPlanKey) ?? null;
 
   const quotaPct =
     subscriptionStatus.maxVehicles > 0
@@ -97,7 +105,7 @@ export default async function SubscriptionPage(props: {
               </div>
               <p className="text-sm text-muted-foreground">
                 {currentPlan
-                  ? formatPrice(currentPlan.price / 100, locale)
+                  ? formatPrice(currentPlan.price, locale)
                   : activeSubscription.plan}{" "}
                 / {t("month")}
                 {activeSubscription.periodEnd && (
@@ -123,17 +131,18 @@ export default async function SubscriptionPage(props: {
               </div>
             )}
           </div>
-          {activeSubscription.cancelAtPeriodEnd && activeSubscription.periodEnd && (
-            <div className="px-6 py-3 bg-destructive/10 text-destructive text-sm font-medium">
-              {t("cancelingAt", {
-                date: format.dateTime(activeSubscription.periodEnd, {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                }),
-              })}
-            </div>
-          )}
+          {activeSubscription.cancelAtPeriodEnd &&
+            activeSubscription.periodEnd && (
+              <div className="px-6 py-3 bg-destructive/10 text-destructive text-sm font-medium">
+                {t("cancelingAt", {
+                  date: format.dateTime(activeSubscription.periodEnd, {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  }),
+                })}
+              </div>
+            )}
 
           <div className="p-6 space-y-3">
             <div className="flex items-center justify-between text-sm">
@@ -201,11 +210,11 @@ export default async function SubscriptionPage(props: {
               <CardContent className="flex-1 space-y-6">
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold text-primary">
-                    {formatPrice(plan.price / 100, locale)}
+                    {formatPrice(plan.price, locale)}
                   </span>
                   <span className="text-muted-foreground">/ {t("month")}</span>
                 </div>
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2">
                   <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
                   <span className="text-foreground">
                     {(plan.limits as any)?.vehicles} vehicles
@@ -222,8 +231,8 @@ export default async function SubscriptionPage(props: {
                   <SubscribeButton
                     planName={plan.name}
                     variant={plan.popular ? "default" : "outline"}
-                    successUrl={`/dashboard/subscription`}
-                    cancelUrl={`/dashboard/subscription`}
+                    successUrl={`/${locale}/dashboard/subscription`}
+                    cancelUrl={`/${locale}/dashboard/subscription`}
                   />
                 )}
               </CardFooter>
