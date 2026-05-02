@@ -1177,6 +1177,8 @@
     "subtitle": "Manage your subscription, payment method and invoices.",
     "statusActive": "Active",
     "statusTrialing": "Trial",
+    "popular": "Popular",
+    "getStarted": "Get started",
     "month": "month",
     "nextBilling": "Next billing: {date}",
     "noSubscription": "No active subscription",

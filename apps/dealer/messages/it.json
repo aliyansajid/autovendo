@@ -1177,6 +1177,8 @@
     "subtitle": "Gestite il vostro abbonamento, il metodo di pagamento e le fatture.",
     "statusActive": "Attivo",
     "statusTrialing": "Prova",
+    "popular": "Popolare",
+    "getStarted": "Inizia",
     "month": "mese",
     "nextBilling": "Prossima fatturazione: {date}",
     "noSubscription": "Nessun abbonamento attivo",

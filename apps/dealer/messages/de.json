@@ -1182,6 +1182,8 @@
     "subtitle": "Verwalten Sie Ihr Abonnement, Ihre Zahlungsmethode und Rechnungen.",
     "statusActive": "Aktiv",
     "statusTrialing": "Testphase",
+    "popular": "Beliebt",
+    "getStarted": "Jetzt starten",
     "month": "Monat",
     "nextBilling": "Nächste Abrechnung: {date}",
     "noSubscription": "Kein aktives Abonnement",

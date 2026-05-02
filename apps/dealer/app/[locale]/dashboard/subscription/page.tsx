@@ -100,13 +100,13 @@ export default async function SubscriptionPage(props: {
       </div>
 
       {/* Current Plan + Usage */}
-      {activeSubscription && currentTier ? (
+      {activeSubscription ? (
         <div className="rounded-lg border divide-y">
           <div className="p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-bold capitalize">
-                  {currentTier.name} Plan
+                  {currentTier?.name ?? activeSubscription.plan} Plan
                 </h2>
                 <Badge className="bg-green-500 hover:bg-green-600">
                   {activeSubscription.status === "trialing"
@@ -115,7 +115,7 @@ export default async function SubscriptionPage(props: {
                 </Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                {currentTier.price} / {t("month")}
+                {currentTier?.price ?? activeSubscription.plan} / {t("month")}
                 {activeSubscription.periodEnd && (
                   <span>
                     {" · "}
@@ -180,7 +180,18 @@ export default async function SubscriptionPage(props: {
                   <CardTitle className="text-xl font-bold">
                     {tier.name}
                   </CardTitle>
-                  {tier.popular && <Badge>{t("popular")}</Badge>}
+                  <div className="flex gap-2">
+                    {activeSubscription?.plan?.toLowerCase() ===
+                      tier.name.toLowerCase() && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs border-primary text-primary"
+                      >
+                        {t("currentPlan")}
+                      </Badge>
+                    )}
+                    {tier.popular && <Badge>{t("popular")}</Badge>}
+                  </div>
                 </div>
                 <CardDescription>{tier.description}</CardDescription>
               </CardHeader>
@@ -215,12 +226,19 @@ export default async function SubscriptionPage(props: {
                 </div>
               </CardContent>
               <CardFooter>
-                <SubscribeButton
-                  planName={tier.name}
-                  variant={tier.popular ? "default" : "outline"}
-                  successUrl={`/dashboard/subscription`}
-                  cancelUrl={`/dashboard/subscription`}
-                />
+                {activeSubscription?.plan?.toLowerCase() ===
+                tier.name.toLowerCase() ? (
+                  <Button variant="outline" className="w-full" disabled>
+                    {t("currentPlan")}
+                  </Button>
+                ) : (
+                  <SubscribeButton
+                    planName={tier.name}
+                    variant={tier.popular ? "default" : "outline"}
+                    successUrl={`/dashboard/subscription`}
+                    cancelUrl={`/dashboard/subscription`}
+                  />
+                )}
               </CardFooter>
             </Card>
           ))}

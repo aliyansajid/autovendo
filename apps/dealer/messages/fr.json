@@ -1177,6 +1177,8 @@
     "subtitle": "Gérez votre abonnement, votre moyen de paiement et vos factures.",
     "statusActive": "Actif",
     "statusTrialing": "Essai",
+    "popular": "Populaire",
+    "getStarted": "Commencer",
     "month": "mois",
     "nextBilling": "Prochaine facturation : {date}",
     "noSubscription": "Aucun abonnement actif",
