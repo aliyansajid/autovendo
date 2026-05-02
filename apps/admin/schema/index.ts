@@ -48,3 +48,12 @@ export const dealerSchema = z.object({
     ),
   businessEmail: z.email("Please enter a valid email"),
 });
+
+export const planSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().optional(),
+  price: z.coerce.number().min(0, "Price must be non-negative"),
+  priceId: z.string().min(1, "Price ID is required"),
+  vehicles: z.coerce.number().min(1, "At least 1 vehicle required"),
+  popular: z.boolean().default(false),
+});

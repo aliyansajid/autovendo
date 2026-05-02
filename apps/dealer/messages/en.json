@@ -1146,6 +1146,8 @@
     "expiredGraceDescription": "Your subscription has expired and your listings have been deactivated. Please renew your subscription.",
     "quotaTitle": "Listing Quota Exhausted",
     "quotaDescription": "You have reached the maximum quota of your plan ({plan}) ({current}/{max} listings). Please upgrade your subscription.",
+    "upgradePlan": "Upgrade Plan",
+    "subscribeNow": "Subscribe Now",
     "pageTitle": "All Vehicles",
     "pageSubtitle": "Manage your listed vehicles and their status.",
     "newListing": "New Listing"

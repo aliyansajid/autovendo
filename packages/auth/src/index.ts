@@ -84,28 +84,14 @@ export const auth = betterAuth({
       createCustomerOnSignUp: true,
       subscription: {
         enabled: true,
-        plans: [
-          {
-            name: "bronze",
-            priceId: process.env.STRIPE_BRONZE_PRICE_ID!,
-            limits: { vehicles: 5 },
-          },
-          {
-            name: "silver",
-            priceId: process.env.STRIPE_SILVER_PRICE_ID!,
-            limits: { vehicles: 10 },
-          },
-          {
-            name: "gold",
-            priceId: process.env.STRIPE_GOLD_PRICE_ID!,
-            limits: { vehicles: 15 },
-          },
-          {
-            name: "diamond",
-            priceId: process.env.STRIPE_DIAMOND_PRICE_ID!,
-            limits: { vehicles: 25 },
-          },
-        ],
+        plans: async () => {
+          const plans = await prisma.plan.findMany();
+          return plans.map((plan) => ({
+            name: plan.name,
+            priceId: plan.priceId,
+            limits: plan.limits as Record<string, any>,
+          }));
+        },
       },
     }),
   ],

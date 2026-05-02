@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Users2 } from "lucide-react";
+import { Users2, CreditCard } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import {
@@ -23,6 +23,11 @@ const data = {
       title: "Dealers",
       url: "/dealers",
       icon: Users2,
+    },
+    {
+      title: "Plans",
+      url: "/plans",
+      icon: CreditCard,
     },
   ],
 };

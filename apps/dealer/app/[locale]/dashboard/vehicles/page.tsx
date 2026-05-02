@@ -1,5 +1,5 @@
 import { Button } from "@repo/ui/components/button";
-import { Plus, AlertCircle, AlertTriangle } from "lucide-react";
+import { Plus, AlertCircle } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { getDealerVehicles, getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { VehicleList } from "./_components/vehicle-list";
@@ -8,11 +8,10 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@repo/ui/components/alert";
-import { getTranslations, getFormatter } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 export default async function VehiclesPage() {
   const t = await getTranslations("VehiclesPage");
-  const format = await getFormatter();
 
   const [vehicles, subscriptionStatus] = await Promise.all([
     getDealerVehicles(),
@@ -26,55 +25,23 @@ export default async function VehiclesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Grace period — subscription expired but still within 7 days */}
-      {subscriptionStatus.type === "expired" &&
-        !subscriptionStatus.isGraceExpired &&
-        subscriptionStatus.graceEnd && (
-          <Alert className="border-yellow-500 bg-yellow-50 text-yellow-900 dark:bg-yellow-950/20 dark:text-yellow-400 [&>svg]:text-yellow-500">
-            <AlertTriangle />
-            <AlertTitle>{t("expiredTitle")}</AlertTitle>
-            <AlertDescription>
-              {t("expiredGraceDescription")}{" "}
-              <strong>
-                {format.dateTime(new Date(subscriptionStatus.graceEnd), {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
-              </strong>{" "}
-              {t("expiredDescription", {
-                date: format.dateTime(new Date(subscriptionStatus.graceEnd), {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                }),
-              })}
-            </AlertDescription>
-          </Alert>
-        )}
-
-      {/* No subscription or grace period has expired */}
+      {/* No subscription or expired */}
       {(subscriptionStatus.type === "no_subscription" ||
-        (subscriptionStatus.type === "expired" &&
-          subscriptionStatus.isGraceExpired)) && (
+        subscriptionStatus.type === "expired") && (
         <Alert variant="destructive">
-          <AlertCircle />
+          <AlertCircle className="size-4" />
           <AlertTitle>{t("noSubTitle")}</AlertTitle>
-          <AlertDescription>
-            {subscriptionStatus.type === "no_subscription"
-              ? t("noSubDescription")
-              : t("expiredDescription", {
-                  date: subscriptionStatus.graceEnd
-                     ? format.dateTime(
-                         new Date(subscriptionStatus.graceEnd),
-                         {
-                           day: "2-digit",
-                           month: "2-digit",
-                           year: "numeric",
-                         },
-                       )
-                    : "",
-                })}
+          <AlertDescription className="space-y-3">
+            <p>
+              {subscriptionStatus.type === "no_subscription"
+                ? t("noSubDescription")
+                : t("expiredGraceDescription")}
+            </p>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/dashboard/subscription">
+                {t("subscribeNow")}
+              </Link>
+            </Button>
           </AlertDescription>
         </Alert>
       )}
@@ -82,14 +49,21 @@ export default async function VehiclesPage() {
       {/* Quota exhausted */}
       {subscriptionStatus.type === "quota_exhausted" && (
         <Alert variant="destructive">
-          <AlertCircle />
+          <AlertCircle className="size-4" />
           <AlertTitle>{t("quotaTitle")}</AlertTitle>
-          <AlertDescription>
-            {t("quotaDescription", {
-              plan: subscriptionStatus.plan,
-              current: subscriptionStatus.currentCount,
-              max: subscriptionStatus.maxVehicles,
-            })}
+          <AlertDescription className="space-y-3">
+            <p>
+              {t("quotaDescription", {
+                plan: subscriptionStatus.plan,
+                current: subscriptionStatus.currentCount,
+                max: subscriptionStatus.maxVehicles,
+              })}
+            </p>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/dashboard/subscription">
+                {t("upgradePlan")}
+              </Link>
+            </Button>
           </AlertDescription>
         </Alert>
       )}
@@ -102,13 +76,13 @@ export default async function VehiclesPage() {
 
         {isBlocked ? (
           <Button disabled>
-            <Plus />
+            <Plus className="mr-2 size-4" />
             {t("newListing")}
           </Button>
         ) : (
           <Button asChild>
             <Link href="/dashboard/vehicles/new">
-              <Plus />
+              <Plus className="mr-2 size-4" />
               {t("newListing")}
             </Link>
           </Button>

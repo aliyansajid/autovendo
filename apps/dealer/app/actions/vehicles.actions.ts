@@ -54,12 +54,7 @@ import {
 
 import { parseSearchParams } from "@/lib/helpers/vehicle";
 
-const PLAN_LIMITS: Record<string, number> = {
-  bronze: 5,
-  silver: 10,
-  gold: 15,
-  diamond: 25,
-};
+// PLAN_LIMITS removed - now dynamic from DB via auth plugin
 
 export type SubscriptionStatus = {
   type: "active" | "no_subscription" | "quota_exhausted" | "expired";
@@ -1213,7 +1208,10 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
     : 0;
 
   const subscription = await prisma.subscription.findFirst({
-    where: { referenceId: session.user.id },
+    where: {
+      referenceId: session.user.id,
+      status: { in: ["active", "trialing", "past_due"] },
+    },
     orderBy: { periodEnd: "desc" },
   });
 
@@ -1229,30 +1227,11 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
     };
   }
 
-  const planName = subscription.plan.toLowerCase();
-  const maxVehicles = PLAN_LIMITS[planName] ?? 0;
-  const isActive = ["active", "trialing", "past_due"].includes(
-    subscription.status,
-  );
+  const plan = await prisma.plan.findUnique({
+    where: { name: subscription.plan },
+  });
 
-  if (!isActive) {
-    const expiredAt =
-      subscription.periodEnd ?? subscription.endedAt ?? subscription.canceledAt;
-    const graceEnd = expiredAt
-      ? new Date(expiredAt.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
-      : null;
-    const isGraceExpired = graceEnd ? new Date() > new Date(graceEnd) : true;
-    return {
-      type: "expired",
-      plan: subscription.plan,
-      maxVehicles,
-      currentCount,
-      remainingQuota: 0,
-      graceEnd,
-      isGraceExpired,
-    };
-  }
-
+  const maxVehicles = (plan?.limits as any)?.vehicles ?? 0;
   const remainingQuota = Math.max(0, maxVehicles - currentCount);
 
   if (remainingQuota === 0) {
@@ -1372,11 +1351,17 @@ export async function createVehicle(
       status: { in: ["active", "trialing", "past_due"] },
     },
     orderBy: { periodEnd: "desc" },
-    select: { plan: true },
   });
 
-  const planName = subscription?.plan?.toLowerCase() || "";
-  const maxVehicles = PLAN_LIMITS[planName] || 0;
+  if (!subscription) {
+    return { error: "noSubscription" };
+  }
+
+  const plan = await prisma.plan.findUnique({
+    where: { name: subscription.plan },
+  });
+
+  const maxVehicles = (plan?.limits as any)?.vehicles ?? 0;
 
   const currentCount = await prisma.vehicle.count({
     where: { dealerId: dealer.id },
