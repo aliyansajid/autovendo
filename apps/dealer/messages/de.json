@@ -584,6 +584,7 @@
     "TOO_MANY_REQUESTS": "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
     "INVALID_TOKEN": "Ungültiger oder abgelaufener Token",
     "SESSION_EXPIRED": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+    "BANNED_USER": "Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Support.",
     "UNKNOWN_ERROR": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
   },
   "ProfileSchema": {

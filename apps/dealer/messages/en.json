@@ -579,6 +579,7 @@
     "TOO_MANY_REQUESTS": "Too many requests. Please try again later.",
     "INVALID_TOKEN": "Invalid or expired token",
     "SESSION_EXPIRED": "Session expired. Please log in again.",
+    "BANNED_USER": "Your account has been banned. Please contact support.",
     "UNKNOWN_ERROR": "An unknown error occurred. Please try again."
   },
   "ProfileSchema": {

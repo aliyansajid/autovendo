@@ -42,6 +42,8 @@ export default async function PlansPage() {
               <TableHead>Price</TableHead>
               <TableHead>Stripe Price ID</TableHead>
               <TableHead>Vehicle Limit</TableHead>
+              <TableHead>Trial</TableHead>
+              <TableHead>Trial Days</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -58,16 +60,7 @@ export default async function PlansPage() {
                 <TableRow key={plan.id}>
                   <TableCell className="flex items-center gap-2 font-medium">
                     {plan.name}
-                    <div className="flex gap-1">
-                      {plan.popular && (
-                        <Badge variant="secondary">Popular</Badge>
-                      )}
-                      {plan.hasTrial && (
-                        <Badge className="bg-blue-500 hover:bg-blue-600 text-white whitespace-nowrap">
-                          {plan.trialDays}d Trial
-                        </Badge>
-                      )}
-                    </div>
+                    {plan.popular && <Badge variant="secondary">Popular</Badge>}
                   </TableCell>
                   <TableCell>
                     {new Intl.NumberFormat("de-CH", {
@@ -81,6 +74,16 @@ export default async function PlansPage() {
                   <TableCell>
                     {(plan.limits as any)?.vehicles ?? 0} vehicles
                   </TableCell>
+                  <TableCell>
+                    {plan.hasTrial ? (
+                      <Badge className="bg-green-500 hover:bg-green-600 text-white">
+                        Yes
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline">No</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>{plan.hasTrial ? plan.trialDays : "-"}</TableCell>
                   <TableCell>
                     <Badge className="bg-green-500 hover:bg-green-600 text-white">
                       Active

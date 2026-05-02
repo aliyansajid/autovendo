@@ -68,7 +68,7 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
           toast.success(result.message);
           setOpen(false);
           form.reset();
-          router.refresh();
+          window.location.reload();
         } else {
           toast.error(result.error);
         }

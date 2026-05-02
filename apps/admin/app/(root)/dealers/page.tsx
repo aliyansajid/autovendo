@@ -85,7 +85,7 @@ export default async function DealersPage() {
           <TableBody>
             {dealers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   No dealers found.
                 </TableCell>
               </TableRow>
