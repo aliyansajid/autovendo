@@ -46,7 +46,7 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
     defaultValues: {
       name: plan?.name || "",
       description: plan?.description || "",
-      price: plan?.price || 0,
+      price: plan?.price ? plan.price / 100 : 0,
       priceId: plan?.priceId || "",
       vehicles: (plan?.limits as any)?.vehicles || 5,
       popular: plan?.popular || false,
@@ -108,8 +108,8 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
                   fieldType={FormFieldType.INPUT}
                   inputType="number"
                   name="price"
-                  label="Price (Rappen)"
-                  placeholder="18000"
+                  label="Price (CHF)"
+                  placeholder="180"
                   disabled={isPending}
                 />
                 <CustomFormField
