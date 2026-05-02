@@ -25,6 +25,11 @@ const data = {
       icon: Users2,
     },
     {
+      title: "Users",
+      url: "/users",
+      icon: Users2,
+    },
+    {
       title: "Plans",
       url: "/plans",
       icon: CreditCard,

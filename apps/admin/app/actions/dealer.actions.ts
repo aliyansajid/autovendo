@@ -83,3 +83,71 @@ export async function createDealer(formData: z.infer<typeof dealerSchema>) {
     };
   }
 }
+
+export async function getDealer(id: string) {
+  return await prisma.dealer.findUnique({
+    where: { id },
+    include: {
+      user: true,
+    },
+  });
+}
+
+export async function getDealerSubscription(userId: string) {
+  return await prisma.subscription.findFirst({
+    where: { referenceId: userId },
+    orderBy: { periodEnd: "desc" },
+  });
+}
+
+export async function updateDealerSubscription(
+  dealerId: string,
+  planName: string,
+  days: number,
+) {
+  try {
+    const dealer = await prisma.dealer.findUnique({
+      where: { id: dealerId },
+    });
+
+    if (!dealer) return { error: "Dealer not found" };
+
+    const now = new Date();
+    const periodEnd = new Date();
+    periodEnd.setDate(now.getDate() + days);
+
+    // Find if subscription exists
+    const existingSub = await prisma.subscription.findFirst({
+      where: { referenceId: dealer.userId },
+    });
+
+    if (existingSub) {
+      await prisma.subscription.update({
+        where: { id: existingSub.id },
+        data: {
+          plan: planName.toLowerCase(),
+          status: "active",
+          periodStart: now,
+          periodEnd: periodEnd,
+        },
+      });
+    } else {
+      await prisma.subscription.create({
+        data: {
+          plan: planName.toLowerCase(),
+          referenceId: dealer.userId,
+          status: "active",
+          periodStart: now,
+          periodEnd: periodEnd,
+        },
+      });
+    }
+
+    revalidatePath(`/dealers/${dealerId}`);
+    return { success: true, message: "Subscription updated successfully" };
+  } catch (error) {
+    console.error("Failed to update subscription:", error);
+    return { error: "Failed to update subscription" };
+  }
+}
+

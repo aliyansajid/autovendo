@@ -39,7 +39,7 @@ export default async function PlansPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Price (CHF)</TableHead>
+              <TableHead>Price</TableHead>
               <TableHead>Stripe Price ID</TableHead>
               <TableHead>Vehicle Limit</TableHead>
               <TableHead>Status</TableHead>
