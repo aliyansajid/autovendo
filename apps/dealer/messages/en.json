@@ -1185,6 +1185,7 @@
     "popular": "Popular",
     "getStarted": "Get started",
     "month": "month",
+    "trialDaysLabel": "{days}-day free trial",
     "trialEndsAt": "Your trial ends on {date}",
     "nextBilling": "Next billing: {date}",
     "noSubscription": "No active subscription",

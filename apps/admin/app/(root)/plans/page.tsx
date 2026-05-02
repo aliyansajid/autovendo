@@ -58,7 +58,16 @@ export default async function PlansPage() {
                 <TableRow key={plan.id}>
                   <TableCell className="flex items-center gap-2 font-medium">
                     {plan.name}
-                    {plan.popular && <Badge variant="secondary">Popular</Badge>}
+                    <div className="flex gap-1">
+                      {plan.popular && (
+                        <Badge variant="secondary">Popular</Badge>
+                      )}
+                      {plan.hasTrial && (
+                        <Badge className="bg-blue-500 hover:bg-blue-600 text-white whitespace-nowrap">
+                          {plan.trialDays}d Trial
+                        </Badge>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     {new Intl.NumberFormat("de-CH", {

@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 
 import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +40,7 @@ interface PlanFormDialogProps {
 
 export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof planSchema>>({
@@ -66,6 +68,7 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
           toast.success(result.message);
           setOpen(false);
           form.reset();
+          router.refresh();
         } else {
           toast.error(result.error);
         }
@@ -78,7 +81,7 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{plan ? "Edit Plan" : "Create New Plan"}</DialogTitle>
         </DialogHeader>

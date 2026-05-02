@@ -4,7 +4,7 @@ import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/ui/src/components/button";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { useRouter } from "@/i18n/routing";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
@@ -58,27 +58,15 @@ export const SubscriptionActions = ({
 
   if (cancelAtPeriodEnd) {
     return (
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={isPending}
-        onClick={handleReactivate}
-      >
-        {isPending ? <Spinner className="mr-2" /> : null}
-        {t("reactivateSubscription")}
+      <Button variant="outline" disabled={isPending} onClick={handleReactivate}>
+        {isPending ? <Spinner /> : t("reactivateSubscription")}
       </Button>
     );
   }
 
   return (
-    <Button
-      variant="destructive"
-      size="sm"
-      disabled={isPending}
-      onClick={handleCancel}
-    >
-      {isPending ? <Spinner className="mr-2" /> : null}
-      {t("cancelSubscription")}
+    <Button variant="destructive" disabled={isPending} onClick={handleCancel}>
+      {isPending ? <Spinner /> : t("cancelSubscription")}
     </Button>
   );
 };

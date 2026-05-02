@@ -1188,6 +1188,7 @@
     "popular": "Beliebt",
     "getStarted": "Jetzt starten",
     "month": "Monat",
+    "trialDaysLabel": "{days} Tage kostenloser Test",
     "trialEndsAt": "Ihr Testzugang endet am {date}",
     "nextBilling": "Nächste Abrechnung: {date}",
     "noSubscription": "Kein aktives Abonnement",

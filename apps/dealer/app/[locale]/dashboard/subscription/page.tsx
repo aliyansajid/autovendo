@@ -233,7 +233,7 @@ export default async function SubscriptionPage(props: {
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
                     <span className="text-foreground">
-                      {(plan.limits as any)?.vehicles} {t("listingsCount", { count: (plan.limits as any)?.vehicles })}
+                      {t("listingsCount", { count: (plan.limits as any)?.vehicles })}
                     </span>
                   </div>
 

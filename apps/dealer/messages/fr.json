@@ -1181,6 +1181,7 @@
     "popular": "Populaire",
     "getStarted": "Commencer",
     "month": "mois",
+    "trialDaysLabel": "{days} jours d'essai gratuit",
     "trialEndsAt": "Votre essai se termine le {date}",
     "nextBilling": "Prochaine facturation : {date}",
     "noSubscription": "Aucun abonnement actif",

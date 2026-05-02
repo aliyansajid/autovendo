@@ -78,8 +78,7 @@ export function DealerListActions({
           toast.success("Now impersonating user");
           const baseUrl =
             process.env.NEXT_PUBLIC_APP_URL || "https://autovendo.ch";
-          const locale = window.location.pathname.split("/")[1] || "de";
-          window.location.href = `${baseUrl}/${locale}/dashboard`;
+          window.location.href = `${baseUrl}/en/dashboard`;
         },
         onError: (ctx: { error: { message: string } }) => {
           toast.error(ctx.error.message);
@@ -92,7 +91,7 @@ export function DealerListActions({
     await authClient.admin.stopImpersonating(undefined, {
       onSuccess: () => {
         toast.success("Stopped impersonating");
-        router.refresh();
+        window.location.reload();
       },
     });
   };
