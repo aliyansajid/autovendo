@@ -205,9 +205,11 @@ export default async function SubscriptionPage(props: {
                   </span>
                   <span className="text-muted-foreground">/ {t("month")}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle2 className="size-4 text-primary shrink-0" />
-                  <span>{(plan.limits as any)?.vehicles} vehicles</span>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
+                  <span className="text-foreground">
+                    {(plan.limits as any)?.vehicles} vehicles
+                  </span>
                 </div>
               </CardContent>
               <CardFooter>

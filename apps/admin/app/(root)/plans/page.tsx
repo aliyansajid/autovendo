@@ -1,4 +1,5 @@
-import { Plus, Edit, Badge } from "lucide-react";
+import { Plus, Edit } from "lucide-react";
+import { Badge } from "@repo/ui/components/badge";
 import { prisma } from "@repo/db";
 import { Button } from "@repo/ui/components/button";
 import {
@@ -58,9 +59,7 @@ export default async function PlansPage() {
                   <TableCell className="font-medium">
                     {plan.name}
                     {plan.popular && (
-                      <Badge className="ml-2 bg-blue-100 text-blue-800">
-                        Popular
-                      </Badge>
+                      <Badge className="ml-2" variant="secondary">Popular</Badge>
                     )}
                   </TableCell>
                   <TableCell>{(plan.price / 100).toFixed(2)}</TableCell>
@@ -71,9 +70,7 @@ export default async function PlansPage() {
                     {(plan.limits as any)?.vehicles ?? 0} vehicles
                   </TableCell>
                   <TableCell>
-                    <Badge className="bg-green-100 text-green-800">
-                      Active
-                    </Badge>
+                    <Badge className="bg-green-500 hover:bg-green-600 text-white">Active</Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end">
