@@ -165,3 +165,123 @@ export async function updateDealer(
     };
   }
 }
+
+export async function setUserPasswordAdmin({
+  userId,
+  newPassword,
+}: {
+  userId: string;
+  newPassword: string;
+}) {
+  try {
+    await auth.api.setUserPassword({
+      body: {
+        userId,
+        newPassword,
+      },
+    });
+    return { success: true, message: "Password updated successfully" };
+  } catch (error) {
+    console.error("Set password error:", error);
+    return { error: "Failed to set password" };
+  }
+}
+
+export async function setRole({
+  userId,
+  role,
+}: {
+  userId: string;
+  role: "user" | "admin";
+}) {
+  try {
+    const { headers } = await import("next/headers");
+    await auth.api.setRole({
+      body: {
+        userId,
+        role,
+      },
+      headers: await headers(),
+    });
+    revalidatePath("/dealers");
+    return { success: true, message: `Role updated to ${role}` };
+  } catch (error) {
+    console.error("Set role error:", error);
+    return { error: "Failed to set role" };
+  }
+}
+
+export async function banUser({
+  userId,
+  reason,
+  expiresIn,
+}: {
+  userId: string;
+  reason?: string;
+  expiresIn?: number;
+}) {
+  try {
+    const { headers } = await import("next/headers");
+    await auth.api.banUser({
+      body: {
+        userId,
+        banReason: reason,
+        banExpiresIn: expiresIn,
+      },
+      headers: await headers(),
+    });
+    revalidatePath("/dealers");
+    return { success: true, message: "User banned successfully" };
+  } catch (error) {
+    console.error("Ban user error:", error);
+    return { error: "Failed to ban user" };
+  }
+}
+
+export async function unbanUser(userId: string) {
+  try {
+    const { headers } = await import("next/headers");
+    await auth.api.unbanUser({
+      body: {
+        userId,
+      },
+      headers: await headers(),
+    });
+    revalidatePath("/dealers");
+    return { success: true, message: "User unbanned successfully" };
+  } catch (error) {
+    console.error("Unban user error:", error);
+    return { error: "Failed to unban user" };
+  }
+}
+
+export async function removeUser(userId: string) {
+  try {
+    const { headers } = await import("next/headers");
+    // 1. Find the dealer to get their ID for revalidation
+    const dealer = await prisma.dealer.findUnique({
+      where: { userId },
+    });
+
+    // 2. Remove from Better Auth
+    await auth.api.removeUser({
+      body: {
+        userId,
+      },
+      headers: await headers(),
+    });
+
+    // 3. Ensure the dealer record is also gone
+    if (dealer) {
+      await prisma.dealer.delete({
+        where: { id: dealer.id },
+      });
+    }
+
+    revalidatePath("/dealers");
+    return { success: true, message: "User removed successfully" };
+  } catch (error) {
+    console.error("Remove user error:", error);
+    return { error: "Failed to remove user" };
+  }
+}

@@ -16,36 +16,25 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/src/components/avatar";
+import { DealerListActions } from "./_components/dealer-list-actions";
 
 export const dynamic = "force-dynamic";
 
-interface DealerListItem {
-  id: string;
-  logo: string | null;
-  companyName: string;
-  contactPerson: string;
-  businessEmail: string;
-  phoneNumber: string;
-  city: string;
-  createdAt: Date;
-}
-
 export default async function DealersPage() {
-  const dealers = (await prisma.dealer.findMany({
-    select: {
-      id: true,
-      logo: true,
-      companyName: true,
-      contactPerson: true,
-      businessEmail: true,
-      phoneNumber: true,
-      city: true,
-      createdAt: true,
+  const dealers = await prisma.dealer.findMany({
+    include: {
+      user: {
+        select: {
+          id: true,
+          role: true,
+          banned: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
     },
-  })) as DealerListItem[];
+  });
 
   return (
     <div className="flex-1 space-y-6">
@@ -70,12 +59,13 @@ export default async function DealersPage() {
               <TableHead>Phone</TableHead>
               <TableHead>City</TableHead>
               <TableHead>Created At</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {dealers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   No dealers found.
                 </TableCell>
               </TableRow>
@@ -99,6 +89,14 @@ export default async function DealersPage() {
                   <TableCell>{dealer.city}</TableCell>
                   <TableCell>
                     {new Date(dealer.createdAt).toLocaleDateString("de-CH")}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DealerListActions
+                      dealerId={dealer.id}
+                      userId={dealer.userId}
+                      isBanned={!!dealer.user?.banned}
+                      currentRole={dealer.user?.role || "user"}
+                    />
                   </TableCell>
                 </TableRow>
               ))

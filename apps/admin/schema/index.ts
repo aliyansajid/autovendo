@@ -65,3 +65,16 @@ export const planSchema = z.object({
   vehicles: z.coerce.number().min(1, "At least 1 vehicle required"),
   popular: z.boolean().default(false),
 });
+
+export const roleSchema = z.object({
+  role: z.enum(["user", "admin"]),
+});
+
+export const passwordChangeSchema = z.object({
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+export const banSchema = z.object({
+  reason: z.string().min(1, "Reason is required"),
+  expiresIn: z.string(),
+});
