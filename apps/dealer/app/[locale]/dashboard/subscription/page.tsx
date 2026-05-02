@@ -1,6 +1,6 @@
 import { auth } from "@repo/auth";
-import { headers } from "next/headers";
 import { prisma } from "@repo/db";
+import { headers } from "next/headers";
 import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { getBillingData } from "@/app/actions/billing.actions";
 import { getTranslations, getFormatter } from "next-intl/server";
@@ -15,20 +15,48 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import { CreditCard, ExternalLink, Download, Receipt, CheckCircle2 } from "lucide-react";
+import {
+  CreditCard,
+  ExternalLink,
+  Download,
+  Receipt,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@repo/ui/src/components/card";
 import { BillingPortalButton } from "./_components/billing-portal-button";
-import { SubscribeButton } from "@/app/[locale]/(root)/pricing/_components/subscribe-button";
+import { SubscribeButton } from "./_components/subscribe-button";
+import { formatPrice } from "@/lib/helpers/format";
 
-const PLANS = [
-  { name: "Bronze", key: "bronze", price: 180, listings: 5, popular: false },
-  { name: "Silver", key: "silver", price: 280, listings: 10, popular: false },
-  { name: "Gold", key: "gold", price: 325, listings: 15, popular: true },
-  { name: "Diamond", key: "diamond", price: 408, listings: 25, popular: false },
-] as const;
+interface PricingFeature {
+  name: string;
+  included: boolean;
+}
 
-export default async function SubscriptionPage() {
+interface PricingTier {
+  name: string;
+  price: string;
+  period?: string;
+  description: string;
+  features: PricingFeature[];
+  buttonText: string;
+  popular: boolean;
+}
+
+export default async function SubscriptionPage(props: {
+  params: Promise<{ locale: string }>;
+}) {
   const t = await getTranslations("BillingPage");
+  const tp = await getTranslations("PricingPage");
   const format = await getFormatter();
+  const { locale } = await props.params;
 
   const session = await auth.api.getSession({ headers: await headers() });
 
@@ -45,8 +73,16 @@ export default async function SubscriptionPage() {
     (s) => s.status === "active" || s.status === "trialing",
   );
 
+  const rawTiers = (await tp.raw("tiers")) as PricingTier[];
+
+  const tiers = rawTiers.map((tier) => ({
+    ...tier,
+    price: formatPrice(Number(tier.price.replace(/[^\d.-]/g, "")), locale),
+  }));
+
   const currentPlanKey = activeSubscription?.plan?.toLowerCase() ?? null;
-  const currentPlan = PLANS.find((p) => p.key === currentPlanKey) ?? null;
+  const currentTier =
+    tiers.find((t) => t.name.toLowerCase() === currentPlanKey) ?? null;
 
   const quotaPct =
     subscriptionStatus.maxVehicles > 0
@@ -54,7 +90,6 @@ export default async function SubscriptionPage() {
       : 0;
 
   const hasAnySubscription = subscriptions.length > 0;
-  const showPlanCards = true; // always show plan selection/upgrade section
 
   return (
     <div className="space-y-6">
@@ -65,12 +100,14 @@ export default async function SubscriptionPage() {
       </div>
 
       {/* Current Plan + Usage */}
-      {activeSubscription && currentPlan ? (
+      {activeSubscription && currentTier ? (
         <div className="rounded-lg border divide-y">
           <div className="p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold capitalize">{currentPlan.name} Plan</h2>
+                <h2 className="text-xl font-bold capitalize">
+                  {currentTier.name} Plan
+                </h2>
                 <Badge className="bg-green-500 hover:bg-green-600">
                   {activeSubscription.status === "trialing"
                     ? t("statusTrialing")
@@ -78,12 +115,7 @@ export default async function SubscriptionPage() {
                 </Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                {format.number(currentPlan.price, {
-                  style: "currency",
-                  currency: "CHF",
-                  minimumFractionDigits: 0,
-                })}{" "}
-                / {t("month")}
+                {currentTier.price} / {t("month")}
                 {activeSubscription.periodEnd && (
                   <span>
                     {" · "}
@@ -104,19 +136,24 @@ export default async function SubscriptionPage() {
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">{t("listings")}</span>
               <span className="font-medium">
-                {subscriptionStatus.currentCount} / {subscriptionStatus.maxVehicles}
+                {subscriptionStatus.currentCount} /{" "}
+                {subscriptionStatus.maxVehicles}
               </span>
             </div>
             <Progress value={quotaPct} className="h-2" />
             <p className="text-xs text-muted-foreground">
-              {t("slotsRemaining", { count: subscriptionStatus.remainingQuota })}
+              {t("slotsRemaining", {
+                count: subscriptionStatus.remainingQuota,
+              })}
             </p>
           </div>
         </div>
       ) : (
         <div className="rounded-lg border border-dashed p-8 text-center space-y-2">
           <p className="font-semibold">{t("noSubscription")}</p>
-          <p className="text-sm text-muted-foreground">{t("noSubscriptionDesc")}</p>
+          <p className="text-sm text-muted-foreground">
+            {t("noSubscriptionDesc")}
+          </p>
         </div>
       )}
 
@@ -127,55 +164,66 @@ export default async function SubscriptionPage() {
             {activeSubscription ? t("upgradePlanTitle") : t("selectPlanTitle")}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {activeSubscription ? t("upgradePlanSubtitle") : t("selectPlanSubtitle")}
+            {activeSubscription
+              ? t("upgradePlanSubtitle")
+              : t("selectPlanSubtitle")}
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {PLANS.map((plan) => {
-            const isCurrent = plan.key === currentPlanKey;
-            return (
-              <div
-                key={plan.key}
-                className={`rounded-lg border p-5 flex flex-col gap-4 ${
-                  isCurrent ? "border-primary bg-primary/5" : ""
-                } ${plan.popular && !isCurrent ? "border-primary/50" : ""}`}
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-base">{plan.name}</span>
-                    {isCurrent && (
-                      <Badge variant="outline" className="text-xs border-primary text-primary">
-                        {t("currentPlan")}
-                      </Badge>
-                    )}
-                    {plan.popular && !isCurrent && (
-                      <Badge className="text-xs">Popular</Badge>
-                    )}
-                  </div>
-                  <p className="text-2xl font-bold">
-                    CHF {plan.price}
-                    <span className="text-sm font-normal text-muted-foreground">/{t("month")}</span>
-                  </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {tiers.map((tier) => (
+            <Card
+              key={tier.name}
+              className={`${tier.popular ? "border-primary" : ""}`}
+            >
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl font-bold">
+                    {tier.name}
+                  </CardTitle>
+                  {tier.popular && <Badge>{t("popular")}</Badge>}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle2 className="size-4 text-primary shrink-0" />
-                  {t("listingsCount", { count: plan.listings })}
+                <CardDescription>{tier.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-1 space-y-6">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold text-primary">
+                    {tier.price}
+                  </span>
+                  {tier.period && (
+                    <span className="text-muted-foreground">{tier.period}</span>
+                  )}
                 </div>
-                {isCurrent ? (
-                  <Button variant="outline" className="w-full" disabled>
-                    {t("currentPlan")}
-                  </Button>
-                ) : (
-                  <SubscribeButton
-                    planName={plan.name}
-                    variant={plan.popular ? "default" : "outline"}
-                    successUrl={`/dashboard/subscription`}
-                    cancelUrl={`/dashboard/subscription`}
-                  />
-                )}
-              </div>
-            );
-          })}
+                <div className="space-y-4">
+                  {tier.features.map((feature: PricingFeature) => (
+                    <div key={feature.name} className="flex items-start gap-3">
+                      {feature.included ? (
+                        <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
+                      ) : (
+                        <XCircle className="size-5 text-muted-foreground shrink-0 mt-0.5" />
+                      )}
+                      <span
+                        className={
+                          feature.included
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }
+                      >
+                        {feature.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <SubscribeButton
+                  planName={tier.name}
+                  variant={tier.popular ? "default" : "outline"}
+                  successUrl={`/dashboard/subscription`}
+                  cancelUrl={`/dashboard/subscription`}
+                />
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       </div>
 
@@ -184,7 +232,9 @@ export default async function SubscriptionPage() {
         <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <p className="font-semibold">{t("billingPortalTitle")}</p>
-            <p className="text-sm text-muted-foreground">{t("billingPortalDesc")}</p>
+            <p className="text-sm text-muted-foreground">
+              {t("billingPortalDesc")}
+            </p>
           </div>
           <div className="shrink-0">
             <BillingPortalButton />
@@ -205,18 +255,24 @@ export default async function SubscriptionPage() {
             </div>
             <div>
               <p className="font-medium capitalize">
-                {billingData.paymentMethod.brand} •••• {billingData.paymentMethod.last4}
+                {billingData.paymentMethod.brand} ••••{" "}
+                {billingData.paymentMethod.last4}
               </p>
               <p className="text-sm text-muted-foreground">
                 {t("cardExpiry", {
-                  month: String(billingData.paymentMethod.expMonth).padStart(2, "0"),
+                  month: String(billingData.paymentMethod.expMonth).padStart(
+                    2,
+                    "0",
+                  ),
                   year: billingData.paymentMethod.expYear,
                 })}
               </p>
             </div>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">{t("noPaymentMethod")}</p>
+          <p className="text-sm text-muted-foreground">
+            {t("noPaymentMethod")}
+          </p>
         )}
       </div>
 
@@ -234,7 +290,9 @@ export default async function SubscriptionPage() {
                 <TableHead>{t("invoiceCol.date")}</TableHead>
                 <TableHead>{t("invoiceCol.amount")}</TableHead>
                 <TableHead>{t("invoiceCol.status")}</TableHead>
-                <TableHead className="text-right">{t("invoiceCol.actions")}</TableHead>
+                <TableHead className="text-right">
+                  {t("invoiceCol.actions")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -243,7 +301,8 @@ export default async function SubscriptionPage() {
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
                       <Receipt className="size-4 text-muted-foreground" />
-                      {invoice.number ?? `#${invoice.id.slice(-8).toUpperCase()}`}
+                      {invoice.number ??
+                        `#${invoice.id.slice(-8).toUpperCase()}`}
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
@@ -275,7 +334,11 @@ export default async function SubscriptionPage() {
                     <div className="flex items-center justify-end gap-1">
                       {invoice.hostedUrl && (
                         <Button variant="ghost" size="sm" asChild>
-                          <a href={invoice.hostedUrl} target="_blank" rel="noopener noreferrer">
+                          <a
+                            href={invoice.hostedUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             <ExternalLink className="size-4 mr-1" />
                             {t("view")}
                           </a>
@@ -283,7 +346,11 @@ export default async function SubscriptionPage() {
                       )}
                       {invoice.pdfUrl && (
                         <Button variant="ghost" size="sm" asChild>
-                          <a href={invoice.pdfUrl} target="_blank" rel="noopener noreferrer">
+                          <a
+                            href={invoice.pdfUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             <Download className="size-4" />
                             <span className="sr-only">{t("download")}</span>
                           </a>

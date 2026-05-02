@@ -23,7 +23,7 @@ import {
   CardFooter,
 } from "@repo/ui/src/components/card";
 import { XCircle } from "lucide-react";
-import { SubscribeButton } from "./_components/subscribe-button";
+import { PricingButton } from "./_components/pricing-button";
 import { getTranslations } from "next-intl/server";
 import { formatPrice } from "@/lib/helpers/format";
 
@@ -389,8 +389,8 @@ export default async function PricingPage(props: {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <SubscribeButton
-                    planName={tier.name}
+                  <PricingButton
+                    label={t("getStarted")}
                     variant={tier.popular ? "default" : "outline"}
                   />
                 </CardFooter>

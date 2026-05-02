@@ -33,7 +33,7 @@ export const SubscribeButton = ({
   const handleSubscribe = () => {
     if (!session) {
       toast.error(t("loginRequired"));
-      router.push(`/login?callbackUrl=/pricing`);
+      router.push(`/login?callbackUrl=/dashboard/subscription`);
       return;
     }
 
@@ -50,8 +50,8 @@ export const SubscribeButton = ({
 
       const { data, error } = await authClient.subscription.upgrade({
         plan: planName.toLowerCase(),
-        successUrl: toAbsolute(successUrl, "/pricing?success=true"),
-        cancelUrl: toAbsolute(cancelUrl, "/pricing"),
+        successUrl: toAbsolute(successUrl, "/dashboard/subscription?success=true"),
+        cancelUrl: toAbsolute(cancelUrl, "/dashboard/subscription"),
         ...(activeSubscription?.stripeSubscriptionId && {
           subscriptionId: activeSubscription.stripeSubscriptionId,
         }),
