@@ -58,9 +58,13 @@ export default async function PlansPage() {
             ) : (
               plans.map((plan) => (
                 <TableRow key={plan.id}>
-                  <TableCell className="space-x-2 font-medium">
+                  <TableCell className="font-medium">
                     {plan.name}
-                    {plan.popular && <Badge variant="secondary">Popular</Badge>}
+                    {plan.popular && (
+                      <Badge variant="secondary" className="ml-2">
+                        Popular
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell>
                     {new Intl.NumberFormat("de-CH", {

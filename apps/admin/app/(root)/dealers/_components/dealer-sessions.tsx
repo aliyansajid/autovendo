@@ -92,7 +92,7 @@ export function DealerSessions({ userId, sessions }: DealerSessionsProps) {
             onClick={handleRevokeAll}
             disabled={isPending}
           >
-            <Trash2 className="mr-2 size-4" />
+            <Trash2 />
             Revoke All
           </Button>
         )}

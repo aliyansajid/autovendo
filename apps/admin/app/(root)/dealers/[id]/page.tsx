@@ -75,7 +75,7 @@ export default async function ViewDealerPage({ params }: ViewDealerPageProps) {
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" asChild>
             <Link href="/dealers">
-              <ArrowLeft className="size-4" />
+              <ArrowLeft />
             </Link>
           </Button>
           <div>
@@ -187,13 +187,13 @@ export default async function ViewDealerPage({ params }: ViewDealerPageProps) {
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <p className="text-xs font-medium text-muted-foreground">
                     Account Email
                   </p>
                   <p className="text-sm font-medium">{dealer.user?.email}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <p className="text-xs font-medium text-muted-foreground">
                     Role
                   </p>
                   <p className="text-sm">
