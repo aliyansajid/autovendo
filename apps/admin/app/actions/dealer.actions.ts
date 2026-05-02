@@ -183,7 +183,7 @@ export async function setUserPasswordAdmin({
     return { success: true, message: "Password updated successfully" };
   } catch (error) {
     console.error("Set password error:", error);
-    return { error: "Failed to set password" };
+    return { success: false, error: "Failed to set password" };
   }
 }
 
@@ -207,7 +207,7 @@ export async function setRole({
     return { success: true, message: `Role updated to ${role}` };
   } catch (error) {
     console.error("Set role error:", error);
-    return { error: "Failed to set role" };
+    return { success: false, error: "Failed to set role" };
   }
 }
 
@@ -222,6 +222,14 @@ export async function banUser({
 }) {
   try {
     const { headers } = await import("next/headers");
+
+    // 1. Get user and dealer info for the email
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { dealer: true },
+    });
+
+    // 2. Perform the ban
     await auth.api.banUser({
       body: {
         userId,
@@ -230,40 +238,104 @@ export async function banUser({
       },
       headers: await headers(),
     });
+
+    // 3. Send the notification email
+    if (user && user.email) {
+      const { sendEmail, AccountBannedEmail } =
+        await import("@repo/transactional");
+
+      let durationText = "Permanent";
+      if (expiresIn) {
+        if (expiresIn === 3600) durationText = "1 Hour";
+        else if (expiresIn === 86400) durationText = "24 Hours";
+        else if (expiresIn === 604800) durationText = "7 Days";
+        else if (expiresIn === 2592000) durationText = "30 Days";
+      }
+
+      const isPermanent = !expiresIn;
+      
+      await sendEmail({
+        to: user.email,
+        subject: isPermanent 
+          ? "Important: Your account has been permanently banned"
+          : "Notice: Your account has been temporarily suspended",
+        template: AccountBannedEmail({
+          dealerName: user.dealer?.contactPerson || user.name || "Dealer",
+          reason: reason || "Violation of platform policies",
+          duration: durationText,
+          isPermanent,
+        }),
+      });
+    }
+
     revalidatePath("/dealers");
     return { success: true, message: "User banned successfully" };
   } catch (error) {
     console.error("Ban user error:", error);
-    return { error: "Failed to ban user" };
+    return { success: false, error: "Failed to ban user" };
   }
 }
 
 export async function unbanUser(userId: string) {
   try {
     const { headers } = await import("next/headers");
+
+    // 1. Get user and dealer info for the email
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { dealer: true },
+    });
+
+    // 2. Perform the unban
     await auth.api.unbanUser({
       body: {
         userId,
       },
       headers: await headers(),
     });
+
+    // 3. Send the notification email
+    if (user && user.email) {
+      const { sendEmail, AccountUnbannedEmail } =
+        await import("@repo/transactional");
+
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://autovendo.ch";
+      const loginUrl = `${baseUrl}/de/dashboard`;
+
+      await sendEmail({
+        to: user.email,
+        subject: "Your Autovendo account access has been restored",
+        template: AccountUnbannedEmail({
+          dealerName: user.dealer?.contactPerson || user.name || "Dealer",
+          loginUrl: loginUrl,
+        }),
+      });
+    }
+
     revalidatePath("/dealers");
     return { success: true, message: "User unbanned successfully" };
   } catch (error) {
     console.error("Unban user error:", error);
-    return { error: "Failed to unban user" };
+    return { success: false, error: "Failed to unban user" };
   }
 }
 
 export async function removeUser(userId: string) {
   try {
     const { headers } = await import("next/headers");
-    // 1. Find the dealer to get their ID for revalidation
-    const dealer = await prisma.dealer.findUnique({
-      where: { userId },
+
+    // 1. Get user and dealer info for the email BEFORE deleting
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { dealer: true },
     });
 
-    // 2. Remove from Better Auth
+    if (!user) {
+      return { success: false, error: "User not found" };
+    }
+
+    // 2. Remove from Better Auth (this usually triggers cascading deletes if configured, 
+    // but we manually handle the dealer record just in case)
     await auth.api.removeUser({
       body: {
         userId,
@@ -271,10 +343,30 @@ export async function removeUser(userId: string) {
       headers: await headers(),
     });
 
-    // 3. Ensure the dealer record is also gone
-    if (dealer) {
-      await prisma.dealer.delete({
-        where: { id: dealer.id },
+    // 3. Ensure the dealer record is also gone (if not already deleted by Cascade)
+    if (user.dealer) {
+      const dealerExists = await prisma.dealer.findUnique({
+        where: { id: user.dealer.id },
+      });
+      if (dealerExists) {
+        await prisma.dealer.delete({
+          where: { id: user.dealer.id },
+        });
+      }
+    }
+
+    // 4. Send the notification email
+    if (user.email) {
+      const { sendEmail, AccountDeletedEmail } = await import(
+        "@repo/transactional"
+      );
+
+      await sendEmail({
+        to: user.email,
+        subject: "Your Autovendo account has been closed",
+        template: AccountDeletedEmail({
+          dealerName: user.dealer?.contactPerson || user.name || "Dealer",
+        }),
       });
     }
 
@@ -282,6 +374,6 @@ export async function removeUser(userId: string) {
     return { success: true, message: "User removed successfully" };
   } catch (error) {
     console.error("Remove user error:", error);
-    return { error: "Failed to remove user" };
+    return { success: false, error: "Failed to remove user" };
   }
 }

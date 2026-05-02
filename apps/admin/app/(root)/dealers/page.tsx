@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import { Badge } from "@repo/ui/components/badge";
 import { getImageUrl } from "@/lib/helpers/image";
 import {
   Avatar,
@@ -28,6 +29,7 @@ export default async function DealersPage() {
           id: true,
           role: true,
           banned: true,
+          stripeCustomerId: true,
         },
       },
     },
@@ -35,6 +37,22 @@ export default async function DealersPage() {
       createdAt: "desc",
     },
   });
+
+  // Fetch all subscriptions for these users to determine subscription status
+  const stripeCustomerIds = dealers
+    .map((d) => d.user?.stripeCustomerId)
+    .filter((id): id is string => !!id);
+
+  const subscriptions = await prisma.subscription.findMany({
+    where: {
+      stripeCustomerId: { in: stripeCustomerIds },
+      status: "active",
+    },
+  });
+
+  const activeSubscriptionCustomerIds = new Set(
+    subscriptions.map((s) => s.stripeCustomerId),
+  );
 
   return (
     <div className="flex-1 space-y-6">
@@ -58,6 +76,8 @@ export default async function DealersPage() {
               <TableHead>Email</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>City</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Subscription</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -65,41 +85,67 @@ export default async function DealersPage() {
           <TableBody>
             {dealers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center">
+                <TableCell colSpan={9} className="h-24 text-center">
                   No dealers found.
                 </TableCell>
               </TableRow>
             ) : (
-              dealers.map((dealer) => (
-                <TableRow key={dealer.id}>
-                  <TableCell>
-                    <Avatar>
-                      <AvatarImage src={getImageUrl(dealer.logo)} />
-                      <AvatarFallback>
-                        {dealer.companyName.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {dealer.companyName}
-                  </TableCell>
-                  <TableCell>{dealer.contactPerson}</TableCell>
-                  <TableCell>{dealer.businessEmail}</TableCell>
-                  <TableCell>{dealer.phoneNumber}</TableCell>
-                  <TableCell>{dealer.city}</TableCell>
-                  <TableCell>
-                    {new Date(dealer.createdAt).toLocaleDateString("de-CH")}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DealerListActions
-                      dealerId={dealer.id}
-                      userId={dealer.userId}
-                      isBanned={!!dealer.user?.banned}
-                      currentRole={dealer.user?.role || "user"}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))
+              dealers.map((dealer) => {
+                const hasSubscription =
+                  !!dealer.user?.stripeCustomerId &&
+                  activeSubscriptionCustomerIds.has(
+                    dealer.user.stripeCustomerId,
+                  );
+
+                return (
+                  <TableRow key={dealer.id}>
+                    <TableCell>
+                      <Avatar>
+                        <AvatarImage src={getImageUrl(dealer.logo)} />
+                        <AvatarFallback>
+                          {dealer.companyName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {dealer.companyName}
+                    </TableCell>
+                    <TableCell>{dealer.contactPerson}</TableCell>
+                    <TableCell>{dealer.businessEmail}</TableCell>
+                    <TableCell>{dealer.phoneNumber}</TableCell>
+                    <TableCell>{dealer.city}</TableCell>
+                    <TableCell>
+                      {dealer.user?.banned ? (
+                        <Badge variant="destructive">Banned</Badge>
+                      ) : (
+                        <Badge className="bg-green-500 text-white hover:bg-green-600">
+                          Active
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {hasSubscription ? (
+                        <Badge className="bg-green-500 text-white hover:bg-green-600">
+                          Subscribed
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">No Subscription</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(dealer.createdAt).toLocaleDateString("de-CH")}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DealerListActions
+                        dealerId={dealer.id}
+                        userId={dealer.userId}
+                        isBanned={!!dealer.user?.banned}
+                        currentRole={dealer.user?.role || "user"}
+                      />
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

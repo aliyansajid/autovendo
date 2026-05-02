@@ -58,3 +58,9 @@ export default sendEmail;
 
 export { DealerContactEmail } from "../emails/dealer-contact";
 export type { DealerContactEmailProps } from "../emails/dealer-contact";
+
+export { AccountBannedEmail } from "../emails/account-banned";
+export { AccountUnbannedEmail } from "../emails/account-unbanned";
+export { AccountDeletedEmail } from "../emails/account-deleted";
+
+

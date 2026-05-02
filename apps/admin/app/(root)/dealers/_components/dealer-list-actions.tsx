@@ -61,9 +61,9 @@ export function DealerListActions({
     startTransition(async () => {
       const result = await unbanUser(userId);
       if (result.success) {
-        toast.success(result.message);
+        toast.success(result.message || "Operation successful");
       } else {
-        toast.error(result.error);
+        toast.error(result.error || "Something went wrong");
       }
     });
   };
@@ -109,8 +109,8 @@ export function DealerListActions({
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem asChild>
-            <Link href={`/dealers/${dealerId}/edit`} className="cursor-pointer">
-              <Pencil className="mr-2 size-4" />
+            <Link href={`/dealers/${dealerId}/edit`}>
+              <Pencil className="size-4" />
               Edit Profile
             </Link>
           </DropdownMenuItem>
@@ -120,21 +120,21 @@ export function DealerListActions({
           <DropdownMenuGroup>
             {isImpersonating ? (
               <DropdownMenuItem onSelect={handleStopImpersonating}>
-                <UserMinus className="mr-2 size-4" />
+                <UserMinus className="size-4" />
                 Stop Impersonating
               </DropdownMenuItem>
             ) : (
               <DropdownMenuItem onSelect={handleImpersonate}>
-                <UserRoundSearch className="mr-2 size-4" />
+                <UserRoundSearch className="size-4" />
                 Impersonate
               </DropdownMenuItem>
             )}
             <DropdownMenuItem onSelect={() => setIsRoleDialogOpen(true)}>
-              <ShieldAlert className="mr-2 size-4" />
+              <ShieldAlert className="size-4" />
               Set Role
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => setIsPasswordDialogOpen(true)}>
-              <KeyRound className="mr-2 size-4" />
+              <KeyRound className="size-4" />
               Change Password
             </DropdownMenuItem>
           </DropdownMenuGroup>
@@ -143,10 +143,10 @@ export function DealerListActions({
 
           {isBanned ? (
             <DropdownMenuItem
-              className="text-green-600 focus:text-green-600"
+              className="text-green-500 focus:text-green-600"
               onSelect={handleUnbanUser}
             >
-              <UserCheck className="mr-2 size-4" />
+              <UserCheck className="size-4" />
               Unban User
             </DropdownMenuItem>
           ) : (
@@ -154,7 +154,7 @@ export function DealerListActions({
               className="text-destructive focus:text-destructive"
               onSelect={() => setIsBanDialogOpen(true)}
             >
-              <UserX className="mr-2 size-4" />
+              <UserX className="size-4" />
               Ban User
             </DropdownMenuItem>
           )}
@@ -162,10 +162,10 @@ export function DealerListActions({
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
-            className="text-destructive focus:text-destructive font-medium"
+            className="text-destructive focus:text-destructive"
             onSelect={() => setIsDeleteDialogOpen(true)}
           >
-            <Trash2 className="mr-2 size-4" />
+            <Trash2 className="size-4" />
             Remove Dealer
           </DropdownMenuItem>
         </DropdownMenuContent>
