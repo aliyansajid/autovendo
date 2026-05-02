@@ -33,6 +33,7 @@ import {
 } from "@repo/ui/src/components/card";
 import { BillingPortalButton } from "./_components/billing-portal-button";
 import { SubscribeButton } from "./_components/subscribe-button";
+import { SubscriptionActions } from "./_components/subscription-actions";
 import { formatPrice } from "@/lib/helpers/format";
 
 interface PricingFeature {
@@ -130,7 +131,26 @@ export default async function SubscriptionPage(props: {
                 )}
               </p>
             </div>
+            {activeSubscription.stripeSubscriptionId && (
+              <div className="shrink-0">
+                <SubscriptionActions
+                  subscriptionId={activeSubscription.stripeSubscriptionId}
+                  cancelAtPeriodEnd={!!activeSubscription.cancelAtPeriodEnd}
+                />
+              </div>
+            )}
           </div>
+          {activeSubscription.cancelAtPeriodEnd && activeSubscription.periodEnd && (
+            <div className="px-6 py-3 bg-destructive/10 text-destructive text-sm font-medium">
+              {t("cancelingAt", {
+                date: format.dateTime(activeSubscription.periodEnd, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }),
+              })}
+            </div>
+          )}
 
           <div className="p-6 space-y-3">
             <div className="flex items-center justify-between text-sm">
