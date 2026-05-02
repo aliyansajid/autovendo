@@ -24,6 +24,7 @@ import {
   ChevronRight,
   Ban,
   ShieldCheck,
+  MoreHorizontal,
 } from "lucide-react";
 import { Skeleton } from "@repo/ui/components/skeleton";
 import Link from "next/link";
@@ -137,12 +138,12 @@ export default function UsersPage() {
                 <TableRow key={user.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <Avatar className="size-8">
+                      <Avatar>
                         <AvatarImage src={user.image} />
                         <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">
-                        <span className="font-medium text-sm">{user.name}</span>
+                        <span className="text-sm font-medium">{user.name}</span>
                         <span className="text-xs text-muted-foreground">
                           {user.email}
                         </span>
@@ -177,7 +178,9 @@ export default function UsersPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/dealers/${user.id}`}>Manage</Link>
+                      <Link href={`/users/${user.id}`}>
+                        <MoreHorizontal />
+                      </Link>
                     </Button>
                   </TableCell>
                 </TableRow>

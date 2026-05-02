@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@repo/ui/components/button";
 import { getDealer, getDealerSubscription } from "@/app/actions/dealer.actions";
 import { getPlans } from "@/app/actions/plan.actions";
 import {
@@ -15,8 +17,8 @@ import {
   AvatarImage,
 } from "@repo/ui/src/components/avatar";
 import { getImageUrl } from "@/lib/helpers/image";
-import { DealerActions } from "@/app/(root)/dealers/_components/dealer-actions";
-import { SubscriptionManager } from "@/app/(root)/dealers/_components/subscription-manager";
+import { UserActions } from "@/components/admin/user-actions";
+import { SubscriptionManager } from "@/components/admin/subscription-manager";
 import {
   CheckCircle2,
   XCircle,
@@ -65,11 +67,16 @@ export default async function DealerDetailPage({
             </div>
           </div>
         </div>
-        <DealerActions
-          userId={dealer.userId}
-          userRole={dealer.user.role || "user"}
-          isBanned={!!dealer.user.banned}
-        />
+        <div className="flex items-center gap-2">
+          <Button variant="outline" asChild>
+            <Link href={`/dealers/${dealer.id}/edit`}>Edit Dealer</Link>
+          </Button>
+          <UserActions
+            userId={dealer.userId}
+            userRole={dealer.user.role || "user"}
+            isBanned={!!dealer.user.banned}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -49,6 +49,11 @@ export const dealerSchema = z.object({
   businessEmail: z.email("Please enter a valid email"),
 });
 
+export const updateDealerSchema = dealerSchema.extend({
+  password: z.string().min(8, "Password must be at least 8 characters").optional().or(z.literal("")),
+});
+
+
 export const planSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),

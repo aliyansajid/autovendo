@@ -124,7 +124,7 @@ export function SubscriptionManager({
       </div>
 
       <div className="flex justify-end pt-2">
-        <Button onClick={handleUpdate} disabled={isPending} className="gap-2">
+        <Button onClick={handleUpdate} disabled={isPending}>
           <Save />
           Update Subscription
         </Button>

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { auth } from "@repo/auth";
 import { prisma } from "@repo/db";
 import { revalidatePath } from "next/cache";
-import { dealerSchema } from "@/schema";
+import { dealerSchema, updateDealerSchema } from "@/schema";
 
 export async function createDealer(formData: z.infer<typeof dealerSchema>) {
   try {
@@ -151,3 +151,75 @@ export async function updateDealerSubscription(
   }
 }
 
+export async function updateDealer(
+  id: string,
+  formData: z.infer<typeof updateDealerSchema>,
+) {
+  try {
+    const validatedData = updateDealerSchema.parse(formData);
+
+    const dealer = await prisma.dealer.findUnique({
+      where: { id },
+      include: { user: true },
+    });
+
+    if (!dealer) {
+      return { error: "Dealer not found" };
+    }
+
+    // 1. Update User via Better Auth Admin API
+    await auth.api.adminUpdateUser({
+      body: {
+        userId: dealer.userId,
+        data: {
+          name: validatedData.name,
+          email: validatedData.email,
+        },
+      },
+    });
+
+    // 2. Update password if provided via Admin API
+    if (validatedData.password) {
+      await auth.api.setUserPassword({
+        body: {
+          userId: dealer.userId,
+          newPassword: validatedData.password,
+        },
+      });
+    }
+
+    // 3. Update Dealer Record
+    await prisma.dealer.update({
+      where: { id },
+      data: {
+        companyName: validatedData.companyName,
+        streetAddress: validatedData.streetAddress,
+        zipCode: validatedData.zipCode,
+        city: validatedData.city,
+        uidNumber: validatedData.uidNumber,
+        contactPerson: validatedData.contactPerson,
+        phoneNumber: validatedData.phoneNumber,
+        businessEmail: validatedData.businessEmail,
+      },
+    });
+
+    revalidatePath("/dealers");
+    revalidatePath(`/dealers/${id}`);
+
+    return {
+      success: true,
+      message: "Dealer updated successfully",
+    };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { error: error.issues[0]?.message || "Validation error" };
+    }
+
+    console.error("Dealer update error:", error);
+
+    return {
+      success: false,
+      error: "An unexpected error occurred. Please try again later.",
+    };
+  }
+}

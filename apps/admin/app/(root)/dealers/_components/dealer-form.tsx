@@ -19,42 +19,56 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import { createDealer } from "@/app/actions/dealer.actions";
-import { PlusCircle } from "lucide-react";
-import { dealerSchema } from "@/schema";
+import { createDealer, updateDealer } from "@/app/actions/dealer.actions";
+import { PlusCircle, Save } from "lucide-react";
+import { dealerSchema, updateDealerSchema } from "@/schema";
 import { swissCities } from "@/lib/swiss-cities";
 import { SelectItem } from "@repo/ui/components/select";
 
-export function DealerForm() {
+interface DealerFormProps {
+  initialData?: any;
+  dealerId?: string;
+}
+
+export function DealerForm({ initialData, dealerId }: DealerFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const isEditing = !!dealerId;
 
-  const form = useForm<z.infer<typeof dealerSchema>>({
-    resolver: zodResolver(dealerSchema),
+  const currentSchema = isEditing ? updateDealerSchema : dealerSchema;
+
+  const form = useForm<z.infer<typeof currentSchema>>({
+    resolver: zodResolver(currentSchema),
     defaultValues: {
-      name: "",
-      email: "",
+      name: initialData?.user?.name || "",
+      email: initialData?.user?.email || "",
       password: "",
-      companyName: "",
-      streetAddress: "",
-      zipCode: "",
-      city: "",
-      uidNumber: "",
-      contactPerson: "",
-      phoneNumber: "",
-      businessEmail: "",
+      companyName: initialData?.companyName || "",
+      streetAddress: initialData?.streetAddress || "",
+      zipCode: initialData?.zipCode || "",
+      city: initialData?.city || "",
+      uidNumber: initialData?.uidNumber || "",
+      contactPerson: initialData?.contactPerson || "",
+      phoneNumber: initialData?.phoneNumber || "",
+      businessEmail: initialData?.businessEmail || "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof dealerSchema>) {
+  function onSubmit(data: z.infer<typeof currentSchema>) {
     startTransition(async () => {
-      const result = await createDealer(data);
+      let result;
+      if (isEditing && dealerId) {
+        result = await updateDealer(dealerId, data);
+      } else {
+        result = await createDealer(data as z.infer<typeof dealerSchema>);
+      }
+
       if (result.error) {
         toast.error(result.error);
         return;
       }
       toast.success(result.message);
-      router.push("/dealers");
+      router.push(`/dealers/${dealerId || ""}`);
     });
   }
 
@@ -89,7 +103,7 @@ export function DealerForm() {
                 fieldType={FormFieldType.INPUT}
                 inputType="password"
                 name="password"
-                label="Password"
+                label={isEditing ? "New Password (optional)" : "Password"}
                 placeholder="********"
                 disabled={isPending}
               />
@@ -198,16 +212,20 @@ export function DealerForm() {
       </Card>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={isPending} className="w-full md:w-auto">
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="w-full md:w-auto gap-2"
+        >
           {isPending ? (
             <>
               <Spinner />
-              Creating...
+              {isEditing ? "Saving..." : "Creating..."}
             </>
           ) : (
             <>
-              <PlusCircle />
-              Create Dealer
+              {isEditing ? <Save /> : <PlusCircle />}
+              {isEditing ? "Save Changes" : "Create Dealer"}
             </>
           )}
         </Button>

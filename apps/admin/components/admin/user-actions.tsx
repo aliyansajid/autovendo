@@ -24,17 +24,13 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-interface DealerActionsProps {
+interface UserActionsProps {
   userId: string;
   userRole: string;
   isBanned: boolean;
 }
 
-export function DealerActions({
-  userId,
-  userRole,
-  isBanned,
-}: DealerActionsProps) {
+export function UserActions({ userId, userRole, isBanned }: UserActionsProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
 

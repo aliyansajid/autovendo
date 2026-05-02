@@ -10,8 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import { PlanFormDialog } from "@/app/(root)/plans/_components/plan-form-dialog";
-import { DeletePlanButton } from "@/app/(root)/plans/_components/delete-plan-button";
+import { PlanFormDialog } from "./_components/plan-form-dialog";
+import { DeletePlanButton } from "./_components/delete-plan-button";
 
 export const dynamic = "force-dynamic";
 
