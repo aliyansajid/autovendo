@@ -139,11 +139,15 @@ export default async function SubscriptionPage(props: {
                   <span>
                     {" · "}
                     {t("nextBilling", {
-                      date: formatDateTime(activeSubscription.periodEnd, {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      }),
+                      date: formatDateTime(
+                        activeSubscription.periodEnd,
+                        {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        },
+                        locale,
+                      ),
                     })}
                   </span>
                 )}
@@ -165,11 +169,15 @@ export default async function SubscriptionPage(props: {
             activeSubscription.trialEnd && (
               <div className="px-6 py-3 bg-primary/10 text-primary text-sm font-medium">
                 {t("trialEndsAt", {
-                  date: formatDateTime(activeSubscription.trialEnd, {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  }),
+                  date: formatDateTime(
+                    activeSubscription.trialEnd,
+                    {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    },
+                    locale,
+                  ),
                 })}
               </div>
             )}
@@ -185,6 +193,7 @@ export default async function SubscriptionPage(props: {
                     month: "short",
                     year: "numeric",
                   },
+                  locale,
                 ),
               })}
             </div>
@@ -385,11 +394,15 @@ export default async function SubscriptionPage(props: {
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {formatDateTime(new Date(invoice.date * 1000), {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
+                    {formatDateTime(
+                      new Date(invoice.date * 1000),
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      },
+                      locale,
+                    )}
                   </TableCell>
                   <TableCell>{formatPrice(invoice.amount / 100)}</TableCell>
                   <TableCell>

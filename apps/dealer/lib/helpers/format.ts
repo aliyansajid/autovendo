@@ -101,12 +101,13 @@ export function formatDateTime(
     month: "2-digit",
     year: "numeric",
   },
-): string {
+  locale: string = "de-CH",
+) : string {
   const d =
     typeof date === "string" || typeof date === "number"
       ? new Date(date)
       : date;
-  return new Intl.DateTimeFormat("de-CH", options).format(d);
+  return new Intl.DateTimeFormat(locale, options).format(d);
 }
 
 export const DAY_ORDER = [

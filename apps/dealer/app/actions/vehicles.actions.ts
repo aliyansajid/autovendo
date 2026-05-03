@@ -1237,14 +1237,14 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
     };
   }
 
-  const plan = await prisma.plan.findUnique({
-    where: { name: subscription.plan },
+  const plan = await prisma.plan.findFirst({
+    where: { name: { equals: subscription.plan, mode: "insensitive" } },
   });
 
   const maxVehicles = (plan?.limits as any)?.vehicles ?? 0;
   const remainingQuota = Math.max(0, maxVehicles - currentCount);
 
-  if (remainingQuota === 0) {
+  if (remainingQuota === 0 && maxVehicles > 0) {
     return {
       type: "quota_exhausted",
       plan: subscription.plan,
@@ -1351,29 +1351,16 @@ export async function createVehicle(
     throw new Error("Dealer profile not found");
   }
 
-  const subscription = await prisma.subscription.findFirst({
-    where: {
-      referenceId: session.user.id,
-      status: { in: ["active", "trialing", "past_due"] },
-    },
-    orderBy: { periodEnd: "desc" },
-  });
+  const subscriptionStatus = await getVehicleSubscriptionStatus();
 
-  if (!subscription) {
+  if (subscriptionStatus.type === "no_subscription") {
     return { error: "noSubscription" };
   }
 
-  const plan = await prisma.plan.findUnique({
-    where: { name: subscription.plan },
-  });
-
-  const maxVehicles = (plan?.limits as any)?.vehicles ?? 0;
-
-  const currentCount = await prisma.vehicle.count({
-    where: { dealerId: dealer.id },
-  });
-
-  if (currentCount >= maxVehicles) {
+  if (
+    subscriptionStatus.type === "quota_exhausted" ||
+    subscriptionStatus.currentCount >= subscriptionStatus.maxVehicles
+  ) {
     return {
       error: "limitReached",
     };
