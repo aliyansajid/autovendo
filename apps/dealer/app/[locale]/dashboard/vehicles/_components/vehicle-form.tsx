@@ -586,11 +586,15 @@ export function VehicleForm({
         // Show specific message for validation errors, generic for system errors
         const isValidationError =
           error instanceof Error &&
-          (error.message.includes("Datei") ||
-            error.message.includes("Dateityp") ||
-            error.message.includes("Upload-Vorbereitung") ||
-            error.message === "limitReached" ||
-            error.message.includes("Limit"));
+          (error.message === "limitReached" ||
+            error.message.includes("Limit") ||
+            error.message === t("errorUploadPrep") ||
+            error.message.includes(t("errorUploadPrep")) ||
+            // Fallback for file-related errors that might come from Zod or elsewhere
+            error.message.toLowerCase().includes("file") ||
+            error.message.toLowerCase().includes("datei") ||
+            error.message.toLowerCase().includes("fichier") ||
+            error.message.toLowerCase().includes("file")); // IT is file too
 
         toast.error(
           isValidationError && error instanceof Error

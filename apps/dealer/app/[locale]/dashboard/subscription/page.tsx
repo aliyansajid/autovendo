@@ -21,7 +21,6 @@ import {
   Download,
   Receipt,
   CheckCircle2,
-  XCircle,
 } from "lucide-react";
 import {
   Card,
@@ -84,8 +83,7 @@ export default async function SubscriptionPage(props: {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
+      <div className="space-y-1">
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
@@ -186,7 +184,7 @@ export default async function SubscriptionPage(props: {
 
       {/* Plan Cards — upgrade or subscribe */}
       <div className="space-y-4">
-        <div>
+        <div className="space-y-0">
           <h2 className="text-base font-semibold">
             {activeSubscription ? t("upgradePlanTitle") : t("selectPlanTitle")}
           </h2>
@@ -220,7 +218,11 @@ export default async function SubscriptionPage(props: {
                     {plan.popular && <Badge>{t("popular")}</Badge>}
                   </div>
                 </div>
-                <CardDescription>{plan.description}</CardDescription>
+                <CardDescription>
+                  {t.has(`planDescription.${plan.name.toLowerCase()}`)
+                    ? t(`planDescription.${plan.name.toLowerCase()}`)
+                    : plan.description}
+                </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 space-y-6">
                 <div className="flex items-baseline gap-1">
@@ -233,7 +235,9 @@ export default async function SubscriptionPage(props: {
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
                     <span className="text-foreground">
-                      {t("listingsCount", { count: (plan.limits as any)?.vehicles })}
+                      {t("listingsCount", {
+                        count: (plan.limits as any)?.vehicles,
+                      })}
                     </span>
                   </div>
 
@@ -317,8 +321,8 @@ export default async function SubscriptionPage(props: {
       </div>
 
       {/* Invoices */}
-      <div className="rounded-lg border">
-        <div className="px-6 py-4 border-b">
+      <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
           <p className="font-semibold">{t("invoicesTitle")}</p>
           <p className="text-sm text-muted-foreground">{t("invoicesDesc")}</p>
         </div>

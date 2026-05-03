@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@repo/ui/components/table";
 import { Button } from "@repo/ui/components/button";
-import { Edit, Trash2, AlertTriangle } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { getImageUrl } from "@/lib/helpers/image";
@@ -37,7 +37,6 @@ import {
   InputGroupInput,
   InputGroupAddon,
 } from "@repo/ui/components/input-group";
-import { Badge } from "@repo/ui/components/badge";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import {
@@ -74,9 +73,6 @@ export function VehicleList({
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const isExpiredGraceDone =
-    subscriptionStatus?.type === "expired" && subscriptionStatus.isGraceExpired;
-
   const filteredVehicles = useMemo(() => {
     if (!searchQuery) return vehicles;
     const query = searchQuery.toLowerCase();
@@ -93,8 +89,7 @@ export function VehicleList({
       <div className="text-center py-20 border-2 border-dashed rounded-lg bg-muted/20">
         <h3 className="text-lg font-semibold">{t("emptyTitle")}</h3>
         <p className="text-muted-foreground mb-6">{t("emptyText")}</p>
-        {!isExpiredGraceDone &&
-          subscriptionStatus?.type !== "no_subscription" &&
+        {subscriptionStatus?.type !== "no_subscription" &&
           subscriptionStatus?.type !== "quota_exhausted" && (
             <Button asChild>
               <Link href="/dashboard/vehicles/new">{t("newListing")}</Link>
@@ -151,9 +146,11 @@ export function VehicleList({
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="flex items-center gap-2 font-medium whitespace-nowrap">
-                  {vehicle.make}
-                  {vehicle.model ? ` ${vehicle.model}` : ""}
+                <TableCell className="font-medium whitespace-nowrap">
+                  <span className="flex items-center gap-2">
+                    {vehicle.make}
+                    {vehicle.model ? ` ${vehicle.model}` : ""}
+                  </span>
                 </TableCell>
                 <TableCell className="font-semibold whitespace-nowrap">
                   {formatPrice(vehicle.price, locale)}

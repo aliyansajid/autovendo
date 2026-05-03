@@ -61,7 +61,7 @@ export function ContactSection() {
               fieldType={FormFieldType.INPUT_GROUP}
               name="phoneNumber"
               label={t("businessPhone")}
-              placeholder="+41 XX XXX XX XX"
+              placeholder={t("phonePlaceholder")}
               disabled={true}
             />
 

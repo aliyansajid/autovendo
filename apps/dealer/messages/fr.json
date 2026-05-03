@@ -865,6 +865,12 @@
   },
   "PricingPage": {
     "getStarted": "Commencer",
+    "planDescription": {
+      "starter": "Idéal pour les petits concessionnaires qui commencent leur parcours numérique.",
+      "professional": "Parfait pour les concessions en croissance avec un stock moyen.",
+      "business": "Conçu pour les grandes concessions ayant besoin d'une grande visibilité.",
+      "ultimate": "Notre plan le plus puissant pour les leaders de l'industrie."
+    },
     "title": "Plus de visibilité. Plus de service. Moins de coûts.",
     "subtitle": "Pourquoi payer 30 à 40 % de plus – quand vous bénéficiez d'un suivi plus personnalisé et d'une transparence totale avec autovendo.ch ?",
     "noOverpriced": "Fini les plateformes trop chères.",
@@ -880,6 +886,10 @@
     },
     "tableRows": {
       "ca": "env.",
+      "planBronze": "Bronze",
+      "planSilver": "Argent",
+      "planGold": "Or",
+      "planDiamond": "Diamant",
       "bronzeVehicles": "Jusqu'à 5 véhicules",
       "silverVehicles": "Jusqu'à 10 véhicules",
       "goldVehicles": "Jusqu'à 15 véhicules",
@@ -1126,7 +1136,8 @@
   "DashboardPage": {
     "welcomeTitle": "Bon retour, {name} !",
     "welcomeSubtitle": "Gérez votre commerce de véhicules et votre abonnement en un seul endroit.",
-    "activePlan": "Plan Actif",
+    "activePlan": "Plan actif",
+    "planLabel": "Plan {plan}",
     "noSubscription": "Pas d'abonnement",
     "statusTrialing": "Essai",
     "statusActive": "Actif",
@@ -1148,6 +1159,8 @@
     "expiredGraceDescription": "Votre abonnement a expiré et vos annonces ont été désactivées. Veuillez renouveler votre abonnement.",
     "quotaTitle": "Quota d'annonces épuisé",
     "quotaDescription": "Vous avez atteint le quota maximum de votre plan ({plan}) ({current}/{max} annonces). Veuillez mettre à niveau votre abonnement.",
+    "upgradePlan": "Changer de plan",
+    "subscribeNow": "S'abonner maintenant",
     "pageTitle": "Tous les Véhicules",
     "pageSubtitle": "Gérez vos véhicules publiés et leur statut.",
     "newListing": "Nouvelle Annonce"
@@ -1176,7 +1189,13 @@
   },
   "BillingPage": {
     "title": "Facturation & Utilisation",
-    "subtitle": "Gérez votre abonnement, votre moyen de paiement et vos factures.",
+    "subtitle": "Gérez votre abonnement, votre mode de paiement et vos factures.",
+    "planDescription": {
+      "starter": "Idéal pour les petits concessionnaires débutant leur aventure numérique.",
+      "professional": "Parfait pour les concessionnaires en croissance avec un inventaire moyen.",
+      "business": "Conçu pour les grands concessionnaires ayant besoin d'une grande visibilité.",
+      "ultimate": "Notre plan le plus puissant pour les leaders du secteur."
+    },
     "statusActive": "Actif",
     "statusTrialing": "Essai",
     "popular": "Populaire",
@@ -1304,7 +1323,8 @@
     "logout": "Se Déconnecter"
   },
   "NavMain": {
-    "platform": "Plateforme"
+    "platform": "Plateforme",
+    "toggle": "Basculer"
   },
   "SubscriptionCard": {
     "cardTitle": "Abonnement",
@@ -1621,6 +1641,7 @@
     "businessEmail": "E-mail professionnel",
     "businessEmailPlaceholder": "email@exemple.ch",
     "businessPhone": "Téléphone professionnel",
+    "phonePlaceholder": "+41 XX XXX XX XX",
     "street": "Rue",
     "streetPlaceholder": "Rue",
     "zip": "Code postal",

@@ -136,7 +136,9 @@ function ImagePreview({
   onRemove: () => void;
 }) {
   return (
-    <div className={`relative ${aspectClass} rounded-lg overflow-hidden border`}>
+    <div
+      className={`relative ${aspectClass} rounded-lg overflow-hidden border`}
+    >
       <img src={src} alt={alt} className="object-cover w-full h-full" />
       <Button
         type="button"
@@ -194,18 +196,56 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
             closeTime: oh.closeTime || "18:00",
           }))
         : [
-            { day: "MONDAY", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "TUESDAY", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "WEDNESDAY", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "THURSDAY", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "FRIDAY", isOpen: true, openTime: "08:00", closeTime: "18:00" },
-            { day: "SATURDAY", isOpen: false, openTime: "08:00", closeTime: "18:00" },
-            { day: "SUNDAY", isOpen: false, openTime: "08:00", closeTime: "18:00" },
+            {
+              day: "MONDAY",
+              isOpen: true,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "TUESDAY",
+              isOpen: true,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "WEDNESDAY",
+              isOpen: true,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "THURSDAY",
+              isOpen: true,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "FRIDAY",
+              isOpen: true,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "SATURDAY",
+              isOpen: false,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
+            {
+              day: "SUNDAY",
+              isOpen: false,
+              openTime: "08:00",
+              closeTime: "18:00",
+            },
           ],
     },
   });
 
-  const { fields } = useFieldArray({ control: form.control, name: "openingHours" });
+  const { fields } = useFieldArray({
+    control: form.control,
+    name: "openingHours",
+  });
 
   // useWatch for image fields — each only triggers its own re-render
   const imageValue = useWatch({ control: form.control, name: "image" });
@@ -280,7 +320,9 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         if (values.name !== (initialData?.user?.name || "")) {
           userUpdates.name = values.name;
         }
-        if ((imageUrl as string | null) !== (initialData?.user?.image || null)) {
+        if (
+          (imageUrl as string | null) !== (initialData?.user?.image || null)
+        ) {
           userUpdates.image = (imageUrl as string) || "";
         }
 
@@ -427,7 +469,9 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                       alt={t("logoAlt")}
                       aspectClass="w-32 h-32"
                       onRemove={() =>
-                        form.setValue("logo", undefined, { shouldDirty: true })
+                        form.setValue("logo", undefined, {
+                          shouldDirty: true,
+                        })
                       }
                     />
                   )}
@@ -589,11 +633,8 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         </CardContent>
       </Card>
 
-      <div className="flex justify-end pt-4">
-        <Button
-          disabled={isPending || !form.formState.isDirty}
-          type="submit"
-        >
+      <div className="flex justify-end">
+        <Button disabled={isPending || !form.formState.isDirty} type="submit">
           {isPending ? (
             <>
               <Spinner />

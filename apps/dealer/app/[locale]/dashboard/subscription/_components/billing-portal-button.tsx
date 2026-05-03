@@ -25,9 +25,11 @@ export function BillingPortalButton() {
 
   return (
     <Button variant="outline" disabled={isPending} onClick={handleClick}>
-      {isPending ? <Spinner /> : (
+      {isPending ? (
+        <Spinner />
+      ) : (
         <>
-          <ExternalLink className="size-4" />
+          <ExternalLink />
           {t("billingPortalCta")}
         </>
       )}

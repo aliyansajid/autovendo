@@ -869,7 +869,13 @@
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
   },
   "PricingPage": {
-    "getStarted": "Jetzt starten",
+    "getStarted": "Loslegen",
+    "planDescription": {
+      "starter": "Ideal für kleine Händler, die ihre digitale Reise beginnen.",
+      "professional": "Perfekt für wachsende Autohäuser mit mittlerem Bestand.",
+      "business": "Entwickelt für grosse Autohäuser, die hohe Sichtbarkeit benötigen.",
+      "ultimate": "Unser leistungsstärkster Plan für Branchenführer."
+    },
     "title": "Mehr Sichtbarkeit. Mehr Service. Weniger Kosten.",
     "subtitle": "Warum 30–40% mehr bezahlen – wenn Sie bei autovendo.ch mehr persönliche Betreuung und volle Transparenz erhalten?",
     "noOverpriced": "Schluss mit überteuerten Plattformen.",
@@ -885,6 +891,10 @@
     },
     "tableRows": {
       "ca": "ca.",
+      "planBronze": "Bronze",
+      "planSilver": "Silber",
+      "planGold": "Gold",
+      "planDiamond": "Diamant",
       "bronzeVehicles": "Bis 5 Fahrzeuge",
       "silverVehicles": "Bis 10 Fahrzeuge",
       "goldVehicles": "Bis 15 Fahrzeuge",
@@ -1133,7 +1143,8 @@
   "DashboardPage": {
     "welcomeTitle": "Willkommen zurück, {name}!",
     "welcomeSubtitle": "Verwalten Sie Ihren Fahrzeughandel und Ihr Abonnement an einem Ort.",
-    "activePlan": "Aktives Paket",
+    "activePlan": "Aktiver Plan",
+    "planLabel": "{plan}-Plan",
     "noSubscription": "Kein Abo",
     "statusTrialing": "Testphase",
     "statusActive": "Aktiv",
@@ -1155,6 +1166,8 @@
     "expiredGraceDescription": "Ihr Abonnement ist abgelaufen und Ihre Inserate wurden deaktiviert. Bitte erneuern Sie Ihr Abo.",
     "quotaTitle": "Inseratskontingent ausgeschöpft",
     "quotaDescription": "Sie haben das maximale Kontingent Ihres Plans ({plan}) erreicht ({current}/{max} Inserate). Bitte upgraden Sie Ihr Abonnement.",
+    "upgradePlan": "Plan upgraden",
+    "subscribeNow": "Jetzt abonnieren",
     "pageTitle": "Alle Fahrzeuge",
     "pageSubtitle": "Verwalten Sie Ihre inserierten Fahrzeuge und deren Status.",
     "newListing": "Neues Inserat"
@@ -1184,6 +1197,12 @@
   "BillingPage": {
     "title": "Abrechnung & Nutzung",
     "subtitle": "Verwalten Sie Ihr Abonnement, Ihre Zahlungsmethode und Rechnungen.",
+    "planDescription": {
+      "starter": "Ideal für kleine Händler, die ihre digitale Reise beginnen.",
+      "professional": "Perfekt für wachsende Autohäuser mit mittlerem Bestand.",
+      "business": "Konzipiert für große Händler, die hohe Sichtbarkeit benötigen.",
+      "ultimate": "Unser leistungsstärkster Plan für Branchenführer."
+    },
     "statusActive": "Aktiv",
     "statusTrialing": "Testphase",
     "popular": "Beliebt",
@@ -1311,7 +1330,8 @@
     "logout": "Abmelden"
   },
   "NavMain": {
-    "platform": "Plattform"
+    "platform": "Plattform",
+    "toggle": "Umschalten"
   },
   "SubscriptionCard": {
     "cardTitle": "Abonnement",
@@ -1629,7 +1649,8 @@
     "companyPlaceholder": "Firmenname aus Profil",
     "businessEmail": "Geschäfts-E-Mail",
     "businessEmailPlaceholder": "email@beispiel.ch",
-    "businessPhone": "Geschäfts-Telefon",
+    "businessPhone": "Geschäftstelefon",
+    "phonePlaceholder": "+41 XX XXX XX XX",
     "street": "Strasse",
     "streetPlaceholder": "Strasse",
     "zip": "PLZ",

@@ -46,7 +46,7 @@ export default async function DashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium">
               {t("activePlan")}
             </CardTitle>
@@ -55,7 +55,7 @@ export default async function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold capitalize">
               {activeSubscription
-                ? `${activeSubscription.plan} Plan`
+                ? t("planLabel", { plan: activeSubscription.plan })
                 : t("noSubscription")}
             </div>
             {activeSubscription && (
@@ -69,7 +69,7 @@ export default async function DashboardPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium">
               {t("vehiclesTitle")}
             </CardTitle>
@@ -105,7 +105,7 @@ export default async function DashboardPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium">
               {t("visitorsTitle")}
             </CardTitle>
@@ -125,10 +125,8 @@ export default async function DashboardPage() {
           <CardHeader>
             <CardTitle>{t("recentActivity")}</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground italic">
-              {t("noActivity")}
-            </p>
+          <CardContent className="text-sm text-muted-foreground italic">
+            {t("noActivity")}
           </CardContent>
         </Card>
 

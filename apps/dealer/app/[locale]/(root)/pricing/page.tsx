@@ -146,7 +146,9 @@ export default async function PricingPage(props: {
                 </TableHeader>
                 <TableBody>
                   <TableRow>
-                    <TableCell className="font-semibold">Bronze</TableCell>
+                    <TableCell className="font-semibold">
+                      {t("tableRows.planBronze")}
+                    </TableCell>
                     <TableCell>{t("tableRows.bronzeVehicles")}</TableCell>
                     <TableCell className="font-bold text-primary">
                       {formatPrice(180, locale)}
@@ -159,7 +161,9 @@ export default async function PricingPage(props: {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-semibold">Silver</TableCell>
+                    <TableCell className="font-semibold">
+                      {t("tableRows.planSilver")}
+                    </TableCell>
                     <TableCell>{t("tableRows.silverVehicles")}</TableCell>
                     <TableCell className="font-bold text-primary">
                       {formatPrice(280, locale)}
@@ -172,7 +176,9 @@ export default async function PricingPage(props: {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-semibold">Gold</TableCell>
+                    <TableCell className="font-semibold">
+                      {t("tableRows.planGold")}
+                    </TableCell>
                     <TableCell>{t("tableRows.goldVehicles")}</TableCell>
                     <TableCell className="font-bold text-primary">
                       {formatPrice(325, locale)}
@@ -185,7 +191,9 @@ export default async function PricingPage(props: {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell className="font-semibold">Diamond</TableCell>
+                    <TableCell className="font-semibold">
+                      {t("tableRows.planDiamond")}
+                    </TableCell>
                     <TableCell>{t("tableRows.diamondVehicles")}</TableCell>
                     <TableCell className="font-bold text-primary">
                       {formatPrice(408, locale)}
@@ -344,7 +352,11 @@ export default async function PricingPage(props: {
                     </CardTitle>
                     {plan.popular && <Badge>{t("popular")}</Badge>}
                   </div>
-                  <CardDescription>{plan.description}</CardDescription>
+                  <CardDescription>
+                  {t.has(`planDescription.${plan.name.toLowerCase()}`)
+                    ? t(`planDescription.${plan.name.toLowerCase()}`)
+                    : plan.description}
+                </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 space-y-6">
                   <div className="flex items-baseline gap-1">

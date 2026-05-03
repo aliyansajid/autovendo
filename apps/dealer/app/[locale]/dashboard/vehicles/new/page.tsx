@@ -21,7 +21,7 @@ export default async function AddNewVehiclePage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 items-start">
         <Button variant={"link"} asChild>
           <Link href="/dashboard/vehicles">
             <ArrowLeft />

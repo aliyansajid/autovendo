@@ -865,6 +865,12 @@
   },
   "PricingPage": {
     "getStarted": "Get started",
+    "planDescription": {
+      "starter": "Ideal for small dealers starting their digital journey.",
+      "professional": "Perfect for growing dealerships with medium inventory.",
+      "business": "Designed for large dealerships needing high visibility.",
+      "ultimate": "Our most powerful plan for industry leaders."
+    },
     "title": "More visibility. More service. Lower costs.",
     "subtitle": "Why pay 30–40% more – when you get more personal support and full transparency with autovendo.ch?",
     "noOverpriced": "No more overpriced platforms.",
@@ -880,6 +886,10 @@
     },
     "tableRows": {
       "ca": "approx.",
+      "planBronze": "Bronze",
+      "planSilver": "Silver",
+      "planGold": "Gold",
+      "planDiamond": "Diamond",
       "bronzeVehicles": "Up to 5 vehicles",
       "silverVehicles": "Up to 10 vehicles",
       "goldVehicles": "Up to 15 vehicles",
@@ -1129,6 +1139,7 @@
     "welcomeTitle": "Welcome back, {name}!",
     "welcomeSubtitle": "Manage your vehicle dealership and subscription in one place.",
     "activePlan": "Active Plan",
+    "planLabel": "{plan} Plan",
     "noSubscription": "No Subscription",
     "statusTrialing": "Trial",
     "statusActive": "Active",
@@ -1181,6 +1192,12 @@
   "BillingPage": {
     "title": "Billing & Usage",
     "subtitle": "Manage your subscription, payment method and invoices.",
+    "planDescription": {
+      "starter": "Ideal for small dealers starting their digital journey.",
+      "professional": "Perfect for growing dealerships with medium inventory.",
+      "business": "Designed for large dealerships needing high visibility.",
+      "ultimate": "Our most powerful plan for industry leaders."
+    },
     "statusActive": "Active",
     "statusTrialing": "Trial",
     "popular": "Popular",
@@ -1308,7 +1325,8 @@
     "logout": "Sign Out"
   },
   "NavMain": {
-    "platform": "Platform"
+    "platform": "Platform",
+    "toggle": "Toggle"
   },
   "SubscriptionCard": {
     "cardTitle": "Subscription",
@@ -1627,6 +1645,7 @@
     "businessEmail": "Business Email",
     "businessEmailPlaceholder": "email@example.com",
     "businessPhone": "Business Phone",
+    "phonePlaceholder": "+41 XX XXX XX XX",
     "street": "Street",
     "streetPlaceholder": "Street",
     "zip": "ZIP",

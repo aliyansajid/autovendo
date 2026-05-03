@@ -50,7 +50,10 @@ export const SubscribeButton = ({
 
       const { data, error } = await authClient.subscription.upgrade({
         plan: planName.toLowerCase(),
-        successUrl: toAbsolute(successUrl, "/dashboard/subscription?success=true"),
+        successUrl: toAbsolute(
+          successUrl,
+          "/dashboard/subscription?success=true",
+        ),
         cancelUrl: toAbsolute(cancelUrl, "/dashboard/subscription"),
         ...(activeSubscription?.stripeSubscriptionId && {
           subscriptionId: activeSubscription.stripeSubscriptionId,

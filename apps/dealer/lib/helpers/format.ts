@@ -123,7 +123,10 @@ export function formatDateTime(
   },
 ): string {
   const chLocale = getCHLocale(locale);
-  const d = typeof date === "string" || typeof date === "number" ? new Date(date) : date;
+  const d =
+    typeof date === "string" || typeof date === "number"
+      ? new Date(date)
+      : date;
   return new Intl.DateTimeFormat(chLocale, options).format(d);
 }
 
