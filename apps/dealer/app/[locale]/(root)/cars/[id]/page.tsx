@@ -38,6 +38,8 @@ import { EnergyLabel } from "../_components/energy-label";
 import {
   DAY_LABELS,
   DAY_ORDER,
+  formatNumber,
+  formatPrice,
   formatKilometers,
   formatDateTime,
 } from "@/lib/helpers/format";
