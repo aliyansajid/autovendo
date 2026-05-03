@@ -35,13 +35,18 @@ export const SubscriptionActions = ({
 
   const handleCancel = async () => {
     startTransition(async () => {
-      const { error } = await authClient.subscription.cancel({
+      const { data, error } = await authClient.subscription.cancel({
         subscriptionId,
         returnUrl: window.location.href,
       });
 
       if (error) {
         toast.error(error.message);
+        return;
+      }
+
+      if (data?.url) {
+        window.location.href = data.url;
         return;
       }
 
@@ -85,14 +90,14 @@ export const SubscriptionActions = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {t("cancelConfirmTitle") || "Are you sure?"}
+            {t("cancelConfirmTitle")}
           </AlertDialogTitle>
           <AlertDialogDescription>{t("cancelConfirm")}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive hover:bg-destructive/90"
+            variant={"destructive"}
             disabled={isPending}
             onClick={(e) => {
               e.preventDefault();

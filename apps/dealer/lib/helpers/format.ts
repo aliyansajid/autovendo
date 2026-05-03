@@ -92,7 +92,7 @@ export function formatCount(count: number): string {
 }
 
 /**
- * Format date time following Swiss standards
+ * Format date time following locale standards
  */
 export function formatDateTime(
   date: Date | string | number,
@@ -101,12 +101,13 @@ export function formatDateTime(
     month: "2-digit",
     year: "numeric",
   },
+  locale: string = "de-CH",
 ): string {
   const d =
     typeof date === "string" || typeof date === "number"
       ? new Date(date)
       : date;
-  return new Intl.DateTimeFormat("de-CH", options).format(d);
+  return new Intl.DateTimeFormat(locale, options).format(d);
 }
 
 export const DAY_ORDER = [
