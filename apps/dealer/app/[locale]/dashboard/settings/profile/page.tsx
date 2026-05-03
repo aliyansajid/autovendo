@@ -1,5 +1,5 @@
 import { getDealerProfile } from "@/app/actions/dealer.actions";
-import { DealerProfileForm } from "@/app/[locale]/dashboard/_components/dealer-profile-form";
+import { DealerProfileForm } from "@/app/[locale]/dashboard/settings/_components/dealer-profile-form";
 import { getTranslations } from "next-intl/server";
 
 export default async function ProfilePage() {

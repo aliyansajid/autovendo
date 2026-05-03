@@ -3,7 +3,7 @@ import { prisma } from "@repo/db";
 import { headers } from "next/headers";
 import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { getBillingData } from "@/app/actions/billing.actions";
-import { getTranslations, getFormatter } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import { Progress } from "@repo/ui/components/progress";
@@ -33,17 +33,37 @@ import {
 import { BillingPortalButton } from "./_components/billing-portal-button";
 import { SubscribeButton } from "./_components/subscribe-button";
 import { SubscriptionActions } from "./_components/subscription-actions";
-import { formatPrice } from "@/lib/helpers/format";
+import { formatPrice, formatDateTime } from "@/lib/helpers/format";
 
+/**
+ * Subscription Management Page
+ *
+ * Handles the dealer's billing lifecycle:
+ * - Displays active plan details and next billing date
+ * - Shows current listing quota vs. plan limits
+ * - Lists available upgrade/downgrade plans fetched from DB
+ * - Lists payment history (invoices)
+ */
 export default async function SubscriptionPage(props: {
   params: Promise<{ locale: string }>;
 }) {
+  // Initialize translations
   const t = await getTranslations("BillingPage");
-  const format = await getFormatter();
+
+  // Extract locale from params (Next.js 15 Promise-based approach)
   const { locale } = await props.params;
 
+  // Fetch current session for identity
   const session = await auth.api.getSession({ headers: await headers() });
 
+  /**
+   * Data Aggregation Phase
+   * Parallel fetch for all required dashboard data:
+   * 1. Historical subscriptions from DB
+   * 2. Calculated vehicle quota status
+   * 3. Live billing data from Stripe (invoices, cards)
+   * 4. Available subscription plans
+   */
   const [subscriptions, subscriptionStatus, billingData, plans] =
     await Promise.all([
       prisma.subscription.findMany({
@@ -105,14 +125,14 @@ export default async function SubscriptionPage(props: {
               </div>
               <p className="text-sm text-muted-foreground">
                 {currentPlan
-                  ? formatPrice(currentPlan.price, locale)
+                  ? formatPrice(currentPlan.price)
                   : activeSubscription.plan}{" "}
                 / {t("month")}
                 {activeSubscription.periodEnd && (
                   <span>
                     {" · "}
                     {t("nextBilling", {
-                      date: format.dateTime(activeSubscription.periodEnd, {
+                      date: formatDateTime(activeSubscription.periodEnd, {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
@@ -135,7 +155,7 @@ export default async function SubscriptionPage(props: {
             activeSubscription.trialEnd && (
               <div className="px-6 py-3 bg-primary/10 text-primary text-sm font-medium">
                 {t("trialEndsAt", {
-                  date: format.dateTime(activeSubscription.trialEnd, {
+                  date: formatDateTime(activeSubscription.trialEnd, {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
@@ -148,7 +168,7 @@ export default async function SubscriptionPage(props: {
             activeSubscription.periodEnd && (
               <div className="px-6 py-3 bg-destructive/10 text-destructive text-sm font-medium">
                 {t("cancelingAt", {
-                  date: format.dateTime(activeSubscription.periodEnd, {
+                  date: formatDateTime(activeSubscription.periodEnd, {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
@@ -227,7 +247,7 @@ export default async function SubscriptionPage(props: {
               <CardContent className="flex-1 space-y-6">
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold text-primary">
-                    {formatPrice(plan.price, locale)}
+                    {formatPrice(plan.price)}
                   </span>
                   <span className="text-muted-foreground">/ {t("month")}</span>
                 </div>
@@ -350,19 +370,13 @@ export default async function SubscriptionPage(props: {
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {format.dateTime(new Date(invoice.date * 1000), {
+                    {formatDateTime(new Date(invoice.date * 1000), {
                       day: "2-digit",
                       month: "short",
                       year: "numeric",
                     })}
                   </TableCell>
-                  <TableCell>
-                    {format.number(invoice.amount / 100, {
-                      style: "currency",
-                      currency: invoice.currency.toUpperCase(),
-                      minimumFractionDigits: 2,
-                    })}
-                  </TableCell>
+                  <TableCell>{formatPrice(invoice.amount / 100)}</TableCell>
                   <TableCell>
                     <Badge
                       className={

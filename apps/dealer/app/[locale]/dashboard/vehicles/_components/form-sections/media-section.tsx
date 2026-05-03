@@ -11,7 +11,6 @@ import { Dispatch, SetStateAction } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@repo/ui/components/button";
 import { toast } from "sonner";
-import { z } from "zod";
 
 export function MediaSection({
   previewImages,

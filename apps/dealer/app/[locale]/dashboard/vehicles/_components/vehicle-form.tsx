@@ -40,8 +40,8 @@ import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import {
   formatPrice,
-  formatNumber,
-  formatDateTime,
+  formatKilometers,
+  formatRegistrationDate,
 } from "@/lib/helpers/format";
 import {
   AlertCircleIcon,
@@ -66,7 +66,6 @@ import {
 } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
-import { AlertCircle, AlertTriangle } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
 import { getImageUrl } from "@/lib/helpers/image";
@@ -76,7 +75,7 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@repo/ui/components/alert";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 const VEHICLE_DATA_MAP: Record<string, any> = {
   car: {
@@ -125,6 +124,18 @@ const STEP_FIELDS: Record<number, any[]> = {
   4: [],
 };
 
+/**
+ * Vehicle Form Component (Multi-step)
+ *
+ * A comprehensive form for creating or editing vehicle listings.
+ * Key Features:
+ * - Dynamic data mapping (makes/models) based on vehicle type
+ * - Three-phase submission process:
+ *   1. Listing validation & quota check
+ *   2. Image upload to S3 via pre-signed URLs
+ *   3. Final DB record creation/update
+ * - Real-time "Live Preview" of the vehicle listing
+ */
 export function VehicleForm({
   dealerProfile,
   initialData,
@@ -136,10 +147,13 @@ export function VehicleForm({
   vehicleId?: string;
   subscriptionStatus?: SubscriptionStatus;
 }) {
+  // Localization and routing
   const t = useTranslations("VehicleForm");
   const params = useParams();
   const locale = (params.locale as string) || "de";
   const router = useRouter();
+
+  // Submission state management
   const [isPending, startTransition] = useTransition();
   const [currentStep, setCurrentStep] = useState(1);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -335,12 +349,8 @@ export function VehicleForm({
 
   // Determine whether submission should be blocked based on subscription state.
   // For new listings: block unless subscription is active.
-  // For edits: only block when the grace period after expiry has already passed.
   const isSubmitBlocked = subscriptionStatus
-    ? vehicleId
-      ? subscriptionStatus.type === "expired" &&
-        subscriptionStatus.isGraceExpired
-      : subscriptionStatus.type !== "active"
+    ? subscriptionStatus.type !== "active"
     : false;
 
   const handleNext = async () => {
@@ -636,7 +646,9 @@ export function VehicleForm({
           <AlertDescription>{t("noSubscriptionDesc")}</AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>
-              <Link href="/dashboard/subscription">{t("subscribeNow")}</Link>
+              <Link href="/dashboard/subscription" locale={locale}>
+                {t("subscribeNow")}
+              </Link>
             </Button>
           </AlertAction>
         </Alert>
@@ -655,7 +667,9 @@ export function VehicleForm({
           </AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>
-              <Link href="/dashboard/subscription">{t("upgradePlan")}</Link>
+              <Link href="/dashboard/subscription" locale={locale}>
+                {t("upgradePlan")}
+              </Link>
             </Button>
           </AlertAction>
         </Alert>
@@ -769,7 +783,7 @@ export function VehicleForm({
                     <div className="space-y-1">
                       <p className="text-muted-foreground">{t("priceLabel")}</p>
                       <p className="font-bold text-base">
-                        {formatPrice(form.getValues("price"), locale)}
+                        {formatPrice(form.getValues("price"))}
                       </p>
                     </div>
 
@@ -778,7 +792,7 @@ export function VehicleForm({
                         {t("kilometerLabel")}
                       </p>
                       <p className="font-bold text-base">
-                        {formatNumber(form.getValues("kilometer"), locale)} km
+                        {formatKilometers(form.getValues("kilometer"))}
                       </p>
                     </div>
 
@@ -787,8 +801,10 @@ export function VehicleForm({
                         {t("firstRegistrationLabel")}
                       </p>
                       <p className="font-bold text-base">
-                        {form.getValues("registrationMonth")} /{" "}
-                        {form.getValues("registrationYear")}
+                        {formatRegistrationDate(
+                          form.getValues("registrationMonth"),
+                          form.getValues("registrationYear"),
+                        )}
                       </p>
                     </div>
 

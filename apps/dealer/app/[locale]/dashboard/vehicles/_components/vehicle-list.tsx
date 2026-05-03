@@ -41,7 +41,8 @@ import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import {
   formatPrice,
-  formatNumber,
+  formatKilometers,
+  formatRegistrationDate,
   formatDateTime,
 } from "@/lib/helpers/format";
 
@@ -60,6 +61,15 @@ interface Vehicle {
   createdAt: Date;
 }
 
+/**
+ * Vehicle List Component (Client-side)
+ * 
+ * Features:
+ * - Tabular view of all dealer vehicles
+ * - Real-time filtering by brand, model, and version
+ * - Direct actions for editing and deleting vehicles
+ * - Formatted display using Swiss (de-CH) technical standards
+ */
 export function VehicleList({
   vehicles,
   subscriptionStatus,
@@ -71,6 +81,8 @@ export function VehicleList({
   const params = useParams();
   const locale = (params.locale as string) || "de";
   const router = useRouter();
+
+  // State for the real-time search/filter input
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredVehicles = useMemo(() => {
@@ -153,14 +165,16 @@ export function VehicleList({
                   </span>
                 </TableCell>
                 <TableCell className="font-semibold whitespace-nowrap">
-                  {formatPrice(vehicle.price, locale)}
+                  {formatPrice(vehicle.price)}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {formatNumber(vehicle.kilometer, locale)} km
+                  {formatKilometers(vehicle.kilometer)}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {vehicle.registrationMonth.toString().padStart(2, "0")}/
-                  {vehicle.registrationYear}
+                  {formatRegistrationDate(
+                    vehicle.registrationMonth,
+                    vehicle.registrationYear,
+                  )}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap capitalize">
                   {vehicle.bodyType?.replace(/-/g, " ") || "-"}
@@ -169,7 +183,7 @@ export function VehicleList({
                   {vehicle.color?.toLowerCase() || "-"}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {formatDateTime(new Date(vehicle.createdAt), locale, {
+                  {formatDateTime(new Date(vehicle.createdAt), {
                     day: "2-digit",
                     month: "2-digit",
                     year: "numeric",

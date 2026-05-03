@@ -62,8 +62,6 @@ export type SubscriptionStatus = {
   maxVehicles: number;
   currentCount: number;
   remainingQuota: number;
-  graceEnd: string | null;
-  isGraceExpired: boolean;
 };
 
 // =============================================================================
@@ -1222,8 +1220,6 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
       maxVehicles: 0,
       currentCount,
       remainingQuota: 0,
-      graceEnd: null,
-      isGraceExpired: false,
     };
   }
 
@@ -1241,8 +1237,6 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
       maxVehicles,
       currentCount,
       remainingQuota: 0,
-      graceEnd: null,
-      isGraceExpired: false,
     };
   }
 
@@ -1252,8 +1246,6 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
     maxVehicles,
     currentCount,
     remainingQuota,
-    graceEnd: null,
-    isGraceExpired: false,
   };
 }
 

@@ -14,17 +14,34 @@ import {
   AlertTitle,
 } from "@repo/ui/src/components/alert";
 
+/**
+ * Vehicles Inventory Page
+ * 
+ * Displays the list of vehicles owned by the dealer.
+ * Implements a subscription guard that:
+ * 1. Alerts users if they lack an active subscription
+ * 2. Blocks new listings if the quota is exhausted
+ */
 export default async function VehiclesPage(props: {
   params: Promise<{ locale: string }>;
 }) {
+  // Extract locale and initialize translations
   const { locale } = await props.params;
   const t = await getTranslations("VehiclesPage");
 
+  /**
+   * Data Fetching
+   * Fetches the dealer's vehicles and their current subscription quota status in parallel
+   */
   const [vehicles, subscriptionStatus] = await Promise.all([
     getDealerVehicles(),
     getVehicleSubscriptionStatus(),
   ]);
 
+  /**
+   * Subscription Logic
+   * Determine if the user is prevented from creating new listings
+   */
   const isBlocked =
     subscriptionStatus.type === "no_subscription" ||
     subscriptionStatus.type === "quota_exhausted" ||
@@ -41,7 +58,7 @@ export default async function VehiclesPage(props: {
           <AlertDescription>
             {subscriptionStatus.type === "no_subscription"
               ? t("noSubDescription")
-              : t("expiredGraceDescription")}
+              : t("expiredDescription")}
           </AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>

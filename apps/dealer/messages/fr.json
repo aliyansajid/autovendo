@@ -1153,10 +1153,9 @@
   },
   "VehiclesPage": {
     "expiredTitle": "Abonnement expiré",
-    "expiredDescription": "Votre abonnement a expiré. Vos annonces seront désactivées le {date}. Veuillez renouveler votre abonnement pour rester actif.",
+    "expiredDescription": "Votre abonnement a expiré. Veuillez renouveler votre abonnement pour réactiver vos annonces.",
     "noSubTitle": "Aucun abonnement actif",
     "noSubDescription": "Vous n'avez pas d'abonnement actif. Choisissez un plan pour publier des véhicules.",
-    "expiredGraceDescription": "Votre abonnement a expiré et vos annonces ont été désactivées. Veuillez renouveler votre abonnement.",
     "quotaTitle": "Quota d'annonces épuisé",
     "quotaDescription": "Vous avez atteint le quota maximum de votre plan ({plan}) ({current}/{max} annonces). Veuillez mettre à niveau votre abonnement.",
     "upgradePlan": "Changer de plan",
@@ -1348,7 +1347,17 @@
     "billing": "Facturation & Utilisation",
     "settings": "Paramètres",
     "profile": "Profil",
-    "changePassword": "Changer le Mot de Passe"
+    "changePassword": "Changer le Mot de Passe",
+    "logoAlt": "AutoVendo Logo"
+  },
+  "DashboardBreadcrumb": {
+    "dashboard": "Tableau de bord",
+    "vehicles": "Véhicules",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "subscription": "Abonnement",
+    "new": "Nouvelle Annonce",
+    "change-password": "Changer le Mot de Passe"
   },
   "Unauthorized": {
     "title": "Accès Refusé",
@@ -1378,7 +1387,6 @@
     "phone": "Téléphone"
   },
   "VehicleList": {
-    "graceWarning": "Vos annonces seront désactivées le {date} si vous ne renouvelez pas votre abonnement.",
     "searchPlaceholder": "Rechercher par marque, modèle ou version...",
     "colImage": "Image",
     "colVehicle": "Véhicule",
@@ -1502,8 +1510,6 @@
     "quotaExhaustedDesc": "Vous avez atteint le quota maximum de votre plan ({plan}) ({current}/{max} annonces). Veuillez mettre à niveau votre abonnement.",
     "expiredWarningTitle": "Abonnement expiré",
     "expiredWarningDesc": "Votre abonnement a expiré. Les annonces seront désactivées le {date}. Veuillez renouveler votre abonnement.",
-    "expiredGraceTitle": "Abonnement expiré",
-    "expiredGraceDesc": "Votre abonnement a expiré et vos annonces ont été désactivées. Veuillez renouveler votre abonnement pour être à nouveau actif.",
     "subscribeNow": "S'abonner maintenant",
     "upgradePlan": "Changer de plan",
     "successUpdate": "Annonce mise à jour avec succès !",

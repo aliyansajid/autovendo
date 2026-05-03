@@ -3,27 +3,16 @@
  * FORMATTING HELPERS - Production Grade
  * ============================================================================
  * Pure formatting functions with NO side effects
+ * Always using de-CH for Swiss standards
  */
 
-/**
- * Map base locale to Swiss-specific locale for formatting
- */
-export function getCHLocale(locale: string): string {
-  const mapping: Record<string, string> = {
-    de: "de-CH",
-    fr: "fr-CH",
-    it: "it-CH",
-    en: "en-CH",
-  };
-  return mapping[locale] || locale || "de-CH";
-}
+const CH_LOCALE = "de-CH";
 
 /**
  * Format price in Swiss Francs (CHF 1'234.00)
  */
-export function formatPrice(price: number, locale: string = "de-CH"): string {
-  const chLocale = getCHLocale(locale);
-  return new Intl.NumberFormat(chLocale, {
+export function formatPrice(price: number): string {
+  return new Intl.NumberFormat("de-CH", {
     style: "currency",
     currency: "CHF",
     minimumFractionDigits: 0,
@@ -31,20 +20,16 @@ export function formatPrice(price: number, locale: string = "de-CH"): string {
   }).format(price);
 }
 
-export function formatNumber(
-  num: number | null | undefined,
-  locale: string = "de-CH",
-): string {
+export function formatNumber(num: number | null | undefined): string {
   if (num === null || num === undefined) return "0";
-  const chLocale = getCHLocale(locale);
-  return new Intl.NumberFormat(chLocale).format(num);
+  return new Intl.NumberFormat("de-CH").format(num);
 }
 
 /**
  * Format kilometers (1'234 km)
  */
-export function formatKilometers(km: number, locale: string = "de-CH"): string {
-  return `${formatNumber(km, locale)} km`;
+export function formatKilometers(km: number): string {
+  return `${formatNumber(km)} km`;
 }
 
 /**
@@ -61,32 +46,28 @@ export function formatRegistrationDate(
 /**
  * Format power (kW and PS)
  */
-export function formatPower(
-  kw: number | null,
-  hp: number | null,
-  locale: string = "de-CH",
-): string {
+export function formatPower(kw: number | null, hp: number | null): string {
   if (kw === null && hp === null) return "N/A";
   if (kw !== null && hp !== null)
-    return `${formatNumber(kw, locale)} kW (${formatNumber(hp, locale)} PS)`;
-  if (kw !== null) return `${formatNumber(kw, locale)} kW`;
-  return `${formatNumber(hp, locale)} PS`;
+    return `${formatNumber(kw)} kW (${formatNumber(hp)} PS)`;
+  if (kw !== null) return `${formatNumber(kw)} kW`;
+  return `${formatNumber(hp)} PS`;
 }
 
 /**
  * Format PS only
  */
-export function formatPS(hp: number | null, locale: string = "de-CH"): string {
+export function formatPS(hp: number | null): string {
   if (hp === null) return "N/A";
-  return `${formatNumber(hp, locale)} PS`;
+  return `${formatNumber(hp)} PS`;
 }
 
 /**
  * Format kW only
  */
-export function formatKW(kw: number | null, locale: string = "de-CH"): string {
+export function formatKW(kw: number | null): string {
   if (kw === null) return "N/A";
-  return `${formatNumber(kw, locale)} kW`;
+  return `${formatNumber(kw)} kW`;
 }
 
 /**
@@ -106,8 +87,8 @@ export function formatEnumLabel(value: string | null | undefined): string {
 /**
  * Format count with thousand separators
  */
-export function formatCount(count: number, locale: string = "de-CH"): string {
-  return formatNumber(count, locale);
+export function formatCount(count: number): string {
+  return formatNumber(count);
 }
 
 /**
@@ -115,19 +96,17 @@ export function formatCount(count: number, locale: string = "de-CH"): string {
  */
 export function formatDateTime(
   date: Date | string | number,
-  locale: string = "de-CH",
   options: Intl.DateTimeFormatOptions = {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
   },
 ): string {
-  const chLocale = getCHLocale(locale);
   const d =
     typeof date === "string" || typeof date === "number"
       ? new Date(date)
       : date;
-  return new Intl.DateTimeFormat(chLocale, options).format(d);
+  return new Intl.DateTimeFormat("de-CH", options).format(d);
 }
 
 export const DAY_ORDER = [

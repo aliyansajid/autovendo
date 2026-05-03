@@ -1153,10 +1153,9 @@
   },
   "VehiclesPage": {
     "expiredTitle": "Abbonamento scaduto",
-    "expiredDescription": "Il vostro abbonamento è scaduto. I vostri annunci saranno disattivati il {date}. Rinnovate il vostro abbonamento per rimanere attivi.",
+    "expiredDescription": "Il vostro abbonamento è scaduto. Rinnovate il vostro abbonamento per riattivare i vostri annunci.",
     "noSubTitle": "Nessun abbonamento attivo",
     "noSubDescription": "Non avete un abbonamento attivo. Scegliete un piano per pubblicare veicoli.",
-    "expiredGraceDescription": "Il vostro abbonamento è scaduto e i vostri annunci sono stati disattivati. Rinnovate il vostro abbonamento.",
     "quotaTitle": "Quota annunci esaurita",
     "quotaDescription": "Avete raggiunto la quota massima del vostro piano ({plan}) ({current}/{max} annunci). Aggiornate il vostro abbonamento.",
     "upgradePlan": "Aggiorna piano",
@@ -1348,7 +1347,17 @@
     "billing": "Fatturazione & Utilizzo",
     "settings": "Impostazioni",
     "profile": "Profilo",
-    "changePassword": "Cambia Password"
+    "changePassword": "Cambia Password",
+    "logoAlt": "AutoVendo Logo"
+  },
+  "DashboardBreadcrumb": {
+    "dashboard": "Dashboard",
+    "vehicles": "Veicoli",
+    "settings": "Impostazioni",
+    "profile": "Profilo",
+    "subscription": "Abbonamento",
+    "new": "Nuovo Annuncio",
+    "change-password": "Cambia Password"
   },
   "Unauthorized": {
     "title": "Accesso Negato",
@@ -1378,7 +1387,6 @@
     "phone": "Telefono"
   },
   "VehicleList": {
-    "graceWarning": "I vostri annunci saranno disattivati il {date} se non rinnovate il vostro abbonamento.",
     "searchPlaceholder": "Cerca per marca, modello o versione...",
     "colImage": "Immagine",
     "colVehicle": "Veicolo",
@@ -1502,8 +1510,6 @@
     "quotaExhaustedDesc": "Avete raggiunto la quota massima del vostro piano ({plan}) ({current}/{max} annunci). Aggiornate il vostro abbonamento.",
     "expiredWarningTitle": "Abbonamento scaduto",
     "expiredWarningDesc": "Il vostro abbonamento è scaduto. Gli annunci saranno disattivati il {date}. Rinnovate il vostro abbonamento.",
-    "expiredGraceTitle": "Abbonamento scaduto",
-    "expiredGraceDesc": "Il vostro abbonamento è scaduto e i vostri annunci sono stati disattivati. Rinnovate il vostro abbonamento per essere nuovamente attivi.",
     "subscribeNow": "Abbonati ora",
     "upgradePlan": "Aggiorna piano",
     "successUpdate": "Annuncio aggiornato con successo!",

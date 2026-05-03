@@ -17,7 +17,8 @@ import { useTransition } from "react";
 import { toast } from "sonner";
 import { Link } from "@/i18n/routing";
 import { CreditCard, ExternalLink } from "lucide-react";
-import { useTranslations, useFormatter } from "next-intl";
+import { useTranslations } from "next-intl";
+import { formatDateTime } from "@/lib/helpers/format";
 
 type SubscriptionData = {
   id: string;
@@ -42,7 +43,6 @@ export function SubscriptionCard({
 }: SubscriptionCardProps) {
   const [isPending, startTransition] = useTransition();
   const t = useTranslations("SubscriptionCard");
-  const format = useFormatter();
 
   const activeSubscription = subscriptions.find(
     (s) => s.status === "active" || s.status === "trialing",
@@ -90,7 +90,7 @@ export function SubscriptionCard({
                   ? t("cancelAtPeriodEnd")
                   : activeSubscription.periodEnd
                     ? t("nextBilling", {
-                        date: format.dateTime(
+                        date: formatDateTime(
                           new Date(activeSubscription.periodEnd),
                           {
                             day: "2-digit",

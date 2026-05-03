@@ -1160,10 +1160,9 @@
   },
   "VehiclesPage": {
     "expiredTitle": "Abonnement abgelaufen",
-    "expiredDescription": "Ihr Abonnement ist abgelaufen. Ihre Inserate werden am {date} deaktiviert. Bitte erneuern Sie Ihr Abo, um aktiv zu bleiben.",
+    "expiredDescription": "Ihr Abonnement ist abgelaufen. Bitte erneuern Sie Ihr Abonnement, um Ihre Inserate zu reaktivieren.",
     "noSubTitle": "Kein aktives Abonnement",
     "noSubDescription": "Sie haben kein aktives Abonnement. Wählen Sie einen Plan, um Fahrzeuge zu inserieren.",
-    "expiredGraceDescription": "Ihr Abonnement ist abgelaufen und Ihre Inserate wurden deaktiviert. Bitte erneuern Sie Ihr Abo.",
     "quotaTitle": "Inseratskontingent ausgeschöpft",
     "quotaDescription": "Sie haben das maximale Kontingent Ihres Plans ({plan}) erreicht ({current}/{max} Inserate). Bitte upgraden Sie Ihr Abonnement.",
     "upgradePlan": "Plan upgraden",
@@ -1355,7 +1354,17 @@
     "billing": "Abrechnung & Nutzung",
     "settings": "Einstellungen",
     "profile": "Profil",
-    "changePassword": "Passwort ändern"
+    "changePassword": "Passwort ändern",
+    "logoAlt": "AutoVendo Logo"
+  },
+  "DashboardBreadcrumb": {
+    "dashboard": "Dashboard",
+    "vehicles": "Fahrzeuge",
+    "settings": "Einstellungen",
+    "profile": "Profil",
+    "subscription": "Abonnement",
+    "new": "Neues Inserat",
+    "change-password": "Passwort ändern"
   },
   "Unauthorized": {
     "title": "Zugriff verweigert",
@@ -1385,7 +1394,6 @@
     "phone": "Telefon"
   },
   "VehicleList": {
-    "graceWarning": "Ihre Inserate werden am {date} deaktiviert, falls Sie Ihr Abo nicht erneuern.",
     "searchPlaceholder": "Nach Marke, Modell oder Version suchen...",
     "colImage": "Bild",
     "colVehicle": "Fahrzeug",
@@ -1509,8 +1517,6 @@
     "quotaExhaustedDesc": "Sie haben das maximale Kontingent Ihres Plans ({plan}) erreicht ({current}/{max} Inserate). Bitte upgraden Sie Ihr Abonnement.",
     "expiredWarningTitle": "Abonnement abgelaufen",
     "expiredWarningDesc": "Ihr Abonnement ist abgelaufen. Inserate werden am {date} deaktiviert. Bitte erneuern Sie Ihr Abo.",
-    "expiredGraceTitle": "Abonnement abgelaufen",
-    "expiredGraceDesc": "Ihr Abonnement ist abgelaufen und Ihre Inserate wurden deaktiviert. Bitte erneuern Sie Ihr Abo, um wieder aktiv zu sein.",
     "subscribeNow": "Jetzt abonnieren",
     "upgradePlan": "Plan upgraden",
     "successUpdate": "Inserat erfolgreich aktualisiert!",
