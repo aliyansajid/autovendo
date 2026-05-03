@@ -8,19 +8,35 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
-import { Edit, Trash2 } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  MoreHorizontal,
+  Send,
+  FileText,
+  Pencil,
+} from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { getImageUrl } from "@/lib/helpers/image";
 import {
   deleteVehicle,
+  updateVehicleStatus,
   type SubscriptionStatus,
 } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useTransition } from "react";
 import { Search } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@repo/ui/components/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -59,7 +75,20 @@ interface Vehicle {
   color: string;
   images: string[];
   createdAt: Date;
+  status: string;
 }
+
+const statusVariantMap: Record<
+  string,
+  "default" | "secondary" | "destructive" | "outline"
+> = {
+  PUBLISHED: "default",
+  DRAFT: "secondary",
+  PAUSED: "outline",
+  SOLD: "outline",
+  ARCHIVED: "outline",
+  BANNED: "destructive",
+};
 
 /**
  * Vehicle List Component (Client-side)
@@ -101,12 +130,6 @@ export function VehicleList({
       <div className="text-center py-20 border-2 border-dashed rounded-lg bg-muted/20">
         <h3 className="text-lg font-semibold">{t("emptyTitle")}</h3>
         <p className="text-muted-foreground">{t("emptyText")}</p>
-        {subscriptionStatus?.type !== "no_subscription" &&
-          subscriptionStatus?.type !== "quota_exhausted" && (
-            <Button asChild>
-              <Link href="/dashboard/vehicles/new">{t("newListing")}</Link>
-            </Button>
-          )}
       </div>
     );
   }
@@ -136,6 +159,7 @@ export function VehicleList({
               <TableHead>{t("colBody")}</TableHead>
               <TableHead>{t("colColor")}</TableHead>
               <TableHead>{t("colCreated")}</TableHead>
+              <TableHead>{t("colStatus")}</TableHead>
               <TableHead className="text-right">{t("colActions")}</TableHead>
             </TableRow>
           </TableHeader>
@@ -189,58 +213,129 @@ export function VehicleList({
                     year: "numeric",
                   })}
                 </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={statusVariantMap[vehicle.status] || "outline"}
+                  >
+                    {t(`status_${vehicle.status}`)}
+                  </Badge>
+                </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end">
-                    <Button variant="ghost" size="icon" asChild>
-                      <Link href={`/dashboard/vehicles/${vehicle.id}`}>
-                        <Edit />
-                      </Link>
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            {t("deleteTitle")}
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {t("deleteDesc")}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                          <AlertDialogAction
-                            variant="destructive"
-                            onClick={async () => {
-                              try {
-                                await deleteVehicle(vehicle.id);
-                                toast.success(t("deleteSuccess"));
-                                router.refresh();
-                              } catch (error) {
-                                toast.error(t("deleteError"));
-                              }
-                            }}
-                          >
-                            {t("delete")}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
+                  <VehicleActions vehicle={vehicle} t={t} router={router} />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+    </div>
+  );
+}
+
+function VehicleActions({
+  vehicle,
+  t,
+  router,
+}: {
+  vehicle: Vehicle;
+  t: any;
+  router: any;
+}) {
+  const [isPending, startTransition] = useTransition();
+
+  const handleStatusUpdate = (newStatus: string) => {
+    startTransition(async () => {
+      try {
+        await updateVehicleStatus(vehicle.id, newStatus);
+        toast.success(t("statusUpdateSuccess"));
+        router.refresh();
+      } catch (error) {
+        toast.error(t("statusUpdateError"));
+      }
+    });
+  };
+
+  const isRestricted = ["SOLD", "ARCHIVED", "BANNED", "PAUSED"].includes(
+    vehicle.status,
+  );
+
+  return (
+    <div className="flex justify-end">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" disabled={isPending}>
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem asChild disabled={isRestricted || isPending}>
+            <Link href={`/dashboard/vehicles/${vehicle.id}`}>
+              <Pencil />
+              {t("edit")}
+            </Link>
+          </DropdownMenuItem>
+
+          {vehicle.status === "DRAFT" && (
+            <DropdownMenuItem
+              onSelect={() => handleStatusUpdate("PUBLISHED")}
+              disabled={isRestricted || isPending}
+            >
+              <Send />
+              {t("publish")}
+            </DropdownMenuItem>
+          )}
+
+          {vehicle.status === "PUBLISHED" && (
+            <DropdownMenuItem
+              onSelect={() => handleStatusUpdate("DRAFT")}
+              disabled={isRestricted || isPending}
+            >
+              <FileText />
+              {t("statusDraft")}
+            </DropdownMenuItem>
+          )}
+
+          <DropdownMenuSeparator />
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <DropdownMenuItem
+                onSelect={(e) => e.preventDefault()}
+                className="text-destructive focus:text-destructive"
+                disabled={isRestricted || isPending}
+              >
+                <Trash2 />
+                {t("delete")}
+              </DropdownMenuItem>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{t("deleteTitle")}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {t("deleteDesc")}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  onClick={async () => {
+                    try {
+                      await deleteVehicle(vehicle.id);
+                      toast.success(t("deleteSuccess"));
+                      router.refresh();
+                    } catch (error) {
+                      toast.error(t("deleteError"));
+                    }
+                  }}
+                >
+                  {t("delete")}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

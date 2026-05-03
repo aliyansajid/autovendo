@@ -75,7 +75,6 @@ const RenderField = ({
   field: any;
 }) => {
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
 
   switch (props.fieldType) {
     case FormFieldType.INPUT:
@@ -235,25 +234,37 @@ const RenderField = ({
       );
 
     case FormFieldType.DATE_PICKER:
+      const selectedDate = field.value
+        ? field.value instanceof Date
+          ? field.value
+          : new Date(field.value)
+        : undefined;
+
       return (
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               id="date"
-              className="justify-start font-normal"
+              className={cn(
+                "justify-start font-normal text-left",
+                !selectedDate && "text-muted-foreground",
+                props.className,
+              )}
             >
-              {date ? date.toLocaleDateString() : props.placeholder}
+              {selectedDate && !isNaN(selectedDate.getTime())
+                ? selectedDate.toLocaleDateString()
+                : props.placeholder}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto overflow-hidden p-0" align="start">
             <Calendar
               mode="single"
-              selected={date}
-              defaultMonth={date}
+              selected={selectedDate}
+              defaultMonth={selectedDate}
               captionLayout="dropdown"
               onSelect={(date) => {
-                setDate(date);
+                field.onChange(date);
                 setOpen(false);
               }}
             />

@@ -1744,6 +1744,40 @@ export async function deleteVehicle(id: string) {
     cacheDeletePattern("vehicles:*"),
     cacheDelete(`vehicle:${id}`),
   ]);
-  revalidatePath("/dashboard/vehicles");
+  revalidatePath("/", "layout");
   return { success: true };
+}
+
+/**
+ * Quick status update for a vehicle
+ */
+export async function updateVehicleStatus(vehicleId: string, status: string) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    throw new Error("Unauthorized");
+  }
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!dealer) {
+    throw new Error("Dealer profile not found");
+  }
+
+  const updated = await prisma.vehicle.update({
+    where: {
+      id: vehicleId,
+      dealerId: dealer.id,
+    },
+    data: {
+      status: status as any,
+    },
+  });
+
+  revalidatePath("/", "layout");
+  return { success: true, status: updated.status };
 }

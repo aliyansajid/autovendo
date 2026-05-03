@@ -85,14 +85,14 @@ export const SubscriptionActions = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {t("cancelConfirmTitle") || "Are you sure?"}
+            {t("cancelConfirmTitle")}
           </AlertDialogTitle>
           <AlertDialogDescription>{t("cancelConfirm")}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>{t("cancel")}</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive hover:bg-destructive/90"
+            variant={"destructive"}
             disabled={isPending}
             onClick={(e) => {
               e.preventDefault();

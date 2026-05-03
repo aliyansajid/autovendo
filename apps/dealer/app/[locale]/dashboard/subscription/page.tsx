@@ -417,7 +417,7 @@ export default async function SubscriptionPage(props: {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center justify-end gap-1">
+                    <div className="flex items-center justify-end">
                       {invoice.hostedUrl && (
                         <Button variant="ghost" size="icon" asChild>
                           <a

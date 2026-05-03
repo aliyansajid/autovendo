@@ -942,7 +942,9 @@ export function VehicleForm({
                   type="submit"
                   variant="outline"
                   disabled={
-                    isSubmitting || isSubmitBlocked || (!!vehicleId && !isDirty)
+                    isSubmitting ||
+                    isSubmitBlocked ||
+                    (!!vehicleId && !isDirty && initialData?.status === "DRAFT")
                   }
                   onClick={() => form.setValue("status", "DRAFT")}
                 >
@@ -959,7 +961,11 @@ export function VehicleForm({
                   key="submit-button"
                   type="submit"
                   disabled={
-                    isSubmitting || isSubmitBlocked || (!!vehicleId && !isDirty)
+                    isSubmitting ||
+                    isSubmitBlocked ||
+                    (!!vehicleId &&
+                      !isDirty &&
+                      initialData?.status === "PUBLISHED")
                   }
                   onClick={() => form.setValue("status", "PUBLISHED")}
                 >
