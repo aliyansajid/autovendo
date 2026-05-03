@@ -115,7 +115,14 @@ export default async function SubscriptionPage(props: {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-bold capitalize">
-                  {currentPlan?.name ?? activeSubscription.plan} Plan
+                  {t.has(
+                    `plans.${(currentPlan?.name ?? activeSubscription.plan).toLowerCase()}`,
+                  )
+                    ? t(
+                        `plans.${(currentPlan?.name ?? activeSubscription.plan).toLowerCase()}`,
+                      )
+                    : (currentPlan?.name ?? activeSubscription.plan)}{" "}
+                  Plan
                 </h2>
                 <Badge className="bg-green-500 hover:bg-green-600">
                   {activeSubscription.status === "trialing"
@@ -146,7 +153,10 @@ export default async function SubscriptionPage(props: {
               <div className="shrink-0">
                 <SubscriptionActions
                   subscriptionId={activeSubscription.stripeSubscriptionId}
-                  cancelAtPeriodEnd={!!activeSubscription.cancelAtPeriodEnd}
+                  isCanceling={
+                    !!activeSubscription.cancelAtPeriodEnd ||
+                    !!activeSubscription.cancelAt
+                  }
                 />
               </div>
             )}
@@ -164,18 +174,21 @@ export default async function SubscriptionPage(props: {
               </div>
             )}
 
-          {activeSubscription.cancelAtPeriodEnd &&
-            activeSubscription.periodEnd && (
-              <div className="px-6 py-3 bg-destructive/10 text-destructive text-sm font-medium">
-                {t("cancelingAt", {
-                  date: formatDateTime(activeSubscription.periodEnd, {
+          {(activeSubscription.cancelAtPeriodEnd ||
+            activeSubscription.cancelAt) && (
+            <div className="px-6 py-3 bg-destructive/10 text-destructive text-sm font-medium">
+              {t("cancelingAt", {
+                date: formatDateTime(
+                  activeSubscription.cancelAt || activeSubscription.periodEnd!,
+                  {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
-                  }),
-                })}
-              </div>
-            )}
+                  },
+                ),
+              })}
+            </div>
+          )}
 
           <div className="p-6 space-y-3">
             <div className="flex items-center justify-between text-sm">
@@ -223,7 +236,9 @@ export default async function SubscriptionPage(props: {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xl font-bold">
-                    {plan.name}
+                    {t.has(`plans.${plan.name.toLowerCase()}`)
+                      ? t(`plans.${plan.name.toLowerCase()}`)
+                      : plan.name}
                   </CardTitle>
                   <div className="flex gap-2">
                     {activeSubscription?.plan?.toLowerCase() ===
@@ -341,7 +356,7 @@ export default async function SubscriptionPage(props: {
       </div>
 
       {/* Invoices */}
-      <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="rounded-lg border p-6 flex flex-col gap-4">
         <div className="space-y-1">
           <p className="font-semibold">{t("invoicesTitle")}</p>
           <p className="text-sm text-muted-foreground">{t("invoicesDesc")}</p>
@@ -391,25 +406,25 @@ export default async function SubscriptionPage(props: {
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
                       {invoice.hostedUrl && (
-                        <Button variant="ghost" size="sm" asChild>
+                        <Button variant="ghost" size="icon" asChild>
                           <a
                             href={invoice.hostedUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <ExternalLink className="size-4 mr-1" />
-                            {t("view")}
+                            <ExternalLink />
+                            <span className="sr-only">{t("view")}</span>
                           </a>
                         </Button>
                       )}
                       {invoice.pdfUrl && (
-                        <Button variant="ghost" size="sm" asChild>
+                        <Button variant="ghost" size="icon" asChild>
                           <a
                             href={invoice.pdfUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <Download className="size-4" />
+                            <Download />
                             <span className="sr-only">{t("download")}</span>
                           </a>
                         </Button>

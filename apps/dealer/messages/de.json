@@ -877,12 +877,18 @@
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
   },
   "PricingPage": {
-    "getStarted": "Loslegen",
+    "getStarted": "Paket wählen",
     "planDescription": {
-      "starter": "Ideal für kleine Händler, die ihre digitale Reise beginnen.",
-      "professional": "Perfekt für wachsende Autohäuser mit mittlerem Bestand.",
-      "business": "Entwickelt für grosse Autohäuser, die hohe Sichtbarkeit benötigen.",
-      "ultimate": "Unser leistungsstärkster Plan für Branchenführer."
+      "bronze": "Ideal für kleine Händler, die ihre digitale Reise beginnen.",
+      "silver": "Perfekt für wachsende Autohäuser mit mittlerem Bestand.",
+      "gold": "Entwickelt für grosse Autohäuser, die hohe Sichtbarkeit benötigen.",
+      "diamond": "Unser leistungsstärkster Plan für Branchenführer."
+    },
+    "plans": {
+      "bronze": "Bronze",
+      "silver": "Silber",
+      "gold": "Gold",
+      "diamond": "Diamant"
     },
     "title": "Mehr Sichtbarkeit. Mehr Service. Weniger Kosten.",
     "subtitle": "Warum 30–40% mehr bezahlen – wenn Sie bei autovendo.ch mehr persönliche Betreuung und volle Transparenz erhalten?",
@@ -892,7 +898,7 @@
     "comparisonTitle": "Faire Preise – Direkt verglichen",
     "tableHeaders": {
       "package": "Paket",
-      "vehicles": "Fahrzeuge gleichzeitig",
+      "vehicles": "Inserate gleichzeitig",
       "price": "autovendo.ch",
       "savings": "Ersparnis vs. Marktführer*",
       "monthlySavings": "Monatliche Einsparung"
@@ -903,20 +909,20 @@
       "planSilver": "Silber",
       "planGold": "Gold",
       "planDiamond": "Diamant",
-      "bronzeVehicles": "Bis 5 Fahrzeuge",
-      "silverVehicles": "Bis 10 Fahrzeuge",
-      "goldVehicles": "Bis 15 Fahrzeuge",
-      "diamondVehicles": "Bis 25 Fahrzeuge",
+      "bronzeVehicles": "Bis 5 Inserate",
+      "silverVehicles": "Bis 10 Inserate",
+      "goldVehicles": "Bis 15 Inserate",
+      "diamondVehicles": "Bis 25 Inserate",
       "bronzeSavings": "ca. 30% günstiger",
       "silverSavings": "ca. 30% günstiger",
       "goldSavings": "ca. 35% günstiger",
       "diamondSavings": "ca. 40% günstiger"
     },
     "largerDealers": {
-      "title": "Mehr als 25 Fahrzeuge",
-      "subtitle": "Für größere Händler ab 25 Fahrzeugen",
+      "title": "Mehr als 25 Inserate",
+      "subtitle": "Für größere Händler ab 25 Inseraten",
       "tagline": "Individuelle Lösungen. Individuelle Preise.",
-      "description1": "Betreiben Sie ein größeres Autohaus mit mehr als 25 Fahrzeugen im Bestand? Dann erstellen wir für Sie ein maßgeschneidertes Angebot – garantiert günstiger als marktübliche Plattformpreise.",
+      "description1": "Betreiben Sie ein größeres Autohaus mit mehr als 25 Inseraten im Bestand? Dann erstellen wir für Sie ein maßgeschneidertes Angebot – garantiert günstiger als marktübliche Plattformpreise.",
       "description2": "Wir analysieren Ihren aktuellen Bestand und Ihre Bedürfnisse und präsentieren Ihnen eine transparente, faire Lösung mit echtem Sparpotenzial.",
       "personalTitle": "Persönlich. Direkt. Vor Ort.",
       "personalDesc1": "Gerne besuchen wir Sie persönlich und bringen eine detaillierte Preisübersicht mit. Wir erklären Ihnen alles im Detail – offen, ehrlich und ohne Verpflichtung.",
@@ -946,8 +952,8 @@
     "choosePlan": "Wählen Sie Ihr passendes Paket",
     "popular": "Beliebt",
     "month": "Monat",
-    "vehiclesIncluded": "Fahrzeuge inklusive",
-    "trialDaysLabel": "{days} Tage kostenloser Testzugang",
+    "vehiclesIncluded": "Inserate",
+    "trialDaysLabel": "{days} Tage kostenloser Test",
     "example": {
       "label": "Beispielrechnung:",
       "text": "Ein Händler mit 25 Fahrzeugen spart bei autovendo.ch",
@@ -1205,10 +1211,16 @@
     "title": "Abrechnung & Nutzung",
     "subtitle": "Verwalten Sie Ihr Abonnement, Ihre Zahlungsmethode und Rechnungen.",
     "planDescription": {
-      "starter": "Ideal für kleine Händler, die ihre digitale Reise beginnen.",
-      "professional": "Perfekt für wachsende Autohäuser mit mittlerem Bestand.",
-      "business": "Konzipiert für große Händler, die hohe Sichtbarkeit benötigen.",
-      "ultimate": "Unser leistungsstärkster Plan für Branchenführer."
+      "bronze": "Ideal für kleine Händler, die ihre digitale Reise beginnen.",
+      "silver": "Perfekt für wachsende Autohäuser mit mittlerem Bestand.",
+      "gold": "Konzipiert für große Händler, die hohe Sichtbarkeit benötigen.",
+      "diamond": "Unser leistungsstärkster Plan für Branchenführer."
+    },
+    "plans": {
+      "bronze": "Bronze",
+      "silver": "Silber",
+      "gold": "Gold",
+      "diamond": "Diamant"
     },
     "statusActive": "Aktiv",
     "statusTrialing": "Testphase",

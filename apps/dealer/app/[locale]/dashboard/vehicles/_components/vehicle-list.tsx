@@ -63,7 +63,7 @@ interface Vehicle {
 
 /**
  * Vehicle List Component (Client-side)
- * 
+ *
  * Features:
  * - Tabular view of all dealer vehicles
  * - Real-time filtering by brand, model, and version
@@ -100,7 +100,7 @@ export function VehicleList({
     return (
       <div className="text-center py-20 border-2 border-dashed rounded-lg bg-muted/20">
         <h3 className="text-lg font-semibold">{t("emptyTitle")}</h3>
-        <p className="text-muted-foreground mb-6">{t("emptyText")}</p>
+        <p className="text-muted-foreground">{t("emptyText")}</p>
         {subscriptionStatus?.type !== "no_subscription" &&
           subscriptionStatus?.type !== "quota_exhausted" && (
             <Button asChild>

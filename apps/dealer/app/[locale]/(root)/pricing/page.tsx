@@ -348,7 +348,9 @@ export default async function PricingPage(props: {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-xl font-bold">
-                      {plan.name}
+                      {t.has(`plans.${plan.name.toLowerCase()}`)
+                        ? t(`plans.${plan.name.toLowerCase()}`)
+                        : plan.name}
                     </CardTitle>
                     {plan.popular && <Badge>{t("popular")}</Badge>}
                   </div>
