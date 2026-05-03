@@ -86,8 +86,10 @@ export default async function SubscriptionPage(props: {
       }),
     ]);
 
-  const activeSubscription = subscriptions.find(
-    (s) => s.status === "active" || s.status === "trialing",
+  const activeSubscription = subscriptions.find((s) =>
+    ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(
+      s.status,
+    ),
   );
 
   const currentPlanKey = activeSubscription?.plan?.toLowerCase() ?? null;
@@ -101,6 +103,22 @@ export default async function SubscriptionPage(props: {
 
   const hasAnySubscription = subscriptions.length > 0;
 
+  const getStatusInfo = (status: string) => {
+    switch (status) {
+      case "trialing":
+        return { label: t("statusTrialing"), color: "bg-blue-500 hover:bg-blue-600" };
+      case "past_due":
+      case "unpaid":
+        return { label: t("statusPastDue"), color: "bg-red-500 hover:bg-red-600" };
+      case "incomplete":
+        return { label: t("statusIncomplete"), color: "bg-yellow-500 hover:bg-yellow-600" };
+      default:
+        return { label: t("statusActive"), color: "bg-green-500 hover:bg-green-600" };
+    }
+  };
+
+  const statusInfo = activeSubscription ? getStatusInfo(activeSubscription.status) : null;
+
   return (
     <div className="space-y-6">
       <div className="space-y-1">
@@ -110,7 +128,48 @@ export default async function SubscriptionPage(props: {
 
       {/* Current Plan + Usage */}
       {activeSubscription ? (
-        <div className="rounded-lg border divide-y">
+        <div className="rounded-lg border divide-y overflow-hidden">
+          {/* Status Banners */}
+          {(activeSubscription.status === "past_due" || activeSubscription.status === "unpaid") && (
+            <div className="px-6 py-3 bg-red-500 text-white text-sm font-medium">
+              {t("paymentFailedWarning")}
+            </div>
+          )}
+
+          {activeSubscription.status === "trialing" &&
+            activeSubscription.trialEnd && (
+              <div className="px-6 py-3 bg-blue-500 text-white text-sm font-medium">
+                {t("trialEndsAt", {
+                  date: formatDateTime(
+                    activeSubscription.trialEnd,
+                    {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    },
+                    locale,
+                  ),
+                })}
+              </div>
+            )}
+
+          {(activeSubscription.cancelAtPeriodEnd ||
+            activeSubscription.cancelAt) && (
+            <div className="px-6 py-3 bg-destructive text-white text-sm font-medium">
+              {t("cancelingAt", {
+                date: formatDateTime(
+                  activeSubscription.cancelAt || activeSubscription.periodEnd!,
+                  {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  },
+                  locale,
+                ),
+              })}
+            </div>
+          )}
+
           <div className="p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -124,10 +183,8 @@ export default async function SubscriptionPage(props: {
                     : (currentPlan?.name ?? activeSubscription.plan)}{" "}
                   Plan
                 </h2>
-                <Badge className="bg-green-500 hover:bg-green-600">
-                  {activeSubscription.status === "trialing"
-                    ? t("statusTrialing")
-                    : t("statusActive")}
+                <Badge className={statusInfo?.color}>
+                  {statusInfo?.label}
                 </Badge>
               </div>
               <p className="text-sm text-muted-foreground">
@@ -165,39 +222,6 @@ export default async function SubscriptionPage(props: {
               </div>
             )}
           </div>
-          {activeSubscription.status === "trialing" &&
-            activeSubscription.trialEnd && (
-              <div className="px-6 py-3 bg-primary/10 text-primary text-sm font-medium">
-                {t("trialEndsAt", {
-                  date: formatDateTime(
-                    activeSubscription.trialEnd,
-                    {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    },
-                    locale,
-                  ),
-                })}
-              </div>
-            )}
-
-          {(activeSubscription.cancelAtPeriodEnd ||
-            activeSubscription.cancelAt) && (
-            <div className="px-6 py-3 bg-destructive/10 text-destructive text-sm font-medium">
-              {t("cancelingAt", {
-                date: formatDateTime(
-                  activeSubscription.cancelAt || activeSubscription.periodEnd!,
-                  {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  },
-                  locale,
-                ),
-              })}
-            </div>
-          )}
 
           <div className="p-6 space-y-3">
             <div className="flex items-center justify-between text-sm">

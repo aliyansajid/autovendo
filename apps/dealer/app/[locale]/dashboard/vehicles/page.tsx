@@ -45,10 +45,27 @@ export default async function VehiclesPage(props: {
   const isBlocked =
     subscriptionStatus.type === "no_subscription" ||
     subscriptionStatus.type === "quota_exhausted" ||
-    subscriptionStatus.type === "expired";
+    subscriptionStatus.type === "expired" ||
+    subscriptionStatus.type === "past_due";
 
   return (
     <div className="space-y-6">
+      {/* Past due warning */}
+      {subscriptionStatus.type === "past_due" && (
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle>{t("pastDueTitle")}</AlertTitle>
+          <AlertDescription>{t("pastDueDescription")}</AlertDescription>
+          <AlertAction>
+            <Button size="xs" variant="outline" asChild>
+              <Link href="/dashboard/subscription" locale={locale}>
+                {t("upgradePlan")}
+              </Link>
+            </Button>
+          </AlertAction>
+        </Alert>
+      )}
+
       {/* No subscription or expired */}
       {(subscriptionStatus.type === "no_subscription" ||
         subscriptionStatus.type === "expired") && (

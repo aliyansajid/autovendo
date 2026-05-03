@@ -57,7 +57,7 @@ import { parseSearchParams } from "@/lib/helpers/vehicle";
 // PLAN_LIMITS removed - now dynamic from DB via auth plugin
 
 export type SubscriptionStatus = {
-  type: "active" | "no_subscription" | "quota_exhausted" | "expired";
+  type: "active" | "no_subscription" | "quota_exhausted" | "expired" | "past_due";
   plan: string;
   maxVehicles: number;
   currentCount: number;
@@ -89,6 +89,7 @@ const VEHICLE_LIST_SELECT = {
   color: true,
   createdAt: true,
   images: true,
+  status: true,
   equipment: true, // Only if needed for listing
   dealer: {
     select: {
@@ -1237,6 +1238,22 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
     };
   }
 
+  // Handle payment failures / past due states
+  if (subscription.status === "past_due" || subscription.status === "unpaid") {
+    const plan = await prisma.plan.findFirst({
+      where: { name: { equals: subscription.plan, mode: "insensitive" } },
+    });
+    const maxVehicles = (plan?.limits as any)?.vehicles ?? 0;
+    
+    return {
+      type: "past_due",
+      plan: subscription.plan,
+      maxVehicles,
+      currentCount,
+      remainingQuota: Math.max(0, maxVehicles - currentCount),
+    };
+  }
+
   const plan = await prisma.plan.findFirst({
     where: { name: { equals: subscription.plan, mode: "insensitive" } },
   });
@@ -1278,6 +1295,21 @@ export async function prepareVehicleListing(existingVehicleId?: string) {
 
   if (!dealer) {
     throw new Error("Dealer profile not found");
+  }
+
+  // Subscription security check
+  const status = await getVehicleSubscriptionStatus();
+
+  if (!existingVehicleId) {
+    // Blocking new creations for past_due, quota_exhausted, or expired
+    if (status.type !== "active") {
+      throw new Error(status.type);
+    }
+  } else {
+    // Blocking edits only if subscription is completely dead
+    if (status.type === "no_subscription" || status.type === "expired") {
+      throw new Error("subscription_ended");
+    }
   }
 
   return {
@@ -1353,16 +1385,14 @@ export async function createVehicle(
 
   const subscriptionStatus = await getVehicleSubscriptionStatus();
 
-  if (subscriptionStatus.type === "no_subscription") {
-    return { error: "noSubscription" };
-  }
-
-  if (
-    subscriptionStatus.type === "quota_exhausted" ||
-    subscriptionStatus.currentCount >= subscriptionStatus.maxVehicles
-  ) {
+  if (subscriptionStatus.type !== "active") {
     return {
-      error: "limitReached",
+      error:
+        subscriptionStatus.type === "no_subscription"
+          ? "noSubscription"
+          : subscriptionStatus.type === "quota_exhausted"
+            ? "limitReached"
+            : subscriptionStatus.type,
     };
   }
 
@@ -1766,6 +1796,18 @@ export async function updateVehicleStatus(vehicleId: string, status: string) {
 
   if (!dealer) {
     throw new Error("Dealer profile not found");
+  }
+
+  const subStatus = await getVehicleSubscriptionStatus();
+
+  // If subscription is completely ended, block all modifications
+  if (subStatus.type === "no_subscription" || subStatus.type === "expired") {
+    throw new Error("Subscription inactive. Action blocked.");
+  }
+
+  // If past due, block publishing but allow other maintenance (unpublishing, sold, etc.)
+  if (subStatus.type === "past_due" && status === "PUBLISHED") {
+    throw new Error("Payment failed. Cannot publish new listings.");
   }
 
   const updated = await prisma.vehicle.update({

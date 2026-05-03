@@ -221,7 +221,12 @@ export function VehicleList({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <VehicleActions vehicle={vehicle} t={t} router={router} />
+                  <VehicleActions
+                    vehicle={vehicle}
+                    t={t}
+                    router={router}
+                    subscriptionStatus={subscriptionStatus}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -236,10 +241,12 @@ function VehicleActions({
   vehicle,
   t,
   router,
+  subscriptionStatus,
 }: {
   vehicle: Vehicle;
   t: any;
   router: any;
+  subscriptionStatus?: SubscriptionStatus;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -255,9 +262,14 @@ function VehicleActions({
     });
   };
 
-  const isRestricted = ["SOLD", "ARCHIVED", "BANNED", "PAUSED"].includes(
-    vehicle.status,
-  );
+  const isCanceled =
+    subscriptionStatus?.type === "no_subscription" ||
+    subscriptionStatus?.type === "expired";
+  const isPastDue = subscriptionStatus?.type === "past_due";
+
+  const isRestricted =
+    ["SOLD", "ARCHIVED", "BANNED", "PAUSED"].includes(vehicle.status) ||
+    isCanceled;
 
   return (
     <div className="flex justify-end">
@@ -278,7 +290,7 @@ function VehicleActions({
           {vehicle.status === "DRAFT" && (
             <DropdownMenuItem
               onSelect={() => handleStatusUpdate("PUBLISHED")}
-              disabled={isRestricted || isPending}
+              disabled={isRestricted || isPastDue || isPending}
             >
               <Send />
               {t("publish")}
