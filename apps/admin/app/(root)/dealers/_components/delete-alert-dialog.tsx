@@ -47,17 +47,17 @@ export function DeleteAlertDialog({
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete the user
-            account and all associated dealer data.
+            account, cancel active Stripe subscriptions, and remove all associated dealer data including vehicles and images.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
           <AlertDialogAction
+            variant={"destructive"}
             onClick={(e) => {
               e.preventDefault();
               handleDeleteUser();
             }}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             disabled={isPending}
           >
             {isPending ? (

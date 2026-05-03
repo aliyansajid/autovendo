@@ -13,6 +13,7 @@
   "dependencies": {
     "@repo/auth": "*",
     "@repo/db": "*",
+    "@repo/storage": "*",
     "@repo/transactional": "*",
     "@repo/ui": "*",
     "lucide-react": "^0.563.0",

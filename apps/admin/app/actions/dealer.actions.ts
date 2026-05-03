@@ -1,8 +1,9 @@
 "use server";
 
 import { z } from "zod";
-import { auth } from "@repo/auth";
+import { auth, stripeClient } from "@repo/auth";
 import { prisma } from "@repo/db";
+import { StorageService } from "@repo/storage";
 import { revalidatePath } from "next/cache";
 import { dealerSchema, updateDealerSchema } from "@/schema";
 
@@ -337,18 +338,95 @@ export async function removeUser(userId: string) {
   try {
     const { headers } = await import("next/headers");
 
-    // 1. Get user and dealer info for the email BEFORE deleting
+    // 1. Get user and dealer info (including vehicles) BEFORE deleting
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { dealer: true },
+      include: {
+        dealer: {
+          include: {
+            vehicles: true,
+          },
+        },
+      },
     });
 
     if (!user) {
       return { success: false, error: "User not found" };
     }
 
-    // 2. Remove from Better Auth (this usually triggers cascading deletes if configured, 
-    // but we manually handle the dealer record just in case)
+    // Initialize StorageService for image deletion
+    const storage = new StorageService({
+      accessKeyId: process.env.R2_ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || "",
+      accountId: process.env.R2_ACCOUNT_ID || "",
+      bucket: process.env.R2_BUCKET_NAME || "autovendo",
+      publicDomain: process.env.R2_PUBLIC_DOMAIN,
+    });
+
+    // 2. Delete Dealer, Vehicles, and their Images
+    if (user.dealer) {
+      // 2a. Delete vehicle images
+      for (const vehicle of user.dealer.vehicles) {
+        if (vehicle.images && vehicle.images.length > 0) {
+          await Promise.all(
+            vehicle.images.map(async (key) => {
+              try {
+                await storage.deleteFile(key);
+              } catch (e) {
+                console.error(`Failed to delete vehicle image: ${key}`, e);
+              }
+            })
+          );
+        }
+      }
+
+      // 2b. Delete dealer logos/covers
+      if (user.dealer.logo) {
+        try { await storage.deleteFile(user.dealer.logo); } catch (e) {}
+      }
+      if (user.dealer.coverImage) {
+        try { await storage.deleteFile(user.dealer.coverImage); } catch (e) {}
+      }
+
+      // 2c. Delete vehicles from DB
+      await prisma.vehicle.deleteMany({
+        where: { dealerId: user.dealer.id },
+      });
+
+      // 2d. Delete dealer record
+      await prisma.dealer.delete({
+        where: { id: user.dealer.id },
+      });
+    }
+
+    // 3. Cancel Stripe subscriptions
+    const uniqueSubsMap = new Map();
+    
+    if (user.stripeCustomerId) {
+      const subsByCustomer = await prisma.subscription.findMany({
+        where: { stripeCustomerId: user.stripeCustomerId },
+      });
+      subsByCustomer.forEach(s => uniqueSubsMap.set(s.stripeSubscriptionId, s));
+    }
+    
+    const subsByRef = await prisma.subscription.findMany({
+      where: { referenceId: userId },
+    });
+    subsByRef.forEach(s => uniqueSubsMap.set(s.stripeSubscriptionId, s));
+
+    const uniqueSubs = Array.from(uniqueSubsMap.values());
+
+    for (const sub of uniqueSubs) {
+      if (sub.stripeSubscriptionId && sub.status !== "canceled") {
+        try {
+          await stripeClient.subscriptions.cancel(sub.stripeSubscriptionId);
+        } catch (e) {
+          console.error(`Failed to cancel Stripe subscription: ${sub.stripeSubscriptionId}`, e);
+        }
+      }
+    }
+
+    // 4. Remove User from Better Auth (this cascades Account, Session, etc.)
     await auth.api.removeUser({
       body: {
         userId,
@@ -356,19 +434,7 @@ export async function removeUser(userId: string) {
       headers: await headers(),
     });
 
-    // 3. Ensure the dealer record is also gone (if not already deleted by Cascade)
-    if (user.dealer) {
-      const dealerExists = await prisma.dealer.findUnique({
-        where: { id: user.dealer.id },
-      });
-      if (dealerExists) {
-        await prisma.dealer.delete({
-          where: { id: user.dealer.id },
-        });
-      }
-    }
-
-    // 4. Send the notification email
+    // 5. Send Notification Email
     if (user.email) {
       const { sendEmail, AccountDeletedEmail } = await import(
         "@repo/transactional"
@@ -384,7 +450,7 @@ export async function removeUser(userId: string) {
     }
 
     revalidatePath("/dealers");
-    return { success: true, message: "User removed successfully" };
+    return { success: true, message: "User and all associated data removed successfully" };
   } catch (error) {
     console.error("Remove user error:", error);
     return { success: false, error: "Failed to remove user" };
