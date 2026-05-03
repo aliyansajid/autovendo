@@ -48,8 +48,8 @@ export function ListingListCard({
 
   // Use helpers for ALL formatting
   const title = formatVehicleName([item.make, item.model, item.version]);
-  const formattedPrice = formatPrice(item.price, locale);
-  const formattedKm = formatNumber(item.kilometer, locale);
+  const formattedPrice = formatPrice(item.price);
+  const formattedKm = formatNumber(item.kilometer);
   const registrationDate = formatRegistrationDate(
     item.registrationMonth,
     item.registrationYear,
@@ -154,8 +154,8 @@ export function ListingListCard({
             {item.kw !== null && item.kw !== undefined && (
               <>
                 <span>
-                  {formatNumber(item.kw, locale)} kW
-                  {item.hp ? ` (${formatNumber(item.hp, locale)} PS)` : ""}
+                  {formatNumber(item.kw)} kW
+                  {item.hp ? ` (${formatNumber(item.hp)} PS)` : ""}
                 </span>
                 <span className="text-muted-foreground">•</span>
               </>

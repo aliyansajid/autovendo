@@ -51,13 +51,11 @@ export default async function HomePage(props: {
         ? tVehicle(`conditions.${item.vehicleCondition.toUpperCase()}`)
         : undefined,
       title: buildVehicleTitle(item.make, item.model, item.version),
-      price: formatPrice(item.price, locale),
+      price: formatPrice(item.price),
       details: [
         formatRegistrationDate(item.registrationMonth, item.registrationYear),
-        `${formatNumber(item.kilometer, locale)} km`,
-        item.fuelType
-          ? tVehicle(`fuelTypes.${item.fuelType.toUpperCase()}`)
-          : "",
+        `${formatNumber(item.kilometer)} km`,
+        item.fuelType ? tVehicle(`fuelTypes.${item.fuelType.toUpperCase()}`) : "",
       ].filter(Boolean),
       garageName: item.dealer.companyName,
       garageId: item.dealer.id,

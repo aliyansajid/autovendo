@@ -151,13 +151,13 @@ export default async function PricingPage(props: {
                     </TableCell>
                     <TableCell>{t("tableRows.bronzeVehicles")}</TableCell>
                     <TableCell className="font-bold text-primary">
-                      {formatPrice(180, locale)}
+                      {formatPrice(180)}
                     </TableCell>
                     <TableCell className="text-green-600 font-medium">
                       {t("tableRows.bronzeSavings")}
                     </TableCell>
                     <TableCell>
-                      {t("tableRows.ca")} {formatPrice(75, locale)}
+                      {t("tableRows.ca")} {formatPrice(75)}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -166,13 +166,13 @@ export default async function PricingPage(props: {
                     </TableCell>
                     <TableCell>{t("tableRows.silverVehicles")}</TableCell>
                     <TableCell className="font-bold text-primary">
-                      {formatPrice(280, locale)}
+                      {formatPrice(280)}
                     </TableCell>
                     <TableCell className="text-green-600 font-medium">
                       {t("tableRows.silverSavings")}
                     </TableCell>
                     <TableCell>
-                      {t("tableRows.ca")} {formatPrice(115, locale)}
+                      {t("tableRows.ca")} {formatPrice(115)}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -181,13 +181,13 @@ export default async function PricingPage(props: {
                     </TableCell>
                     <TableCell>{t("tableRows.goldVehicles")}</TableCell>
                     <TableCell className="font-bold text-primary">
-                      {formatPrice(325, locale)}
+                      {formatPrice(325)}
                     </TableCell>
                     <TableCell className="text-green-600 font-medium">
                       {t("tableRows.goldSavings")}
                     </TableCell>
                     <TableCell>
-                      {t("tableRows.ca")} {formatPrice(175, locale)}
+                      {t("tableRows.ca")} {formatPrice(175)}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -196,13 +196,13 @@ export default async function PricingPage(props: {
                     </TableCell>
                     <TableCell>{t("tableRows.diamondVehicles")}</TableCell>
                     <TableCell className="font-bold text-primary">
-                      {formatPrice(408, locale)}
+                      {formatPrice(408)}
                     </TableCell>
                     <TableCell className="text-green-600 font-medium">
                       {t("tableRows.diamondSavings")}
                     </TableCell>
                     <TableCell>
-                      {t("tableRows.ca")} {formatPrice(270, locale)}
+                      {t("tableRows.ca")} {formatPrice(270)}
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -353,15 +353,15 @@ export default async function PricingPage(props: {
                     {plan.popular && <Badge>{t("popular")}</Badge>}
                   </div>
                   <CardDescription>
-                  {t.has(`planDescription.${plan.name.toLowerCase()}`)
-                    ? t(`planDescription.${plan.name.toLowerCase()}`)
-                    : plan.description}
-                </CardDescription>
+                    {t.has(`planDescription.${plan.name.toLowerCase()}`)
+                      ? t(`planDescription.${plan.name.toLowerCase()}`)
+                      : plan.description}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 space-y-6">
                   <div className="flex items-baseline gap-1">
                     <span className="text-3xl font-bold text-primary">
-                      {formatPrice(plan.price, locale)}
+                      {formatPrice(plan.price)}
                     </span>
                     <span className="text-muted-foreground">
                       / {t("month")}
