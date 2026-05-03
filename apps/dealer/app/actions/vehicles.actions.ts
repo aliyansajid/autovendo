@@ -1219,16 +1219,15 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
     ? await prisma.vehicle.count({ where: { dealerId: dealer.id } })
     : 0;
 
-  // Use the Stripe plugin's API to get subscriptions with their associated limits
-  const subscriptions = await (auth.api as any).subscription.list({
-    headers: await headers(),
+  const subscription = await prisma.subscription.findFirst({
+    where: {
+      referenceId: session.user.id,
+      status: { in: ["active", "trialing", "past_due"] },
+    },
+    orderBy: { periodEnd: "desc" },
   });
 
-  const activeSubscription = (subscriptions as any[]).find(
-    (s) => s.status === "active" || s.status === "trialing",
-  );
-
-  if (!activeSubscription) {
+  if (!subscription) {
     return {
       type: "no_subscription",
       plan: "",
@@ -1238,28 +1237,18 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
     };
   }
 
-  // The plugin automatically attaches the limits defined in the auth config
-  // (which we defined as fetching from the prisma.plan table)
-  const limits = (activeSubscription as any).limits;
-  const maxVehicles = limits?.vehicles ?? 0;
+  const plan = await prisma.plan.findUnique({
+    where: { name: subscription.plan },
+  });
+
+  const maxVehicles = (plan?.limits as any)?.vehicles ?? 0;
   const remainingQuota = Math.max(0, maxVehicles - currentCount);
 
-  if (remainingQuota === 0 && maxVehicles > 0) {
+  if (remainingQuota === 0) {
     return {
       type: "quota_exhausted",
-      plan: activeSubscription.plan,
+      plan: subscription.plan,
       maxVehicles,
-      currentCount,
-      remainingQuota: 0,
-    };
-  }
-
-  // Handle the case where maxVehicles is 0 (shouldn't happen with a plan, but safe to guard)
-  if (maxVehicles === 0) {
-     return {
-      type: "no_subscription",
-      plan: activeSubscription.plan,
-      maxVehicles: 0,
       currentCount,
       remainingQuota: 0,
     };
@@ -1267,7 +1256,7 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
 
   return {
     type: "active",
-    plan: activeSubscription.plan,
+    plan: subscription.plan,
     maxVehicles,
     currentCount,
     remainingQuota,
@@ -1362,16 +1351,29 @@ export async function createVehicle(
     throw new Error("Dealer profile not found");
   }
 
-  const subscriptionStatus = await getVehicleSubscriptionStatus();
+  const subscription = await prisma.subscription.findFirst({
+    where: {
+      referenceId: session.user.id,
+      status: { in: ["active", "trialing", "past_due"] },
+    },
+    orderBy: { periodEnd: "desc" },
+  });
 
-  if (subscriptionStatus.type === "no_subscription") {
+  if (!subscription) {
     return { error: "noSubscription" };
   }
 
-  if (
-    subscriptionStatus.type === "quota_exhausted" ||
-    subscriptionStatus.currentCount >= subscriptionStatus.maxVehicles
-  ) {
+  const plan = await prisma.plan.findUnique({
+    where: { name: subscription.plan },
+  });
+
+  const maxVehicles = (plan?.limits as any)?.vehicles ?? 0;
+
+  const currentCount = await prisma.vehicle.count({
+    where: { dealerId: dealer.id },
+  });
+
+  if (currentCount >= maxVehicles) {
     return {
       error: "limitReached",
     };

@@ -1243,7 +1243,6 @@
     "cancelSubscription": "Abonnement kündigen",
     "reactivateSubscription": "Abonnement reaktivieren",
     "cancelingAt": "Ihr Abonnement endet am {date}.",
-    "cancelConfirmTitle": "Abonnement kündigen",
     "cancelConfirm": "Sind Sie sicher, dass Sie Ihr Abonnement kündigen möchten?",
     "cancelSuccess": "Kündigung zum Periodenende vorgemerkt.",
     "reactivateSuccess": "Abonnement reaktiviert.",

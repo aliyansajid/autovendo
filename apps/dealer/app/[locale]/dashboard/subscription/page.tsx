@@ -66,8 +66,9 @@ export default async function SubscriptionPage(props: {
    */
   const [subscriptions, subscriptionStatus, billingData, plans] =
     await Promise.all([
-      (auth.api as any).subscription.list({
-        headers: await headers(),
+      prisma.subscription.findMany({
+        where: { referenceId: session!.user.id },
+        orderBy: { periodEnd: "desc" },
       }),
       getVehicleSubscriptionStatus(),
       getBillingData(),
@@ -85,7 +86,7 @@ export default async function SubscriptionPage(props: {
       }),
     ]);
 
-  const activeSubscription = (subscriptions as any[]).find(
+  const activeSubscription = subscriptions.find(
     (s) => s.status === "active" || s.status === "trialing",
   );
 
@@ -138,15 +139,11 @@ export default async function SubscriptionPage(props: {
                   <span>
                     {" · "}
                     {t("nextBilling", {
-                      date: formatDateTime(
-                        activeSubscription.periodEnd,
-                        {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        },
-                        locale,
-                      ),
+                      date: formatDateTime(activeSubscription.periodEnd, {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      }),
                     })}
                   </span>
                 )}
@@ -168,15 +165,11 @@ export default async function SubscriptionPage(props: {
             activeSubscription.trialEnd && (
               <div className="px-6 py-3 bg-primary/10 text-primary text-sm font-medium">
                 {t("trialEndsAt", {
-                  date: formatDateTime(
-                    activeSubscription.trialEnd,
-                    {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    },
-                    locale,
-                  ),
+                  date: formatDateTime(activeSubscription.trialEnd, {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  }),
                 })}
               </div>
             )}
@@ -192,7 +185,6 @@ export default async function SubscriptionPage(props: {
                     month: "short",
                     year: "numeric",
                   },
-                  locale,
                 ),
               })}
             </div>
@@ -393,15 +385,11 @@ export default async function SubscriptionPage(props: {
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {formatDateTime(
-                      new Date(invoice.date * 1000),
-                      {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      },
-                      locale,
-                    )}
+                    {formatDateTime(new Date(invoice.date * 1000), {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </TableCell>
                   <TableCell>{formatPrice(invoice.amount / 100)}</TableCell>
                   <TableCell>
@@ -416,7 +404,7 @@ export default async function SubscriptionPage(props: {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center justify-end">
+                    <div className="flex items-center justify-end gap-1">
                       {invoice.hostedUrl && (
                         <Button variant="ghost" size="icon" asChild>
                           <a
