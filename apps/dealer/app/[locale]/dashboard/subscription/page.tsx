@@ -184,7 +184,7 @@ export default async function SubscriptionPage(props: {
 
       {/* Plan Cards — upgrade or subscribe */}
       <div className="space-y-4">
-        <div className="space-y-0">
+        <div className="space-y-1">
           <h2 className="text-base font-semibold">
             {activeSubscription ? t("upgradePlanTitle") : t("selectPlanTitle")}
           </h2>
@@ -407,9 +407,7 @@ export default async function SubscriptionPage(props: {
             </TableBody>
           </Table>
         ) : (
-          <div className="px-6 py-10 text-center text-sm text-muted-foreground">
-            {t("noInvoices")}
-          </div>
+          <div className="text-sm text-muted-foreground">{t("noInvoices")}</div>
         )}
       </div>
     </div>

@@ -3,12 +3,15 @@ import { headers } from "next/headers";
 import { getDealerProfile } from "@/app/actions/dealer.actions";
 import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { VehicleForm } from "../_components/vehicle-form";
-import { Link } from "@/i18n/routing";
+import { Link, redirect } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@repo/ui/src/components/button";
 
-export default async function AddNewVehiclePage() {
+export default async function AddNewVehiclePage(props: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await props.params;
   const t = await getTranslations("NewVehiclePage");
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -18,6 +21,15 @@ export default async function AddNewVehiclePage() {
     session?.user?.id ? getDealerProfile() : null,
     getVehicleSubscriptionStatus(),
   ]);
+
+  const isBlocked =
+    subscriptionStatus.type === "no_subscription" ||
+    subscriptionStatus.type === "quota_exhausted" ||
+    subscriptionStatus.type === "expired";
+
+  if (isBlocked) {
+    redirect({ href: "/dashboard/vehicles", locale: locale });
+  }
 
   return (
     <div className="space-y-8">

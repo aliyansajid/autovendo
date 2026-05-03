@@ -1,5 +1,5 @@
 import { Button } from "@repo/ui/components/button";
-import { Plus, AlertCircle, AlertCircleIcon } from "lucide-react";
+import { Plus, AlertCircleIcon } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import {
   getDealerVehicles,
@@ -14,7 +14,10 @@ import {
   AlertTitle,
 } from "@repo/ui/src/components/alert";
 
-export default async function VehiclesPage() {
+export default async function VehiclesPage(props: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await props.params;
   const t = await getTranslations("VehiclesPage");
 
   const [vehicles, subscriptionStatus] = await Promise.all([
@@ -42,7 +45,9 @@ export default async function VehiclesPage() {
           </AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>
-              <Link href="/dashboard/subscription">{t("subscribeNow")}</Link>
+              <Link href="/dashboard/subscription" locale={locale}>
+                {t("subscribeNow")}
+              </Link>
             </Button>
           </AlertAction>
         </Alert>
@@ -62,7 +67,9 @@ export default async function VehiclesPage() {
           </AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>
-              <Link href="/dashboard/subscription">{t("upgradePlan")}</Link>
+              <Link href="/dashboard/subscription" locale={locale}>
+                {t("upgradePlan")}
+              </Link>
             </Button>
           </AlertAction>
         </Alert>
@@ -74,12 +81,19 @@ export default async function VehiclesPage() {
           <p className="text-sm text-muted-foreground">{t("pageSubtitle")}</p>
         </div>
 
-        <Button disabled={isBlocked} asChild>
-          <Link href="/dashboard/vehicles/new">
+        {isBlocked ? (
+          <Button disabled>
             <Plus />
             {t("newListing")}
-          </Link>
-        </Button>
+          </Button>
+        ) : (
+          <Button asChild>
+            <Link href="/dashboard/vehicles/new" locale={locale}>
+              <Plus />
+              {t("newListing")}
+            </Link>
+          </Button>
+        )}
       </div>
 
       <VehicleList
