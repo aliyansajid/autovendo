@@ -245,6 +245,7 @@ export function VehicleForm({
       address: initialData?.address || dealerProfile?.streetAddress || "",
       zipCode: initialData?.zipCode || dealerProfile?.zipCode || "",
       city: initialData?.city || dealerProfile?.city || "",
+      status: (initialData?.status as any) || "PUBLISHED",
     },
   });
 
@@ -935,25 +936,46 @@ export function VehicleForm({
                 <ArrowRight />
               </Button>
             ) : (
-              <Button
-                key="submit-button"
-                type="submit"
-                disabled={
-                  isSubmitting || isSubmitBlocked || (!!vehicleId && !isDirty)
-                }
-              >
-                {isSubmitting ? (
-                  <>
+              <div className="flex items-center gap-3">
+                <Button
+                  key="draft-button"
+                  type="submit"
+                  variant="outline"
+                  disabled={
+                    isSubmitting || isSubmitBlocked || (!!vehicleId && !isDirty)
+                  }
+                  onClick={() => form.setValue("status", "DRAFT")}
+                >
+                  {isSubmitting ? (
                     <Spinner />
-                    {t("processingText")}
-                  </>
-                ) : (
-                  <>
-                    {t("publish")}
-                    <Send />
-                  </>
-                )}
-              </Button>
+                  ) : (
+                    <>
+                      <Check />
+                      {t("statusDraft")}
+                    </>
+                  )}
+                </Button>
+                <Button
+                  key="submit-button"
+                  type="submit"
+                  disabled={
+                    isSubmitting || isSubmitBlocked || (!!vehicleId && !isDirty)
+                  }
+                  onClick={() => form.setValue("status", "PUBLISHED")}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Spinner />
+                      {t("processingText")}
+                    </>
+                  ) : (
+                    <>
+                      {t("publish")}
+                      <Send />
+                    </>
+                  )}
+                </Button>
+              </div>
             )}
           </div>
 

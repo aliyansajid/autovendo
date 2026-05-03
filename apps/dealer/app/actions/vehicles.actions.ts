@@ -422,6 +422,12 @@ export async function buildWhereClause(
     ];
   }
 
+  where.status = "PUBLISHED";
+  where.dealer = {
+    user: {
+      banned: { not: true },
+    },
+  };
   return where;
 }
 
@@ -1051,8 +1057,16 @@ export async function getVehicleCountAndFacets(rawParams: {
 export async function getVehicle(id: string): Promise<VehicleDetails | null> {
   if (!id) return null;
 
-  return (await prisma.vehicle.findUnique({
-    where: { id },
+  return (await prisma.vehicle.findFirst({
+    where: {
+      id,
+      status: "PUBLISHED",
+      dealer: {
+        user: {
+          banned: { not: true },
+        },
+      },
+    },
     select: {
       id: true,
       price: true,
@@ -1398,6 +1412,7 @@ export async function createVehicle(
         ? (validatedData.interiorColor.toUpperCase() as Color)
         : null,
       metallic: validatedData.metallic,
+      status: validatedData.status,
       vehicleCondition: validatedData.vehicleCondition
         ? (validatedData.vehicleCondition
             .toUpperCase()
@@ -1611,6 +1626,7 @@ export async function updateVehicle(
         ? (validatedData.interiorColor.toUpperCase() as Color)
         : null,
       metallic: validatedData.metallic,
+      status: validatedData.status,
       vehicleCondition: validatedData.vehicleCondition
         ? (validatedData.vehicleCondition
             .toUpperCase()

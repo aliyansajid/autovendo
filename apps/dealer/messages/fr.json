@@ -107,6 +107,14 @@
       "CLASSIC": "Ancien",
       "PRE_OWNED": "Occasion"
     },
+    "statuses": {
+      "DRAFT": "Brouillon",
+      "PUBLISHED": "Publié",
+      "PAUSED": "En pause",
+      "SOLD": "Vendu",
+      "ARCHIVED": "Archivé",
+      "BANNED": "Bloqué"
+    },
     "fuelTypes": {
       "PETROL": "Essence",
       "DIESEL": "Diesel",
@@ -1542,7 +1550,13 @@
     "errorUploadPrep": "Erreur lors de la préparation du téléchargement",
     "errorUploadFailed": "Échec du téléchargement pour {filename}",
     "errorLimitReached": "Limite atteinte : votre abonnement actuel ne permet pas d'ajouter plus de véhicules.",
-    "errorGeneric": "Une erreur s'est produite. Veuillez vérifier votre connexion Internet et réessayer."
+    "errorGeneric": "Une erreur s'est produite. Veuillez vérifier votre connexion Internet et réessayer.",
+    "publicationStatusTitle": "État de la publication",
+    "statusLabel": "Statut",
+    "statusPlaceholder": "Choisir le statut",
+    "statusPublished": "Publier",
+    "statusDraft": "Enregistrer comme brouillon",
+    "statusHelpText": "Les véhicules publiés sont visibles par tous. Les brouillons ne sont visibles que par vous dans votre tableau de bord."
   },
   "VehicleFormSections": {
     "vehicleFeatures": "Caractéristiques du véhicule",

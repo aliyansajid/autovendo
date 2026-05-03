@@ -107,6 +107,14 @@
       "CLASSIC": "D'epoca",
       "PRE_OWNED": "Usato"
     },
+    "statuses": {
+      "DRAFT": "Bozza",
+      "PUBLISHED": "Pubblicato",
+      "PAUSED": "In pausa",
+      "SOLD": "Venduto",
+      "ARCHIVED": "Archiviato",
+      "BANNED": "Bloccato"
+    },
     "fuelTypes": {
       "PETROL": "Benzina",
       "DIESEL": "Diesel",
@@ -1542,7 +1550,13 @@
     "errorUploadPrep": "Errore nella preparazione del caricamento",
     "errorUploadFailed": "Caricamento non riuscito per {filename}",
     "errorLimitReached": "Limite raggiunto: il tuo abbonamento attuale non consente l'inserimento di altri veicoli.",
-    "errorGeneric": "Qualcosa è andato storto. Controlla la tua connessione Internet e riprova."
+    "errorGeneric": "Qualcosa è andato storto. Controlla la tua connessione Internet e riprova.",
+    "publicationStatusTitle": "Stato della pubblicazione",
+    "statusLabel": "Stato",
+    "statusPlaceholder": "Scegli lo stato",
+    "statusPublished": "Pubblica",
+    "statusDraft": "Salva come bozza",
+    "statusHelpText": "I veicoli pubblicati sono visibili a tutti. Le bozze sono visibili solo a te nella tua dashboard."
   },
   "VehicleFormSections": {
     "vehicleFeatures": "Caratteristiche del veicolo",

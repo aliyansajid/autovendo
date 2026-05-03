@@ -107,6 +107,14 @@
       "CLASSIC": "Oldtimer",
       "PRE_OWNED": "Occasion"
     },
+    "statuses": {
+      "DRAFT": "Entwurf",
+      "PUBLISHED": "Veröffentlicht",
+      "PAUSED": "Pausiert",
+      "SOLD": "Verkauft",
+      "ARCHIVED": "Archiviert",
+      "BANNED": "Gesperrt"
+    },
     "fuelTypes": {
       "PETROL": "Benzin",
       "DIESEL": "Diesel",
@@ -1549,7 +1557,13 @@
     "errorUploadPrep": "Fehler bei der Upload-Vorbereitung",
     "errorUploadFailed": "Upload fehlgeschlagen für {filename}",
     "errorLimitReached": "Limit erreicht: Ihr aktuelles Abo erlaubt keine weiteren Fahrzeuge.",
-    "errorGeneric": "Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+    "publicationStatusTitle": "Veröffentlichungsstatus",
+    "statusLabel": "Status",
+    "statusPlaceholder": "Status wählen",
+    "statusPublished": "Veröffentlichen",
+    "statusDraft": "Als Entwurf speichern",
+    "statusHelpText": "Veröffentlichte Fahrzeuge sind für alle sichtbar. Entwürfe sind nur für Sie in Ihrem Dashboard sichtbar."
   },
   "VehicleFormSections": {
     "vehicleFeatures": "Fahrzeug-Merkmale",

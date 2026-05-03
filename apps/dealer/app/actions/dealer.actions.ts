@@ -3,15 +3,17 @@
 import { prisma, DayOfWeek } from "@repo/db";
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
-import {
-  createDealerProfileSchema,
-} from "@/schema/profile-schema";
+import { createDealerProfileSchema } from "@/schema/profile-schema";
 import { getTranslations } from "next-intl/server";
 import { createDealerContactSchema } from "@/schema/dealer-contact-schema";
-import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { sendEmail, DealerContactEmail } from "@repo/transactional";
-import { cacheGet, cacheSet, cacheDelete, cacheDeletePattern } from "@/lib/cache";
+import {
+  cacheGet,
+  cacheSet,
+  cacheDelete,
+  cacheDeletePattern,
+} from "@/lib/cache";
 import type {
   DealerProfile,
   DealerListResult,
@@ -53,9 +55,7 @@ function parseTimeString(time: string | null | undefined): Date | null {
 // Dashboard: update dealer profile
 // -----------------------------------------------------------------------------
 
-export async function updateDealerProfile(
-  values: any,
-) {
+export async function updateDealerProfile(values: any) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -286,7 +286,7 @@ export async function getDealers({
   try {
     const skip = (page - 1) * pageSize;
 
-    const where = searchQuery
+    const where: any = searchQuery
       ? {
           OR: [
             {
@@ -308,6 +308,8 @@ export async function getDealers({
           ],
         }
       : {};
+
+    where.user = { banned: { not: true } };
 
     const [dealers, totalCount] = await Promise.all([
       prisma.dealer.findMany({
@@ -352,8 +354,13 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
   if (cached) return cached;
 
   try {
-    const dealer = await prisma.dealer.findUnique({
-      where: { id },
+    const dealer = await prisma.dealer.findFirst({
+      where: {
+        id,
+        user: {
+          banned: { not: true },
+        },
+      },
       select: {
         id: true,
         companyName: true,

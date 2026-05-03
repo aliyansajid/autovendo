@@ -107,6 +107,14 @@
       "CLASSIC": "Classic",
       "PRE_OWNED": "Pre-owned"
     },
+    "statuses": {
+      "DRAFT": "Draft",
+      "PUBLISHED": "Published",
+      "PAUSED": "Paused",
+      "SOLD": "Sold",
+      "ARCHIVED": "Archived",
+      "BANNED": "Banned"
+    },
     "fuelTypes": {
       "PETROL": "Petrol",
       "DIESEL": "Diesel",
@@ -1544,7 +1552,13 @@
     "errorUploadPrep": "Error preparing upload",
     "errorUploadFailed": "Upload failed for {filename}",
     "errorLimitReached": "Limit reached: Your current subscription does not allow more vehicles.",
-    "errorGeneric": "Something went wrong. Please check your internet connection and try again."
+    "errorGeneric": "Something went wrong. Please check your internet connection and try again.",
+    "publicationStatusTitle": "Publication Status",
+    "statusLabel": "Status",
+    "statusPlaceholder": "Select status",
+    "statusPublished": "Publish",
+    "statusDraft": "Save as Draft",
+    "statusHelpText": "Published vehicles are visible to everyone. Drafts are only visible to you in your dashboard."
   },
   "VehicleFormSections": {
     "vehicleFeatures": "Vehicle Features",

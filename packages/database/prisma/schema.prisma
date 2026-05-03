@@ -291,6 +291,15 @@ enum EmissionStandard {
   EURO_6E
 }
 
+enum VehicleStatus {
+  DRAFT
+  PUBLISHED
+  PAUSED
+  SOLD
+  ARCHIVED
+  BANNED
+}
+
 model Vehicle {
   id          String      @id @default(cuid())
   dealerId    String?
@@ -298,6 +307,7 @@ model Vehicle {
   sellerId    String?
   seller      Seller?     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   vehicleType VehicleType
+  status      VehicleStatus @default(PUBLISHED)
 
   // Basic Data
   make              String
