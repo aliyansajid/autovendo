@@ -38,11 +38,8 @@ import { EnergyLabel } from "../_components/energy-label";
 import {
   DAY_LABELS,
   DAY_ORDER,
-  formatNumber,
-  formatPrice,
   formatKilometers,
   formatDateTime,
-  getCHLocale,
 } from "@/lib/helpers/format";
 import type { ListingProps } from "@/types/vehicle";
 import { KeyDetailCard } from "../_components/key-detail-card";
@@ -58,16 +55,18 @@ function f(value: string | null | undefined): string | undefined {
 }
 
 /** Format an integer with locale-aware thousands separator + suffix. */
-function n(value: number | null | undefined, suffix = "", locale = "de-CH"): string | undefined {
+function n(value: number | null | undefined, suffix = ""): string | undefined {
   if (value == null) return undefined;
-  const formatted = formatNumber(value, locale);
+  const formatted = formatNumber(value);
   return suffix ? `${formatted} ${suffix}` : formatted;
 }
 
 /** Format a float with locale-aware formatting + suffix. */
-function fl(value: number | null | undefined, suffix = "", locale = "de-CH"): string | undefined {
+function fl(value: number | null | undefined, suffix = ""): string | undefined {
   if (value == null) return undefined;
-  const formatted = value.toLocaleString(getCHLocale(locale), { maximumFractionDigits: 2 });
+  const formatted = new Intl.NumberFormat("de-CH", {
+    maximumFractionDigits: 2,
+  }).format(value);
   return suffix ? `${formatted} ${suffix}` : formatted;
 }
 
@@ -181,8 +180,8 @@ export default async function ListingPage({
   const powerLabel =
     item.kw != null || item.hp != null
       ? [
-          item.kw != null ? `${formatNumber(item.kw, locale)} kW` : null,
-          item.hp != null ? `(${formatNumber(item.hp, locale)} PS)` : null,
+          item.kw != null ? `${formatNumber(item.kw)} kW` : null,
+          item.hp != null ? `(${formatNumber(item.hp)} PS)` : null,
         ]
           .filter(Boolean)
           .join(" ")
@@ -201,12 +200,12 @@ export default async function ListingPage({
     [t("basicDataKeys.driveType")]: item.driveType
       ? getLabel("driveTypes", item.driveType)
       : undefined,
-    [t("basicDataKeys.seats")]: n(item.seats, "", locale),
-    [t("basicDataKeys.doors")]: n(item.doors, "", locale),
+    [t("basicDataKeys.seats")]: n(item.seats),
+    [t("basicDataKeys.doors")]: n(item.doors),
   });
 
   const vehicleHistory = filterObj({
-    [t("vehicleHistoryKeys.kilometer")]: formatKilometers(item.kilometer, locale),
+    [t("vehicleHistoryKeys.kilometer")]: formatKilometers(item.kilometer),
     [t("vehicleHistoryKeys.firstRegistration")]: `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
   });
 
@@ -215,7 +214,7 @@ export default async function ListingPage({
 
   const inspectionAndWarranty = filterObj({
     [t("inspectionWarrantyKeys.lastInspection")]: lastInspectionDate
-      ? formatDateTime(lastInspectionDate, locale)
+      ? formatDateTime(lastInspectionDate)
       : undefined,
     [t("inspectionWarrantyKeys.inspectionPassed")]:
       lastInspectionDate != null
@@ -227,26 +226,29 @@ export default async function ListingPage({
       ? getLabel("warranty", item.warranty)
       : undefined,
     [t("inspectionWarrantyKeys.warrantyFrom")]: warrantyStartDate
-      ? formatDateTime(warrantyStartDate, locale)
+      ? formatDateTime(warrantyStartDate)
       : undefined,
     [t("inspectionWarrantyKeys.warrantyDuration")]:
       item.duration != null ? `${item.duration} ${t("months")}` : undefined,
-    [t("inspectionWarrantyKeys.warrantyMaxKm")]: n(item.maxKm, "km", locale),
+    [t("inspectionWarrantyKeys.warrantyMaxKm")]: n(item.maxKm, "km"),
   });
 
   const technicalData = filterObj({
     [t("technicalDataKeys.power")]: powerLabel,
     [t("technicalDataKeys.transmission")]: transmissionLabel,
-    [t("technicalDataKeys.cubicCapacity")]: n(item.cubicCapacity, "ccm", locale),
-    [t("technicalDataKeys.gears")]: n(item.numberOfGears, "", locale),
-    [t("technicalDataKeys.cylinders")]: n(item.cylinders, "", locale),
-    [t("technicalDataKeys.emptyWeight")]: n(item.emptyWeight, "kg", locale),
-    [t("technicalDataKeys.loadCapacity")]: n(item.loadCapacity, "kg", locale),
-    [t("technicalDataKeys.wheelbase")]: n(item.wheelbase, "mm", locale),
-    [t("technicalDataKeys.length")]: n(item.length, "mm", locale),
-    [t("technicalDataKeys.width")]: n(item.width, "mm", locale),
-    [t("technicalDataKeys.height")]: n(item.height, "mm", locale),
-    [t("technicalDataKeys.towingCapacityBraked")]: n(item.towingCapacityBraked, "kg", locale),
+    [t("technicalDataKeys.cubicCapacity")]: n(item.cubicCapacity, "ccm"),
+    [t("technicalDataKeys.gears")]: n(item.numberOfGears),
+    [t("technicalDataKeys.cylinders")]: n(item.cylinders),
+    [t("technicalDataKeys.emptyWeight")]: n(item.emptyWeight, "kg"),
+    [t("technicalDataKeys.loadCapacity")]: n(item.loadCapacity, "kg"),
+    [t("technicalDataKeys.wheelbase")]: n(item.wheelbase, "mm"),
+    [t("technicalDataKeys.length")]: n(item.length, "mm"),
+    [t("technicalDataKeys.width")]: n(item.width, "mm"),
+    [t("technicalDataKeys.height")]: n(item.height, "mm"),
+    [t("technicalDataKeys.towingCapacityBraked")]: n(
+      item.towingCapacityBraked,
+      "kg",
+    ),
   });
 
   const energyData = filterObj({
@@ -254,20 +256,32 @@ export default async function ListingPage({
       ? getLabel("emissions", item.emissionStandard)
       : undefined,
     [t("energyConsumptionKeys.fuelType")]: fuelLabel,
-    [t("energyConsumptionKeys.co2Emission")]: n(item.co2Emission, "g/km", locale),
-    [t("energyConsumptionKeys.consumptionCity")]: fl(item.consumptionCity, "l/100km", locale),
-    [t("energyConsumptionKeys.consumptionCountry")]: fl(item.consumptionCountry, "l/100km", locale),
-    [t("energyConsumptionKeys.consumptionTotal")]: fl(item.consumptionTotal, "l/100km", locale),
+    [t("energyConsumptionKeys.co2Emission")]: n(item.co2Emission, "g/km"),
+    [t("energyConsumptionKeys.consumptionCity")]: fl(
+      item.consumptionCity,
+      "l/100km",
+    ),
+    [t("energyConsumptionKeys.consumptionCountry")]: fl(
+      item.consumptionCountry,
+      "l/100km",
+    ),
+    [t("energyConsumptionKeys.consumptionTotal")]: fl(
+      item.consumptionTotal,
+      "l/100km",
+    ),
   });
 
   const electricData = filterObj({
-    [t("electricDataKeys.range")]: n(item.range, "km", locale),
-    [t("electricDataKeys.batteryCapacity")]: fl(item.batteryCapacity, "kWh", locale),
+    [t("electricDataKeys.range")]: n(item.range, "km"),
+    [t("electricDataKeys.batteryCapacity")]: fl(item.batteryCapacity, "kWh"),
     [t("electricDataKeys.batteryRental")]:
       item.batteryRentalMonth != null
-        ? `${formatNumber(item.batteryRentalMonth, locale)} CHF/${t("months")}`
+        ? `${formatNumber(item.batteryRentalMonth)} CHF/${t("months")}`
         : undefined,
-    [t("electricDataKeys.powerConsumption")]: fl(item.powerConsumption, "kWh/100km", locale),
+    [t("electricDataKeys.powerConsumption")]: fl(
+      item.powerConsumption,
+      "kWh/100km",
+    ),
     [t("electricDataKeys.batteryOwnership")]: item.batteryOwnership
       ? getLabel("batteryOwnership", item.batteryOwnership)
       : undefined,
@@ -277,14 +291,14 @@ export default async function ListingPage({
     [t("electricDataKeys.chargingFast")]: item.chargingPlugTypeFast
       ? getLabel("chargingStandardDC", item.chargingPlugTypeFast)
       : undefined,
-    [t("electricDataKeys.chargingPower")]: fl(item.chargingPower, "kW", locale),
+    [t("electricDataKeys.chargingPower")]: fl(item.chargingPower, "kW"),
     [t("electricDataKeys.combustionEngine")]:
       item.combustionEnginePowerHp != null
-        ? `${formatNumber(item.combustionEnginePowerHp, locale)} PS`
+        ? `${formatNumber(item.combustionEnginePowerHp)} PS`
         : undefined,
     [t("electricDataKeys.electricMotor")]:
       item.electricMotorPowerHp != null
-        ? `${formatNumber(item.electricMotorPowerHp, locale)} PS`
+        ? `${formatNumber(item.electricMotorPowerHp)} PS`
         : undefined,
   });
 
@@ -344,7 +358,7 @@ export default async function ListingPage({
         day: tProfile.has(`days.${oh.day}`) ? tProfile(`days.${oh.day}`) : (DAY_LABELS[oh.day] ?? oh.day),
         hours:
           oh.isOpen && open != null && close != null
-            ? `${open.toLocaleTimeString(getCHLocale(locale), { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString(getCHLocale(locale), { hour: "2-digit", minute: "2-digit" })}`
+            ? `${open.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
             : tProfile("isClosed"),
       };
     });
@@ -373,10 +387,10 @@ export default async function ListingPage({
   const similarListings: ListingProps[] = similarItems.map((sim) => ({
     id: sim.id,
     title: `${sim.make} ${sim.model || ""}`.trim(),
-    price: formatPrice(sim.price, locale),
+    price: formatPrice(sim.price),
     details: [
       `${String(sim.registrationMonth).padStart(2, "0")}/${sim.registrationYear}`,
-      formatKilometers(sim.kilometer, locale),
+      formatKilometers(sim.kilometer),
       sim.fuelType ? getLabel("fuelTypes", sim.fuelType) : undefined,
     ].filter((d): d is string => d != null && d !== ""),
     garageName: sim.dealer.companyName,
@@ -464,7 +478,7 @@ export default async function ListingPage({
           <div className="lg:hidden space-y-3">
             <h1 className="text-2xl font-bold leading-tight">{title}</h1>
             <div className="text-3xl font-bold text-primary">
-              {formatPrice(price, locale)}
+              {formatPrice(price)}
             </div>
           </div>
 
@@ -478,7 +492,7 @@ export default async function ListingPage({
                   <Gauge className="text-muted-foreground" strokeWidth={1.5} />
                 }
                 label={t("vehicleHistoryKeys.kilometer")}
-                value={formatKilometers(item.kilometer, locale)}
+                value={formatKilometers(item.kilometer)}
               />
               {powerLabel && (
                 <KeyDetailCard
@@ -629,11 +643,11 @@ export default async function ListingPage({
             <CardContent className="space-y-3">
               <h1 className="text-xl font-bold">{title}</h1>
               <h2 className="text-2xl font-bold text-primary">
-                {formatPrice(price, locale)}
+                {formatPrice(price)}
               </h2>
               {item.newPrice != null && item.newPrice > 0 && (
                 <p className="text-sm text-muted-foreground">
-                  {t("newPrice")} {formatPrice(item.newPrice, locale)}
+                  {t("newPrice")} {formatPrice(item.newPrice)}
                 </p>
               )}
             </CardContent>

@@ -41,7 +41,7 @@ import { MakeModelDialog } from "./filters/make-model-dialog";
 import type { VehicleFacets } from "@/types/vehicle";
 import { createVehicleFiltersSchema } from "@/schema/vehicle-filters-schema";
 import { useTranslations, useLocale } from "next-intl";
-import { getCHLocale } from "@/lib/helpers/format";
+import { formatKilometers } from "@/lib/helpers/format";
 import { useMemo } from "react";
 
 export const FiltersSidebar = ({
@@ -348,9 +348,7 @@ export const FiltersSidebar = ({
                   <SelectItem value="any">{t("any")}</SelectItem>
                   {KILOMETER_OPTIONS.map((m) => (
                     <SelectItem key={m.value} value={m.value}>
-                      {Number(m.value) === 0
-                        ? "0 km"
-                        : `${new Intl.NumberFormat(getCHLocale(locale)).format(Number(m.value))} km`}
+                      {formatKilometers(Number(m.value))}
                     </SelectItem>
                   ))}
                 </CustomFormField>
@@ -363,9 +361,7 @@ export const FiltersSidebar = ({
                   <SelectItem value="any">{t("any")}</SelectItem>
                   {KILOMETER_OPTIONS.map((m) => (
                     <SelectItem key={m.value} value={m.value}>
-                      {Number(m.value) === 0
-                        ? "0 km"
-                        : `${new Intl.NumberFormat(getCHLocale(locale)).format(Number(m.value))} km`}
+                      {formatKilometers(Number(m.value))}
                     </SelectItem>
                   ))}
                 </CustomFormField>
