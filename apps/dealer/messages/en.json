@@ -1236,7 +1236,8 @@
     "nextBilling": "Next billing: {date}",
     "noSubscription": "No active subscription",
     "noSubscriptionDesc": "Choose a plan to start listing your vehicles.",
-    "listings": "Listings",
+    "quota": "Listings Quota",
+    "quotaUsed": "{current} of {max} slots used",
     "slotsRemaining": "{count} slots remaining",
     "selectPlanTitle": "Choose Your Plan",
     "selectPlanSubtitle": "Select a plan to get started.",
@@ -1258,7 +1259,7 @@
     "billingPortalError": "Failed to open billing portal. Please try again.",
     "paymentTitle": "Payment Method",
     "paymentDesc": "Your card on file for billing.",
-    "cardExpiry": "Expires {month}/{year}",
+    "cardExpiry": "Expires {expiry}",
     "noPaymentMethod": "No payment method on file.",
     "invoicesTitle": "Invoices",
     "invoicesDesc": "Your recent billing history.",
@@ -1277,6 +1278,7 @@
       "open": "Open",
       "void": "Void",
       "uncollectible": "Uncollectible",
+      "draft": "Draft",
       "unknown": "Unknown"
     }
   },

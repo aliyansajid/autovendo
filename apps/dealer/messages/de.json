@@ -1251,8 +1251,9 @@
     "nextBilling": "Nächste Abrechnung: {date}",
     "noSubscription": "Kein aktives Abonnement",
     "noSubscriptionDesc": "Wählen Sie einen Plan, um Ihre Fahrzeuge zu inserieren.",
-    "listings": "Inserate",
-    "slotsRemaining": "{count} Slots verbleibend",
+    "quota": "Inserats-Kontingent",
+    "quotaUsed": "{current} von {max} Plätzen belegt",
+    "slotsRemaining": "{count} Plätze verfügbar",
     "selectPlanTitle": "Plan wählen",
     "selectPlanSubtitle": "Wählen Sie einen Plan, um loszulegen.",
     "upgradePlanTitle": "Plan wechseln",
@@ -1273,7 +1274,7 @@
     "billingPortalError": "Abrechnungsportal konnte nicht geöffnet werden. Bitte erneut versuchen.",
     "paymentTitle": "Zahlungsmethode",
     "paymentDesc": "Ihre hinterlegte Karte für die Abrechnung.",
-    "cardExpiry": "Gültig bis {month}/{year}",
+    "cardExpiry": "Gültig bis {expiry}",
     "noPaymentMethod": "Keine Zahlungsmethode hinterlegt.",
     "invoicesTitle": "Rechnungen",
     "invoicesDesc": "Ihre aktuelle Abrechnungshistorie.",
@@ -1292,6 +1293,7 @@
       "open": "Offen",
       "void": "Storniert",
       "uncollectible": "Uneinbringlich",
+      "draft": "Entwurf",
       "unknown": "Unbekannt"
     }
   },

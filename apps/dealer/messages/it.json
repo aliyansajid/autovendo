@@ -1238,7 +1238,8 @@
     "nextBilling": "Prossima fatturazione: {date}",
     "noSubscription": "Nessun abbonamento attivo",
     "noSubscriptionDesc": "Scegliete un piano per iniziare a pubblicare i vostri veicoli.",
-    "listings": "Annunci",
+    "quota": "Quota annunci",
+    "quotaUsed": "{current} di {max} slot utilizzati",
     "slotsRemaining": "{count} slot rimanenti",
     "selectPlanTitle": "Scegli il Tuo Piano",
     "selectPlanSubtitle": "Seleziona un piano per iniziare.",
@@ -1260,7 +1261,7 @@
     "billingPortalError": "Impossibile aprire il portale di fatturazione. Riprovare.",
     "paymentTitle": "Metodo di Pagamento",
     "paymentDesc": "La vostra carta registrata per la fatturazione.",
-    "cardExpiry": "Scade il {month}/{year}",
+    "cardExpiry": "Scade il {expiry}",
     "noPaymentMethod": "Nessun metodo di pagamento registrato.",
     "invoicesTitle": "Fatture",
     "invoicesDesc": "La vostra cronologia di fatturazione recente.",
@@ -1279,6 +1280,7 @@
       "open": "Aperta",
       "void": "Annullata",
       "uncollectible": "Inesigibile",
+      "draft": "Bozza",
       "unknown": "Sconosciuto"
     }
   },

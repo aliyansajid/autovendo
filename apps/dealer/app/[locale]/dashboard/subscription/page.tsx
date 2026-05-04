@@ -90,9 +90,11 @@ export default async function SubscriptionPage(props: {
       }),
     ]);
 
-  const subscriptions = (subscriptionsResponse as any[]) || [];
+  const subscriptions = Array.isArray(subscriptionsResponse)
+    ? subscriptionsResponse
+    : (subscriptionsResponse as any)?.data || [];
 
-  const activeSubscription = subscriptions.find((s) =>
+  const activeSubscription = subscriptions.find((s: any) =>
     ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(
       s.status,
     ),

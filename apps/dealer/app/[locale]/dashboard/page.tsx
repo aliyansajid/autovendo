@@ -49,10 +49,13 @@ export default async function DashboardPage(props: {
       prisma.plan.findMany({ select: { name: true, price: true } }),
     ]);
 
-  const subscriptions = (subscriptionsResponse as any)?.data || [];
-  const activeSubscription = subscriptions.find(
-    (s: any) =>
-      ["active", "trialing", "past_due", "unpaid"].includes(s.status),
+  const subscriptions = Array.isArray(subscriptionsResponse)
+    ? subscriptionsResponse
+    : (subscriptionsResponse as any)?.data || [];
+  const activeSubscription = subscriptions.find((s: any) =>
+    ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(
+      s.status,
+    ),
   );
 
   const currentPlan = plans.find(
@@ -66,15 +69,14 @@ export default async function DashboardPage(props: {
 
   return (
     <div className="space-y-8 pb-10">
-      {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
+        <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">{t("welcome")}</h1>
           <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <Button asChild>
           <Link href="/dashboard/vehicles/new">
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus />
             {t("newListing")}
           </Link>
         </Button>
@@ -127,11 +129,9 @@ export default async function DashboardPage(props: {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Main Content Area (2/3) */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Subscription & Quota Card */}
-          <Card className="overflow-hidden border-2 border-primary/5 shadow-md">
-            <CardHeader className="bg-muted/30 pb-4">
+          <Card>
+            <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <LayoutDashboard className="size-5 text-primary" />
@@ -151,7 +151,7 @@ export default async function DashboardPage(props: {
                 )}
               </div>
             </CardHeader>
-            <CardContent className="pt-6 space-y-6">
+            <CardContent className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
@@ -163,7 +163,10 @@ export default async function DashboardPage(props: {
                   {activeSubscription?.periodEnd && (
                     <p className="text-sm text-muted-foreground mt-1">
                       {t("nextBilling", {
-                        date: formatDateShort(activeSubscription.periodEnd, locale),
+                        date: formatDateShort(
+                          activeSubscription.periodEnd,
+                          locale,
+                        ),
                       })}
                     </p>
                   )}
@@ -204,9 +207,12 @@ export default async function DashboardPage(props: {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg">{t("recentListings")}</CardTitle>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link href="/dashboard/vehicles" className="flex items-center">
+                  <Link
+                    href="/dashboard/vehicles"
+                    className="flex items-center"
+                  >
                     {t("viewAll")}
-                    <ArrowRight className="ml-2 size-4" />
+                    <ArrowRight />
                   </Link>
                 </Button>
               </div>
@@ -237,7 +243,10 @@ export default async function DashboardPage(props: {
                             {vehicle.make} {vehicle.model}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {formatDateShort(new Date(vehicle.createdAt), locale)}
+                            {formatDateShort(
+                              new Date(vehicle.createdAt),
+                              locale,
+                            )}
                           </p>
                         </div>
                       </div>
@@ -245,12 +254,7 @@ export default async function DashboardPage(props: {
                         <p className="font-semibold">
                           {formatPrice(vehicle.price)}
                         </p>
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] uppercase tracking-tighter"
-                        >
-                          {vehicle.status}
-                        </Badge>
+                        <Badge variant="secondary">{vehicle.status}</Badge>
                       </div>
                     </div>
                   ))}
@@ -274,38 +278,38 @@ export default async function DashboardPage(props: {
 
         {/* Sidebar / Quick Actions (1/3) */}
         <div className="space-y-6">
-          <Card className="bg-primary text-primary-foreground border-0 shadow-lg">
+          <Card className="bg-primary text-primary-foreground">
             <CardHeader>
               <CardTitle className="text-lg">{t("quickActions")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <Button
                 variant="secondary"
-                className="w-full justify-start font-semibold border-0"
+                className="w-full justify-start"
                 asChild
               >
                 <Link href="/dashboard/vehicles/new">
-                  <Plus className="mr-2 size-4" />
+                  <Plus />
                   {t("newListing")}
                 </Link>
               </Button>
               <Button
                 variant="secondary"
-                className="w-full justify-start font-semibold border-0"
+                className="w-full justify-start"
                 asChild
               >
                 <Link href="/dashboard/subscription">
-                  <CreditCard className="mr-2 size-4" />
+                  <CreditCard />
                   {t("billingSettings")}
                 </Link>
               </Button>
               <Button
                 variant="secondary"
-                className="w-full justify-start font-semibold border-0 opacity-80"
+                className="w-full justify-start"
                 asChild
               >
                 <Link href="/dashboard/vehicles">
-                  <Car className="mr-2 size-4" />
+                  <Car />
                   {t("manageInventory")}
                 </Link>
               </Button>
@@ -314,15 +318,15 @@ export default async function DashboardPage(props: {
 
           {/* Need Help? */}
           <Card className="bg-muted/50 border-dashed">
-            <CardContent className="pt-6 text-center">
-              <div className="bg-primary/10 size-12 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CardContent className="text-center space-y-3">
+              <div className="bg-primary/10 size-12 rounded-full flex items-center justify-center mx-auto">
                 <LayoutDashboard className="size-6 text-primary" />
               </div>
               <p className="font-semibold">{t("needHelp")}</p>
-              <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 {t("helpDesc")}
               </p>
-              <Button variant="link" size="sm" className="mt-2 text-primary">
+              <Button variant="link" size="sm" className="text-primary">
                 {t("contactSupport")}
               </Button>
             </CardContent>
@@ -357,8 +361,8 @@ function StatCard({
   };
 
   return (
-    <Card className="shadow-sm hover:shadow-md transition-all duration-200">
-      <CardContent className="p-6">
+    <Card>
+      <CardContent>
         <div className="flex items-center justify-between mb-4">
           <div className={`p-2 rounded-lg border ${colorMap[color]}`}>
             {icon}

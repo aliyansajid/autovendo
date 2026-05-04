@@ -1234,12 +1234,17 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
     ? await prisma.vehicle.count({ where: { dealerId: dealer.id } })
     : 0;
 
-  const subscriptions = (subscriptionsResponse as any)?.data || [];
+  const subscriptions = Array.isArray(subscriptionsResponse)
+    ? subscriptionsResponse
+    : (subscriptionsResponse as any)?.data || [];
   const limits = (subscriptionsResponse as any)?.limits;
 
   // Find priority subscription (active/trialing first)
   const activeSub = subscriptions.find(
-    (s: any) => s.status === "active" || s.status === "trialing",
+    (s: any) =>
+      s.status === "active" ||
+      s.status === "trialing" ||
+      s.status === "incomplete",
   );
   const pastDueSub = subscriptions.find(
     (s: any) => s.status === "past_due" || s.status === "unpaid",
