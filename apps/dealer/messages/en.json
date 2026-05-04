@@ -532,7 +532,18 @@
     "searchPlaceholder": "Search…",
     "searchAriaLabel": "Search vehicles",
     "sortAriaLabel": "Sort",
-    "sortPlaceholder": "Sort by"
+    "sortPlaceholder": "Sort by",
+    "sortOptions": {
+      "relevance": "Relevance",
+      "price-asc": "Price (Lowest first)",
+      "price-desc": "Price (Highest first)",
+      "kilometer-asc": "Mileage (Lowest first)",
+      "kilometer-desc": "Mileage (Highest first)",
+      "registration-asc": "Registration (Oldest first)",
+      "registration-desc": "Registration (Newest first)",
+      "created-asc": "Listings (Oldest first)",
+      "created-desc": "Listings (Newest first)"
+    }
   },
   "LoginForm": {
     "title": "Welcome back",
@@ -1403,12 +1414,26 @@
     "login": "Login",
     "goHome": "Go to Home"
   },
+  "ListingHeader": {
+    "back": "Back",
+    "start": "Home",
+    "vehicles": "Vehicles",
+    "share": "Share",
+    "shareSuccess": "Link copied to clipboard."
+  },
   "SellerSection": {
     "title": "Seller",
     "reviewCount": "({count} reviews)",
     "allVehicles": "All vehicles from this dealer",
     "openingHours": "Opening Hours",
-    "noOpeningHours": "No opening hours available."
+    "noOpeningHours": "No opening hours available.",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
   },
   "ReviewSection": {
     "title": "Reviews",

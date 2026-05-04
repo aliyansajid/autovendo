@@ -537,7 +537,18 @@
     "searchPlaceholder": "Suchen…",
     "searchAriaLabel": "Fahrzeuge suchen",
     "sortAriaLabel": "Sortieren",
-    "sortPlaceholder": "Sortieren nach"
+    "sortPlaceholder": "Sortieren nach",
+    "sortOptions": {
+      "relevance": "Standard-Sortierung",
+      "price-asc": "Preis (niedrigster zuerst)",
+      "price-desc": "Preis (höchster zuerst)",
+      "kilometer-asc": "Kilometerstand (niedrigster zuerst)",
+      "kilometer-desc": "Kilometerstand (höchster zuerst)",
+      "registration-asc": "Erstzulassung (älteste zuerst)",
+      "registration-desc": "Erstzulassung (jüngste zuerst)",
+      "created-asc": "Inserate (älteste zuerst)",
+      "created-desc": "Inserate (neueste zuerst)"
+    }
   },
   "LoginForm": {
     "title": "Willkommen zurück",
@@ -1418,12 +1429,26 @@
     "login": "Anmelden",
     "goHome": "Zur Startseite"
   },
+  "ListingHeader": {
+    "back": "Zurück",
+    "start": "Start",
+    "vehicles": "Fahrzeuge",
+    "share": "Teilen",
+    "shareSuccess": "Link in die Zwischenablage kopiert."
+  },
   "SellerSection": {
     "title": "Verkäufer",
     "reviewCount": "({count} Bewertungen)",
     "allVehicles": "Alle Fahrzeuge dieses Händlers",
     "openingHours": "Öffnungszeiten",
-    "noOpeningHours": "Keine Öffnungszeiten verfügbar."
+    "noOpeningHours": "Keine Öffnungszeiten verfügbar.",
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag",
+    "sunday": "Sonntag"
   },
   "ReviewSection": {
     "title": "Bewertungen",
@@ -1460,6 +1485,7 @@
     "edit": "Bearbeiten",
     "publish": "Veröffentlichen",
     "statusDraft": "Als Entwurf speichern",
+    "statusSold": "Als verkauft markieren",
     "statusUpdateSuccess": "Status erfolgreich aktualisiert!",
     "statusUpdateError": "Fehler beim Aktualisieren des Status.",
     "emptyTitle": "Keine Fahrzeuge gefunden",

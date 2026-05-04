@@ -134,8 +134,8 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                 <div className="space-y-2 text-sm">
                   {seller.openingHours.map((item, i) => (
                     <div key={i} className="flex justify-between">
-                      <span className="text-sm text-muted-foreground capitalize">
-                        {item.day}
+                      <span className="text-sm text-muted-foreground">
+                        {t(item.day.toLowerCase())}
                       </span>
                       <span className="font-medium text-sm text-right">
                         {item.hours}

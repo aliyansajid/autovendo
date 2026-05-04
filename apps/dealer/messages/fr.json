@@ -532,7 +532,18 @@
     "searchPlaceholder": "Rechercher…",
     "searchAriaLabel": "Rechercher des véhicules",
     "sortAriaLabel": "Trier",
-    "sortPlaceholder": "Trier par"
+    "sortPlaceholder": "Trier par",
+    "sortOptions": {
+      "relevance": "Pertinence",
+      "price-asc": "Prix (Croissant)",
+      "price-desc": "Prix (Décroissant)",
+      "kilometer-asc": "Kilométrage (Moins de km)",
+      "kilometer-desc": "Kilométrage (Plus de km)",
+      "registration-asc": "Année (Plus ancienne)",
+      "registration-desc": "Année (Plus récente)",
+      "created-asc": "Annonces (Plus anciennes)",
+      "created-desc": "Annonces (Plus récentes)"
+    }
   },
   "LoginForm": {
     "title": "Bon retour",
@@ -1404,12 +1415,26 @@
     "login": "Connexion",
     "goHome": "Aller à l'Accueil"
   },
+  "ListingHeader": {
+    "back": "Retour",
+    "start": "Accueil",
+    "vehicles": "Véhicules",
+    "share": "Partager",
+    "shareSuccess": "Lien copié dans le presse-papiers."
+  },
   "SellerSection": {
     "title": "Vendeur",
     "reviewCount": "({count} avis)",
     "allVehicles": "Tous les véhicules de ce concessionnaire",
-    "openingHours": "Heures d'Ouverture",
-    "noOpeningHours": "Aucune heure d'ouverture disponible."
+    "openingHours": "Heures d'ouverture",
+    "noOpeningHours": "Aucune heure d'ouverture disponible.",
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche"
   },
   "ReviewSection": {
     "title": "Avis",
