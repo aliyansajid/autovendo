@@ -28,6 +28,7 @@ import { TransmissionTypeEnum, DriveTypeEnum } from "@/constants";
 import { carBodyTypeEnum, carFuelTypeEnum } from "@/constants/cars";
 import { formatNumber } from "@/lib/helpers/format";
 import { FieldLabel } from "@repo/ui/components/field";
+import { useTranslations } from "next-intl";
 
 // Utility for classes
 function cn(...inputs: (string | undefined | null | false)[]) {
@@ -53,6 +54,7 @@ function RangeFilter({
   value,
   onValueChange,
 }: RangeFilterProps) {
+  const t = useTranslations("GarageRichFilters");
   return (
     <div className="space-y-4">
       <PopoverHeader>
@@ -61,7 +63,7 @@ function RangeFilter({
           className="text-xs cursor-pointer hover:underline"
           onClick={() => onValueChange([min, max])}
         >
-          Zurücksetzen
+          {t("reset")}
         </PopoverDescription>
       </PopoverHeader>
 
@@ -135,6 +137,7 @@ function CheckboxListFilter({
   selectedValues = [],
   onChange,
 }: CheckboxListProps) {
+  const t = useTranslations("GarageRichFilters");
   const toggle = (value: string) => {
     const newSelected = selectedValues.includes(value)
       ? selectedValues.filter((v) => v !== value)
@@ -150,7 +153,7 @@ function CheckboxListFilter({
           className="text-xs cursor-pointer hover:underline"
           onClick={() => onChange?.([])}
         >
-          Zurücksetzen
+          {t("reset")}
         </PopoverDescription>
       </PopoverHeader>
 
@@ -192,6 +195,7 @@ function GridFilter({
   selectedValues = [],
   onChange,
 }: GridFilterProps) {
+  const t = useTranslations("GarageRichFilters");
   const toggle = (value: string) => {
     const newSelected = selectedValues.includes(value)
       ? selectedValues.filter((v) => v !== value)
@@ -255,6 +259,7 @@ export default function GarageRichFilters({
   initialFilters = {},
   facets,
 }: GarageRichFiltersProps) {
+  const t = useTranslations("GarageRichFilters");
   const [isMakeModalOpen, setIsMakeModalOpen] = useState(false);
 
   // Filter States
@@ -470,7 +475,9 @@ export default function GarageRichFilters({
 
   const totalSelected = selectedMakes.length + excludedMakes.length;
   const label =
-    totalSelected > 0 ? `${totalSelected} Marken/Modelle` : "Marke & Modell";
+    totalSelected > 0
+      ? t("makesModels", { count: totalSelected })
+      : t("makeModelPlaceholder");
 
   return (
     <div className="space-y-4">
@@ -504,13 +511,13 @@ export default function GarageRichFilters({
               variant="outline"
               className={getTriggerClass(isRangeActive(yearRange))}
             >
-              {formatRangeLabel("Jahr", yearRange, DEFAULTS.YEAR, "", true)}
+              {formatRangeLabel(t("year"), yearRange, DEFAULTS.YEAR, "", true)}
               <ChevronDown />
             </Button>
           </PopoverTrigger>
           <PopoverContent align="start" className="w-[300px]">
             <RangeFilter
-              label="Jahr"
+              label={t("year")}
               min={1900}
               max={2026}
               value={yearRange ?? DEFAULTS.YEAR}
@@ -526,7 +533,7 @@ export default function GarageRichFilters({
               className={getTriggerClass(isRangeActive(kilometerRange))}
             >
               {formatRangeLabel(
-                "Kilometerstand",
+                t("mileage"),
                 kilometerRange,
                 DEFAULTS.KILOMETER,
                 " km",
@@ -536,7 +543,7 @@ export default function GarageRichFilters({
           </PopoverTrigger>
           <PopoverContent align="start" className="w-[300px]">
             <RangeFilter
-              label="Kilometerstand"
+              label={t("mileage")}
               min={0}
               max={200000}
               unit="km"
@@ -553,13 +560,13 @@ export default function GarageRichFilters({
               variant="outline"
               className={getTriggerClass(isRangeActive(priceRange))}
             >
-              {formatRangeLabel("Preis", priceRange, DEFAULTS.PRICE, " CHF")}
+              {formatRangeLabel(t("price"), priceRange, DEFAULTS.PRICE, " CHF")}
               <ChevronDown />
             </Button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-[300px]">
             <RangeFilter
-              label="Preis"
+              label={t("price")}
               min={0}
               max={100000}
               unit="CHF"
@@ -577,14 +584,14 @@ export default function GarageRichFilters({
               className={getTriggerClass(selectedBodyTypes.length > 0)}
             >
               {selectedBodyTypes.length > 0
-                ? `${selectedBodyTypes.length} ausgewählt`
-                : "Karosserieform"}
+                ? t("selected", { count: selectedBodyTypes.length })
+                : t("bodyType")}
               <ChevronDown />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[300px]" align="start">
             <CheckboxListFilter
-              title="Karosserieform"
+              title={t("bodyType")}
               items={carBodyTypeEnum.map(
                 (t: { value: string; label: string }) => ({ ...t, icon: Car }),
               )}
@@ -601,14 +608,14 @@ export default function GarageRichFilters({
               className={getTriggerClass(selectedFuels.length > 0)}
             >
               {selectedFuels.length > 0
-                ? `${selectedFuels.length} ausgewählt`
-                : "Treibstoff"}
+                ? t("selected", { count: selectedFuels.length })
+                : t("fuel")}
               <ChevronDown />
             </Button>
           </PopoverTrigger>
           <PopoverContent align="start" className="w-[300px]">
             <CheckboxListFilter
-              title="Treibstoff"
+              title={t("fuel")}
               items={carFuelTypeEnum.map(
                 (t: { value: string; label: string }) => ({
                   ...t,
@@ -627,14 +634,14 @@ export default function GarageRichFilters({
               className={getTriggerClass(selectedTransmissions.length > 0)}
             >
               {selectedTransmissions.length > 0
-                ? `${selectedTransmissions.length} ausgewählt`
-                : "Getriebe"}
+                ? t("selected", { count: selectedTransmissions.length })
+                : t("transmission")}
               <ChevronDown />
             </Button>
           </PopoverTrigger>
           <PopoverContent align="start" className="w-[300px]">
             <CheckboxListFilter
-              title="Getriebe"
+              title={t("transmission")}
               items={TransmissionTypeEnum.map((t) => ({
                 ...t,
               }))}
@@ -651,14 +658,14 @@ export default function GarageRichFilters({
               className={getTriggerClass(selectedDrives.length > 0)}
             >
               {selectedDrives.length > 0
-                ? `${selectedDrives.length} ausgewählt`
-                : "Antrieb"}
+                ? t("selected", { count: selectedDrives.length })
+                : t("drive")}
               <ChevronDown />
             </Button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-[300px]">
             <CheckboxListFilter
-              title="Antrieb"
+              title={t("drive")}
               items={DriveTypeEnum.map((t) => ({
                 ...t,
               }))}
@@ -684,7 +691,7 @@ export default function GarageRichFilters({
             className="text-muted-foreground hover:text-foreground"
           >
             <X />
-            Filter zurücksetzen
+            {t("resetFilters")}
           </Button>
         )}
         <Link

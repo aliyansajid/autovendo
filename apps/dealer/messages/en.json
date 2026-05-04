@@ -545,6 +545,20 @@
       "created-desc": "Listings (Newest first)"
     }
   },
+  "GarageRichFilters": {
+    "reset": "Reset",
+    "makesModels": "{count} Make/Models",
+    "makeModelPlaceholder": "Make & Model",
+    "year": "Year",
+    "mileage": "Mileage",
+    "price": "Price",
+    "selected": "{count} selected",
+    "bodyType": "Body Type",
+    "fuel": "Fuel",
+    "transmission": "Transmission",
+    "drive": "Drive",
+    "resetFilters": "Reset Filters"
+  },
   "LoginForm": {
     "title": "Welcome back",
     "description": "Enter your email address below to log in to your account",

@@ -550,6 +550,20 @@
       "created-desc": "Inserate (neueste zuerst)"
     }
   },
+  "GarageRichFilters": {
+    "reset": "Zurücksetzen",
+    "makesModels": "{count} Marken/Modelle",
+    "makeModelPlaceholder": "Marke & Modell",
+    "year": "Jahr",
+    "mileage": "Kilometerstand",
+    "price": "Preis",
+    "selected": "{count} ausgewählt",
+    "bodyType": "Karosserieform",
+    "fuel": "Treibstoff",
+    "transmission": "Getriebe",
+    "drive": "Antrieb",
+    "resetFilters": "Filter zurücksetzen"
+  },
   "LoginForm": {
     "title": "Willkommen zurück",
     "description": "Geben Sie unten Ihre E-Mail-Adresse ein, um sich in Ihr Konto einzuloggen",

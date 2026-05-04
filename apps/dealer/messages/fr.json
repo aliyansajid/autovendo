@@ -545,6 +545,20 @@
       "created-desc": "Annonces (Plus récentes)"
     }
   },
+  "GarageRichFilters": {
+    "reset": "Réinitialiser",
+    "makesModels": "{count} Marques/Modèles",
+    "makeModelPlaceholder": "Marque & Modèle",
+    "year": "Année",
+    "mileage": "Kilométrage",
+    "price": "Prix",
+    "selected": "{count} sélectionné(s)",
+    "bodyType": "Carrosserie",
+    "fuel": "Carburant",
+    "transmission": "Transmission",
+    "drive": "Traction",
+    "resetFilters": "Réinitialiser les filtres"
+  },
   "LoginForm": {
     "title": "Bon retour",
     "description": "Saisissez votre adresse e-mail ci-dessous pour vous connecter à votre compte",

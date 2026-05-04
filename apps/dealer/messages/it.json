@@ -545,6 +545,20 @@
       "created-desc": "Annunci (Più recenti)"
     }
   },
+  "GarageRichFilters": {
+    "reset": "Reimposta",
+    "makesModels": "{count} Marche/Modelli",
+    "makeModelPlaceholder": "Marca & Modello",
+    "year": "Anno",
+    "mileage": "Chilometraggio",
+    "price": "Prezzo",
+    "selected": "{count} selezionati",
+    "bodyType": "Carrozzeria",
+    "fuel": "Carburante",
+    "transmission": "Trasmissione",
+    "drive": "Trazione",
+    "resetFilters": "Reimposta filtri"
+  },
   "LoginForm": {
     "title": "Bentornato",
     "description": "Inserisca il suo indirizzo e-mail qui sotto per accedere al suo account",
