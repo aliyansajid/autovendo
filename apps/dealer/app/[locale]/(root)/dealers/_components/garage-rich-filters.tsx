@@ -260,6 +260,19 @@ export default function GarageRichFilters({
   facets,
 }: GarageRichFiltersProps) {
   const t = useTranslations("GarageRichFilters");
+  const tVehicle = useTranslations("Vehicle");
+
+  const getLabel = (namespace: string, key: string | null | undefined) => {
+    if (!key) return undefined;
+    const normalizedKey = key
+      .replace(/([a-z])([A-Z])/g, "$1_$2")
+      .toUpperCase()
+      .replace(/[-]/g, "_");
+    const formattedKey = `${namespace}.${normalizedKey}`;
+    // @ts-ignore
+    return tVehicle.has(formattedKey) ? tVehicle(formattedKey) : key;
+  };
+
   const [isMakeModalOpen, setIsMakeModalOpen] = useState(false);
 
   // Filter States
@@ -592,9 +605,11 @@ export default function GarageRichFilters({
           <PopoverContent className="w-[300px]" align="start">
             <CheckboxListFilter
               title={t("bodyType")}
-              items={carBodyTypeEnum.map(
-                (t: { value: string; label: string }) => ({ ...t, icon: Car }),
-              )}
+              items={carBodyTypeEnum.map((t) => ({
+                ...t,
+                label: getLabel("types", t.value) || t.label,
+                icon: Car,
+              }))}
               selectedValues={selectedBodyTypes}
               onChange={setSelectedBodyTypes}
             />
@@ -616,11 +631,10 @@ export default function GarageRichFilters({
           <PopoverContent align="start" className="w-[300px]">
             <CheckboxListFilter
               title={t("fuel")}
-              items={carFuelTypeEnum.map(
-                (t: { value: string; label: string }) => ({
-                  ...t,
-                }),
-              )}
+              items={carFuelTypeEnum.map((t) => ({
+                ...t,
+                label: getLabel("fuelTypes", t.value) || t.label,
+              }))}
               selectedValues={selectedFuels}
               onChange={setSelectedFuels}
             />
@@ -644,6 +658,7 @@ export default function GarageRichFilters({
               title={t("transmission")}
               items={TransmissionTypeEnum.map((t) => ({
                 ...t,
+                label: getLabel("transmissionTypes", t.value) || t.label,
               }))}
               selectedValues={selectedTransmissions}
               onChange={setSelectedTransmissions}
@@ -668,6 +683,7 @@ export default function GarageRichFilters({
               title={t("drive")}
               items={DriveTypeEnum.map((t) => ({
                 ...t,
+                label: getLabel("driveTypes", t.value) || t.label,
               }))}
               selectedValues={selectedDrives}
               onChange={setSelectedDrives}
