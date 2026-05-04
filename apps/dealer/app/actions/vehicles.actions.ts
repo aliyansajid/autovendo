@@ -1266,8 +1266,13 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
 
   // Fallback: If limits are missing from API, fetch from DB using plan name
   if (maxVehicles === 0 && mainSub.plan) {
-    const plan = await prisma.plan.findUnique({
-      where: { name: mainSub.plan },
+    const plan = await prisma.plan.findFirst({
+      where: {
+        name: {
+          contains: mainSub.plan,
+          mode: "insensitive",
+        },
+      },
       select: { limits: true },
     });
     if (plan && (plan.limits as any)?.vehicles) {
