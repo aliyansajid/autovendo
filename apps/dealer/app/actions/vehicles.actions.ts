@@ -1225,7 +1225,7 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
       where: { userId: session.user.id },
       select: { id: true },
     }),
-    (auth.api as any).subscription.list({
+    (auth.api as any).listActiveSubscriptions({
       headers: await headers(),
     }),
   ]);

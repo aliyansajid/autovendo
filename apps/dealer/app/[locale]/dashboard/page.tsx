@@ -43,7 +43,7 @@ export default async function DashboardPage(props: {
 
   const [subscriptionsResponse, subscriptionStatus, summary, plans] =
     await Promise.all([
-      (auth.api as any).subscription.list({ headers: await headers() }),
+      (auth.api as any).listActiveSubscriptions({ headers: await headers() }),
       getVehicleSubscriptionStatus(),
       getDashboardSummary(),
       prisma.plan.findMany({ select: { name: true, price: true } }),

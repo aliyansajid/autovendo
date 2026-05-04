@@ -71,7 +71,7 @@ export default async function SubscriptionPage(props: {
    */
   const [subscriptionsResponse, subscriptionStatus, billingData, plans] =
     await Promise.all([
-      (auth.api as any).subscription.list({
+      (auth.api as any).listActiveSubscriptions({
         headers: await headers(),
       }),
       getVehicleSubscriptionStatus(),
