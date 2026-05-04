@@ -1499,6 +1499,11 @@
     "electricData": "Electric Data",
     "colourUpholstery": "Colour & Upholstery",
     "identifiers": "Identification Numbers",
+    "identifierKeys": {
+      "vin": "VIN",
+      "serialNumber": "Serial Number",
+      "typeApproval": "Type Approval"
+    },
     "equipment": "Equipment",
     "extras": "Extras",
     "description": "Vehicle Description",

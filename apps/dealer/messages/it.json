@@ -1501,6 +1501,11 @@
     "electricData": "Dati elettrici",
     "colourUpholstery": "Colore e selleria",
     "identifiers": "Numeri di identificazione",
+    "identifierKeys": {
+      "vin": "VIN",
+      "serialNumber": "Numero di serie",
+      "typeApproval": "Approvazione del tipo"
+    },
     "equipment": "Equipaggiamento",
     "extras": "Extra",
     "description": "Descrizione del veicolo",

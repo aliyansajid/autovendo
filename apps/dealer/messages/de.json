@@ -1514,6 +1514,11 @@
     "electricData": "Elektrische Daten",
     "colourUpholstery": "Farbe und Polsterung",
     "identifiers": "Identifikationsnummern",
+    "identifierKeys": {
+      "vin": "FIN",
+      "serialNumber": "Seriennummer",
+      "typeApproval": "Typengenehmigung"
+    },
     "equipment": "Ausstattung",
     "extras": "Extras",
     "description": "Fahrzeugbeschreibung",

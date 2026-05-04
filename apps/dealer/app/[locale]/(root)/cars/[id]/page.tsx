@@ -145,7 +145,7 @@ export default async function ListingPage({
 }) {
   const t = await getTranslations("VehicleDetail");
   const tVehicle = await getTranslations("Vehicle");
-  const tProfile = await getTranslations("DashboardProfile");
+  const tProfile = await getTranslations("DealerProfileForm");
   const { id, locale } = await params;
   const item = await getVehicleCached(id);
 
@@ -315,9 +315,9 @@ export default async function ListingPage({
   });
 
   const identifiers = filterObj({
-    FIN: f(item.vin),
-    Seriennummer: f(item.serialNumber),
-    Typengenehmigung: f(item.typeApproval),
+    [t("identifierKeys.vin")]: f(item.vin),
+    [t("identifierKeys.serialNumber")]: f(item.serialNumber),
+    [t("identifierKeys.typeApproval")]: f(item.typeApproval),
   });
 
   const equipmentList = item.equipment
@@ -356,8 +356,7 @@ export default async function ListingPage({
       const open = toDate(oh.openTime);
       const close = toDate(oh.closeTime);
       return {
-        // @ts-ignore
-        day: tProfile.has(`days.${oh.day}`) ? tProfile(`days.${oh.day}`) : (DAY_LABELS[oh.day] ?? oh.day),
+        day: oh.day,
         hours:
           oh.isOpen && open != null && close != null
             ? `${open.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
