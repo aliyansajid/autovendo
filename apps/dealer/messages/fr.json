@@ -1446,6 +1446,7 @@
     "edit": "Modifier",
     "publish": "Publier",
     "statusDraft": "Mettre en brouillon",
+    "statusSold": "Marquer comme vendu",
     "statusUpdateSuccess": "Statut mis à jour avec succès !",
     "statusUpdateError": "Erreur lors de la mise à jour du statut.",
     "emptyTitle": "Aucun véhicule trouvé",

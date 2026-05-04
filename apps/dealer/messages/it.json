@@ -1447,6 +1447,7 @@
     "edit": "Modifica",
     "publish": "Pubblica",
     "statusDraft": "Imposta come bozza",
+    "statusSold": "Segna come venduto",
     "statusUpdateSuccess": "Stato aggiornato con successo!",
     "statusUpdateError": "Errore durante l'aggiornamento dello stato.",
     "emptyTitle": "Nessun veicolo trovato",

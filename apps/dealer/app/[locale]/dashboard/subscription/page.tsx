@@ -104,11 +104,11 @@ export default async function SubscriptionPage(props: {
   const currentPlan =
     plans.find((p) => p.name.toLowerCase() === currentPlanKey) ?? null;
 
-  // Calculate quota using Plugin for limits and DB for current count
-  const maxVehicles = (subscriptionsResponse as any)?.limits?.vehicles || 0;
+  // Calculate quota using the robust subscriptionStatus action
+  const maxVehicles = subscriptionStatus.maxVehicles;
   const currentCount = subscriptionStatus.currentCount;
   const quotaPct = maxVehicles > 0 ? (currentCount / maxVehicles) * 100 : 0;
-  const remainingQuota = Math.max(0, maxVehicles - currentCount);
+  const remainingQuota = subscriptionStatus.remainingQuota;
 
   const hasAnySubscription = subscriptions.length > 0;
 

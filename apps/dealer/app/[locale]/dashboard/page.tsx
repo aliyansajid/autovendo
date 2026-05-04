@@ -223,7 +223,7 @@ export default async function DashboardPage(props: {
                   {summary.recentVehicles.map((vehicle) => (
                     <div
                       key={vehicle.id}
-                      className="py-3 flex items-center justify-between group"
+                      className="flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-3">
                         <div className="relative size-12 rounded-md overflow-hidden bg-muted shrink-0 border">

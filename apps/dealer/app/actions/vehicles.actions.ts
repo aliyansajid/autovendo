@@ -1262,7 +1262,19 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
     };
   }
 
-  const maxVehicles = limits?.vehicles || 0;
+  let maxVehicles = limits?.vehicles || 0;
+
+  // Fallback: If limits are missing from API, fetch from DB using plan name
+  if (maxVehicles === 0 && mainSub.plan) {
+    const plan = await prisma.plan.findUnique({
+      where: { name: mainSub.plan },
+      select: { limits: true },
+    });
+    if (plan && (plan.limits as any)?.vehicles) {
+      maxVehicles = (plan.limits as any).vehicles;
+    }
+  }
+
   const remainingQuota = Math.max(0, maxVehicles - currentCount);
 
   // Status mapping
