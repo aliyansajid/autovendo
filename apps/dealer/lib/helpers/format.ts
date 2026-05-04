@@ -1,12 +1,9 @@
 /**
  * ============================================================================
- * FORMATTING HELPERS - Production Grade
+ * FORMATTING HELPERS
  * ============================================================================
- * Pure formatting functions with NO side effects
  * Always using de-CH for Swiss standards
  */
-
-const CH_LOCALE = "de-CH";
 
 /**
  * Format price in Swiss Francs (CHF 1'234.00)
@@ -20,6 +17,9 @@ export function formatPrice(price: number): string {
   }).format(price);
 }
 
+/**
+ * Format number with thousand separators
+ */
 export function formatNumber(num: number | null | undefined): string {
   if (num === null || num === undefined) return "0";
   return new Intl.NumberFormat("de-CH").format(num);
@@ -92,6 +92,42 @@ export function formatCount(count: number): string {
 }
 
 /**
+ * Format date following Swiss standards (04.05.2026)
+ */
+export function formatDate(
+  date: Date | string | number,
+  locale: string = "de-CH",
+): string {
+  return formatDateTime(
+    date,
+    {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    },
+    locale,
+  );
+}
+
+/**
+ * Format date with short month name (04. Mai 2026)
+ */
+export function formatDateShort(
+  date: Date | string | number,
+  locale: string = "de-CH",
+): string {
+  return formatDateTime(
+    date,
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    },
+    locale,
+  );
+}
+
+/**
  * Format date time following Swiss standards
  */
 export function formatDateTime(
@@ -102,7 +138,7 @@ export function formatDateTime(
     year: "numeric",
   },
   locale: string = "de-CH",
-) : string {
+): string {
   const d =
     typeof date === "string" || typeof date === "number"
       ? new Date(date)
@@ -132,3 +168,20 @@ export const DAY_LABELS: Record<string, string> = {
   SATURDAY: "Samstag",
   SUNDAY: "Sonntag",
 };
+
+/**
+ * Format card number display (Visa •••• 4242)
+ */
+export function formatCardNumber(brand: string, last4: string): string {
+  const capitalizedBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
+  return `${capitalizedBrand} •••• ${last4}`;
+}
+
+/**
+ * Format card expiry date (MM/YY)
+ */
+export function formatCardExpiry(month: number, year: number): string {
+  const mm = String(month).padStart(2, "0");
+  const yy = String(year).slice(-2);
+  return `${mm}/${yy}`;
+}

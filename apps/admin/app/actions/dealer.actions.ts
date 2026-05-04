@@ -308,6 +308,19 @@ export async function unbanUser(userId: string) {
       headers: await headers(),
     });
 
+    // 2.5 Automatically republish PAUSED listings if the user has a dealer profile
+    if (user && user.dealer) {
+      await prisma.vehicle.updateMany({
+        where: {
+          dealerId: user.dealer.id,
+          status: "PAUSED",
+        },
+        data: {
+          status: "PUBLISHED",
+        },
+      });
+    }
+
     // 3. Send the notification email
     if (user && user.email) {
       const { sendEmail, AccountUnbannedEmail } =

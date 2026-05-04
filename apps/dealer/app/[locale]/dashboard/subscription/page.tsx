@@ -33,7 +33,12 @@ import {
 import { BillingPortalButton } from "./_components/billing-portal-button";
 import { SubscribeButton } from "./_components/subscribe-button";
 import { SubscriptionActions } from "./_components/subscription-actions";
-import { formatPrice, formatDateTime } from "@/lib/helpers/format";
+import {
+  formatPrice,
+  formatDateShort,
+  formatCardNumber,
+  formatCardExpiry,
+} from "@/lib/helpers/format";
 
 /**
  * Subscription Management Page
@@ -64,11 +69,10 @@ export default async function SubscriptionPage(props: {
    * 3. Live billing data from Stripe (invoices, cards)
    * 4. Available subscription plans
    */
-  const [subscriptions, subscriptionStatus, billingData, plans] =
+  const [subscriptionsResponse, subscriptionStatus, billingData, plans] =
     await Promise.all([
-      prisma.subscription.findMany({
-        where: { referenceId: session!.user.id },
-        orderBy: { periodEnd: "desc" },
+      (auth.api as any).subscription.list({
+        headers: await headers(),
       }),
       getVehicleSubscriptionStatus(),
       getBillingData(),
@@ -86,6 +90,8 @@ export default async function SubscriptionPage(props: {
       }),
     ]);
 
+  const subscriptions = (subscriptionsResponse as any[]) || [];
+
   const activeSubscription = subscriptions.find((s) =>
     ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(
       s.status,
@@ -96,28 +102,43 @@ export default async function SubscriptionPage(props: {
   const currentPlan =
     plans.find((p) => p.name.toLowerCase() === currentPlanKey) ?? null;
 
-  const quotaPct =
-    subscriptionStatus.maxVehicles > 0
-      ? (subscriptionStatus.currentCount / subscriptionStatus.maxVehicles) * 100
-      : 0;
+  // Calculate quota using Plugin for limits and DB for current count
+  const maxVehicles = (subscriptionsResponse as any)?.limits?.vehicles || 0;
+  const currentCount = subscriptionStatus.currentCount;
+  const quotaPct = maxVehicles > 0 ? (currentCount / maxVehicles) * 100 : 0;
+  const remainingQuota = Math.max(0, maxVehicles - currentCount);
 
   const hasAnySubscription = subscriptions.length > 0;
 
   const getStatusInfo = (status: string) => {
     switch (status) {
       case "trialing":
-        return { label: t("statusTrialing"), color: "bg-blue-500 hover:bg-blue-600" };
+        return {
+          label: t("statusTrialing"),
+          color: "bg-blue-500 hover:bg-blue-600",
+        };
       case "past_due":
       case "unpaid":
-        return { label: t("statusPastDue"), color: "bg-red-500 hover:bg-red-600" };
+        return {
+          label: t("statusPastDue"),
+          color: "bg-red-500 hover:bg-red-600",
+        };
       case "incomplete":
-        return { label: t("statusIncomplete"), color: "bg-yellow-500 hover:bg-yellow-600" };
+        return {
+          label: t("statusIncomplete"),
+          color: "bg-yellow-500 hover:bg-yellow-600",
+        };
       default:
-        return { label: t("statusActive"), color: "bg-green-500 hover:bg-green-600" };
+        return {
+          label: t("statusActive"),
+          color: "bg-green-500 hover:bg-green-600",
+        };
     }
   };
 
-  const statusInfo = activeSubscription ? getStatusInfo(activeSubscription.status) : null;
+  const statusInfo = activeSubscription
+    ? getStatusInfo(activeSubscription.status)
+    : null;
 
   return (
     <div className="space-y-6">
@@ -130,7 +151,8 @@ export default async function SubscriptionPage(props: {
       {activeSubscription ? (
         <div className="rounded-lg border divide-y overflow-hidden">
           {/* Status Banners */}
-          {(activeSubscription.status === "past_due" || activeSubscription.status === "unpaid") && (
+          {(activeSubscription.status === "past_due" ||
+            activeSubscription.status === "unpaid") && (
             <div className="px-6 py-3 bg-red-500 text-white text-sm font-medium">
               {t("paymentFailedWarning")}
             </div>
@@ -140,15 +162,7 @@ export default async function SubscriptionPage(props: {
             activeSubscription.trialEnd && (
               <div className="px-6 py-3 bg-blue-500 text-white text-sm font-medium">
                 {t("trialEndsAt", {
-                  date: formatDateTime(
-                    activeSubscription.trialEnd,
-                    {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    },
-                    locale,
-                  ),
+                  date: formatDateShort(activeSubscription.trialEnd, locale),
                 })}
               </div>
             )}
@@ -157,13 +171,8 @@ export default async function SubscriptionPage(props: {
             activeSubscription.cancelAt) && (
             <div className="px-6 py-3 bg-destructive text-white text-sm font-medium">
               {t("cancelingAt", {
-                date: formatDateTime(
+                date: formatDateShort(
                   activeSubscription.cancelAt || activeSubscription.periodEnd!,
-                  {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  },
                   locale,
                 ),
               })}
@@ -183,26 +192,17 @@ export default async function SubscriptionPage(props: {
                     : (currentPlan?.name ?? activeSubscription.plan)}{" "}
                   Plan
                 </h2>
-                <Badge className={statusInfo?.color}>
-                  {statusInfo?.label}
-                </Badge>
+                <Badge className={statusInfo?.color}>{statusInfo?.label}</Badge>
               </div>
               <p className="text-sm text-muted-foreground">
-                {currentPlan
-                  ? formatPrice(currentPlan.price)
-                  : activeSubscription.plan}{" "}
-                / {t("month")}
+                {formatPrice(currentPlan?.price || 0)} /{" "}
+                {activeSubscription.billingInterval || t("month")}
                 {activeSubscription.periodEnd && (
                   <span>
                     {" · "}
                     {t("nextBilling", {
-                      date: formatDateTime(
+                      date: formatDateShort(
                         activeSubscription.periodEnd,
-                        {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        },
                         locale,
                       ),
                     })}
@@ -225,16 +225,18 @@ export default async function SubscriptionPage(props: {
 
           <div className="p-6 space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">{t("listings")}</span>
+              <span className="text-muted-foreground">{t("quota")}</span>
               <span className="font-medium">
-                {subscriptionStatus.currentCount} /{" "}
-                {subscriptionStatus.maxVehicles}
+                {t("quotaUsed", {
+                  current: currentCount,
+                  max: maxVehicles,
+                })}
               </span>
             </div>
             <Progress value={quotaPct} className="h-2" />
             <p className="text-xs text-muted-foreground">
               {t("slotsRemaining", {
-                count: subscriptionStatus.remainingQuota,
+                count: remainingQuota,
               })}
             </p>
           </div>
@@ -366,17 +368,18 @@ export default async function SubscriptionPage(props: {
               <CreditCard className="size-5 text-muted-foreground" />
             </div>
             <div>
-              <p className="font-medium capitalize">
-                {billingData.paymentMethod.brand} ••••{" "}
-                {billingData.paymentMethod.last4}
+              <p className="font-medium">
+                {formatCardNumber(
+                  billingData.paymentMethod.brand,
+                  billingData.paymentMethod.last4,
+                )}
               </p>
               <p className="text-sm text-muted-foreground">
                 {t("cardExpiry", {
-                  month: String(billingData.paymentMethod.expMonth).padStart(
-                    2,
-                    "0",
+                  expiry: formatCardExpiry(
+                    billingData.paymentMethod.expMonth,
+                    billingData.paymentMethod.expYear,
                   ),
-                  year: billingData.paymentMethod.expYear,
                 })}
               </p>
             </div>
@@ -418,15 +421,7 @@ export default async function SubscriptionPage(props: {
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {formatDateTime(
-                      new Date(invoice.date * 1000),
-                      {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      },
-                      locale,
-                    )}
+                    {formatDateShort(new Date(invoice.date * 1000), locale)}
                   </TableCell>
                   <TableCell>{formatPrice(invoice.amount / 100)}</TableCell>
                   <TableCell>
@@ -434,7 +429,11 @@ export default async function SubscriptionPage(props: {
                       className={
                         invoice.status === "paid"
                           ? "bg-green-500 hover:bg-green-600"
-                          : "bg-destructive"
+                          : invoice.status === "open"
+                            ? "bg-yellow-500 hover:bg-yellow-600"
+                            : invoice.status === "draft"
+                              ? "bg-muted text-muted-foreground"
+                              : "bg-destructive hover:bg-destructive/90"
                       }
                     >
                       {t(`invoiceStatus.${invoice.status}`)}

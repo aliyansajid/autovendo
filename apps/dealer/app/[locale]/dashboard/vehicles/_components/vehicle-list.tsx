@@ -11,12 +11,12 @@ import {
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import {
-  Edit,
   Trash2,
   MoreHorizontal,
   Send,
   FileText,
   Pencil,
+  CheckCircle2,
 } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
@@ -59,7 +59,7 @@ import {
   formatPrice,
   formatKilometers,
   formatRegistrationDate,
-  formatDateTime,
+  formatDate,
 } from "@/lib/helpers/format";
 
 interface Vehicle {
@@ -207,11 +207,7 @@ export function VehicleList({
                   {vehicle.color?.toLowerCase() || "-"}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {formatDateTime(new Date(vehicle.createdAt), {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
+                  {formatDate(new Date(vehicle.createdAt), locale)}
                 </TableCell>
                 <TableCell>
                   <Badge
@@ -267,9 +263,10 @@ function VehicleActions({
     subscriptionStatus?.type === "expired";
   const isPastDue = subscriptionStatus?.type === "past_due";
 
-  const isRestricted =
-    ["SOLD", "ARCHIVED", "BANNED", "PAUSED"].includes(vehicle.status) ||
-    isCanceled;
+  // Restricted by car state (Sold, Archived, etc.)
+  const isStateRestricted = ["SOLD", "ARCHIVED", "BANNED", "PAUSED"].includes(
+    vehicle.status,
+  );
 
   return (
     <div className="flex justify-end">
@@ -280,7 +277,10 @@ function VehicleActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem asChild disabled={isRestricted || isPending}>
+          <DropdownMenuItem
+            asChild
+            disabled={isStateRestricted || isCanceled || isPending}
+          >
             <Link href={`/dashboard/vehicles/${vehicle.id}`}>
               <Pencil />
               {t("edit")}
@@ -290,7 +290,7 @@ function VehicleActions({
           {vehicle.status === "DRAFT" && (
             <DropdownMenuItem
               onSelect={() => handleStatusUpdate("PUBLISHED")}
-              disabled={isRestricted || isPastDue || isPending}
+              disabled={isStateRestricted || isCanceled || isPastDue || isPending}
             >
               <Send />
               {t("publish")}
@@ -298,13 +298,23 @@ function VehicleActions({
           )}
 
           {vehicle.status === "PUBLISHED" && (
-            <DropdownMenuItem
-              onSelect={() => handleStatusUpdate("DRAFT")}
-              disabled={isRestricted || isPending}
-            >
-              <FileText />
-              {t("statusDraft")}
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem
+                onSelect={() => handleStatusUpdate("DRAFT")}
+                disabled={isStateRestricted || isCanceled || isPending}
+              >
+                <FileText />
+                {t("statusDraft")}
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onSelect={() => handleStatusUpdate("SOLD")}
+                disabled={isStateRestricted || isPending}
+              >
+                <CheckCircle2 className="text-green-600" />
+                {t("statusSold")}
+              </DropdownMenuItem>
+            </>
           )}
 
           <DropdownMenuSeparator />
@@ -314,7 +324,7 @@ function VehicleActions({
               <DropdownMenuItem
                 onSelect={(e) => e.preventDefault()}
                 className="text-destructive focus:text-destructive"
-                disabled={isRestricted || isPending}
+                disabled={isStateRestricted || isPending}
               >
                 <Trash2 />
                 {t("delete")}

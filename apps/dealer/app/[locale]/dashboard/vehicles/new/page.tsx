@@ -22,10 +22,7 @@ export default async function AddNewVehiclePage(props: {
     getVehicleSubscriptionStatus(),
   ]);
 
-  const isBlocked =
-    subscriptionStatus.type === "no_subscription" ||
-    subscriptionStatus.type === "quota_exhausted" ||
-    subscriptionStatus.type === "expired";
+  const isBlocked = subscriptionStatus.type !== "active";
 
   if (isBlocked) {
     redirect({ href: "/dashboard/vehicles", locale: locale });

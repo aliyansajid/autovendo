@@ -102,7 +102,6 @@ function OpeningHourRow({
             inputType="time"
             name={`openingHours.${index}.openTime`}
             placeholder="08:00"
-            className="h-9"
             disabled={isPending}
           />
           <CustomFormField
@@ -111,7 +110,6 @@ function OpeningHourRow({
             inputType="time"
             name={`openingHours.${index}.closeTime`}
             placeholder="18:00"
-            className="h-9"
             disabled={isPending}
           />
         </>

@@ -33,7 +33,6 @@ import type {
   ChargingPlugTypeFast,
 } from "@repo/db";
 import { auth } from "@repo/auth";
-import { z } from "zod";
 import { headers } from "next/headers";
 import { createId } from "@paralleldrive/cuid2";
 import { storage } from "@/lib/helpers/storage";
@@ -62,6 +61,14 @@ export type SubscriptionStatus = {
   maxVehicles: number;
   currentCount: number;
   remainingQuota: number;
+};
+
+export type DashboardSummary = {
+  totalCount: number;
+  publishedCount: number;
+  draftCount: number;
+  soldCount: number;
+  recentVehicles: any[];
 };
 
 // =============================================================================
@@ -1212,23 +1219,35 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.id) throw new Error("Unauthorized");
 
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-  });
+  // Parallel fetch: Dealer count from DB, Sub status from Plugin
+  const [dealer, subscriptionsResponse] = await Promise.all([
+    prisma.dealer.findUnique({
+      where: { userId: session.user.id },
+      select: { id: true },
+    }),
+    (auth.api as any).subscription.list({
+      headers: await headers(),
+    }),
+  ]);
 
   const currentCount = dealer
     ? await prisma.vehicle.count({ where: { dealerId: dealer.id } })
     : 0;
 
-  const subscription = await prisma.subscription.findFirst({
-    where: {
-      referenceId: session.user.id,
-      status: { in: ["active", "trialing", "past_due"] },
-    },
-    orderBy: { periodEnd: "desc" },
-  });
+  const subscriptions = (subscriptionsResponse as any)?.data || [];
+  const limits = (subscriptionsResponse as any)?.limits;
 
-  if (!subscription) {
+  // Find priority subscription (active/trialing first)
+  const activeSub = subscriptions.find(
+    (s: any) => s.status === "active" || s.status === "trialing",
+  );
+  const pastDueSub = subscriptions.find(
+    (s: any) => s.status === "past_due" || s.status === "unpaid",
+  );
+
+  const mainSub = activeSub || pastDueSub;
+
+  if (!mainSub) {
     return {
       type: "no_subscription",
       plan: "",
@@ -1238,33 +1257,24 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
     };
   }
 
-  // Handle payment failures / past due states
-  if (subscription.status === "past_due" || subscription.status === "unpaid") {
-    const plan = await prisma.plan.findFirst({
-      where: { name: { equals: subscription.plan, mode: "insensitive" } },
-    });
-    const maxVehicles = (plan?.limits as any)?.vehicles ?? 0;
-    
+  const maxVehicles = limits?.vehicles || 0;
+  const remainingQuota = Math.max(0, maxVehicles - currentCount);
+
+  // Status mapping
+  if (mainSub.status === "past_due" || mainSub.status === "unpaid") {
     return {
       type: "past_due",
-      plan: subscription.plan,
+      plan: mainSub.plan,
       maxVehicles,
       currentCount,
-      remainingQuota: Math.max(0, maxVehicles - currentCount),
+      remainingQuota,
     };
   }
-
-  const plan = await prisma.plan.findFirst({
-    where: { name: { equals: subscription.plan, mode: "insensitive" } },
-  });
-
-  const maxVehicles = (plan?.limits as any)?.vehicles ?? 0;
-  const remainingQuota = Math.max(0, maxVehicles - currentCount);
 
   if (remainingQuota === 0 && maxVehicles > 0) {
     return {
       type: "quota_exhausted",
-      plan: subscription.plan,
+      plan: mainSub.plan,
       maxVehicles,
       currentCount,
       remainingQuota: 0,
@@ -1273,12 +1283,72 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
 
   return {
     type: "active",
-    plan: subscription.plan,
+    plan: mainSub.plan,
     maxVehicles,
     currentCount,
     remainingQuota,
   };
 }
+
+/**
+ * Get dashboard overview summary data
+ */
+export async function getDashboardSummary(): Promise<DashboardSummary> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: session.user.id },
+    select: { id: true },
+  });
+
+  if (!dealer) {
+    return {
+      totalCount: 0,
+      publishedCount: 0,
+      draftCount: 0,
+      soldCount: 0,
+      recentVehicles: [],
+    };
+  }
+
+  const [counts, recentVehicles] = await Promise.all([
+    prisma.vehicle.groupBy({
+      by: ["status"],
+      where: { dealerId: dealer.id },
+      _count: { _all: true },
+    }),
+    prisma.vehicle.findMany({
+      where: { dealerId: dealer.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        make: true,
+        model: true,
+        price: true,
+        status: true,
+        images: true,
+        createdAt: true,
+      },
+    }),
+  ]);
+
+  const totalCount = counts.reduce((acc, curr) => acc + curr._count._all, 0);
+  const publishedCount =
+    counts.find((c) => c.status === "PUBLISHED")?._count._all || 0;
+  const draftCount = counts.find((c) => c.status === "DRAFT")?._count._all || 0;
+  const soldCount = counts.find((c) => c.status === "SOLD")?._count._all || 0;
+
+  return {
+    totalCount,
+    publishedCount,
+    draftCount,
+    soldCount,
+    recentVehicles,
+  };
+}
+
 
 export async function prepareVehicleListing(existingVehicleId?: string) {
   const session = await auth.api.getSession({
@@ -1392,7 +1462,7 @@ export async function createVehicle(
           ? "noSubscription"
           : subscriptionStatus.type === "quota_exhausted"
             ? "limitReached"
-            : subscriptionStatus.type,
+            : subscriptionStatus.type, // Block everything else (past_due, expired, etc.)
     };
   }
 
@@ -1580,6 +1650,14 @@ export async function updateVehicle(
 
   if (!dealer) {
     throw new Error("Dealer profile not found");
+  }
+
+  // SECURITY GUARD:
+  // Only allow saving edits if the subscription is active, trialing, or past_due.
+  // We block if it's expired or no_subscription.
+  const subStatus = await getVehicleSubscriptionStatus();
+  if (subStatus.type === "no_subscription" || subStatus.type === "expired") {
+    throw new Error("Subscription inactive. Cannot save edits.");
   }
 
   const tSchema = await getTranslations("VehicleSchema");
@@ -1800,14 +1878,20 @@ export async function updateVehicleStatus(vehicleId: string, status: string) {
 
   const subStatus = await getVehicleSubscriptionStatus();
 
-  // If subscription is completely ended, block all modifications
-  if (subStatus.type === "no_subscription" || subStatus.type === "expired") {
-    throw new Error("Subscription inactive. Action blocked.");
-  }
-
-  // If past due, block publishing but allow other maintenance (unpublishing, sold, etc.)
-  if (subStatus.type === "past_due" && status === "PUBLISHED") {
-    throw new Error("Payment failed. Cannot publish new listings.");
+  // SECURITY GUARD:
+  // We ALWAYS allow taking a car offline (SOLD or DRAFT) regardless of subscription.
+  // We ONLY allow putting a car live (PUBLISHED) if the subscription is healthy.
+  
+  if (status === "PUBLISHED") {
+    if (subStatus.type !== "active") {
+      throw new Error("Subscription not active. Cannot publish.");
+    }
+  } else {
+    // For SOLD or DRAFT, we just ensure the user isn't totally missing (no_subscription)
+    // but we allow it even if expired.
+    if (subStatus.type === "no_subscription") {
+      throw new Error("Unauthorized");
+    }
   }
 
   const updated = await prisma.vehicle.update({
