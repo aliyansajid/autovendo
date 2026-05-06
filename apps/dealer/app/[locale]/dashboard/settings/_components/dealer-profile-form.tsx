@@ -245,6 +245,15 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
     name: "openingHours",
   });
 
+  // If dealer has no saved opening hours, mark form dirty so they can save defaults
+  useEffect(() => {
+    if (!initialData?.openingHours?.length) {
+      form.setValue("openingHours", form.getValues("openingHours"), {
+        shouldDirty: true,
+      });
+    }
+  }, []);
+
   // useWatch for image fields — each only triggers its own re-render
   const imageValue = useWatch({ control: form.control, name: "image" });
   const logoValue = useWatch({ control: form.control, name: "logo" });

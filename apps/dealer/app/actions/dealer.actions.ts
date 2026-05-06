@@ -200,7 +200,7 @@ export async function updateDealerProfile(values: any) {
       cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
     ]);
 
-    revalidatePath("/dashboard/settings/profile");
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     console.error("Failed to update dealer profile:", error);
