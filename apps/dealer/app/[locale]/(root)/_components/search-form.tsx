@@ -96,9 +96,13 @@ export const SearchForm = () => {
                 placeholder={t("fields.make")}
                 ariaLabel={t("fields.make")}
               >
-                {carMakes.map((group) => (
+                {carMakes.map((group, index) => (
                   <SelectGroup key={group.label}>
-                    <SelectLabel>{group.label}</SelectLabel>
+                    <SelectLabel>
+                      {index === 0
+                        ? t("makeGroups.topMakes")
+                        : t("makeGroups.allMakes")}
+                    </SelectLabel>
                     {group.items.map((make) => (
                       <SelectItem
                         key={`${group.label}-${make.value}`}

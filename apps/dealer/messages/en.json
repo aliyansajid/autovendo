@@ -91,6 +91,10 @@
       "price": "Price",
       "registrationFrom": "First registration from"
     },
+    "makeGroups": {
+      "topMakes": "Top Makes",
+      "allMakes": "All Makes"
+    },
     "button": "Search",
     "advancedSearch": "Advanced Search",
     "validation": {
@@ -153,12 +157,12 @@
       "UTILITY": "Utility Vehicle",
       "TRUCK": "Truck",
       "CAMPER": "Camper",
-      "CABRIOLET": "Cabriolet",
+      "CABRIOLET": "Convertible",
       "COUPE": "Coupé",
-      "SMALL_CAR": "Small car",
-      "ESTATE": "Estate",
+      "SMALL_CAR": "City Car",
+      "ESTATE": "Station Wagon",
       "MINIVAN": "Minivan",
-      "SALOON": "Saloon",
+      "SALOON": "Sedan",
       "PICKUP": "Pick-up",
       "SUV": "SUV / Off-road",
       "BRIDGE": "Bridge",
@@ -1514,7 +1518,7 @@
     "colourUpholstery": "Colour & Upholstery",
     "identifiers": "Identification Numbers",
     "identifierKeys": {
-      "vin": "VIN",
+      "vin": "Vehicle Identification Number",
       "serialNumber": "Serial Number",
       "typeApproval": "Type Approval"
     },

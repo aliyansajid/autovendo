@@ -91,6 +91,10 @@
       "price": "Preis",
       "registrationFrom": "Erstzulassung ab"
     },
+    "makeGroups": {
+      "topMakes": "Top-Marken",
+      "allMakes": "Alle Marken"
+    },
     "button": "Suchen",
     "advancedSearch": "Erweiterte Suche",
     "validation": {
@@ -1529,7 +1533,7 @@
     "colourUpholstery": "Farbe und Polsterung",
     "identifiers": "Identifikationsnummern",
     "identifierKeys": {
-      "vin": "FIN",
+      "vin": "Fahrzeugidentifikationsnummer",
       "serialNumber": "Seriennummer",
       "typeApproval": "Typengenehmigung"
     },

@@ -91,6 +91,10 @@
       "price": "Prezzo",
       "registrationFrom": "Prima immatricolazione da"
     },
+    "makeGroups": {
+      "topMakes": "Marche principali",
+      "allMakes": "Tutte le marche"
+    },
     "button": "Cerca",
     "advancedSearch": "Ricerca avanzata",
     "validation": {
@@ -153,9 +157,9 @@
       "UTILITY": "Veicolo commerciale",
       "TRUCK": "Camion",
       "CAMPER": "Camper",
-      "CABRIOLET": "Cabriolet",
+      "CABRIOLET": "Cabrio / Decapottabile",
       "COUPE": "Coupé",
-      "SMALL_CAR": "Utilitaria",
+      "SMALL_CAR": "Citycar",
       "ESTATE": "Station wagon",
       "MINIVAN": "Monovolume",
       "SALOON": "Berlina",
@@ -963,6 +967,8 @@
       "swiss": "Direttamente svizzeri"
     },
     "partnershipText": "Con autovendo.ch non investe in pubblicità. Investe in una partnership.\nIl suo margine appartiene a Lei – non alla piattaforma.",
+    "month": "mese",
+    "vehiclesIncluded": "veicoli inclusi",
     "trialDaysLabel": "{days} giorni di prova gratuita",
     "choosePlan": "Scelga il suo pacchetto",
     "popular": "Popolare",
@@ -1516,7 +1522,7 @@
     "colourUpholstery": "Colore e selleria",
     "identifiers": "Numeri di identificazione",
     "identifierKeys": {
-      "vin": "VIN",
+      "vin": "Numero di identificazione del veicolo",
       "serialNumber": "Numero di serie",
       "typeApproval": "Approvazione del tipo"
     },
