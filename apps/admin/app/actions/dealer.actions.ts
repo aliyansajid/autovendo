@@ -6,6 +6,7 @@ import { prisma } from "@repo/db";
 import { StorageService } from "@repo/storage";
 import { revalidatePath } from "next/cache";
 import { dealerSchema, updateDealerSchema } from "@/schema";
+import { cacheDelete, cacheDeletePattern } from "@/lib/cache";
 
 export async function createDealer(formData: z.infer<typeof dealerSchema>) {
   try {
@@ -65,6 +66,7 @@ export async function createDealer(formData: z.infer<typeof dealerSchema>) {
       // We don't return error here because the account was successfully created
     }
 
+    await cacheDeletePattern("dealers:list:*");
     revalidatePath("/dealers");
 
     return {
@@ -146,6 +148,11 @@ export async function updateDealer(
       },
     });
 
+    await Promise.all([
+      cacheDelete(`dealer:${id}`),
+      cacheDeletePattern("dealers:list:*"),
+      cacheDeletePattern(`dealer:vehicles:${id}:*`),
+    ]);
     revalidatePath("/dealers");
     revalidatePath(`/dealers/${id}`);
 
@@ -462,6 +469,14 @@ export async function removeUser(userId: string) {
       });
     }
 
+    if (user.dealer) {
+      await Promise.all([
+        cacheDelete(`dealer:${user.dealer.id}`),
+        cacheDeletePattern("dealers:list:*"),
+        cacheDeletePattern(`dealer:vehicles:${user.dealer.id}:*`),
+        cacheDeletePattern("vehicles:*"),
+      ]);
+    }
     revalidatePath("/dealers");
     return { success: true, message: "User and all associated data removed successfully" };
   } catch (error) {
