@@ -41,9 +41,9 @@ export function BasicDataSection({
   const kmMax = 400000;
   const priceMax = 1000000;
 
-  const yearValue = watch("year");
-  const kilometerValue = watch("kilometer");
-  const priceValue = watch("price");
+  const yearValue = useWatch({ control, name: "year" });
+  const kilometerValue = useWatch({ control, name: "kilometer" });
+  const priceValue = useWatch({ control, name: "price" });
 
   const yearRange = yearValue ?? [yearMin, yearMax];
   const kilometerRange = kilometerValue ?? [0, kmMax];
