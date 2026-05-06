@@ -1595,7 +1595,10 @@ export async function createVehicle(
     },
   });
 
-  await cacheDeletePattern("vehicles:*");
+  await Promise.all([
+    cacheDeletePattern("vehicles:*"),
+    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
+  ]);
   revalidatePath("/dashboard/vehicles");
   return listingId;
 }
@@ -1820,6 +1823,7 @@ export async function updateVehicle(
   await Promise.all([
     cacheDeletePattern("vehicles:*"),
     cacheDelete(`vehicle:${vehicleId}`),
+    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
   ]);
   revalidatePath("/dashboard/vehicles");
   return vehicleId;
@@ -1875,6 +1879,7 @@ export async function deleteVehicle(id: string) {
   await Promise.all([
     cacheDeletePattern("vehicles:*"),
     cacheDelete(`vehicle:${id}`),
+    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
   ]);
   revalidatePath("/", "layout");
   return { success: true };
@@ -1931,6 +1936,7 @@ export async function updateVehicleStatus(vehicleId: string, status: string) {
   await Promise.all([
     cacheDeletePattern("vehicles:*"),
     cacheDelete(`vehicle:${vehicleId}`),
+    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
   ]);
   revalidatePath("/", "layout");
   return { success: true, status: updated.status };
