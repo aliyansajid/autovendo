@@ -105,6 +105,8 @@ const VEHICLE_LIST_SELECT = {
       city: true,
       zipCode: true,
       phoneNumber: true,
+      googleRating: true,
+      googleReviewCount: true,
     },
   },
 } satisfies Prisma.VehicleSelect;
@@ -1926,6 +1928,10 @@ export async function updateVehicleStatus(vehicleId: string, status: string) {
     },
   });
 
+  await Promise.all([
+    cacheDeletePattern("vehicles:*"),
+    cacheDelete(`vehicle:${vehicleId}`),
+  ]);
   revalidatePath("/", "layout");
   return { success: true, status: updated.status };
 }
