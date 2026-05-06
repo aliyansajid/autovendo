@@ -400,12 +400,15 @@ export async function removeUser(userId: string) {
         }
       }
 
-      // 2b. Delete dealer logos/covers
+      // 2b. Delete dealer logos/covers/profile image
       if (user.dealer.logo) {
         try { await storage.deleteFile(user.dealer.logo); } catch (e) {}
       }
       if (user.dealer.coverImage) {
         try { await storage.deleteFile(user.dealer.coverImage); } catch (e) {}
+      }
+      if (user.image) {
+        try { await storage.deleteFile(user.image); } catch (e) {}
       }
 
       // 2c. Delete vehicles from DB
