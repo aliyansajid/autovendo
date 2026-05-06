@@ -8,6 +8,8 @@ export interface DealerListItem {
   zipCode: string;
   logo: string | null;
   coverImage: string | null;
+  googleRating: number | null;
+  googleReviewCount: number | null;
 }
 
 export interface DealerListResult {
@@ -39,6 +41,8 @@ export interface DealerDetail {
   country: string;
   openingHours: DealerOpeningHour[];
   googlePlaceId: string | null;
+  googleRating: number | null;
+  googleReviewCount: number | null;
 }
 
 export interface DealerVehiclesResult {

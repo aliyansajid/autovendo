@@ -31,6 +31,8 @@ export interface VehicleListItem {
     city: string;
     zipCode: string;
     phoneNumber: string | null;
+    googleRating: number | null;
+    googleReviewCount: number | null;
   };
 }
 

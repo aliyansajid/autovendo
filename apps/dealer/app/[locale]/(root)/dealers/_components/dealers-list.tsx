@@ -4,7 +4,7 @@ import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@repo/ui/components/button";
-import { MapPin, ArrowRight, Search } from "lucide-react";
+import { MapPin, ArrowRight, Search, Star } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import {
   InputGroup,
@@ -130,9 +130,20 @@ export const DealersList = ({ initialData }: DealersListProps) => {
                 className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-muted/50 transition-colors group"
               >
                 <div className="min-w-0 space-y-1 flex-1">
-                  <h2 className="font-semibold text-base truncate text-foreground group-hover:text-primary transition-colors">
-                    {dealer.companyName}
-                  </h2>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="font-semibold text-base truncate text-foreground group-hover:text-primary transition-colors">
+                      {dealer.companyName}
+                    </h2>
+                    {dealer.googleRating != null && (
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
+                        <Star className="size-3 fill-rating text-rating" />
+                        <span className="font-medium text-foreground">{dealer.googleRating.toFixed(1)}</span>
+                        {dealer.googleReviewCount != null && (
+                          <span>({dealer.googleReviewCount})</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                   <div className="flex items-center text-muted-foreground gap-1">
                     <MapPin className="size-3.5 shrink-0" />
                     <span className="text-xs truncate">

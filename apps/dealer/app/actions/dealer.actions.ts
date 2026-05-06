@@ -325,6 +325,8 @@ export async function getDealers({
           zipCode: true,
           logo: true,
           coverImage: true,
+          googleRating: true,
+          googleReviewCount: true,
         },
       }),
       prisma.dealer.count({ where }),
@@ -375,6 +377,8 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
         phoneNumber: true,
         businessEmail: true,
         googlePlaceId: true,
+        googleRating: true,
+        googleReviewCount: true,
         user: { select: { emailVerified: true } },
         openingHours: {
           select: { day: true, isOpen: true, openTime: true, closeTime: true },
@@ -399,6 +403,8 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
       email: dealer.businessEmail,
       isVerified: dealer.user.emailVerified,
       googlePlaceId: dealer.googlePlaceId ?? null,
+      googleRating: dealer.googleRating ?? null,
+      googleReviewCount: dealer.googleReviewCount ?? null,
       openingHours: [...dealer.openingHours]
         .sort(
           (a, b) =>
@@ -555,47 +561,107 @@ export async function sendDealerContactEmail(
 }
 
 // -----------------------------------------------------------------------------
-// Public: fetch Google Place reviews
+// Public: fetch Google Place reviews with 30-day DB cache
+// - Visitors always read from DB (zero API calls)
+// - API is called at most once per dealer per 30 days
 // Requires GOOGLE_PLACES_API_KEY env var + dealer.googlePlaceId to be set.
 // Returns null if unconfigured — UI handles gracefully.
 // -----------------------------------------------------------------------------
 
+const REVIEW_CACHE_TTL = 60 * 60 * 24 * 30; // 30 days in seconds
+
 export async function getDealerGoogleReviews(
-  placeId: string,
+  dealerId: string,
 ): Promise<GooglePlaceData | null> {
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
-  if (!apiKey) return null;
+  const redisFreshKey = `dealer:reviews:fresh:${dealerId}`;
 
+  // 1. Check if Redis says cache is still fresh
+  const isFresh = await cacheGet<boolean>(redisFreshKey);
+
+  if (isFresh) {
+    // Serve from DB — no API call
+    const dealer = await prisma.dealer.findUnique({
+      where: { id: dealerId },
+      select: { googleRating: true, googleReviewCount: true, googleReviews: true },
+    });
+    if (dealer?.googleRating != null) {
+      return {
+        rating: dealer.googleRating,
+        reviewCount: dealer.googleReviewCount ?? null,
+        reviews: (dealer.googleReviews as any[]) ?? [],
+      };
+    }
+  }
+
+  // 2. Redis key expired (or never set) — check if dealer has a Place ID
+  const dealer = await prisma.dealer.findUnique({
+    where: { id: dealerId },
+    select: {
+      googlePlaceId: true,
+      googleRating: true,
+      googleReviewCount: true,
+      googleReviews: true,
+    },
+  });
+
+  if (!dealer?.googlePlaceId) return null;
+
+  // 3. No API key — return whatever is in DB (may be stale but better than nothing)
+  if (!apiKey) {
+    if (dealer.googleRating != null) {
+      return {
+        rating: dealer.googleRating,
+        reviewCount: dealer.googleReviewCount ?? null,
+        reviews: (dealer.googleReviews as any[]) ?? [],
+      };
+    }
+    return null;
+  }
+
+  // 4. Call Google API
   try {
     const url = new URL(
       "https://maps.googleapis.com/maps/api/place/details/json",
     );
-    url.searchParams.set("place_id", placeId);
+    url.searchParams.set("place_id", dealer.googlePlaceId);
     url.searchParams.set("fields", "rating,user_ratings_total,reviews");
     url.searchParams.set("language", "de");
     url.searchParams.set("key", apiKey);
 
-    const res = await fetch(url.toString(), {
-      next: { revalidate: 3600 },
-    });
-
+    const res = await fetch(url.toString(), { cache: "no-store" });
     if (!res.ok) return null;
 
     const data = await res.json();
     if (data.status !== "OK" || !data.result) return null;
 
     const { result } = data;
+    const reviews = (result.reviews ?? []).map((r: any) => ({
+      authorName: r.author_name,
+      rating: r.rating,
+      text: r.text,
+      relativeTimeDescription: r.relative_time_description,
+      profilePhotoUrl: r.profile_photo_url ?? null,
+    }));
+
+    // 5. Persist to DB + mark fresh in Redis for 30 days
+    await Promise.all([
+      prisma.dealer.update({
+        where: { id: dealerId },
+        data: {
+          googleRating: result.rating ?? null,
+          googleReviewCount: result.user_ratings_total ?? null,
+          googleReviews: reviews,
+        },
+      }),
+      cacheSet(redisFreshKey, true, REVIEW_CACHE_TTL),
+      cacheDelete(`dealer:${dealerId}`),
+    ]);
 
     return {
       rating: result.rating ?? null,
       reviewCount: result.user_ratings_total ?? null,
-      reviews: (result.reviews ?? []).map((r: any) => ({
-        authorName: r.author_name,
-        rating: r.rating,
-        text: r.text,
-        relativeTimeDescription: r.relative_time_description,
-        profilePhotoUrl: r.profile_photo_url ?? null,
-      })),
+      reviews,
     };
   } catch (error) {
     console.error("Failed to fetch Google reviews:", error);

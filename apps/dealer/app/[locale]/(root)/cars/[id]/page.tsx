@@ -379,8 +379,8 @@ export default async function ListingPage({
     description: item.dealer.description ?? undefined,
     openingHours: openingHours.length > 0 ? openingHours : undefined,
     isVerified: dealerUser?.emailVerified === true,
-    rating: 0,
-    reviewCount: 0,
+    rating: (item.dealer as any).googleRating ?? null,
+    reviewCount: (item.dealer as any).googleReviewCount ?? null,
   };
 
   const similarItems = await getSimilarVehicles(item.dealerId!, item.id);
@@ -626,12 +626,14 @@ export default async function ListingPage({
 
             <SellerSection seller={seller} />
 
-            <ReviewSection
-              rating={seller.rating}
-              count={seller.reviewCount}
-              reviews={[]}
-              dealerId={seller.id}
-            />
+            {seller.rating != null && (
+              <ReviewSection
+                rating={seller.rating}
+                count={seller.reviewCount ?? 0}
+                reviews={[]}
+                dealerId={seller.id}
+              />
+            )}
 
             <Separator className="my-12" />
 
@@ -666,20 +668,24 @@ export default async function ListingPage({
                     </span>
                   </div>
                 )}
-                <div className="flex items-center gap-1.5 text-sm">
-                  <div className="flex text-rating">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`size-4 ${i < Math.round(seller.rating) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
-                      />
-                    ))}
+                {seller.rating != null && (
+                  <div className="flex items-center gap-1.5 text-sm">
+                    <div className="flex text-rating">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`size-4 ${i < Math.round(seller.rating!) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="font-semibold">{seller.rating.toFixed(1)}</span>
+                    {seller.reviewCount != null && (
+                      <span className="text-muted-foreground">
+                        {t("reviewCount", { count: seller.reviewCount })}
+                      </span>
+                    )}
                   </div>
-                  <span className="font-semibold">{seller.rating}</span>
-                  <span className="text-muted-foreground">
-                    {t("reviewCount", { count: seller.reviewCount })}
-                  </span>
-                </div>
+                )}
               </div>
 
               <Separator />

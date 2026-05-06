@@ -24,8 +24,8 @@ interface SellerSectionProps {
     id: string;
     logo?: string;
     name: string;
-    rating: number;
-    reviewCount: number;
+    rating: number | null;
+    reviewCount: number | null;
     website?: string;
     phone: string;
     address: string;
@@ -58,20 +58,24 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                   </div>
                 )}
                 <h3 className="font-bold text-lg">{seller.name}</h3>
-                <div className="flex items-center gap-1.5 text-sm">
-                  <div className="flex text-rating">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`size-4 ${i < Math.round(seller.rating) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
-                      />
-                    ))}
+                {seller.rating != null && (
+                  <div className="flex items-center gap-1.5 text-sm">
+                    <div className="flex text-rating">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`size-4 ${i < Math.round(seller.rating!) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="font-semibold">{seller.rating.toFixed(1)}</span>
+                    {seller.reviewCount != null && (
+                      <span className="text-muted-foreground">
+                        {t("reviewCount", { count: seller.reviewCount })}
+                      </span>
+                    )}
                   </div>
-                  <span className="font-semibold">{seller.rating}</span>
-                  <span className="text-muted-foreground">
-                    {t("reviewCount", { count: seller.reviewCount })}
-                  </span>
-                </div>
+                )}
 
                 {seller.website && (
                   <Link

@@ -69,9 +69,7 @@ export default async function DealerPage({
 
   const [initialVehicles, googleData] = await Promise.all([
     getDealerVehicles(dealer.id, 1, 12, filters),
-    dealer.googlePlaceId
-      ? getDealerGoogleReviews(dealer.googlePlaceId)
-      : Promise.resolve(null),
+    getDealerGoogleReviews(dealer.id),
   ]);
 
   const dealerSchema = {

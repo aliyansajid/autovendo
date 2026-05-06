@@ -205,14 +205,22 @@ export function ListingListCard({
                   {item.dealer.companyName}
                 </Link>
 
-                <div className="flex items-center text-rating">
-                  <Star className="w-3 h-3 fill-current" />
-                  <Star className="w-3 h-3 fill-current" />
-                  <Star className="w-3 h-3 fill-current" />
-                  <Star className="w-3 h-3 fill-current" />
-                  <Star className="w-3 h-3 fill-current opacity-30" />
-                </div>
-                <span className="text-xs text-muted-foreground">(0)</span>
+                {item.dealer.googleRating != null && (
+                  <>
+                    <div className="flex items-center text-rating">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-3 h-3 fill-current ${i < Math.round(item.dealer.googleRating!) ? "text-rating" : "text-muted-foreground opacity-30"}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {item.dealer.googleRating.toFixed(1)}
+                      {item.dealer.googleReviewCount != null && ` (${item.dealer.googleReviewCount})`}
+                    </span>
+                  </>
+                )}
               </div>
 
               <span className="text-xs text-muted-foreground truncate">
