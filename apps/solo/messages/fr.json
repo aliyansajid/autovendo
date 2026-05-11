@@ -1,4 +1,11 @@
 {
+  "HomePage": {
+    "hero": {
+      "title": "Vendez votre voiture. Sans concessionnaires. Sans complications.",
+      "description": "Vendre votre voiture devrait être simple. Pourtant, sur la plupart des plateformes, c’est tout le contraire.\nVotre annonce se perd parmi les concessionnaires, les offres professionnelles et des centaines d’autres véhicules. Vous baissez le prix, attendez des messages… sans vraiment être visible. Ce n’est pas ainsi que cela devrait fonctionner.\nAutosolo.ch a été créé pour changer cela. Une plateforme exclusivement dédiée aux particuliers – à des personnes comme vous.\nAucun concessionnaire. Aucun véhicule de showroom. Aucune concurrence injuste. Seulement de vraies personnes qui vendent leur voiture.\nSur Autosolo.ch, votre voiture reçoit l’attention qu’elle mérite. Les acheteurs viennent ici spécifiquement pour trouver des offres privées – transparentes, directes et plus humaines.\nVous gardez le contrôle sur votre prix, vos échanges et votre vente. Aucun intermédiaire. Aucune pression. Aucune complication inutile.\nQue vous souhaitiez vendre, changer ou simplement passer à autre chose, Autosolo.ch vous offre une plateforme juste et efficace.\nParce que vendre votre voiture, ce n’est pas qu’une transaction – c’est votre temps, votre valeur et votre décision. Et cela mérite une plateforme à votre image.",
+      "cta": "Publiez votre annonce dès maintenant et trouvez de vrais acheteurs."
+    }
+  },
   "Header": {
     "nav": {
       "advancedSearch": "Recherche avancée",
@@ -865,193 +872,85 @@
     "errorDefault": "Une erreur est survenue. Veuillez réessayer."
   },
   "PricingPage": {
-    "title": "Plus de visibilité. Plus de service. Moins de coûts.",
-    "subtitle": "Pourquoi payer 30 à 40 % de plus – quand vous bénéficiez d'un suivi plus personnalisé et d'une transparence totale avec autovendo.ch ?",
-    "noOverpriced": "Fini les plateformes trop chères.",
-    "introText1": "autovendo.ch donne aux concessionnaires le contrôle, l'équité et un vrai support personnel – à des conditions nettement meilleures. Le commerce automobile est déjà suffisamment exigeant. Votre plateforme d'annonces devrait vous soutenir – et non rogner votre marge.",
-    "introText2": "autovendo.ch offre des prix équitables, des interlocuteurs directs et une transparence totale. Pas de frais cachés. Pas de logique de grande entreprise. Juste un vrai partenariat.",
-    "comparisonTitle": "Des prix équitables – Comparaison directe",
-    "tableHeaders": {
-      "package": "Forfait",
-      "vehicles": "Véhicules simultanés",
-      "price": "autovendo.ch",
-      "savings": "Économies vs. leader du marché*",
-      "monthlySavings": "Économies mensuelles"
-    },
-    "tableRows": {
-      "ca": "env.",
-      "bronzeVehicles": "Jusqu'à 5 véhicules",
-      "silverVehicles": "Jusqu'à 10 véhicules",
-      "goldVehicles": "Jusqu'à 15 véhicules",
-      "diamondVehicles": "Jusqu'à 25 véhicules",
-      "bronzeSavings": "env. 30% moins cher",
-      "silverSavings": "env. 30% moins cher",
-      "goldSavings": "env. 35% moins cher",
-      "diamondSavings": "env. 40% moins cher"
-    },
-    "largerDealers": {
-      "title": "Plus de 25 véhicules",
-      "subtitle": "Pour les grands concessionnaires dès 25 véhicules",
-      "tagline": "Solutions individuelles. Prix individuels.",
-      "description1": "Vous gérez une concession plus importante avec plus de 25 véhicules en stock ? Nous créons pour vous une offre sur mesure – garantie moins chère que les tarifs habituels des plateformes.",
-      "description2": "Nous analysons votre stock actuel et vos besoins, et vous présentons une solution transparente et équitable avec un vrai potentiel d'économies.",
-      "personalTitle": "Personnel. Direct. Sur place.",
-      "personalDesc1": "Nous nous rendons volontiers chez vous en personne et apportons un aperçu détaillé des prix. Nous vous expliquons tout en détail – ouvertement, honnêtement et sans engagement.",
-      "personalDesc2": "Un seul appel suffit.",
-      "personalDesc3": "Ou envoyez-nous un e-mail et convenez d'un rendez-vous. Nous sommes à portée d'un coup de téléphone.",
-      "callButton": "Prendre rendez-vous par téléphone",
-      "emailButton": "Écrire un e-mail"
-    },
-    "whyPay": {
-      "title": "Pourquoi payer plus ?",
-      "reach": "Même portée.",
-      "contact": "Interlocuteur personnel.",
-      "response": "Temps de réponse plus rapides.",
-      "flexible": "Solutions flexibles pour concessionnaires.",
-      "noCorp": "Pas de structures d'entreprise.",
-      "fair": "Tarification équitable."
-    },
-    "weAre": {
-      "title": "Nous sommes :",
-      "efficient": "Plus efficaces",
-      "dealerOriented": "Orientés concessionnaires",
-      "personal": "Personnels",
-      "transparent": "Transparents",
-      "swiss": "Directement suisses"
-    },
-    "partnershipText": "Avec autovendo.ch, vous n'investissez pas dans la publicité. Vous investissez dans un partenariat.\nVotre marge vous appartient – pas à la plateforme.",
+    "title": "Simple. Équitable. Vendez avec succès.",
+    "subtitle": "Choisissez le forfait adapté à votre vente de voiture. Pas de frais cachés, contrôle total.",
     "choosePlan": "Choisissez votre forfait",
-    "popular": "Populaire",
-    "example": {
-      "label": "Exemple de calcul :",
-      "text": "Un concessionnaire avec 25 véhicules économise avec autovendo.ch",
-      "highlight": "plus de CHF 3'000.– par an.",
-      "suffix": "C'est de la marge directe. Sans risque.",
-      "switchText": "Passez maintenant à autovendo.ch et économisez plusieurs milliers de francs par an – avec un service personnalisé et des conditions équitables.",
-      "contactButton": "Prendre contact sans engagement"
-    },
+    "popular": "MEILLEURE VALEUR",
     "tiers": [
       {
-        "name": "Bronze",
-        "price": "180.–",
-        "period": "/ mois",
-        "description": "Idéal pour les petits stocks.",
+        "name": "Standard",
+        "price": "19.–",
+        "period": "/ 30 jours",
+        "description": "Idéal pour une vente rapide.",
         "features": [
           {
-            "name": "Jusqu'à 5 véhicules",
+            "name": "Publiez en quelques minutes",
             "included": true
           },
           {
-            "name": "Visibilité totale",
+            "name": "Atteignez de vrais acheteurs privés",
             "included": true
           },
           {
-            "name": "Support personnel",
+            "name": "Contrôle total sur le prix et la communication",
             "included": true
           },
           {
-            "name": "Pas de frais cachés",
-            "included": true
-          },
-          {
-            "name": "Durée flexible",
+            "name": "Annonce de 30 jours",
             "included": true
           }
         ],
-        "buttonText": "Choisir le forfait",
+        "buttonText": "Commencer la vente",
         "popular": false
       },
       {
-        "name": "Silver",
-        "price": "280.–",
-        "period": "/ mois",
-        "description": "Parfait pour les concessionnaires en croissance.",
+        "name": "BEST VALUE",
+        "price": "49.–",
+        "period": "/ Jusqu'à la vente",
+        "description": "Vendez sans pression au meilleur prix.",
         "features": [
           {
-            "name": "Jusqu'à 10 véhicules",
+            "name": "Aucune limite de temps",
             "included": true
           },
           {
-            "name": "Visibilité totale",
+            "name": "Aucun renouvellement nécessaire",
             "included": true
           },
           {
-            "name": "Support personnel",
+            "name": "Aucune pression pour baisser votre prix",
             "included": true
           },
           {
-            "name": "Pas de frais cachés",
-            "included": true
-          },
-          {
-            "name": "Durée flexible",
+            "name": "Visibilité maximale",
             "included": true
           }
         ],
-        "buttonText": "Choisir le forfait",
-        "popular": false
-      },
-      {
-        "name": "Gold",
-        "price": "325.–",
-        "period": "/ mois",
-        "description": "Pour les concessionnaires établis.",
-        "features": [
-          {
-            "name": "Jusqu'à 15 véhicules",
-            "included": true
-          },
-          {
-            "name": "Visibilité totale",
-            "included": true
-          },
-          {
-            "name": "Support personnel",
-            "included": true
-          },
-          {
-            "name": "Pas de frais cachés",
-            "included": true
-          },
-          {
-            "name": "Durée flexible",
-            "included": true
-          }
-        ],
-        "buttonText": "Choisir le forfait",
+        "buttonText": "Vendre sans pression",
         "popular": true
-      },
-      {
-        "name": "Diamond",
-        "price": "408.–",
-        "period": "/ mois",
-        "description": "Pour les concessionnaires à volume plus élevé.",
-        "features": [
-          {
-            "name": "Jusqu'à 25 véhicules",
-            "included": true
-          },
-          {
-            "name": "Visibilité totale",
-            "included": true
-          },
-          {
-            "name": "Support personnel",
-            "included": true
-          },
-          {
-            "name": "Pas de frais cachés",
-            "included": true
-          },
-          {
-            "name": "Durée flexible",
-            "included": true
-          }
-        ],
-        "buttonText": "Choisir le forfait",
-        "popular": false
       }
-    ]
+    ],
+    "trustSafety": {
+      "title": "Section Confiance & Sécurité",
+      "items": [
+        {
+          "title": "Uniquement des vendeurs particuliers",
+          "description": "Pas de concessionnaires en concurrence avec vous"
+        },
+        {
+          "title": "Tarification transparente",
+          "description": "Pas de frais cachés ni d'abonnements"
+        },
+        {
+          "title": "Contrôle total",
+          "description": "Vous décidez du prix, de la communication et de la transaction"
+        }
+      ]
+    },
+    "urgency": {
+      "title": "Commencez aujourd'hui — votre acheteur vous cherche peut-être déjà",
+      "button": "Commencer la vente maintenant"
+    }
   },
   "SubscribeButton": {
     "loginRequired": "Veuillez vous connecter pour choisir un forfait",

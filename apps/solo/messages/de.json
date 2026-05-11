@@ -1,4 +1,11 @@
 {
+  "HomePage": {
+    "hero": {
+      "title": "Verkaufen Sie Ihr Auto. Keine Händler. Kein Aufwand.",
+      "description": "Ihr Auto zu verkaufen sollte einfach sein. Doch auf den meisten Plattformen ist es genau das Gegenteil.\nIhr Inserat geht zwischen Händlern, professionellen Angeboten und unzähligen anderen Fahrzeugen unter. Sie senken den Preis, warten auf Anfragen – und fühlen sich trotzdem übersehen. So sollte es nicht sein.\nAutosolo.ch wurde genau deshalb entwickelt. Eine Plattform ausschließlich für Privatverkäufer – für Menschen wie Sie.\nKeine Händler. Keine Showroom-Fahrzeuge. Keine unfaire Konkurrenz. Nur echte Menschen, die ihre Autos verkaufen.\nAuf Autosolo.ch bekommt Ihr Fahrzeug die Aufmerksamkeit, die es verdient. Käufer kommen gezielt hierher, weil sie nach privaten Angeboten suchen – transparent, direkt und persönlich.\nSie behalten die Kontrolle über Preis, Kommunikation und Verkauf. Kein Druck. Keine Zwischenhändler. Kein unnötiger Aufwand.\nEgal ob Sie Ihr Auto ersetzen, verkaufen oder einfach etwas Neues möchten – Autosolo.ch bietet Ihnen die faire Plattform, die Sie verdienen.\nDenn Ihr Auto zu verkaufen ist mehr als nur eine Transaktion – es ist Ihre Zeit, Ihr Wert und Ihre Entscheidung. Und genau dafür ist Autosolo.ch gemacht.",
+      "cta": "Inserieren Sie Ihr Auto jetzt und erreichen Sie echte Käufer."
+    }
+  },
   "Header": {
     "nav": {
       "advancedSearch": "Erweiterte Suche",
@@ -869,193 +876,85 @@
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
   },
   "PricingPage": {
-    "title": "Mehr Sichtbarkeit. Mehr Service. Weniger Kosten.",
-    "subtitle": "Warum 30–40% mehr bezahlen – wenn Sie bei autovendo.ch mehr persönliche Betreuung und volle Transparenz erhalten?",
-    "noOverpriced": "Schluss mit überteuerten Plattformen.",
-    "introText1": "autovendo.ch gibt Händlern Kontrolle, Fairness und echten persönlichen Support – zu deutlich besseren Konditionen. Der Fahrzeughandel ist anspruchsvoll genug. Ihre Inserate-Plattform sollte Sie unterstützen – nicht Ihre Marge belasten.",
-    "introText2": "autovendo.ch bietet faire Preise, direkte Ansprechpartner und volle Transparenz. Keine versteckten Kosten. Kein Konzern-Denken. Sondern echte Partnerschaft.",
-    "comparisonTitle": "Faire Preise – Direkt verglichen",
-    "tableHeaders": {
-      "package": "Paket",
-      "vehicles": "Fahrzeuge gleichzeitig",
-      "price": "autovendo.ch",
-      "savings": "Ersparnis vs. Marktführer*",
-      "monthlySavings": "Monatliche Einsparung"
-    },
-    "tableRows": {
-      "ca": "ca.",
-      "bronzeVehicles": "Bis 5 Fahrzeuge",
-      "silverVehicles": "Bis 10 Fahrzeuge",
-      "goldVehicles": "Bis 15 Fahrzeuge",
-      "diamondVehicles": "Bis 25 Fahrzeuge",
-      "bronzeSavings": "ca. 30% günstiger",
-      "silverSavings": "ca. 30% günstiger",
-      "goldSavings": "ca. 35% günstiger",
-      "diamondSavings": "ca. 40% günstiger"
-    },
-    "largerDealers": {
-      "title": "Mehr als 25 Fahrzeuge",
-      "subtitle": "Für größere Händler ab 25 Fahrzeugen",
-      "tagline": "Individuelle Lösungen. Individuelle Preise.",
-      "description1": "Betreiben Sie ein größeres Autohaus mit mehr als 25 Fahrzeugen im Bestand? Dann erstellen wir für Sie ein maßgeschneidertes Angebot – garantiert günstiger als marktübliche Plattformpreise.",
-      "description2": "Wir analysieren Ihren aktuellen Bestand und Ihre Bedürfnisse und präsentieren Ihnen eine transparente, faire Lösung mit echtem Sparpotenzial.",
-      "personalTitle": "Persönlich. Direkt. Vor Ort.",
-      "personalDesc1": "Gerne besuchen wir Sie persönlich und bringen eine detaillierte Preisübersicht mit. Wir erklären Ihnen alles im Detail – offen, ehrlich und ohne Verpflichtung.",
-      "personalDesc2": "Ein Anruf genügt.",
-      "personalDesc3": "Oder senden Sie uns eine E-Mail und vereinbaren Sie einen Termin. Wir sind nur einen Telefonanruf entfernt.",
-      "callButton": "Telefontermin vereinbaren",
-      "emailButton": "E-Mail schreiben"
-    },
-    "whyPay": {
-      "title": "Warum mehr bezahlen?",
-      "reach": "Gleiche Reichweite.",
-      "contact": "Persönlicher Ansprechpartner.",
-      "response": "Schnellere Reaktionszeiten.",
-      "flexible": "Flexible Lösungen für Händler.",
-      "noCorp": "Keine Konzern-Strukturen.",
-      "fair": "Faire Preisgestaltung."
-    },
-    "weAre": {
-      "title": "Wir sind:",
-      "efficient": "Effizienter",
-      "dealerOriented": "Händlerorientiert",
-      "personal": "Persönlich",
-      "transparent": "Transparent",
-      "swiss": "Schweizerisch direkt"
-    },
-    "partnershipText": "Mit autovendo.ch investieren Sie nicht in Werbung. Sie investieren in eine Partnerschaft.\nIhre Marge gehört Ihnen – nicht der Plattform.",
+    "title": "Einfach. Fair. Erfolgreich verkaufen.",
+    "subtitle": "Wählen Sie das passende Paket für Ihren Autoverkauf. Keine versteckten Kosten, volle Kontrolle.",
     "choosePlan": "Wählen Sie Ihr passendes Paket",
-    "popular": "Beliebt",
-    "example": {
-      "label": "Beispielrechnung:",
-      "text": "Ein Händler mit 25 Fahrzeugen spart bei autovendo.ch",
-      "highlight": "über CHF 3'000.– pro Jahr.",
-      "suffix": "Das ist direkte Marge. Ohne Risiko.",
-      "switchText": "Wechseln Sie jetzt zu autovendo.ch und sparen Sie mehrere tausend Franken pro Jahr – bei persönlichem Service und fairen Konditionen.",
-      "contactButton": "Jetzt unverbindlich Kontakt aufnehmen"
-    },
+    "popular": "BESTER WERT",
     "tiers": [
       {
-        "name": "Bronze",
-        "price": "180.–",
-        "period": "/ Monat",
-        "description": "Ideal für kleinere Bestände.",
+        "name": "Standard",
+        "price": "19.–",
+        "period": "/ 30 Tage",
+        "description": "Ideal für den schnellen Verkauf.",
         "features": [
           {
-            "name": "Bis zu 5 Fahrzeuge",
+            "name": "In wenigen Minuten inserieren",
             "included": true
           },
           {
-            "name": "Volle Sichtbarkeit",
+            "name": "Echte private Käufer erreichen",
             "included": true
           },
           {
-            "name": "Persönlicher Support",
+            "name": "Volle Kontrolle über Preis & Kommunikation",
             "included": true
           },
           {
-            "name": "Keine versteckten Kosten",
-            "included": true
-          },
-          {
-            "name": "Laufzeit flexibel",
+            "name": "30 Tage Laufzeit",
             "included": true
           }
         ],
-        "buttonText": "Paket wählen",
+        "buttonText": "Verkauf starten",
         "popular": false
       },
       {
-        "name": "Silver",
-        "price": "280.–",
-        "period": "/ Monat",
-        "description": "Perfekt für wachsende Händler.",
+        "name": "BEST VALUE",
+        "price": "49.–",
+        "period": "/ Bis verkauft",
+        "description": "Verkaufen ohne Zeitdruck zum Bestpreis.",
         "features": [
           {
-            "name": "Bis zu 10 Fahrzeuge",
+            "name": "Keine zeitliche Begrenzung",
             "included": true
           },
           {
-            "name": "Volle Sichtbarkeit",
+            "name": "Keine Erneuerungen nötig",
             "included": true
           },
           {
-            "name": "Persönlicher Support",
+            "name": "Kein Druck, den Preis zu senken",
             "included": true
           },
           {
-            "name": "Keine versteckten Kosten",
-            "included": true
-          },
-          {
-            "name": "Laufzeit flexibel",
+            "name": "Maximale Sichtbarkeit",
             "included": true
           }
         ],
-        "buttonText": "Paket wählen",
-        "popular": false
-      },
-      {
-        "name": "Gold",
-        "price": "325.–",
-        "period": "/ Monat",
-        "description": "Für etablierte Händler.",
-        "features": [
-          {
-            "name": "Bis zu 15 Fahrzeuge",
-            "included": true
-          },
-          {
-            "name": "Volle Sichtbarkeit",
-            "included": true
-          },
-          {
-            "name": "Persönlicher Support",
-            "included": true
-          },
-          {
-            "name": "Keine versteckten Kosten",
-            "included": true
-          },
-          {
-            "name": "Laufzeit flexibel",
-            "included": true
-          }
-        ],
-        "buttonText": "Paket wählen",
+        "buttonText": "Ohne Zeitdruck verkaufen",
         "popular": true
-      },
-      {
-        "name": "Diamond",
-        "price": "408.–",
-        "period": "/ Monat",
-        "description": "Für Händler mit höherem Volumen.",
-        "features": [
-          {
-            "name": "Bis zu 25 Fahrzeuge",
-            "included": true
-          },
-          {
-            "name": "Volle Sichtbarkeit",
-            "included": true
-          },
-          {
-            "name": "Persönlicher Support",
-            "included": true
-          },
-          {
-            "name": "Keine versteckten Kosten",
-            "included": true
-          },
-          {
-            "name": "Laufzeit flexibel",
-            "included": true
-          }
-        ],
-        "buttonText": "Paket wählen",
-        "popular": false
       }
-    ]
+    ],
+    "trustSafety": {
+      "title": "Vertrauen & Sicherheit",
+      "items": [
+        {
+          "title": "Nur Privatverkäufer",
+          "description": "Keine Händler, die mit Ihnen konkurrieren"
+        },
+        {
+          "title": "Transparente Preise",
+          "description": "Keine versteckten Kosten oder Abos"
+        },
+        {
+          "title": "Volle Kontrolle",
+          "description": "Sie entscheiden über Preis, Kommunikation und Abschluss"
+        }
+      ]
+    },
+    "urgency": {
+      "title": "Starten Sie heute — Ihr Käufer sucht vielleicht schon jetzt",
+      "button": "Jetzt inserieren"
+    }
   },
   "SubscribeButton": {
     "loginRequired": "Bitte melden Sie sich an, um ein Paket zu wählen",
@@ -1187,21 +1086,37 @@
     "closingText2": "Wir gehen mit der Zeit, hören zu und entwickeln die Plattform gemeinsam mit den Händlern weiter."
   },
   "DashboardPage": {
-    "welcomeTitle": "Willkommen zurück, {name}!",
-    "welcomeSubtitle": "Verwalten Sie Ihren Fahrzeughandel und Ihr Abonnement an einem Ort.",
-    "activePlan": "Aktives Paket",
-    "noSubscription": "Kein Abo",
-    "statusTrialing": "Testphase",
-    "statusActive": "Aktiv",
-    "vehiclesTitle": "Fahrzeuge",
-    "usedSlots": "{current} von {max} Inseraten genutzt",
-    "postedVehicles": "Eingestellte Fahrzeuge",
-    "visitorsTitle": "Besucher",
-    "visitorsSubtitle": "Aufrufe Ihrer Inserate",
-    "recentActivity": "Letzte Aktivitäten",
-    "noActivity": "Noch keine Aktivitäten vorhanden.",
-    "quickAccess": "Schnellzugriff",
-    "frequentFeatures": "Häufig genutzte Funktionen"
+    "welcome": "Willkommen im Kontrollzentrum",
+    "subtitle": "Verwalten Sie Ihren Bestand und Ihr Abonnement an einem Ort.",
+    "newListing": "Neues Fahrzeug inserieren",
+    "paymentFailedTitle": "Zahlung fehlgeschlagen",
+    "paymentFailedDesc": "Ihre letzte Zahlung konnte nicht verarbeitet werden. Bitte aktualisieren Sie Ihre Zahlungsmethode, um Ihre Inserate aktiv zu halten.",
+    "fixPayment": "Zahlung beheben",
+    "totalVehicles": "Gesamtbestand",
+    "totalVehiclesDesc": "Alle Fahrzeuge in Ihrem Konto",
+    "published": "Live-Inserate",
+    "publishedDesc": "Aktuell auf Autovendo sichtbar",
+    "drafts": "Entwürfe",
+    "draftsDesc": "Noch nicht veröffentlichte Inserate",
+    "sold": "Verkauft",
+    "soldDesc": "Erfolgreich vermittelte Fahrzeuge",
+    "planOverview": "Plan-Übersicht",
+    "currentPlan": "Aktueller Plan",
+    "nextBilling": "Nächste Abrechnung am {date}",
+    "price": "Preis",
+    "month": "Mt.",
+    "listingQuota": "Inserate-Kontingent",
+    "remainingSlots": "Noch {count} Slots verfügbar",
+    "recentListings": "Neueste Fahrzeuge",
+    "viewAll": "Alle ansehen",
+    "noRecentVehicles": "Sie haben noch keine Fahrzeuge hinzugefügt.",
+    "addFirstVehicle": "Erstes Fahrzeug hinzufügen",
+    "quickActions": "Schnellzugriff",
+    "billingSettings": "Abrechnung & Abo",
+    "manageInventory": "Inventar verwalten",
+    "needHelp": "Brauchen Sie Hilfe?",
+    "helpDesc": "Unser Support-Team ist für Sie da, um Ihren Verkaufserfolg zu maximieren.",
+    "contactSupport": "Support kontaktieren"
   },
   "VehiclesPage": {
     "expiredTitle": "Abonnement abgelaufen",

@@ -1,4 +1,11 @@
 {
+  "HomePage": {
+    "hero": {
+      "title": "Vendi la tua auto. Senza concessionari. Senza complicazioni.",
+      "description": "Vendere la propria auto dovrebbe essere semplice. Ma sulla maggior parte delle piattaforme non lo è.\nIl tuo annuncio si perde tra concessionari, offerte professionali e centinaia di altre auto. Abbassi il prezzo, aspetti risposte… e ti senti comunque invisibile. Non dovrebbe funzionare così.\nAutosolo.ch è stato creato proprio per cambiare questo. Una piattaforma dedicata esclusivamente ai privati – a persone come te.\nNessun concessionario. Nessun veicolo da showroom. Nessuna concorrenza sleale. Solo persone reali che vendono le loro auto.\nSu Autosolo.ch, la tua auto riceve l’attenzione che merita. Gli acquirenti arrivano qui perché cercano offerte private – più trasparenti, dirette e personali.\nMantieni il controllo sul prezzo, sulla comunicazione e sulla vendita. Nessuna pressione. Nessun intermediario. Nessuna complicazione inutile.\nChe tu voglia vendere, cambiare o semplicemente andare avanti, Autosolo.ch ti offre una piattaforma equa ed efficace.\nPerché vendere la tua auto non è solo una transazione – è il tuo tempo, il tuo valore e la tua decisione. Ed è giusto che sia così.",
+      "cta": "Pubblica subito la tua auto e trova acquirenti reali."
+    }
+  },
   "Header": {
     "nav": {
       "advancedSearch": "Ricerca avanzata",
@@ -861,195 +868,69 @@
     "messagePlaceholder": "Ci scriva il suo messaggio...",
     "submitting": "Invio in corso...",
     "submit": "Invia messaggio",
+    "PricingPage": {
+      "title": "Semplice. Equo. Vendi con successo.",
+      "subtitle": "Scegli il pacchetto adatto alla tua vendita auto. Nessun costo nascosto, pieno controllo.",
+      "choosePlan": "Scegli il tuo pacchetto",
+      "popular": "MIGLIOR VALORE",
+      "tiers": [
+        {
+          "name": "Standard",
+          "price": "19.–",
+          "period": "/ 30 giorni",
+          "description": "Ideale per una vendita rapida.",
+          "features": [
+            {
+              "name": "Pubblica in pochi minuti",
+              "included": true
+            },
+            {
+              "name": "Raggiungi veri acquirenti privati",
+              "included": true
+            },
+            {
+              "name": "Pieno controllo su prezzo e comunicazione",
+              "included": true
+            },
+            {
+              "name": "Annuncio di 30 giorni",
+              "included": true
+            }
+          ],
+          "buttonText": "Inizia la vendita",
+          "popular": false
+        },
+        {
+          "name": "BEST VALUE",
+          "price": "49.–",
+          "period": "/ Fino alla vendita",
+          "description": "Vendi senza pressioni al miglior prezzo.",
+          "features": [
+            {
+              "name": "Nessun limite di tempo",
+              "included": true
+            },
+            {
+              "name": "Nessun rinnovo necessario",
+              "included": true
+            },
+            {
+              "name": "Nessuna pressione per abbassare il prezzo",
+              "included": true
+            },
+            {
+              "name": "Massima visibilità",
+              "included": true
+            }
+          ],
+          "buttonText": "Vendi senza pressioni",
+          "popular": true
+        }
+      ]
+    },
     "successDefault": "Messaggio inviato con successo.",
     "errorDefault": "Si è verificato un errore. Riprovi."
   },
-  "PricingPage": {
-    "title": "Più visibilità. Più servizio. Meno costi.",
-    "subtitle": "Perché pagare il 30–40% in più – quando con autovendo.ch ottiene un supporto più personale e la massima trasparenza?",
-    "noOverpriced": "Basta con le piattaforme troppo costose.",
-    "introText1": "autovendo.ch offre ai concessionari controllo, equità e un vero supporto personale – a condizioni nettamente migliori. Il commercio automobilistico è già abbastanza impegnativo. La sua piattaforma di inserzioni dovrebbe supportarla – non erodere il suo margine.",
-    "introText2": "autovendo.ch offre prezzi equi, interlocutori diretti e piena trasparenza. Nessun costo nascosto. Nessuna logica aziendale. Solo una vera partnership.",
-    "comparisonTitle": "Prezzi equi – Confronto diretto",
-    "tableHeaders": {
-      "package": "Pacchetto",
-      "vehicles": "Veicoli simultanei",
-      "price": "autovendo.ch",
-      "savings": "Risparmio vs. leader di mercato*",
-      "monthlySavings": "Risparmio mensile"
-    },
-    "tableRows": {
-      "ca": "ca.",
-      "bronzeVehicles": "Fino a 5 veicoli",
-      "silverVehicles": "Fino a 10 veicoli",
-      "goldVehicles": "Fino a 15 veicoli",
-      "diamondVehicles": "Fino a 25 veicoli",
-      "bronzeSavings": "ca. 30% in meno",
-      "silverSavings": "ca. 30% in meno",
-      "goldSavings": "ca. 35% in meno",
-      "diamondSavings": "ca. 40% in meno"
-    },
-    "largerDealers": {
-      "title": "Più di 25 veicoli",
-      "subtitle": "Per concessionari più grandi con 25+ veicoli",
-      "tagline": "Soluzioni individuali. Prezzi individuali.",
-      "description1": "Gestisce una concessionaria più grande con oltre 25 veicoli in stock? Creiamo per Lei un'offerta su misura – garantita più economica dei prezzi standard delle piattaforme.",
-      "description2": "Analizziamo il suo stock attuale e le sue esigenze e le presentiamo una soluzione trasparente ed equa con un reale potenziale di risparmio.",
-      "personalTitle": "Personale. Diretto. Sul posto.",
-      "personalDesc1": "Siamo lieti di venire da Lei di persona e portare un prospetto dettagliato dei prezzi. Le spieghiamo tutto nei dettagli – apertamente, onestamente e senza impegno.",
-      "personalDesc2": "Basta una telefonata.",
-      "personalDesc3": "O ci invii una e-mail e concordi un appuntamento. Siamo a portata di telefono.",
-      "callButton": "Fissare un appuntamento telefonico",
-      "emailButton": "Scrivere un'e-mail"
-    },
-    "whyPay": {
-      "title": "Perché pagare di più?",
-      "reach": "Stessa portata.",
-      "contact": "Interlocutore personale.",
-      "response": "Tempi di risposta più rapidi.",
-      "flexible": "Soluzioni flessibili per concessionari.",
-      "noCorp": "Nessuna struttura aziendale.",
-      "fair": "Prezzi equi."
-    },
-    "weAre": {
-      "title": "Siamo:",
-      "efficient": "Più efficienti",
-      "dealerOriented": "Orientati ai concessionari",
-      "personal": "Personali",
-      "transparent": "Trasparenti",
-      "swiss": "Direttamente svizzeri"
-    },
-    "partnershipText": "Con autovendo.ch non investe in pubblicità. Investe in una partnership.\nIl suo margine appartiene a Lei – non alla piattaforma.",
-    "choosePlan": "Scelga il suo pacchetto",
-    "popular": "Popolare",
-    "example": {
-      "label": "Esempio di calcolo:",
-      "text": "Un concessionario con 25 veicoli risparmia con autovendo.ch",
-      "highlight": "oltre CHF 3'000.– all'anno.",
-      "suffix": "È margine diretto. Senza rischi.",
-      "switchText": "Passi ora ad autovendo.ch e risparmi diverse migliaia di franchi all'anno – con servizio personale e condizioni eque.",
-      "contactButton": "Contattare senza impegno"
-    },
-    "tiers": [
-      {
-        "name": "Bronze",
-        "price": "180.–",
-        "period": "/ mese",
-        "description": "Ideale per inventari ridotti.",
-        "features": [
-          {
-            "name": "Fino a 5 veicoli",
-            "included": true
-          },
-          {
-            "name": "Piena visibilità",
-            "included": true
-          },
-          {
-            "name": "Supporto personale",
-            "included": true
-          },
-          {
-            "name": "Nessun costo nascosto",
-            "included": true
-          },
-          {
-            "name": "Durata flessibile",
-            "included": true
-          }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": false
-      },
-      {
-        "name": "Silver",
-        "price": "280.–",
-        "period": "/ mese",
-        "description": "Perfetto per concessionari in crescita.",
-        "features": [
-          {
-            "name": "Fino a 10 veicoli",
-            "included": true
-          },
-          {
-            "name": "Piena visibilità",
-            "included": true
-          },
-          {
-            "name": "Supporto personale",
-            "included": true
-          },
-          {
-            "name": "Nessun costo nascosto",
-            "included": true
-          },
-          {
-            "name": "Durata flessibile",
-            "included": true
-          }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": false
-      },
-      {
-        "name": "Gold",
-        "price": "325.–",
-        "period": "/ mese",
-        "description": "Per concessionari affermati.",
-        "features": [
-          {
-            "name": "Fino a 15 veicoli",
-            "included": true
-          },
-          {
-            "name": "Piena visibilità",
-            "included": true
-          },
-          {
-            "name": "Supporto personale",
-            "included": true
-          },
-          {
-            "name": "Nessun costo nascosto",
-            "included": true
-          },
-          {
-            "name": "Durata flessibile",
-            "included": true
-          }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": true
-      },
-      {
-        "name": "Diamond",
-        "price": "408.–",
-        "period": "/ mese",
-        "description": "Per concessionari con volumi elevati.",
-        "features": [
-          {
-            "name": "Fino a 25 veicoli",
-            "included": true
-          },
-          {
-            "name": "Piena visibilità",
-            "included": true
-          },
-          {
-            "name": "Supporto personale",
-            "included": true
-          },
-          {
-            "name": "Nessun costo nascosto",
-            "included": true
-          },
-          {
-            "name": "Durata flessibile",
-            "included": true
-          }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": false
       }
     ]
   },
