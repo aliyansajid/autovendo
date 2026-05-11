@@ -573,6 +573,23 @@
     "forgotPassword": "Forgot password?",
     "submitting": "Signing in...",
     "submit": "Sign in",
+    "noAccount": "Don't have an account?",
+    "signup": "Sign up",
+    "errorDefault": "An error occurred. Please try again."
+  },
+  "SignupForm": {
+    "title": "Create an account",
+    "description": "Enter your details below to create your account",
+    "name": "Full Name",
+    "namePlaceholder": "John Doe",
+    "email": "Email",
+    "emailPlaceholder": "m@example.com",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submitting": "Creating account...",
+    "submit": "Create account",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Sign in",
     "errorDefault": "An error occurred. Please try again."
   },
   "ForgotPasswordForm": {
@@ -607,7 +624,8 @@
     "passwordMinLength": "Password must be at least 8 characters long",
     "passwordsDoNotMatch": "Passwords do not match",
     "currentPasswordRequired": "Current password is required",
-    "newPasswordMinLength": "New password must be at least 8 characters long"
+    "newPasswordMinLength": "New password must be at least 8 characters long",
+    "nameMinLength": "Name must be at least 3 characters long"
   },
   "AuthErrors": {
     "INVALID_EMAIL_OR_PASSWORD": "Invalid email or password",

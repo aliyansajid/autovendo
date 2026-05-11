@@ -573,6 +573,23 @@
     "forgotPassword": "Mot de passe oublié ?",
     "submitting": "Connexion en cours...",
     "submit": "Se connecter",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "signup": "S'inscrire",
+    "errorDefault": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "SignupForm": {
+    "title": "Créer un compte",
+    "description": "Entrez vos coordonnées ci-dessous pour créer votre compte",
+    "name": "Nom complet",
+    "namePlaceholder": "Jean Dupont",
+    "email": "E-mail",
+    "emailPlaceholder": "m@exemple.ch",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "submitting": "Création du compte...",
+    "submit": "Créer un compte",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "login": "Se connecter",
     "errorDefault": "Une erreur est survenue. Veuillez réessayer."
   },
   "ForgotPasswordForm": {
@@ -607,7 +624,8 @@
     "passwordMinLength": "Le mot de passe doit comporter au moins 8 caractères",
     "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
     "currentPasswordRequired": "Le mot de passe actuel est requis",
-    "newPasswordMinLength": "Le nouveau mot de passe doit comporter au moins 8 caractères"
+    "newPasswordMinLength": "Le nouveau mot de passe doit comporter au moins 8 caractères",
+    "nameMinLength": "Le nom doit comporter au moins 3 caractères"
   },
   "AuthErrors": {
     "INVALID_EMAIL_OR_PASSWORD": "E-mail ou mot de passe invalide",

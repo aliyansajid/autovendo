@@ -573,6 +573,23 @@
     "forgotPassword": "Password dimenticata?",
     "submitting": "Accesso in corso...",
     "submit": "Accedi",
+    "noAccount": "Non hai un account?",
+    "signup": "Registrati",
+    "errorDefault": "Si è verificato un errore. Riprovi."
+  },
+  "SignupForm": {
+    "title": "Crea un account",
+    "description": "Inserisci i tuoi dati qui sotto per creare il tuo account",
+    "name": "Nome completo",
+    "namePlaceholder": "Mario Rossi",
+    "email": "E-mail",
+    "emailPlaceholder": "m@esempio.ch",
+    "password": "Password",
+    "confirmPassword": "Conferma Password",
+    "submitting": "Creazione account...",
+    "submit": "Crea account",
+    "alreadyHaveAccount": "Hai già un account?",
+    "login": "Accedi",
     "errorDefault": "Si è verificato un errore. Riprovi."
   },
   "ForgotPasswordForm": {
@@ -607,7 +624,8 @@
     "passwordMinLength": "La password deve contenere almeno 8 caratteri",
     "passwordsDoNotMatch": "Le password non corrispondono",
     "currentPasswordRequired": "La password attuale è obbligatoria",
-    "newPasswordMinLength": "La nuova password deve contenere almeno 8 caratteri"
+    "newPasswordMinLength": "La nuova password deve contenere almeno 8 caratteri",
+    "nameMinLength": "Il nome deve contenere almeno 3 caratteri"
   },
   "AuthErrors": {
     "INVALID_EMAIL_OR_PASSWORD": "E-mail o password non validi",

@@ -21,44 +21,43 @@ import { Spinner } from "@repo/ui/src/components/spinner";
 import { authClient } from "@repo/auth/client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
-import { createLoginSchema } from "@/schema/auth-schema";
+import { createSignupSchema } from "@/schema/auth-schema";
 import { useTranslations } from "next-intl";
 
-export const LoginForm = () => {
-  const t = useTranslations("LoginForm");
+export const SignupForm = () => {
+  const t = useTranslations("SignupForm");
   const tAuthErrors = useTranslations("AuthErrors");
   const tSchema = useTranslations("AuthSchema");
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [isPending, startTransition] = useTransition();
 
-  const loginSchema = useMemo(() => createLoginSchema(tSchema), [tSchema]);
+  const signupSchema = useMemo(() => createSignupSchema(tSchema), [tSchema]);
 
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<z.infer<typeof signupSchema>>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
-      rememberme: false,
+      confirmPassword: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
+  function onSubmit(values: z.infer<typeof signupSchema>) {
     startTransition(async () => {
-      const { error } = await authClient.signIn.email({
+      const { error } = await authClient.signUp.email({
         email: values.email,
         password: values.password,
-        rememberMe: values.rememberme,
-        callbackURL: callbackUrl,
+        name: values.name,
+        callbackURL: "/",
       });
 
       if (error) {
-        // Better Auth returns error codes in some versions/configs, or we fallback to statusText or message
         const errorCode = (error as any).code || "UNKNOWN_ERROR";
         toast.error(tAuthErrors(errorCode) || error.message || t("errorDefault"));
         return;
       }
+
+      toast.success("Account created successfully!");
     });
   }
 
@@ -71,6 +70,15 @@ export const LoginForm = () => {
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
+            <CustomFormField
+              control={form.control}
+              fieldType={FormFieldType.INPUT}
+              name="name"
+              label={t("name")}
+              placeholder={t("namePlaceholder")}
+              disabled={isPending}
+            />
+
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
@@ -91,24 +99,18 @@ export const LoginForm = () => {
               disabled={isPending}
             />
 
-            <div className="flex items-center justify-between">
-              <CustomFormField
-                control={form.control}
-                fieldType={FormFieldType.CHECKBOX}
-                name="rememberme"
-                label={t("rememberMe")}
-                disabled={isPending}
-              />
-              <Link
-                href="/forgot-password"
-                className="text-sm underline-offset-4 hover:text-primary hover:underline whitespace-nowrap"
-              >
-                {t("forgotPassword")}
-              </Link>
-            </div>
+            <CustomFormField
+              control={form.control}
+              fieldType={FormFieldType.INPUT}
+              inputType="password"
+              name="confirmPassword"
+              label={t("confirmPassword")}
+              placeholder="********"
+              disabled={isPending}
+            />
 
             <Field>
-              <Button type="submit" disabled={isPending}>
+              <Button type="submit" disabled={isPending} className="w-full">
                 {isPending ? (
                   <>
                     <Spinner />
@@ -121,9 +123,9 @@ export const LoginForm = () => {
             </Field>
 
             <div className="text-center text-sm">
-              {t("noAccount")}{" "}
-              <Link href="/signup" className="underline underline-offset-4">
-                {t("signup")}
+              {t("alreadyHaveAccount")}{" "}
+              <Link href="/login" className="underline underline-offset-4">
+                {t("login")}
               </Link>
             </div>
           </FieldGroup>

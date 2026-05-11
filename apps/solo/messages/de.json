@@ -578,6 +578,23 @@
     "forgotPassword": "Passwort vergessen?",
     "submitting": "Wird angemeldet...",
     "submit": "Anmelden",
+    "noAccount": "Noch kein Konto?",
+    "signup": "Registrieren",
+    "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "SignupForm": {
+    "title": "Konto erstellen",
+    "description": "Geben Sie unten Ihre Daten ein, um Ihr Konto zu erstellen",
+    "name": "Vollständiger Name",
+    "namePlaceholder": "Max Mustermann",
+    "email": "E-Mail",
+    "emailPlaceholder": "m@beispiel.ch",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "submitting": "Konto wird erstellt...",
+    "submit": "Konto erstellen",
+    "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+    "login": "Anmelden",
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
   },
   "ForgotPasswordForm": {
@@ -612,7 +629,8 @@
     "passwordMinLength": "Passwort muss mindestens 8 Zeichen lang sein",
     "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
     "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
-    "newPasswordMinLength": "Neues Passwort muss mindestens 8 Zeichen lang sein"
+    "newPasswordMinLength": "Neues Passwort muss mindestens 8 Zeichen lang sein",
+    "nameMinLength": "Name muss mindestens 3 Zeichen lang sein"
   },
   "AuthErrors": {
     "INVALID_EMAIL_OR_PASSWORD": "E-Mail oder Passwort ungültig",
