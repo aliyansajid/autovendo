@@ -10,12 +10,16 @@ import { useTranslations } from "next-intl";
 
 interface SubscribeButtonProps {
   planName: string;
+  label?: string;
   variant?: "default" | "outline";
+  className?: string;
 }
 
 export const SubscribeButton = ({
   planName,
+  label,
   variant = "default",
+  className,
 }: SubscribeButtonProps) => {
   const t = useTranslations("SubscribeButton");
   const router = useRouter();
@@ -31,7 +35,7 @@ export const SubscribeButton = ({
 
     startTransition(async () => {
       const { data, error } = await authClient.subscription.upgrade({
-        plan: planName.toLowerCase(),
+        plan: planName.toLowerCase().replace(/\s+/g, "_"),
         successUrl: `${window.location.origin}/profile?success=true`,
         cancelUrl: `${window.location.origin}/pricing`,
       });
@@ -49,12 +53,12 @@ export const SubscribeButton = ({
 
   return (
     <Button
-      className="w-full"
+      className={className || "w-full"}
       variant={variant}
       disabled={isPending}
       onClick={handleSubscribe}
     >
-      {isPending ? <Spinner /> : t("choosePlan")}
+      {isPending ? <Spinner /> : label || t("choosePlan")}
     </Button>
   );
 };

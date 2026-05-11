@@ -55,10 +55,8 @@ import {
 import { parseSearchParams } from "@/lib/helpers/vehicle";
 
 const PLAN_LIMITS: Record<string, number> = {
-  bronze: 5,
-  silver: 10,
-  gold: 15,
-  diamond: 25,
+  standard: 1,
+  best_value: 1,
 };
 
 export type SubscriptionStatus = {
@@ -69,6 +67,14 @@ export type SubscriptionStatus = {
   remainingQuota: number;
   graceEnd: string | null;
   isGraceExpired: boolean;
+};
+
+export type DashboardSummary = {
+  totalCount: number;
+  publishedCount: number;
+  draftCount: number;
+  soldCount: number;
+  recentVehicles: any[];
 };
 
 // =============================================================================
@@ -97,15 +103,6 @@ const VEHICLE_LIST_SELECT = {
   createdAt: true,
   images: true,
   equipment: true, // Only if needed for listing
-  dealer: {
-    select: {
-      id: true,
-      companyName: true,
-      city: true,
-      zipCode: true,
-      phoneNumber: true,
-    },
-  },
   seller: {
     select: {
       id: true,
@@ -403,9 +400,9 @@ export async function buildWhereClause(
     where.warranty = { not: null };
   }
 
-  // Dealer filter
-  if (!omitFilters.dealerId && params.dealerId) {
-    where.dealerId = params.dealerId;
+  // Seller filter
+  if (!omitFilters.sellerId && params.sellerId) {
+    where.sellerId = params.sellerId;
   }
 
   // Interior color
@@ -1131,31 +1128,19 @@ export async function getVehicle(id: string): Promise<VehicleDetails | null> {
       extras: true,
       images: true,
       createdAt: true,
-      dealer: {
+      seller: {
         select: {
           id: true,
-          companyName: true,
-          description: true,
-          website: true,
-          logo: true,
-          coverImage: true,
+          firstName: true,
+          lastName: true,
           streetAddress: true,
           zipCode: true,
           city: true,
           country: true,
           phoneNumber: true,
-          businessEmail: true,
-          googlePlaceId: true,
+          email: true,
+          image: true,
           user: { select: { emailVerified: true } },
-          openingHours: {
-            select: {
-              day: true,
-              isOpen: true,
-              openTime: true,
-              closeTime: true,
-            },
-            orderBy: { day: "asc" },
-          },
         },
       },
     },
@@ -1187,17 +1172,17 @@ export async function getVehicleCached(id: string) {
 }
 
 /**
- * Get similar vehicles from the same dealer (excluding current vehicle)
+ * Get similar vehicles from the same seller (excluding current vehicle)
  */
 export async function getSimilarVehicles(
-  dealerId: string,
+  sellerId: string,
   excludeId: string,
 ): Promise<VehicleListItem[]> {
-  if (!dealerId) return [];
+  if (!sellerId) return [];
 
   const vehicles = await prisma.vehicle.findMany({
     where: {
-      dealerId,
+      sellerId,
       NOT: { id: excludeId },
     },
     take: 5,
@@ -1212,16 +1197,72 @@ export async function getSimilarVehicles(
 // DASHBOARD / ADMIN ACTIONS
 // =============================================================================
 
+export async function getDashboardSummary(): Promise<DashboardSummary> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const seller = await prisma.seller.findUnique({
+    where: { userId: session.user.id },
+    select: { id: true },
+  });
+
+  if (!seller) {
+    return {
+      totalCount: 0,
+      publishedCount: 0,
+      draftCount: 0,
+      soldCount: 0,
+      recentVehicles: [],
+    };
+  }
+
+  const [counts, recentVehicles] = await Promise.all([
+    prisma.vehicle.groupBy({
+      by: ["status"],
+      where: { sellerId: seller.id },
+      _count: { _all: true },
+    }),
+    prisma.vehicle.findMany({
+      where: { sellerId: seller.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        make: true,
+        model: true,
+        price: true,
+        status: true,
+        images: true,
+        createdAt: true,
+      },
+    }),
+  ]);
+
+  const totalCount = counts.reduce((acc, curr) => acc + curr._count._all, 0);
+  const publishedCount =
+    counts.find((c) => c.status === "PUBLISHED")?._count._all || 0;
+  const draftCount = counts.find((c) => c.status === "DRAFT")?._count._all || 0;
+  const soldCount = counts.find((c) => c.status === "SOLD")?._count._all || 0;
+
+  return {
+    totalCount,
+    publishedCount,
+    draftCount,
+    soldCount,
+    recentVehicles,
+  };
+}
+
 export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.id) throw new Error("Unauthorized");
 
-  const dealer = await prisma.dealer.findUnique({
+  const seller = await prisma.seller.findUnique({
     where: { userId: session.user.id },
   });
 
-  const currentCount = dealer
-    ? await prisma.vehicle.count({ where: { dealerId: dealer.id } })
+  const currentCount = seller
+    ? await prisma.vehicle.count({ where: { sellerId: seller.id } })
     : 0;
 
   const subscription = await prisma.subscription.findFirst({
@@ -1299,18 +1340,18 @@ export async function prepareVehicleListing(existingVehicleId?: string) {
     throw new Error("Unauthorized");
   }
 
-  const dealer = await prisma.dealer.findUnique({
+  const seller = await prisma.seller.findUnique({
     where: { userId: session.user.id },
   });
 
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   return {
     listingId: existingVehicleId || createId(),
     country: "ch",
-    dealerId: dealer.id,
+    sellerId: seller.id,
   };
 }
 
@@ -1326,20 +1367,20 @@ export async function getPresignedUrls(
     throw new Error("Unauthorized");
   }
 
-  const dealer = await prisma.dealer.findUnique({
+  const seller = await prisma.seller.findUnique({
     where: { userId: session.user.id },
   });
 
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   const country = "ch";
 
   const urls = await Promise.all(
     files.map(async (file) => {
-      const key = StorageService.formatDealerPath(
-        dealer.id,
+      const key = StorageService.formatSellerPath(
+        seller.id,
         "listing",
         file.name,
         listingId,
@@ -1369,13 +1410,13 @@ export async function createVehicle(
     throw new Error("Unauthorized");
   }
 
-  const dealer = await prisma.dealer.findUnique({
+  const seller = await prisma.seller.findUnique({
     where: { userId: session.user.id },
     select: { id: true },
   });
 
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   const subscription = await prisma.subscription.findFirst({
@@ -1391,7 +1432,7 @@ export async function createVehicle(
   const maxVehicles = PLAN_LIMITS[planName] || 0;
 
   const currentCount = await prisma.vehicle.count({
-    where: { dealerId: dealer.id },
+    where: { sellerId: seller.id },
   });
 
   if (currentCount >= maxVehicles) {
@@ -1403,7 +1444,7 @@ export async function createVehicle(
   const vehicle = await prisma.vehicle.create({
     data: {
       id: listingId,
-      dealerId: dealer.id,
+      sellerId: seller.id,
       vehicleType: validatedData.vehicleType.toUpperCase() as VehicleType,
       make: validatedData.make,
       model: validatedData.model || null,
@@ -1509,7 +1550,7 @@ export async function createVehicle(
   return listingId;
 }
 
-export async function getDealerVehicles() {
+export async function getSellerVehicles() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -1518,17 +1559,17 @@ export async function getDealerVehicles() {
     throw new Error("Unauthorized");
   }
 
-  const dealer = await prisma.dealer.findUnique({
+  const seller = await prisma.seller.findUnique({
     where: { userId: session.user.id },
     select: { id: true },
   });
 
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   const vehicles = await prisma.vehicle.findMany({
-    where: { dealerId: dealer.id },
+    where: { sellerId: seller.id },
     orderBy: { createdAt: "desc" },
     select: VEHICLE_LIST_SELECT,
   });
@@ -1545,19 +1586,19 @@ export async function getVehicleById(id: string) {
     throw new Error("Unauthorized");
   }
 
-  const dealer = await prisma.dealer.findUnique({
+  const seller = await prisma.seller.findUnique({
     where: { userId: session.user.id },
     select: { id: true },
   });
 
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   const vehicle = await prisma.vehicle.findUnique({
     where: {
       id,
-      dealerId: dealer.id,
+      sellerId: seller.id,
     },
   });
 
@@ -1577,12 +1618,12 @@ export async function updateVehicle(
     throw new Error("Unauthorized");
   }
 
-  const dealer = await prisma.dealer.findUnique({
+  const seller = await prisma.seller.findUnique({
     where: { userId: session.user.id },
   });
 
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   const tSchema = await getTranslations("VehicleSchema");
@@ -1590,7 +1631,7 @@ export async function updateVehicle(
   const validatedData = schema.parse(formData);
 
   const existingVehicle = await prisma.vehicle.findUnique({
-    where: { id: vehicleId, dealerId: dealer.id },
+    where: { id: vehicleId, sellerId: seller.id },
     select: { images: true },
   });
 
@@ -1614,7 +1655,7 @@ export async function updateVehicle(
   await prisma.vehicle.update({
     where: {
       id: vehicleId,
-      dealerId: dealer.id,
+      sellerId: seller.id,
     },
     data: {
       vehicleType: validatedData.vehicleType.toUpperCase() as VehicleType,
@@ -1734,18 +1775,18 @@ export async function deleteVehicle(id: string) {
     throw new Error("Unauthorized");
   }
 
-  const dealer = await prisma.dealer.findUnique({
+  const seller = await prisma.seller.findUnique({
     where: { userId: session.user.id },
     select: { id: true },
   });
 
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   // Fetch the vehicle to get its images before deleting
   const vehicle = await prisma.vehicle.findUnique({
-    where: { id, dealerId: dealer.id },
+    where: { id, sellerId: seller.id },
     select: { images: true },
   });
 
@@ -1768,7 +1809,7 @@ export async function deleteVehicle(id: string) {
   await prisma.vehicle.delete({
     where: {
       id,
-      dealerId: dealer.id,
+      sellerId: seller.id,
     },
   });
 

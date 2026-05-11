@@ -1,6 +1,6 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
-import { getDealerProfile } from "@/app/actions/dealer.actions";
+import { getSellerProfile } from "@/app/actions/seller.actions";
 import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { VehicleForm } from "../_components/vehicle-form";
 import { Link } from "@/i18n/routing";
@@ -13,8 +13,8 @@ export default async function AddNewVehiclePage() {
     headers: await headers(),
   });
 
-  const [dealerProfile, subscriptionStatus] = await Promise.all([
-    session?.user?.id ? getDealerProfile() : null,
+  const [sellerProfile, subscriptionStatus] = await Promise.all([
+    session?.user?.id ? getSellerProfile() : null,
     getVehicleSubscriptionStatus(),
   ]);
 
@@ -31,13 +31,11 @@ export default async function AddNewVehiclePage() {
 
         <div className="space-y-1">
           <h1 className="text-2xl font-bold">{t("title")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("subtitle")}
-          </p>
+          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
       </div>
       <VehicleForm
-        dealerProfile={dealerProfile}
+        sellerProfile={sellerProfile}
         subscriptionStatus={subscriptionStatus}
       />
     </div>

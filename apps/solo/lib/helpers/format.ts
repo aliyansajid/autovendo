@@ -111,6 +111,34 @@ export function formatCount(count: number, locale: string = "de-CH"): string {
 }
 
 /**
+ * Format date following Swiss standards (04.05.2026)
+ */
+export function formatDate(
+  date: Date | string | number,
+  locale: string = "de-CH",
+): string {
+  return formatDateTime(date, locale, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+/**
+ * Format date with short month name (04. Mai 2026)
+ */
+export function formatDateShort(
+  date: Date | string | number,
+  locale: string = "de-CH",
+): string {
+  return formatDateTime(date, locale, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+/**
  * Format date time following Swiss standards
  */
 export function formatDateTime(
@@ -123,7 +151,10 @@ export function formatDateTime(
   },
 ): string {
   const chLocale = getCHLocale(locale);
-  const d = typeof date === "string" || typeof date === "number" ? new Date(date) : date;
+  const d =
+    typeof date === "string" || typeof date === "number"
+      ? new Date(date)
+      : date;
   return new Intl.DateTimeFormat(chLocale, options).format(d);
 }
 

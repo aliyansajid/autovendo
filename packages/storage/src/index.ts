@@ -97,4 +97,16 @@ export class StorageService {
     const subPath = subfolder ? `/${subfolder}` : "";
     return `${dealerId}/${type}${subPath}/${timestamp}_${sanitizedName}`;
   }
+
+  /**
+   * Helper to format seller paths.
+   */
+  static formatSellerPath(
+    sellerId: string,
+    type: "branding" | "profiles" | "listing",
+    filename: string,
+    subfolder?: string,
+  ) {
+    return this.formatDealerPath(sellerId, type, filename, subfolder);
+  }
 }

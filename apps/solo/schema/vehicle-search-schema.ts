@@ -87,8 +87,9 @@ export const createVehicleSearchSchema = (t: TFn) =>
     inspectionPassed: z.boolean().optional(),
     hasWarranty: z.boolean().optional(),
 
-    // Dealer context (for dealer-specific advanced search)
+    // Dealer / Seller context (for specific advanced search)
     dealerId: z.string().optional(),
+    sellerId: z.string().optional(),
   });
 
 export type VehicleSearchParams = z.infer<

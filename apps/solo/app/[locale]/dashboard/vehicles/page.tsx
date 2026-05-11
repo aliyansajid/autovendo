@@ -1,7 +1,7 @@
 import { Button } from "@repo/ui/components/button";
 import { Plus, AlertCircle, AlertTriangle } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { getDealerVehicles, getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
+import { getSellerVehicles, getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { VehicleList } from "./_components/vehicle-list";
 import {
   Alert,
@@ -15,7 +15,7 @@ export default async function VehiclesPage() {
   const format = await getFormatter();
 
   const [vehicles, subscriptionStatus] = await Promise.all([
-    getDealerVehicles(),
+    getSellerVehicles(),
     getVehicleSubscriptionStatus(),
   ]);
 

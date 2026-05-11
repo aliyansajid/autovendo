@@ -1,145 +1,385 @@
 import { auth } from "@repo/auth";
+import { prisma } from "@repo/db";
 import { headers } from "next/headers";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/card";
 import { Badge } from "@repo/ui/components/badge";
 import { Progress } from "@repo/ui/components/progress";
-import { Car, CreditCard, Users } from "lucide-react";
-import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
-import { getTranslations, getFormatter } from "next-intl/server";
+import {
+  Car,
+  CheckCircle2,
+  FileText,
+  LayoutDashboard,
+  Plus,
+  ArrowRight,
+  TrendingUp,
+  AlertCircle,
+  CreditCard,
+} from "lucide-react";
+import {
+  getVehicleSubscriptionStatus,
+  getDashboardSummary,
+} from "@/app/actions/vehicles.actions";
+import { getTranslations } from "next-intl/server";
+import {
+  formatPrice,
+  formatDateShort,
+  formatNumber,
+} from "@/lib/helpers/format";
+import { Link } from "@/i18n/routing";
+import { Button } from "@repo/ui/components/button";
+import Image from "next/image";
+import { getImageUrl } from "@/lib/helpers/image";
 
-export default async function DashboardPage() {
+export default async function DashboardPage(props: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await props.params;
   const t = await getTranslations("DashboardPage");
-  const format = await getFormatter();
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const [subscriptionsResponse, subscriptionStatus, summary, plans] =
+    await Promise.all([
+      (auth.api as any).listActiveSubscriptions({ headers: await headers() }),
+      getVehicleSubscriptionStatus(),
+      getDashboardSummary(),
+      prisma.plan.findMany({ select: { name: true, price: true } }),
+    ]);
 
-  // @ts-ignore - subscription is added by the stripe plugin
-  const subscriptionApi = (auth.api as any).subscription;
-  const [subscriptionsResponse, subscriptionStatus] = await Promise.all([
-    subscriptionApi
-      ? subscriptionApi.list({ headers: await headers() })
-      : Promise.resolve({ data: [] }),
-    getVehicleSubscriptionStatus(),
-  ]);
-
-  const subscriptions = subscriptionsResponse?.data || [];
-  const activeSubscription = subscriptions.find(
-    (sub: any) => sub.status === "active" || sub.status === "trialing",
+  const subscriptions = Array.isArray(subscriptionsResponse)
+    ? subscriptionsResponse
+    : (subscriptionsResponse as any)?.data || [];
+  const activeSubscription = subscriptions.find((s: any) =>
+    ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(
+      s.status,
+    ),
   );
 
+  const currentPlan = plans.find(
+    (p) => p.name.toLowerCase() === activeSubscription?.plan?.toLowerCase(),
+  );
+
+  const quotaPct =
+    subscriptionStatus.maxVehicles > 0
+      ? (subscriptionStatus.currentCount / subscriptionStatus.maxVehicles) * 100
+      : 0;
+
   return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold">
-          {t("welcomeTitle", { name: session!.user.name })}
-        </h1>
-        <p className="text-sm text-muted-foreground">{t("welcomeSubtitle")}</p>
+    <div className="space-y-8 pb-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">{t("welcome")}</h1>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
+        </div>
+        <Button asChild>
+          <Link href="/dashboard/vehicles/new">
+            <Plus />
+            {t("newListing")}
+          </Link>
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t("activePlan")}
-            </CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold capitalize">
-              {activeSubscription
-                ? `${activeSubscription.plan} Plan`
-                : t("noSubscription")}
-            </div>
-            {activeSubscription && (
-              <Badge className="mt-2 bg-green-500 hover:bg-green-600">
-                {activeSubscription.status === "trialing"
-                  ? t("statusTrialing")
-                  : t("statusActive")}
-              </Badge>
-            )}
-          </CardContent>
-        </Card>
+      {/* Critical Alerts */}
+      {subscriptionStatus.type === "expired" && (
+        <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex items-start gap-3 text-destructive animate-in fade-in slide-in-from-top-4">
+          <AlertCircle className="size-5 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="font-semibold">{t("paymentFailedTitle")}</p>
+            <p className="text-sm opacity-90">{t("paymentFailedDesc")}</p>
+            <Button size="sm" variant="destructive" asChild className="mt-2">
+              <Link href="/dashboard/subscription">{t("fixPayment")}</Link>
+            </Button>
+          </div>
+        </div>
+      )}
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t("vehiclesTitle")}
-            </CardTitle>
-            <Car className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="text-2xl font-bold">
-              {format.number(subscriptionStatus.currentCount)}
-            </div>
-            {subscriptionStatus.type !== "no_subscription" ? (
-              <>
-                <Progress
-                  value={
-                    (subscriptionStatus.currentCount /
-                      subscriptionStatus.maxVehicles) *
-                    100
-                  }
-                  className="h-1.5"
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t("usedSlots", {
-                    current: format.number(subscriptionStatus.currentCount),
-                    max: format.number(subscriptionStatus.maxVehicles),
+      {/* Stats Overview */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title={t("totalVehicles")}
+          value={summary.totalCount}
+          icon={<Car className="size-5" />}
+          description={t("totalVehiclesDesc")}
+          color="blue"
+        />
+        <StatCard
+          title={t("published")}
+          value={summary.publishedCount}
+          icon={<TrendingUp className="size-5" />}
+          description={t("publishedDesc")}
+          color="green"
+        />
+        <StatCard
+          title={t("drafts")}
+          value={summary.draftCount}
+          icon={<FileText className="size-5" />}
+          description={t("draftsDesc")}
+          color="amber"
+        />
+        <StatCard
+          title={t("sold")}
+          value={summary.soldCount}
+          icon={<CheckCircle2 className="size-5" />}
+          description={t("soldDesc")}
+          color="purple"
+        />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <LayoutDashboard className="size-5 text-primary" />
+                  {t("planOverview")}
+                </CardTitle>
+                {activeSubscription && (
+                  <Badge
+                    className={
+                      activeSubscription.status === "active" ||
+                      activeSubscription.status === "trialing"
+                        ? "bg-green-500 hover:bg-green-600 border-0"
+                        : "bg-destructive border-0 text-white"
+                    }
+                  >
+                    {activeSubscription.status.toUpperCase()}
+                  </Badge>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
+                    {t("currentPlan")}
+                  </p>
+                  <p className="text-2xl font-bold">
+                    {currentPlan?.name || "No Active Plan"}
+                  </p>
+                  {activeSubscription?.periodEnd && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {t("nextBilling", {
+                        date: formatDateShort(
+                          activeSubscription.periodEnd,
+                          locale,
+                        ),
+                      })}
+                    </p>
+                  )}
+                </div>
+                <div className="text-right sm:text-left">
+                  <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
+                    {t("price")}
+                  </p>
+                  <p className="text-2xl font-bold">
+                    {formatPrice(currentPlan?.price || 0)}
+                    <span className="text-sm font-normal text-muted-foreground ml-1">
+                      / {t("month")}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <div className="flex justify-between text-sm font-medium">
+                  <span>{t("listingQuota")}</span>
+                  <span>
+                    {summary.publishedCount} / {subscriptionStatus.maxVehicles}
+                  </span>
+                </div>
+                <Progress value={quotaPct} className="h-3 rounded-full" />
+                <p className="text-xs text-muted-foreground text-right italic">
+                  {t("remainingSlots", {
+                    count: subscriptionStatus.remainingQuota,
                   })}
                 </p>
-              </>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                {t("postedVehicles")}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Recent Activity */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">{t("recentListings")}</CardTitle>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link
+                    href="/dashboard/vehicles"
+                    className="flex items-center"
+                  >
+                    {t("viewAll")}
+                    <ArrowRight className="size-4 ml-1" />
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {summary.recentVehicles.length > 0 ? (
+                <div className="divide-y">
+                  {summary.recentVehicles.map((vehicle) => (
+                    <div
+                      key={vehicle.id}
+                      className="flex items-center justify-between group py-4 first:pt-0 last:pb-0"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="relative size-12 rounded-md overflow-hidden bg-muted shrink-0 border">
+                          {vehicle.images?.[0] ? (
+                            <Image
+                              src={getImageUrl(vehicle.images[0])}
+                              alt={vehicle.make}
+                              fill
+                              className="object-cover transition-transform group-hover:scale-110"
+                            />
+                          ) : (
+                            <Car className="size-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/30" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium">
+                            {vehicle.make} {vehicle.model}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatDateShort(
+                              new Date(vehicle.createdAt),
+                              locale,
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">
+                          {formatPrice(vehicle.price)}
+                        </p>
+                        <Badge variant="secondary" className="mt-1">
+                          {vehicle.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-10 text-center border-2 border-dashed rounded-lg bg-muted/20">
+                  <Car className="size-10 mx-auto text-muted-foreground/30 mb-3" />
+                  <p className="text-sm text-muted-foreground">
+                    {t("noRecentVehicles")}
+                  </p>
+                  <Button variant="outline" size="sm" asChild className="mt-4">
+                    <Link href="/dashboard/vehicles/new">
+                      {t("addFirstVehicle")}
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar / Quick Actions (1/3) */}
+        <div className="space-y-6">
+          <Card className="bg-primary text-primary-foreground">
+            <CardHeader>
+              <CardTitle className="text-lg">{t("quickActions")}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button
+                variant="secondary"
+                className="w-full justify-start"
+                asChild
+              >
+                <Link href="/dashboard/vehicles/new">
+                  <Plus className="size-4 mr-2" />
+                  {t("newListing")}
+                </Link>
+              </Button>
+              <Button
+                variant="secondary"
+                className="w-full justify-start"
+                asChild
+              >
+                <Link href="/dashboard/subscription">
+                  <CreditCard className="size-4 mr-2" />
+                  {t("billingSettings")}
+                </Link>
+              </Button>
+              <Button
+                variant="secondary"
+                className="w-full justify-start"
+                asChild
+              >
+                <Link href="/dashboard/vehicles">
+                  <Car className="size-4 mr-2" />
+                  {t("manageInventory")}
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Need Help? */}
+          <Card className="bg-muted/50 border-dashed">
+            <CardContent className="text-center space-y-3 pt-6">
+              <div className="bg-primary/10 size-12 rounded-full flex items-center justify-center mx-auto">
+                <LayoutDashboard className="size-6 text-primary" />
+              </div>
+              <p className="font-semibold">{t("needHelp")}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {t("helpDesc")}
               </p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t("visitorsTitle")}
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{format.number(0)}</div>
-            <p className="text-xs text-muted-foreground">
-              {t("visitorsSubtitle")}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>{t("recentActivity")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground italic">
-              {t("noActivity")}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>{t("quickAccess")}</CardTitle>
-            <CardDescription>{t("frequentFeatures")}</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2"></CardContent>
-        </Card>
+              <Button variant="link" size="sm" className="text-primary">
+                {t("contactSupport")}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Reusable Stat Card Component
+ */
+function StatCard({
+  title,
+  value,
+  icon,
+  description,
+  color,
+}: {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  description: string;
+  color: "blue" | "green" | "amber" | "purple";
+}) {
+  const colorMap = {
+    blue: "text-blue-600 bg-blue-50 border-blue-100",
+    green: "text-green-600 bg-green-50 border-green-100",
+    amber: "text-amber-600 bg-amber-50 border-amber-100",
+    purple: "text-purple-600 bg-purple-50 border-purple-100",
+  };
+
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className={`p-2 rounded-lg border ${colorMap[color]}`}>
+            {icon}
+          </div>
+          <span className="text-2xl font-bold tracking-tight">
+            {formatNumber(value)}
+          </span>
+        </div>
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="text-xs text-muted-foreground/60 mt-0.5 line-clamp-1">
+            {description}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
