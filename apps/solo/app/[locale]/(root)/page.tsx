@@ -3,10 +3,10 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import { buildMetadata, PAGE_META } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
-import { SearchForm } from "./_components/search-form";
 import { FeaturedListings } from "./_components/featured-listings";
 import { HowItWorks } from "./_components/how-it-works";
 import { SellCta } from "./_components/sell-cta";
+import { LandingHero } from "./_components/landing-hero";
 import { getVehicles } from "@/app/actions/vehicles.actions";
 import { buildVehicleTitle } from "@/lib/helpers/vehicle";
 import {
@@ -107,11 +107,7 @@ export default async function HomePage(props: {
     <>
       <JsonLd data={websiteSchema} />
       <JsonLd data={organizationSchema} />
-      <div className="bg-linear-to-r from-primary to-primary/80">
-        <div className="w-full max-w-285 mx-auto px-4 py-12">
-          <SearchForm />
-        </div>
-      </div>
+      <LandingHero />
       <FeaturedListings listings={listings} />
       <HowItWorks />
       <SellCta />
