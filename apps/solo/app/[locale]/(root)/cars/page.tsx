@@ -27,10 +27,6 @@ import { ListingControls } from "./_components/listing-controls";
 import { formatCount } from "@/lib/helpers/format";
 import { getTranslations } from "next-intl/server";
 
-/**
- * Cars List Page - Pure UI Component
- * All business logic handled in server actions
- */
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
@@ -38,6 +34,10 @@ export async function generateMetadata(props: {
   return buildMetadata(locale, "/cars", PAGE_META.cars);
 }
 
+/**
+ * Cars List Page - Pure UI Component
+ * All business logic handled in server actions
+ */
 export default async function CarsPage(props: {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -144,25 +144,24 @@ export default async function CarsPage(props: {
               )}
             </div>
 
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href={
-                      query.page > 1
-                        ? buildUrl({ page: query.page - 1 })
-                        : undefined
-                    }
-                    className={
-                      query.page <= 1 ? "pointer-events-none opacity-50" : ""
-                    }
-                  />
-                </PaginationItem>
+            {totalPages > 1 && (
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href={
+                        query.page > 1
+                          ? buildUrl({ page: query.page - 1 })
+                          : undefined
+                      }
+                      className={
+                        query.page <= 1 ? "pointer-events-none opacity-50" : ""
+                      }
+                    />
+                  </PaginationItem>
 
-                {totalPages > 0 &&
-                  Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                     (p) => {
-                      // Simple pagination logic, showing up to 7 pages with dots
                       if (totalPages > 7) {
                         if (
                           p === 1 ||
@@ -203,22 +202,23 @@ export default async function CarsPage(props: {
                     },
                   )}
 
-                <PaginationItem>
-                  <PaginationNext
-                    href={
-                      query.page < totalPages
-                        ? buildUrl({ page: query.page + 1 })
-                        : undefined
-                    }
-                    className={
-                      query.page >= totalPages
-                        ? "pointer-events-none opacity-50"
-                        : ""
-                    }
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+                  <PaginationItem>
+                    <PaginationNext
+                      href={
+                        query.page < totalPages
+                          ? buildUrl({ page: query.page + 1 })
+                          : undefined
+                      }
+                      className={
+                        query.page >= totalPages
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
           </div>
         </div>
       </div>

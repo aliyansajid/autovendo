@@ -53,6 +53,8 @@ const languages = [
 
 const navLinks = [
   { href: "/advanced-search", labelKey: "nav.advancedSearch" },
+  { href: "/dealers", labelKey: "nav.dealers" },
+  { href: "/sell", labelKey: "nav.sell" },
 ] as const;
 
 export const Header = () => {

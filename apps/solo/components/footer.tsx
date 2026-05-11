@@ -93,6 +93,9 @@ export const Footer = () => {
               </h4>
               <ul className="space-y-2 text-sm">
                 <FooterLink href="/faq">{t("links.faq")}</FooterLink>
+                <FooterLink href="/how-it-works">
+                  {t("links.howItWorks")}
+                </FooterLink>
                 <FooterLink href="/sicherheitshinweise">
                   {t("links.safety")}
                 </FooterLink>

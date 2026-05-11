@@ -42,7 +42,6 @@ import {
   formatPrice,
   formatKilometers,
   formatDateTime,
-  getCHLocale,
 } from "@/lib/helpers/format";
 import type { ListingProps } from "@/types/vehicle";
 import { KeyDetailCard } from "../_components/key-detail-card";
@@ -58,16 +57,18 @@ function f(value: string | null | undefined): string | undefined {
 }
 
 /** Format an integer with locale-aware thousands separator + suffix. */
-function n(value: number | null | undefined, suffix = "", locale = "de-CH"): string | undefined {
+function n(value: number | null | undefined, suffix = ""): string | undefined {
   if (value == null) return undefined;
-  const formatted = formatNumber(value, locale);
+  const formatted = formatNumber(value);
   return suffix ? `${formatted} ${suffix}` : formatted;
 }
 
 /** Format a float with locale-aware formatting + suffix. */
-function fl(value: number | null | undefined, suffix = "", locale = "de-CH"): string | undefined {
+function fl(value: number | null | undefined, suffix = ""): string | undefined {
   if (value == null) return undefined;
-  const formatted = value.toLocaleString(getCHLocale(locale), { maximumFractionDigits: 2 });
+  const formatted = new Intl.NumberFormat("de-CH", {
+    maximumFractionDigits: 2,
+  }).format(value);
   return suffix ? `${formatted} ${suffix}` : formatted;
 }
 
@@ -103,12 +104,11 @@ export async function generateMetadata({
     .filter(Boolean)
     .join(" – ");
   const description = [
-    item.dealer?.companyName
-      ? `${name} kaufen von ${item.dealer.companyName}`
-      : `${name} privat kaufen`,
+    item.dealer ? `${name} kaufen bei ${item.dealer.companyName}` : name,
     kmFormatted,
     item.fuelType,
-    "auf autosolo.ch",
+    item.dealer?.city ? `in ${item.dealer.city}` : null,
+    "auf autovendo.ch.",
   ]
     .filter(Boolean)
     .join(", ");
@@ -145,10 +145,11 @@ export default async function ListingPage({
 }) {
   const t = await getTranslations("VehicleDetail");
   const tVehicle = await getTranslations("Vehicle");
+  const tProfile = await getTranslations("DealerProfileForm");
   const { id, locale } = await params;
   const item = await getVehicleCached(id);
 
-  if (!item) notFound();
+  if (!item || !item.dealer) notFound();
 
   const getLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
@@ -181,8 +182,8 @@ export default async function ListingPage({
   const powerLabel =
     item.kw != null || item.hp != null
       ? [
-          item.kw != null ? `${formatNumber(item.kw, locale)} kW` : null,
-          item.hp != null ? `(${formatNumber(item.hp, locale)} PS)` : null,
+          item.kw != null ? `${formatNumber(item.kw)} kW` : null,
+          item.hp != null ? `(${formatNumber(item.hp)} PS)` : null,
         ]
           .filter(Boolean)
           .join(" ")
@@ -201,13 +202,12 @@ export default async function ListingPage({
     [t("basicDataKeys.driveType")]: item.driveType
       ? getLabel("driveTypes", item.driveType)
       : undefined,
-    [t("basicDataKeys.seats")]: n(item.seats, "", locale),
-    [t("basicDataKeys.doors")]: n(item.doors, "", locale),
-    [t("basicDataKeys.offerNumber")]: item.id.slice(-8),
+    [t("basicDataKeys.seats")]: n(item.seats),
+    [t("basicDataKeys.doors")]: n(item.doors),
   });
 
   const vehicleHistory = filterObj({
-    [t("vehicleHistoryKeys.kilometer")]: formatKilometers(item.kilometer, locale),
+    [t("vehicleHistoryKeys.kilometer")]: formatKilometers(item.kilometer),
     [t("vehicleHistoryKeys.firstRegistration")]: `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
   });
 
@@ -216,7 +216,7 @@ export default async function ListingPage({
 
   const inspectionAndWarranty = filterObj({
     [t("inspectionWarrantyKeys.lastInspection")]: lastInspectionDate
-      ? formatDateTime(lastInspectionDate, locale)
+      ? formatDateTime(lastInspectionDate)
       : undefined,
     [t("inspectionWarrantyKeys.inspectionPassed")]:
       lastInspectionDate != null
@@ -228,26 +228,29 @@ export default async function ListingPage({
       ? getLabel("warranty", item.warranty)
       : undefined,
     [t("inspectionWarrantyKeys.warrantyFrom")]: warrantyStartDate
-      ? formatDateTime(warrantyStartDate, locale)
+      ? formatDateTime(warrantyStartDate)
       : undefined,
     [t("inspectionWarrantyKeys.warrantyDuration")]:
       item.duration != null ? `${item.duration} ${t("months")}` : undefined,
-    [t("inspectionWarrantyKeys.warrantyMaxKm")]: n(item.maxKm, "km", locale),
+    [t("inspectionWarrantyKeys.warrantyMaxKm")]: n(item.maxKm, "km"),
   });
 
   const technicalData = filterObj({
     [t("technicalDataKeys.power")]: powerLabel,
     [t("technicalDataKeys.transmission")]: transmissionLabel,
-    [t("technicalDataKeys.cubicCapacity")]: n(item.cubicCapacity, "ccm", locale),
-    [t("technicalDataKeys.gears")]: n(item.numberOfGears, "", locale),
-    [t("technicalDataKeys.cylinders")]: n(item.cylinders, "", locale),
-    [t("technicalDataKeys.emptyWeight")]: n(item.emptyWeight, "kg", locale),
-    [t("technicalDataKeys.loadCapacity")]: n(item.loadCapacity, "kg", locale),
-    [t("technicalDataKeys.wheelbase")]: n(item.wheelbase, "mm", locale),
-    [t("technicalDataKeys.length")]: n(item.length, "mm", locale),
-    [t("technicalDataKeys.width")]: n(item.width, "mm", locale),
-    [t("technicalDataKeys.height")]: n(item.height, "mm", locale),
-    [t("technicalDataKeys.towingCapacityBraked")]: n(item.towingCapacityBraked, "kg", locale),
+    [t("technicalDataKeys.cubicCapacity")]: n(item.cubicCapacity, "ccm"),
+    [t("technicalDataKeys.gears")]: n(item.numberOfGears),
+    [t("technicalDataKeys.cylinders")]: n(item.cylinders),
+    [t("technicalDataKeys.emptyWeight")]: n(item.emptyWeight, "kg"),
+    [t("technicalDataKeys.loadCapacity")]: n(item.loadCapacity, "kg"),
+    [t("technicalDataKeys.wheelbase")]: n(item.wheelbase, "mm"),
+    [t("technicalDataKeys.length")]: n(item.length, "mm"),
+    [t("technicalDataKeys.width")]: n(item.width, "mm"),
+    [t("technicalDataKeys.height")]: n(item.height, "mm"),
+    [t("technicalDataKeys.towingCapacityBraked")]: n(
+      item.towingCapacityBraked,
+      "kg",
+    ),
   });
 
   const energyData = filterObj({
@@ -255,20 +258,32 @@ export default async function ListingPage({
       ? getLabel("emissions", item.emissionStandard)
       : undefined,
     [t("energyConsumptionKeys.fuelType")]: fuelLabel,
-    [t("energyConsumptionKeys.co2Emission")]: n(item.co2Emission, "g/km", locale),
-    [t("energyConsumptionKeys.consumptionCity")]: fl(item.consumptionCity, "l/100km", locale),
-    [t("energyConsumptionKeys.consumptionCountry")]: fl(item.consumptionCountry, "l/100km", locale),
-    [t("energyConsumptionKeys.consumptionTotal")]: fl(item.consumptionTotal, "l/100km", locale),
+    [t("energyConsumptionKeys.co2Emission")]: n(item.co2Emission, "g/km"),
+    [t("energyConsumptionKeys.consumptionCity")]: fl(
+      item.consumptionCity,
+      "l/100km",
+    ),
+    [t("energyConsumptionKeys.consumptionCountry")]: fl(
+      item.consumptionCountry,
+      "l/100km",
+    ),
+    [t("energyConsumptionKeys.consumptionTotal")]: fl(
+      item.consumptionTotal,
+      "l/100km",
+    ),
   });
 
   const electricData = filterObj({
-    [t("electricDataKeys.range")]: n(item.range, "km", locale),
-    [t("electricDataKeys.batteryCapacity")]: fl(item.batteryCapacity, "kWh", locale),
+    [t("electricDataKeys.range")]: n(item.range, "km"),
+    [t("electricDataKeys.batteryCapacity")]: fl(item.batteryCapacity, "kWh"),
     [t("electricDataKeys.batteryRental")]:
       item.batteryRentalMonth != null
-        ? `${formatNumber(item.batteryRentalMonth, locale)} CHF/${t("months")}`
+        ? `${formatNumber(item.batteryRentalMonth)} CHF/${t("months")}`
         : undefined,
-    [t("electricDataKeys.powerConsumption")]: fl(item.powerConsumption, "kWh/100km", locale),
+    [t("electricDataKeys.powerConsumption")]: fl(
+      item.powerConsumption,
+      "kWh/100km",
+    ),
     [t("electricDataKeys.batteryOwnership")]: item.batteryOwnership
       ? getLabel("batteryOwnership", item.batteryOwnership)
       : undefined,
@@ -278,14 +293,14 @@ export default async function ListingPage({
     [t("electricDataKeys.chargingFast")]: item.chargingPlugTypeFast
       ? getLabel("chargingStandardDC", item.chargingPlugTypeFast)
       : undefined,
-    [t("electricDataKeys.chargingPower")]: fl(item.chargingPower, "kW", locale),
+    [t("electricDataKeys.chargingPower")]: fl(item.chargingPower, "kW"),
     [t("electricDataKeys.combustionEngine")]:
       item.combustionEnginePowerHp != null
-        ? `${formatNumber(item.combustionEnginePowerHp, locale)} PS`
+        ? `${formatNumber(item.combustionEnginePowerHp)} PS`
         : undefined,
     [t("electricDataKeys.electricMotor")]:
       item.electricMotorPowerHp != null
-        ? `${formatNumber(item.electricMotorPowerHp, locale)} PS`
+        ? `${formatNumber(item.electricMotorPowerHp)} PS`
         : undefined,
   });
 
@@ -300,9 +315,9 @@ export default async function ListingPage({
   });
 
   const identifiers = filterObj({
-    FIN: f(item.vin),
-    Seriennummer: f(item.serialNumber),
-    Typengenehmigung: f(item.typeApproval),
+    [t("identifierKeys.vin")]: f(item.vin),
+    [t("identifierKeys.serialNumber")]: f(item.serialNumber),
+    [t("identifierKeys.typeApproval")]: f(item.typeApproval),
   });
 
   const equipmentList = item.equipment
@@ -341,48 +356,47 @@ export default async function ListingPage({
       const open = toDate(oh.openTime);
       const close = toDate(oh.closeTime);
       return {
-        day: DAY_LABELS[oh.day] ?? oh.day,
+        day: oh.day,
         hours:
           oh.isOpen && open != null && close != null
-            ? `${open.toLocaleTimeString(getCHLocale(locale), { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString(getCHLocale(locale), { hour: "2-digit", minute: "2-digit" })}`
-            : "Geschlossen",
+            ? `${open.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
+            : tProfile("isClosed"),
       };
     });
 
   const dealerUser = (
-    item.dealer as (typeof item.dealer & { user?: { emailVerified: boolean } }) | null
-  )?.user;
+    item.dealer as typeof item.dealer & { user?: { emailVerified: boolean } }
+  ).user;
 
-  const seller = item.dealer ? {
+  const seller = {
     id: item.dealer.id,
     name: item.dealer.companyName,
     address: `${item.dealer.streetAddress}, ${item.dealer.zipCode} ${item.dealer.city}`,
     phone: item.dealer.phoneNumber ?? undefined,
     logo: item.dealer.logo ? getImageUrl(item.dealer.logo) : undefined,
     website: item.dealer.website ?? undefined,
-    contactPerson: item.dealer.contactPerson ?? undefined,
     businessEmail: item.dealer.businessEmail ?? undefined,
     description: item.dealer.description ?? undefined,
     openingHours: openingHours.length > 0 ? openingHours : undefined,
     isVerified: dealerUser?.emailVerified === true,
-    rating: 0,
-    reviewCount: 0,
-  } : null;
+    rating: (item.dealer as any).googleRating ?? null,
+    reviewCount: (item.dealer as any).googleReviewCount ?? null,
+  };
 
-  const similarItems = item.dealerId ? await getSimilarVehicles(item.dealerId, item.id) : [];
+  const similarItems = await getSimilarVehicles(item.dealerId!, item.id);
 
   const similarListings: ListingProps[] = similarItems.map((sim) => ({
     id: sim.id,
     title: `${sim.make} ${sim.model || ""}`.trim(),
-    price: formatPrice(sim.price, locale),
+    price: formatPrice(sim.price),
     details: [
       `${String(sim.registrationMonth).padStart(2, "0")}/${sim.registrationYear}`,
-      formatKilometers(sim.kilometer, locale),
+      formatKilometers(sim.kilometer),
       sim.fuelType ? getLabel("fuelTypes", sim.fuelType) : undefined,
     ].filter((d): d is string => d != null && d !== ""),
-    garageName: sim.dealer?.companyName ?? `${sim.seller?.firstName ?? ""} ${sim.seller?.lastName ?? ""}`.trim(),
-    garageId: sim.dealer?.id ?? sim.seller?.id ?? "",
-    garageLocation: sim.dealer ? `${sim.dealer.city}, CH` : `${sim.seller?.city ?? ""}, CH`,
+    garageName: sim.dealer.companyName,
+    garageId: sim.dealer.id,
+    garageLocation: `${sim.dealer.city}, CH`,
     badge: sim.vehicleCondition
       ? getLabel("conditions", sim.vehicleCondition)
       : undefined,
@@ -400,6 +414,7 @@ export default async function ListingPage({
       ? { "@type": "QuantitativeValue", value: item.kilometer, unitCode: "KMT" }
       : undefined,
     fuelType: fuelLabel ?? undefined,
+    driveWheelConfiguration: item.driveType ?? undefined,
     vehicleTransmission: transmissionLabel ?? undefined,
     color: item.color ?? undefined,
     vehicleIdentificationNumber: item.vin ?? undefined,
@@ -408,7 +423,18 @@ export default async function ListingPage({
       price: item.price,
       priceCurrency: "CHF",
       availability: "https://schema.org/InStock",
-      url: `https://autosolo.ch/${locale}/cars/${item.id}`,
+      url: `https://autovendo.ch/${locale}/cars/${item.id}`,
+      seller: {
+        "@type": "AutoDealer",
+        name: item.dealer.companyName,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: item.dealer.streetAddress ?? undefined,
+          postalCode: item.dealer.zipCode ?? undefined,
+          addressLocality: item.dealer.city ?? undefined,
+          addressCountry: "CH",
+        },
+      },
     },
     image: images[0] ?? undefined,
   };
@@ -420,25 +446,20 @@ export default async function ListingPage({
       {
         "@type": "ListItem",
         position: 1,
-        name: "AutoSolo",
-        item: `https://autosolo.ch/${locale}`,
+        name: "AutoVendo",
+        item: `https://autovendo.ch/${locale}`,
       },
       {
         "@type": "ListItem",
         position: 2,
-        name:
-          locale === "fr"
-            ? "Voitures"
-            : locale === "it"
-              ? "Auto"
-              : "Fahrzeuge",
-        item: `https://autosolo.ch/${locale}/cars`,
+        name: locale === "fr" ? "Voitures" : locale === "it" ? "Auto" : "Fahrzeuge",
+        item: `https://autovendo.ch/${locale}/cars`,
       },
       {
         "@type": "ListItem",
         position: 3,
         name: title,
-        item: `https://autosolo.ch/${locale}/cars/${item.id}`,
+        item: `https://autovendo.ch/${locale}/cars/${item.id}`,
       },
     ],
   };
@@ -458,7 +479,7 @@ export default async function ListingPage({
           <div className="lg:hidden space-y-3">
             <h1 className="text-2xl font-bold leading-tight">{title}</h1>
             <div className="text-3xl font-bold text-primary">
-              {formatPrice(price, locale)}
+              {formatPrice(price)}
             </div>
           </div>
 
@@ -471,15 +492,15 @@ export default async function ListingPage({
                 icon={
                   <Gauge className="text-muted-foreground" strokeWidth={1.5} />
                 }
-                label="Kilometerstand"
-                value={formatKilometers(item.kilometer, locale)}
+                label={t("vehicleHistoryKeys.kilometer")}
+                value={formatKilometers(item.kilometer)}
               />
               {powerLabel && (
                 <KeyDetailCard
                   icon={
                     <Zap className="text-muted-foreground" strokeWidth={1.5} />
                   }
-                  label="Leistung"
+                  label={t("technicalDataKeys.power")}
                   value={powerLabel}
                 />
               )}
@@ -488,7 +509,7 @@ export default async function ListingPage({
                   icon={
                     <Fuel className="text-muted-foreground" strokeWidth={1.5} />
                   }
-                  label="Treibstoff"
+                  label={t("energyConsumptionKeys.fuelType")}
                   value={fuelLabel}
                 />
               )}
@@ -603,12 +624,12 @@ export default async function ListingPage({
               </ListingSection>
             )}
 
-            {seller && <SellerSection seller={seller} />}
+            <SellerSection seller={seller} />
 
-            {seller && (
+            {seller.rating != null && (
               <ReviewSection
                 rating={seller.rating}
-                count={seller.reviewCount}
+                count={seller.reviewCount ?? 0}
                 reviews={[]}
                 dealerId={seller.id}
               />
@@ -625,102 +646,104 @@ export default async function ListingPage({
             <CardContent className="space-y-3">
               <h1 className="text-xl font-bold">{title}</h1>
               <h2 className="text-2xl font-bold text-primary">
-                {formatPrice(price, locale)}
+                {formatPrice(price)}
               </h2>
               {item.newPrice != null && item.newPrice > 0 && (
                 <p className="text-sm text-muted-foreground">
-                  {t("newPrice")} {formatPrice(item.newPrice, locale)}
+                  {t("newPrice")} {formatPrice(item.newPrice)}
                 </p>
               )}
             </CardContent>
           </Card>
 
-          {seller && (
-            <Card>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <h3 className="text-xl font-bold">{seller.name}</h3>
-                  {seller.isVerified && (
-                    <div className="flex items-center gap-2">
-                      <BadgeCheck className="size-4 text-primary" />
-                      <span className="text-sm font-medium text-primary">
-                        {t("verifiedDealer")}
-                      </span>
-                    </div>
-                  )}
+          <Card>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold">{seller.name}</h3>
+                {seller.isVerified && (
+                  <div className="flex items-center gap-2">
+                    <BadgeCheck className="size-4 text-primary" />
+                    <span className="text-sm font-medium text-primary">
+                      {t("verifiedDealer")}
+                    </span>
+                  </div>
+                )}
+                {seller.rating != null && (
                   <div className="flex items-center gap-1.5 text-sm">
                     <div className="flex text-rating">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star
                           key={i}
-                          className={`size-4 ${i < Math.round(seller.rating) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+                          className={`size-4 ${i < Math.round(seller.rating!) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
                         />
                       ))}
                     </div>
-                    <span className="font-semibold">{seller.rating}</span>
-                    <span className="text-muted-foreground">
-                      {t("reviewCount", { count: seller.reviewCount })}
-                    </span>
+                    <span className="font-semibold">{seller.rating.toFixed(1)}</span>
+                    {seller.reviewCount != null && (
+                      <span className="text-muted-foreground">
+                        {t("reviewCount", { count: seller.reviewCount })}
+                      </span>
+                    )}
                   </div>
+                )}
+              </div>
+
+              <Separator />
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="bg-muted p-2.5 rounded-lg">
+                    <MapPin className="size-4 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {seller.address}
+                  </p>
                 </div>
 
-                <Separator />
-
-                <div className="space-y-3">
+                {seller.phone && (
                   <div className="flex items-center gap-3">
                     <div className="bg-muted p-2.5 rounded-lg">
-                      <MapPin className="size-4 text-muted-foreground" />
+                      <Phone className="size-4 text-muted-foreground" />
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      {seller.address}
-                    </p>
+                    <Link
+                      href={`tel:${seller.phone}`}
+                      className="text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
+                    >
+                      {seller.phone}
+                    </Link>
                   </div>
+                )}
+              </div>
 
-                  {seller.phone && (
-                    <div className="flex items-center gap-3">
-                      <div className="bg-muted p-2.5 rounded-lg">
-                        <Phone className="size-4 text-muted-foreground" />
-                      </div>
-                      <Link
-                        href={`tel:${seller.phone}`}
-                        className="text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
-                      >
-                        {seller.phone}
-                      </Link>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  {seller.phone && (
-                    <Button className="w-full" asChild>
-                      <Link href={`tel:${seller.phone}`}>
-                        <Phone />
-                        {t("phone")}
-                      </Link>
-                    </Button>
-                  )}
-                  {seller.businessEmail && (
-                    <Button variant="outline" className="w-full" asChild>
-                      <Link href={`mailto:${seller.businessEmail}`}>
-                        <Mail />
-                        {t("contact")}
-                      </Link>
-                    </Button>
-                  )}
-                  <Button variant="link" className="w-full" asChild>
-                    <Link href={`/dealers/${seller.id}`}>
-                      {t("allVehicles")}
+              <div className="space-y-3">
+                {seller.phone && (
+                  <Button className="w-full" asChild>
+                    <Link href={`tel:${seller.phone}`}>
+                      <Phone />
+                      {t("phone")}
                     </Link>
                   </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                )}
+                {seller.businessEmail && (
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href={`mailto:${seller.businessEmail}`}>
+                      <Mail />
+                      {t("contact")}
+                    </Link>
+                  </Button>
+                )}
+                <Button variant="link" className="w-full" asChild>
+                  <Link href={`/dealers/${seller.id}`}>
+                    {t("allVehicles")}
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      <StickyActionBar price={price} sellerPhone={seller?.phone ?? ""} />
+      <StickyActionBar price={price} sellerPhone={seller.phone ?? ""} />
     </div>
   );
 }

@@ -131,6 +131,7 @@ export const createVehicleFormSchema = (t: TFn) =>
     vehicleType: z
       .string({ error: t("vehicleTypeRequired") })
       .refine((val) => VALID_VEHICLE_TYPES.includes(val), t("invalidType")),
+    status: z.enum(["DRAFT", "PUBLISHED", "PAUSED", "SOLD", "ARCHIVED", "BANNED"]).default("PUBLISHED"),
 
     // Vehicle Features (Mandatory: make, bodyType, color)
     make: z

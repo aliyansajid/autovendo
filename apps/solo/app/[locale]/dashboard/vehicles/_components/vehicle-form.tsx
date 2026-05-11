@@ -5,7 +5,7 @@ import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@repo/ui/lib/utils";
 import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
-import { SellerProfile } from "@/types/seller";
+import { DealerProfile } from "@/types/dealer";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import {
@@ -40,10 +40,16 @@ import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import {
   formatPrice,
-  formatNumber,
-  formatDateTime,
+  formatKilometers,
+  formatRegistrationDate,
 } from "@/lib/helpers/format";
-import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
+import {
+  AlertCircleIcon,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Send,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -60,11 +66,16 @@ import {
 } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
-import { AlertCircle, AlertTriangle } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
 import { getImageUrl } from "@/lib/helpers/image";
-import { Alert, AlertDescription, AlertTitle } from "@repo/ui/components/alert";
+import {
+  Alert,
+  AlertAction,
+  AlertDescription,
+  AlertTitle,
+} from "@repo/ui/components/alert";
+import { Link } from "@/i18n/routing";
 
 const VEHICLE_DATA_MAP: Record<string, any> = {
   car: {
@@ -113,21 +124,36 @@ const STEP_FIELDS: Record<number, any[]> = {
   4: [],
 };
 
+/**
+ * Vehicle Form Component (Multi-step)
+ *
+ * A comprehensive form for creating or editing vehicle listings.
+ * Key Features:
+ * - Dynamic data mapping (makes/models) based on vehicle type
+ * - Three-phase submission process:
+ *   1. Listing validation & quota check
+ *   2. Image upload to S3 via pre-signed URLs
+ *   3. Final DB record creation/update
+ * - Real-time "Live Preview" of the vehicle listing
+ */
 export function VehicleForm({
-  sellerProfile,
+  dealerProfile,
   initialData,
   vehicleId,
   subscriptionStatus,
 }: {
-  sellerProfile: SellerProfile | null;
+  dealerProfile: DealerProfile | null;
   initialData?: z.infer<ReturnType<typeof createVehicleFormSchema>>;
   vehicleId?: string;
   subscriptionStatus?: SubscriptionStatus;
 }) {
+  // Localization and routing
   const t = useTranslations("VehicleForm");
   const params = useParams();
   const locale = (params.locale as string) || "de";
   const router = useRouter();
+
+  // Submission state management
   const [isPending, startTransition] = useTransition();
   const [currentStep, setCurrentStep] = useState(1);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -211,18 +237,15 @@ export function VehicleForm({
       equipment: {},
       extras: {},
       ...(initialData || {}),
-      // Ensure seller info is always populated if not already present in initialData
-      companyName:
-        initialData?.companyName ||
-        (sellerProfile
-          ? `${sellerProfile.firstName} ${sellerProfile.lastName}`
-          : ""),
+      // Ensure dealer info is always populated if not already present in initialData
+      companyName: initialData?.companyName || dealerProfile?.companyName || "",
       businessEmail:
-        initialData?.businessEmail || sellerProfile?.email || "",
-      phoneNumber: initialData?.phoneNumber || sellerProfile?.phoneNumber || "",
-      address: initialData?.address || sellerProfile?.streetAddress || "",
-      zipCode: initialData?.zipCode || sellerProfile?.zipCode || "",
-      city: initialData?.city || sellerProfile?.city || "",
+        initialData?.businessEmail || dealerProfile?.businessEmail || "",
+      phoneNumber: initialData?.phoneNumber || dealerProfile?.phoneNumber || "",
+      address: initialData?.address || dealerProfile?.streetAddress || "",
+      zipCode: initialData?.zipCode || dealerProfile?.zipCode || "",
+      city: initialData?.city || dealerProfile?.city || "",
+      status: (initialData?.status as any) || "PUBLISHED",
     },
   });
 
@@ -327,12 +350,8 @@ export function VehicleForm({
 
   // Determine whether submission should be blocked based on subscription state.
   // For new listings: block unless subscription is active.
-  // For edits: only block when the grace period after expiry has already passed.
   const isSubmitBlocked = subscriptionStatus
-    ? vehicleId
-      ? subscriptionStatus.type === "expired" &&
-        subscriptionStatus.isGraceExpired
-      : subscriptionStatus.type !== "active"
+    ? subscriptionStatus.type !== "active"
     : false;
 
   const handleNext = async () => {
@@ -578,11 +597,15 @@ export function VehicleForm({
         // Show specific message for validation errors, generic for system errors
         const isValidationError =
           error instanceof Error &&
-          (error.message.includes("Datei") ||
-            error.message.includes("Dateityp") ||
-            error.message.includes("Upload-Vorbereitung") ||
-            error.message === "limitReached" ||
-            error.message.includes("Limit"));
+          (error.message === "limitReached" ||
+            error.message.includes("Limit") ||
+            error.message === t("errorUploadPrep") ||
+            error.message.includes(t("errorUploadPrep")) ||
+            // Fallback for file-related errors that might come from Zod or elsewhere
+            error.message.toLowerCase().includes("file") ||
+            error.message.toLowerCase().includes("datei") ||
+            error.message.toLowerCase().includes("fichier") ||
+            error.message.toLowerCase().includes("file")); // IT is file too
 
         toast.error(
           isValidationError && error instanceof Error
@@ -619,15 +642,22 @@ export function VehicleForm({
       {/* Subscription status banners */}
       {subscriptionStatus?.type === "no_subscription" && (
         <Alert variant="destructive">
-          <AlertCircle />
+          <AlertCircleIcon />
           <AlertTitle>{t("noSubscriptionTitle")}</AlertTitle>
           <AlertDescription>{t("noSubscriptionDesc")}</AlertDescription>
+          <AlertAction>
+            <Button size="xs" variant="outline" asChild>
+              <Link href="/dashboard/subscription" locale={locale}>
+                {t("subscribeNow")}
+              </Link>
+            </Button>
+          </AlertAction>
         </Alert>
       )}
 
       {subscriptionStatus?.type === "quota_exhausted" && (
         <Alert variant="destructive">
-          <AlertCircle />
+          <AlertCircleIcon />
           <AlertTitle>{t("quotaExhaustedTitle")}</AlertTitle>
           <AlertDescription>
             {t("quotaExhaustedDesc", {
@@ -636,39 +666,15 @@ export function VehicleForm({
               max: subscriptionStatus.maxVehicles,
             })}
           </AlertDescription>
+          <AlertAction>
+            <Button size="xs" variant="outline" asChild>
+              <Link href="/dashboard/subscription" locale={locale}>
+                {t("upgradePlan")}
+              </Link>
+            </Button>
+          </AlertAction>
         </Alert>
       )}
-
-      {subscriptionStatus?.type === "expired" &&
-        !subscriptionStatus.isGraceExpired &&
-        subscriptionStatus.graceEnd && (
-          <Alert className="border-yellow-500 bg-yellow-50 text-yellow-900 dark:bg-yellow-950/20 dark:text-yellow-400 [&>svg]:text-yellow-500">
-            <AlertTriangle />
-            <AlertTitle>{t("expiredWarningTitle")}</AlertTitle>
-            <AlertDescription>
-              {t("expiredWarningDesc", {
-                date: formatDateTime(
-                  new Date(subscriptionStatus.graceEnd),
-                  locale,
-                  {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  },
-                ),
-              })}
-            </AlertDescription>
-          </Alert>
-        )}
-
-      {subscriptionStatus?.type === "expired" &&
-        subscriptionStatus.isGraceExpired && (
-          <Alert variant="destructive">
-            <AlertCircle />
-            <AlertTitle>{t("expiredGraceTitle")}</AlertTitle>
-            <AlertDescription>{t("expiredGraceDesc")}</AlertDescription>
-          </Alert>
-        )}
 
       <div className="flex justify-between items-start w-full max-w-3xl mx-auto mb-8 isolate">
         {steps.map((step, index) => {
@@ -778,7 +784,7 @@ export function VehicleForm({
                     <div className="space-y-1">
                       <p className="text-muted-foreground">{t("priceLabel")}</p>
                       <p className="font-bold text-base">
-                        {formatPrice(form.getValues("price"), locale)}
+                        {formatPrice(form.getValues("price"))}
                       </p>
                     </div>
 
@@ -787,7 +793,7 @@ export function VehicleForm({
                         {t("kilometerLabel")}
                       </p>
                       <p className="font-bold text-base">
-                        {formatNumber(form.getValues("kilometer"), locale)} km
+                        {formatKilometers(form.getValues("kilometer"))}
                       </p>
                     </div>
 
@@ -796,8 +802,10 @@ export function VehicleForm({
                         {t("firstRegistrationLabel")}
                       </p>
                       <p className="font-bold text-base">
-                        {form.getValues("registrationMonth")} /{" "}
-                        {form.getValues("registrationYear")}
+                        {formatRegistrationDate(
+                          form.getValues("registrationMonth"),
+                          form.getValues("registrationYear"),
+                        )}
                       </p>
                     </div>
 
@@ -928,25 +936,52 @@ export function VehicleForm({
                 <ArrowRight />
               </Button>
             ) : (
-              <Button
-                key="submit-button"
-                type="submit"
-                disabled={
-                  isSubmitting || isSubmitBlocked || (!!vehicleId && !isDirty)
-                }
-              >
-                {isSubmitting ? (
-                  <>
+              <div className="flex items-center gap-3">
+                <Button
+                  key="draft-button"
+                  type="submit"
+                  variant="outline"
+                  disabled={
+                    isSubmitting ||
+                    isSubmitBlocked ||
+                    (!!vehicleId && !isDirty && initialData?.status === "DRAFT")
+                  }
+                  onClick={() => form.setValue("status", "DRAFT")}
+                >
+                  {isSubmitting ? (
                     <Spinner />
-                    {t("processingText")}
-                  </>
-                ) : (
-                  <>
-                    {t("publish")}
-                    <Send />
-                  </>
-                )}
-              </Button>
+                  ) : (
+                    <>
+                      <Check />
+                      {t("statusDraft")}
+                    </>
+                  )}
+                </Button>
+                <Button
+                  key="submit-button"
+                  type="submit"
+                  disabled={
+                    isSubmitting ||
+                    isSubmitBlocked ||
+                    (!!vehicleId &&
+                      !isDirty &&
+                      initialData?.status === "PUBLISHED")
+                  }
+                  onClick={() => form.setValue("status", "PUBLISHED")}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Spinner />
+                      {t("processingText")}
+                    </>
+                  ) : (
+                    <>
+                      {t("publish")}
+                      <Send />
+                    </>
+                  )}
+                </Button>
+              </div>
             )}
           </div>
 

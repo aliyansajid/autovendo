@@ -69,12 +69,12 @@ export default function ImpressumPage() {
                   </span>
                   &nbsp;
                   <Link
-                    href="https://www.autosolo.ch"
+                    href="https://www.autovendo.ch"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary underline-offset-4 hover:underline"
                   >
-                    www.autosolo.ch
+                    www.autovendo.ch
                   </Link>
                 </p>
               </div>
@@ -82,10 +82,12 @@ export default function ImpressumPage() {
 
             <section className="space-y-4">
               <h2 className="text-xl md:text-2xl font-bold">
-                Vertretungsberechtigte Person
+              Vertretungsberechtigte Person
               </h2>
               <div className="text-muted-foreground text-lg">
-                <p>Charles McCorvick</p>
+                <p>
+                Charles McCorvick
+                </p>
                 <p>Geschäftsführer</p>
               </div>
             </section>

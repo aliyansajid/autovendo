@@ -8,19 +8,35 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
+import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
-import { Edit, Trash2, AlertTriangle } from "lucide-react";
+import {
+  Trash2,
+  MoreHorizontal,
+  Send,
+  FileText,
+  Pencil,
+  CheckCircle2,
+} from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { getImageUrl } from "@/lib/helpers/image";
 import {
   deleteVehicle,
+  updateVehicleStatus,
   type SubscriptionStatus,
 } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useTransition } from "react";
 import { Search } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@repo/ui/components/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,13 +53,13 @@ import {
   InputGroupInput,
   InputGroupAddon,
 } from "@repo/ui/components/input-group";
-import { Badge } from "@repo/ui/components/badge";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import {
   formatPrice,
-  formatNumber,
-  formatDateTime,
+  formatKilometers,
+  formatRegistrationDate,
+  formatDate,
 } from "@/lib/helpers/format";
 
 interface Vehicle {
@@ -59,8 +75,30 @@ interface Vehicle {
   color: string;
   images: string[];
   createdAt: Date;
+  status: string;
 }
 
+const statusVariantMap: Record<
+  string,
+  "default" | "secondary" | "destructive" | "outline"
+> = {
+  PUBLISHED: "default",
+  DRAFT: "secondary",
+  PAUSED: "outline",
+  SOLD: "outline",
+  ARCHIVED: "outline",
+  BANNED: "destructive",
+};
+
+/**
+ * Vehicle List Component (Client-side)
+ *
+ * Features:
+ * - Tabular view of all dealer vehicles
+ * - Real-time filtering by brand, model, and version
+ * - Direct actions for editing and deleting vehicles
+ * - Formatted display using Swiss (de-CH) technical standards
+ */
 export function VehicleList({
   vehicles,
   subscriptionStatus,
@@ -72,10 +110,9 @@ export function VehicleList({
   const params = useParams();
   const locale = (params.locale as string) || "de";
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const isExpiredGraceDone =
-    subscriptionStatus?.type === "expired" && subscriptionStatus.isGraceExpired;
+  // State for the real-time search/filter input
+  const [searchQuery, setSearchQuery] = useState("");
 
   const filteredVehicles = useMemo(() => {
     if (!searchQuery) return vehicles;
@@ -92,41 +129,13 @@ export function VehicleList({
     return (
       <div className="text-center py-20 border-2 border-dashed rounded-lg bg-muted/20">
         <h3 className="text-lg font-semibold">{t("emptyTitle")}</h3>
-        <p className="text-muted-foreground mb-6">{t("emptyText")}</p>
-        {!isExpiredGraceDone &&
-          subscriptionStatus?.type !== "no_subscription" &&
-          subscriptionStatus?.type !== "quota_exhausted" && (
-            <Button asChild>
-              <Link href="/dashboard/vehicles/new">{t("newListing")}</Link>
-            </Button>
-          )}
+        <p className="text-muted-foreground">{t("emptyText")}</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      {subscriptionStatus?.type === "expired" &&
-        !subscriptionStatus.isGraceExpired &&
-        subscriptionStatus.graceEnd && (
-          <div className="flex items-start gap-3 rounded-lg border border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20 px-4 py-3 text-sm text-yellow-900 dark:text-yellow-400">
-            <AlertTriangle className="mt-0.5 size-4 shrink-0 text-yellow-500" />
-            <p>
-              {t("graceWarning", {
-                date: formatDateTime(
-                  new Date(subscriptionStatus.graceEnd),
-                  locale,
-                  {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  },
-                ),
-              })}
-            </p>
-          </div>
-        )}
-
       <InputGroup className="sm:max-w-sm">
         <InputGroupInput
           placeholder={t("searchPlaceholder")}
@@ -138,7 +147,7 @@ export function VehicleList({
         </InputGroupAddon>
       </InputGroup>
 
-      <div className="rounded-md border bg-card">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -150,15 +159,13 @@ export function VehicleList({
               <TableHead>{t("colBody")}</TableHead>
               <TableHead>{t("colColor")}</TableHead>
               <TableHead>{t("colCreated")}</TableHead>
+              <TableHead>{t("colStatus")}</TableHead>
               <TableHead className="text-right">{t("colActions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredVehicles.map((vehicle) => (
-              <TableRow
-                key={vehicle.id}
-                className={isExpiredGraceDone ? "opacity-50" : undefined}
-              >
+              <TableRow key={vehicle.id}>
                 <TableCell>
                   <div className="relative w-12 h-12 rounded-md overflow-hidden bg-muted">
                     {vehicle.images?.[0] ? (
@@ -179,22 +186,19 @@ export function VehicleList({
                   <span className="flex items-center gap-2">
                     {vehicle.make}
                     {vehicle.model ? ` ${vehicle.model}` : ""}
-                    {isExpiredGraceDone && (
-                      <Badge variant="secondary" className="text-xs">
-                        {t("inactive")}
-                      </Badge>
-                    )}
                   </span>
                 </TableCell>
                 <TableCell className="font-semibold whitespace-nowrap">
-                  {formatPrice(vehicle.price, locale)}
+                  {formatPrice(vehicle.price)}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {formatNumber(vehicle.kilometer, locale)} km
+                  {formatKilometers(vehicle.kilometer)}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {vehicle.registrationMonth.toString().padStart(2, "0")}/
-                  {vehicle.registrationYear}
+                  {formatRegistrationDate(
+                    vehicle.registrationMonth,
+                    vehicle.registrationYear,
+                  )}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap capitalize">
                   {vehicle.bodyType?.replace(/-/g, " ") || "-"}
@@ -203,64 +207,157 @@ export function VehicleList({
                   {vehicle.color?.toLowerCase() || "-"}
                 </TableCell>
                 <TableCell className="text-muted-foreground whitespace-nowrap">
-                  {formatDateTime(new Date(vehicle.createdAt), locale, {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
+                  {formatDate(new Date(vehicle.createdAt), locale)}
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={statusVariantMap[vehicle.status] || "outline"}
+                  >
+                    {t(`status_${vehicle.status}`)}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end">
-                    <Button variant="ghost" size="icon-sm" asChild>
-                      <Link href={`/dashboard/vehicles/${vehicle.id}`}>
-                        <Edit />
-                      </Link>
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            {t("deleteTitle")}
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {t("deleteDesc")}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                          <AlertDialogAction
-                            variant="destructive"
-                            onClick={async () => {
-                              try {
-                                await deleteVehicle(vehicle.id);
-                                toast.success(t("deleteSuccess"));
-                                router.refresh();
-                              } catch (error) {
-                                toast.error(t("deleteError"));
-                              }
-                            }}
-                          >
-                            {t("delete")}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
+                  <VehicleActions
+                    vehicle={vehicle}
+                    t={t}
+                    router={router}
+                    subscriptionStatus={subscriptionStatus}
+                  />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+    </div>
+  );
+}
+
+function VehicleActions({
+  vehicle,
+  t,
+  router,
+  subscriptionStatus,
+}: {
+  vehicle: Vehicle;
+  t: any;
+  router: any;
+  subscriptionStatus?: SubscriptionStatus;
+}) {
+  const [isPending, startTransition] = useTransition();
+
+  const handleStatusUpdate = (newStatus: string) => {
+    startTransition(async () => {
+      try {
+        await updateVehicleStatus(vehicle.id, newStatus);
+        toast.success(t("statusUpdateSuccess"));
+        router.refresh();
+      } catch (error) {
+        toast.error(t("statusUpdateError"));
+      }
+    });
+  };
+
+  const isCanceled =
+    subscriptionStatus?.type === "no_subscription" ||
+    subscriptionStatus?.type === "expired";
+  const isPastDue = subscriptionStatus?.type === "past_due";
+
+  // Restricted by car state (Sold, Archived, etc.)
+  const isStateRestricted = ["SOLD", "ARCHIVED", "BANNED", "PAUSED"].includes(
+    vehicle.status,
+  );
+
+  return (
+    <div className="flex justify-end">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" disabled={isPending}>
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            asChild
+            disabled={isStateRestricted || isCanceled || isPending}
+          >
+            <Link href={`/dashboard/vehicles/${vehicle.id}`}>
+              <Pencil />
+              {t("edit")}
+            </Link>
+          </DropdownMenuItem>
+
+          {vehicle.status === "DRAFT" && (
+            <DropdownMenuItem
+              onSelect={() => handleStatusUpdate("PUBLISHED")}
+              disabled={isStateRestricted || isCanceled || isPastDue || isPending}
+            >
+              <Send />
+              {t("publish")}
+            </DropdownMenuItem>
+          )}
+
+          {vehicle.status === "PUBLISHED" && (
+            <>
+              <DropdownMenuItem
+                onSelect={() => handleStatusUpdate("DRAFT")}
+                disabled={isStateRestricted || isCanceled || isPending}
+              >
+                <FileText />
+                {t("statusDraft")}
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onSelect={() => handleStatusUpdate("SOLD")}
+                disabled={isStateRestricted || isPending}
+              >
+                <CheckCircle2 className="text-green-600" />
+                {t("statusSold")}
+              </DropdownMenuItem>
+            </>
+          )}
+
+          <DropdownMenuSeparator />
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <DropdownMenuItem
+                onSelect={(e) => e.preventDefault()}
+                className="text-destructive focus:text-destructive"
+                disabled={isStateRestricted || isPending}
+              >
+                <Trash2 />
+                {t("delete")}
+              </DropdownMenuItem>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{t("deleteTitle")}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {t("deleteDesc")}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  onClick={async () => {
+                    try {
+                      await deleteVehicle(vehicle.id);
+                      toast.success(t("deleteSuccess"));
+                      router.refresh();
+                    } catch (error) {
+                      toast.error(t("deleteError"));
+                    }
+                  }}
+                >
+                  {t("delete")}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

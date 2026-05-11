@@ -3,7 +3,13 @@ import type { MetadataRoute } from "next";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: ["/dashboard/", "/api/"] },
+      // Allow all legitimate crawlers including Google, Bing, etc.
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/dashboard/", "/api/"],
+      },
+      // Block AI training crawlers — content not licensed for model training
       { userAgent: "GPTBot", disallow: "/" },
       { userAgent: "ChatGPT-User", disallow: "/" },
       { userAgent: "CCBot", disallow: "/" },
@@ -13,8 +19,9 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: "Amazonbot", disallow: "/" },
       { userAgent: "meta-externalagent", disallow: "/" },
       { userAgent: "Applebot-Extended", disallow: "/" },
+      // Allow Google-Extended so AutoVendo appears in Google AI Overviews
       { userAgent: "Google-Extended", allow: "/" },
     ],
-    sitemap: "https://autosolo.ch/sitemap.xml",
+    sitemap: "https://autovendo.ch/sitemap.xml",
   };
 }

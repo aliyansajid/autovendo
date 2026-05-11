@@ -24,12 +24,11 @@ interface SellerSectionProps {
     id: string;
     logo?: string;
     name: string;
-    rating: number;
-    reviewCount: number;
+    rating: number | null;
+    reviewCount: number | null;
     website?: string;
     phone: string;
     address: string;
-    contactPerson?: string;
     businessEmail?: string;
     description?: string;
     openingHours?: { day: string; hours: string }[];
@@ -59,20 +58,24 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                   </div>
                 )}
                 <h3 className="font-bold text-lg">{seller.name}</h3>
-                <div className="flex items-center gap-1.5 text-sm">
-                  <div className="flex text-rating">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`size-4 ${i < Math.round(seller.rating) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
-                      />
-                    ))}
+                {seller.rating != null && (
+                  <div className="flex items-center gap-1.5 text-sm">
+                    <div className="flex text-rating">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`size-4 ${i < Math.round(seller.rating!) ? "fill-rating text-rating" : "text-muted-foreground opacity-30 fill-current"}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="font-semibold">{seller.rating.toFixed(1)}</span>
+                    {seller.reviewCount != null && (
+                      <span className="text-muted-foreground">
+                        {t("reviewCount", { count: seller.reviewCount })}
+                      </span>
+                    )}
                   </div>
-                  <span className="font-semibold">{seller.rating}</span>
-                  <span className="text-muted-foreground">
-                    {t("reviewCount", { count: seller.reviewCount })}
-                  </span>
-                </div>
+                )}
 
                 {seller.website && (
                   <Link
@@ -135,8 +138,8 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                 <div className="space-y-2 text-sm">
                   {seller.openingHours.map((item, i) => (
                     <div key={i} className="flex justify-between">
-                      <span className="text-sm text-muted-foreground capitalize">
-                        {item.day}
+                      <span className="text-sm text-muted-foreground">
+                        {t(item.day.toLowerCase())}
                       </span>
                       <span className="font-medium text-sm text-right">
                         {item.hours}

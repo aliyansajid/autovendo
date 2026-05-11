@@ -14,10 +14,12 @@ import { Spinner } from "@repo/ui/components/spinner";
 import { Badge } from "@repo/ui/components/badge";
 import { Progress } from "@repo/ui/components/progress";
 import { useTransition } from "react";
+import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { Link } from "@/i18n/routing";
 import { CreditCard, ExternalLink } from "lucide-react";
-import { useTranslations, useFormatter } from "next-intl";
+import { useTranslations } from "next-intl";
+import { formatDate } from "@/lib/helpers/format";
 
 type SubscriptionData = {
   id: string;
@@ -41,12 +43,45 @@ export function SubscriptionCard({
   hasSubscription,
 }: SubscriptionCardProps) {
   const [isPending, startTransition] = useTransition();
+  const params = useParams();
+  const locale = (params.locale as string) || "de";
   const t = useTranslations("SubscriptionCard");
-  const format = useFormatter();
 
-  const activeSubscription = subscriptions.find(
-    (s) => s.status === "active" || s.status === "trialing",
+  const activeSubscription = subscriptions.find((s) =>
+    ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(
+      s.status,
+    ),
   );
+
+  const getStatusInfo = (status: string) => {
+    switch (status) {
+      case "trialing":
+        return {
+          label: t("statusTrialing"),
+          color: "bg-blue-500 hover:bg-blue-600",
+        };
+      case "past_due":
+      case "unpaid":
+        return {
+          label: t("statusPastDue"),
+          color: "bg-red-500 hover:bg-red-600",
+        };
+      case "incomplete":
+        return {
+          label: t("statusIncomplete"),
+          color: "bg-yellow-500 hover:bg-yellow-600",
+        };
+      default:
+        return {
+          label: t("statusActive"),
+          color: "bg-green-500 hover:bg-green-600",
+        };
+    }
+  };
+
+  const statusInfo = activeSubscription
+    ? getStatusInfo(activeSubscription.status)
+    : null;
 
   const handleManageBilling = () => {
     startTransition(async () => {
@@ -55,9 +90,7 @@ export function SubscriptionCard({
       });
 
       if (error) {
-        toast.error(
-          error.message || t("billingError"),
-        );
+        toast.error(error.message || t("billingError"));
         return;
       }
 
@@ -74,9 +107,7 @@ export function SubscriptionCard({
           <CreditCard className="size-5" />
           {t("cardTitle")}
         </CardTitle>
-        <CardDescription>
-          {t("cardDesc")}
-        </CardDescription>
+        <CardDescription>{t("cardDesc")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {activeSubscription ? (
@@ -90,21 +121,15 @@ export function SubscriptionCard({
                   ? t("cancelAtPeriodEnd")
                   : activeSubscription.periodEnd
                     ? t("nextBilling", {
-                        date: format.dateTime(
+                        date: formatDate(
                           new Date(activeSubscription.periodEnd),
-                          {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          },
+                          locale,
                         ),
                       })
                     : t("activeSubscription")}
               </p>
             </div>
-            <Badge className="bg-green-500 hover:bg-green-600">
-              {activeSubscription.status === "trialing" ? t("statusTrialing") : t("statusActive")}
-            </Badge>
+            <Badge className={statusInfo?.color}>{statusInfo?.label}</Badge>
           </div>
         ) : (
           <div className="p-4 border border-dashed rounded-lg text-center space-y-2">

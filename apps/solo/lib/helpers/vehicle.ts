@@ -217,5 +217,6 @@ export function mapVehicleToForm(vehicle: any): any {
     equipment: (vehicle.equipment as any) ?? {},
     extras: (vehicle.extras as any) ?? {},
     images: vehicle.images ?? [],
+    status: vehicle.status,
   };
 }

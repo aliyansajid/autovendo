@@ -1,11 +1,4 @@
 {
-  "HomePage": {
-    "hero": {
-      "title": "Vendez votre voiture. Sans concessionnaires. Sans complications.",
-      "description": "Vendre votre voiture devrait être simple. Pourtant, sur la plupart des plateformes, c’est tout le contraire.\nVotre annonce se perd parmi les concessionnaires, les offres professionnelles et des centaines d’autres véhicules. Vous baissez le prix, attendez des messages… sans vraiment être visible. Ce n’est pas ainsi que cela devrait fonctionner.\nAutosolo.ch a été créé pour changer cela. Une plateforme exclusivement dédiée aux particuliers – à des personnes comme vous.\nAucun concessionnaire. Aucun véhicule de showroom. Aucune concurrence injuste. Seulement de vraies personnes qui vendent leur voiture.\nSur Autosolo.ch, votre voiture reçoit l’attention qu’elle mérite. Les acheteurs viennent ici spécifiquement pour trouver des offres privées – transparentes, directes et plus humaines.\nVous gardez le contrôle sur votre prix, vos échanges et votre vente. Aucun intermédiaire. Aucune pression. Aucune complication inutile.\nQue vous souhaitiez vendre, changer ou simplement passer à autre chose, Autosolo.ch vous offre une plateforme juste et efficace.\nParce que vendre votre voiture, ce n’est pas qu’une transaction – c’est votre temps, votre valeur et votre décision. Et cela mérite une plateforme à votre image.",
-      "cta": "Publiez votre annonce dès maintenant et trouvez de vrais acheteurs."
-    }
-  },
   "Header": {
     "nav": {
       "advancedSearch": "Recherche avancée",
@@ -98,6 +91,10 @@
       "price": "Prix",
       "registrationFrom": "Première immatriculation dès"
     },
+    "makeGroups": {
+      "topMakes": "Meilleures marques",
+      "allMakes": "Toutes les marques"
+    },
     "button": "Rechercher",
     "advancedSearch": "Recherche avancée",
     "validation": {
@@ -113,6 +110,14 @@
       "OLDTIMER": "Ancien",
       "CLASSIC": "Ancien",
       "PRE_OWNED": "Occasion"
+    },
+    "statuses": {
+      "DRAFT": "Brouillon",
+      "PUBLISHED": "Publié",
+      "PAUSED": "En pause",
+      "SOLD": "Vendu",
+      "ARCHIVED": "Archivé",
+      "BANNED": "Bloqué"
     },
     "fuelTypes": {
       "PETROL": "Essence",
@@ -147,59 +152,59 @@
       "ALL_WHEEL": "4x4"
     },
     "types": {
-      "bus": "Bus",
-      "car": "Voiture de tourisme",
-      "utility": "Véhicule utilitaire",
-      "truck": "Camion",
-      "camper": "Camping-car",
-      "cabriolet": "Cabriolet",
-      "coupe": "Coupé",
-      "small-car": "Petite voiture",
-      "estate": "Break",
-      "minivan": "Monospace",
-      "saloon": "Berline",
-      "pickup": "Pick-up",
-      "suv": "SUV / Tout-terrain",
-      "bridge": "Pont",
-      "bridge-double-cab": "Pont avec double cabine",
-      "chassis-cab": "Châssis cabine",
-      "box": "Fourgon",
-      "box-glazed": "Fourgon vitré",
-      "box-double-cab": "Fourgon double cabine",
-      "tipper": "Benne",
-      "platform": "Plate-forme",
-      "semi-trailer": "Semi-remorque",
-      "cab-over": "Double cabine",
-      "tourist-bus": "Autocar",
-      "alcove": "Capucine",
-      "trailer": "Remorque",
-      "integrated": "Intégral",
-      "cab": "Cabine",
-      "other": "Autre",
-      "semi-integrated": "Profilé",
-      "motorhome": "Camping-car",
-      "caravan": "Caravane"
+      "BUS": "Bus",
+      "CAR": "Voiture de tourisme",
+      "UTILITY": "Véhicule utilitaire",
+      "TRUCK": "Camion",
+      "CAMPER": "Camping-car",
+      "CABRIOLET": "Cabriolet / Décapotable",
+      "COUPE": "Coupé",
+      "SMALL_CAR": "Citadine",
+      "ESTATE": "Break",
+      "MINIVAN": "Monospace",
+      "SALOON": "Berline",
+      "PICKUP": "Pick-up",
+      "SUV": "SUV / Tout-terrain",
+      "BRIDGE": "Pont",
+      "BRIDGE_DOUBLE_CAB": "Pont avec double cabine",
+      "CHASSIS_CAB": "Châssis cabine",
+      "BOX": "Fourgon",
+      "BOX_GLAZED": "Fourgon vitré",
+      "BOX_DOUBLE_CAB": "Fourgon double cabine",
+      "TIPPER": "Benne",
+      "PLATFORM": "Plate-forme",
+      "SEMI_TRAILER": "Semi-remorque",
+      "CAB_OVER": "Double cabine",
+      "TOURIST_BUS": "Autocar",
+      "ALCOVE": "Capucine",
+      "TRAILER": "Remorque",
+      "INTEGRATED": "Intégral",
+      "CAB": "Cabine",
+      "OTHER": "Autre",
+      "SEMI_INTEGRATED": "Profilé",
+      "MOTORHOME": "Camping-car",
+      "CARAVAN": "Caravane"
     },
     "colors": {
-      "anthracite": "Anthracite",
-      "beige": "Beige",
-      "black": "Noir",
-      "blue": "Bleu",
-      "bordeaux": "Bordeaux",
-      "brown": "Brun",
-      "gold": "Or",
-      "gray": "Gris",
-      "green": "Vert",
-      "multicoloured": "Multicolore",
-      "orange": "Orange",
-      "pink": "Rose",
-      "red": "Rouge",
-      "silver": "Argent",
-      "turquoise": "Turquoise",
-      "violet": "Violet",
-      "white": "Blanc",
-      "yellow": "Jaune",
-      "other": "Autre"
+      "ANTHRACITE": "Anthracite",
+      "BEIGE": "Beige",
+      "BLACK": "Noir",
+      "BLUE": "Bleu",
+      "BORDEAUX": "Bordeaux",
+      "BROWN": "Brun",
+      "GOLD": "Or",
+      "GRAY": "Gris",
+      "GREEN": "Vert",
+      "MULTICOLOURED": "Multicolore",
+      "ORANGE": "Orange",
+      "PINK": "Rose",
+      "RED": "Rouge",
+      "SILVER": "Argent",
+      "TURQUOISE": "Turquoise",
+      "VIOLET": "Violet",
+      "WHITE": "Blanc",
+      "YELLOW": "Jaune",
+      "OTHER": "Autre"
     },
     "equipment": {
       "360_CAMERA": "Caméra 360°",
@@ -531,7 +536,32 @@
     "searchPlaceholder": "Rechercher…",
     "searchAriaLabel": "Rechercher des véhicules",
     "sortAriaLabel": "Trier",
-    "sortPlaceholder": "Trier par"
+    "sortPlaceholder": "Trier par",
+    "sortOptions": {
+      "relevance": "Pertinence",
+      "price-asc": "Prix (Croissant)",
+      "price-desc": "Prix (Décroissant)",
+      "kilometer-asc": "Kilométrage (Moins de km)",
+      "kilometer-desc": "Kilométrage (Plus de km)",
+      "registration-asc": "Année (Plus ancienne)",
+      "registration-desc": "Année (Plus récente)",
+      "created-asc": "Annonces (Plus anciennes)",
+      "created-desc": "Annonces (Plus récentes)"
+    }
+  },
+  "GarageRichFilters": {
+    "reset": "Réinitialiser",
+    "makesModels": "{count} Marques/Modèles",
+    "makeModelPlaceholder": "Marque & Modèle",
+    "year": "Année",
+    "mileage": "Kilométrage",
+    "price": "Prix",
+    "selected": "{count} sélectionné(s)",
+    "bodyType": "Carrosserie",
+    "fuel": "Carburant",
+    "transmission": "Transmission",
+    "drive": "Traction",
+    "resetFilters": "Réinitialiser les filtres"
   },
   "LoginForm": {
     "title": "Bon retour",
@@ -543,9 +573,7 @@
     "forgotPassword": "Mot de passe oublié ?",
     "submitting": "Connexion en cours...",
     "submit": "Se connecter",
-    "errorDefault": "Une erreur est survenue. Veuillez réessayer.",
-    "noAccount": "Pas encore de compte ?",
-    "signUp": "S'inscrire"
+    "errorDefault": "Une erreur est survenue. Veuillez réessayer."
   },
   "ForgotPasswordForm": {
     "title": "Mot de passe oublié",
@@ -588,6 +616,7 @@
     "TOO_MANY_REQUESTS": "Trop de requêtes. Veuillez réessayer plus tard.",
     "INVALID_TOKEN": "Jeton invalide ou expiré",
     "SESSION_EXPIRED": "Session expirée. Veuillez vous reconnecter.",
+    "BANNED_USER": "Votre compte a été banni. Veuillez contacter le support.",
     "UNKNOWN_ERROR": "Une erreur inconnue s'est produite. Veuillez réessayer."
   },
   "ProfileSchema": {
@@ -872,85 +901,147 @@
     "errorDefault": "Une erreur est survenue. Veuillez réessayer."
   },
   "PricingPage": {
-    "title": "Simple. Équitable. Vendez avec succès.",
-    "subtitle": "Choisissez le forfait adapté à votre vente de voiture. Pas de frais cachés, contrôle total.",
+    "getStarted": "Commencer",
+    "planDescription": {
+      "starter": "Idéal pour les petits concessionnaires qui commencent leur parcours numérique.",
+      "professional": "Parfait pour les concessions en croissance avec un stock moyen.",
+      "business": "Conçu pour les grandes concessions ayant besoin d'une grande visibilité.",
+      "ultimate": "Notre plan le plus puissant pour les leaders de l'industrie."
+    },
+    "title": "Plus de visibilité. Plus de service. Moins de coûts.",
+    "subtitle": "Pourquoi payer 30 à 40 % de plus – quand vous bénéficiez d'un suivi plus personnalisé et d'une transparence totale avec autovendo.ch ?",
+    "noOverpriced": "Fini les plateformes trop chères.",
+    "introText1": "autovendo.ch donne aux concessionnaires le contrôle, l'équité et un vrai support personnel – à des conditions nettement meilleures. Le commerce automobile est déjà suffisamment exigeant. Votre plateforme d'annonces devrait vous soutenir – et non rogner votre marge.",
+    "introText2": "autovendo.ch offre des prix équitables, des interlocuteurs directs et une transparence totale. Pas de frais cachés. Pas de logique de grande entreprise. Juste un vrai partenariat.",
+    "comparisonTitle": "Des prix équitables – Comparaison directe",
+    "tableHeaders": {
+      "package": "Forfait",
+      "vehicles": "Véhicules simultanés",
+      "price": "autovendo.ch",
+      "savings": "Économies vs. leader du marché*",
+      "monthlySavings": "Économies mensuelles"
+    },
+    "tableRows": {
+      "ca": "env.",
+      "planBronze": "Bronze",
+      "planSilver": "Argent",
+      "planGold": "Or",
+      "planDiamond": "Diamant",
+      "bronzeVehicles": "Jusqu'à 5 véhicules",
+      "silverVehicles": "Jusqu'à 10 véhicules",
+      "goldVehicles": "Jusqu'à 15 véhicules",
+      "diamondVehicles": "Jusqu'à 25 véhicules",
+      "bronzeSavings": "env. 30% moins cher",
+      "silverSavings": "env. 30% moins cher",
+      "goldSavings": "env. 35% moins cher",
+      "diamondSavings": "env. 40% moins cher"
+    },
+    "largerDealers": {
+      "title": "Plus de 25 véhicules",
+      "subtitle": "Pour les grands concessionnaires dès 25 véhicules",
+      "tagline": "Solutions individuelles. Prix individuels.",
+      "description1": "Vous gérez une concession plus importante avec plus de 25 véhicules en stock ? Nous créons pour vous une offre sur mesure – garantie moins chère que les tarifs habituels des plateformes.",
+      "description2": "Nous analysons votre stock actuel et vos besoins, et vous présentons une solution transparente et équitable avec un vrai potentiel d'économies.",
+      "personalTitle": "Personnel. Direct. Sur place.",
+      "personalDesc1": "Nous nous rendons volontiers chez vous en personne et apportons un aperçu détaillé des prix. Nous vous expliquons tout en détail – ouvertement, honnêtement et sans engagement.",
+      "personalDesc2": "Un seul appel suffit.",
+      "personalDesc3": "Ou envoyez-nous un e-mail et convenez d'un rendez-vous. Nous sommes à portée d'un coup de téléphone.",
+      "callButton": "Prendre rendez-vous par téléphone",
+      "emailButton": "Écrire un e-mail"
+    },
+    "whyPay": {
+      "title": "Pourquoi payer plus ?",
+      "reach": "Même portée.",
+      "contact": "Interlocuteur personnel.",
+      "response": "Temps de réponse plus rapides.",
+      "flexible": "Solutions flexibles pour concessionnaires.",
+      "noCorp": "Pas de structures d'entreprise.",
+      "fair": "Tarification équitable."
+    },
+    "weAre": {
+      "title": "Nous sommes :",
+      "efficient": "Plus efficaces",
+      "dealerOriented": "Orientés concessionnaires",
+      "personal": "Personnels",
+      "transparent": "Transparents",
+      "swiss": "Directement suisses"
+    },
+    "partnershipText": "Avec autovendo.ch, vous n'investissez pas dans la publicité. Vous investissez dans un partenariat.\nVotre marge vous appartient – pas à la plateforme.",
+    "month": "mois",
+    "vehiclesIncluded": "véhicules inclus",
+    "trialDaysLabel": "{days} jours d'essai gratuit",
     "choosePlan": "Choisissez votre forfait",
-    "popular": "MEILLEURE VALEUR",
+    "popular": "Populaire",
+    "example": {
+      "label": "Exemple de calcul :",
+      "text": "Un concessionnaire avec 25 véhicules économise avec autovendo.ch",
+      "highlight": "plus de CHF 3'000.– par an.",
+      "suffix": "C'est de la marge directe. Sans risque.",
+      "switchText": "Passez maintenant à autovendo.ch et économisez plusieurs milliers de francs par an – avec un service personnalisé et des conditions équitables.",
+      "contactButton": "Prendre contact sans engagement"
+    },
     "tiers": [
       {
-        "name": "Standard",
-        "price": "19.–",
-        "period": "/ 30 jours",
-        "description": "Idéal pour une vente rapide.",
+        "name": "Bronze",
+        "price": "180.–",
+        "period": "/ mois",
+        "description": "Idéal pour les petits stocks.",
         "features": [
-          {
-            "name": "Publiez en quelques minutes",
-            "included": true
-          },
-          {
-            "name": "Atteignez de vrais acheteurs privés",
-            "included": true
-          },
-          {
-            "name": "Contrôle total sur le prix et la communication",
-            "included": true
-          },
-          {
-            "name": "Annonce de 30 jours",
-            "included": true
-          }
+          { "name": "Jusqu'à 5 véhicules", "included": true },
+          { "name": "Visibilité totale", "included": true },
+          { "name": "Support personnel", "included": true },
+          { "name": "Pas de frais cachés", "included": true },
+          { "name": "Durée flexible", "included": true }
         ],
-        "buttonText": "Commencer la vente",
+        "buttonText": "Choisir le forfait",
         "popular": false
       },
       {
-        "name": "BEST VALUE",
-        "price": "49.–",
-        "period": "/ Jusqu'à la vente",
-        "description": "Vendez sans pression au meilleur prix.",
+        "name": "Silver",
+        "price": "280.–",
+        "period": "/ mois",
+        "description": "Parfait pour les concessionnaires en croissance.",
         "features": [
-          {
-            "name": "Aucune limite de temps",
-            "included": true
-          },
-          {
-            "name": "Aucun renouvellement nécessaire",
-            "included": true
-          },
-          {
-            "name": "Aucune pression pour baisser votre prix",
-            "included": true
-          },
-          {
-            "name": "Visibilité maximale",
-            "included": true
-          }
+          { "name": "Jusqu'à 10 véhicules", "included": true },
+          { "name": "Visibilité totale", "included": true },
+          { "name": "Support personnel", "included": true },
+          { "name": "Pas de frais cachés", "included": true },
+          { "name": "Durée flexible", "included": true }
         ],
-        "buttonText": "Vendre sans pression",
+        "buttonText": "Choisir le forfait",
+        "popular": false
+      },
+      {
+        "name": "Gold",
+        "price": "325.–",
+        "period": "/ mois",
+        "description": "Pour les concessionnaires établis.",
+        "features": [
+          { "name": "Jusqu'à 15 véhicules", "included": true },
+          { "name": "Visibilité totale", "included": true },
+          { "name": "Support personnel", "included": true },
+          { "name": "Pas de frais cachés", "included": true },
+          { "name": "Durée flexible", "included": true }
+        ],
+        "buttonText": "Choisir le forfait",
         "popular": true
+      },
+      {
+        "name": "Diamond",
+        "price": "408.–",
+        "period": "/ mois",
+        "description": "Pour les concessionnaires à volume plus élevé.",
+        "features": [
+          { "name": "Jusqu'à 25 véhicules", "included": true },
+          { "name": "Visibilité totale", "included": true },
+          { "name": "Support personnel", "included": true },
+          { "name": "Pas de frais cachés", "included": true },
+          { "name": "Durée flexible", "included": true }
+        ],
+        "buttonText": "Choisir le forfait",
+        "popular": false
       }
-    ],
-    "trustSafety": {
-      "title": "Section Confiance & Sécurité",
-      "items": [
-        {
-          "title": "Uniquement des vendeurs particuliers",
-          "description": "Pas de concessionnaires en concurrence avec vous"
-        },
-        {
-          "title": "Tarification transparente",
-          "description": "Pas de frais cachés ni d'abonnements"
-        },
-        {
-          "title": "Contrôle total",
-          "description": "Vous décidez du prix, de la communication et de la transaction"
-        }
-      ]
-    },
-    "urgency": {
-      "title": "Commencez aujourd'hui — votre acheteur vous cherche peut-être déjà",
-      "button": "Commencer la vente maintenant"
-    }
+    ]
   },
   "SubscribeButton": {
     "loginRequired": "Veuillez vous connecter pour choisir un forfait",
@@ -1082,30 +1173,47 @@
     "closingText2": "Nous évoluons avec le temps, écoutons et développons la plateforme en collaboration avec les concessionnaires."
   },
   "DashboardPage": {
-    "welcomeTitle": "Bon retour, {name} !",
-    "welcomeSubtitle": "Gérez votre commerce de véhicules et votre abonnement en un seul endroit.",
-    "activePlan": "Plan Actif",
-    "noSubscription": "Pas d'abonnement",
-    "statusTrialing": "Essai",
-    "statusActive": "Actif",
-    "vehiclesTitle": "Véhicules",
-    "usedSlots": "{current} sur {max} annonces utilisées",
-    "postedVehicles": "Véhicules publiés",
-    "visitorsTitle": "Visiteurs",
-    "visitorsSubtitle": "Vues de vos annonces",
-    "recentActivity": "Activité Récente",
-    "noActivity": "Aucune activité pour l'instant.",
-    "quickAccess": "Accès Rapide",
-    "frequentFeatures": "Fonctions fréquemment utilisées"
+    "welcome": "Bienvenue dans le centre de contrôle",
+    "subtitle": "Gérez votre inventaire et votre abonnement en un seul endroit.",
+    "newListing": "Inscrire un nouveau véhicule",
+    "paymentFailedTitle": "Échec du paiement",
+    "paymentFailedDesc": "Votre dernier paiement n'a pas pu être traité. Veuillez mettre à jour votre mode de paiement pour maintenir vos annonces actives.",
+    "fixPayment": "Résoudre le paiement",
+    "totalVehicles": "Inventaire total",
+    "totalVehiclesDesc": "Tous les véhicules de votre compte",
+    "published": "Annonces en ligne",
+    "publishedDesc": "Actuellement visibles sur Autovendo",
+    "drafts": "Brouillons",
+    "draftsDesc": "Annonces pas encore publiées",
+    "sold": "Vendus",
+    "soldDesc": "Véhicules vendus avec succès",
+    "planOverview": "Aperçu du forfait",
+    "currentPlan": "Forfait actuel",
+    "nextBilling": "Prochaine facturation le {date}",
+    "price": "Prix",
+    "month": "mois",
+    "listingQuota": "Quota d'annonces",
+    "remainingSlots": "{count} emplacements restants",
+    "recentListings": "Véhicules récents",
+    "viewAll": "Voir tout",
+    "noRecentVehicles": "Vous n'avez pas encore ajouté de véhicules.",
+    "addFirstVehicle": "Ajouter votre premier véhicule",
+    "quickActions": "Accès rapide",
+    "billingSettings": "Facturation et abonnement",
+    "manageInventory": "Gérer l'inventaire",
+    "needHelp": "Besoin d'aide ?",
+    "helpDesc": "Notre équipe de support aux concessionnaires est là pour vous aider à maximiser votre succès de vente.",
+    "contactSupport": "Contacter le support"
   },
   "VehiclesPage": {
     "expiredTitle": "Abonnement expiré",
-    "expiredDescription": "Votre abonnement a expiré. Vos annonces seront désactivées le {date}. Veuillez renouveler votre abonnement pour rester actif.",
+    "expiredDescription": "Votre abonnement a expiré. Veuillez renouveler votre abonnement pour réactiver vos annonces.",
     "noSubTitle": "Aucun abonnement actif",
     "noSubDescription": "Vous n'avez pas d'abonnement actif. Choisissez un plan pour publier des véhicules.",
-    "expiredGraceDescription": "Votre abonnement a expiré et vos annonces ont été désactivées. Veuillez renouveler votre abonnement.",
     "quotaTitle": "Quota d'annonces épuisé",
     "quotaDescription": "Vous avez atteint le quota maximum de votre plan ({plan}) ({current}/{max} annonces). Veuillez mettre à niveau votre abonnement.",
+    "upgradePlan": "Changer de plan",
+    "subscribeNow": "S'abonner maintenant",
     "pageTitle": "Tous les Véhicules",
     "pageSubtitle": "Gérez vos véhicules publiés et leur statut.",
     "newListing": "Nouvelle Annonce"
@@ -1131,6 +1239,80 @@
   "SubscriptionPage": {
     "title": "Abonnement",
     "subtitle": "Gérez votre plan et vos détails de facturation."
+  },
+  "BillingPage": {
+    "title": "Facturation & Utilisation",
+    "subtitle": "Gérez votre abonnement, votre mode de paiement et vos factures.",
+    "planDescription": {
+      "bronze": "Idéal pour les petits concessionnaires débutant leur aventure numérique.",
+      "silver": "Parfait pour les concessionnaires en croissance avec un inventaire moyen.",
+      "gold": "Conçu pour les grands concessionnaires ayant besoin d'une grande visibilité.",
+      "diamond": "Notre forfait le plus puissant pour les leaders du secteur."
+    },
+    "plans": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or",
+      "diamond": "Diamant"
+    },
+    "statusActive": "Actif",
+    "statusTrialing": "Essai",
+    "statusPastDue": "Échec du paiement",
+    "statusUnpaid": "Impayé",
+    "statusIncomplete": "Incomplet",
+    "paymentFailedWarning": "Nous n'avons pas pu traiter votre dernier paiement. Veuillez mettre à jour votre mode de paiement pour garder vos annonces actives.",
+    "popular": "Populaire",
+    "getStarted": "Commencer",
+    "month": "mois",
+    "trialDaysLabel": "{days} jours d'essai gratuit",
+    "trialEndsAt": "Votre essai se termine le {date}",
+    "nextBilling": "Prochaine facturation : {date}",
+    "noSubscription": "Aucun abonnement actif",
+    "noSubscriptionDesc": "Choisissez un forfait pour commencer à publier vos véhicules.",
+    "quota": "Quota d'annonces",
+    "quotaUsed": "{current} sur {max} emplacements utilisés",
+    "slotsRemaining": "{count} emplacements restants",
+    "selectPlanTitle": "Choisir un Plan",
+    "selectPlanSubtitle": "Sélectionnez un forfait pour démarrer.",
+    "upgradePlanTitle": "Changer de Plan",
+    "upgradePlanSubtitle": "Passez à un autre forfait à tout moment.",
+    "currentPlan": "Forfait Actuel",
+    "listingsCount": "{count} annonces",
+    "cancelSubscription": "Résilier l'abonnement",
+    "reactivateSubscription": "Réactiver l'abonnement",
+    "cancelingAt": "Votre abonnement se terminera le {date}.",
+    "cancelConfirmTitle": "Résilier l'abonnement",
+    "cancelConfirm": "Êtes-vous sûr de vouloir résilier votre abonnement ?",
+    "cancel": "Annuler",
+    "cancelSuccess": "Résiliation programmée.",
+    "reactivateSuccess": "Abonnement réactivé.",
+    "billingPortalTitle": "Portail de Facturation",
+    "billingPortalDesc": "Résilier l'abonnement, mettre à jour le moyen de paiement et gérer les détails de facturation.",
+    "billingPortalCta": "Ouvrir le Portail de Facturation",
+    "billingPortalError": "Impossible d'ouvrir le portail de facturation. Veuillez réessayer.",
+    "paymentTitle": "Moyen de Paiement",
+    "paymentDesc": "Votre carte enregistrée pour la facturation.",
+    "cardExpiry": "Expire le {expiry}",
+    "noPaymentMethod": "Aucun moyen de paiement enregistré.",
+    "invoicesTitle": "Factures",
+    "invoicesDesc": "Votre historique de facturation récent.",
+    "noInvoices": "Aucune facture pour l'instant.",
+    "view": "Voir",
+    "download": "Télécharger PDF",
+    "invoiceCol": {
+      "number": "Facture",
+      "date": "Date",
+      "amount": "Montant",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "invoiceStatus": {
+      "paid": "Payée",
+      "open": "Ouverte",
+      "void": "Annulée",
+      "uncollectible": "Irrécupérable",
+      "unknown": "Inconnu"
+    }
   },
   "DealerProfileForm": {
     "personalTitle": "Informations Personnelles",
@@ -1207,7 +1389,8 @@
     "logout": "Se Déconnecter"
   },
   "NavMain": {
-    "platform": "Plateforme"
+    "platform": "Plateforme",
+    "toggle": "Basculer"
   },
   "SubscriptionCard": {
     "cardTitle": "Abonnement",
@@ -1217,6 +1400,9 @@
     "activeSubscription": "Abonnement Actif",
     "statusTrialing": "Essai",
     "statusActive": "Actif",
+    "statusPastDue": "Échec du pagamento",
+    "statusUnpaid": "Impayé",
+    "statusIncomplete": "Incomplet",
     "noSubscription": "Aucun abonnement actif",
     "viewPlans": "Voir les Plans",
     "quota": "Quota d'Annonces",
@@ -1228,10 +1414,20 @@
   "DashboardSidebar": {
     "overview": "Aperçu",
     "vehicles": "Véhicules",
-    "subscription": "Abonnement",
+    "billing": "Facturation & Utilisation",
     "settings": "Paramètres",
     "profile": "Profil",
-    "changePassword": "Changer le Mot de Passe"
+    "changePassword": "Changer le Mot de Passe",
+    "logoAlt": "AutoVendo Logo"
+  },
+  "DashboardBreadcrumb": {
+    "dashboard": "Tableau de bord",
+    "vehicles": "Véhicules",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "subscription": "Abonnement",
+    "new": "Nouvelle Annonce",
+    "change-password": "Changer le Mot de Passe"
   },
   "Unauthorized": {
     "title": "Accès Refusé",
@@ -1239,12 +1435,26 @@
     "login": "Connexion",
     "goHome": "Aller à l'Accueil"
   },
+  "ListingHeader": {
+    "back": "Retour",
+    "start": "Accueil",
+    "vehicles": "Véhicules",
+    "share": "Partager",
+    "shareSuccess": "Lien copié dans le presse-papiers."
+  },
   "SellerSection": {
     "title": "Vendeur",
     "reviewCount": "({count} avis)",
     "allVehicles": "Tous les véhicules de ce concessionnaire",
-    "openingHours": "Heures d'Ouverture",
-    "noOpeningHours": "Aucune heure d'ouverture disponible."
+    "openingHours": "Heures d'ouverture",
+    "noOpeningHours": "Aucune heure d'ouverture disponible.",
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche"
   },
   "ReviewSection": {
     "title": "Avis",
@@ -1261,7 +1471,6 @@
     "phone": "Téléphone"
   },
   "VehicleList": {
-    "graceWarning": "Vos annonces seront désactivées le {date} si vous ne renouvelez pas votre abonnement.",
     "searchPlaceholder": "Rechercher par marque, modèle ou version...",
     "colImage": "Image",
     "colVehicle": "Véhicule",
@@ -1271,7 +1480,20 @@
     "colBody": "Carrosserie",
     "colColor": "Couleur",
     "colCreated": "Créé le",
+    "colStatus": "Statut",
     "colActions": "Actions",
+    "status_DRAFT": "Brouillon",
+    "status_PUBLISHED": "Publié",
+    "status_PAUSED": "En pause",
+    "status_SOLD": "Vendu",
+    "status_ARCHIVED": "Archivé",
+    "status_BANNED": "Banni",
+    "edit": "Modifier",
+    "publish": "Publier",
+    "statusDraft": "Mettre en brouillon",
+    "statusSold": "Marquer comme vendu",
+    "statusUpdateSuccess": "Statut mis à jour avec succès !",
+    "statusUpdateError": "Erreur lors de la mise à jour du statut.",
     "emptyTitle": "Aucun véhicule trouvé",
     "emptyText": "Vous n'avez encore publié aucun véhicule.",
     "newListing": "Créer une Nouvelle Annonce",
@@ -1298,6 +1520,11 @@
     "electricData": "Données électriques",
     "colourUpholstery": "Couleur et sellerie",
     "identifiers": "Numéros d'identification",
+    "identifierKeys": {
+      "vin": "Numéro d'identification du véhicule",
+      "serialNumber": "Numéro de série",
+      "typeApproval": "Réception par type"
+    },
     "equipment": "Équipement",
     "extras": "Extras",
     "description": "Description du véhicule",
@@ -1385,8 +1612,8 @@
     "quotaExhaustedDesc": "Vous avez atteint le quota maximum de votre plan ({plan}) ({current}/{max} annonces). Veuillez mettre à niveau votre abonnement.",
     "expiredWarningTitle": "Abonnement expiré",
     "expiredWarningDesc": "Votre abonnement a expiré. Les annonces seront désactivées le {date}. Veuillez renouveler votre abonnement.",
-    "expiredGraceTitle": "Abonnement expiré",
-    "expiredGraceDesc": "Votre abonnement a expiré et vos annonces ont été désactivées. Veuillez renouveler votre abonnement pour être à nouveau actif.",
+    "subscribeNow": "S'abonner maintenant",
+    "upgradePlan": "Changer de plan",
     "successUpdate": "Annonce mise à jour avec succès !",
     "successPublish": "Annonce publiée avec succès !",
     "back": "Retour",
@@ -1417,7 +1644,13 @@
     "errorUploadPrep": "Erreur lors de la préparation du téléchargement",
     "errorUploadFailed": "Échec du téléchargement pour {filename}",
     "errorLimitReached": "Limite atteinte : votre abonnement actuel ne permet pas d'ajouter plus de véhicules.",
-    "errorGeneric": "Une erreur s'est produite. Veuillez vérifier votre connexion Internet et réessayer."
+    "errorGeneric": "Une erreur s'est produite. Veuillez vérifier votre connexion Internet et réessayer.",
+    "publicationStatusTitle": "État de la publication",
+    "statusLabel": "Statut",
+    "statusPlaceholder": "Choisir le statut",
+    "statusPublished": "Publier",
+    "statusDraft": "Enregistrer comme brouillon",
+    "statusHelpText": "Les véhicules publiés sont visibles par tous. Les brouillons ne sont visibles que par vous dans votre tableau de bord."
   },
   "VehicleFormSections": {
     "vehicleFeatures": "Caractéristiques du véhicule",
@@ -1522,6 +1755,7 @@
     "businessEmail": "E-mail professionnel",
     "businessEmailPlaceholder": "email@exemple.ch",
     "businessPhone": "Téléphone professionnel",
+    "phonePlaceholder": "+41 XX XXX XX XX",
     "street": "Rue",
     "streetPlaceholder": "Rue",
     "zip": "Code postal",
@@ -1542,6 +1776,15 @@
     "selectTypePlaceholder": "Sélectionner le type",
     "combustionEnginePower": "Puissance moteur thermique (Ch)",
     "electricMotorPower": "Puissance moteur électrique (Ch)",
+    "numberOfGears": "Nombre de vitesses",
+    "numberOfGearsPlaceholder": "ex. 6",
+    "serialNumber": "Numéro de série",
+    "serialNumberPlaceholder": "Entrez le numéro de série",
+    "dimensions": "Dimensions (mm)",
+    "height": "Hauteur",
+    "width": "Largeur",
+    "length": "Longueur",
+    "powerConsumption": "Consommation d'énergie",
     "furtherInfo": "Informations supplémentaires",
     "typeApprovalPlaceholder": "ex. 1MA123",
     "mediaLimitError": "Maximum de 10 images autorisé",
@@ -1605,87 +1848,5 @@
     "button": "Retour à l'accueil",
     "metaTitle": "404 - Page non trouvée | AutoVendo",
     "metaDescription": "Désolé, la page demandée n'a pas pu être trouvée sur AutoVendo."
-  },
-  "SignupForm": {
-    "title": "Créer un compte",
-    "description": "Entrez vos informations pour créer votre compte",
-    "name": "Nom complet",
-    "namePlaceholder": "Jean Dupont",
-    "email": "E-mail",
-    "emailPlaceholder": "m@exemple.com",
-    "password": "Mot de passe",
-    "confirmPassword": "Confirmer le mot de passe",
-    "submitting": "Création du compte...",
-    "submit": "Créer un compte",
-    "alreadyHaveAccount": "Vous avez déjà un compte ?",
-    "signIn": "Se connecter",
-    "errorDefault": "Une erreur est survenue. Veuillez réessayer."
-  },
-  "SellerProfileForm": {
-    "personalTitle": "Informations personnelles",
-    "personalDesc": "Vos informations de compte de base.",
-    "nameLabel": "Nom affiché",
-    "namePlaceholder": "Jean Dupont",
-    "emailLabel": "E-mail du compte",
-    "emailPlaceholder": "jean@exemple.com",
-    "profileImageLabel": "Photo de profil",
-    "sellerTitle": "Informations de contact",
-    "sellerDesc": "Votre nom et vos coordonnées affichés aux acheteurs.",
-    "firstNameLabel": "Prénom",
-    "firstNamePlaceholder": "Jean",
-    "lastNameLabel": "Nom de famille",
-    "lastNamePlaceholder": "Dupont",
-    "phoneLabel": "Numéro de téléphone",
-    "contactEmailLabel": "E-mail de contact",
-    "addressTitle": "Adresse",
-    "addressDesc": "Votre localisation.",
-    "streetLabel": "Rue et numéro",
-    "streetPlaceholder": "Rue Principale 123",
-    "zipLabel": "Code postal",
-    "cityLabel": "Ville",
-    "cityPlaceholder": "Sélectionner une ville",
-    "saving": "Enregistrement...",
-    "save": "Enregistrer le profil",
-    "missingUser": "Informations utilisateur manquantes.",
-    "userUpdateError": "Impossible de mettre à jour les informations utilisateur.",
-    "emailChangeError": "Impossible d'initier le changement d'e-mail.",
-    "emailConfirmation": "Un e-mail de confirmation a été envoyé à votre nouvelle adresse.",
-    "profileUpdateSuccess": "Profil mis à jour avec succès.",
-    "profileUpdateError": "Impossible de mettre à jour le profil.",
-    "unexpectedError": "Une erreur est survenue. Veuillez réessayer."
-  },
-  "BrandsSection": {
-    "title": "Rechercher par marque"
-  },
-  "HowItWorksSection": {
-    "title": "Comment ça marche",
-    "subtitle": "Publiez votre annonce et touchez des milliers d'acheteurs en Suisse.",
-    "step1": {
-      "title": "Créer un compte",
-      "description": "Inscrivez-vous gratuitement en quelques secondes – sans paperasse."
-    },
-    "step2": {
-      "title": "Choisir un forfait",
-      "description": "Sélectionnez le plan qui vous convient et activez vos crédits d'annonce."
-    },
-    "step3": {
-      "title": "Publier votre voiture",
-      "description": "Téléchargez des photos, ajoutez des détails et publiez instantanément."
-    },
-    "step4": {
-      "title": "Être contacté",
-      "description": "Les acheteurs intéressés vous contactent directement par téléphone ou e-mail."
-    }
-  },
-  "SellCta": {
-    "title": "Prêt à vendre votre voiture ?",
-    "subtitle": "Rejoignez des milliers de vendeurs particuliers sur AutoSolo et trouvez vite un acheteur.",
-    "cta": "Commencer à vendre",
-    "browse": "Parcourir les annonces",
-    "perk": {
-      "free": "Inscription gratuite, sans frais cachés",
-      "fast": "Publiez votre voiture en moins de 5 minutes",
-      "direct": "Les acheteurs vous contactent directement"
-    }
   }
 }

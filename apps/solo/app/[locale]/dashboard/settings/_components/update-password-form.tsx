@@ -28,8 +28,11 @@ export const UpdatePasswordForm = () => {
   const [isPending, startTransition] = useTransition();
   const t = useTranslations("UpdatePasswordForm");
   const t_schema = useTranslations("AuthSchema");
-  
-  const schema = useMemo(() => createUpdatePasswordSchema(t_schema), [t_schema]);
+
+  const schema = useMemo(
+    () => createUpdatePasswordSchema(t_schema),
+    [t_schema],
+  );
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),

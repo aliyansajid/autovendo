@@ -10,16 +10,20 @@ import { useTranslations } from "next-intl";
 
 interface SubscribeButtonProps {
   planName: string;
-  label?: string;
   variant?: "default" | "outline";
+  label?: string;
+  successUrl?: string;
+  cancelUrl?: string;
   className?: string;
 }
 
 export const SubscribeButton = ({
   planName,
-  label,
   variant = "default",
-  className,
+  label,
+  successUrl,
+  cancelUrl,
+  className = "w-full",
 }: SubscribeButtonProps) => {
   const t = useTranslations("SubscribeButton");
   const router = useRouter();
@@ -29,15 +33,31 @@ export const SubscribeButton = ({
   const handleSubscribe = () => {
     if (!session) {
       toast.error(t("loginRequired"));
-      router.push(`/login?callbackUrl=/pricing`);
+      router.push(`/login?callbackUrl=/dashboard/subscription`);
       return;
     }
 
     startTransition(async () => {
+      const { data: subscriptions } = await authClient.subscription.list();
+      const activeSubscription = subscriptions?.find(
+        (sub: any) => sub.status === "active" || sub.status === "trialing",
+      );
+
+      const toAbsolute = (url: string | undefined, fallback: string) => {
+        if (!url) return `${window.location.origin}${fallback}`;
+        return url.startsWith("http") ? url : `${window.location.origin}${url}`;
+      };
+
       const { data, error } = await authClient.subscription.upgrade({
-        plan: planName.toLowerCase().replace(/\s+/g, "_"),
-        successUrl: `${window.location.origin}/profile?success=true`,
-        cancelUrl: `${window.location.origin}/pricing`,
+        plan: planName.toLowerCase(),
+        successUrl: toAbsolute(
+          successUrl,
+          "/dashboard/subscription?success=true",
+        ),
+        cancelUrl: toAbsolute(cancelUrl, "/dashboard/subscription"),
+        ...(activeSubscription?.stripeSubscriptionId && {
+          subscriptionId: activeSubscription.stripeSubscriptionId,
+        }),
       });
 
       if (error) {
@@ -53,12 +73,12 @@ export const SubscribeButton = ({
 
   return (
     <Button
-      className={className || "w-full"}
+      className={className}
       variant={variant}
       disabled={isPending}
       onClick={handleSubscribe}
     >
-      {isPending ? <Spinner /> : label || t("choosePlan")}
+      {isPending ? <Spinner /> : (label ?? t("choosePlan"))}
     </Button>
   );
 };

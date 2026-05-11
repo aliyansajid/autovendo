@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { UpdatePasswordForm } from "../../_components/update-password-form";
+import { UpdatePasswordForm } from "../_components/update-password-form";
 
 export default async function ChangePasswordPage() {
   const t = await getTranslations("ChangePasswordPage");

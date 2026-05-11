@@ -31,15 +31,9 @@ export interface VehicleListItem {
     city: string;
     zipCode: string;
     phoneNumber: string | null;
-  } | null;
-  seller: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    city: string;
-    zipCode: string;
-    phoneNumber: string;
-  } | null;
+    googleRating: number | null;
+    googleReviewCount: number | null;
+  };
 }
 
 export type VehicleDetails = Prisma.VehicleGetPayload<{

@@ -83,7 +83,7 @@ export default async function DashboardPage(props: {
       </div>
 
       {/* Critical Alerts */}
-      {subscriptionStatus.type === "expired" && (
+      {subscriptionStatus.type === "past_due" && (
         <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex items-start gap-3 text-destructive animate-in fade-in slide-in-from-top-4">
           <AlertCircle className="size-5 shrink-0 mt-0.5" />
           <div className="space-y-1">
@@ -212,7 +212,7 @@ export default async function DashboardPage(props: {
                     className="flex items-center"
                   >
                     {t("viewAll")}
-                    <ArrowRight className="size-4 ml-1" />
+                    <ArrowRight />
                   </Link>
                 </Button>
               </div>
@@ -223,7 +223,7 @@ export default async function DashboardPage(props: {
                   {summary.recentVehicles.map((vehicle) => (
                     <div
                       key={vehicle.id}
-                      className="flex items-center justify-between group py-4 first:pt-0 last:pb-0"
+                      className="flex items-center justify-between group"
                     >
                       <div className="flex items-center gap-3">
                         <div className="relative size-12 rounded-md overflow-hidden bg-muted shrink-0 border">
@@ -254,9 +254,7 @@ export default async function DashboardPage(props: {
                         <p className="font-semibold">
                           {formatPrice(vehicle.price)}
                         </p>
-                        <Badge variant="secondary" className="mt-1">
-                          {vehicle.status}
-                        </Badge>
+                        <Badge variant="secondary">{vehicle.status}</Badge>
                       </div>
                     </div>
                   ))}
@@ -291,7 +289,7 @@ export default async function DashboardPage(props: {
                 asChild
               >
                 <Link href="/dashboard/vehicles/new">
-                  <Plus className="size-4 mr-2" />
+                  <Plus />
                   {t("newListing")}
                 </Link>
               </Button>
@@ -301,7 +299,7 @@ export default async function DashboardPage(props: {
                 asChild
               >
                 <Link href="/dashboard/subscription">
-                  <CreditCard className="size-4 mr-2" />
+                  <CreditCard />
                   {t("billingSettings")}
                 </Link>
               </Button>
@@ -311,7 +309,7 @@ export default async function DashboardPage(props: {
                 asChild
               >
                 <Link href="/dashboard/vehicles">
-                  <Car className="size-4 mr-2" />
+                  <Car />
                   {t("manageInventory")}
                 </Link>
               </Button>
@@ -320,7 +318,7 @@ export default async function DashboardPage(props: {
 
           {/* Need Help? */}
           <Card className="bg-muted/50 border-dashed">
-            <CardContent className="text-center space-y-3 pt-6">
+            <CardContent className="text-center space-y-3">
               <div className="bg-primary/10 size-12 rounded-full flex items-center justify-center mx-auto">
                 <LayoutDashboard className="size-6 text-primary" />
               </div>
@@ -364,7 +362,7 @@ function StatCard({
 
   return (
     <Card>
-      <CardContent className="pt-6">
+      <CardContent>
         <div className="flex items-center justify-between mb-4">
           <div className={`p-2 rounded-lg border ${colorMap[color]}`}>
             {icon}

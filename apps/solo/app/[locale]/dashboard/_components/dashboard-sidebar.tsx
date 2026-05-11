@@ -24,9 +24,22 @@ interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
   } | null;
 }
 
+/**
+ * Dashboard Sidebar Component
+ * 
+ * Provides the primary navigation for the dealer dashboard.
+ * - Dynamically localizes all menu items
+ * - Integrates with the User Profile (NavUser) and Main Navigation (NavMain)
+ * - Persists across all dashboard sub-pages
+ */
 export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
   const t = useTranslations("DashboardSidebar");
 
+  /**
+   * Main Navigation Configuration
+   * All URLs are relative; they are automatically prefixed with the locale
+   * by the localized <Link> and useRouter from @/i18n/routing.
+   */
   const navItems = [
     {
       title: t("overview"),
@@ -40,7 +53,7 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
       isActive: true,
     },
     {
-      title: t("subscription"),
+      title: t("billing"),
       url: "/dashboard/subscription",
       icon: CreditCard,
     },
@@ -69,7 +82,7 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <Image src="/logo.svg" alt="AutoSolo Logo" fill priority />
+                <Image src="/logo.svg" alt={t("logoAlt")} fill priority />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

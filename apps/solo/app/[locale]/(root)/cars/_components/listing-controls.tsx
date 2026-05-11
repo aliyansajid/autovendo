@@ -108,7 +108,7 @@ export function ListingControls({
         <SelectContent>
           {SORT_OPTIONS.map((option) => (
             <SelectItem key={option} value={option}>
-              {SORT_LABELS[option]}
+              {t(`sortOptions.${option}`)}
             </SelectItem>
           ))}
         </SelectContent>

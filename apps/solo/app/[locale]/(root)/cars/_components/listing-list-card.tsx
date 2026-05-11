@@ -48,8 +48,8 @@ export function ListingListCard({
 
   // Use helpers for ALL formatting
   const title = formatVehicleName([item.make, item.model, item.version]);
-  const formattedPrice = formatPrice(item.price, locale);
-  const formattedKm = formatNumber(item.kilometer, locale);
+  const formattedPrice = formatPrice(item.price);
+  const formattedKm = formatNumber(item.kilometer);
   const registrationDate = formatRegistrationDate(
     item.registrationMonth,
     item.registrationYear,
@@ -154,8 +154,8 @@ export function ListingListCard({
             {item.kw !== null && item.kw !== undefined && (
               <>
                 <span>
-                  {formatNumber(item.kw, locale)} kW
-                  {item.hp ? ` (${formatNumber(item.hp, locale)} PS)` : ""}
+                  {formatNumber(item.kw)} kW
+                  {item.hp ? ` (${formatNumber(item.hp)} PS)` : ""}
                 </span>
                 <span className="text-muted-foreground">•</span>
               </>
@@ -195,31 +195,55 @@ export function ListingListCard({
 
           <Separator />
 
-          {(() => {
-            const sellerName = item.dealer?.companyName
-              ?? `${item.seller?.firstName ?? ""} ${item.seller?.lastName ?? ""}`.trim();
-            const sellerLocation = item.dealer
-              ? `${item.dealer.zipCode} ${item.dealer.city}`
-              : `${item.seller?.zipCode ?? ""} ${item.seller?.city ?? ""}`;
-            const sellerPhone = item.dealer?.phoneNumber ?? item.seller?.phoneNumber;
+          <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 ">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <Link
+                  href={`/dealers/${item.dealer.id}`}
+                  className="text-sm font-bold truncate hover:underline relative z-20"
+                >
+                  {item.dealer.companyName}
+                </Link>
 
-            return (
-              <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4">
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-bold truncate">{sellerName}</span>
-                  <span className="text-xs text-muted-foreground truncate">{sellerLocation}</span>
-                </div>
-                {sellerPhone && (
-                  <Button asChild className="relative z-20">
-                    <Link href={`tel:${sellerPhone}`}>
-                      <Phone />
-                      {tCard("contact")}
-                    </Link>
-                  </Button>
+                {item.dealer.googleRating != null && (
+                  <>
+                    <div className="flex items-center text-rating">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-3 h-3 fill-current ${i < Math.round(item.dealer.googleRating!) ? "text-rating" : "text-muted-foreground opacity-30"}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {item.dealer.googleRating.toFixed(1)}
+                      {item.dealer.googleReviewCount != null && ` (${item.dealer.googleReviewCount})`}
+                    </span>
+                  </>
                 )}
               </div>
-            );
-          })()}
+
+              <span className="text-xs text-muted-foreground truncate">
+                {item.dealer.zipCode} {item.dealer.city}
+              </span>
+            </div>
+
+            <Button asChild className="relative z-20">
+              <Link href={`tel:${item.dealer.phoneNumber}`}>
+                <Phone />
+                {tCard("contact")}
+              </Link>
+            </Button>
+          </div>
+
+          {showDealerLink && (
+            <Link
+              href={`/dealers/${item.dealer.id}`}
+              className="mt-4 text-sm text-primary font-medium underline-offset-4 hover:underline relative z-20"
+            >
+              {tCard("allVehicles")}
+            </Link>
+          )}
         </div>
       </CardContent>
     </Card>

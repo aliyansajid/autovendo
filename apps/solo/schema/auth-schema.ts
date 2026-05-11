@@ -9,19 +9,6 @@ export const createLoginSchema = (t: TFn) =>
     rememberme: z.boolean(),
   });
 
-export const createSignupSchema = (t: TFn) =>
-  z
-    .object({
-      name: z.string().min(2, t("nameMinLength")),
-      email: z.string().email(t("invalidEmail")),
-      password: z.string().min(8, t("passwordMinLength")),
-      confirmPassword: z.string(),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: t("passwordsDoNotMatch"),
-      path: ["confirmPassword"],
-    });
-
 export const createForgotPasswordSchema = (t: TFn) =>
   z.object({
     email: z.string().email(t("invalidEmail")),

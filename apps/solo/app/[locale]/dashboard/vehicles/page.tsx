@@ -1,88 +1,96 @@
 import { Button } from "@repo/ui/components/button";
-import { Plus, AlertCircle, AlertTriangle } from "lucide-react";
+import { Plus, AlertCircleIcon } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { getSellerVehicles, getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
+import {
+  getDealerVehicles,
+  getVehicleSubscriptionStatus,
+} from "@/app/actions/vehicles.actions";
 import { VehicleList } from "./_components/vehicle-list";
+import { getTranslations } from "next-intl/server";
 import {
   Alert,
+  AlertAction,
   AlertDescription,
   AlertTitle,
-} from "@repo/ui/components/alert";
-import { getTranslations, getFormatter } from "next-intl/server";
+} from "@repo/ui/src/components/alert";
 
-export default async function VehiclesPage() {
+/**
+ * Vehicles Inventory Page
+ * 
+ * Displays the list of vehicles owned by the dealer.
+ * Implements a subscription guard that:
+ * 1. Alerts users if they lack an active subscription
+ * 2. Blocks new listings if the quota is exhausted
+ */
+export default async function VehiclesPage(props: {
+  params: Promise<{ locale: string }>;
+}) {
+  // Extract locale and initialize translations
+  const { locale } = await props.params;
   const t = await getTranslations("VehiclesPage");
-  const format = await getFormatter();
 
+  /**
+   * Data Fetching
+   * Fetches the dealer's vehicles and their current subscription quota status in parallel
+   */
   const [vehicles, subscriptionStatus] = await Promise.all([
-    getSellerVehicles(),
+    getDealerVehicles(),
     getVehicleSubscriptionStatus(),
   ]);
 
+  /**
+   * Subscription Logic
+   * Determine if the user is prevented from creating new listings
+   */
   const isBlocked =
     subscriptionStatus.type === "no_subscription" ||
     subscriptionStatus.type === "quota_exhausted" ||
-    subscriptionStatus.type === "expired";
+    subscriptionStatus.type === "expired" ||
+    subscriptionStatus.type === "past_due";
 
   return (
     <div className="space-y-6">
-      {/* Grace period — subscription expired but still within 7 days */}
-      {subscriptionStatus.type === "expired" &&
-        !subscriptionStatus.isGraceExpired &&
-        subscriptionStatus.graceEnd && (
-          <Alert className="border-yellow-500 bg-yellow-50 text-yellow-900 dark:bg-yellow-950/20 dark:text-yellow-400 [&>svg]:text-yellow-500">
-            <AlertTriangle />
-            <AlertTitle>{t("expiredTitle")}</AlertTitle>
-            <AlertDescription>
-              {t("expiredGraceDescription")}{" "}
-              <strong>
-                {format.dateTime(new Date(subscriptionStatus.graceEnd), {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
-              </strong>{" "}
-              {t("expiredDescription", {
-                date: format.dateTime(new Date(subscriptionStatus.graceEnd), {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                }),
-              })}
-            </AlertDescription>
-          </Alert>
-        )}
-
-      {/* No subscription or grace period has expired */}
-      {(subscriptionStatus.type === "no_subscription" ||
-        (subscriptionStatus.type === "expired" &&
-          subscriptionStatus.isGraceExpired)) && (
+      {/* Past due warning */}
+      {subscriptionStatus.type === "past_due" && (
         <Alert variant="destructive">
-          <AlertCircle />
+          <AlertCircleIcon />
+          <AlertTitle>{t("pastDueTitle")}</AlertTitle>
+          <AlertDescription>{t("pastDueDescription")}</AlertDescription>
+          <AlertAction>
+            <Button size="xs" variant="outline" asChild>
+              <Link href="/dashboard/subscription" locale={locale}>
+                {t("upgradePlan")}
+              </Link>
+            </Button>
+          </AlertAction>
+        </Alert>
+      )}
+
+      {/* No subscription or expired */}
+      {(subscriptionStatus.type === "no_subscription" ||
+        subscriptionStatus.type === "expired") && (
+        <Alert variant="destructive">
+          <AlertCircleIcon />
           <AlertTitle>{t("noSubTitle")}</AlertTitle>
           <AlertDescription>
             {subscriptionStatus.type === "no_subscription"
               ? t("noSubDescription")
-              : t("expiredDescription", {
-                  date: subscriptionStatus.graceEnd
-                     ? format.dateTime(
-                         new Date(subscriptionStatus.graceEnd),
-                         {
-                           day: "2-digit",
-                           month: "2-digit",
-                           year: "numeric",
-                         },
-                       )
-                    : "",
-                })}
+              : t("expiredDescription")}
           </AlertDescription>
+          <AlertAction>
+            <Button size="xs" variant="outline" asChild>
+              <Link href="/dashboard/subscription" locale={locale}>
+                {t("subscribeNow")}
+              </Link>
+            </Button>
+          </AlertAction>
         </Alert>
       )}
 
       {/* Quota exhausted */}
       {subscriptionStatus.type === "quota_exhausted" && (
         <Alert variant="destructive">
-          <AlertCircle />
+          <AlertCircleIcon />
           <AlertTitle>{t("quotaTitle")}</AlertTitle>
           <AlertDescription>
             {t("quotaDescription", {
@@ -91,6 +99,13 @@ export default async function VehiclesPage() {
               max: subscriptionStatus.maxVehicles,
             })}
           </AlertDescription>
+          <AlertAction>
+            <Button size="xs" variant="outline" asChild>
+              <Link href="/dashboard/subscription" locale={locale}>
+                {t("upgradePlan")}
+              </Link>
+            </Button>
+          </AlertAction>
         </Alert>
       )}
 
@@ -107,7 +122,7 @@ export default async function VehiclesPage() {
           </Button>
         ) : (
           <Button asChild>
-            <Link href="/dashboard/vehicles/new">
+            <Link href="/dashboard/vehicles/new" locale={locale}>
               <Plus />
               {t("newListing")}
             </Link>

@@ -3,11 +3,12 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import { buildMetadata, PAGE_META } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
+import { SearchForm } from "./_components/search-form";
 import { FeaturedListings } from "./_components/featured-listings";
-import { HowItWorks } from "./_components/how-it-works";
-import { SellCta } from "./_components/sell-cta";
-import { LandingHero } from "./_components/landing-hero";
+import { FeaturedGarage } from "./_components/featured-garage";
+import { About } from "./_components/about";
 import { getVehicles } from "@/app/actions/vehicles.actions";
+import { getDealers } from "@/app/actions/dealer.actions";
 import { buildVehicleTitle } from "@/lib/helpers/vehicle";
 import {
   formatPrice,
@@ -30,7 +31,7 @@ export default async function HomePage(props: {
 }) {
   const { locale } = await props.params;
 
-  const [vehiclesResult, tVehicle] = await Promise.all([
+  const [vehiclesResult, dealersResult, tVehicle] = await Promise.all([
     getVehicles({ pageSize: "12", sort: "created-desc" }).catch(() => ({
       vehicles: [],
       total: 0,
@@ -38,17 +39,11 @@ export default async function HomePage(props: {
       pageSize: 12,
       totalPages: 0,
     })),
+    getDealers({ pageSize: 8 }),
     getTranslations("Vehicle"),
   ]);
 
   function vehicleToListingProps(item: VehicleListItem): ListingProps {
-    const sellerName = item.dealer?.companyName ?? item.seller?.firstName
-      ? `${item.seller?.firstName} ${item.seller?.lastName}`.trim()
-      : "";
-    const sellerLocation = item.dealer
-      ? [item.dealer.zipCode, item.dealer.city].filter(Boolean).join(" ")
-      : [item.seller?.zipCode, item.seller?.city].filter(Boolean).join(" ");
-
     return {
       id: item.id,
       image: getImageUrl(item.images[0]),
@@ -56,17 +51,17 @@ export default async function HomePage(props: {
         ? tVehicle(`conditions.${item.vehicleCondition.toUpperCase()}`)
         : undefined,
       title: buildVehicleTitle(item.make, item.model, item.version),
-      price: formatPrice(item.price, locale),
+      price: formatPrice(item.price),
       details: [
         formatRegistrationDate(item.registrationMonth, item.registrationYear),
-        `${formatNumber(item.kilometer, locale)} km`,
-        item.fuelType
-          ? tVehicle(`fuelTypes.${item.fuelType.toUpperCase()}`)
-          : "",
+        `${formatNumber(item.kilometer)} km`,
+        item.fuelType ? tVehicle(`fuelTypes.${item.fuelType.toUpperCase()}`) : "",
       ].filter(Boolean),
-      garageName: sellerName,
-      garageId: item.dealer?.id ?? item.seller?.id ?? "",
-      garageLocation: sellerLocation,
+      garageName: item.dealer.companyName,
+      garageId: item.dealer.id,
+      garageLocation: [item.dealer.zipCode, item.dealer.city]
+        .filter(Boolean)
+        .join(" "),
     };
   }
 
@@ -74,16 +69,27 @@ export default async function HomePage(props: {
     vehicleToListingProps,
   );
 
+  const garages = dealersResult.dealers.map((d) => ({
+    id: d.id,
+    name: d.companyName,
+    image: d.coverImage
+      ? getImageUrl(d.coverImage)
+      : d.logo
+        ? getImageUrl(d.logo)
+        : "/placeholder-car.jpg",
+    garageLocation: d.streetAddress || d.city,
+  }));
+
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "AutoSolo",
-    url: "https://autosolo.ch",
+    name: "AutoVendo",
+    url: "https://autovendo.ch",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `https://autosolo.ch/${locale}/cars?search={search_term_string}`,
+        urlTemplate: `https://autovendo.ch/${locale}/cars?search={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -92,9 +98,10 @@ export default async function HomePage(props: {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "AutoSolo",
-    url: "https://autosolo.ch",
-    logo: "https://autosolo.ch/logo.svg",
+    name: "AutoVendo",
+    url: "https://autovendo.ch",
+    logo: "https://autovendo.ch/logo.svg",
+    sameAs: ["https://autovendo.ch"],
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+41793223520",
@@ -107,10 +114,14 @@ export default async function HomePage(props: {
     <>
       <JsonLd data={websiteSchema} />
       <JsonLd data={organizationSchema} />
-      <LandingHero />
+      <div className="bg-linear-to-r from-primary to-primary/80">
+        <div className="w-full max-w-285 mx-auto px-4 py-12">
+          <SearchForm />
+        </div>
+      </div>
       <FeaturedListings listings={listings} />
-      <HowItWorks />
-      <SellCta />
+      <FeaturedGarage garages={garages} />
+      <About />
     </>
   );
 }

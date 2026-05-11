@@ -13,6 +13,7 @@ import {
 import { Separator } from "@repo/ui/src/components/separator";
 import { Link } from "@/i18n/routing";
 import { formatVehicleName } from "@/lib/helpers/vehicle";
+import { useTranslations } from "next-intl";
 
 interface ListingHeaderProps {
   make: string;
@@ -21,6 +22,7 @@ interface ListingHeaderProps {
 }
 
 export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
+  const t = useTranslations("ListingHeader");
   const displayName = formatVehicleName([make, model, trim]);
   const displayMake = formatVehicleName([make]);
   const displayModel = formatVehicleName([model]);
@@ -38,7 +40,7 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        alert("Link in die Zwischenablage kopiert.");
+        alert(t("shareSuccess"));
       }
     } catch (err) {
       console.error("Error sharing:", err);
@@ -51,7 +53,7 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
         <Button variant="link" asChild>
           <Link href="/cars">
             <ArrowLeft />
-            Zurück
+            {t("back")}
           </Link>
         </Button>
 
@@ -63,11 +65,11 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
         <Breadcrumb className="hidden md:block">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Start</BreadcrumbLink>
+              <BreadcrumbLink href="/">{t("start")}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/cars">Fahrzeuge</BreadcrumbLink>
+              <BreadcrumbLink href="/cars">{t("vehicles")}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -92,7 +94,7 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
         onClick={handleShare}
       >
         <Share2 />
-        <span className="hidden sm:inline">Teilen</span>
+        <span className="hidden sm:inline">{t("share")}</span>
       </Button>
     </div>
   );

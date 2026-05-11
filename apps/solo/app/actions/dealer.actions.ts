@@ -1,12 +1,19 @@
 "use server";
 
-import { prisma } from "@repo/db";
+import { prisma, DayOfWeek } from "@repo/db";
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
+import { createDealerProfileSchema } from "@/schema/profile-schema";
 import { getTranslations } from "next-intl/server";
 import { createDealerContactSchema } from "@/schema/dealer-contact-schema";
+import { revalidatePath } from "next/cache";
 import { sendEmail, DealerContactEmail } from "@repo/transactional";
-import { cacheGet, cacheSet } from "@/lib/cache";
+import {
+  cacheGet,
+  cacheSet,
+  cacheDelete,
+  cacheDeletePattern,
+} from "@/lib/cache";
 import type {
   DealerProfile,
   DealerListResult,
@@ -17,10 +24,13 @@ import type {
 import { DAY_ORDER } from "@/lib/helpers/format";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { buildWhereClause } from "./vehicles.actions";
+import { storage } from "@/lib/helpers/storage";
 
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
+
+// Reverse map no longer needed as we use Enums directly in the form
 
 function toTimeString(date: Date | string | null): string {
   if (!date) return "";
@@ -31,6 +41,171 @@ function toTimeString(date: Date | string | null): string {
     minute: "2-digit",
     hour12: false,
   });
+}
+
+function parseTimeString(time: string | null | undefined): Date | null {
+  if (!time || !time.includes(":")) return null;
+  const [hours, minutes] = time.split(":").map(Number);
+  const date = new Date();
+  date.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+  return date;
+}
+
+// -----------------------------------------------------------------------------
+// Dashboard: update dealer profile
+// -----------------------------------------------------------------------------
+
+export async function updateDealerProfile(values: any) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) return { success: false, error: "Unauthorized" };
+  const userId = session.user.id;
+
+  const tSchema = await getTranslations("ProfileSchema");
+  const schema = createDealerProfileSchema(tSchema);
+
+  try {
+    const validatedValues = schema.parse(values);
+
+    // 1. Fetch current data to check for image changes
+    const existingData = await prisma.dealer.findUnique({
+      where: { userId },
+      select: {
+        logo: true,
+        coverImage: true,
+        user: {
+          select: {
+            image: true,
+          },
+        },
+      },
+    });
+
+    const imagesToDelete: string[] = [];
+
+    // Check logo
+    if (
+      existingData?.logo &&
+      values.logo !== existingData.logo &&
+      (typeof values.logo === "string" || values.logo === null)
+    ) {
+      imagesToDelete.push(existingData.logo);
+    }
+
+    // Check coverImage
+    if (
+      existingData?.coverImage &&
+      values.coverImage !== existingData.coverImage &&
+      (typeof values.coverImage === "string" || values.coverImage === null)
+    ) {
+      imagesToDelete.push(existingData.coverImage);
+    }
+
+    // Check user profile image
+    if (
+      existingData?.user?.image &&
+      values.image !== existingData.user.image &&
+      (typeof values.image === "string" || values.image === null)
+    ) {
+      imagesToDelete.push(existingData.user.image);
+    }
+
+    // 2. Delete old files from storage
+    if (imagesToDelete.length > 0) {
+      await Promise.all(
+        imagesToDelete.map(async (url) => {
+          try {
+            const urlObj = new URL(url);
+            const key = urlObj.pathname.startsWith("/")
+              ? urlObj.pathname.substring(1)
+              : urlObj.pathname;
+            await storage.deleteFile(key);
+          } catch (e) {
+            console.error(`Failed to delete old dealer image: ${url}`, e);
+          }
+        }),
+      );
+    }
+
+    const dealer = await prisma.dealer.upsert({
+      where: { userId },
+      create: {
+        userId,
+        companyName: validatedValues.companyName,
+        description: validatedValues.description,
+        website: validatedValues.website,
+        logo:
+          typeof validatedValues.logo === "string"
+            ? validatedValues.logo
+            : undefined,
+        streetAddress: validatedValues.streetAddress,
+        zipCode: validatedValues.zipCode,
+        city: validatedValues.city,
+        country: validatedValues.country,
+        uidNumber: validatedValues.uidNumber,
+        contactPerson: validatedValues.contactPerson,
+        phoneNumber: validatedValues.phoneNumber,
+        businessEmail: validatedValues.businessEmail,
+        coverImage:
+          typeof validatedValues.coverImage === "string"
+            ? validatedValues.coverImage
+            : undefined,
+      },
+      update: {
+        companyName: validatedValues.companyName,
+        description: validatedValues.description,
+        website: validatedValues.website,
+        logo:
+          typeof validatedValues.logo === "string"
+            ? validatedValues.logo
+            : validatedValues.logo === null
+              ? null
+              : undefined,
+        coverImage:
+          typeof validatedValues.coverImage === "string"
+            ? validatedValues.coverImage
+            : validatedValues.coverImage === null
+              ? null
+              : undefined,
+        streetAddress: validatedValues.streetAddress,
+        zipCode: validatedValues.zipCode,
+        city: validatedValues.city,
+        country: validatedValues.country,
+        uidNumber: validatedValues.uidNumber,
+        contactPerson: validatedValues.contactPerson,
+        phoneNumber: validatedValues.phoneNumber,
+        businessEmail: validatedValues.businessEmail,
+      },
+    });
+
+    await prisma.openingHour.deleteMany({ where: { dealerId: dealer.id } });
+
+    if (validatedValues.openingHours?.length) {
+      await prisma.openingHour.createMany({
+        data: validatedValues.openingHours.map((oh) => ({
+          dealerId: dealer.id,
+          day: oh.day as DayOfWeek,
+          isOpen: oh.isOpen,
+          openTime: parseTimeString(oh.openTime),
+          closeTime: parseTimeString(oh.closeTime),
+        })),
+      });
+    }
+
+    await Promise.all([
+      cacheDelete(`dealer:${dealer.id}`),
+      cacheDeletePattern("dealers:list:*"),
+      cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
+    ]);
+
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update dealer profile:", error);
+    return { success: false, error: "errorDefault" };
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -111,7 +286,7 @@ export async function getDealers({
   try {
     const skip = (page - 1) * pageSize;
 
-    const where = searchQuery
+    const where: any = searchQuery
       ? {
           OR: [
             {
@@ -134,6 +309,8 @@ export async function getDealers({
         }
       : {};
 
+    where.user = { banned: { not: true } };
+
     const [dealers, totalCount] = await Promise.all([
       prisma.dealer.findMany({
         where,
@@ -148,6 +325,8 @@ export async function getDealers({
           zipCode: true,
           logo: true,
           coverImage: true,
+          googleRating: true,
+          googleReviewCount: true,
         },
       }),
       prisma.dealer.count({ where }),
@@ -177,8 +356,13 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
   if (cached) return cached;
 
   try {
-    const dealer = await prisma.dealer.findUnique({
-      where: { id },
+    const dealer = await prisma.dealer.findFirst({
+      where: {
+        id,
+        user: {
+          banned: { not: true },
+        },
+      },
       select: {
         id: true,
         companyName: true,
@@ -193,6 +377,8 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
         phoneNumber: true,
         businessEmail: true,
         googlePlaceId: true,
+        googleRating: true,
+        googleReviewCount: true,
         user: { select: { emailVerified: true } },
         openingHours: {
           select: { day: true, isOpen: true, openTime: true, closeTime: true },
@@ -217,6 +403,8 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
       email: dealer.businessEmail,
       isVerified: dealer.user.emailVerified,
       googlePlaceId: dealer.googlePlaceId ?? null,
+      googleRating: dealer.googleRating ?? null,
+      googleReviewCount: dealer.googleReviewCount ?? null,
       openingHours: [...dealer.openingHours]
         .sort(
           (a, b) =>
@@ -350,7 +538,7 @@ export async function sendDealerContactEmail(
 
     const result = await sendEmail({
       to: dealer.businessEmail,
-      subject: `New contact request from ${validatedData.name} – autosolo.ch`,
+      subject: `New contact request from ${validatedData.name} – autovendo.ch`,
       replyTo: validatedData.email,
       template: DealerContactEmail({
         dealerName: dealer.companyName,
@@ -373,47 +561,107 @@ export async function sendDealerContactEmail(
 }
 
 // -----------------------------------------------------------------------------
-// Public: fetch Google Place reviews
+// Public: fetch Google Place reviews with 30-day DB cache
+// - Visitors always read from DB (zero API calls)
+// - API is called at most once per dealer per 30 days
 // Requires GOOGLE_PLACES_API_KEY env var + dealer.googlePlaceId to be set.
 // Returns null if unconfigured — UI handles gracefully.
 // -----------------------------------------------------------------------------
 
+const REVIEW_CACHE_TTL = 60 * 60 * 24 * 30; // 30 days in seconds
+
 export async function getDealerGoogleReviews(
-  placeId: string,
+  dealerId: string,
 ): Promise<GooglePlaceData | null> {
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
-  if (!apiKey) return null;
+  const redisFreshKey = `dealer:reviews:fresh:${dealerId}`;
 
+  // 1. Check if Redis says cache is still fresh
+  const isFresh = await cacheGet<boolean>(redisFreshKey);
+
+  if (isFresh) {
+    // Serve from DB — no API call
+    const dealer = await prisma.dealer.findUnique({
+      where: { id: dealerId },
+      select: { googleRating: true, googleReviewCount: true, googleReviews: true },
+    });
+    if (dealer?.googleRating != null) {
+      return {
+        rating: dealer.googleRating,
+        reviewCount: dealer.googleReviewCount ?? null,
+        reviews: (dealer.googleReviews as any[]) ?? [],
+      };
+    }
+  }
+
+  // 2. Redis key expired (or never set) — check if dealer has a Place ID
+  const dealer = await prisma.dealer.findUnique({
+    where: { id: dealerId },
+    select: {
+      googlePlaceId: true,
+      googleRating: true,
+      googleReviewCount: true,
+      googleReviews: true,
+    },
+  });
+
+  if (!dealer?.googlePlaceId) return null;
+
+  // 3. No API key — return whatever is in DB (may be stale but better than nothing)
+  if (!apiKey) {
+    if (dealer.googleRating != null) {
+      return {
+        rating: dealer.googleRating,
+        reviewCount: dealer.googleReviewCount ?? null,
+        reviews: (dealer.googleReviews as any[]) ?? [],
+      };
+    }
+    return null;
+  }
+
+  // 4. Call Google API
   try {
     const url = new URL(
       "https://maps.googleapis.com/maps/api/place/details/json",
     );
-    url.searchParams.set("place_id", placeId);
+    url.searchParams.set("place_id", dealer.googlePlaceId);
     url.searchParams.set("fields", "rating,user_ratings_total,reviews");
     url.searchParams.set("language", "de");
     url.searchParams.set("key", apiKey);
 
-    const res = await fetch(url.toString(), {
-      next: { revalidate: 3600 },
-    });
-
+    const res = await fetch(url.toString(), { cache: "no-store" });
     if (!res.ok) return null;
 
     const data = await res.json();
     if (data.status !== "OK" || !data.result) return null;
 
     const { result } = data;
+    const reviews = (result.reviews ?? []).map((r: any) => ({
+      authorName: r.author_name,
+      rating: r.rating,
+      text: r.text,
+      relativeTimeDescription: r.relative_time_description,
+      profilePhotoUrl: r.profile_photo_url ?? null,
+    }));
+
+    // 5. Persist to DB + mark fresh in Redis for 30 days
+    await Promise.all([
+      prisma.dealer.update({
+        where: { id: dealerId },
+        data: {
+          googleRating: result.rating ?? null,
+          googleReviewCount: result.user_ratings_total ?? null,
+          googleReviews: reviews,
+        },
+      }),
+      cacheSet(redisFreshKey, true, REVIEW_CACHE_TTL),
+      cacheDelete(`dealer:${dealerId}`),
+    ]);
 
     return {
       rating: result.rating ?? null,
       reviewCount: result.user_ratings_total ?? null,
-      reviews: (result.reviews ?? []).map((r: any) => ({
-        authorName: r.author_name,
-        rating: r.rating,
-        text: r.text,
-        relativeTimeDescription: r.relative_time_description,
-        profilePhotoUrl: r.profile_photo_url ?? null,
-      })),
+      reviews,
     };
   } catch (error) {
     console.error("Failed to fetch Google reviews:", error);

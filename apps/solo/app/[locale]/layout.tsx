@@ -31,32 +31,33 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    metadataBase: new URL("https://autosolo.ch"),
+    metadataBase: new URL("https://autovendo.ch"),
     title: {
-      default: "Auto privat kaufen & verkaufen Schweiz | AutoSolo",
+      default: "Gebrauchtwagen & Occasionen kaufen Schweiz | AutoVendo",
       template: "%s",
     },
     description:
-      "Tausende Gebrauchtwagen von Privatverkäufern in der Schweiz. Günstig Auto kaufen ohne Händleraufschlag – direkt von privat auf autosolo.ch.",
+      "Tausende Gebrauchtwagen und Occasionen von verifizierten Schweizer Händlern. Günstiger als AutoScout24 – faire Preise, keine versteckten Kosten.",
     keywords: [
-      "auto privat kaufen schweiz",
-      "gebrauchtwagen von privat schweiz",
-      "auto verkaufen schweiz privat",
-      "privatinserat auto schweiz",
-      "occasion von privat kaufen",
-      "auto privat verkaufen schweiz",
-      "autosolo",
-      "gebrauchtwagen privat schweiz",
-      "occasion privat schweiz",
+      "gebrauchtwagen schweiz",
+      "occasion auto schweiz",
+      "auto kaufen schweiz",
+      "occasionen kaufen",
+      "gebrauchtwagen kaufen",
+      "autohändler schweiz",
+      "auto inserat schweiz",
+      "autovendo",
+      "occasion kaufen schweiz",
+      "gebrauchtwagen kaufen schweiz",
     ],
     openGraph: {
-      siteName: "AutoSolo",
+      siteName: "AutoVendo",
       images: [
         {
           url: "/web-app-manifest-512x512.png",
           width: 1200,
           height: 630,
-          alt: "AutoSolo – Auto privat kaufen & verkaufen Schweiz",
+          alt: "AutoVendo – Gebrauchtwagen & Occasionen Schweiz",
         },
       ],
       locale: OG_LOCALE[locale] ?? "de_CH",
@@ -77,7 +78,7 @@ export async function generateMetadata({
       },
     },
     other: {
-      "apple-mobile-web-app-title": "AutoSolo",
+      "apple-mobile-web-app-title": "AutoVendo",
     },
   };
 }
@@ -103,7 +104,18 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-X61M6TQ4LL"
+          src="https://plausible.io/js/pa-DzlMYGkJm6FkvJ_MeBOD2.js"
+          strategy="afterInteractive"
+        />
+        <Script id="plausible-init" strategy="afterInteractive">
+          {`
+            window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)};
+            window.plausible.init=window.plausible.init||function(i){window.plausible.o=i||{}};
+            window.plausible.init();
+          `}
+        </Script>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-QSHVMEN9ZJ"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -111,7 +123,7 @@ export default async function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-X61M6TQ4LL');
+            gtag('config', 'G-QSHVMEN9ZJ');
           `}
         </Script>
         <NextIntlClientProvider messages={messages} locale={locale}>

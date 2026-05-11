@@ -16,29 +16,35 @@ const createOptionalImage = (t: TFn) =>
       (file) =>
         typeof file === "string" ||
         (file instanceof File && ACCEPTED_IMAGE_TYPES.includes(file.type)),
-      { message: t("invalidImageType") },
+      {
+        message: t("invalidImageType"),
+      },
     )
     .optional()
     .nullable();
 
-export const createSellerProfileSchema = (t: TFn) =>
+const createOptionalString = () =>
+  z.string().optional().or(z.literal("")).nullable();
+
+const createOptionalUrl = (t: TFn) =>
+  z.string().url(t("invalidUrl")).optional().or(z.literal("")).nullable();
+
+export const createDealerProfileSchema = (t: TFn) =>
   z.object({
     // User fields
-    name: z.string().min(2, t("nameMinLength")).max(50, t("nameMaxLength")),
+    name: z.string().min(3, t("nameMinLength")).max(50, t("nameMaxLength")),
     email: z.string().email(t("invalidEmail")),
     image: createOptionalImage(t),
 
-    // Seller fields
-    firstName: z.string().min(2, t("firstNameMinLength")).max(50, t("firstNameMaxLength")),
-    lastName: z.string().min(2, t("lastNameMinLength")).max(50, t("lastNameMaxLength")),
-    phoneNumber: z
+    // Dealer fields
+    companyName: z
       .string()
-      .min(1, t("phoneRequired"))
-      .regex(
-        /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/,
-        t("invalidPhoneFormat"),
-      ),
-    sellerEmail: z.string().email(t("invalidEmail")),
+      .min(3, t("companyNameMinLength"))
+      .max(50, t("companyNameMaxLength")),
+    description: createOptionalString(),
+    website: createOptionalUrl(t),
+    logo: createOptionalImage(t),
+    coverImage: createOptionalImage(t),
     streetAddress: z
       .string()
       .min(5, t("addressMinLength"))
@@ -49,4 +55,30 @@ export const createSellerProfileSchema = (t: TFn) =>
       .max(10, t("zipCodeMaxLength")),
     city: z.string().min(2, t("cityMinLength")).max(50, t("cityMaxLength")),
     country: z.literal("Switzerland"),
+    uidNumber: z
+      .string()
+      .min(1, t("uidRequired"))
+      .regex(/^CHE-\d{3}\.\d{3}\.\d{3}$/, t("invalidUidFormat")),
+    contactPerson: z
+      .string()
+      .min(3, t("contactPersonMinLength"))
+      .max(50, t("contactPersonMaxLength")),
+    phoneNumber: z
+      .string()
+      .min(1, t("phoneRequired"))
+      .regex(
+        /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/,
+        t("invalidPhoneFormat"),
+      ),
+    businessEmail: z.string().email(t("invalidEmail")),
+
+    // Opening Hours
+    openingHours: z.array(
+      z.object({
+        day: z.string(),
+        isOpen: z.boolean(),
+        openTime: z.string().optional().nullable(),
+        closeTime: z.string().optional().nullable(),
+      }),
+    ),
   });

@@ -119,16 +119,6 @@ export const LoginForm = () => {
                 )}
               </Button>
             </Field>
-
-            <p className="text-center text-sm text-muted-foreground">
-              {t("noAccount")}{" "}
-              <Link
-                href="/signup"
-                className="underline-offset-4 hover:text-primary hover:underline"
-              >
-                {t("signUp")}
-              </Link>
-            </p>
           </FieldGroup>
         </form>
       </CardContent>

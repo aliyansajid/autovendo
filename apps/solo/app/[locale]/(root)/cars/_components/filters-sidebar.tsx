@@ -41,7 +41,7 @@ import { MakeModelDialog } from "./filters/make-model-dialog";
 import type { VehicleFacets } from "@/types/vehicle";
 import { createVehicleFiltersSchema } from "@/schema/vehicle-filters-schema";
 import { useTranslations, useLocale } from "next-intl";
-import { getCHLocale } from "@/lib/helpers/format";
+import { formatKilometers } from "@/lib/helpers/format";
 import { useMemo } from "react";
 
 export const FiltersSidebar = ({
@@ -168,13 +168,17 @@ export const FiltersSidebar = ({
 
   // Watch for changes and update URL
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
     const subscription = form.watch((values) => {
-      const timer = setTimeout(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
         updateUrl(values);
       }, 500);
-      return () => clearTimeout(timer);
     });
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+    };
   }, [form, updateUrl]);
 
   const watchCondition = useWatch({ control: form.control, name: "condition" });
@@ -238,17 +242,17 @@ export const FiltersSidebar = ({
               <FieldLabel>{t("condition")}</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchCondition, [
-                  { value: "NEW", label: tVehicle("conditions.NEW") },
+                  { value: "new", label: tVehicle("conditions.NEW") },
                   {
-                    value: "DEMONSTRATION",
+                    value: "demonstration",
                     label: tVehicle("conditions.DEMONSTRATION"),
                   },
                   {
-                    value: "PRE_REGISTERED",
+                    value: "pre-registered",
                     label: tVehicle("conditions.PRE_REGISTERED"),
                   },
-                  { value: "USED", label: tVehicle("conditions.USED") },
-                  { value: "OLDTIMER", label: tVehicle("conditions.OLDTIMER") },
+                  { value: "used", label: tVehicle("conditions.USED") },
+                  { value: "oldtimer", label: tVehicle("conditions.OLDTIMER") },
                 ])}
                 <ConditionDialog resultCount={resultCount} />
               </div>
@@ -344,9 +348,7 @@ export const FiltersSidebar = ({
                   <SelectItem value="any">{t("any")}</SelectItem>
                   {KILOMETER_OPTIONS.map((m) => (
                     <SelectItem key={m.value} value={m.value}>
-                      {Number(m.value) === 0
-                        ? "0 km"
-                        : `${new Intl.NumberFormat(getCHLocale(locale)).format(Number(m.value))} km`}
+                      {formatKilometers(Number(m.value))}
                     </SelectItem>
                   ))}
                 </CustomFormField>
@@ -359,9 +361,7 @@ export const FiltersSidebar = ({
                   <SelectItem value="any">{t("any")}</SelectItem>
                   {KILOMETER_OPTIONS.map((m) => (
                     <SelectItem key={m.value} value={m.value}>
-                      {Number(m.value) === 0
-                        ? "0 km"
-                        : `${new Intl.NumberFormat(getCHLocale(locale)).format(Number(m.value))} km`}
+                      {formatKilometers(Number(m.value))}
                     </SelectItem>
                   ))}
                 </CustomFormField>

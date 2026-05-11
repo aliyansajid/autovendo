@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import { buildMetadata, PAGE_META } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
-import {
-  CheckCircle2,
-  XCircle,
-  ShieldCheck,
-  Zap,
-  Info,
-  ArrowRight,
-} from "lucide-react";
+import { Separator } from "@repo/ui/src/components/separator";
+import { ArrowRight, CheckCircle2, Mail, Phone } from "lucide-react";
+import { Button } from "@repo/ui/src/components/button";
+import { Link } from "@/i18n/routing";
 import { Badge } from "@repo/ui/src/components/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@repo/ui/src/components/table";
 import {
   Card,
   CardHeader,
@@ -18,26 +22,11 @@ import {
   CardContent,
   CardFooter,
 } from "@repo/ui/src/components/card";
-import { Button } from "@repo/ui/src/components/button";
-import { SubscribeButton } from "./_components/subscribe-button";
+import { XCircle } from "lucide-react";
+import { PricingButton } from "./_components/pricing-button";
 import { getTranslations } from "next-intl/server";
 import { formatPrice } from "@/lib/helpers/format";
-import { Link } from "@/i18n/routing";
-
-interface PricingFeature {
-  name: string;
-  included: boolean;
-}
-
-interface PricingTier {
-  name: string;
-  price: string;
-  period?: string;
-  description: string;
-  features: PricingFeature[];
-  buttonText: string;
-  popular: boolean;
-}
+import { prisma } from "@repo/db";
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -51,36 +40,48 @@ export default async function PricingPage(props: {
 }) {
   const { locale } = await props.params;
   const t = await getTranslations("PricingPage");
-  const rawTiers = (await t.raw("tiers")) as PricingTier[];
-  const trustSafety = await t.raw("trustSafety");
-  const urgency = await t.raw("urgency");
 
-  const tiers = rawTiers.map((tier) => ({
-    ...tier,
-    price: formatPrice(Number(tier.price.replace(/[^\d.-]/g, "")), locale),
-  }));
+  const plans = await prisma.plan.findMany({
+    orderBy: { price: "asc" },
+    select: {
+      name: true,
+      price: true,
+      description: true,
+      limits: true,
+      popular: true,
+      hasTrial: true,
+      trialDays: true,
+    },
+  });
 
   const pricingSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "AutoSolo Inserate-Pakete",
+    name: "AutoVendo Händlerpakete",
     description:
-      "Faire Inserate-Pakete für private Autoverkäufer in der Schweiz – einfach und erfolgreich verkaufen",
-    itemListElement: rawTiers.map((tier, index) => ({
+      "Faire Inserate-Pakete für Autohändler in der Schweiz – günstiger als AutoScout24",
+    itemListElement: plans.map((plan, index) => ({
       "@type": "ListItem",
       position: index + 1,
       item: {
         "@type": "Offer",
-        name: `AutoSolo ${tier.name}`,
-        description: tier.description,
-        price: Number(tier.price.replace(/[^\d.-]/g, "")),
+        name: `AutoVendo ${plan.name}`,
+        description: plan.description,
+        price: plan.price,
         priceCurrency: "CHF",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: plan.price,
+          priceCurrency: "CHF",
+          unitCode: "MON",
+          unitText: "Monat",
+        },
         availability: "https://schema.org/InStock",
-        url: `https://autosolo.ch/${locale}/pricing`,
+        url: `https://autovendo.ch/${locale}/pricing`,
         seller: {
           "@type": "Organization",
-          name: "AutoSolo",
-          url: "https://autosolo.ch",
+          name: "AutoVendo",
+          url: "https://autovendo.ch",
         },
       },
     })),
@@ -89,177 +90,346 @@ export default async function PricingPage(props: {
   return (
     <>
       <JsonLd data={pricingSchema} />
-      <div className="bg-linear-to-b from-primary to-primary/90">
-        <div className="w-full max-w-285 mx-auto px-4 py-20 md:py-32">
-          <div className="text-center text-white space-y-6">
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
-              {t("title")}
-            </h1>
-            <p className="text-xl md:text-2xl max-w-2xl mx-auto opacity-90 leading-relaxed">
+      <div className="bg-linear-to-r from-primary to-primary/80">
+        <div className="w-full max-w-285 mx-auto px-4 py-12">
+          <div className="text-center text-white space-y-4">
+            <h1 className="text-2xl md:text-4xl font-bold">{t("title")}</h1>
+            <p className="text-base md:text-lg max-w-3xl mx-auto">
               {t("subtitle")}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="w-full max-w-285 mx-auto -mt-12 md:-mt-20 pb-24 px-4">
-        <section className="space-y-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {tiers.map((tier) => (
+      <div className="w-full max-w-285 mx-auto py-12 px-4 space-y-12">
+        <div className="max-w-4xl mx-auto space-y-12">
+          <section className="space-y-6">
+            <h2 className="text-2xl font-bold">{t("noOverpriced")}</h2>
+            <div className="space-y-4 text-muted-foreground text-lg">
+              <p>
+                <span className="font-semibold text-foreground">
+                  autovendo.ch
+                </span>
+                &nbsp;{t("introText1")}
+              </p>
+
+              <p className="font-semibold text-center">{t("introText2")}</p>
+            </div>
+          </section>
+
+          <Separator />
+
+          <section className="space-y-6">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">
+              {t("comparisonTitle")}
+            </h2>
+            <div className="rounded-xl border overflow-hidden">
+              <Table>
+                <TableHeader className="bg-muted/50">
+                  <TableRow>
+                    <TableHead className="font-bold">
+                      {t("tableHeaders.package")}
+                    </TableHead>
+                    <TableHead className="font-bold">
+                      {t("tableHeaders.vehicles")}
+                    </TableHead>
+                    <TableHead className="font-bold">
+                      {t("tableHeaders.price")}
+                    </TableHead>
+                    <TableHead className="font-bold">
+                      {t("tableHeaders.savings")}
+                    </TableHead>
+                    <TableHead className="font-bold">
+                      {t("tableHeaders.monthlySavings")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-semibold">
+                      {t("tableRows.planBronze")}
+                    </TableCell>
+                    <TableCell>{t("tableRows.bronzeVehicles")}</TableCell>
+                    <TableCell className="font-bold text-primary">
+                      {formatPrice(180)}
+                    </TableCell>
+                    <TableCell className="text-green-600 font-medium">
+                      {t("tableRows.bronzeSavings")}
+                    </TableCell>
+                    <TableCell>
+                      {t("tableRows.ca")} {formatPrice(75)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">
+                      {t("tableRows.planSilver")}
+                    </TableCell>
+                    <TableCell>{t("tableRows.silverVehicles")}</TableCell>
+                    <TableCell className="font-bold text-primary">
+                      {formatPrice(280)}
+                    </TableCell>
+                    <TableCell className="text-green-600 font-medium">
+                      {t("tableRows.silverSavings")}
+                    </TableCell>
+                    <TableCell>
+                      {t("tableRows.ca")} {formatPrice(115)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">
+                      {t("tableRows.planGold")}
+                    </TableCell>
+                    <TableCell>{t("tableRows.goldVehicles")}</TableCell>
+                    <TableCell className="font-bold text-primary">
+                      {formatPrice(325)}
+                    </TableCell>
+                    <TableCell className="text-green-600 font-medium">
+                      {t("tableRows.goldSavings")}
+                    </TableCell>
+                    <TableCell>
+                      {t("tableRows.ca")} {formatPrice(175)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">
+                      {t("tableRows.planDiamond")}
+                    </TableCell>
+                    <TableCell>{t("tableRows.diamondVehicles")}</TableCell>
+                    <TableCell className="font-bold text-primary">
+                      {formatPrice(408)}
+                    </TableCell>
+                    <TableCell className="text-green-600 font-medium">
+                      {t("tableRows.diamondSavings")}
+                    </TableCell>
+                    <TableCell>
+                      {t("tableRows.ca")} {formatPrice(270)}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </section>
+
+          <Separator />
+
+          <section className="space-y-6">
+            <h2 className="text-2xl font-bold">{t("largerDealers.title")}</h2>
+            <div className="bg-primary/5 border border-primary/20 p-8 rounded-xl space-y-6">
+              <div>
+                <h3 className="text-xl font-bold mb-2">
+                  {t("largerDealers.subtitle")}
+                </h3>
+                <p className="text-lg font-medium">
+                  {t("largerDealers.tagline")}
+                </p>
+              </div>
+              <div className="space-y-4 text-muted-foreground text-lg">
+                <p>{t("largerDealers.description1")}</p>
+                <p>{t("largerDealers.description2")}</p>
+              </div>
+
+              <Separator className="bg-primary/20" />
+
+              <div className="space-y-4">
+                <h3 className="text-xl font-bold">
+                  {t("largerDealers.personalTitle")}
+                </h3>
+                <div className="space-y-4 text-muted-foreground text-lg">
+                  <p>{t("largerDealers.personalDesc1")}</p>
+                  <p className="font-medium text-foreground">
+                    {t("largerDealers.personalDesc2")}
+                  </p>
+                  <p>{t("largerDealers.personalDesc3")}</p>
+                </div>
+                <div className="pt-4 flex flex-col sm:flex-row gap-3">
+                  <Button asChild>
+                    <Link href="tel:+41793223520">
+                      <Phone />
+                      {t("largerDealers.callButton")}
+                    </Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link href="mailto:info@autovendo.ch">
+                      <Mail />
+                      {t("largerDealers.emailButton")}
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <Separator />
+
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <section className="space-y-6">
+                <h2 className="text-xl font-bold">{t("whyPay.title")}</h2>
+                <div className="space-y-3 text-lg text-muted-foreground">
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      {t("whyPay.reach")}
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      {t("whyPay.contact")}
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      {t("whyPay.response")}
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      {t("whyPay.flexible")}
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      {t("whyPay.noCorp")}
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <CheckCircle2 className="size-5 text-primary shrink-0" />
+                      {t("whyPay.fair")}
+                    </li>
+                  </ul>
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <h2 className="text-xl font-bold">{t("weAre.title")}</h2>
+                <ul className="space-y-3 text-lg">
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="size-5 text-primary shrink-0" />
+                    {t("weAre.efficient")}
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="size-5 text-primary shrink-0" />
+                    {t("weAre.dealerOriented")}
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="size-5 text-primary shrink-0" />
+                    {t("weAre.personal")}
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="size-5 text-primary shrink-0" />
+                    {t("weAre.transparent")}
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <CheckCircle2 className="size-5 text-primary shrink-0" />
+                    {t("weAre.swiss")}
+                  </li>
+                </ul>
+              </section>
+            </div>
+
+            <p className="font-semibold text-foreground text-lg text-center leading-relaxed">
+              {t("partnershipText")
+                .split("\n")
+                .map((line: string, i: number) => (
+                  <span key={i}>
+                    {line}
+                    {i === 0 && <br />}
+                  </span>
+                ))}
+            </p>
+          </div>
+        </div>
+
+        <Separator className="max-w-4xl mx-auto" />
+
+        <section className="space-y-12">
+          <h2 className="text-2xl font-bold text-center">{t("choosePlan")}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {plans.map((plan) => (
               <Card
-                key={tier.name}
-                className={`flex flex-col relative overflow-hidden transition-all duration-500 hover:shadow-2xl ${
-                  tier.popular
-                    ? "border-primary shadow-xl ring-4 ring-primary/10 scale-105 z-10 md:py-4"
-                    : "border-border/50 bg-white/50 backdrop-blur-sm"
-                }`}
+                key={plan.name}
+                className={`${plan.popular ? "border-primary" : ""}`}
               >
-                {tier.popular && (
-                  <div className="absolute top-0 right-0 left-0">
-                    <div className="bg-primary text-primary-foreground text-xs font-bold py-2 text-center uppercase tracking-widest">
-                      ⭐ {t("popular")} ⭐
-                    </div>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl font-bold">
+                      {t.has(`plans.${plan.name.toLowerCase()}`)
+                        ? t(`plans.${plan.name.toLowerCase()}`)
+                        : plan.name}
+                    </CardTitle>
+                    {plan.popular && <Badge>{t("popular")}</Badge>}
                   </div>
-                )}
-                <CardHeader
-                  className={`pb-8 ${tier.popular ? "pt-12" : "pt-8"}`}
-                >
-                  <CardTitle className="text-3xl font-extrabold">
-                    {tier.name}
-                  </CardTitle>
-                  <CardDescription className="text-lg font-medium text-muted-foreground mt-2">
-                    {tier.description}
+                  <CardDescription>
+                    {t.has(`planDescription.${plan.name.toLowerCase()}`)
+                      ? t(`planDescription.${plan.name.toLowerCase()}`)
+                      : plan.description}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex-1 space-y-10">
-                  <div className="flex items-baseline gap-2">
-                    <span
-                      className={`text-6xl font-black ${tier.popular ? "text-primary" : "text-foreground"}`}
-                    >
-                      {tier.price}
+                <CardContent className="flex-1 space-y-6">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-3xl font-bold text-primary">
+                      {formatPrice(plan.price)}
                     </span>
-                    {tier.period && (
-                      <span className="text-xl text-muted-foreground font-semibold">
-                        {tier.period}
-                      </span>
-                    )}
+                    <span className="text-muted-foreground">
+                      / {t("month")}
+                    </span>
                   </div>
-                  <div className="space-y-5">
-                    {tier.features.map((feature: PricingFeature) => (
-                      <div
-                        key={feature.name}
-                        className="flex items-start gap-4"
-                      >
-                        <div
-                          className={`rounded-full p-1 ${feature.included ? "bg-primary/10" : "bg-muted"}`}
-                        >
-                          {feature.included ? (
-                            <CheckCircle2 className="size-5 text-primary shrink-0" />
-                          ) : (
-                            <XCircle className="size-5 text-muted-foreground shrink-0" />
-                          )}
-                        </div>
-                        <span
-                          className={`text-lg ${
-                            feature.included
-                              ? "text-foreground font-semibold"
-                              : "text-muted-foreground line-through"
-                          }`}
-                        >
-                          {feature.name}
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
+                      <span className="text-foreground">
+                        {(plan.limits as any)?.vehicles} {t("vehiclesIncluded")}
+                      </span>
+                    </div>
+
+                    {plan.hasTrial && plan.trialDays && (
+                      <div className="flex items-start gap-2 text-green-600 font-medium">
+                        <CheckCircle2 className="size-5 shrink-0 mt-0.5" />
+                        <span>
+                          {t("trialDaysLabel", { days: plan.trialDays })}
                         </span>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </CardContent>
-                <CardFooter className="pt-10 pb-8 px-8">
-                  <SubscribeButton
-                    planName={tier.name}
-                    label={tier.buttonText}
-                    variant={tier.popular ? "default" : "outline"}
-                    className={`w-full h-14 text-xl font-black shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98] ${
-                      tier.popular ? "bg-primary hover:bg-primary/90" : ""
-                    }`}
+                <CardFooter>
+                  <PricingButton
+                    label={t("getStarted")}
+                    variant={plan.popular ? "default" : "outline"}
                   />
                 </CardFooter>
               </Card>
             ))}
           </div>
+        </section>
 
-          {/* Trust & Safety Section */}
-          <div className="max-w-4xl mx-auto py-16 border-y border-border/50">
-            <div className="flex items-center justify-center gap-3 mb-12">
-              <ShieldCheck className="size-8 text-primary" />
-              <h2 className="text-3xl font-black text-center">
-                {trustSafety.title}
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              {trustSafety.items.map((item: any, i: number) => (
-                <div
-                  key={i}
-                  className="flex flex-col items-center text-center space-y-4"
-                >
-                  <div className="size-12 rounded-2xl bg-primary/5 flex items-center justify-center">
-                    <Badge className="bg-primary/10 text-primary border-none text-lg font-bold">
-                      {i + 1}
-                    </Badge>
-                  </div>
-                  <h4 className="text-xl font-bold">{item.title}</h4>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+        <Separator className="max-w-4xl mx-auto" />
 
-          {/* Urgency Trigger */}
-          <div className="max-w-4xl mx-auto">
-            <div className="rounded-3xl bg-linear-to-r from-primary/5 via-primary/10 to-primary/5 p-12 text-center space-y-8 border border-primary/20 shadow-inner">
-              <div className="flex justify-center">
-                <div className="p-4 rounded-full bg-primary text-white animate-pulse">
-                  <Zap className="size-8 fill-current" />
-                </div>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-black max-w-2xl mx-auto leading-tight">
-                {urgency.title}
+        <div className="max-w-4xl mx-auto">
+          <section className="bg-linear-to-r from-primary to-primary/80 text-white p-8 md:p-12 rounded-xl space-y-8 text-center shadow-xl">
+            <div>
+              <h2 className="text-xl opacity-90 font-semibold mb-2">
+                {t("example.label")}
               </h2>
-              <Button
-                asChild
-                size="lg"
-                className="h-14 px-10 text-xl font-bold shadow-xl"
-              >
-                <Link href="/signup">
-                  {urgency.button}
-                  <ArrowRight className="ml-2 size-6" />
+              <p className="text-xl font-medium leading-relaxed">
+                {t("example.text")}
+                <span className="text-4xl font-black block my-4 tracking-tight drop-shadow-sm">
+                  {t("example.highlight")}
+                </span>
+              </p>
+              <p className="text-xl opacity-90 font-medium">
+                {t("example.suffix")}
+              </p>
+            </div>
+
+            <div className="pt-8 border-t border-white/20 mt-8 space-y-8">
+              <p className="text-lg font-semibold leading-relaxed max-w-2xl mx-auto">
+                {t("example.switchText")}
+              </p>
+              <Button variant="secondary" asChild>
+                <Link href="/contact">
+                  {t("example.contactButton")}
+                  <ArrowRight />
                 </Link>
               </Button>
             </div>
-          </div>
-
-          {/* FAQ/Contact Helper */}
-          <div className="max-w-xl mx-auto text-center space-y-6 opacity-60 hover:opacity-100 transition-opacity">
-            <div className="flex items-center justify-center gap-2">
-              <Info className="size-5" />
-              <p className="text-lg font-medium">Haben Sie noch Fragen?</p>
-            </div>
-            <div className="flex justify-center gap-8">
-              <Link
-                href="/contact"
-                className="hover:text-primary font-bold transition-colors"
-              >
-                Kontakt
-              </Link>
-              <Link
-                href="/faq"
-                className="hover:text-primary font-bold transition-colors"
-              >
-                FAQ
-              </Link>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </>
   );
