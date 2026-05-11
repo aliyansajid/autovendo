@@ -919,147 +919,44 @@
     "errorDefault": "An error occurred. Please try again."
   },
   "PricingPage": {
-    "getStarted": "Get started",
-    "planDescription": {
-      "starter": "Ideal for small dealers starting their digital journey.",
-      "professional": "Perfect for growing dealerships with medium inventory.",
-      "business": "Designed for large dealerships needing high visibility.",
-      "ultimate": "Our most powerful plan for industry leaders."
+    "title": "Simple & Transparent Pricing",
+    "subtitle": "Choose the plan that fits your needs. No hidden fees, no subscriptions.",
+    "standard": {
+      "name": "Standard",
+      "price": "19",
+      "duration": "30 days listing",
+      "features": [
+        "List your car in minutes",
+        "Reach real private buyers",
+        "Full control over price & communication"
+      ],
+      "button": "Start Selling"
     },
-    "title": "More visibility. More service. Lower costs.",
-    "subtitle": "Why pay 30–40% more – when you get more personal support and full transparency with autovendo.ch?",
-    "noOverpriced": "No more overpriced platforms.",
-    "introText1": "autovendo.ch gives dealers control, fairness and genuine personal support – at significantly better rates. The car trade is demanding enough. Your listing platform should support you – not eat into your margin.",
-    "introText2": "autovendo.ch offers fair prices, direct contacts and full transparency. No hidden costs. No corporate thinking. Just a real partnership.",
-    "comparisonTitle": "Fair prices – Direct comparison",
-    "tableHeaders": {
-      "package": "Package",
-      "vehicles": "Vehicles simultaneously",
-      "price": "autovendo.ch",
-      "savings": "Savings vs. market leader*",
-      "monthlySavings": "Monthly savings"
+    "bestValue": {
+      "name": "BEST VALUE",
+      "badge": "Most Popular",
+      "price": "49",
+      "duration": "Until your car is sold",
+      "features": [
+        "No time limit",
+        "No renewals",
+        "No pressure to lower your price",
+        "Maximum visibility"
+      ],
+      "button": "Sell Without Pressure"
     },
-    "tableRows": {
-      "ca": "approx.",
-      "planBronze": "Bronze",
-      "planSilver": "Silver",
-      "planGold": "Gold",
-      "planDiamond": "Diamond",
-      "bronzeVehicles": "Up to 5 vehicles",
-      "silverVehicles": "Up to 10 vehicles",
-      "goldVehicles": "Up to 15 vehicles",
-      "diamondVehicles": "Up to 25 vehicles",
-      "bronzeSavings": "approx. 30% cheaper",
-      "silverSavings": "approx. 30% cheaper",
-      "goldSavings": "approx. 35% cheaper",
-      "diamondSavings": "approx. 40% cheaper"
+    "trustSafety": {
+      "title": "Trust & Safety",
+      "features": [
+        "Only private sellers - No dealers competing with you",
+        "Transparent pricing - No hidden costs or subscriptions",
+        "Full control - You decide price, communication, and deal"
+      ]
     },
-    "largerDealers": {
-      "title": "More than 25 vehicles",
-      "subtitle": "For larger dealers with 25+ vehicles",
-      "tagline": "Individual solutions. Individual prices.",
-      "description1": "Do you run a larger dealership with more than 25 vehicles in stock? We will create a tailored offer for you – guaranteed to be cheaper than standard platform prices.",
-      "description2": "We analyse your current inventory and needs, and present you with a transparent, fair solution with real savings potential.",
-      "personalTitle": "Personal. Direct. On-site.",
-      "personalDesc1": "We are happy to visit you in person and bring a detailed price overview. We will explain everything in detail – openly, honestly and without obligation.",
-      "personalDesc2": "One call is enough.",
-      "personalDesc3": "Or send us an email and arrange an appointment. We are just a phone call away.",
-      "callButton": "Schedule a call",
-      "emailButton": "Write an email"
+    "urgency": {
+      "text": "Start today — your buyer might already be looking"
     },
-    "whyPay": {
-      "title": "Why pay more?",
-      "reach": "Same reach.",
-      "contact": "Personal contact person.",
-      "response": "Faster response times.",
-      "flexible": "Flexible solutions for dealers.",
-      "noCorp": "No corporate structures.",
-      "fair": "Fair pricing."
-    },
-    "weAre": {
-      "title": "We are:",
-      "efficient": "More efficient",
-      "dealerOriented": "Dealer-oriented",
-      "personal": "Personal",
-      "transparent": "Transparent",
-      "swiss": "Directly Swiss"
-    },
-    "partnershipText": "With autovendo.ch, you are not investing in advertising. You are investing in a partnership.\nYour margin belongs to you – not the platform.",
-    "choosePlan": "Choose your package",
-    "popular": "Popular",
-    "month": "month",
-    "vehiclesIncluded": "vehicles included",
-    "trialDaysLabel": "{days}-day free trial",
-    "example": {
-      "label": "Example calculation:",
-      "text": "A dealer with 25 vehicles saves with autovendo.ch",
-      "highlight": "over CHF 3,000 per year.",
-      "suffix": "That is direct margin. Without risk.",
-      "switchText": "Switch to autovendo.ch now and save several thousand francs per year – with personal service and fair conditions.",
-      "contactButton": "Get in touch"
-    },
-    "tiers": [
-      {
-        "name": "Bronze",
-        "price": "180.–",
-        "period": "/ month",
-        "description": "Ideal for smaller inventories.",
-        "features": [
-          { "name": "Up to 5 vehicles", "included": true },
-          { "name": "Full visibility", "included": true },
-          { "name": "Personal support", "included": true },
-          { "name": "No hidden costs", "included": true },
-          { "name": "Flexible duration", "included": true }
-        ],
-        "buttonText": "Choose plan",
-        "popular": false
-      },
-      {
-        "name": "Silver",
-        "price": "280.–",
-        "period": "/ month",
-        "description": "Perfect for growing dealers.",
-        "features": [
-          { "name": "Up to 10 vehicles", "included": true },
-          { "name": "Full visibility", "included": true },
-          { "name": "Personal support", "included": true },
-          { "name": "No hidden costs", "included": true },
-          { "name": "Flexible duration", "included": true }
-        ],
-        "buttonText": "Choose plan",
-        "popular": false
-      },
-      {
-        "name": "Gold",
-        "price": "325.–",
-        "period": "/ month",
-        "description": "For established dealers.",
-        "features": [
-          { "name": "Up to 15 vehicles", "included": true },
-          { "name": "Full visibility", "included": true },
-          { "name": "Personal support", "included": true },
-          { "name": "No hidden costs", "included": true },
-          { "name": "Flexible duration", "included": true }
-        ],
-        "buttonText": "Choose plan",
-        "popular": true
-      },
-      {
-        "name": "Diamond",
-        "price": "408.–",
-        "period": "/ month",
-        "description": "For dealers with higher volume.",
-        "features": [
-          { "name": "Up to 25 vehicles", "included": true },
-          { "name": "Full visibility", "included": true },
-          { "name": "Personal support", "included": true },
-          { "name": "No hidden costs", "included": true },
-          { "name": "Flexible duration", "included": true }
-        ],
-        "buttonText": "Choose plan",
-        "popular": false
-      }
-    ]
+    "month": "month"
   },
   "SubscribeButton": {
     "loginRequired": "Please log in to choose a package",

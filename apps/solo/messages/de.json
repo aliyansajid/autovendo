@@ -924,153 +924,44 @@
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
   },
   "PricingPage": {
-    "getStarted": "Paket wählen",
-    "planDescription": {
-      "bronze": "Ideal für kleine Händler, die ihre digitale Reise beginnen.",
-      "silver": "Perfekt für wachsende Autohäuser mit mittlerem Bestand.",
-      "gold": "Entwickelt für grosse Autohäuser, die hohe Sichtbarkeit benötigen.",
-      "diamond": "Unser leistungsstärkster Plan für Branchenführer."
+    "title": "Einfache & transparente Preise",
+    "subtitle": "Wählen Sie den Plan, der zu Ihren Bedürfnissen passt. Keine versteckten Gebühren, keine Abonnements.",
+    "standard": {
+      "name": "Standard",
+      "price": "19",
+      "duration": "30 Tage Inserat",
+      "features": [
+        "Inserieren Sie Ihr Auto in wenigen Minuten",
+        "Erreichen Sie echte private Käufer",
+        "Volle Kontrolle über Preis & Kommunikation"
+      ],
+      "button": "Jetzt verkaufen"
     },
-    "plans": {
-      "bronze": "Bronze",
-      "silver": "Silber",
-      "gold": "Gold",
-      "diamond": "Diamant"
+    "bestValue": {
+      "name": "BESTES ANGEBOT",
+      "badge": "Am beliebtesten",
+      "price": "49",
+      "duration": "Bis Ihr Auto verkauft ist",
+      "features": [
+        "Kein Zeitlimit",
+        "Keine Verlängerungen",
+        "Kein Druck, den Preis zu senken",
+        "Maximale Sichtbarkeit"
+      ],
+      "button": "Ohne Druck verkaufen"
     },
-    "title": "Mehr Sichtbarkeit. Mehr Service. Weniger Kosten.",
-    "subtitle": "Warum 30–40% mehr bezahlen – wenn Sie bei autovendo.ch mehr persönliche Betreuung und volle Transparenz erhalten?",
-    "noOverpriced": "Schluss mit überteuerten Plattformen.",
-    "introText1": "autovendo.ch gibt Händlern Kontrolle, Fairness und echten persönlichen Support – zu deutlich besseren Konditionen. Der Fahrzeughandel ist anspruchsvoll genug. Ihre Inserate-Plattform sollte Sie unterstützen – nicht Ihre Marge belasten.",
-    "introText2": "autovendo.ch bietet faire Preise, direkte Ansprechpartner und volle Transparenz. Keine versteckten Kosten. Kein Konzern-Denken. Sondern echte Partnerschaft.",
-    "comparisonTitle": "Faire Preise – Direkt verglichen",
-    "tableHeaders": {
-      "package": "Paket",
-      "vehicles": "Inserate gleichzeitig",
-      "price": "autovendo.ch",
-      "savings": "Ersparnis vs. Marktführer*",
-      "monthlySavings": "Monatliche Einsparung"
+    "trustSafety": {
+      "title": "Vertrauen & Sicherheit",
+      "features": [
+        "Nur private Verkäufer - Keine Konkurrenz durch Händler",
+        "Transparente Preise - Keine versteckten Kosten oder Abonnements",
+        "Volle Kontrolle - Sie entscheiden über Preis, Kommunikation und Deal"
+      ]
     },
-    "tableRows": {
-      "ca": "ca.",
-      "planBronze": "Bronze",
-      "planSilver": "Silber",
-      "planGold": "Gold",
-      "planDiamond": "Diamant",
-      "bronzeVehicles": "Bis 5 Inserate",
-      "silverVehicles": "Bis 10 Inserate",
-      "goldVehicles": "Bis 15 Inserate",
-      "diamondVehicles": "Bis 25 Inserate",
-      "bronzeSavings": "ca. 30% günstiger",
-      "silverSavings": "ca. 30% günstiger",
-      "goldSavings": "ca. 35% günstiger",
-      "diamondSavings": "ca. 40% günstiger"
+    "urgency": {
+      "text": "Starten Sie heute — Ihr Käufer sucht vielleicht schon jetzt"
     },
-    "largerDealers": {
-      "title": "Mehr als 25 Inserate",
-      "subtitle": "Für größere Händler ab 25 Inseraten",
-      "tagline": "Individuelle Lösungen. Individuelle Preise.",
-      "description1": "Betreiben Sie ein größeres Autohaus mit mehr als 25 Inseraten im Bestand? Dann erstellen wir für Sie ein maßgeschneidertes Angebot – garantiert günstiger als marktübliche Plattformpreise.",
-      "description2": "Wir analysieren Ihren aktuellen Bestand und Ihre Bedürfnisse und präsentieren Ihnen eine transparente, faire Lösung mit echtem Sparpotenzial.",
-      "personalTitle": "Persönlich. Direkt. Vor Ort.",
-      "personalDesc1": "Gerne besuchen wir Sie persönlich und bringen eine detaillierte Preisübersicht mit. Wir erklären Ihnen alles im Detail – offen, ehrlich und ohne Verpflichtung.",
-      "personalDesc2": "Ein Anruf genügt.",
-      "personalDesc3": "Oder senden Sie uns eine E-Mail und vereinbaren Sie einen Termin. Wir sind nur einen Telefonanruf entfernt.",
-      "callButton": "Telefontermin vereinbaren",
-      "emailButton": "E-Mail schreiben"
-    },
-    "whyPay": {
-      "title": "Warum mehr bezahlen?",
-      "reach": "Gleiche Reichweite.",
-      "contact": "Persönlicher Ansprechpartner.",
-      "response": "Schnellere Reaktionszeiten.",
-      "flexible": "Flexible Lösungen für Händler.",
-      "noCorp": "Keine Konzern-Strukturen.",
-      "fair": "Faire Preisgestaltung."
-    },
-    "weAre": {
-      "title": "Wir sind:",
-      "efficient": "Effizienter",
-      "dealerOriented": "Händlerorientiert",
-      "personal": "Persönlich",
-      "transparent": "Transparent",
-      "swiss": "Schweizerisch direkt"
-    },
-    "partnershipText": "Mit autovendo.ch investieren Sie nicht in Werbung. Sie investieren in eine Partnerschaft.\nIhre Marge gehört Ihnen – nicht der Plattform.",
-    "choosePlan": "Wählen Sie Ihr passendes Paket",
-    "popular": "Beliebt",
-    "month": "Monat",
-    "vehiclesIncluded": "Inserate",
-    "trialDaysLabel": "{days} Tage kostenloser Test",
-    "example": {
-      "label": "Beispielrechnung:",
-      "text": "Ein Händler mit 25 Fahrzeugen spart bei autovendo.ch",
-      "highlight": "über CHF 3'000.– pro Jahr.",
-      "suffix": "Das ist direkte Marge. Ohne Risiko.",
-      "switchText": "Wechseln Sie jetzt zu autovendo.ch und sparen Sie mehrere tausend Franken pro Jahr – bei persönlichem Service und fairen Konditionen.",
-      "contactButton": "Jetzt unverbindlich Kontakt aufnehmen"
-    },
-    "tiers": [
-      {
-        "name": "Bronze",
-        "price": "180.–",
-        "period": "/ Monat",
-        "description": "Ideal für kleinere Bestände.",
-        "features": [
-          { "name": "Bis zu 5 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
-        ],
-        "buttonText": "Paket wählen",
-        "popular": false
-      },
-      {
-        "name": "Silver",
-        "price": "280.–",
-        "period": "/ Monat",
-        "description": "Perfekt für wachsende Händler.",
-        "features": [
-          { "name": "Bis zu 10 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
-        ],
-        "buttonText": "Paket wählen",
-        "popular": false
-      },
-      {
-        "name": "Gold",
-        "price": "325.–",
-        "period": "/ Monat",
-        "description": "Für etablierte Händler.",
-        "features": [
-          { "name": "Bis zu 15 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
-        ],
-        "buttonText": "Paket wählen",
-        "popular": true
-      },
-      {
-        "name": "Diamond",
-        "price": "408.–",
-        "period": "/ Monat",
-        "description": "Für Händler mit höherem Volumen.",
-        "features": [
-          { "name": "Bis zu 25 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
-        ],
-        "buttonText": "Paket wählen",
-        "popular": false
-      }
-    ]
+    "month": "Monat"
   },
   "SubscribeButton": {
     "loginRequired": "Bitte melden Sie sich an, um ein Paket zu wählen",

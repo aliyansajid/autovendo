@@ -919,147 +919,44 @@
     "errorDefault": "Si è verificato un errore. Riprovi."
   },
   "PricingPage": {
-    "getStarted": "Inizia ora",
-    "planDescription": {
-      "starter": "Ideale per i piccoli concessionari che iniziano il loro percorso digitale.",
-      "professional": "Perfetto per le concessionarie in crescita con un inventario medio.",
-      "business": "Progettato per le grandi concessionarie che necessitano di un'elevata visibilità.",
-      "ultimate": "Il nostro piano più potente per i leader del settore."
+    "title": "Prezzi semplici e trasparenti",
+    "subtitle": "Scegli il piano più adatto alle tue esigenze. Nessun costo nascosto, nessun abbonamento.",
+    "standard": {
+      "name": "Standard",
+      "price": "19",
+      "duration": "Annuncio per 30 giorni",
+      "features": [
+        "Inserisci la tua auto in pochi minuti",
+        "Raggiungi veri acquirenti privati",
+        "Controllo totale su prezzo e comunicazione"
+      ],
+      "button": "Inizia a vendere"
     },
-    "title": "Più visibilità. Più servizio. Meno costi.",
-    "subtitle": "Perché pagare il 30–40% in più – quando con autovendo.ch ottiene un supporto più personale e la massima trasparenza?",
-    "noOverpriced": "Basta con le piattaforme troppo costose.",
-    "introText1": "autovendo.ch offre ai concessionari controllo, equità e un vero supporto personale – a condizioni nettamente migliori. Il commercio automobilistico è già abbastanza impegnativo. La sua piattaforma di inserzioni dovrebbe supportarla – non erodere il suo margine.",
-    "introText2": "autovendo.ch offre prezzi equi, interlocutori diretti e piena trasparenza. Nessun costo nascosto. Nessuna logica aziendale. Solo una vera partnership.",
-    "comparisonTitle": "Prezzi equi – Confronto diretto",
-    "tableHeaders": {
-      "package": "Pacchetto",
-      "vehicles": "Veicoli simultanei",
-      "price": "autovendo.ch",
-      "savings": "Risparmio vs. leader di mercato*",
-      "monthlySavings": "Risparmio mensile"
+    "bestValue": {
+      "name": "MIGLIOR VALORE",
+      "badge": "Il più popolare",
+      "price": "49",
+      "duration": "Finché la tua auto non viene venduta",
+      "features": [
+        "Nessun limite di tempo",
+        "Nessun rinnovo",
+        "Nessuna pressione per abbassare il prezzo",
+        "Massima visibilità"
+      ],
+      "button": "Vendi senza pressione"
     },
-    "tableRows": {
-      "ca": "ca.",
-      "planBronze": "Bronzo",
-      "planSilver": "Argento",
-      "planGold": "Oro",
-      "planDiamond": "Diamante",
-      "bronzeVehicles": "Fino a 5 veicoli",
-      "silverVehicles": "Fino a 10 veicoli",
-      "goldVehicles": "Fino a 15 veicoli",
-      "diamondVehicles": "Fino a 25 veicoli",
-      "bronzeSavings": "ca. 30% in meno",
-      "silverSavings": "ca. 30% in meno",
-      "goldSavings": "ca. 35% in meno",
-      "diamondSavings": "ca. 40% in meno"
+    "trustSafety": {
+      "title": "Fiducia e sicurezza",
+      "features": [
+        "Solo venditori privati - Nessun rivenditore in concorrenza con te",
+        "Prezzi trasparenti - Nessun costo nascosto o abbonamento",
+        "Controllo totale - Tu decidi prezzo, comunicazione e trattativa"
+      ]
     },
-    "largerDealers": {
-      "title": "Più di 25 veicoli",
-      "subtitle": "Per concessionari più grandi con 25+ veicoli",
-      "tagline": "Soluzioni individuali. Prezzi individuali.",
-      "description1": "Gestisce una concessionaria più grande con oltre 25 veicoli in stock? Creiamo per Lei un'offerta su misura – garantita più economica dei prezzi standard delle piattaforme.",
-      "description2": "Analizziamo il suo stock attuale e le sue esigenze e le presentiamo una soluzione trasparente ed equa con un reale potenziale di risparmio.",
-      "personalTitle": "Personale. Diretto. Sul posto.",
-      "personalDesc1": "Siamo lieti di venire da Lei di persona e portare un prospetto dettagliato dei prezzi. Le spieghiamo tutto nei dettagli – apertamente, onestamente e senza impegno.",
-      "personalDesc2": "Basta una telefonata.",
-      "personalDesc3": "O ci invii una e-mail e concordi un appuntamento. Siamo a portata di telefono.",
-      "callButton": "Fissare un appuntamento telefonico",
-      "emailButton": "Scrivere un'e-mail"
+    "urgency": {
+      "text": "Inizia oggi — il tuo acquirente potrebbe già stare cercando"
     },
-    "whyPay": {
-      "title": "Perché pagare di più?",
-      "reach": "Stessa portata.",
-      "contact": "Interlocutore personale.",
-      "response": "Tempi di risposta più rapidi.",
-      "flexible": "Soluzioni flessibili per concessionari.",
-      "noCorp": "Nessuna struttura aziendale.",
-      "fair": "Prezzi equi."
-    },
-    "weAre": {
-      "title": "Siamo:",
-      "efficient": "Più efficienti",
-      "dealerOriented": "Orientati ai concessionari",
-      "personal": "Personali",
-      "transparent": "Trasparenti",
-      "swiss": "Direttamente svizzeri"
-    },
-    "partnershipText": "Con autovendo.ch non investe in pubblicità. Investe in una partnership.\nIl suo margine appartiene a Lei – non alla piattaforma.",
-    "month": "mese",
-    "vehiclesIncluded": "veicoli inclusi",
-    "trialDaysLabel": "{days} giorni di prova gratuita",
-    "choosePlan": "Scelga il suo pacchetto",
-    "popular": "Popolare",
-    "example": {
-      "label": "Esempio di calcolo:",
-      "text": "Un concessionario con 25 veicoli risparmia con autovendo.ch",
-      "highlight": "oltre CHF 3'000.– all'anno.",
-      "suffix": "È margine diretto. Senza rischi.",
-      "switchText": "Passi ora ad autovendo.ch e risparmi diverse migliaia di franchi all'anno – con servizio personale e condizioni eque.",
-      "contactButton": "Contattare senza impegno"
-    },
-    "tiers": [
-      {
-        "name": "Bronze",
-        "price": "180.–",
-        "period": "/ mese",
-        "description": "Ideale per inventari ridotti.",
-        "features": [
-          { "name": "Fino a 5 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": false
-      },
-      {
-        "name": "Silver",
-        "price": "280.–",
-        "period": "/ mese",
-        "description": "Perfetto per concessionari in crescita.",
-        "features": [
-          { "name": "Fino a 10 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": false
-      },
-      {
-        "name": "Gold",
-        "price": "325.–",
-        "period": "/ mese",
-        "description": "Per concessionari affermati.",
-        "features": [
-          { "name": "Fino a 15 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": true
-      },
-      {
-        "name": "Diamond",
-        "price": "408.–",
-        "period": "/ mese",
-        "description": "Per concessionari con volumi elevati.",
-        "features": [
-          { "name": "Fino a 25 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": false
-      }
-    ]
+    "month": "mese"
   },
   "SubscribeButton": {
     "loginRequired": "Effettui il login per scegliere un pacchetto",
