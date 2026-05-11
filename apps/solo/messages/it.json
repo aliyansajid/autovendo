@@ -931,9 +931,6 @@
     "successDefault": "Messaggio inviato con successo.",
     "errorDefault": "Si è verificato un errore. Riprovi."
   },
-      }
-    ]
-  },
   "SubscribeButton": {
     "loginRequired": "Effettui il login per scegliere un pacchetto",
     "errorDefault": "Qualcosa è andato storto",
