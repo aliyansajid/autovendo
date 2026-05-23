@@ -57,9 +57,11 @@ export default async function HomePage(props: {
         `${formatNumber(item.kilometer)} km`,
         item.fuelType ? tVehicle(`fuelTypes.${item.fuelType.toUpperCase()}`) : "",
       ].filter(Boolean),
-      garageName: item.dealer.companyName,
-      garageId: item.dealer.id,
-      garageLocation: [item.dealer.zipCode, item.dealer.city]
+      garageName: item.seller
+        ? `${item.seller.firstName} ${item.seller.lastName}`
+        : "",
+      garageId: item.seller?.id ?? item.id,
+      garageLocation: [item.seller?.zipCode, item.seller?.city]
         .filter(Boolean)
         .join(" "),
     };

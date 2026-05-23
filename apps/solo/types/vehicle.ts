@@ -25,19 +25,18 @@ export interface VehicleListItem {
   images: string[];
   equipment: Prisma.JsonValue | null;
   priceRating?: PriceRating;
-  dealer: {
+  seller: {
     id: string;
-    companyName: string;
+    firstName: string;
+    lastName: string;
     city: string;
     zipCode: string;
-    phoneNumber: string | null;
-    googleRating: number | null;
-    googleReviewCount: number | null;
-  };
+    phoneNumber: string;
+  } | null;
 }
 
 export type VehicleDetails = Prisma.VehicleGetPayload<{
-  include: { dealer: true };
+  include: { seller: true };
 }>;
 
 export interface VehicleFacets {

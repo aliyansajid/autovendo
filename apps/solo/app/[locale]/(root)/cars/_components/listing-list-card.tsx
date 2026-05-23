@@ -5,7 +5,7 @@ import { Card, CardContent } from "@repo/ui/components/card";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
 import Image from "next/image";
-import { Check, Star, Phone } from "lucide-react";
+import { Check, Phone } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { Separator } from "@repo/ui/src/components/separator";
 import type { VehicleListItem } from "@/types/vehicle";
@@ -197,53 +197,25 @@ export function ListingListCard({
 
           <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 ">
             <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/dealers/${item.dealer.id}`}
-                  className="text-sm font-bold truncate hover:underline relative z-20"
-                >
-                  {item.dealer.companyName}
-                </Link>
-
-                {item.dealer.googleRating != null && (
-                  <>
-                    <div className="flex items-center text-rating">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-3 h-3 fill-current ${i < Math.round(item.dealer.googleRating!) ? "text-rating" : "text-muted-foreground opacity-30"}`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {item.dealer.googleRating.toFixed(1)}
-                      {item.dealer.googleReviewCount != null && ` (${item.dealer.googleReviewCount})`}
-                    </span>
-                  </>
-                )}
-              </div>
-
+              <span className="text-sm font-bold truncate">
+                {item.seller
+                  ? `${item.seller.firstName} ${item.seller.lastName}`
+                  : ""}
+              </span>
               <span className="text-xs text-muted-foreground truncate">
-                {item.dealer.zipCode} {item.dealer.city}
+                {item.seller?.zipCode} {item.seller?.city}
               </span>
             </div>
 
-            <Button asChild className="relative z-20">
-              <Link href={`tel:${item.dealer.phoneNumber}`}>
-                <Phone />
-                {tCard("contact")}
-              </Link>
-            </Button>
+            {item.seller?.phoneNumber && (
+              <Button asChild className="relative z-20">
+                <Link href={`tel:${item.seller.phoneNumber}`}>
+                  <Phone />
+                  {tCard("contact")}
+                </Link>
+              </Button>
+            )}
           </div>
-
-          {showDealerLink && (
-            <Link
-              href={`/dealers/${item.dealer.id}`}
-              className="mt-4 text-sm text-primary font-medium underline-offset-4 hover:underline relative z-20"
-            >
-              {tCard("allVehicles")}
-            </Link>
-          )}
         </div>
       </CardContent>
     </Card>

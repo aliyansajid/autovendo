@@ -19,7 +19,7 @@ async function handleListingPayment(event: Stripe.Event) {
       ? new Date(paidAt.getTime() + 30 * 24 * 60 * 60 * 1000)
       : null; // best_value = null means until sold
 
-  await prisma.vehicle.update({
+  await prisma.vehicle.updateMany({
     where: {
       id: vehicleId,
       stripeSessionId: null, // idempotency — only process once

@@ -36,8 +36,6 @@ import { Link } from "@/i18n/routing";
 import { StickyActionBar } from "../_components/sticky-action-bar";
 import { EnergyLabel } from "../_components/energy-label";
 import {
-  DAY_LABELS,
-  DAY_ORDER,
   formatNumber,
   formatPrice,
   formatKilometers,
@@ -104,10 +102,12 @@ export async function generateMetadata({
     .filter(Boolean)
     .join(" – ");
   const description = [
-    item.dealer ? `${name} kaufen bei ${item.dealer.companyName}` : name,
+    item.seller
+      ? `${name} kaufen bei ${item.seller.firstName} ${item.seller.lastName}`
+      : name,
     kmFormatted,
     item.fuelType,
-    item.dealer?.city ? `in ${item.dealer.city}` : null,
+    item.seller?.city ? `in ${item.seller.city}` : null,
     "auf autovendo.ch.",
   ]
     .filter(Boolean)
@@ -145,11 +145,10 @@ export default async function ListingPage({
 }) {
   const t = await getTranslations("VehicleDetail");
   const tVehicle = await getTranslations("Vehicle");
-  const tProfile = await getTranslations("DealerProfileForm");
   const { id, locale } = await params;
   const item = await getVehicleCached(id);
 
-  if (!item || !item.dealer) notFound();
+  if (!item) notFound();
 
   const getLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
@@ -338,52 +337,30 @@ export default async function ListingPage({
       ? item.vehicleDescription
       : null;
 
-  const dealerWithHours = item.dealer as typeof item.dealer & {
-    openingHours?: Array<{
-      day: string;
-      openTime: Date | string | null;
-      closeTime: Date | string | null;
-      isOpen: boolean;
-    }>;
-  };
-  const openingHours = [...(dealerWithHours.openingHours || [])]
-    .sort(
-      (a, b) =>
-        DAY_ORDER.indexOf(a.day as (typeof DAY_ORDER)[number]) -
-        DAY_ORDER.indexOf(b.day as (typeof DAY_ORDER)[number]),
-    )
-    .map((oh) => {
-      const open = toDate(oh.openTime);
-      const close = toDate(oh.closeTime);
-      return {
-        day: oh.day,
-        hours:
-          oh.isOpen && open != null && close != null
-            ? `${open.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} – ${close.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}`
-            : tProfile("isClosed"),
-      };
-    });
-
-  const dealerUser = (
-    item.dealer as typeof item.dealer & { user?: { emailVerified: boolean } }
-  ).user;
+  const sellerUser = (
+    item.seller as typeof item.seller & { user?: { emailVerified: boolean } }
+  )?.user;
 
   const seller = {
-    id: item.dealer.id,
-    name: item.dealer.companyName,
-    address: `${item.dealer.streetAddress}, ${item.dealer.zipCode} ${item.dealer.city}`,
-    phone: item.dealer.phoneNumber ?? undefined,
-    logo: item.dealer.logo ? getImageUrl(item.dealer.logo) : undefined,
-    website: item.dealer.website ?? undefined,
-    businessEmail: item.dealer.businessEmail ?? undefined,
-    description: item.dealer.description ?? undefined,
-    openingHours: openingHours.length > 0 ? openingHours : undefined,
-    isVerified: dealerUser?.emailVerified === true,
-    rating: (item.dealer as any).googleRating ?? null,
-    reviewCount: (item.dealer as any).googleReviewCount ?? null,
+    id: item.seller?.id ?? "",
+    name: item.seller
+      ? `${item.seller.firstName} ${item.seller.lastName}`
+      : "",
+    address: item.seller
+      ? `${item.seller.streetAddress}, ${item.seller.zipCode} ${item.seller.city}`
+      : "",
+    phone: item.seller?.phoneNumber ?? undefined,
+    logo: item.seller?.image ? getImageUrl(item.seller.image) : undefined,
+    website: undefined as string | undefined,
+    businessEmail: item.seller?.email ?? undefined,
+    description: undefined as string | undefined,
+    openingHours: undefined as { day: string; hours: string }[] | undefined,
+    isVerified: sellerUser?.emailVerified === true,
+    rating: null as number | null,
+    reviewCount: null as number | null,
   };
 
-  const similarItems = await getSimilarVehicles(item.dealerId!, item.id);
+  const similarItems = await getSimilarVehicles(item.sellerId!, item.id);
 
   const similarListings: ListingProps[] = similarItems.map((sim) => ({
     id: sim.id,
@@ -394,9 +371,11 @@ export default async function ListingPage({
       formatKilometers(sim.kilometer),
       sim.fuelType ? getLabel("fuelTypes", sim.fuelType) : undefined,
     ].filter((d): d is string => d != null && d !== ""),
-    garageName: sim.dealer.companyName,
-    garageId: sim.dealer.id,
-    garageLocation: `${sim.dealer.city}, CH`,
+    garageName: sim.seller
+      ? `${sim.seller.firstName} ${sim.seller.lastName}`
+      : "",
+    garageId: sim.seller?.id ?? sim.id,
+    garageLocation: sim.seller ? `${sim.seller.city}, CH` : "",
     badge: sim.vehicleCondition
       ? getLabel("conditions", sim.vehicleCondition)
       : undefined,
@@ -425,13 +404,13 @@ export default async function ListingPage({
       availability: "https://schema.org/InStock",
       url: `https://autovendo.ch/${locale}/cars/${item.id}`,
       seller: {
-        "@type": "AutoDealer",
-        name: item.dealer.companyName,
+        "@type": "Person",
+        name: seller.name,
         address: {
           "@type": "PostalAddress",
-          streetAddress: item.dealer.streetAddress ?? undefined,
-          postalCode: item.dealer.zipCode ?? undefined,
-          addressLocality: item.dealer.city ?? undefined,
+          streetAddress: item.seller?.streetAddress ?? undefined,
+          postalCode: item.seller?.zipCode ?? undefined,
+          addressLocality: item.seller?.city ?? undefined,
           addressCountry: "CH",
         },
       },

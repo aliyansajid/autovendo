@@ -27,7 +27,7 @@ interface SellerSectionProps {
     rating: number | null;
     reviewCount: number | null;
     website?: string;
-    phone: string;
+    phone?: string;
     address: string;
     businessEmail?: string;
     description?: string;
