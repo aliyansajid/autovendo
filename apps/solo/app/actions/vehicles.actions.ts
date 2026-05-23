@@ -76,8 +76,24 @@ async function getCurrentSeller() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.id) return null;
 
-  return await prisma.seller.findUnique({
+  const nameParts = (session.user.name ?? "").trim().split(" ");
+  const firstName = nameParts[0] || "";
+  const lastName = nameParts.slice(1).join(" ") || firstName;
+
+  return await prisma.seller.upsert({
     where: { userId: session.user.id },
+    update: {},
+    create: {
+      userId: session.user.id,
+      firstName,
+      lastName,
+      email: session.user.email,
+      phoneNumber: "",
+      streetAddress: "",
+      zipCode: "",
+      city: "",
+      country: "ch",
+    },
     select: { id: true },
   });
 }
