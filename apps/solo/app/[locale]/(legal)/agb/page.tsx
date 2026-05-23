@@ -11,7 +11,7 @@ export default function AGBPage() {
               Allgemeine Geschäftsbedingungen (AGB)
             </h1>
             <p className="text-base md:text-lg max-w-3xl mx-auto">
-              Regelungen für die Nutzung von Autovendo.ch
+              Regelungen für die Nutzung von Autosolo.ch
             </p>
           </div>
         </div>
@@ -26,10 +26,10 @@ export default function AGBPage() {
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
                 Diese Allgemeinen Geschäftsbedingungen (AGB) regeln die Nutzung
-                der Online-Plattform Autovendo.ch (nachfolgend „Autovendo“).
+                der Online-Plattform Autosolo.ch (nachfolgend „Autosolo“).
               </p>
               <p>
-                Autovendo ist eine digitale Inserate- und Verkaufsplattform für
+                Autosolo ist eine digitale Inserate- und Verkaufsplattform für
                 Fahrzeuge und richtet sich ausschliesslich an gewerbliche
                 Autohändler und Garagen.
               </p>
@@ -48,12 +48,12 @@ export default function AGBPage() {
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Autovendo stellt eine technische Plattform zur Verfügung, auf
+                Autosolo stellt eine technische Plattform zur Verfügung, auf
                 der Autohändler Fahrzeuge inserieren und Kaufinteressenten
                 Kontakt aufnehmen können.
               </p>
               <div className="space-y-2">
-                <p className="font-semibold text-foreground">Autovendo:</p>
+                <p className="font-semibold text-foreground">Autosolo:</p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>
                     ist nicht Vertragspartner der Kaufverträge zwischen Händlern
@@ -80,7 +80,7 @@ export default function AGBPage() {
               3. Registrierung und Nutzerkonto
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
-              <p>Die Nutzung von Autovendo setzt eine Registrierung voraus.</p>
+              <p>Die Nutzung von Autosolo setzt eine Registrierung voraus.</p>
               <div className="space-y-2">
                 <p className="font-semibold text-foreground">
                   Der Nutzer verpflichtet sich:
@@ -92,7 +92,7 @@ export default function AGBPage() {
                 </ul>
               </div>
               <p>
-                Autovendo behält sich das Recht vor, Nutzerkonten zu prüfen, zu
+                Autosolo behält sich das Recht vor, Nutzerkonten zu prüfen, zu
                 sperren oder zu löschen, wenn falsche Angaben gemacht oder diese
                 AGB verletzt werden.
               </p>
@@ -117,11 +117,11 @@ export default function AGBPage() {
                   <li>
                     die Rechtmässigkeit der Inhalte (Texte, Bilder, Preise)
                   </li>
-                  <li>die Einhaltung der Insertionsregeln von Autovendo.ch</li>
+                  <li>die Einhaltung der Insertionsregeln von Autosolo.ch</li>
                 </ul>
               </div>
               <p>
-                Autovendo übernimmt keine Haftung für Inhalte von Inseraten oder
+                Autosolo übernimmt keine Haftung für Inhalte von Inseraten oder
                 die Qualität der angebotenen Fahrzeuge.
               </p>
             </div>
@@ -135,7 +135,7 @@ export default function AGBPage() {
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Die Nutzung von Autovendo ist kostenpflichtig gemäss den auf der
+                Die Nutzung von Autosolo ist kostenpflichtig gemäss den auf der
                 Website veröffentlichten Preisen.
               </p>
               <ul className="list-disc pl-6 space-y-2">
@@ -147,7 +147,7 @@ export default function AGBPage() {
                 </li>
               </ul>
               <p>
-                Autovendo behält sich das Recht vor, Preise anzupassen.
+                Autosolo behält sich das Recht vor, Preise anzupassen.
                 Änderungen werden rechtzeitig kommuniziert.
               </p>
             </div>
@@ -192,7 +192,7 @@ export default function AGBPage() {
             <div className="space-y-4 text-muted-foreground text-lg">
               <div className="space-y-2">
                 <p className="font-semibold text-foreground">
-                  Autovendo haftet nicht für:
+                  Autosolo haftet nicht für:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>
@@ -219,7 +219,7 @@ export default function AGBPage() {
             <div className="space-y-4 text-muted-foreground text-lg">
               <div className="space-y-2">
                 <p className="font-semibold text-foreground">
-                  Autovendo kann Nutzer oder Inserate jederzeit sperren oder
+                  Autosolo kann Nutzer oder Inserate jederzeit sperren oder
                   entfernen, insbesondere bei:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
@@ -241,7 +241,7 @@ export default function AGBPage() {
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
                 Die Bearbeitung personenbezogener Daten erfolgt gemäss der
-                Datenschutzerklärung von Autovendo.ch.
+                Datenschutzerklärung von Autosolo.ch.
               </p>
             </div>
           </section>
@@ -254,7 +254,7 @@ export default function AGBPage() {
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Autovendo behält sich das Recht vor, diese AGB jederzeit zu
+                Autosolo behält sich das Recht vor, diese AGB jederzeit zu
                 ändern.
               </p>
               <p>
@@ -274,7 +274,7 @@ export default function AGBPage() {
               <p>Es gilt ausschliesslich Schweizer Recht.</p>
               <p>
                 Gerichtsstand ist – soweit gesetzlich zulässig – der Sitz des
-                Betreibers von Autovendo.ch.
+                Betreibers von Autosolo.ch.
               </p>
             </div>
           </section>

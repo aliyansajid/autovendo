@@ -18,7 +18,7 @@ export default function SicherheitshinweisePage() {
               Sicherheitshinweise
             </h1>
             <p className="text-base md:text-lg max-w-3xl mx-auto">
-              Sicher Handeln auf Autovendo.ch
+              Sicher Handeln auf Autosolo.ch
             </p>
           </div>
         </div>
@@ -28,13 +28,13 @@ export default function SicherheitshinweisePage() {
         <div className="max-w-4xl mx-auto space-y-12">
           <section className="space-y-4 text-muted-foreground text-lg">
             <p>
-              Der Schutz unserer Nutzerinnen und Nutzer hat für Autovendo.ch
+              Der Schutz unserer Nutzerinnen und Nutzer hat für Autosolo.ch
               höchste Priorität. Mit den folgenden Sicherheitshinweisen
               unterstützen wir Sie dabei, Risiken zu erkennen und sich wirksam
               vor Betrugsversuchen zu schützen.
             </p>
             <p>
-              Wie alle Online-Marktplätze kann auch Autovendo.ch vereinzelt Ziel
+              Wie alle Online-Marktplätze kann auch Autosolo.ch vereinzelt Ziel
               von missbräuchlicher Nutzung werden. Deshalb ist es uns wichtig,
               Sie transparent zu informieren und Ihnen konkrete Empfehlungen an
               die Hand zu geben, wie Sie selbst aktiv zu Ihrer Sicherheit
@@ -53,7 +53,7 @@ export default function SicherheitshinweisePage() {
                 Online-Betrugsfällen in der Schweiz deutlich gestiegen. Bitte
                 seien Sie bei der Kommunikation mit anderen Nutzern aufmerksam
                 und befolgen Sie unsere Sicherheitstipps, um ein sicheres und
-                positives Nutzungserlebnis auf Autovendo.ch zu gewährleisten.
+                positives Nutzungserlebnis auf Autosolo.ch zu gewährleisten.
               </p>
               <p className="font-semibold">
                 Haben Sie den Verdacht auf einen Betrugsversuch, brechen Sie den
@@ -93,7 +93,7 @@ export default function SicherheitshinweisePage() {
                   Nur Fahrzeuge aus der Schweiz und dem Fürstentum Liechtenstein
                 </h3>
                 <p className="text-muted-foreground">
-                  Gemäss den Insertionsregeln von Autovendo.ch dürfen nur
+                  Gemäss den Insertionsregeln von Autosolo.ch dürfen nur
                   Fahrzeuge angeboten werden, die sich in der Schweiz oder im
                   Fürstentum Liechtenstein befinden. Angebote aus dem Ausland
                   sind nicht zulässig. Sollten Sie ein entsprechendes Inserat
@@ -147,7 +147,7 @@ export default function SicherheitshinweisePage() {
                 </h3>
                 <p className="text-muted-foreground">
                   Betrüger versenden gelegentlich E-Mails oder SMS, die
-                  vorgeben, von Autovendo.ch zu stammen oder auf angeblich
+                  vorgeben, von Autosolo.ch zu stammen oder auf angeblich
                   günstigere Vergleichsangebote hinweisen. Ziel ist es, Sie auf
                   gefälschte Webseiten zu locken oder Zugangsdaten zu erlangen.
                 </p>
@@ -166,7 +166,7 @@ export default function SicherheitshinweisePage() {
                       oder SMS ein
                     </li>
                     <li>
-                      Rufen Sie Autovendo.ch immer direkt über die
+                      Rufen Sie Autosolo.ch immer direkt über die
                       Browser-Adresse auf
                     </li>
                   </ul>

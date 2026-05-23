@@ -11,7 +11,7 @@ export default function ImpressumPage() {
           <div className="text-center text-white space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold">Impressum</h1>
             <p className="text-base md:text-lg max-w-3xl mx-auto">
-              Rechtliche Informationen zu Autovendo.ch
+              Rechtliche Informationen zu Autosolo.ch
             </p>
           </div>
         </div>
@@ -24,7 +24,7 @@ export default function ImpressumPage() {
               Anbieter / Betreiber
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
-              <p className="font-semibold text-foreground">Autovendo.ch</p>
+              <p className="font-semibold text-foreground">Autosolo.ch</p>
               <p>Die Verkaufsplattform für Autohändler in der Schweiz</p>
               <div>
                 <p>Mackee Johnson</p>
@@ -57,10 +57,10 @@ export default function ImpressumPage() {
                   <span className="font-semibold text-foreground">E-Mail:</span>
                   &nbsp;
                   <Link
-                    href="mailto:info@autovendo.ch"
+                    href="mailto:info@autosolo.ch"
                     className="text-primary underline-offset-4 hover:underline"
                   >
-                    info@autovendo.ch
+                    info@autosolo.ch
                   </Link>
                 </p>
                 <p>
@@ -69,12 +69,12 @@ export default function ImpressumPage() {
                   </span>
                   &nbsp;
                   <Link
-                    href="https://www.autovendo.ch"
+                    href="https://www.autosolo.ch"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary underline-offset-4 hover:underline"
                   >
-                    www.autovendo.ch
+                    www.autosolo.ch
                   </Link>
                 </p>
               </div>
@@ -101,13 +101,13 @@ export default function ImpressumPage() {
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Autovendo.ch übernimmt keine Gewähr für die in Inseraten
+                Autosolo.ch übernimmt keine Gewähr für die in Inseraten
                 veröffentlichten Inhalte. Für die Richtigkeit, Vollständigkeit
                 und Aktualität der Inserate sind ausschliesslich die jeweiligen
                 Anbieter verantwortlich.
               </p>
               <p>
-                Autovendo.ch haftet nicht für direkte oder indirekte Schäden,
+                Autosolo.ch haftet nicht für direkte oder indirekte Schäden,
                 die aus der Nutzung der Plattform oder aus Kontakten zwischen
                 Nutzern entstehen.
               </p>
@@ -137,7 +137,7 @@ export default function ImpressumPage() {
             <h2 className="text-xl md:text-2xl font-bold">Urheberrechte</h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Die Inhalte, Strukturen, Texte und Grafiken auf Autovendo.ch
+                Die Inhalte, Strukturen, Texte und Grafiken auf Autosolo.ch
                 sind urheberrechtlich geschützt.
               </p>
               <p>
@@ -155,7 +155,7 @@ export default function ImpressumPage() {
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>Es gilt ausschliesslich Schweizer Recht.</p>
-              <p>Gerichtsstand ist der Sitz des Betreibers von Autovendo.ch.</p>
+              <p>Gerichtsstand ist der Sitz des Betreibers von Autosolo.ch.</p>
             </div>
           </section>
 

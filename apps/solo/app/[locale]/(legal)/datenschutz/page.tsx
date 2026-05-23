@@ -24,11 +24,11 @@ export default function PrivacyPage() {
               <p>
                 Der Schutz deiner persönlichen Daten ist uns wichtig. In dieser
                 Datenschutzerklärung informieren wir dich darüber, welche
-                personenbezogenen Daten bei der Nutzung von Autovendo.ch
+                personenbezogenen Daten bei der Nutzung von Autosolo.ch
                 erhoben, bearbeitet und gespeichert werden.
               </p>
               <p>
-                Autovendo.ch hält sich an die geltenden datenschutzrechtlichen
+                Autosolo.ch hält sich an die geltenden datenschutzrechtlichen
                 Bestimmungen der Schweiz (DSG) sowie – soweit anwendbar – der EU
                 (DSGVO).
               </p>
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
                 Verantwortlich für die Datenbearbeitung ist der Betreiber von
-                Autovendo.ch.
+                Autosolo.ch.
               </p>
               <p>Kontaktinformationen findest du im Impressum.</p>
             </div>
@@ -123,7 +123,7 @@ export default function PrivacyPage() {
             <div className="space-y-4 text-muted-foreground text-lg">
               <div className="space-y-2">
                 <p className="font-semibold text-foreground">
-                  Autovendo.ch gibt personenbezogene Daten nicht an Dritte
+                  Autosolo.ch gibt personenbezogene Daten nicht an Dritte
                   weiter, ausser:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
@@ -167,7 +167,7 @@ export default function PrivacyPage() {
             <div className="space-y-4 text-muted-foreground text-lg">
               <div className="space-y-2">
                 <p className="font-semibold text-foreground">
-                  Autovendo.ch verwendet Cookies und ähnliche Technologien, um:
+                  Autosolo.ch verwendet Cookies und ähnliche Technologien, um:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>die Benutzerfreundlichkeit zu verbessern</li>
@@ -248,7 +248,7 @@ export default function PrivacyPage() {
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Autovendo.ch behält sich vor, diese Datenschutzerklärung
+                Autosolo.ch behält sich vor, diese Datenschutzerklärung
                 jederzeit anzupassen.
               </p>
               <p>

@@ -11,7 +11,7 @@ export default function InsertionsregelnPage() {
           <div className="text-center text-white space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold">Insertionsregeln</h1>
             <p className="text-base md:text-lg max-w-3xl mx-auto">
-              Richtlinien für Fahrzeuginserate auf Autovendo.ch
+              Richtlinien für Fahrzeuginserate auf Autosolo.ch
             </p>
           </div>
         </div>
@@ -22,7 +22,7 @@ export default function InsertionsregelnPage() {
           <section className="space-y-4 text-muted-foreground text-lg">
             <p>
               Diese Insertionsregeln gelten für alle Fahrzeuginserate auf
-              Autovendo.ch.
+              Autosolo.ch.
             </p>
             <p>
               Sie dienen dazu, einen fairen, transparenten und sicheren
@@ -43,7 +43,7 @@ export default function InsertionsregelnPage() {
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Autovendo.ch ist eine Verkaufsplattform ausschliesslich für
+                Autosolo.ch ist eine Verkaufsplattform ausschliesslich für
                 Autohändler und Garagen.
               </p>
               <ul className="list-disc pl-6 space-y-2">
@@ -59,7 +59,7 @@ export default function InsertionsregelnPage() {
                 </li>
               </ul>
               <p>
-                Autovendo.ch behält sich vor, Anbieter zu überprüfen und
+                Autosolo.ch behält sich vor, Anbieter zu überprüfen und
                 Inserate bei Unklarheiten zu sperren oder zu entfernen.
               </p>
             </div>
@@ -151,7 +151,7 @@ export default function InsertionsregelnPage() {
               </li>
             </ul>
             <p className="font-semibold text-foreground">
-              Autovendo.ch ist eine Fahrzeugplattform – keine Werbefläche für
+              Autosolo.ch ist eine Fahrzeugplattform – keine Werbefläche für
               Drittangebote.
             </p>
           </section>
@@ -208,7 +208,7 @@ export default function InsertionsregelnPage() {
               </li>
             </ul>
             <p className="font-semibold text-foreground">
-              Autovendo.ch empfiehlt, Besichtigungen und Zahlungen stets
+              Autosolo.ch empfiehlt, Besichtigungen und Zahlungen stets
               persönlich und nachvollziehbar abzuwickeln.
             </p>
           </section>
@@ -221,7 +221,7 @@ export default function InsertionsregelnPage() {
             </h2>
             <div className="space-y-2 text-muted-foreground text-lg">
               <p className="font-semibold text-foreground">
-                Autovendo.ch behält sich das Recht vor:
+                Autosolo.ch behält sich das Recht vor:
               </p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Inserate jederzeit zu prüfen</li>
@@ -247,7 +247,7 @@ export default function InsertionsregelnPage() {
             </h2>
             <div className="space-y-2 text-muted-foreground text-lg">
               <p className="font-semibold text-foreground">
-                Autovendo.ch steht für:
+                Autosolo.ch steht für:
               </p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Fairen Wettbewerb</li>

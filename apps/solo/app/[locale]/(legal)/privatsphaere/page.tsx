@@ -25,7 +25,7 @@ export default function PrivatsphaereEinstellungenPage() {
           <section className="space-y-4">
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Autovendo.ch verwendet Cookies und ähnliche Technologien, um den
+                Autosolo.ch verwendet Cookies und ähnliche Technologien, um den
                 sicheren Betrieb der Plattform zu gewährleisten, Inhalte zu
                 optimieren und das Nutzungserlebnis zu verbessern.
               </p>
@@ -64,7 +64,7 @@ export default function PrivatsphaereEinstellungenPage() {
                   </ul>
                 </div>
                 <p className="font-medium">
-                  Ohne diese Cookies kann Autovendo.ch nicht ordnungsgemäss
+                  Ohne diese Cookies kann Autosolo.ch nicht ordnungsgemäss
                   betrieben werden.
                 </p>
               </div>
@@ -101,7 +101,7 @@ export default function PrivatsphaereEinstellungenPage() {
                 </p>
                 <p>
                   Die gewonnenen Informationen dienen ausschliesslich dazu,
-                  Autovendo.ch weiter zu verbessern.
+                  Autosolo.ch weiter zu verbessern.
                 </p>
                 <ul className="list-disc pl-6 space-y-1">
                   <li>Erhebung anonymisierter Nutzungsdaten</li>
