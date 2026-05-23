@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@repo/db";
 
+export const dynamic = "force-dynamic";
+
 const BASE_URL = "https://autosolo.ch";
 const LOCALES = ["de", "en", "fr", "it"];
 
