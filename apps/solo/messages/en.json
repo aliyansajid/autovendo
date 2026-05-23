@@ -2,8 +2,6 @@
   "Header": {
     "nav": {
       "advancedSearch": "Advanced Search",
-      "dealers": "Find Dealers",
-      "sell": "Sell",
       "mobileMenuTitle": "Menu"
     },
     "auth": {
@@ -18,11 +16,11 @@
       "fr": "Français",
       "it": "Italiano"
     },
-    "logoAlt": "AutoVendo Logo"
+    "logoAlt": "AutoSolo Logo"
   },
   "Footer": {
     "description": "Discover your perfect vehicle in our premium selection. We offer thousands of certified used and new cars from top European brands at unbeatable prices and with transparent history.",
-    "socialMediaDisclaimer": "Autovendo.ch consciously avoids social media. We focus on direct contact, personal accessibility, and real conversations – from person to person, not through likes or algorithms.",
+    "socialMediaDisclaimer": "Autosolo.ch consciously avoids social media. We focus on direct contact, personal accessibility, and real conversations – from person to person, not through likes or algorithms.",
     "newsletter": {
       "title": "Stay in the Fast Lane",
       "description": "Subscribe to our newsletter for the latest offers, vehicle news, and exclusive promotions.",
@@ -41,7 +39,6 @@
       "rules": "Insertion Rules",
       "pricing": "Pricing",
       "contact": "Contact",
-      "howItWorks": "How it works",
       "faq": "FAQ",
       "safety": "Safety Instructions",
       "privacy": "Privacy Policy",
@@ -53,9 +50,9 @@
     "copyright": "All rights reserved."
   },
   "About": {
-    "title": "About Autovendo.ch",
+    "title": "About Autosolo.ch",
     "subtitle": "Fair. Transparent. Uncomplicated. Human.",
-    "description": "Autovendo.ch is the sales platform for all car dealers in Switzerland. We developed Autovendo with one clear goal: to make the sale of vehicles simple, efficient, and fair — without unnecessary administrative burden.",
+    "description": "Autosolo.ch is the platform for private car sellers in Switzerland. We developed Autosolo with one clear goal: to make the sale of vehicles simple, efficient, and fair — without unnecessary administrative burden.",
     "features": {
       "efficiency": {
         "title": "Efficiency & Structure",
@@ -349,11 +346,6 @@
     "showMore": "Show more",
     "showLess": "Show less"
   },
-  "FeaturedGarage": {
-    "title": "Featured Garages",
-    "emptyState": "No garages currently listed.",
-    "button": "To the Garage"
-  },
   "ListingCard": {
     "saveToFavorites": "Save to favorites"
   },
@@ -549,20 +541,6 @@
       "created-desc": "Listings (Newest first)"
     }
   },
-  "GarageRichFilters": {
-    "reset": "Reset",
-    "makesModels": "{count} Make/Models",
-    "makeModelPlaceholder": "Make & Model",
-    "year": "Year",
-    "mileage": "Mileage",
-    "price": "Price",
-    "selected": "{count} selected",
-    "bodyType": "Body Type",
-    "fuel": "Fuel",
-    "transmission": "Transmission",
-    "drive": "Drive",
-    "resetFilters": "Reset Filters"
-  },
   "LoginForm": {
     "title": "Welcome back",
     "description": "Enter your email address below to log in to your account",
@@ -699,90 +677,13 @@
   },
   "Common": {
     "errorDefault": "An error occurred. Please try again.",
-    "dealerNotFound": "Dealer profile not found.",
+    "sellerNotFound": "Seller profile not found.",
     "emailSendError": "Email could not be sent.",
     "isClosed": "Closed"
   },
-  "SellPage": {
-    "hero": {
-      "title": "The partner for professional car dealers",
-      "subtitle": "Autovendo — List your inventory on the largest Swiss marketplace.",
-      "ctaList": "List now",
-      "ctaPricing": "View dealer solutions"
-    },
-    "reach": {
-      "title": "Reach more buyers",
-      "titleHighlight": "efficiently",
-      "titleSuffix": "and effectively",
-      "cardTitle": "Professional dealer advertising",
-      "cardSubtitle": "MAXIMUM VISIBILITY • HIGH-QUALITY LEADS",
-      "cardDescription": "Present your inventory to millions of potential buyers every month. Autovendo offers professional tools tailored specifically to the needs of modern Swiss car dealerships.",
-      "badge": "Over 500 dealers in Switzerland trust us",
-      "ctaFirst": "Create your first listing",
-      "ctaHow": "How it works"
-    },
-    "advantages": {
-      "title": "Your benefits with",
-      "titleHighlight": "Autovendo for dealers",
-      "performanceTitle": "Performance & Growth",
-      "efficiencyTitle": "Efficiency & Tools",
-      "features": {
-        "leads": "High-quality leads: Direct enquiries from serious buyers ready to purchase.",
-        "reach": "Maximum reach: Your vehicles are prominently featured on our high-traffic portal.",
-        "regional": "Regional targeting: Effectively reach local buyers in your specific region.",
-        "brand": "Brand authority: Dedicated dealer pages help build trust with potential customers.",
-        "sync": "Inventory synchronisation: Automatically import your inventory from common DMS systems.",
-        "smart": "Smart listing: Save time with automatic technical data and energy information.",
-        "tracking": "Performance tracking: Monitor your listing statistics and optimise your strategy.",
-        "leads2": "Lead management: Manage all customer enquiries in one central dashboard."
-      }
-    },
-    "services": {
-      "title": "We support your",
-      "titleHighlight": "daily business",
-      "sync": {
-        "title": "Inventory synchronisation",
-        "description": "Seamless integration into your existing dealer management system."
-      },
-      "autoFill": {
-        "title": "Auto-fill data",
-        "description": "Our system assists you in entering technical and equipment details."
-      },
-      "compliance": {
-        "title": "Compliance",
-        "description": "We ensure all listings meet the legal requirements for energy labels and CO2."
-      },
-      "leads": {
-        "title": "Verified leads",
-        "description": "Receive high-quality leads directly from interested Swiss buyers."
-      }
-    },
-    "photos": {
-      "title": "Professional presentation",
-      "titleHighlight": "boosts",
-      "titleSuffix": "your success",
-      "tip1Title": "Consistent setting",
-      "tip1Description": "Use your showroom or a neutral location to build a professional dealer brand.",
-      "tip2Title": "Full walkthrough",
-      "tip2Description": "Show every angle, including interior details and model highlights.",
-      "tip3Title": "Interior & extras",
-      "tip3Description": "Document premium equipment and the condition of the cabin precisely.",
-      "expertTip": "Expert tip: Consistent, high-quality photos build long-term trust in your dealer brand."
-    },
-    "cta": {
-      "title": "Ready to increase your",
-      "titleHighlight": "sales volume",
-      "titleSuffix": "?",
-      "subtitle": "List your inventory on Autovendo",
-      "subtitleBadge": "PROFESSIONAL • SCALABLE • EFFECTIVE",
-      "description": "Join the professional network of Swiss car dealers. Our packages are designed to help dealerships of every size succeed in the digital market.",
-      "ctaStart": "Get started now",
-      "ctaContact": "Contact sales team"
-    }
-  },
   "FaqPage": {
     "title": "Frequently Asked Questions",
-    "subtitle": "Find quick answers to the most important questions about Autovendo.ch.",
+    "subtitle": "Find quick answers to the most important questions about Autosolo.ch.",
     "noQuestion": "Didn't find your question?",
     "supportText": "Our support team is happy to help. Contact us at any time!",
     "contactButton": "Contact us",
@@ -791,23 +692,23 @@
         "category": "General",
         "items": [
           {
-            "question": "What is Autovendo.ch?",
-            "answer": "Autovendo.ch is a specialized online sales platform for all car dealers in Switzerland. Dealers can easily list their vehicles and reach potential buyers directly."
+            "question": "What is Autosolo.ch?",
+            "answer": "Autosolo.ch is a specialized online platform for private car sellers in Switzerland. sellers can easily list their vehicles and reach potential buyers directly."
           },
           {
-            "question": "Who can use Autovendo.ch?",
-            "answer": "Autovendo.ch is aimed exclusively at commercial car dealers and garages. Private sellers are not permitted on this platform."
+            "question": "Who can use Autosolo.ch?",
+            "answer": "Autosolo.ch is designed for private individuals selling their own vehicles."
           },
           {
-            "question": "In which regions is Autovendo.ch available?",
-            "answer": "Autovendo.ch is focused on the Swiss market. Listed vehicles must be located in Switzerland or the Principality of Liechtenstein."
+            "question": "In which regions is Autosolo.ch available?",
+            "answer": "Autosolo.ch is focused on the Swiss market. Listed vehicles must be located in Switzerland or the Principality of Liechtenstein."
           },
           {
-            "question": "Is Autovendo.ch also suitable for small dealers?",
-            "answer": "Yes. Autovendo.ch is deliberately designed so that all dealers – regardless of size or location – receive the same fair opportunities."
+            "question": "Is Autosolo.ch also suitable for first-time sellers?",
+            "answer": "Yes. Autosolo.ch is deliberately designed so that all sellers – regardless of experience – get the same fair opportunity."
           },
           {
-            "question": "How does Autovendo.ch differ from other platforms?",
+            "question": "How does Autosolo.ch differ from other platforms?",
             "answer": "We focus on fair prices, simple processes and personal support instead of complicated packages, anonymous hotlines or long-term commitments."
           }
         ]
@@ -821,7 +722,7 @@
           },
           {
             "question": "Can several vehicles be listed at the same time?",
-            "answer": "Yes. Dealers can publish several vehicles at the same time – depending on the chosen package."
+            "answer": "Yes. Sellers can list multiple vehicles – depending on the chosen package."
           },
           {
             "question": "How long does a listing stay online?",
@@ -841,8 +742,8 @@
         "category": "Costs & Packages",
         "items": [
           {
-            "question": "How much does it cost to use Autovendo.ch?",
-            "answer": "Autovendo.ch offers clear, transparent and competitive prices – with no hidden fees."
+            "question": "How much does it cost to use Autosolo.ch?",
+            "answer": "Autosolo.ch offers clear, transparent and competitive prices – with no hidden fees."
           },
           {
             "question": "Are there long-term contract commitments?",
@@ -850,11 +751,11 @@
           },
           {
             "question": "Are there additional fees per vehicle sold?",
-            "answer": "No. Autovendo.ch does not charge sales commissions."
+            "answer": "No. Autosolo.ch does not charge sales commissions."
           },
           {
             "question": "Are price changes possible?",
-            "answer": "Yes. Dealers can change their package at any time if their needs change."
+            "answer": "Yes. Sellers can choose their plan if their needs change."
           },
           {
             "question": "Will I receive an invoice?",
@@ -866,11 +767,11 @@
         "category": "Support & Security",
         "items": [
           {
-            "question": "How can I reach Autovendo.ch support?",
+            "question": "How can I reach Autosolo.ch support?",
             "answer": "You can reach us directly and personally by phone or email – without waiting loops or anonymous ticket systems."
           },
           {
-            "question": "How does Autovendo.ch protect against fraud?",
+            "question": "How does Autosolo.ch protect against fraud?",
             "answer": "We rely on technical protective measures, clear insertion rules and actively inform about safe buying and selling practices."
           },
           {
@@ -882,8 +783,8 @@
             "answer": "Yes. Protecting your data is our top priority. All data is processed in accordance with applicable data protection regulations."
           },
           {
-            "question": "Are there additional security features for dealers?",
-            "answer": "Yes. For dealers, we recommend, among other things, providing a mobile number for additional account security."
+            "question": "Are there additional security features for sellers?",
+            "answer": "Yes. For sellers, we recommend, among other things, providing a mobile number for additional account security."
           }
         ]
       }
@@ -951,7 +852,7 @@
     "trustSafety": {
       "title": "Trust & Safety",
       "features": [
-        "Only private sellers - No dealers competing with you",
+        "Only private sellers - No other listings",
         "Transparent pricing - No hidden costs or subscriptions",
         "Full control - You decide price, communication, and deal"
       ]
@@ -975,98 +876,20 @@
     "subjectMax": "Subject may be at most 100 characters long",
     "messageMax": "Message may be at most 500 characters long"
   },
-  "DealersPage": {
-    "title": "Discover our dealers",
-    "subtitle": "From exclusive sports cars to reliable family vehicles – find the right car with our verified dealers."
-  },
-  "DealersList": {
-    "title": "Our dealers",
-    "subtitle": "Find the right dealer near you.",
-    "searchPlaceholder": "Search dealers...",
-    "notFoundTitle": "No dealer found",
-    "notFoundDescription": "No dealer matches \"{query}\".",
-    "resetSearch": "Reset search",
-    "emptyTitle": "No dealers registered yet",
-    "emptyDescription": "Would you like to offer your vehicles as a dealer?",
-    "becomeDealer": "Become a dealer"
-  },
-  "DealerDetail": {
-    "phoneButton": "Phone",
-    "emailButton": "Email",
-    "tabAbout": "About us",
-    "tabCars": "Vehicles",
-    "tabRatings": "Reviews",
-    "aboutTitle": "About {name}",
-    "noDescription": "This dealer has not yet added a description.",
-    "currentOffers": "Current offers",
-    "ratingsTitle": "Reviews",
-    "googleRatings": "Google reviews",
-    "reviewsCount": "{count} reviews",
-    "openingHours": "Opening hours",
-    "noOpeningHours": "No opening hours provided. Please contact the dealer directly.",
-    "contactTitle": "Contact",
-    "sendMessage": "Send message",
-    "nameLabel": "Name",
-    "namePlaceholder": "John Smith",
-    "phoneLabel": "Phone",
-    "emailLabel": "Email",
-    "messageLabel": "Message",
-    "messagePlaceholder": "I am interested in...",
-    "submitting": "Sending",
-    "vehiclesCount": "{count} vehicles",
-    "sortBy": "Sort by:",
-    "sortNewest": "Newest first",
-    "sortPriceAsc": "Price: ascending",
-    "sortPriceDesc": "Price: descending",
-    "sortMileage": "Mileage",
-    "noVehicles": "This dealer has not yet listed any vehicles.",
-    "ratingsOverview": "Ratings overview",
-    "customerReviews": "Customer reviews",
-    "noReviews": "No reviews yet.",
-    "moreOnGoogle": "More on Google",
-    "noRatings": "No reviews available",
-    "noRatingsDescription": "This dealer has not yet linked any Google reviews.",
-    "successToast": "Message sent! The dealer will get back to you.",
-    "errorToast": "Message could not be sent.",
-    "unexpectedError": "An unexpected error occurred."
-  },
-  "DealerContactSchema": {
-    "nameMinLength": "Name is required",
-    "nameMaxLength": "Name can be a maximum of 50 characters",
-    "phoneRequired": "Phone number is required",
-    "invalidPhoneFormat": "Invalid Swiss phone number",
-    "invalidEmail": "Invalid email address",
-    "messageMaxLength": "Message can be a maximum of 1000 characters"
-  },
-  "GarageFilters": {
-    "reset": "Reset",
-    "yearLabel": "Year",
-    "mileageLabel": "Mileage",
-    "priceLabel": "Price",
-    "bodyTypeLabel": "Body type",
-    "fuelLabel": "Fuel",
-    "transmissionLabel": "Transmission",
-    "driveLabel": "Drive",
-    "selectedCount": "{count} selected",
-    "makeModelLabel": "Make & Model",
-    "makeModelSelected": "{count} makes/models",
-    "resetAll": "Reset filters",
-    "moreFilters": "More filters"
-  },
   "AboutPage": {
-    "heroTitle": "About Autovendo.ch",
+    "heroTitle": "About Autosolo.ch",
     "heroSubtitle": "Fair. Transparent. Simple. Human.",
-    "heroPlatform": "Autovendo.ch is the sales platform for all car dealers in Switzerland.",
+    "heroPlatform": "Autosolo.ch is the platform for private car sellers in Switzerland.",
     "missionTitle": "Our Mission",
-    "missionText1": "We developed Autovendo with a clear goal: to make vehicle sales simple, efficient and fair – without unnecessary administrative overhead, hidden costs or complicated processes.",
+    "missionText1": "We developed Autosolo with a clear goal: to make vehicle sales simple, efficient and fair – without unnecessary administrative overhead, hidden costs or complicated processes.",
     "missionText2": "Especially in today's world, we know:",
     "missionText3": "Listing vehicles must be effective, not expensive. Time is limited, costs are rising – which makes a platform that thinks ahead, listens and supports all the more important.",
     "humanTitle": "More Than Technology – It's About People",
-    "humanText1": "At Autovendo.ch, it's not just about technology, numbers or algorithms.",
+    "humanText1": "At Autosolo.ch, it's not just about technology, numbers or algorithms.",
     "humanText2": "It's about you, your vehicles and your customers.",
-    "humanText3": "We listen, understand the challenges of daily dealer life and are personally available to you at all times. Friendly, respectful and solution-oriented.",
+    "humanText3": "We listen, understand the challenges of daily seller journey and are personally available to you at all times. Friendly, respectful and solution-oriented.",
     "reachableTitle": "Personally Reachable – Without Detours",
-    "reachableText1": "At Autovendo.ch, you speak directly with us.",
+    "reachableText1": "At Autosolo.ch, you speak directly with us.",
     "reachableText2": "No anonymous support team. No bureaucratic maze.",
     "reachableText3": "You can simply pick up the phone or write to us – we listen, advise honestly and help quickly. Just as you would expect from a reliable partner.",
     "pricingTitle": "Fair, Competitive and Transparent",
@@ -1076,19 +899,19 @@
     "pricingFeature2": "competitive",
     "pricingFeature3": "easy to calculate",
     "pricingText2": "No hidden fees, no forced packages. You invest where it counts: in selling your vehicles.",
-    "whyTitle": "Why Autovendo.ch?",
-    "whyText": "Because we understand what car dealers really need today.",
-    "whyConnect": "Autovendo.ch combines:",
+    "whyTitle": "Why Autosolo.ch?",
+    "whyText": "Because we understand what car private sellers need today.",
+    "whyConnect": "Autosolo.ch combines:",
     "efficiencyTitle": "Efficiency & Structure",
     "efficiencyDesc": "simple handling, clear processes, targeted visibility",
     "humanityTitle": "Humanity",
     "humanityDesc": "personal contact, genuine interest, respectful interaction",
     "reliabilityTitle": "Reliability",
     "reliabilityDesc": "reachable, uncomplicated, solution-oriented",
-    "whyAllDealers": "All car dealers are welcome here – regardless of size, location or experience. Everyone is treated fairly and gets the same chance to present their vehicles optimally.",
+    "whyAllSellers": "All car private sellers are welcome here – no experience needed. Everyone is treated fairly and gets the same chance to present their vehicles optimally.",
     "closingTitle": "In Short",
-    "closingText1": "Autovendo.ch makes selling simple, fair and human.",
-    "closingText2": "We move with the times, listen and develop the platform together with dealers."
+    "closingText1": "Autosolo.ch makes selling simple, fair and human.",
+    "closingText2": "We move with the times, listen and develop the platform together with sellers."
   },
   "DashboardPage": {
     "welcome": "Your Seller Dashboard",
@@ -1150,7 +973,7 @@
   },
   "ProfilePage": {
     "title": "Profile Settings",
-    "subtitle": "Manage your personal data and dealer information."
+    "subtitle": "Manage your personal data and seller information."
   },
   "ChangePasswordPage": {
     "title": "Change Password",
@@ -1164,9 +987,9 @@
     "title": "Billing & Usage",
     "subtitle": "Manage your subscription, payment method and invoices.",
     "planDescription": {
-      "starter": "Ideal for small dealers starting their digital journey.",
-      "professional": "Perfect for growing dealerships with medium inventory.",
-      "business": "Designed for large dealerships needing high visibility.",
+      "starter": "Ideal for small first-time sellers.",
+      "professional": "Perfect for growing sellers with multiple vehicles.",
+      "business": "Designed for large sellers needing maximum visibility.",
       "ultimate": "Our most powerful plan for industry leaders."
     },
     "statusActive": "Active",
@@ -1229,64 +1052,6 @@
       "unknown": "Unknown"
     }
   },
-  "DealerProfileForm": {
-    "personalTitle": "Personal Information",
-    "personalDesc": "Your basic account details.",
-    "nameLabel": "Name",
-    "namePlaceholder": "John Doe",
-    "emailLabel": "Email",
-    "emailPlaceholder": "john@example.com",
-    "profileImageLabel": "Profile Photo",
-    "profileImageAlt": "Profile photo preview",
-    "companyTitle": "Company Information",
-    "companyDesc": "Your company and contact details.",
-    "companyNameLabel": "Company Name",
-    "companyNamePlaceholder": "ACME Ltd.",
-    "uidLabel": "UID Number",
-    "websiteLabel": "Website",
-    "logoLabel": "Company Logo",
-    "logoAlt": "Company logo preview",
-    "coverLabel": "Cover Image",
-    "coverAlt": "Cover image preview",
-    "businessEmailLabel": "Business Email",
-    "phoneLabel": "Phone Number",
-    "contactPersonLabel": "Contact Person",
-    "addressTitle": "Address",
-    "addressDesc": "Where your business is located.",
-    "streetLabel": "Street and House Number",
-    "streetPlaceholder": "Main Street 123",
-    "zipLabel": "ZIP Code",
-    "cityLabel": "City",
-    "cityPlaceholder": "Select city",
-    "descriptionTitle": "Description",
-    "descriptionDesc": "Tell us about your business.",
-    "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Tell us about your business...",
-    "openingHoursTitle": "Opening Hours",
-    "openingHoursDesc": "When you are available.",
-    "isOpen": "Open",
-    "isClosed": "Closed",
-    "noOpeningHours": "No opening hours defined.",
-    "saving": "Saving...",
-    "save": "Save Profile",
-    "days": {
-      "MONDAY": "Monday",
-      "TUESDAY": "Tuesday",
-      "WEDNESDAY": "Wednesday",
-      "THURSDAY": "Thursday",
-      "FRIDAY": "Friday",
-      "SATURDAY": "Saturday",
-      "SUNDAY": "Sunday"
-    },
-    "uploadFailed": "File upload failed.",
-    "userUpdateError": "Could not update user information.",
-    "emailChangeError": "Could not initiate email change.",
-    "emailConfirmation": "A confirmation email has been sent to your new email address.",
-    "missingUser": "User information is missing.",
-    "profileUpdateSuccess": "Profile updated successfully.",
-    "profileUpdateError": "Could not update company profile.",
-    "unexpectedError": "An error occurred. Please try again."
-  },
   "UpdatePasswordForm": {
     "cardTitle": "Change Password",
     "cardDesc": "Update your password to protect your account.",
@@ -1333,7 +1098,7 @@
     "settings": "Settings",
     "profile": "Profile",
     "changePassword": "Change Password",
-    "logoAlt": "AutoVendo Logo"
+    "logoAlt": "AutoSolo Logo"
   },
   "DashboardBreadcrumb": {
     "dashboard": "Dashboard",
@@ -1360,7 +1125,7 @@
   "SellerSection": {
     "title": "Seller",
     "reviewCount": "({count} reviews)",
-    "allVehicles": "All vehicles from this dealer",
+    "allVehicles": "All vehicles from this seller",
     "openingHours": "Opening Hours",
     "noOpeningHours": "No opening hours available.",
     "monday": "Monday",
@@ -1425,7 +1190,7 @@
     "transmission": "Transmission",
     "firstRegistration": "First Registration",
     "sellerType": "Seller",
-    "dealer": "Dealer",
+    "seller": "Private Seller",
     "basicData": "Basic Data",
     "vehicleHistory": "Vehicle History",
     "inspectionWarranty": "Inspection & Warranty",
@@ -1444,11 +1209,11 @@
     "extras": "Extras",
     "description": "Vehicle Description",
     "newPrice": "New Price:",
-    "verifiedDealer": "Verified Dealer",
+    "verifiedSeller": "Verified Seller",
     "reviewCount": "({count} reviews)",
     "phone": "Phone",
     "contact": "Contact",
-    "allVehicles": "All vehicles from this dealer",
+    "allVehicles": "All vehicles from this seller",
     "yes": "Yes",
     "no": "No",
     "months": "Months",
@@ -1724,46 +1489,14 @@
   },
   "ListingListCard": {
     "contact": "Contact",
-    "allVehicles": "All vehicles from this dealer",
+    "allVehicles": "All vehicles from this seller",
     "wellMaintained": "Well-maintained condition"
-  },
-  "HowItWorksPage": {
-    "title": "How it Works",
-    "subtitle": "Your path to successful car sales on Autovendo.",
-    "steps": {
-      "step1": {
-        "title": "Download & Sign Contract",
-        "description": "Download the official Autovendo dealer contract, sign it, and send it back to us."
-      },
-      "step2": {
-        "title": "Account Creation",
-        "description": "We will verify your details and create your professional dealer account for you."
-      },
-      "step3": {
-        "title": "Profile Setup",
-        "description": "Log in and complete your dealer profile with your logo, cover image, and description."
-      },
-      "step4": {
-        "title": "Choose Package",
-        "description": "Select the pricing package that best fits your inventory size."
-      },
-      "step5": {
-        "title": "Start Selling",
-        "description": "Start listing your vehicles and reach thousands of potential buyers in Switzerland."
-      }
-    },
-    "cta": {
-      "download": "Download Contract",
-      "contact": "Contact Support",
-      "readyTitle": "Ready to grow your dealership?",
-      "readySubtitle": "Join the Swiss platform designed specifically for professional car dealers."
-    }
   },
   "NotFound": {
     "title": "404 - Page Not Found",
     "description": "The page you are looking for has either been moved, deleted, or never existed.",
     "button": "Back to Home",
-    "metaTitle": "404 - Page Not Found | AutoVendo",
-    "metaDescription": "Sorry, the requested page could not be found on AutoVendo."
+    "metaTitle": "404 - Page Not Found | AutoSolo",
+    "metaDescription": "Sorry, the requested page could not be found on AutoSolo."
   }
 }

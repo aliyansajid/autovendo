@@ -2,8 +2,6 @@
   "Header": {
     "nav": {
       "advancedSearch": "Erweiterte Suche",
-      "dealers": "Händler suchen",
-      "sell": "Verkaufen",
       "mobileMenuTitle": "Menü"
     },
     "auth": {
@@ -18,11 +16,11 @@
       "fr": "Français",
       "it": "Italiano"
     },
-    "logoAlt": "AutoVendo Logo"
+    "logoAlt": "AutoSolo Logo"
   },
   "Footer": {
     "description": "Entdecken Sie Ihr perfektes Fahrzeug in unserer Premium-Auswahl. Wir bieten Tausende von zertifizierten Gebraucht- und Neuwagen von europäischen Top-Marken zu unschlagbaren Preisen und mit transparenter Historie.",
-    "socialMediaDisclaimer": "Autovendo.ch verzichtet bewusst auf Social Media. Bei uns stehen direkter Kontakt, persönliche Erreichbarkeit und echte Gespräche im Mittelpunkt – von Mensch zu Mensch, nicht über Likes oder Algorithmen.",
+    "socialMediaDisclaimer": "Autosolo.ch verzichtet bewusst auf Social Media. Bei uns stehen direkter Kontakt, persönliche Erreichbarkeit und echte Gespräche im Mittelpunkt – von Mensch zu Mensch, nicht über Likes oder Algorithmen.",
     "newsletter": {
       "title": "Bleiben Sie auf der Überholspur",
       "description": "Abonnieren Sie unseren Newsletter für die neuesten Angebote, Fahrzeug-News und exklusive Aktionen.",
@@ -41,7 +39,6 @@
       "rules": "Insertionsregeln",
       "pricing": "Preise",
       "contact": "Kontakt",
-      "howItWorks": "Wie es funktioniert",
       "faq": "FAQ",
       "safety": "Sicherheitshinweise",
       "privacy": "Datenschutz",
@@ -53,9 +50,9 @@
     "copyright": "Alle Rechte vorbehalten."
   },
   "About": {
-    "title": "Über Autovendo.ch",
+    "title": "Über Autosolo.ch",
     "subtitle": "Fair. Transparent. Unkompliziert. Menschlich.",
-    "description": "Autovendo.ch ist die Verkaufsplattform für alle Autohändler in der Schweiz. Wir haben Autovendo mit einem klaren Ziel entwickelt: Den Verkauf von Fahrzeugen einfach, effizient und fair zu gestalten — ohne unnötigen Verwaltungsaufwand.",
+    "description": "Autosolo.ch ist die Verkaufsplattform für alle Autohändler in der Schweiz. Wir haben Autosolo mit einem klaren Ziel entwickelt: Den Verkauf von Fahrzeugen einfach, effizient und fair zu gestalten — ohne unnötigen Verwaltungsaufwand.",
     "features": {
       "efficiency": {
         "title": "Effizienz & Struktur",
@@ -276,7 +273,6 @@
       "REINFORCED_SUSPENSION": "Verstärkte Federung",
       "ADDITIONAL_INSTRUMENTS": "Zusätzliche Instrumente"
     },
-
     "warranty": {
       "FROM_DELIVERY": "Ab Lieferung",
       "FROM_FIRST_REGISTRATION": "Ab Erstzulassung",
@@ -349,11 +345,6 @@
     "emptyState": "Derzeit keine Fahrzeuge eingestellt.",
     "showMore": "Mehr anzeigen",
     "showLess": "Weniger anzeigen"
-  },
-  "FeaturedGarage": {
-    "title": "Ausgewählte Garagen",
-    "emptyState": "Derzeit keine Garagen eingetragen.",
-    "button": "Zur Garage"
   },
   "ListingCard": {
     "saveToFavorites": "Zu Favoriten hinzufügen"
@@ -554,20 +545,6 @@
       "created-desc": "Inserate (neueste zuerst)"
     }
   },
-  "GarageRichFilters": {
-    "reset": "Zurücksetzen",
-    "makesModels": "{count} Marken/Modelle",
-    "makeModelPlaceholder": "Marke & Modell",
-    "year": "Jahr",
-    "mileage": "Kilometerstand",
-    "price": "Preis",
-    "selected": "{count} ausgewählt",
-    "bodyType": "Karosserieform",
-    "fuel": "Treibstoff",
-    "transmission": "Getriebe",
-    "drive": "Antrieb",
-    "resetFilters": "Filter zurücksetzen"
-  },
   "LoginForm": {
     "title": "Willkommen zurück",
     "description": "Geben Sie unten Ihre E-Mail-Adresse ein, um sich in Ihr Konto einzuloggen",
@@ -701,90 +678,13 @@
   },
   "Common": {
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
-    "dealerNotFound": "Händlerprofil nicht gefunden.",
+    "sellerNotFound": "Verkäuferprofil nicht gefunden.",
     "emailSendError": "E-Mail konnte nicht gesendet werden.",
     "isClosed": "Geschlossen"
   },
-  "SellPage": {
-    "hero": {
-      "title": "Der Partner für professionelle Autohändler",
-      "subtitle": "Autovendo — Inserieren Sie Ihren Bestand auf dem grössten Schweizer Marktplatz.",
-      "ctaList": "Jetzt inserieren",
-      "ctaPricing": "Händlerlösungen anzeigen"
-    },
-    "reach": {
-      "title": "Erreichen Sie mehr Käufer",
-      "titleHighlight": "effizient",
-      "titleSuffix": "und effektiv",
-      "cardTitle": "Professionelle Händlerwerbung",
-      "cardSubtitle": "MAXIMALE SICHTBARKEIT • HOCHWERTIGE LEADS",
-      "cardDescription": "Präsentieren Sie Ihren Bestand jeden Monat Millionen potenziellen Käufern. Autovendo bietet professionelle Tools, die speziell auf die Bedürfnisse moderner Schweizer Autohäuser zugeschnitten sind.",
-      "badge": "Über 500 Händler in der Schweiz vertrauen uns",
-      "ctaFirst": "Erstellen Sie Ihr erstes Inserat",
-      "ctaHow": "So funktioniert's"
-    },
-    "advantages": {
-      "title": "Ihre Vorteile mit",
-      "titleHighlight": "Autovendo für Händler",
-      "performanceTitle": "Performance & Wachstum",
-      "efficiencyTitle": "Effizienz & Tools",
-      "features": {
-        "leads": "Hochwertige Leads: Direkte Anfragen von seriösen Käufern, die zum Kauf bereit sind.",
-        "reach": "Maximale Reichweite: Ihre Fahrzeuge werden prominent auf unserem hochfrequentierten Portal präsentiert.",
-        "regional": "Regionales Targeting: Erreichen Sie lokale Käufer in Ihrer spezifischen Region effektiv.",
-        "brand": "Markenautorität: Eigene Händlerseiten helfen dabei, Vertrauen bei potenziellen Kunden aufzubauen.",
-        "sync": "Bestandssynchronisierung: Importieren Sie Ihren Bestand automatisch aus gängigen DMS-Systemen.",
-        "smart": "Smart Listing: Sparen Sie Zeit durch automatische Technikdaten und Energie-Infos.",
-        "tracking": "Performance-Tracking: Überwachen Sie Ihre Inseratsstatistiken und optimieren Sie Ihre Strategie.",
-        "leads2": "Lead-Management: Verwalten Sie alle Kundenanfragen in einem zentralen Dashboard."
-      }
-    },
-    "services": {
-      "title": "Wir unterstützen Ihr",
-      "titleHighlight": "tägliches Geschäft",
-      "sync": {
-        "title": "Bestandssynchronisierung",
-        "description": "Nahtlose Integration in Ihr bestehendes Dealer Management System."
-      },
-      "autoFill": {
-        "title": "Daten automatisch ausfüllen",
-        "description": "Unser System unterstützt Sie bei der Eingabe von Technik- und Ausstattungsdetails."
-      },
-      "compliance": {
-        "title": "Konformität",
-        "description": "Wir stellen sicher, dass alle Inserate die gesetzlichen Anforderungen an Energieetiketten und CO2 erfüllen."
-      },
-      "leads": {
-        "title": "Verifizierte Leads",
-        "description": "Erhalten Sie hochwertige Leads direkt von interessierten Schweizer Käufern."
-      }
-    },
-    "photos": {
-      "title": "Professionelle Präsentation",
-      "titleHighlight": "steigert",
-      "titleSuffix": "Ihren Erfolg",
-      "tip1Title": "Konsistente Umgebung",
-      "tip1Description": "Nutzen Sie Ihren Showroom oder einen neutralen Ort, um eine professionelle Händlermarke aufzubauen.",
-      "tip2Title": "Vollständiger Rundgang",
-      "tip2Description": "Zeigen Sie jeden Winkel, einschliesslich Details im Innenraum und Besonderheiten des Modells.",
-      "tip3Title": "Innenraum & Extras",
-      "tip3Description": "Dokumentieren Sie hochwertige Ausstattung und den Zustand der Kabine präzise.",
-      "expertTip": "Experten-Tipp: Konsistente, hochwertige Fotos bauen langfristiges Vertrauen in Ihre Händlermarke auf."
-    },
-    "cta": {
-      "title": "Bereit, Ihr",
-      "titleHighlight": "Verkaufsvolumen",
-      "titleSuffix": "zu steigern?",
-      "subtitle": "Listen Sie Ihren Bestand auf Autovendo",
-      "subtitleBadge": "PROFESSIONELL • SKALIERBAR • EFFEKTIV",
-      "description": "Werden Sie Teil des professionellen Netzwerks von Schweizer Autohändlern. Unsere Pakete sind darauf zugeschnitten, Autohäusern jeder Grösse zum Erfolg im digitalen Markt zu verhelfen.",
-      "ctaStart": "Jetzt starten",
-      "ctaContact": "Verkaufsteam kontaktieren"
-    }
-  },
   "FaqPage": {
     "title": "Häufig gestellte Fragen",
-    "subtitle": "Finden Sie schnelle Antworten auf die wichtigsten Fragen rund um Autovendo.ch.",
+    "subtitle": "Finden Sie schnelle Antworten auf die wichtigsten Fragen rund um Autosolo.ch.",
     "noQuestion": "Ihre Frage war nicht dabei?",
     "supportText": "Unser Support-Team hilft Ihnen gerne weiter. Kontaktieren Sie uns jederzeit!",
     "contactButton": "Kontaktieren Sie uns",
@@ -793,23 +693,23 @@
         "category": "Allgemein",
         "items": [
           {
-            "question": "Was ist Autovendo.ch?",
-            "answer": "Autovendo.ch ist eine spezialisierte Online-Verkaufsplattform für alle Autohändler in der Schweiz. Händler können ihre Fahrzeuge einfach inserieren und potenzielle Käufer direkt erreichen."
+            "question": "Was ist Autosolo.ch?",
+            "answer": "Autosolo.ch ist eine spezialisierte Online-Verkaufsplattform für alle Autohändler in der Schweiz. Händler können ihre Fahrzeuge einfach inserieren und potenzielle Käufer direkt erreichen."
           },
           {
-            "question": "Wer kann Autovendo.ch nutzen?",
-            "answer": "Autovendo.ch richtet sich ausschliesslich an gewerbliche Autohändler und Garagen. Private Verkäufer sind auf dieser Plattform nicht zugelassen."
+            "question": "Wer kann Autosolo.ch nutzen?",
+            "answer": "Autosolo.ch richtet sich ausschliesslich an gewerbliche Autohändler und Garagen. Private Verkäufer sind auf dieser Plattform nicht zugelassen."
           },
           {
-            "question": "In welchen Regionen ist Autovendo.ch verfügbar?",
-            "answer": "Autovendo.ch ist auf den Schweizer Markt ausgerichtet. Inserierte Fahrzeuge müssen sich in der Schweiz oder im Fürstentum Liechtenstein befinden."
+            "question": "In welchen Regionen ist Autosolo.ch verfügbar?",
+            "answer": "Autosolo.ch ist auf den Schweizer Markt ausgerichtet. Inserierte Fahrzeuge müssen sich in der Schweiz oder im Fürstentum Liechtenstein befinden."
           },
           {
-            "question": "Ist Autovendo.ch auch für kleine Händler geeignet?",
-            "answer": "Ja. Autovendo.ch ist bewusst so aufgebaut, dass alle Händler – unabhängig von Grösse oder Standort – die gleichen fairen Möglichkeiten erhalten."
+            "question": "Ist Autosolo.ch auch für kleine Händler geeignet?",
+            "answer": "Ja. Autosolo.ch ist bewusst so aufgebaut, dass alle Händler – unabhängig von Grösse oder Standort – die gleichen fairen Möglichkeiten erhalten."
           },
           {
-            "question": "Wie unterscheidet sich Autovendo.ch von anderen Plattformen?",
+            "question": "Wie unterscheidet sich Autosolo.ch von anderen Plattformen?",
             "answer": "Wir setzen auf faire Preise, einfache Prozesse und persönlichen Support statt komplizierter Pakete, anonymer Hotlines oder langfristiger Verpflichtungen."
           }
         ]
@@ -843,8 +743,8 @@
         "category": "Kosten & Pakete",
         "items": [
           {
-            "question": "Was kostet die Nutzung von Autovendo.ch?",
-            "answer": "Autovendo.ch bietet klare, transparente und wettbewerbsfähige Preise – ohne versteckte Gebühren."
+            "question": "Was kostet die Nutzung von Autosolo.ch?",
+            "answer": "Autosolo.ch bietet klare, transparente und wettbewerbsfähige Preise – ohne versteckte Gebühren."
           },
           {
             "question": "Gibt es langfristige Vertragsbindungen?",
@@ -852,7 +752,7 @@
           },
           {
             "question": "Fallen zusätzliche Gebühren pro verkauftem Fahrzeug an?",
-            "answer": "Nein. Autovendo.ch erhebt keine Verkaufsprovisionen."
+            "answer": "Nein. Autosolo.ch erhebt keine Verkaufsprovisionen."
           },
           {
             "question": "Sind Preisänderungen möglich?",
@@ -868,11 +768,11 @@
         "category": "Support & Sicherheit",
         "items": [
           {
-            "question": "Wie erreiche ich den Support von Autovendo.ch?",
+            "question": "Wie erreiche ich den Support von Autosolo.ch?",
             "answer": "Du erreichst uns direkt und persönlich per Telefon oder E-Mail – ohne Warteschleifen oder anonyme Ticketsysteme."
           },
           {
-            "question": "Wie schützt Autovendo.ch vor Betrug?",
+            "question": "Wie schützt Autosolo.ch vor Betrug?",
             "answer": "Wir setzen auf technische Schutzmassnahmen, klare Insertionsregeln und informieren aktiv über sichere Kauf- und Verkaufspraktiken."
           },
           {
@@ -977,98 +877,20 @@
     "subjectMax": "Betreff darf maximal 100 Zeichen lang sein",
     "messageMax": "Nachricht darf maximal 500 Zeichen lang sein"
   },
-  "DealersPage": {
-    "title": "Entdecken Sie unsere Händler",
-    "subtitle": "Von exklusiven Sportwagen bis zu zuverlässigen Familienautos – bei unseren verifizierten Händlern finden Sie das passende Fahrzeug."
-  },
-  "DealersList": {
-    "title": "Unsere Händler",
-    "subtitle": "Finden Sie den passenden Händler in Ihrer Nähe.",
-    "searchPlaceholder": "Händler suchen...",
-    "notFoundTitle": "Kein Händler gefunden",
-    "notFoundDescription": "Kein Händler entspricht \"{query}\".",
-    "resetSearch": "Suche zurücksetzen",
-    "emptyTitle": "Noch keine Händler registriert",
-    "emptyDescription": "Möchten Sie Ihr Fahrzeug als Händler anbieten?",
-    "becomeDealer": "Händler werden"
-  },
-  "DealerDetail": {
-    "phoneButton": "Telefon",
-    "emailButton": "E-Mail",
-    "tabAbout": "Über uns",
-    "tabCars": "Fahrzeuge",
-    "tabRatings": "Bewertungen",
-    "aboutTitle": "Über {name}",
-    "noDescription": "Dieser Händler hat noch keine Beschreibung hinterlegt.",
-    "currentOffers": "Aktuelle Angebote",
-    "ratingsTitle": "Bewertungen",
-    "googleRatings": "Google-Bewertungen",
-    "reviewsCount": "{count} Bewertungen",
-    "openingHours": "Öffnungszeiten",
-    "noOpeningHours": "Keine Öffnungszeiten hinterlegt. Bitte kontaktieren Sie den Händler direkt.",
-    "contactTitle": "Kontakt",
-    "sendMessage": "Nachricht senden",
-    "nameLabel": "Name",
-    "namePlaceholder": "Max Mustermann",
-    "phoneLabel": "Telefon",
-    "emailLabel": "E-Mail",
-    "messageLabel": "Nachricht",
-    "messagePlaceholder": "Ich interessiere mich für...",
-    "submitting": "Wird gesendet",
-    "vehiclesCount": "{count} Fahrzeuge",
-    "sortBy": "Sortieren nach:",
-    "sortNewest": "Neueste zuerst",
-    "sortPriceAsc": "Preis: aufsteigend",
-    "sortPriceDesc": "Preis: absteigend",
-    "sortMileage": "Kilometerstand",
-    "noVehicles": "Dieser Händler hat noch keine Fahrzeuge inseriert.",
-    "ratingsOverview": "Bewertungsübersicht",
-    "customerReviews": "Kundenbewertungen",
-    "noReviews": "Noch keine Bewertungen vorhanden.",
-    "moreOnGoogle": "Mehr auf Google",
-    "noRatings": "Keine Bewertungen verfügbar",
-    "noRatingsDescription": "Dieser Händler hat noch keine Google-Bewertungen verknüpft.",
-    "successToast": "Nachricht gesendet! Der Händler meldet sich bei Ihnen.",
-    "errorToast": "Nachricht konnte nicht gesendet werden.",
-    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten."
-  },
-  "DealerContactSchema": {
-    "nameMinLength": "Name ist erforderlich",
-    "nameMaxLength": "Name darf maximal 50 Zeichen lang sein",
-    "phoneRequired": "Telefon ist erforderlich",
-    "invalidPhoneFormat": "Ungültige Schweizer Telefonnummer",
-    "invalidEmail": "Ungültige E-Mail-Adresse",
-    "messageMaxLength": "Nachricht darf maximal 1000 Zeichen lang sein"
-  },
-  "GarageFilters": {
-    "reset": "Zurücksetzen",
-    "yearLabel": "Jahr",
-    "mileageLabel": "Kilometerstand",
-    "priceLabel": "Preis",
-    "bodyTypeLabel": "Karosserieform",
-    "fuelLabel": "Treibstoff",
-    "transmissionLabel": "Getriebe",
-    "driveLabel": "Antrieb",
-    "selectedCount": "{count} ausgewählt",
-    "makeModelLabel": "Marke & Modell",
-    "makeModelSelected": "{count} Marken/Modelle",
-    "resetAll": "Filter zurücksetzen",
-    "moreFilters": "Mehr Filter"
-  },
   "AboutPage": {
-    "heroTitle": "Über Autovendo.ch",
+    "heroTitle": "Über Autosolo.ch",
     "heroSubtitle": "Fair. Transparent. Unkompliziert. Menschlich.",
-    "heroPlatform": "Autovendo.ch ist die Verkaufsplattform für alle Autohändler in der Schweiz.",
+    "heroPlatform": "Autosolo.ch ist die Verkaufsplattform für alle Autohändler in der Schweiz.",
     "missionTitle": "Unsere Mission",
-    "missionText1": "Wir haben Autovendo mit einem klaren Ziel entwickelt: Den Verkauf von Fahrzeugen einfach, effizient und fair zu gestalten – ohne unnötigen Verwaltungsaufwand, ohne versteckte Kosten und ohne komplizierte Prozesse.",
+    "missionText1": "Wir haben Autosolo mit einem klaren Ziel entwickelt: Den Verkauf von Fahrzeugen einfach, effizient und fair zu gestalten – ohne unnötigen Verwaltungsaufwand, ohne versteckte Kosten und ohne komplizierte Prozesse.",
     "missionText2": "Gerade in der heutigen Zeit wissen wir:",
     "missionText3": "Inserieren darf nicht teuer, sondern muss wirksam sein. Zeit ist knapp, Kosten steigen - umso wichtiger ist eine Plattform, die mitdenkt, zuhört und unterstützt.",
     "humanTitle": "Mehr als Technik – es geht um Menschen",
-    "humanText1": "Bei Autovendo.ch geht es nicht nur um Technik, Zahlen oder Algorithmen.",
+    "humanText1": "Bei Autosolo.ch geht es nicht nur um Technik, Zahlen oder Algorithmen.",
     "humanText2": "Es geht um Sie, Ihre Fahrzeuge und Ihre Kunden.",
     "humanText3": "Wir hören zu, verstehen die Herausforderungen im Händleralltag und stehen Ihnen persönlich und jederzeit zur Verfügung. Freundlich, respektvoll und lösungsorientiert.",
     "reachableTitle": "Persönlich erreichbar – ohne Umwege",
-    "reachableText1": "Bei Autovendo.ch sprechen Sie direkt mit uns.",
+    "reachableText1": "Bei Autosolo.ch sprechen Sie direkt mit uns.",
     "reachableText2": "Kein anonymes Support-Team. Kein Bürokratie-Wirrwarr.",
     "reachableText3": "Sie können einfach zum Telefon greifen oder uns schreiben – wir hören zu, beraten ehrlich und helfen schnell weiter. So, wie man es sich von einem verlässlichen Partner wünscht.",
     "pricingTitle": "Fair, wettbewerbsfähig und transparent",
@@ -1078,18 +900,18 @@
     "pricingFeature2": "wettbewerbsfähig",
     "pricingFeature3": "einfach kalkulierbar",
     "pricingText2": "Ohne versteckte Gebühren, ohne Zwangspakete. Sie investieren dort, wo es zählt: in den Verkauf Ihrer Fahrzeuge.",
-    "whyTitle": "Warum Autovendo.ch?",
+    "whyTitle": "Warum Autosolo.ch?",
     "whyText": "Weil wir verstehen, was Autohändler heute wirklich brauchen.",
-    "whyConnect": "Autovendo.ch verbindet:",
+    "whyConnect": "Autosolo.ch verbindet:",
     "efficiencyTitle": "Effizienz & Struktur",
     "efficiencyDesc": "einfache Handhabung, klare Abläufe, gezielte Sichtbarkeit",
     "humanityTitle": "Menschlichkeit",
     "humanityDesc": "persönlicher Kontakt, echtes Interesse, respektvoller Umgang",
     "reliabilityTitle": "Zuverlässigkeit",
     "reliabilityDesc": "erreichbar, unkompliziert, lösungsorientiert",
-    "whyAllDealers": "Hier sind alle Autohändler willkommen – unabhängig von Grösse, Standort oder Erfahrung. Jeder wird fair behandelt und erhält die gleiche Chance, seine Fahrzeuge optimal zu präsentieren.",
+    "whyAllSellers": "Alle Privatverkäufer sind hier willkommen – unabhängig von Erfahrung, Standort oder Fahrzeuganzahl. Jeder wird fair behandelt und erhält die gleiche Chance, sein Fahrzeug optimal zu präsentieren.",
     "closingTitle": "Kurz gesagt",
-    "closingText1": "Autovendo.ch macht Verkauf einfach, fair und menschlich.",
+    "closingText1": "Autosolo.ch macht Verkauf einfach, fair und menschlich.",
     "closingText2": "Wir gehen mit der Zeit, hören zu und entwickeln die Plattform gemeinsam mit den Händlern weiter."
   },
   "DashboardPage": {
@@ -1102,7 +924,7 @@
     "totalVehicles": "Gesamtbestand",
     "totalVehiclesDesc": "Alle Fahrzeuge in Ihrem Konto",
     "published": "Live-Inserate",
-    "publishedDesc": "Aktuell auf Autovendo sichtbar",
+    "publishedDesc": "Aktuell auf Autosolo sichtbar",
     "drafts": "Entwürfe",
     "draftsDesc": "Noch nicht veröffentlichte Inserate",
     "sold": "Verkauft",
@@ -1235,64 +1057,6 @@
       "unknown": "Unbekannt"
     }
   },
-  "DealerProfileForm": {
-    "personalTitle": "Persönliche Informationen",
-    "personalDesc": "Ihre grundlegenden Kontodaten.",
-    "nameLabel": "Name",
-    "namePlaceholder": "Max Mustermann",
-    "emailLabel": "E-Mail",
-    "emailPlaceholder": "max@beispiel.ch",
-    "profileImageLabel": "Profilbild",
-    "profileImageAlt": "Profilbild Vorschau",
-    "companyTitle": "Unternehmensinformationen",
-    "companyDesc": "Ihre Firmen- und Kontaktdaten.",
-    "companyNameLabel": "Firmenname",
-    "companyNamePlaceholder": "ACME GmbH",
-    "uidLabel": "UID-Nummer",
-    "websiteLabel": "Webseite",
-    "logoLabel": "Firmenlogo",
-    "logoAlt": "Firmenlogo Vorschau",
-    "coverLabel": "Titelbild",
-    "coverAlt": "Titelbild Vorschau",
-    "businessEmailLabel": "Geschäftliche E-Mail",
-    "phoneLabel": "Telefonnummer",
-    "contactPersonLabel": "Kontaktperson",
-    "addressTitle": "Adresse",
-    "addressDesc": "Wo sich Ihr Unternehmen befindet.",
-    "streetLabel": "Strasse und Hausnummer",
-    "streetPlaceholder": "Bahnhofstrasse 123",
-    "zipLabel": "PLZ",
-    "cityLabel": "Stadt",
-    "cityPlaceholder": "Stadt auswählen",
-    "descriptionTitle": "Beschreibung",
-    "descriptionDesc": "Erzählen Sie uns von Ihrem Unternehmen.",
-    "descriptionLabel": "Beschreibung",
-    "descriptionPlaceholder": "Erzählen Sie uns von Ihrem Unternehmen...",
-    "openingHoursTitle": "Öffnungszeiten",
-    "openingHoursDesc": "Wann Sie erreichbar sind.",
-    "isOpen": "Geöffnet",
-    "isClosed": "Geschlossen",
-    "noOpeningHours": "Keine Öffnungszeiten definiert.",
-    "saving": "Speichert...",
-    "save": "Profil speichern",
-    "days": {
-      "MONDAY": "Montag",
-      "TUESDAY": "Dienstag",
-      "WEDNESDAY": "Mittwoch",
-      "THURSDAY": "Donnerstag",
-      "FRIDAY": "Freitag",
-      "SATURDAY": "Samstag",
-      "SUNDAY": "Sonntag"
-    },
-    "uploadFailed": "Datei-Upload fehlgeschlagen.",
-    "userUpdateError": "Benutzerinformationen konnten nicht aktualisiert werden.",
-    "emailChangeError": "E-Mail-Änderung konnte nicht initiiert werden.",
-    "emailConfirmation": "Eine Bestätigungs-E-Mail wurde an Ihre neue E-Mail-Adresse gesendet.",
-    "missingUser": "Benutzerinformationen fehlen.",
-    "profileUpdateSuccess": "Profil erfolgreich aktualisiert.",
-    "profileUpdateError": "Unternehmensprofil konnte nicht aktualisiert werden.",
-    "unexpectedError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
-  },
   "UpdatePasswordForm": {
     "cardTitle": "Passwort ändern",
     "cardDesc": "Aktualisieren Sie Ihr Passwort, um Ihr Konto zu schützen.",
@@ -1339,7 +1103,7 @@
     "settings": "Einstellungen",
     "profile": "Profil",
     "changePassword": "Passwort ändern",
-    "logoAlt": "AutoVendo Logo"
+    "logoAlt": "AutoSolo Logo"
   },
   "DashboardBreadcrumb": {
     "dashboard": "Dashboard",
@@ -1431,7 +1195,7 @@
     "transmission": "Getriebe",
     "firstRegistration": "Erstzulassung",
     "sellerType": "Verkäufer",
-    "dealer": "Händler",
+    "seller": "Privatverkäufer",
     "basicData": "Basisdaten",
     "vehicleHistory": "Fahrzeughistorie",
     "inspectionWarranty": "Inspektion & Garantie",
@@ -1450,7 +1214,7 @@
     "extras": "Extras",
     "description": "Fahrzeugbeschreibung",
     "newPrice": "Neupreis:",
-    "verifiedDealer": "Verifizierter Händler",
+    "verifiedSeller": "Verifizierter Verkäufer",
     "reviewCount": "({count} Bewertungen)",
     "phone": "Telefon",
     "contact": "Kontaktieren",
@@ -1733,43 +1497,11 @@
     "allVehicles": "Alle Fahrzeuge von diesem Händler",
     "wellMaintained": "Gepflegter Zustand"
   },
-  "HowItWorksPage": {
-    "title": "Wie es funktioniert",
-    "subtitle": "Ihr Weg zum erfolgreichen Autoverkauf auf Autovendo.",
-    "steps": {
-      "step1": {
-        "title": "Vertrag herunterladen & unterzeichnen",
-        "description": "Laden Sie den offiziellen Autovendo-Händlervertrag herunter, unterzeichnen Sie ihn und senden Sie ihn an uns zurück."
-      },
-      "step2": {
-        "title": "Kontoerstellung",
-        "description": "Wir prüfen Ihre Angaben und erstellen Ihr professionelles Händlerkonto für Sie."
-      },
-      "step3": {
-        "title": "Profil-Setup",
-        "description": "Melden Sie sich an und vervollständigen Sie Ihr Händlerprofil mit Logo, Titelbild und Beschreibung."
-      },
-      "step4": {
-        "title": "Paket wählen",
-        "description": "Wählen Sie das Preispaket, das am besten zu Ihrer Bestandsgröße passt."
-      },
-      "step5": {
-        "title": "Verkauf starten",
-        "description": "Erfasse deine Fahrzeuge und erreiche monatlich tausende potenzielle Käufer in der Schweiz."
-      }
-    },
-    "cta": {
-      "download": "Vertrag herunterladen",
-      "contact": "Support kontaktieren",
-      "readyTitle": "Bereit, Ihr Autohaus wachsen zu lassen?",
-      "readySubtitle": "Schliessen Sie sich der Schweizer Plattform an, die speziell für professionelle Autohändler entwickelt wurde."
-    }
-  },
   "NotFound": {
     "title": "404 - Seite nicht gefunden",
     "description": "Die von Ihnen gesuchte Seite wurde verschoben, gelöscht oder hat nie existiert.",
     "button": "Zurück zur Startseite",
-    "metaTitle": "404 - Seite nicht gefunden | AutoVendo",
-    "metaDescription": "Entschuldigung, die angeforderte Seite konnte auf AutoVendo nicht gefunden werden."
+    "metaTitle": "404 - Seite nicht gefunden | AutoSolo",
+    "metaDescription": "Entschuldigung, die angeforderte Seite konnte auf AutoSolo nicht gefunden werden."
   }
 }
