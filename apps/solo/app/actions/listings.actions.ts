@@ -3,9 +3,8 @@
 import { auth, stripeClient } from "@repo/auth";
 import { prisma } from "@repo/db";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
-export async function createListingCheckoutSession(vehicleId: string, planId: "standard" | "best_value") {
+export async function createListingCheckoutSession(vehicleId: string, planId: "standard" | "best_value", locale: string) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.id) throw new Error("Unauthorized");
 
@@ -44,8 +43,8 @@ export async function createListingCheckoutSession(vehicleId: string, planId: "s
       },
     ],
     mode: "payment",
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/vehicles?success=true&vehicleId=${vehicleId}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/vehicles/${vehicleId}/edit?canceled=true`,
+    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard/vehicles?success=true&vehicleId=${vehicleId}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard/vehicles/${vehicleId}?canceled=true`,
     metadata: {
       vehicleId,
       planId,

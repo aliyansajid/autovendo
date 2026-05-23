@@ -17,6 +17,7 @@ import { EquipmentSection } from "./form-sections/equipment-section";
 import { createListingCheckoutSession } from "@/app/actions/listings.actions";
 import { useState, useTransition, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
 import {
   Card,
@@ -71,6 +72,8 @@ export function VehicleForm({
 }) {
   const t = useTranslations("VehicleForm");
   const router = useRouter();
+  const params = useParams();
+  const locale = (params.locale as string) || "de";
 
   const [isPending, startTransition] = useTransition();
   const [currentStep, setCurrentStep] = useState(1);
@@ -286,7 +289,7 @@ export function VehicleForm({
             const planId = data.planId || listingPlan || "standard";
             if (!planId) throw new Error("No plan selected");
             setUploadStatus("Redirecting to payment...");
-            const checkoutUrl = await createListingCheckoutSession(vehicleId, planId as "standard" | "best_value");
+            const checkoutUrl = await createListingCheckoutSession(vehicleId, planId as "standard" | "best_value", locale);
             window.location.href = checkoutUrl;
             return;
           }
@@ -296,7 +299,7 @@ export function VehicleForm({
           
           if (!data.planId) throw new Error("No plan selected");
           setUploadStatus("Redirecting to payment...");
-          const checkoutUrl = await createListingCheckoutSession(listingId, data.planId);
+          const checkoutUrl = await createListingCheckoutSession(listingId, data.planId, locale);
           window.location.href = checkoutUrl;
           return;
         }

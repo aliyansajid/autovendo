@@ -213,7 +213,7 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <VehicleActions vehicle={vehicle} t={t} router={router} />
+                  <VehicleActions vehicle={vehicle} t={t} router={router} locale={locale} />
                 </TableCell>
               </TableRow>
             ))}
@@ -228,10 +228,12 @@ function VehicleActions({
   vehicle,
   t,
   router,
+  locale,
 }: {
   vehicle: Vehicle;
   t: any;
   router: any;
+  locale: string;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -250,7 +252,7 @@ function VehicleActions({
   const handlePublish = () => {
     startTransition(async () => {
       try {
-        const result = await publishOrPay(vehicle.id);
+        const result = await publishOrPay(vehicle.id, locale);
         if ("checkoutUrl" in result) {
           window.location.href = result.checkoutUrl;
         } else {

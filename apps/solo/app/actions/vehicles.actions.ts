@@ -12,7 +12,6 @@ import { revalidatePath } from "next/cache";
 import {
   cacheGet,
   cacheSet,
-  cacheDelete,
   cacheDeletePattern,
 } from "@/lib/cache";
 import { prisma } from "@repo/db";
@@ -1712,7 +1711,7 @@ export async function updateVehicleStatus(id: string, status: string) {
  * Publish a DRAFT vehicle if payment is already done,
  * or return a Stripe checkout URL if payment is still pending.
  */
-export async function publishOrPay(id: string): Promise<{ checkoutUrl: string } | { published: true }> {
+export async function publishOrPay(id: string, locale: string): Promise<{ checkoutUrl: string } | { published: true }> {
   const seller = await getCurrentSeller();
   if (!seller) throw new Error("Unauthorized");
 
@@ -1744,7 +1743,7 @@ export async function publishOrPay(id: string): Promise<{ checkoutUrl: string } 
 
   const { createListingCheckoutSession } = await import("./listings.actions");
   const planId = vehicle.listingPlan as "standard" | "best_value";
-  const checkoutUrl = await createListingCheckoutSession(id, planId);
+  const checkoutUrl = await createListingCheckoutSession(id, planId, locale);
   return { checkoutUrl };
 }
 
