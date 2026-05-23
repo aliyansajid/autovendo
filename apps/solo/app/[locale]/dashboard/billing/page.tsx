@@ -1,7 +1,3 @@
-import { auth } from "@repo/auth";
-import { prisma } from "@repo/db";
-import { headers } from "next/headers";
-import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { getBillingData } from "@/app/actions/billing.actions";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@repo/ui/components/badge";
@@ -14,13 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/components/table";
-import {
-  CreditCard,
-  ExternalLink,
-  Download,
-  Receipt,
-
-} from "lucide-react";
+import { CreditCard, ExternalLink, Download, Receipt } from "lucide-react";
 import { BillingPortalButton } from "./_components/billing-portal-button";
 import {
   formatPrice,
@@ -29,102 +19,12 @@ import {
   formatCardExpiry,
 } from "@/lib/helpers/format";
 
-/**
- * Subscription Management Page
- *
- * Handles the seller's billing lifecycle:
- * - Displays active plan details and next billing date
- * - Shows current listing quota vs. plan limits
- * - Lists available upgrade/downgrade plans fetched from DB
- * - Lists payment history (invoices)
- */
-export default async function SubscriptionPage(props: {
+export default async function BillingPage(props: {
   params: Promise<{ locale: string }>;
 }) {
-  // Initialize translations
   const t = await getTranslations("BillingPage");
-
-  // Extract locale from params (Next.js 15 Promise-based approach)
   const { locale } = await props.params;
-
-  // Fetch current session for identity
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  /**
-   * Data Aggregation Phase
-   * Parallel fetch for all required dashboard data:
-   * 1. Historical subscriptions from DB
-   * 2. Calculated vehicle quota status
-   * 3. Live billing data from Stripe (invoices, cards)
-   * 4. Available subscription plans
-   */
-  const [subscriptionsResponse, subscriptionStatus, billingData, plans] =
-    await Promise.all([
-      (auth.api as any).listActiveSubscriptions({
-        headers: await headers(),
-      }),
-      getVehicleSubscriptionStatus(),
-      getBillingData(),
-      prisma.plan.findMany({
-        orderBy: { price: "asc" },
-        select: {
-          name: true,
-          price: true,
-          description: true,
-          limits: true,
-          popular: true,
-          hasTrial: true,
-          trialDays: true,
-        },
-      }),
-    ]);
-
-  const subscriptions = Array.isArray(subscriptionsResponse)
-    ? subscriptionsResponse
-    : (subscriptionsResponse as any)?.data || [];
-
-  const activeSubscription = subscriptions.find((s: any) =>
-    ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(
-      s.status,
-    ),
-  );
-
-  const currentPlanKey = activeSubscription?.plan?.toLowerCase() ?? null;
-  const currentPlan =
-    plans.find((p) => p.name.toLowerCase() === currentPlanKey) ?? null;
-
-
-  const hasAnySubscription = subscriptions.length > 0;
-
-  const getStatusInfo = (status: string) => {
-    switch (status) {
-      case "trialing":
-        return {
-          label: t("statusTrialing"),
-          color: "bg-blue-500 hover:bg-blue-600",
-        };
-      case "past_due":
-      case "unpaid":
-        return {
-          label: t("statusPastDue"),
-          color: "bg-red-500 hover:bg-red-600",
-        };
-      case "incomplete":
-        return {
-          label: t("statusIncomplete"),
-          color: "bg-yellow-500 hover:bg-yellow-600",
-        };
-      default:
-        return {
-          label: t("statusActive"),
-          color: "bg-green-500 hover:bg-green-600",
-        };
-    }
-  };
-
-  const statusInfo = activeSubscription
-    ? getStatusInfo(activeSubscription.status)
-    : null;
+  const billingData = await getBillingData();
 
   return (
     <div className="space-y-6">
@@ -133,21 +33,18 @@ export default async function SubscriptionPage(props: {
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-
       {/* Billing Portal */}
-      {hasAnySubscription && (
-        <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <p className="font-semibold">{t("billingPortalTitle")}</p>
-            <p className="text-sm text-muted-foreground">
-              {t("billingPortalDesc")}
-            </p>
-          </div>
-          <div className="shrink-0">
-            <BillingPortalButton />
-          </div>
+      <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <p className="font-semibold">{t("billingPortalTitle")}</p>
+          <p className="text-sm text-muted-foreground">
+            {t("billingPortalDesc")}
+          </p>
         </div>
-      )}
+        <div className="shrink-0">
+          <BillingPortalButton />
+        </div>
+      </div>
 
       {/* Payment Method */}
       <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
