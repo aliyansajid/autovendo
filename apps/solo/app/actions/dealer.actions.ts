@@ -30,8 +30,6 @@ import { storage } from "@/lib/helpers/storage";
 // Helpers
 // -----------------------------------------------------------------------------
 
-// Reverse map no longer needed as we use Enums directly in the form
-
 function toTimeString(date: Date | string | null): string {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
@@ -73,6 +71,7 @@ export async function updateDealerProfile(values: any) {
     const existingData = await prisma.dealer.findUnique({
       where: { userId },
       select: {
+        id: true,
         logo: true,
         coverImage: true,
         user: {
@@ -133,28 +132,28 @@ export async function updateDealerProfile(values: any) {
       where: { userId },
       create: {
         userId,
-        companyName: validatedValues.companyName,
+        companyName: validatedValues.companyName || session.user.name || "Private Seller",
         description: validatedValues.description,
         website: validatedValues.website,
         logo:
           typeof validatedValues.logo === "string"
             ? validatedValues.logo
             : undefined,
-        streetAddress: validatedValues.streetAddress,
-        zipCode: validatedValues.zipCode,
-        city: validatedValues.city,
-        country: validatedValues.country,
-        uidNumber: validatedValues.uidNumber,
-        contactPerson: validatedValues.contactPerson,
-        phoneNumber: validatedValues.phoneNumber,
-        businessEmail: validatedValues.businessEmail,
+        streetAddress: validatedValues.streetAddress || "",
+        zipCode: validatedValues.zipCode || "",
+        city: validatedValues.city || "",
+        country: validatedValues.country || "Switzerland",
+        uidNumber: validatedValues.uidNumber || `IND-${userId.substring(0, 8)}`,
+        contactPerson: validatedValues.contactPerson || session.user.name || "Private Seller",
+        phoneNumber: validatedValues.phoneNumber || "",
+        businessEmail: validatedValues.businessEmail || session.user.email || "",
         coverImage:
           typeof validatedValues.coverImage === "string"
             ? validatedValues.coverImage
             : undefined,
       },
       update: {
-        companyName: validatedValues.companyName,
+        companyName: validatedValues.companyName || session.user.name || "Private Seller",
         description: validatedValues.description,
         website: validatedValues.website,
         logo:
@@ -169,14 +168,14 @@ export async function updateDealerProfile(values: any) {
             : validatedValues.coverImage === null
               ? null
               : undefined,
-        streetAddress: validatedValues.streetAddress,
-        zipCode: validatedValues.zipCode,
-        city: validatedValues.city,
-        country: validatedValues.country,
-        uidNumber: validatedValues.uidNumber,
-        contactPerson: validatedValues.contactPerson,
-        phoneNumber: validatedValues.phoneNumber,
-        businessEmail: validatedValues.businessEmail,
+        streetAddress: validatedValues.streetAddress || "",
+        zipCode: validatedValues.zipCode || "",
+        city: validatedValues.city || "",
+        country: validatedValues.country || "Switzerland",
+        uidNumber: validatedValues.uidNumber || `IND-${userId.substring(0, 8)}`,
+        contactPerson: validatedValues.contactPerson || session.user.name || "Private Seller",
+        phoneNumber: validatedValues.phoneNumber || "",
+        businessEmail: validatedValues.businessEmail || session.user.email || "",
       },
     });
 
@@ -207,10 +206,6 @@ export async function updateDealerProfile(values: any) {
     return { success: false, error: "errorDefault" };
   }
 }
-
-// -----------------------------------------------------------------------------
-// Dashboard: get dealer profile
-// -----------------------------------------------------------------------------
 
 export async function getDealerProfile(): Promise<DealerProfile | null> {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -265,11 +260,6 @@ export async function getDealerProfile(): Promise<DealerProfile | null> {
   } as DealerProfile;
 }
 
-// -----------------------------------------------------------------------------
-// Public: list dealers with search + offset pagination
-// Only fetches the 5 fields the card needs.
-// -----------------------------------------------------------------------------
-
 export async function getDealers({
   searchQuery = "",
   page = 1,
@@ -289,22 +279,10 @@ export async function getDealers({
     const where: any = searchQuery
       ? {
           OR: [
-            {
-              companyName: {
-                contains: searchQuery,
-                mode: "insensitive" as const,
-              },
-            },
-            {
-              streetAddress: {
-                contains: searchQuery,
-                mode: "insensitive" as const,
-              },
-            },
-            { city: { contains: searchQuery, mode: "insensitive" as const } },
-            {
-              zipCode: { contains: searchQuery, mode: "insensitive" as const },
-            },
+            { companyName: { contains: searchQuery, mode: "insensitive" } },
+            { streetAddress: { contains: searchQuery, mode: "insensitive" } },
+            { city: { contains: searchQuery, mode: "insensitive" } },
+            { zipCode: { contains: searchQuery, mode: "insensitive" } },
           ],
         }
       : {};
@@ -345,10 +323,6 @@ export async function getDealers({
     return { dealers: [], totalCount: 0, totalPages: 0, currentPage: page };
   }
 }
-
-// -----------------------------------------------------------------------------
-// Public: dealer detail — no vehicles (fetched separately)
-// -----------------------------------------------------------------------------
 
 export async function getDealerById(id: string): Promise<DealerDetail | null> {
   const cacheKey = `dealer:${id}`;
@@ -427,10 +401,6 @@ export async function getDealerById(id: string): Promise<DealerDetail | null> {
     return null;
   }
 }
-
-// -----------------------------------------------------------------------------
-// Public: dealer vehicles — offset pagination, 12 per page
-// -----------------------------------------------------------------------------
 
 export async function getDealerVehicles(
   dealerId: string,
@@ -515,11 +485,83 @@ export async function getDealerVehicles(
 }
 
 // -----------------------------------------------------------------------------
-// Public: send contact enquiry to dealer via email
-// From:    our SMTP (EMAIL_FROM)
-// To:      dealer.businessEmail
-// ReplyTo: enquirer's email
+// Solo Seller Profile
 // -----------------------------------------------------------------------------
+
+export type SellerProfile = {
+  id: string;
+  userId: string;
+  user: { id: string; name: string; email: string; image: string | null };
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  streetAddress: string;
+  zipCode: string;
+  city: string;
+  country: string;
+};
+
+export async function getSellerProfile(): Promise<SellerProfile | null> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return null;
+
+  const seller = await prisma.seller.findUnique({
+    where: { userId: session.user.id },
+    select: {
+      id: true,
+      userId: true,
+      user: { select: { id: true, name: true, email: true, image: true } },
+      firstName: true,
+      lastName: true,
+      phoneNumber: true,
+      email: true,
+      streetAddress: true,
+      zipCode: true,
+      city: true,
+      country: true,
+    },
+  });
+
+  return seller as SellerProfile | null;
+}
+
+export async function updateSellerProfile(values: {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  streetAddress: string;
+  zipCode: string;
+  city: string;
+}): Promise<{ success: boolean; error?: string }> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return { success: false, error: "Unauthorized" };
+
+  try {
+    const nameParts = values.name.trim().split(" ");
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || firstName;
+
+    await prisma.seller.update({
+      where: { userId: session.user.id },
+      data: {
+        firstName,
+        lastName,
+        phoneNumber: values.phoneNumber,
+        email: values.email,
+        streetAddress: values.streetAddress,
+        zipCode: values.zipCode,
+        city: values.city,
+      },
+    });
+
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update seller profile:", error);
+    return { success: false, error: "errorDefault" };
+  }
+}
 
 export async function sendDealerContactEmail(
   dealerId: string,
@@ -560,15 +602,7 @@ export async function sendDealerContactEmail(
   }
 }
 
-// -----------------------------------------------------------------------------
-// Public: fetch Google Place reviews with 30-day DB cache
-// - Visitors always read from DB (zero API calls)
-// - API is called at most once per dealer per 30 days
-// Requires GOOGLE_PLACES_API_KEY env var + dealer.googlePlaceId to be set.
-// Returns null if unconfigured — UI handles gracefully.
-// -----------------------------------------------------------------------------
-
-const REVIEW_CACHE_TTL = 60 * 60 * 24 * 30; // 30 days in seconds
+const REVIEW_CACHE_TTL = 60 * 60 * 24 * 30;
 
 export async function getDealerGoogleReviews(
   dealerId: string,
@@ -576,11 +610,9 @@ export async function getDealerGoogleReviews(
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
   const redisFreshKey = `dealer:reviews:fresh:${dealerId}`;
 
-  // 1. Check if Redis says cache is still fresh
   const isFresh = await cacheGet<boolean>(redisFreshKey);
 
   if (isFresh) {
-    // Serve from DB — no API call
     const dealer = await prisma.dealer.findUnique({
       where: { id: dealerId },
       select: { googleRating: true, googleReviewCount: true, googleReviews: true },
@@ -594,7 +626,6 @@ export async function getDealerGoogleReviews(
     }
   }
 
-  // 2. Redis key expired (or never set) — check if dealer has a Place ID
   const dealer = await prisma.dealer.findUnique({
     where: { id: dealerId },
     select: {
@@ -607,7 +638,6 @@ export async function getDealerGoogleReviews(
 
   if (!dealer?.googlePlaceId) return null;
 
-  // 3. No API key — return whatever is in DB (may be stale but better than nothing)
   if (!apiKey) {
     if (dealer.googleRating != null) {
       return {
@@ -619,7 +649,6 @@ export async function getDealerGoogleReviews(
     return null;
   }
 
-  // 4. Call Google API
   try {
     const url = new URL(
       "https://maps.googleapis.com/maps/api/place/details/json",
@@ -644,7 +673,6 @@ export async function getDealerGoogleReviews(
       profilePhotoUrl: r.profile_photo_url ?? null,
     }));
 
-    // 5. Persist to DB + mark fresh in Redis for 30 days
     await Promise.all([
       prisma.dealer.update({
         where: { id: dealerId },
