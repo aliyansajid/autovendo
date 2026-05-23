@@ -22,12 +22,14 @@ import { authClient } from "@repo/auth/client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { createSignupSchema } from "@/schema/auth-schema";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { sendWelcomeEmail } from "@/app/actions/auth.actions";
 
 export const SignupForm = () => {
   const t = useTranslations("SignupForm");
   const tAuthErrors = useTranslations("AuthErrors");
   const tSchema = useTranslations("AuthSchema");
+  const locale = useLocale();
   const [isPending, startTransition] = useTransition();
 
   const signupSchema = useMemo(() => createSignupSchema(tSchema), [tSchema]);
@@ -57,6 +59,7 @@ export const SignupForm = () => {
         return;
       }
 
+      await sendWelcomeEmail(values.name, values.email, locale);
       toast.success("Account created successfully!");
     });
   }

@@ -106,32 +106,7 @@ export const auth = betterAuth({
     },
   },
 
-  databaseHooks: {
-    user: {
-      create: {
-        after: async (user) => {
-          try {
-            const { sendEmail } = await import("@repo/transactional");
-            const { SellerWelcomeEmail } = await import(
-              "@repo/transactional/emails/seller-welcome"
-            );
-            await sendEmail({
-              to: user.email,
-              subject: `Welcome to ${appName} – your account is ready`,
-              template: SellerWelcomeEmail({
-                sellerName: user.name,
-                dashboardUrl: `${appUrl}/${process.env.DEFAULT_LOCALE ?? "de"}/dashboard`,
-              }),
-            });
-          } catch {
-            // non-critical — don't block signup
-          }
-        },
-      },
-    },
-  },
-
-  trustedOrigins: [
+trustedOrigins: [
     "https://autovendo.ch",
     "https://www.autovendo.ch",
     "https://autosolo.ch",
