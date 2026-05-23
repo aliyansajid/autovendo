@@ -26,6 +26,8 @@ export async function sendContactMessage(input: any) {
       phone: phone.trim(),
       subject: subject?.trim() || undefined,
       message: message?.trim() || undefined,
+      appName: "AutoSolo",
+      appUrl: "https://autosolo.ch",
     }),
   });
 

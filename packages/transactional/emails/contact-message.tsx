@@ -16,11 +16,11 @@ export interface ContactMessageProps {
   phone: string;
   subject?: string;
   message?: string;
+  appName?: string;
+  appUrl?: string;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL
-  : "https://autovendo.ch";
+const defaultBaseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 
 export const ContactMessage = ({
   name,
@@ -28,6 +28,8 @@ export const ContactMessage = ({
   phone,
   subject,
   message,
+  appName = "Autovendo",
+  appUrl = defaultBaseUrl,
 }: ContactMessageProps) => (
   <Html>
     <Head />
@@ -35,9 +37,9 @@ export const ContactMessage = ({
       <Container style={container}>
         <Section style={logoSection}>
           <Img
-            src={`${baseUrl}/email-logo.png`}
+            src={`${appUrl}/email-logo.png`}
             width="200"
-            alt="Autovendo"
+            alt={appName}
             style={logo}
           />
         </Section>
@@ -67,7 +69,7 @@ export const ContactMessage = ({
         ) : null}
         <Hr style={hr} />
         <Text style={footer}>
-          This is an automated message from autovendo.ch
+          This is an automated message from {appUrl.replace("https://", "")}
         </Text>
       </Container>
     </Body>
