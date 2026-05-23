@@ -1,6 +1,5 @@
 import { useFormContext } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/routing";
 import {
   CustomFormField,
   FormFieldType,
@@ -12,8 +11,6 @@ import {
   CardDescription,
   CardContent,
 } from "@repo/ui/components/card";
-import { Button } from "@repo/ui/components/button";
-import { ExternalLink } from "lucide-react";
 
 export function ContactSection() {
   const t = useTranslations("VehicleFormSections");
@@ -23,18 +20,8 @@ export function ContactSection() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <CardTitle>{t("contactInfo")}</CardTitle>
-              <CardDescription>{t("contactInfoDesc")}</CardDescription>
-            </div>
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/dashboard/settings/profile">
-                {t("editProfile")}
-                <ExternalLink />
-              </Link>
-            </Button>
-          </div>
+          <CardTitle>{t("contactInfo")}</CardTitle>
+          <CardDescription>{t("contactInfoDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -44,7 +31,7 @@ export function ContactSection() {
               name="companyName"
               label={t("company")}
               placeholder={t("companyPlaceholder")}
-              disabled={true}
+              disabled={false}
             />
 
             <CustomFormField
@@ -53,7 +40,7 @@ export function ContactSection() {
               name="businessEmail"
               label={t("businessEmail")}
               placeholder={t("businessEmailPlaceholder")}
-              disabled={true}
+              disabled={false}
             />
 
             <CustomFormField
@@ -62,7 +49,7 @@ export function ContactSection() {
               name="phoneNumber"
               label={t("businessPhone")}
               placeholder={t("phonePlaceholder")}
-              disabled={true}
+              disabled={false}
             />
 
             <CustomFormField
@@ -71,7 +58,7 @@ export function ContactSection() {
               name="address"
               label={t("street")}
               placeholder={t("streetPlaceholder")}
-              disabled={true}
+              disabled={false}
             />
 
             <CustomFormField
@@ -80,7 +67,7 @@ export function ContactSection() {
               name="zipCode"
               label={t("zip")}
               placeholder={t("zip")}
-              disabled={true}
+              disabled={false}
             />
 
             <CustomFormField
@@ -89,7 +76,7 @@ export function ContactSection() {
               name="city"
               label={t("city")}
               placeholder={t("city")}
-              disabled={true}
+              disabled={false}
             />
           </div>
         </CardContent>
