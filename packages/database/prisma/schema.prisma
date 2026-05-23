@@ -388,6 +388,12 @@ model Vehicle {
   // Media
   images String[]
 
+  // Solo listing payment
+  listingPlan      String?
+  listingPaidAt    DateTime?
+  listingExpiresAt DateTime?
+  stripeSessionId  String?   @unique
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
