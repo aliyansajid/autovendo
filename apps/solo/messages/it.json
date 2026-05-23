@@ -1497,5 +1497,29 @@
     "button": "Torna alla Home",
     "metaTitle": "404 - Pagina non trovata | AutoSolo",
     "metaDescription": "Spiacenti, la pagina richiesta non è stata trovata su AutoSolo."
+  },
+  "ProfileForm": {
+    "personalTitle": "Informazioni personali",
+    "personalDesc": "Aggiorna nome, email e numero di telefono.",
+    "namePlaceholder": "Nome completo",
+    "emailPlaceholder": "Indirizzo email",
+    "addressTitle": "Indirizzo",
+    "addressDesc": "Il tuo indirizzo viene mostrato agli acquirenti sui tuoi annunci.",
+    "streetPlaceholder": "Via e numero civico",
+    "cityPlaceholder": "Seleziona città",
+    "nameLabel": "Nome completo",
+    "emailLabel": "Email",
+    "phoneLabel": "Numero di telefono",
+    "streetLabel": "Indirizzo",
+    "zipLabel": "CAP",
+    "cityLabel": "Città",
+    "save": "Salva modifiche",
+    "saving": "Salvataggio...",
+    "profileUpdateSuccess": "Profilo aggiornato con successo.",
+    "profileUpdateError": "Impossibile aggiornare il profilo.",
+    "userUpdateError": "Impossibile aggiornare l'utente.",
+    "emailChangeError": "Impossibile cambiare l'email.",
+    "emailConfirmation": "Un'email di conferma è stata inviata al nuovo indirizzo.",
+    "unexpectedError": "Si è verificato un errore imprevisto."
   }
 }

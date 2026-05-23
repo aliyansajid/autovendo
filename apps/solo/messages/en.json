@@ -1498,5 +1498,29 @@
     "button": "Back to Home",
     "metaTitle": "404 - Page Not Found | AutoSolo",
     "metaDescription": "Sorry, the requested page could not be found on AutoSolo."
+  },
+  "ProfileForm": {
+    "personalTitle": "Personal Information",
+    "personalDesc": "Update your name, email and phone number.",
+    "namePlaceholder": "Full name",
+    "emailPlaceholder": "Email address",
+    "addressTitle": "Address",
+    "addressDesc": "Your address is shown to buyers on your listings.",
+    "streetPlaceholder": "Street and house number",
+    "cityPlaceholder": "Select city",
+    "nameLabel": "Full Name",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone Number",
+    "streetLabel": "Street Address",
+    "zipLabel": "ZIP Code",
+    "cityLabel": "City",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "profileUpdateSuccess": "Profile updated successfully.",
+    "profileUpdateError": "Failed to update profile.",
+    "userUpdateError": "Failed to update user.",
+    "emailChangeError": "Failed to change email.",
+    "emailConfirmation": "A confirmation email has been sent to your new address.",
+    "unexpectedError": "An unexpected error occurred."
   }
 }

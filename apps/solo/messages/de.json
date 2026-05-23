@@ -1503,5 +1503,29 @@
     "button": "Zurück zur Startseite",
     "metaTitle": "404 - Seite nicht gefunden | AutoSolo",
     "metaDescription": "Entschuldigung, die angeforderte Seite konnte auf AutoSolo nicht gefunden werden."
+  },
+  "ProfileForm": {
+    "personalTitle": "Persönliche Angaben",
+    "personalDesc": "Name, E-Mail und Telefonnummer aktualisieren.",
+    "namePlaceholder": "Vollständiger Name",
+    "emailPlaceholder": "E-Mail-Adresse",
+    "addressTitle": "Adresse",
+    "addressDesc": "Ihre Adresse wird Käufern auf Ihren Inseraten angezeigt.",
+    "streetPlaceholder": "Strasse und Hausnummer",
+    "cityPlaceholder": "Stadt auswählen",
+    "nameLabel": "Vollständiger Name",
+    "emailLabel": "E-Mail",
+    "phoneLabel": "Telefonnummer",
+    "streetLabel": "Strassenadresse",
+    "zipLabel": "PLZ",
+    "cityLabel": "Stadt",
+    "save": "Änderungen speichern",
+    "saving": "Wird gespeichert...",
+    "profileUpdateSuccess": "Profil erfolgreich aktualisiert.",
+    "profileUpdateError": "Profil konnte nicht aktualisiert werden.",
+    "userUpdateError": "Benutzer konnte nicht aktualisiert werden.",
+    "emailChangeError": "E-Mail konnte nicht geändert werden.",
+    "emailConfirmation": "Eine Bestätigungs-E-Mail wurde an Ihre neue Adresse gesendet.",
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten."
   }
 }

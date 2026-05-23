@@ -1496,5 +1496,29 @@
     "button": "Retour à l'accueil",
     "metaTitle": "404 - Page non trouvée | AutoSolo",
     "metaDescription": "Désolé, la page demandée n'a pas pu être trouvée sur AutoSolo."
+  },
+  "ProfileForm": {
+    "personalTitle": "Informations personnelles",
+    "personalDesc": "Mettez à jour votre nom, e-mail et numéro de téléphone.",
+    "namePlaceholder": "Nom complet",
+    "emailPlaceholder": "Adresse e-mail",
+    "addressTitle": "Adresse",
+    "addressDesc": "Votre adresse est affichée aux acheteurs sur vos annonces.",
+    "streetPlaceholder": "Rue et numéro",
+    "cityPlaceholder": "Sélectionner une ville",
+    "nameLabel": "Nom complet",
+    "emailLabel": "E-mail",
+    "phoneLabel": "Numéro de téléphone",
+    "streetLabel": "Adresse",
+    "zipLabel": "Code postal",
+    "cityLabel": "Ville",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "profileUpdateSuccess": "Profil mis à jour avec succès.",
+    "profileUpdateError": "Impossible de mettre à jour le profil.",
+    "userUpdateError": "Impossible de mettre à jour l'utilisateur.",
+    "emailChangeError": "Impossible de changer l'e-mail.",
+    "emailConfirmation": "Un e-mail de confirmation a été envoyé à votre nouvelle adresse.",
+    "unexpectedError": "Une erreur inattendue s'est produite."
   }
 }
