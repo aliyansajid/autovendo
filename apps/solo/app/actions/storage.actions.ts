@@ -17,7 +17,7 @@ export async function getPresignedUploadUrl({
   filename: string;
   contentType: string;
 }) {
-  const key = StorageService.formatSellerPath(
+  const key = StorageService.formatPath(
     sellerId,
     type,
     filename,

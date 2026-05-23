@@ -84,10 +84,10 @@ export class StorageService {
   }
 
   /**
-   * Helper to format dealer paths.
+   * Helper to format upload paths for any user (dealer or seller).
    */
-  static formatDealerPath(
-    dealerId: string,
+  static formatPath(
+    userId: string,
     type: "branding" | "profiles" | "listing",
     filename: string,
     subfolder?: string,
@@ -95,18 +95,7 @@ export class StorageService {
     const timestamp = Math.floor(Date.now() / 1000);
     const sanitizedName = filename.replace(/\s+/g, "-").toLowerCase();
     const subPath = subfolder ? `/${subfolder}` : "";
-    return `${dealerId}/${type}${subPath}/${timestamp}_${sanitizedName}`;
+    return `${userId}/${type}${subPath}/${timestamp}_${sanitizedName}`;
   }
 
-  /**
-   * Helper to format seller paths.
-   */
-  static formatSellerPath(
-    sellerId: string,
-    type: "branding" | "profiles" | "listing",
-    filename: string,
-    subfolder?: string,
-  ) {
-    return this.formatDealerPath(sellerId, type, filename, subfolder);
-  }
 }

@@ -1312,7 +1312,7 @@ export async function getPresignedUrls(
 
   const urls = await Promise.all(
     files.map(async (file) => {
-      const key = StorageService.formatSellerPath(
+      const key = StorageService.formatPath(
         seller.id,
         "listing",
         file.name,
