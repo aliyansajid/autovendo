@@ -56,11 +56,9 @@ import { parseSearchParams } from "@/lib/helpers/vehicle";
 // PLAN_LIMITS removed - now dynamic from DB via auth plugin
 
 export type SubscriptionStatus = {
-  type: "active" | "no_subscription" | "quota_exhausted" | "expired" | "past_due";
+  type: "active" | "no_subscription" | "expired" | "past_due";
   plan: string;
-  maxVehicles: number;
-  currentCount: number;
-  remainingQuota: number;
+  isSolo: boolean;
 };
 
 export type DashboardSummary = {
@@ -70,6 +68,19 @@ export type DashboardSummary = {
   soldCount: number;
   recentVehicles: any[];
 };
+
+/**
+ * Helper to get the current seller profile
+ */
+async function getCurrentSeller() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) return null;
+
+  return await prisma.seller.findUnique({
+    where: { userId: session.user.id },
+    select: { id: true },
+  });
+}
 
 // =============================================================================
 // DATABASE QUERY OPTIMIZATION
@@ -97,16 +108,15 @@ const VEHICLE_LIST_SELECT = {
   createdAt: true,
   images: true,
   status: true,
-  equipment: true, // Only if needed for listing
-  dealer: {
+  equipment: true,
+  seller: {
     select: {
       id: true,
-      companyName: true,
+      firstName: true,
+      lastName: true,
       city: true,
       zipCode: true,
       phoneNumber: true,
-      googleRating: true,
-      googleReviewCount: true,
     },
   },
 } satisfies Prisma.VehicleSelect;
@@ -433,7 +443,7 @@ export async function buildWhereClause(
   }
 
   where.status = "PUBLISHED";
-  where.dealer = {
+  where.seller = {
     user: {
       banned: { not: true },
     },
@@ -1071,7 +1081,7 @@ export async function getVehicle(id: string): Promise<VehicleDetails | null> {
     where: {
       id,
       status: "PUBLISHED",
-      dealer: {
+      seller: {
         user: {
           banned: { not: true },
         },
@@ -1138,29 +1148,18 @@ export async function getVehicle(id: string): Promise<VehicleDetails | null> {
       extras: true,
       images: true,
       createdAt: true,
-      dealer: {
+      seller: {
         select: {
           id: true,
-          companyName: true,
-          description: true,
-          website: true,
-          logo: true,
+          firstName: true,
+          lastName: true,
           streetAddress: true,
           zipCode: true,
           city: true,
           phoneNumber: true,
-          businessEmail: true,
-          googlePlaceId: true,
+          email: true,
+          image: true,
           user: { select: { emailVerified: true } },
-          openingHours: {
-            select: {
-              day: true,
-              isOpen: true,
-              openTime: true,
-              closeTime: true,
-            },
-            orderBy: { day: "asc" },
-          },
         },
       },
     },
@@ -1195,14 +1194,14 @@ export async function getVehicleCached(id: string) {
  * Get similar vehicles from the same dealer (excluding current vehicle)
  */
 export async function getSimilarVehicles(
-  dealerId: string,
+  sellerId: string,
   excludeId: string,
 ): Promise<VehicleListItem[]> {
-  if (!dealerId) return [];
+  if (!sellerId) return [];
 
   const vehicles = await prisma.vehicle.findMany({
     where: {
-      dealerId,
+      sellerId,
       NOT: { id: excludeId },
     },
     take: 5,
@@ -1221,96 +1220,14 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.id) throw new Error("Unauthorized");
 
-  // Parallel fetch: Dealer count from DB, Sub status from Plugin
-  const [dealer, subscriptionsResponse] = await Promise.all([
-    prisma.dealer.findUnique({
-      where: { userId: session.user.id },
-      select: { id: true },
-    }),
-    (auth.api as any).listActiveSubscriptions({
-      headers: await headers(),
-    }),
-  ]);
-
-  const currentCount = dealer
-    ? await prisma.vehicle.count({ where: { dealerId: dealer.id } })
-    : 0;
-
-  const subscriptions = Array.isArray(subscriptionsResponse)
-    ? subscriptionsResponse
-    : (subscriptionsResponse as any)?.data || [];
-  const limits = (subscriptionsResponse as any)?.limits;
-
-  // Find priority subscription (active/trialing first)
-  const activeSub = subscriptions.find(
-    (s: any) =>
-      s.status === "active" ||
-      s.status === "trialing" ||
-      s.status === "incomplete",
-  );
-  const pastDueSub = subscriptions.find(
-    (s: any) => s.status === "past_due" || s.status === "unpaid",
-  );
-
-  const mainSub = activeSub || pastDueSub;
-
-  if (!mainSub) {
-    return {
-      type: "no_subscription",
-      plan: "",
-      maxVehicles: 0,
-      currentCount,
-      remainingQuota: 0,
-    };
-  }
-
-  let maxVehicles = limits?.vehicles || 0;
-
-  // Fallback: If limits are missing from API, fetch from DB using plan name
-  if (maxVehicles === 0 && mainSub.plan) {
-    const plan = await prisma.plan.findFirst({
-      where: {
-        name: {
-          contains: mainSub.plan,
-          mode: "insensitive",
-        },
-      },
-      select: { limits: true },
-    });
-    if (plan && (plan.limits as any)?.vehicles) {
-      maxVehicles = (plan.limits as any).vehicles;
-    }
-  }
-
-  const remainingQuota = Math.max(0, maxVehicles - currentCount);
-
-  // Status mapping
-  if (mainSub.status === "past_due" || mainSub.status === "unpaid") {
-    return {
-      type: "past_due",
-      plan: mainSub.plan,
-      maxVehicles,
-      currentCount,
-      remainingQuota,
-    };
-  }
-
-  if (remainingQuota === 0 && maxVehicles > 0) {
-    return {
-      type: "quota_exhausted",
-      plan: mainSub.plan,
-      maxVehicles,
-      currentCount,
-      remainingQuota: 0,
-    };
-  }
-
+  // In Solo app, we don't have a global monthly subscription for quota.
+  // Each vehicle is paid individually. 
+  // This function now just returns a generic status or check for any active listing.
+  
   return {
     type: "active",
-    plan: mainSub.plan,
-    maxVehicles,
-    currentCount,
-    remainingQuota,
+    plan: "Solo Pay-per-Listing",
+    isSolo: true,
   };
 }
 
@@ -1318,15 +1235,9 @@ export async function getVehicleSubscriptionStatus(): Promise<SubscriptionStatus
  * Get dashboard overview summary data
  */
 export async function getDashboardSummary(): Promise<DashboardSummary> {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user?.id) throw new Error("Unauthorized");
+  const seller = await getCurrentSeller();
 
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-
-  if (!dealer) {
+  if (!seller) {
     return {
       totalCount: 0,
       publishedCount: 0,
@@ -1339,11 +1250,11 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
   const [counts, recentVehicles] = await Promise.all([
     prisma.vehicle.groupBy({
       by: ["status"],
-      where: { dealerId: dealer.id },
+      where: { sellerId: seller.id },
       _count: { _all: true },
     }),
     prisma.vehicle.findMany({
-      where: { dealerId: dealer.id },
+      where: { sellerId: seller.id },
       orderBy: { createdAt: "desc" },
       take: 5,
       select: {
@@ -1375,41 +1286,16 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
 
 
 export async function prepareVehicleListing(existingVehicleId?: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const seller = await getCurrentSeller();
 
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  // Subscription security check
-  const status = await getVehicleSubscriptionStatus();
-
-  if (!existingVehicleId) {
-    // Blocking new creations for past_due, quota_exhausted, or expired
-    if (status.type !== "active") {
-      throw new Error(status.type);
-    }
-  } else {
-    // Blocking edits only if subscription is completely dead
-    if (status.type === "no_subscription" || status.type === "expired") {
-      throw new Error("subscription_ended");
-    }
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   return {
     listingId: existingVehicleId || createId(),
     country: "ch",
-    dealerId: dealer.id,
+    sellerId: seller.id,
   };
 }
 
@@ -1417,28 +1303,16 @@ export async function getPresignedUrls(
   listingId: string,
   files: { name: string; type: string }[],
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const seller = await getCurrentSeller();
 
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  const country = "ch";
 
   const urls = await Promise.all(
     files.map(async (file) => {
-      const key = StorageService.formatDealerPath(
-        dealer.id,
+      const key = StorageService.formatSellerPath(
+        seller.id,
         "listing",
         file.name,
         listingId,
@@ -1457,43 +1331,25 @@ export async function createVehicle(
   formData: any,
   imageKeys: string[],
 ) {
+  const seller = await getCurrentSeller();
+
+  if (!seller) {
+    throw new Error("Seller profile not found");
+  }
+
   const t = await getTranslations("VehicleSchema");
   const schema = createVehicleFormSchema(t);
   const validatedData = schema.parse(formData);
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
 
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  const subscriptionStatus = await getVehicleSubscriptionStatus();
-
-  if (subscriptionStatus.type !== "active") {
-    return {
-      error:
-        subscriptionStatus.type === "no_subscription"
-          ? "noSubscription"
-          : subscriptionStatus.type === "quota_exhausted"
-            ? "limitReached"
-            : subscriptionStatus.type, // Block everything else (past_due, expired, etc.)
-    };
-  }
+  // In Solo app, we allow creating a DRAFT without immediate payment.
+  // The payment happens in a subsequent step.
+  const status = validatedData.status || "DRAFT";
 
   const vehicle = await prisma.vehicle.create({
     data: {
       id: listingId,
-      dealerId: dealer.id,
+      sellerId: seller.id,
+      status: status as any,
       vehicleType: validatedData.vehicleType.toUpperCase() as VehicleType,
       make: validatedData.make,
       model: validatedData.model || null,
@@ -1523,7 +1379,6 @@ export async function createVehicle(
         ? (validatedData.interiorColor.toUpperCase() as Color)
         : null,
       metallic: validatedData.metallic,
-      status: validatedData.status,
       vehicleCondition: validatedData.vehicleCondition
         ? (validatedData.vehicleCondition
             .toUpperCase()
@@ -1595,34 +1450,23 @@ export async function createVehicle(
     },
   });
 
-  await Promise.all([
+    await Promise.all([
     cacheDeletePattern("vehicles:*"),
-    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
+    cacheDeletePattern(`seller:vehicles:${seller.id}:*`),
   ]);
   revalidatePath("/dashboard/vehicles");
   return listingId;
 }
 
 export async function getDealerVehicles() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const seller = await getCurrentSeller();
 
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   const vehicles = await prisma.vehicle.findMany({
-    where: { dealerId: dealer.id },
+    where: { sellerId: seller.id },
     orderBy: { createdAt: "desc" },
     select: VEHICLE_LIST_SELECT,
   });
@@ -1631,27 +1475,16 @@ export async function getDealerVehicles() {
 }
 
 export async function getVehicleById(id: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const seller = await getCurrentSeller();
 
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   const vehicle = await prisma.vehicle.findUnique({
     where: {
       id,
-      dealerId: dealer.id,
+      sellerId: seller.id,
     },
   });
 
@@ -1663,28 +1496,10 @@ export async function updateVehicle(
   formData: any,
   imageKeys: string[],
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const seller = await getCurrentSeller();
 
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  // SECURITY GUARD:
-  // Only allow saving edits if the subscription is active, trialing, or past_due.
-  // We block if it's expired or no_subscription.
-  const subStatus = await getVehicleSubscriptionStatus();
-  if (subStatus.type === "no_subscription" || subStatus.type === "expired") {
-    throw new Error("Subscription inactive. Cannot save edits.");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
   const tSchema = await getTranslations("VehicleSchema");
@@ -1692,9 +1507,21 @@ export async function updateVehicle(
   const validatedData = schema.parse(formData);
 
   const existingVehicle = await prisma.vehicle.findUnique({
-    where: { id: vehicleId, dealerId: dealer.id },
-    select: { images: true },
+    where: { id: vehicleId, sellerId: seller.id },
+    select: { images: true, vin: true, status: true },
   });
+
+  if (!existingVehicle) {
+    throw new Error("Vehicle not found");
+  }
+
+  // SECURITY: VIN LOCK
+  // If the vehicle is already PUBLISHED or SOLD, prevent changing critical identity fields
+  if (existingVehicle.status === "PUBLISHED" || existingVehicle.status === "SOLD") {
+    if (existingVehicle.vin && validatedData.vehicleIdentificationNumber && existingVehicle.vin !== validatedData.vehicleIdentificationNumber) {
+      throw new Error("VIN cannot be changed after publication");
+    }
+  }
 
   if (existingVehicle) {
     const oldImages = existingVehicle.images;
@@ -1716,7 +1543,7 @@ export async function updateVehicle(
   await prisma.vehicle.update({
     where: {
       id: vehicleId,
-      dealerId: dealer.id,
+      sellerId: seller.id,
     },
     data: {
       vehicleType: validatedData.vehicleType.toUpperCase() as VehicleType,
@@ -1822,122 +1649,64 @@ export async function updateVehicle(
 
   await Promise.all([
     cacheDeletePattern("vehicles:*"),
-    cacheDelete(`vehicle:${vehicleId}`),
-    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
+    cacheDeletePattern(`seller:vehicles:${seller.id}:*`),
   ]);
   revalidatePath("/dashboard/vehicles");
-  return vehicleId;
+}
+
+export async function updateVehicleStatus(id: string, status: string) {
+  const seller = await getCurrentSeller();
+  if (!seller) throw new Error("Unauthorized");
+
+  await prisma.vehicle.update({
+    where: { id, sellerId: seller.id },
+    data: { status: status as any },
+  });
+
+  await Promise.all([
+    cacheDeletePattern("vehicles:*"),
+    cacheDeletePattern(`seller:vehicles:${seller.id}:*`),
+  ]);
+  revalidatePath("/dashboard/vehicles");
 }
 
 export async function deleteVehicle(id: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const seller = await getCurrentSeller();
 
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
+  if (!seller) {
+    throw new Error("Seller profile not found");
   }
 
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  // Fetch the vehicle to get its images before deleting
   const vehicle = await prisma.vehicle.findUnique({
-    where: { id, dealerId: dealer.id },
+    where: { id, sellerId: seller.id },
     select: { images: true },
   });
 
-  if (vehicle && vehicle.images.length > 0) {
-    // Delete all images from storage
+  if (!vehicle) {
+    throw new Error("Vehicle not found");
+  }
+
+  // Delete images from storage
+  if (vehicle.images.length > 0) {
     await Promise.all(
       vehicle.images.map(async (key) => {
         try {
           await storage.deleteFile(key);
         } catch (e) {
-          console.error(
-            `Failed to delete image during vehicle deletion: ${key}`,
-            e,
-          );
+          console.error(`Failed to delete image: ${key}`, e);
         }
       }),
     );
   }
 
   await prisma.vehicle.delete({
-    where: {
-      id,
-      dealerId: dealer.id,
-    },
+    where: { id, sellerId: seller.id },
   });
 
   await Promise.all([
     cacheDeletePattern("vehicles:*"),
-    cacheDelete(`vehicle:${id}`),
-    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
+    cacheDeletePattern(`seller:vehicles:${seller.id}:*`),
   ]);
-  revalidatePath("/", "layout");
-  return { success: true };
+  revalidatePath("/dashboard/vehicles");
 }
 
-/**
- * Quick status update for a vehicle
- */
-export async function updateVehicleStatus(vehicleId: string, status: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  const subStatus = await getVehicleSubscriptionStatus();
-
-  // SECURITY GUARD:
-  // We ALWAYS allow taking a car offline (SOLD or DRAFT) regardless of subscription.
-  // We ONLY allow putting a car live (PUBLISHED) if the subscription is healthy.
-  
-  if (status === "PUBLISHED") {
-    if (subStatus.type !== "active") {
-      throw new Error("Subscription not active. Cannot publish.");
-    }
-  } else {
-    // For SOLD or DRAFT, we just ensure the user isn't totally missing (no_subscription)
-    // but we allow it even if expired.
-    if (subStatus.type === "no_subscription") {
-      throw new Error("Unauthorized");
-    }
-  }
-
-  const updated = await prisma.vehicle.update({
-    where: {
-      id: vehicleId,
-      dealerId: dealer.id,
-    },
-    data: {
-      status: status as any,
-    },
-  });
-
-  await Promise.all([
-    cacheDeletePattern("vehicles:*"),
-    cacheDelete(`vehicle:${vehicleId}`),
-    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
-  ]);
-  revalidatePath("/", "layout");
-  return { success: true, status: updated.status };
-}
