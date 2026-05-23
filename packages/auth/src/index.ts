@@ -120,7 +120,7 @@ export const auth = betterAuth({
               subject: `Welcome to ${appName} – your account is ready`,
               template: SellerWelcomeEmail({
                 sellerName: user.name,
-                dashboardUrl: `${appUrl}/dashboard`,
+                dashboardUrl: `${appUrl}/de/dashboard`,
               }),
             });
           } catch {
