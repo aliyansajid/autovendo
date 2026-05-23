@@ -23,7 +23,7 @@ import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { createSignupSchema } from "@/schema/auth-schema";
 import { useTranslations, useLocale } from "next-intl";
-import { sendWelcomeEmail } from "@/app/actions/auth.actions";
+import { onSignup } from "@/app/actions/auth.actions";
 
 export const SignupForm = () => {
   const t = useTranslations("SignupForm");
@@ -59,7 +59,7 @@ export const SignupForm = () => {
         return;
       }
 
-      await sendWelcomeEmail(values.name, values.email, locale);
+      await onSignup(values.name, values.email, locale);
       toast.success("Account created successfully!");
     });
   }
