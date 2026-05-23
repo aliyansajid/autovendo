@@ -31,9 +31,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    metadataBase: new URL("https://autovendo.ch"),
+    metadataBase: new URL("https://autosolo.ch"),
     title: {
-      default: "Gebrauchtwagen & Occasionen kaufen Schweiz | AutoVendo",
+      default: "Gebrauchtwagen & Occasionen kaufen Schweiz | AutoSolo",
       template: "%s",
     },
     description:
@@ -46,18 +46,18 @@ export async function generateMetadata({
       "gebrauchtwagen kaufen",
       "autohändler schweiz",
       "auto inserat schweiz",
-      "autovendo",
+      "autosolo",
       "occasion kaufen schweiz",
       "gebrauchtwagen kaufen schweiz",
     ],
     openGraph: {
-      siteName: "AutoVendo",
+      siteName: "AutoSolo",
       images: [
         {
           url: "/web-app-manifest-512x512.png",
           width: 1200,
           height: 630,
-          alt: "AutoVendo – Gebrauchtwagen & Occasionen Schweiz",
+          alt: "AutoSolo – Gebrauchtwagen & Occasionen Schweiz",
         },
       ],
       locale: OG_LOCALE[locale] ?? "de_CH",
@@ -78,7 +78,7 @@ export async function generateMetadata({
       },
     },
     other: {
-      "apple-mobile-web-app-title": "AutoVendo",
+      "apple-mobile-web-app-title": "AutoSolo",
     },
   };
 }

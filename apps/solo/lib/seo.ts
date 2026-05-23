@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const BASE_URL = "https://autovendo.ch";
+const BASE_URL = "https://autosolo.ch";
 const LOCALES = ["de", "en", "fr", "it"] as const;
 type Locale = (typeof LOCALES)[number];
 
@@ -44,7 +44,7 @@ export function buildMetadata(
       title,
       description,
       url: `${BASE_URL}/${locale}${path}`,
-      siteName: "AutoVendo",
+      siteName: "AutoSolo",
       images: [{ url: image, width: 1200, height: 630, alt: title }],
       locale: OG_LOCALE[l],
       type: "website",
@@ -59,194 +59,121 @@ export function buildMetadata(
   };
 }
 
-// ─── Per-page keyword-optimised metadata (DE primary, all 4 locales) ──────────
+// ─── Per-page keyword-optimised metadata ──────────────────────────────────────
 
 export const PAGE_META = {
   home: {
     de: {
-      title: "Gebrauchtwagen & Occasionen kaufen Schweiz | AutoVendo",
+      title: "Auto privat verkaufen Schweiz | AutoSolo",
       description:
-        "Tausende Gebrauchtwagen und Occasionen von verifizierten Schweizer Händlern. Günstiger als AutoScout24 – faire Preise, keine versteckten Kosten. Jetzt suchen.",
+        "Inserate von Privatverkäufern in der Schweiz. Auto direkt verkaufen ohne Händler – fair, einfach, ohne Abo. Ab CHF 19 pro Inserat auf autosolo.ch.",
     },
     en: {
-      title: "Buy Used Cars & Occasions in Switzerland | AutoVendo",
+      title: "Sell Your Car Privately in Switzerland | AutoSolo",
       description:
-        "Thousands of used cars from verified Swiss dealers. More affordable than AutoScout24 – fair prices, no hidden costs. Search now on autovendo.ch.",
+        "Private car listings across Switzerland. Sell your car directly – no dealer, no subscription. From CHF 19 per listing on autosolo.ch.",
     },
     fr: {
-      title: "Acheter voiture d'occasion en Suisse | AutoVendo",
+      title: "Vendre sa voiture en privé en Suisse | AutoSolo",
       description:
-        "Des milliers de voitures d'occasion chez des concessionnaires vérifiés. Moins cher qu'AutoScout24 – prix équitables, sans frais cachés. Cherchez maintenant.",
+        "Annonces de particuliers en Suisse. Vendez votre voiture directement – sans concessionnaire, sans abonnement. Dès CHF 19 par annonce sur autosolo.ch.",
     },
     it: {
-      title: "Comprare auto usate in Svizzera | AutoVendo",
+      title: "Vendere auto privati in Svizzera | AutoSolo",
       description:
-        "Migliaia di auto usate da concessionari verificati. Più economico di AutoScout24 – prezzi equi, senza costi nascosti. Cerca ora su autovendo.ch.",
+        "Annunci di privati in Svizzera. Vendi la tua auto direttamente – senza concessionario, senza abbonamento. Da CHF 19 per annuncio su autosolo.ch.",
     },
   } satisfies PageMeta,
 
   cars: {
     de: {
-      title:
-        "Gebrauchtwagen & Occasionen kaufen – Inserate Schweiz | AutoVendo",
+      title: "Occasionen von Privat kaufen – Schweiz | AutoSolo",
       description:
-        "Alle Gebrauchtwagen-Inserate der Schweiz: BMW, Mercedes, VW, Audi, Skoda, Dacia und mehr. Occasionen günstig kaufen – faire Alternative zu AutoScout24.",
+        "Alle Privatinserate der Schweiz: BMW, Mercedes, VW, Audi und mehr. Gebrauchtwagen direkt vom Privatverkäufer kaufen – fair und ohne Händleraufschlag.",
     },
     en: {
-      title: "Used Car Listings Switzerland – Buy Occasions | AutoVendo",
+      title: "Buy Used Cars from Private Sellers – Switzerland | AutoSolo",
       description:
-        "All used car listings in Switzerland. BMW, Mercedes, VW, Audi and more – buy occasions at fair prices on autovendo.ch.",
+        "Private car listings in Switzerland. BMW, Mercedes, VW, Audi and more – buy used cars directly from private sellers on autosolo.ch.",
     },
     fr: {
-      title: "Annonces voitures d'occasion Suisse | AutoVendo",
+      title: "Acheter voiture d'occasion de particulier – Suisse | AutoSolo",
       description:
-        "Toutes les annonces de voitures d'occasion en Suisse. BMW, Mercedes, VW, Audi et plus – achetez une occasion au meilleur prix sur autovendo.ch.",
+        "Annonces de particuliers en Suisse. BMW, Mercedes, VW, Audi et plus – achetez une occasion directement chez un particulier sur autosolo.ch.",
     },
     it: {
-      title: "Annunci auto usate Svizzera | AutoVendo",
+      title: "Comprare auto usate da privati – Svizzera | AutoSolo",
       description:
-        "Tutti gli annunci di auto usate in Svizzera. BMW, Mercedes, VW, Audi e altri – acquista a prezzi convenienti su autovendo.ch.",
-    },
-  } satisfies PageMeta,
-
-  dealers: {
-    de: {
-      title: "Autohändler & Garagen in der Schweiz | AutoVendo",
-      description:
-        "Verifizierte Autohändler und Garagen aus der ganzen Schweiz. Occasionen und Gebrauchtwagen direkt vom Händler kaufen auf autovendo.ch.",
-    },
-    en: {
-      title: "Car Dealers & Garages in Switzerland | AutoVendo",
-      description:
-        "Verified car dealers and garages across Switzerland. Buy used cars and occasions directly from dealers on autovendo.ch.",
-    },
-    fr: {
-      title: "Concessionnaires & Garages en Suisse | AutoVendo",
-      description:
-        "Concessionnaires automobiles vérifiés dans toute la Suisse. Achetez des voitures d'occasion directement auprès des concessionnaires sur autovendo.ch.",
-    },
-    it: {
-      title: "Concessionari & Officine in Svizzera | AutoVendo",
-      description:
-        "Concessionari auto verificati in tutta la Svizzera. Acquista auto usate direttamente dai concessionari su autovendo.ch.",
+        "Annunci privati in Svizzera. BMW, Mercedes, VW, Audi e altri – acquista auto usate direttamente da privati su autosolo.ch.",
     },
   } satisfies PageMeta,
 
   pricing: {
     de: {
-      title:
-        "Autoinserat aufgeben Schweiz – Faire Preise ab CHF 180 | AutoVendo",
+      title: "Preise – Auto inserieren Schweiz | AutoSolo",
       description:
-        "Inserieren Sie Ihre Fahrzeuge günstiger als bei AutoScout24. Händlerpakete ab CHF 180/Monat. Faire Preise, keine versteckten Kosten – autovendo.ch.",
+        "Klare Preise ohne Abo: CHF 19 für 30 Tage oder CHF 49 bis zum Verkauf. Auto inserieren auf autosolo.ch – einfach, fair, einmalig.",
     },
     en: {
-      title: "Car Listing Prices Switzerland – From CHF 180/mo | AutoVendo",
+      title: "Pricing – List Your Car in Switzerland | AutoSolo",
       description:
-        "List your vehicles affordably on autovendo.ch – significantly cheaper than AutoScout24. Dealer packages from CHF 180/month. No hidden costs.",
+        "Simple pay-per-listing pricing: CHF 19 for 30 days or CHF 49 until sold. No subscription, no hidden costs – autosolo.ch.",
     },
     fr: {
-      title: "Publier annonce auto Suisse – Dès CHF 180/mois | AutoVendo",
+      title: "Tarifs – Publier une annonce auto en Suisse | AutoSolo",
       description:
-        "Publiez vos annonces à petit prix – bien moins cher qu'AutoScout24. Forfaits dès CHF 180/mois. Sans frais cachés sur autovendo.ch.",
+        "Tarifs clairs sans abonnement : CHF 19 pour 30 jours ou CHF 49 jusqu'à la vente. Sans frais cachés sur autosolo.ch.",
     },
     it: {
-      title: "Inserire auto Svizzera – Da CHF 180/mese | AutoVendo",
+      title: "Prezzi – Inserire auto in Svizzera | AutoSolo",
       description:
-        "Inserisci i tuoi veicoli a prezzi convenienti – molto più economico di AutoScout24. Pacchetti da CHF 180/mese. Senza costi nascosti.",
-    },
-  } satisfies PageMeta,
-
-  howItWorks: {
-    de: {
-      title: "Wie funktioniert AutoVendo? – Auto inserieren in 5 Schritten",
-      description:
-        "In 5 einfachen Schritten zum Händlerprofil auf autovendo.ch. Fahrzeuge inserieren, mehr Käufer erreichen – günstiger als AutoScout24.",
-    },
-    en: {
-      title: "How AutoVendo Works – List Your Vehicles in 5 Steps",
-      description:
-        "Create your dealer profile on autovendo.ch in 5 simple steps. List vehicles, reach more buyers – easier and cheaper than AutoScout24.",
-    },
-    fr: {
-      title: "Comment fonctionne AutoVendo? – 5 étapes simples",
-      description:
-        "Créez votre profil concessionnaire en 5 étapes. Publiez vos annonces, atteignez plus d'acheteurs – plus simple et moins cher qu'AutoScout24.",
-    },
-    it: {
-      title: "Come funziona AutoVendo? – 5 semplici passi",
-      description:
-        "Crea il tuo profilo concessionario in 5 passi. Inserisci veicoli, raggiungi più acquirenti – più semplice ed economico di AutoScout24.",
+        "Prezzi chiari senza abbonamento: CHF 19 per 30 giorni o CHF 49 fino alla vendita. Senza costi nascosti su autosolo.ch.",
     },
   } satisfies PageMeta,
 
   faq: {
     de: {
-      title: "FAQ – Häufige Fragen zu AutoVendo | Händlerplattform Schweiz",
+      title: "FAQ – Häufige Fragen zu AutoSolo | Auto privat verkaufen",
       description:
-        "Antworten auf die häufigsten Fragen: Inserate, Preise, Registrierung und mehr. Die günstige und faire Alternative zu AutoScout24 für Schweizer Händler.",
+        "Antworten auf die häufigsten Fragen: Inserate aufgeben, Preise, Registrierung und mehr. Auto privat verkaufen auf autosolo.ch.",
     },
     en: {
-      title: "FAQ – Frequently Asked Questions | AutoVendo Switzerland",
+      title: "FAQ – Frequently Asked Questions | AutoSolo Switzerland",
       description:
-        "Answers to common questions about autovendo.ch: listings, pricing, registration and more. The fair and affordable alternative to AutoScout24.",
+        "Answers to common questions about autosolo.ch: listings, pricing, registration and more. Sell your car privately in Switzerland.",
     },
     fr: {
-      title: "FAQ – Questions fréquentes sur AutoVendo | Suisse",
+      title: "FAQ – Questions fréquentes sur AutoSolo | Suisse",
       description:
-        "Réponses aux questions sur autovendo.ch: annonces, prix, inscription. L'alternative équitable et abordable à AutoScout24.",
+        "Réponses aux questions sur autosolo.ch: annonces, prix, inscription. Vendez votre voiture entre particuliers en Suisse.",
     },
     it: {
-      title: "FAQ – Domande frequenti su AutoVendo | Svizzera",
+      title: "FAQ – Domande frequenti su AutoSolo | Svizzera",
       description:
-        "Risposte alle domande su autovendo.ch: annunci, prezzi, registrazione. L'alternativa equa ed economica ad AutoScout24.",
+        "Risposte alle domande su autosolo.ch: annunci, prezzi, registrazione. Vendi la tua auto tra privati in Svizzera.",
     },
   } satisfies PageMeta,
 
   about: {
     de: {
-      title: "Über AutoVendo – Die faire Autoplattform der Schweiz",
+      title: "Über AutoSolo – Auto privat verkaufen in der Schweiz",
       description:
-        "Autovendo.ch ist die günstige Alternative zu AutoScout24 für Schweizer Autohändler. Fair, transparent, ohne versteckte Kosten. Inserieren ab CHF 180/Monat.",
+        "Autosolo.ch ist die Plattform für Privatverkäufer in der Schweiz. Fair, transparent, ohne Abo – ab CHF 19 pro Inserat.",
     },
     en: {
-      title: "About AutoVendo – Switzerland's Fair Car Platform",
+      title: "About AutoSolo – Private Car Sales in Switzerland",
       description:
-        "AutoVendo.ch is the affordable alternative to AutoScout24 for Swiss car dealers. Fair, transparent, no hidden costs. List from CHF 180/month.",
+        "AutoSolo.ch is the platform for private car sellers in Switzerland. Fair, transparent, no subscription – from CHF 19 per listing.",
     },
     fr: {
-      title: "À propos – AutoVendo, la plateforme auto équitable de Suisse",
+      title: "À propos – AutoSolo, vente auto entre particuliers en Suisse",
       description:
-        "Autovendo.ch est l'alternative abordable à AutoScout24 pour les concessionnaires suisses. Équitable, transparent, sans frais cachés.",
+        "Autosolo.ch est la plateforme pour les vendeurs particuliers en Suisse. Équitable, transparent, sans abonnement – dès CHF 19 par annonce.",
     },
     it: {
-      title: "Chi siamo – AutoVendo, la piattaforma auto equa della Svizzera",
+      title: "Chi siamo – AutoSolo, vendita auto tra privati in Svizzera",
       description:
-        "Autovendo.ch è l'alternativa conveniente ad AutoScout24 per i concessionari svizzeri. Equo, trasparente, senza costi nascosti.",
-    },
-  } satisfies PageMeta,
-
-  sell: {
-    de: {
-      title: "Auto inserieren Schweiz – Günstiger als AutoScout24 | AutoVendo",
-      description:
-        "Schalten Sie Ihr Autoinserat auf autovendo.ch. Händlerpakete ab CHF 180/Monat – deutlich günstiger als AutoScout24. Mehr Käufer, weniger Kosten.",
-    },
-    en: {
-      title:
-        "List Your Car in Switzerland – Cheaper than AutoScout | AutoVendo",
-      description:
-        "Post your car listing on autovendo.ch. Dealer packages from CHF 180/month – significantly cheaper than AutoScout24. More buyers, lower costs.",
-    },
-    fr: {
-      title:
-        "Déposer annonce auto Suisse – Moins cher qu'AutoScout | AutoVendo",
-      description:
-        "Publiez votre annonce sur autovendo.ch. Forfaits dès CHF 180/mois – bien moins cher qu'AutoScout24. Plus d'acheteurs, moins de frais.",
-    },
-    it: {
-      title: "Inserire auto Svizzera – Più economico di AutoScout | AutoVendo",
-      description:
-        "Pubblica il tuo annuncio su autovendo.ch. Pacchetti da CHF 180/mese – molto più economico di AutoScout24. Più acquirenti, meno costi.",
+        "Autosolo.ch è la piattaforma per i venditori privati in Svizzera. Equo, trasparente, senza abbonamento – da CHF 19 per annuncio.",
     },
   } satisfies PageMeta,
 } as const;

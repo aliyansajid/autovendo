@@ -49,7 +49,7 @@ export default function NotFound() {
         {/* Footer Branding */}
         <div className="mt-12 flex items-center justify-center gap-4 text-sm font-medium tracking-[0.2em] text-muted-foreground uppercase opacity-40 select-none">
           <span className="h-px w-8 bg-current" />
-          <span>AutoVendo.ch</span>
+          <span>AutoSolo.ch</span>
           <span className="h-px w-8 bg-current" />
         </div>
       </div>
