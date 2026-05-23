@@ -7,7 +7,7 @@ import { createDealerProfileSchema } from "@/schema/profile-schema";
 import { getTranslations } from "next-intl/server";
 import { createDealerContactSchema } from "@/schema/dealer-contact-schema";
 import { revalidatePath } from "next/cache";
-import { sendEmail, DealerContactEmail } from "@repo/transactional";
+import { sendEmail, ListingContactEmail } from "@repo/transactional";
 import {
   cacheGet,
   cacheSet,
@@ -540,8 +540,8 @@ export async function sendDealerContactEmail(
       to: dealer.businessEmail,
       subject: `New contact request from ${validatedData.name} – autovendo.ch`,
       replyTo: validatedData.email,
-      template: DealerContactEmail({
-        dealerName: dealer.companyName,
+      template: ListingContactEmail({
+        recipientName: dealer.companyName,
         senderName: validatedData.name,
         senderEmail: validatedData.email,
         senderPhone: validatedData.phone,

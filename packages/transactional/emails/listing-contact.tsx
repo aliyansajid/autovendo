@@ -2,50 +2,51 @@ import {
   Body,
   Container,
   Head,
-  Heading,
   Hr,
   Html,
   Img,
+  Link,
   Section,
   Text,
-  Link,
 } from "@react-email/components";
 
-export interface DealerContactEmailProps {
-  dealerName: string;
+export interface ListingContactEmailProps {
+  recipientName: string;
   senderName: string;
   senderEmail: string;
   senderPhone: string;
   message: string;
+  appName?: string;
+  appUrl?: string;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL
-  : "https://autovendo.ch";
+const defaultBaseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 
-export const DealerContactEmail = ({
-  dealerName,
+export const ListingContactEmail = ({
+  recipientName,
   senderName,
   senderEmail,
   senderPhone,
   message,
-}: DealerContactEmailProps) => (
+  appName = "Autovendo",
+  appUrl = defaultBaseUrl,
+}: ListingContactEmailProps) => (
   <Html>
     <Head />
     <Body style={main}>
       <Container style={container}>
         <Section style={logoSection}>
           <Img
-            src={`${baseUrl}/email-logo.png`}
+            src={`${appUrl}/email-logo.png`}
             width="200"
-            alt="Autovendo"
+            alt={appName}
             style={logo}
           />
         </Section>
 
         <Text style={subtitle}>
-          You have received a new message from <strong>{senderName}</strong> via
-          autovendo.ch.
+          You have received a new message from <strong>{senderName}</strong> via{" "}
+          {appUrl.replace("https://", "")}.
         </Text>
 
         <Hr style={hr} />
@@ -87,14 +88,14 @@ export const DealerContactEmail = ({
           {senderName} ({senderEmail}).
         </Text>
         <Text style={footer}>
-          This is an automated message from autovendo.ch
+          This is an automated message from {appUrl.replace("https://", "")}
         </Text>
       </Container>
     </Body>
   </Html>
 );
 
-export default DealerContactEmail;
+export default ListingContactEmail;
 
 // ---------------------------------------------------------------------------
 // Styles
@@ -119,14 +120,6 @@ const logoSection = {
 
 const logo = {
   margin: "0 auto",
-};
-
-const h1 = {
-  color: "#111827",
-  fontSize: "24px",
-  fontWeight: "600",
-  textAlign: "center" as const,
-  margin: "30px 0",
 };
 
 const subtitle = {

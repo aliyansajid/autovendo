@@ -56,8 +56,8 @@ export async function sendEmail({ to, subject, template, replyTo }: SendEmailOpt
 
 export default sendEmail;
 
-export { DealerContactEmail } from "../emails/dealer-contact";
-export type { DealerContactEmailProps } from "../emails/dealer-contact";
+export { ListingContactEmail } from "../emails/listing-contact";
+export type { ListingContactEmailProps } from "../emails/listing-contact";
 
 export { AccountBannedEmail } from "../emails/account-banned";
 export { AccountUnbannedEmail } from "../emails/account-unbanned";
