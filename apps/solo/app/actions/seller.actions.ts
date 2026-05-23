@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { prisma } from "@repo/db";
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
@@ -47,9 +48,20 @@ export async function getSellerProfile(): Promise<SellerProfile | null> {
   return seller as SellerProfile | null;
 }
 
+// Server-side schema for seller-only fields.
+// name, email, image are Better Auth's responsibility (user table)
+// and are updated via authClient.updateUser() / authClient.changeEmail().
+const sellerFieldsSchema = z.object({
+  phoneNumber: z
+    .string()
+    .min(1)
+    .regex(/^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/),
+  streetAddress: z.string().min(5).max(100),
+  zipCode: z.string().min(4).max(10),
+  city: z.string().min(2).max(50),
+});
+
 export async function updateSellerProfile(values: {
-  name: string;
-  email: string;
   phoneNumber: string;
   streetAddress: string;
   zipCode: string;
@@ -58,21 +70,22 @@ export async function updateSellerProfile(values: {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return { success: false, error: "Unauthorized" };
 
-  try {
-    const nameParts = values.name.trim().split(" ");
-    const firstName = nameParts[0] || "";
-    const lastName = nameParts.slice(1).join(" ") || firstName;
+  const parsed = sellerFieldsSchema.safeParse(values);
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: parsed.error.errors[0]?.message ?? "Invalid input",
+    };
+  }
 
+  try {
     await prisma.seller.update({
       where: { userId: session.user.id },
       data: {
-        firstName,
-        lastName,
-        phoneNumber: values.phoneNumber,
-        email: values.email,
-        streetAddress: values.streetAddress,
-        zipCode: values.zipCode,
-        city: values.city,
+        phoneNumber: parsed.data.phoneNumber,
+        streetAddress: parsed.data.streetAddress,
+        zipCode: parsed.data.zipCode,
+        city: parsed.data.city,
       },
     });
 

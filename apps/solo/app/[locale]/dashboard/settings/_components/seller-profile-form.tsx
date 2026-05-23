@@ -56,27 +56,41 @@ export const SellerProfileForm = ({ initialData }: SellerProfileFormProps) => {
   function onSubmit(values: FormValues) {
     startTransition(async () => {
       try {
-        const result = await updateSellerProfile(values);
+        const nameChanged = values.name !== initialData?.user?.name;
+        const emailChanged = values.email !== initialData?.user?.email;
+        const sellerFieldsChanged =
+          values.phoneNumber !== initialData?.phoneNumber ||
+          values.streetAddress !== initialData?.streetAddress ||
+          values.zipCode !== initialData?.zipCode ||
+          values.city !== initialData?.city;
 
-        if (!result.success) {
-          toast.error(t("profileUpdateError"));
-          return;
+        // 1. Update seller-specific fields (phone, address) via server action
+        if (sellerFieldsChanged) {
+          const result = await updateSellerProfile({
+            phoneNumber: values.phoneNumber,
+            streetAddress: values.streetAddress,
+            zipCode: values.zipCode,
+            city: values.city,
+          });
+
+          if (!result.success) {
+            toast.error(t("profileUpdateError"));
+            return;
+          }
         }
 
-        const userUpdates: { name?: string } = {};
-        if (values.name !== initialData?.user?.name) {
-          userUpdates.name = values.name;
-        }
-
-        if (Object.keys(userUpdates).length > 0) {
-          const { error } = await authClient.updateUser(userUpdates);
+        // 2. Update name via Better Auth (user table)
+        if (nameChanged) {
+          const { error } = await authClient.updateUser({ name: values.name });
           if (error) {
             toast.error(error.message || t("userUpdateError"));
             return;
           }
         }
 
-        if (values.email !== initialData?.user?.email) {
+        // 3. Email change via Better Auth — sends confirmation to new email,
+        //    user.email is only updated after they click the link
+        if (emailChanged) {
           const { error } = await authClient.changeEmail({
             newEmail: values.email,
             callbackURL: `/${locale}/dashboard/settings/profile`,
