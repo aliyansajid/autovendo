@@ -21,11 +21,11 @@ export const PricingButton = ({
   const { data: session } = authClient.useSession();
 
   const handleClick = () => {
-    const destination = "/dashboard/subscription";
+    const destination = "/dashboard/billing";
     if (session) {
       router.push(destination);
     } else {
-      const callbackUrl = `/${locale}/dashboard/subscription`;
+      const callbackUrl = `/${locale}/dashboard/billing`;
       router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
     }
   };

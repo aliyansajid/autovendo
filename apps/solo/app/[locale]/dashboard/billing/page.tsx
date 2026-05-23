@@ -6,7 +6,6 @@ import { getBillingData } from "@/app/actions/billing.actions";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
-import { Progress } from "@repo/ui/components/progress";
 import {
   Table,
   TableBody,
@@ -20,19 +19,9 @@ import {
   ExternalLink,
   Download,
   Receipt,
-  CheckCircle2,
+
 } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@repo/ui/src/components/card";
 import { BillingPortalButton } from "./_components/billing-portal-button";
-import { SubscribeButton } from "./_components/subscribe-button";
-import { SubscriptionActions } from "./_components/subscription-actions";
 import {
   formatPrice,
   formatDateShort,

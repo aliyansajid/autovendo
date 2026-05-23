@@ -54,7 +54,7 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
     },
     {
       title: t("billing"),
-      url: "/dashboard/subscription",
+      url: "/dashboard/billing",
       icon: CreditCard,
     },
     {

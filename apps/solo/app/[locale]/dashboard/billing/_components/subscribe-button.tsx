@@ -33,7 +33,7 @@ export const SubscribeButton = ({
   const handleSubscribe = () => {
     if (!session) {
       toast.error(t("loginRequired"));
-      router.push(`/login?callbackUrl=/dashboard/subscription`);
+      router.push(`/login?callbackUrl=/dashboard/billing`);
       return;
     }
 
@@ -52,9 +52,9 @@ export const SubscribeButton = ({
         plan: planName.toLowerCase(),
         successUrl: toAbsolute(
           successUrl,
-          "/dashboard/subscription?success=true",
+          "/dashboard/billing?success=true",
         ),
-        cancelUrl: toAbsolute(cancelUrl, "/dashboard/subscription"),
+        cancelUrl: toAbsolute(cancelUrl, "/dashboard/billing"),
         ...(activeSubscription?.stripeSubscriptionId && {
           subscriptionId: activeSubscription.stripeSubscriptionId,
         }),
