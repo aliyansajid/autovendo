@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import { Badge } from "@repo/ui/components/badge";
-import { Progress } from "@repo/ui/components/progress";
 import {
   Car,
   CheckCircle2,
@@ -17,13 +16,8 @@ import {
   Plus,
   ArrowRight,
   TrendingUp,
-  AlertCircle,
-  CreditCard,
 } from "lucide-react";
-import {
-  getVehicleSubscriptionStatus,
-  getDashboardSummary,
-} from "@/app/actions/vehicles.actions";
+import { getDashboardSummary } from "@/app/actions/vehicles.actions";
 import { getTranslations } from "next-intl/server";
 import {
   formatPrice,
@@ -41,31 +35,7 @@ export default async function DashboardPage(props: {
   const { locale } = await props.params;
   const t = await getTranslations("DashboardPage");
 
-  const [subscriptionsResponse, subscriptionStatus, summary, plans] =
-    await Promise.all([
-      (auth.api as any).listActiveSubscriptions({ headers: await headers() }),
-      getVehicleSubscriptionStatus(),
-      getDashboardSummary(),
-      prisma.plan.findMany({ select: { name: true, price: true } }),
-    ]);
-
-  const subscriptions = Array.isArray(subscriptionsResponse)
-    ? subscriptionsResponse
-    : (subscriptionsResponse as any)?.data || [];
-  const activeSubscription = subscriptions.find((s: any) =>
-    ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(
-      s.status,
-    ),
-  );
-
-  const currentPlan = plans.find(
-    (p) => p.name.toLowerCase() === activeSubscription?.plan?.toLowerCase(),
-  );
-
-  const quotaPct =
-    subscriptionStatus.maxVehicles > 0
-      ? (subscriptionStatus.currentCount / subscriptionStatus.maxVehicles) * 100
-      : 0;
+  const summary = await getDashboardSummary();
 
   return (
     <div className="space-y-8 pb-10">
@@ -82,19 +52,6 @@ export default async function DashboardPage(props: {
         </Button>
       </div>
 
-      {/* Critical Alerts */}
-      {subscriptionStatus.type === "past_due" && (
-        <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex items-start gap-3 text-destructive animate-in fade-in slide-in-from-top-4">
-          <AlertCircle className="size-5 shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="font-semibold">{t("paymentFailedTitle")}</p>
-            <p className="text-sm opacity-90">{t("paymentFailedDesc")}</p>
-            <Button size="sm" variant="destructive" asChild className="mt-2">
-              <Link href="/dashboard/subscription">{t("fixPayment")}</Link>
-            </Button>
-          </div>
-        </div>
-      )}
 
       {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -137,65 +94,32 @@ export default async function DashboardPage(props: {
                   <LayoutDashboard className="size-5 text-primary" />
                   {t("planOverview")}
                 </CardTitle>
-                {activeSubscription && (
-                  <Badge
-                    className={
-                      activeSubscription.status === "active" ||
-                      activeSubscription.status === "trialing"
-                        ? "bg-green-500 hover:bg-green-600 border-0"
-                        : "bg-destructive border-0 text-white"
-                    }
-                  >
-                    {activeSubscription.status.toUpperCase()}
-                  </Badge>
-                )}
+                <Badge className="bg-green-500 hover:bg-green-600 border-0">
+                  Pay-per-Listing
+                </Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
-                    {t("currentPlan")}
+                    Standard
                   </p>
-                  <p className="text-2xl font-bold">
-                    {currentPlan?.name || "No Active Plan"}
-                  </p>
-                  {activeSubscription?.periodEnd && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {t("nextBilling", {
-                        date: formatDateShort(
-                          activeSubscription.periodEnd,
-                          locale,
-                        ),
-                      })}
-                    </p>
-                  )}
+                  <p className="text-2xl font-bold">CHF 19</p>
+                  <p className="text-sm text-muted-foreground mt-1">per listing / 30 days</p>
                 </div>
                 <div className="text-right sm:text-left">
                   <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
-                    {t("price")}
+                    Best Value
                   </p>
-                  <p className="text-2xl font-bold">
-                    {formatPrice(currentPlan?.price || 0)}
-                    <span className="text-sm font-normal text-muted-foreground ml-1">
-                      / {t("month")}
-                    </span>
-                  </p>
+                  <p className="text-2xl font-bold">CHF 49</p>
+                  <p className="text-sm text-muted-foreground mt-1">until sold</p>
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2">
-                <div className="flex justify-between text-sm font-medium">
-                  <span>{t("listingQuota")}</span>
-                  <span>
-                    {summary.publishedCount} / {subscriptionStatus.maxVehicles}
-                  </span>
-                </div>
-                <Progress value={quotaPct} className="h-3 rounded-full" />
-                <p className="text-xs text-muted-foreground text-right italic">
-                  {t("remainingSlots", {
-                    count: subscriptionStatus.remainingQuota,
-                  })}
+              <div className="p-4 bg-muted/30 rounded-xl border border-dashed text-center">
+                <p className="text-sm font-medium text-muted-foreground">
+                  {t("helpDesc")}
                 </p>
               </div>
             </CardContent>
@@ -291,16 +215,6 @@ export default async function DashboardPage(props: {
                 <Link href="/dashboard/vehicles/new">
                   <Plus />
                   {t("newListing")}
-                </Link>
-              </Button>
-              <Button
-                variant="secondary"
-                className="w-full justify-start"
-                asChild
-              >
-                <Link href="/dashboard/subscription">
-                  <CreditCard />
-                  {t("billingSettings")}
                 </Link>
               </Button>
               <Button
