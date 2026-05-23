@@ -1,6 +1,6 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
-import { getDealerProfile } from "@/app/actions/dealer.actions";
+import { getSellerProfile } from "@/app/actions/seller.actions";
 import {
   getVehicleById,
   getVehicleSubscriptionStatus,
@@ -24,8 +24,8 @@ export default async function EditVehiclePage({
     headers: await headers(),
   });
 
-  const [dealerProfile, vehicle, subscriptionStatus] = await Promise.all([
-    session?.user?.id ? getDealerProfile() : null,
+  const [sellerProfile, vehicle, subscriptionStatus] = await Promise.all([
+    session?.user?.id ? getSellerProfile() : null,
     getVehicleById(id),
     getVehicleSubscriptionStatus(),
   ]);
@@ -51,7 +51,7 @@ export default async function EditVehiclePage({
         </div>
       </div>
       <VehicleForm
-        dealerProfile={dealerProfile}
+        sellerProfile={sellerProfile}
         initialData={initialData}
         vehicleId={id}
         subscriptionStatus={subscriptionStatus}

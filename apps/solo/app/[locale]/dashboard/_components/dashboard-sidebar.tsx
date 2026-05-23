@@ -27,7 +27,7 @@ interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
 /**
  * Dashboard Sidebar Component
  * 
- * Provides the primary navigation for the dealer dashboard.
+ * Provides the primary navigation for the seller dashboard.
  * - Dynamically localizes all menu items
  * - Integrates with the User Profile (NavUser) and Main Navigation (NavMain)
  * - Persists across all dashboard sub-pages

@@ -5,7 +5,7 @@ import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@repo/ui/lib/utils";
 import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
-import { DealerProfile } from "@/types/dealer";
+import { SellerProfile } from "@/app/actions/seller.actions";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import {
@@ -128,12 +128,12 @@ const STEP_FIELDS: Record<number, any[]> = {
 };
 
 export function VehicleForm({
-  dealerProfile,
+  sellerProfile,
   initialData,
   vehicleId,
   subscriptionStatus,
 }: {
-  dealerProfile: DealerProfile | null;
+  sellerProfile: SellerProfile | null;
   initialData?: z.infer<ReturnType<typeof createVehicleFormSchema>>;
   vehicleId?: string;
   subscriptionStatus?: SubscriptionStatus;
@@ -226,12 +226,12 @@ export function VehicleForm({
       equipment: {},
       extras: {},
       ...(initialData || {}),
-      companyName: initialData?.companyName || dealerProfile?.companyName || "",
-      businessEmail: initialData?.businessEmail || dealerProfile?.businessEmail || "",
-      phoneNumber: initialData?.phoneNumber || dealerProfile?.phoneNumber || "",
-      address: initialData?.address || dealerProfile?.streetAddress || "",
-      zipCode: initialData?.zipCode || dealerProfile?.zipCode || "",
-      city: initialData?.city || dealerProfile?.city || "",
+      companyName: initialData?.companyName || (sellerProfile ? `${sellerProfile.firstName} ${sellerProfile.lastName}` : ""),
+      businessEmail: initialData?.businessEmail || sellerProfile?.email || "",
+      phoneNumber: initialData?.phoneNumber || sellerProfile?.phoneNumber || "",
+      address: initialData?.address || sellerProfile?.streetAddress || "",
+      zipCode: initialData?.zipCode || sellerProfile?.zipCode || "",
+      city: initialData?.city || sellerProfile?.city || "",
       status: (initialData?.status as any) || "DRAFT",
     },
   });

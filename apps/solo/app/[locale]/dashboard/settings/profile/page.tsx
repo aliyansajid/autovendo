@@ -1,4 +1,4 @@
-import { getSellerProfile } from "@/app/actions/dealer.actions";
+import { getSellerProfile } from "@/app/actions/seller.actions";
 import { SellerProfileForm } from "@/app/[locale]/dashboard/settings/_components/seller-profile-form";
 import { getTranslations } from "next-intl/server";
 

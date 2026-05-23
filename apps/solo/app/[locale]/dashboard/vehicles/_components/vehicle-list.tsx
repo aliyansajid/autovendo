@@ -94,7 +94,7 @@ const statusVariantMap: Record<
  * Vehicle List Component (Client-side)
  *
  * Features:
- * - Tabular view of all dealer vehicles
+ * - Tabular view of all seller vehicles
  * - Real-time filtering by brand, model, and version
  * - Direct actions for editing and deleting vehicles
  * - Formatted display using Swiss (de-CH) technical standards

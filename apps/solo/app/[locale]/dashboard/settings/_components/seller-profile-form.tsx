@@ -21,9 +21,9 @@ import { useTranslations, useLocale } from "next-intl";
 import { authClient } from "@repo/auth/client";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { updateSellerProfile } from "@/app/actions/dealer.actions";
+import { updateSellerProfile } from "@/app/actions/seller.actions";
 import { Spinner } from "@repo/ui/components/spinner";
-import type { SellerProfile } from "@/app/actions/dealer.actions";
+import type { SellerProfile } from "@/app/actions/seller.actions";
 import { SelectItem } from "@repo/ui/components/select";
 import { swissCities } from "@/lib/constants/swiss-cities";
 
@@ -34,7 +34,7 @@ interface SellerProfileFormProps {
 }
 
 export const SellerProfileForm = ({ initialData }: SellerProfileFormProps) => {
-  const t = useTranslations("DealerProfileForm");
+  const t = useTranslations("ProfileForm");
   const locale = useLocale();
   const [isPending, startTransition] = useTransition();
 

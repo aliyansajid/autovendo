@@ -1,7 +1,7 @@
 import { Button } from "@repo/ui/components/button";
 import { Plus } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { getDealerVehicles } from "@/app/actions/vehicles.actions";
+import { getSellerVehicles } from "@/app/actions/vehicles.actions";
 import { VehicleList } from "./_components/vehicle-list";
 import { getTranslations } from "next-intl/server";
 
@@ -11,7 +11,7 @@ export default async function VehiclesPage(props: {
   const { locale } = await props.params;
   const t = await getTranslations("VehiclesPage");
 
-  const vehicles = await getDealerVehicles();
+  const vehicles = await getSellerVehicles();
 
   return (
     <div className="space-y-6">

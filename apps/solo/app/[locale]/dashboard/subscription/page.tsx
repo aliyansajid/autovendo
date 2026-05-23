@@ -43,7 +43,7 @@ import {
 /**
  * Subscription Management Page
  *
- * Handles the dealer's billing lifecycle:
+ * Handles the seller's billing lifecycle:
  * - Displays active plan details and next billing date
  * - Shows current listing quota vs. plan limits
  * - Lists available upgrade/downgrade plans fetched from DB
