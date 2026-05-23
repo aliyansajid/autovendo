@@ -30,7 +30,7 @@ export async function sendEmail({ to, subject, template, replyTo }: SendEmailOpt
     const html = await render(template);
 
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || '"Autovendo" <info@autovendo.ch>',
+      from: process.env.EMAIL_FROM,
       to,
       subject,
       replyTo,
