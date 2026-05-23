@@ -19,9 +19,9 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: "Amazonbot", disallow: "/" },
       { userAgent: "meta-externalagent", disallow: "/" },
       { userAgent: "Applebot-Extended", disallow: "/" },
-      // Allow Google-Extended so AutoVendo appears in Google AI Overviews
+      // Allow Google-Extended so AutoSolo appears in Google AI Overviews
       { userAgent: "Google-Extended", allow: "/" },
     ],
-    sitemap: "https://autovendo.ch/sitemap.xml",
+    sitemap: "https://autosolo.ch/sitemap.xml",
   };
 }

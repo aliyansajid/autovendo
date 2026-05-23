@@ -1,6 +1,6 @@
-# 🌐 AutoVendo — Web Portal
+# 🌐 AutoSolo — Web Portal
 
-The flagship customer-facing marketplace for AutoVendo. Designed for visual excellence and robust data integrity.
+The flagship customer-facing marketplace for AutoSolo. Designed for visual excellence and robust data integrity.
 
 ## 🚀 Key Modules
 

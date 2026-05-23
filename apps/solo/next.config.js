@@ -9,7 +9,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cdn.autovendo.ch",
+        hostname: "cdn.autosolo.ch",
       },
     ],
   },
@@ -24,7 +24,7 @@ const nextConfig = {
 };
 
 export default withSentryConfig(withNextIntl(nextConfig), {
-  org: "autovendo",
+  org: "autosolo",
   project: "autosolo",
 
   silent: !process.env.CI,
