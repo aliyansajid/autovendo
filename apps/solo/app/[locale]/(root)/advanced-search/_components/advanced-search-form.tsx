@@ -46,7 +46,7 @@ export const AdvancedSearchForm = () => {
   const schema = useMemo(() => createAdvancedSearchFormSchema(t_schema), [t_schema]);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const dealerId = searchParams.get("dealer");
+  
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema) as any,
@@ -72,7 +72,7 @@ export const AdvancedSearchForm = () => {
         form.getValues() as Record<string, unknown>,
         vehicleType,
       ),
-      ...(dealerId ? { dealerId } : {}),
+      
     };
 
     getVehicleCountAndFacets(params)
@@ -90,7 +90,7 @@ export const AdvancedSearchForm = () => {
       debounceRef.current = setTimeout(() => {
         const params = {
           ...buildSearchParams(values as Record<string, unknown>, vehicleType),
-          ...(dealerId ? { dealerId } : {}),
+          
         };
         getVehicleCountAndFacets(params)
           .then(({ total: t, facets: f }) => {
@@ -108,7 +108,7 @@ export const AdvancedSearchForm = () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       subscription.unsubscribe();
     };
-  }, [form, vehicleType, dealerId]);
+  }, [form, vehicleType]);
 
   function onSubmit(data: z.infer<typeof schema>) {
     const params = buildSearchParams(
@@ -117,11 +117,7 @@ export const AdvancedSearchForm = () => {
     );
     const query = paramsToQueryString(params);
 
-    if (dealerId) {
-      router.push(`/dealers/${dealerId}?tab=cars&${query}`);
-    } else {
-      router.push(query ? `/cars?${query}` : "/cars");
-    }
+    router.push(query ? `/cars?${query}` : "/cars");
   }
 
   return (

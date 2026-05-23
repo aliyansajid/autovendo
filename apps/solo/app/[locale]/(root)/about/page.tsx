@@ -135,7 +135,7 @@ export default async function AboutPage() {
             <Separator />
 
             <p className="text-muted-foreground text-lg">
-              {t("whyAllDealers")}
+              {t("whyAllSellers")}
             </p>
           </section>
 

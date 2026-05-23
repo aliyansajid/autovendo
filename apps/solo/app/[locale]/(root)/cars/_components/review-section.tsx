@@ -22,14 +22,14 @@ interface ReviewSectionProps {
   rating: number;
   count: number;
   reviews?: Review[];
-  dealerId: string | number;
+  sellerId: string | number;
 }
 
 export const ReviewSection = ({
   rating,
   count,
   reviews = [],
-  dealerId,
+  sellerId,
 }: ReviewSectionProps) => {
   const t = useTranslations("ReviewSection");
   return (
@@ -83,7 +83,7 @@ export const ReviewSection = ({
 
         {reviews.length > 0 && (
           <Link
-            href={`/dealers/${dealerId}`}
+            href={`/cars?seller=${sellerId}`}
             className="flex items-center gap-2 text-primary text-sm font-medium hover:underline"
           >
             {t("showAll")} <ArrowRight className="size-4" />

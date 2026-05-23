@@ -31,7 +31,7 @@ export const ListingHeader = ({ make, model, trim }: ListingHeaderProps) => {
   const handleShare = async () => {
     const shareData = {
       title: displayName,
-      text: `${displayName} – AutoVendo`,
+      text: `${displayName} – AutoSolo`,
       url: window.location.href,
     };
 

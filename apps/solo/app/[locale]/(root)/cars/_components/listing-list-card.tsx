@@ -23,7 +23,7 @@ import {
 
 export interface ListingListCardProps {
   item: VehicleListItem;
-  showDealerLink?: boolean;
+  showSellerLink?: boolean;
 }
 
 /**
@@ -32,7 +32,7 @@ export interface ListingListCardProps {
  */
 export function ListingListCard({
   item,
-  showDealerLink = true,
+  showSellerLink = true,
 }: ListingListCardProps) {
   const t = useTranslations();
   const tCard = useTranslations("ListingListCard");

@@ -108,7 +108,7 @@ export async function generateMetadata({
     kmFormatted,
     item.fuelType,
     item.seller?.city ? `in ${item.seller.city}` : null,
-    "auf autovendo.ch.",
+    "auf autosolo.ch.",
   ]
     .filter(Boolean)
     .join(", ");
@@ -402,7 +402,7 @@ export default async function ListingPage({
       price: item.price,
       priceCurrency: "CHF",
       availability: "https://schema.org/InStock",
-      url: `https://autovendo.ch/${locale}/cars/${item.id}`,
+      url: `https://autosolo.ch/${locale}/cars/${item.id}`,
       seller: {
         "@type": "Person",
         name: seller.name,
@@ -425,20 +425,20 @@ export default async function ListingPage({
       {
         "@type": "ListItem",
         position: 1,
-        name: "AutoVendo",
-        item: `https://autovendo.ch/${locale}`,
+        name: "AutoSolo",
+        item: `https://autosolo.ch/${locale}`,
       },
       {
         "@type": "ListItem",
         position: 2,
         name: locale === "fr" ? "Voitures" : locale === "it" ? "Auto" : "Fahrzeuge",
-        item: `https://autovendo.ch/${locale}/cars`,
+        item: `https://autosolo.ch/${locale}/cars`,
       },
       {
         "@type": "ListItem",
         position: 3,
         name: title,
-        item: `https://autovendo.ch/${locale}/cars/${item.id}`,
+        item: `https://autosolo.ch/${locale}/cars/${item.id}`,
       },
     ],
   };
@@ -516,7 +516,7 @@ export default async function ListingPage({
                   <Store className="text-muted-foreground" strokeWidth={1.5} />
                 }
                 label={t("sellerType")}
-                value={t("dealer")}
+                value={t("privateSeller")}
               />
             </CardContent>
           </Card>
@@ -610,7 +610,7 @@ export default async function ListingPage({
                 rating={seller.rating}
                 count={seller.reviewCount ?? 0}
                 reviews={[]}
-                dealerId={seller.id}
+                sellerId={seller.id}
               />
             )}
 
@@ -643,7 +643,7 @@ export default async function ListingPage({
                   <div className="flex items-center gap-2">
                     <BadgeCheck className="size-4 text-primary" />
                     <span className="text-sm font-medium text-primary">
-                      {t("verifiedDealer")}
+                      {t("verifiedSeller")}
                     </span>
                   </div>
                 )}
@@ -712,7 +712,7 @@ export default async function ListingPage({
                   </Button>
                 )}
                 <Button variant="link" className="w-full" asChild>
-                  <Link href={`/dealers/${seller.id}`}>
+                  <Link href={`/cars?seller=${seller.id}`}>
                     {t("allVehicles")}
                   </Link>
                 </Button>

@@ -123,7 +123,7 @@ export const SellerSection = ({ seller }: SellerSectionProps) => {
                 </Link>
 
                 <Link
-                  href={`/cars?dealerId=${seller.id}`}
+                  href={`/cars?seller=${seller.id}`}
                   className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
                 >
                   <ArrowRight className="size-4" />
