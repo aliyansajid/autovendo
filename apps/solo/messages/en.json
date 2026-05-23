@@ -825,8 +825,14 @@
   "PricingPage": {
     "title": "Simple & Transparent Pricing",
     "subtitle": "Choose the plan that fits your needs. No hidden fees, no subscriptions.",
+    "selectPlanTitle": "Select your listing plan",
+    "selectPlanSubtitle": "Choose how you want to sell your vehicle. Each listing is paid individually.",
+    "selected": "Selected",
+    "popular": "Popular",
+    "selectPlan": "Select Plan",
     "standard": {
       "name": "Standard",
+      "description": "List your car for 30 days and reach private buyers.",
       "price": "19",
       "duration": "30 days listing",
       "features": [
@@ -837,10 +843,11 @@
       "button": "Start Selling"
     },
     "bestValue": {
-      "name": "BEST VALUE",
+      "name": "Best Value",
+      "description": "Sell without time pressure — active until your car is sold.",
       "badge": "Most Popular",
       "price": "49",
-      "duration": "Until your car is sold",
+      "duration": "Until sold",
       "features": [
         "No time limit",
         "No renewals",
@@ -1170,6 +1177,7 @@
     "status_BANNED": "Banned",
     "edit": "Edit",
     "publish": "Publish",
+    "payAndPublish": "Pay & Publish",
     "statusDraft": "Set as Draft",
     "statusSold": "Mark as Sold",
     "statusUpdateSuccess": "Status updated successfully!",

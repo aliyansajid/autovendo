@@ -822,8 +822,14 @@
   "PricingPage": {
     "title": "Prezzi semplici e trasparenti",
     "subtitle": "Scegli il piano più adatto alle tue esigenze. Nessun costo nascosto, nessun abbonamento.",
+    "selectPlanTitle": "Scegli il tuo piano di inserzione",
+    "selectPlanSubtitle": "Scegli come vendere il tuo veicolo. Ogni inserzione viene pagata singolarmente.",
+    "selected": "Selezionato",
+    "popular": "Popolare",
+    "selectPlan": "Scegli piano",
     "standard": {
       "name": "Standard",
+      "description": "Inserisci la tua auto per 30 giorni e raggiungi acquirenti privati.",
       "price": "19",
       "duration": "Annuncio per 30 giorni",
       "features": [
@@ -834,10 +840,11 @@
       "button": "Inizia a vendere"
     },
     "bestValue": {
-      "name": "MIGLIOR VALORE",
+      "name": "Miglior valore",
+      "description": "Vendi senza pressione — attivo finché la tua auto non viene venduta.",
       "badge": "Il più popolare",
       "price": "49",
-      "duration": "Finché la tua auto non viene venduta",
+      "duration": "Fino alla vendita",
       "features": [
         "Nessun limite di tempo",
         "Nessun rinnovo",
@@ -1171,6 +1178,7 @@
     "status_BANNED": "Bannato",
     "edit": "Modifica",
     "publish": "Pubblica",
+    "payAndPublish": "Paga & Pubblica",
     "statusDraft": "Imposta come bozza",
     "statusSold": "Segna come venduto",
     "statusUpdateSuccess": "Stato aggiornato con successo!",

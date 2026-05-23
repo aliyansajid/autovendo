@@ -125,6 +125,8 @@ const VEHICLE_LIST_SELECT = {
   images: true,
   status: true,
   equipment: true,
+  listingPaidAt: true,
+  listingPlan: true,
   seller: {
     select: {
       id: true,
@@ -1525,18 +1527,23 @@ export async function updateVehicle(
 
   const existingVehicle = await prisma.vehicle.findUnique({
     where: { id: vehicleId, sellerId: seller.id },
-    select: { images: true, vin: true, status: true },
+    select: { images: true, vin: true, status: true, listingPaidAt: true },
   });
 
   if (!existingVehicle) {
     throw new Error("Vehicle not found");
   }
 
+  // SECURITY: Block publishing without payment for solo seller vehicles
+  if (validatedData.status === "PUBLISHED" && !existingVehicle.listingPaidAt) {
+    throw new Error("Payment required before publishing");
+  }
+
   // SECURITY: VIN LOCK
-  // If the vehicle is already PUBLISHED or SOLD, prevent changing critical identity fields
-  if (existingVehicle.status === "PUBLISHED" || existingVehicle.status === "SOLD") {
+  // Once payment is made, VIN is permanently locked regardless of listing status
+  if (existingVehicle.listingPaidAt) {
     if (existingVehicle.vin && validatedData.vehicleIdentificationNumber && existingVehicle.vin !== validatedData.vehicleIdentificationNumber) {
-      throw new Error("VIN cannot be changed after publication");
+      throw new Error("VIN cannot be changed after payment");
     }
   }
 
@@ -1685,6 +1692,42 @@ export async function updateVehicleStatus(id: string, status: string) {
     cacheDeletePattern(`seller:vehicles:${seller.id}:*`),
   ]);
   revalidatePath("/dashboard/vehicles");
+}
+
+/**
+ * Publish a DRAFT vehicle if payment is already done,
+ * or return a Stripe checkout URL if payment is still pending.
+ */
+export async function publishOrPay(id: string): Promise<{ checkoutUrl: string } | { published: true }> {
+  const seller = await getCurrentSeller();
+  if (!seller) throw new Error("Unauthorized");
+
+  const vehicle = await prisma.vehicle.findUnique({
+    where: { id, sellerId: seller.id },
+    select: { id: true, listingPaidAt: true, listingPlan: true, make: true, model: true, vin: true, sellerId: true },
+  });
+
+  if (!vehicle) throw new Error("Vehicle not found");
+
+  // Already paid — just publish
+  if (vehicle.listingPaidAt) {
+    await prisma.vehicle.update({
+      where: { id },
+      data: { status: "PUBLISHED" },
+    });
+    await Promise.all([
+      cacheDeletePattern("vehicles:*"),
+      cacheDeletePattern(`seller:vehicles:${seller.id}:*`),
+    ]);
+    revalidatePath("/dashboard/vehicles");
+    return { published: true };
+  }
+
+  // Not paid — create a new Stripe checkout session
+  const { createListingCheckoutSession } = await import("./listings.actions");
+  const planId = (vehicle.listingPlan as "standard" | "best_value") || "standard";
+  const checkoutUrl = await createListingCheckoutSession(id, planId);
+  return { checkoutUrl };
 }
 
 export async function deleteVehicle(id: string) {

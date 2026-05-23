@@ -822,8 +822,14 @@
   "PricingPage": {
     "title": "Tarification simple et transparente",
     "subtitle": "Choisissez le plan qui correspond à vos besoins. Pas de frais cachés, pas d'abonnements.",
+    "selectPlanTitle": "Choisissez votre formule d'annonce",
+    "selectPlanSubtitle": "Choisissez comment vendre votre véhicule. Chaque annonce est payée individuellement.",
+    "selected": "Sélectionné",
+    "popular": "Populaire",
+    "selectPlan": "Choisir ce plan",
     "standard": {
       "name": "Standard",
+      "description": "Publiez votre annonce pendant 30 jours et atteignez des acheteurs privés.",
       "price": "19",
       "duration": "Annonce de 30 jours",
       "features": [
@@ -834,10 +840,11 @@
       "button": "Commencer à vendre"
     },
     "bestValue": {
-      "name": "MEILLEURE VALEUR",
+      "name": "Meilleure valeur",
+      "description": "Vendez sans pression — actif jusqu'à la vente de votre voiture.",
       "badge": "Le plus populaire",
       "price": "49",
-      "duration": "Jusqu'à ce que votre voiture soit vendue",
+      "duration": "Jusqu'à la vente",
       "features": [
         "Pas de limite de temps",
         "Pas de renouvellements",
@@ -1170,6 +1177,7 @@
     "status_BANNED": "Banni",
     "edit": "Modifier",
     "publish": "Publier",
+    "payAndPublish": "Payer & Publier",
     "statusDraft": "Mettre en brouillon",
     "statusSold": "Marquer comme vendu",
     "statusUpdateSuccess": "Statut mis à jour avec succès !",

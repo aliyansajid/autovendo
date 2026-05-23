@@ -55,5 +55,11 @@ export async function createListingCheckoutSession(vehicleId: string, planId: "s
 
   if (!stripeSession.url) throw new Error("Failed to create checkout session");
 
+  // Save the plan and session ID so we can resume payment later if user backs out
+  await prisma.vehicle.update({
+    where: { id: vehicleId },
+    data: { listingPlan: planId, stripeSessionId: stripeSession.id },
+  });
+
   return stripeSession.url;
 }

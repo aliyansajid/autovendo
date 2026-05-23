@@ -55,6 +55,8 @@ export default async function EditVehiclePage({
         initialData={initialData}
         vehicleId={id}
         subscriptionStatus={subscriptionStatus}
+        isPaid={!!vehicle.listingPaidAt}
+        listingPlan={(vehicle.listingPlan as "standard" | "best_value") || undefined}
       />
     </div>
   );

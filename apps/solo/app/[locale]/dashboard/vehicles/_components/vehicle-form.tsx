@@ -132,11 +132,15 @@ export function VehicleForm({
   initialData,
   vehicleId,
   subscriptionStatus,
+  isPaid,
+  listingPlan,
 }: {
   sellerProfile: SellerProfile | null;
   initialData?: z.infer<ReturnType<typeof createVehicleFormSchema>>;
   vehicleId?: string;
   subscriptionStatus?: SubscriptionStatus;
+  isPaid?: boolean;
+  listingPlan?: "standard" | "best_value";
 }) {
   const t = useTranslations("VehicleForm");
   const params = useParams();
@@ -355,8 +359,20 @@ export function VehicleForm({
         const { images: _, ...submitData } = data;
         
         if (vehicleId) {
-          await updateVehicle(vehicleId, submitData, finalImageKeys);
-          toast.success(t("successUpdate"));
+          if (isPaid) {
+            // Already paid — update and stay published
+            await updateVehicle(vehicleId, submitData, finalImageKeys);
+            toast.success(t("successUpdate"));
+          } else {
+            // Not paid — save as draft, then redirect to Stripe
+            await updateVehicle(vehicleId, { ...submitData, status: "DRAFT" }, finalImageKeys);
+            const planId = data.planId || listingPlan || "standard";
+            if (!planId) throw new Error("No plan selected");
+            setUploadStatus("Redirecting to payment...");
+            const checkoutUrl = await createListingCheckoutSession(vehicleId, planId as "standard" | "best_value");
+            window.location.href = checkoutUrl;
+            return;
+          }
         } else {
           const result = await createVehicle(listingId, submitData, finalImageKeys) as any;
           if (result && typeof result === "object" && "error" in result) throw new Error(result.error as string);

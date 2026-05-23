@@ -24,6 +24,7 @@ import { getImageUrl } from "@/lib/helpers/image";
 import {
   deleteVehicle,
   updateVehicleStatus,
+  publishOrPay,
   type SubscriptionStatus,
 } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
@@ -76,6 +77,8 @@ interface Vehicle {
   images: string[];
   createdAt: Date;
   status: string;
+  listingPaidAt: Date | null;
+  listingPlan: string | null;
 }
 
 const statusVariantMap: Record<
@@ -258,6 +261,22 @@ function VehicleActions({
     });
   };
 
+  const handlePublish = () => {
+    startTransition(async () => {
+      try {
+        const result = await publishOrPay(vehicle.id);
+        if ("checkoutUrl" in result) {
+          window.location.href = result.checkoutUrl;
+        } else {
+          toast.success(t("statusUpdateSuccess"));
+          router.refresh();
+        }
+      } catch (error) {
+        toast.error(t("statusUpdateError"));
+      }
+    });
+  };
+
   const isCanceled =
     subscriptionStatus?.type === "no_subscription" ||
     subscriptionStatus?.type === "expired";
@@ -289,11 +308,11 @@ function VehicleActions({
 
           {vehicle.status === "DRAFT" && (
             <DropdownMenuItem
-              onSelect={() => handleStatusUpdate("PUBLISHED")}
-              disabled={isStateRestricted || isCanceled || isPastDue || isPending}
+              onSelect={() => handlePublish()}
+              disabled={isStateRestricted || isPending}
             >
               <Send />
-              {t("publish")}
+              {vehicle.listingPaidAt ? t("publish") : t("payAndPublish")}
             </DropdownMenuItem>
           )}
 

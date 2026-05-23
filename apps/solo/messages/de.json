@@ -826,8 +826,14 @@
   "PricingPage": {
     "title": "Einfache & transparente Preise",
     "subtitle": "Wählen Sie den Plan, der zu Ihren Bedürfnissen passt. Keine versteckten Gebühren, keine Abonnements.",
+    "selectPlanTitle": "Wählen Sie Ihr Inserat-Paket",
+    "selectPlanSubtitle": "Wählen Sie, wie Sie Ihr Fahrzeug verkaufen möchten. Jedes Inserat wird einzeln bezahlt.",
+    "selected": "Ausgewählt",
+    "popular": "Beliebt",
+    "selectPlan": "Paket wählen",
     "standard": {
       "name": "Standard",
+      "description": "Inserieren Sie Ihr Auto 30 Tage lang und erreichen Sie private Käufer.",
       "price": "19",
       "duration": "30 Tage Inserat",
       "features": [
@@ -838,10 +844,11 @@
       "button": "Jetzt verkaufen"
     },
     "bestValue": {
-      "name": "BESTES ANGEBOT",
+      "name": "Bestes Angebot",
+      "description": "Verkaufen Sie ohne Zeitdruck – aktiv bis Ihr Auto verkauft ist.",
       "badge": "Am beliebtesten",
       "price": "49",
-      "duration": "Bis Ihr Auto verkauft ist",
+      "duration": "Bis zum Verkauf",
       "features": [
         "Kein Zeitlimit",
         "Keine Verlängerungen",
@@ -1175,6 +1182,7 @@
     "status_BANNED": "Gesperrt",
     "edit": "Bearbeiten",
     "publish": "Veröffentlichen",
+    "payAndPublish": "Bezahlen & Veröffentlichen",
     "statusDraft": "Als Entwurf speichern",
     "statusSold": "Als verkauft markieren",
     "statusUpdateSuccess": "Status erfolgreich aktualisiert!",
