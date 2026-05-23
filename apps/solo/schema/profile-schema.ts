@@ -29,6 +29,28 @@ const createOptionalString = () =>
 const createOptionalUrl = (t: TFn) =>
   z.string().url(t("invalidUrl")).optional().or(z.literal("")).nullable();
 
+export const createSellerProfileSchema = (t: TFn) =>
+  z.object({
+    name: z.string().min(3, t("nameMinLength")).max(50, t("nameMaxLength")),
+    email: z.string().email(t("invalidEmail")),
+    phoneNumber: z
+      .string()
+      .min(1, t("phoneRequired"))
+      .regex(
+        /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/,
+        t("invalidPhoneFormat"),
+      ),
+    streetAddress: z
+      .string()
+      .min(5, t("addressMinLength"))
+      .max(100, t("addressMaxLength")),
+    zipCode: z
+      .string()
+      .min(4, t("zipCodeMinLength"))
+      .max(10, t("zipCodeMaxLength")),
+    city: z.string().min(2, t("cityMinLength")).max(50, t("cityMaxLength")),
+  });
+
 export const createDealerProfileSchema = (t: TFn) =>
   z.object({
     // User fields
@@ -37,10 +59,7 @@ export const createDealerProfileSchema = (t: TFn) =>
     image: createOptionalImage(t),
 
     // Dealer fields
-    companyName: z
-      .string()
-      .min(3, t("companyNameMinLength"))
-      .max(50, t("companyNameMaxLength")),
+    companyName: createOptionalString(),
     description: createOptionalString(),
     website: createOptionalUrl(t),
     logo: createOptionalImage(t),
@@ -55,14 +74,8 @@ export const createDealerProfileSchema = (t: TFn) =>
       .max(10, t("zipCodeMaxLength")),
     city: z.string().min(2, t("cityMinLength")).max(50, t("cityMaxLength")),
     country: z.literal("Switzerland"),
-    uidNumber: z
-      .string()
-      .min(1, t("uidRequired"))
-      .regex(/^CHE-\d{3}\.\d{3}\.\d{3}$/, t("invalidUidFormat")),
-    contactPerson: z
-      .string()
-      .min(3, t("contactPersonMinLength"))
-      .max(50, t("contactPersonMaxLength")),
+    uidNumber: createOptionalString(),
+    contactPerson: createOptionalString(),
     phoneNumber: z
       .string()
       .min(1, t("phoneRequired"))
@@ -73,12 +86,15 @@ export const createDealerProfileSchema = (t: TFn) =>
     businessEmail: z.string().email(t("invalidEmail")),
 
     // Opening Hours
-    openingHours: z.array(
-      z.object({
-        day: z.string(),
-        isOpen: z.boolean(),
-        openTime: z.string().optional().nullable(),
-        closeTime: z.string().optional().nullable(),
-      }),
-    ),
+    openingHours: z
+      .array(
+        z.object({
+          day: z.string(),
+          isOpen: z.boolean(),
+          openTime: z.string().optional().nullable(),
+          closeTime: z.string().optional().nullable(),
+        }),
+      )
+      .optional()
+      .nullable(),
   });
