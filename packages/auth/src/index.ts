@@ -35,7 +35,7 @@ async function handleListingPayment(event: Stripe.Event) {
 }
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
+  apiVersion: "2026-04-22.dahlia",
 });
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
