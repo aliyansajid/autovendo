@@ -361,13 +361,11 @@ export function VehicleForm({
           const result = await createVehicle(listingId, submitData, finalImageKeys) as any;
           if (result && typeof result === "object" && "error" in result) throw new Error(result.error as string);
           
-          if (data.planId) {
-            setUploadStatus("Redirecting to payment...");
-            const checkoutUrl = await createListingCheckoutSession(listingId, data.planId);
-            window.location.href = checkoutUrl;
-            return;
-          }
-          toast.success(t("successPublish"));
+          if (!data.planId) throw new Error("No plan selected");
+          setUploadStatus("Redirecting to payment...");
+          const checkoutUrl = await createListingCheckoutSession(listingId, data.planId);
+          window.location.href = checkoutUrl;
+          return;
         }
         router.push("/dashboard/vehicles");
       } catch (error) {
@@ -462,14 +460,9 @@ export function VehicleForm({
                 Next <ArrowRight />
               </Button>
             ) : (
-              <div className="flex items-center gap-3">
-                <Button type="submit" variant="outline" disabled={isSubmitting} onClick={() => form.setValue("status", "DRAFT")}>
-                  Save Draft
-                </Button>
-                <Button type="submit" disabled={isSubmitting} onClick={() => form.setValue("status", "PUBLISHED")}>
-                  {isSubmitting ? <Spinner /> : "Publish Listing"}
-                </Button>
-              </div>
+              <Button type="submit" disabled={isSubmitting} onClick={() => form.setValue("status", "PUBLISHED")}>
+                {isSubmitting ? <Spinner /> : <><Send className="mr-2" /> Pay & Publish</>}
+              </Button>
             )}
           </div>
         </form>
