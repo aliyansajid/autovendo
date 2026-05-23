@@ -103,36 +103,38 @@ interface VerifyEmailProps {
   userEmail: string;
   verificationUrl: string;
   locale?: string;
+  appName?: string;
+  appUrl?: string;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-  ? process.env.NEXT_PUBLIC_APP_URL
-  : "https://autovendo.ch";
+const defaultBaseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 
 export const VerifyEmail = ({
   userEmail,
   verificationUrl,
   locale,
+  appName = "Autovendo",
+  appUrl = defaultBaseUrl,
 }: VerifyEmailProps) => {
   const localizedUrl = getLocalizedUrl(verificationUrl, locale);
 
   return (
     <Html>
       <Head />
-      <Preview>Verify your Autovendo email address</Preview>
+      <Preview>Verify your {appName} email address</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={logoSection}>
             <Img
-              src={`${baseUrl}/email-logo.png`}
+              src={`${appUrl}/email-logo.png`}
               width="200"
-              alt="Autovendo"
+              alt={appName}
               style={logo}
             />
           </Section>
           <Text style={text}>Hello,</Text>
           <Text style={text}>
-            Thank you for joining Autovendo. To ensure the security of your
+            Thank you for joining {appName}. To ensure the security of your
             account and activate your access, please verify your email address (
             <strong>{userEmail}</strong>) by clicking the button below.
           </Text>
@@ -145,10 +147,10 @@ export const VerifyEmail = ({
             If you did not request this verification, you can safely ignore this
             email.
           </Text>
-          <Text style={text}>The Autovendo Team</Text>
+          <Text style={text}>The {appName} Team</Text>
           <Hr style={hr} />
           <Text style={footer}>
-            This is an automated message from autovendo.ch
+            This is an automated message from {appUrl.replace("https://", "")}
           </Text>
         </Container>
       </Body>

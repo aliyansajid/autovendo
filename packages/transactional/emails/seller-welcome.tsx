@@ -74,87 +74,56 @@ const footer = {
 };
 
 // ---------------------------------------------------------------------------
-// Utils
-// ---------------------------------------------------------------------------
-
-const getLocalizedUrl = (url: string, locale?: string) => {
-  if (!locale) return url;
-  try {
-    const urlObj = new URL(url);
-    // If the URL already contains the locale prefix, don't add it again
-    if (
-      urlObj.pathname.startsWith(`/${locale}/`) ||
-      urlObj.pathname === `/${locale}`
-    ) {
-      return url;
-    }
-    urlObj.pathname = `/${locale}${urlObj.pathname}`;
-    return urlObj.toString();
-  } catch (e) {
-    return url;
-  }
-};
-
-// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
-interface ResetPasswordEmailProps {
-  userEmail: string;
-  resetPasswordUrl: string;
-  locale?: string;
-  appName?: string;
-  appUrl?: string;
+interface SellerWelcomeEmailProps {
+  sellerName: string;
+  dashboardUrl: string;
 }
 
-const defaultBaseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autosolo.ch";
 
-export const ResetPasswordEmail = ({
-  userEmail,
-  resetPasswordUrl,
-  locale,
-  appName = "Autovendo",
-  appUrl = defaultBaseUrl,
-}: ResetPasswordEmailProps) => {
-  const localizedUrl = getLocalizedUrl(resetPasswordUrl, locale);
-
+export const SellerWelcomeEmail = ({
+  sellerName,
+  dashboardUrl,
+}: SellerWelcomeEmailProps) => {
   return (
     <Html>
       <Head />
-      <Preview>Reset your {appName} password</Preview>
+      <Preview>Welcome to AutoSolo – start selling your car today</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={logoSection}>
             <Img
-              src={`${appUrl}/email-logo.png`}
+              src={`${baseUrl}/email-logo.png`}
               width="200"
-              alt={appName}
+              alt="AutoSolo"
               style={logo}
             />
           </Section>
-          <Text style={text}>Hello,</Text>
+          <Text style={text}>Hello {sellerName},</Text>
           <Text style={text}>
-            We received a request to reset the password for your {appName}
-            account associated with <strong>{userEmail}</strong>.
+            Welcome to AutoSolo! Your account is ready and you can now list your
+            car directly to buyers — no middleman, no monthly fees.
           </Text>
           <Text style={text}>
-            To choose a new password and regain access to your account, please
-            click the button below. This link will expire in 1 hour for your
-            security.
+            Simply create a listing, choose a plan (CHF 19 for 30 days or CHF
+            49 until sold), pay once and your car goes live immediately.
           </Text>
           <Section style={btnContainer}>
-            <Button style={button} href={localizedUrl}>
-              Reset Password
+            <Button style={button} href={dashboardUrl}>
+              Go to Your Dashboard
             </Button>
           </Section>
           <Text style={text}>
-            If you did not request a password reset, please ignore this email or
-            contact support if you have concerns.
+            If you have any questions, reply to this email and we will be happy
+            to help.
           </Text>
-          <Text style={text}>The {appName} Team</Text>
+          <Text style={text}>The AutoSolo Team</Text>
           <Hr style={hr} />
           <Text style={footer}>
-            This is an automated message from {appUrl.replace("https://", "")}
+            This is an automated message from autosolo.ch
           </Text>
         </Container>
       </Body>
@@ -162,4 +131,4 @@ export const ResetPasswordEmail = ({
   );
 };
 
-export default ResetPasswordEmail;
+export default SellerWelcomeEmail;

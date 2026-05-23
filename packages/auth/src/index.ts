@@ -38,8 +38,12 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-02-25.clover",
 });
 
+const appUrl = process.env.BETTER_AUTH_URL ?? "https://autovendo.ch";
+const isSolo = appUrl.includes("autosolo");
+const appName = isSolo ? "AutoSolo" : "Autovendo";
+
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL ?? "https://autovendo.ch",
+  baseURL: appUrl,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -52,10 +56,12 @@ export const auth = betterAuth({
         await import("@repo/transactional/emails/reset-password");
       await sendEmail({
         to: user.email,
-        subject: "Reset your AutoVendo password",
+        subject: `Reset your ${appName} password`,
         template: ResetPasswordEmail({
           userEmail: user.email,
           resetPasswordUrl: url,
+          appName,
+          appUrl,
         }),
       });
     },
@@ -68,10 +74,12 @@ export const auth = betterAuth({
         await import("@repo/transactional/emails/verify-email");
       await sendEmail({
         to: user.email,
-        subject: "Verify your AutoVendo email address",
+        subject: `Verify your ${appName} email address`,
         template: VerifyEmail({
           userEmail: user.email,
           verificationUrl: url,
+          appName,
+          appUrl,
         }),
       });
     },
@@ -86,16 +94,45 @@ export const auth = betterAuth({
           await import("@repo/transactional/emails/confirm-email-change");
         await sendEmail({
           to: user.email,
-          subject: "Approve your AutoVendo email change",
+          subject: `Approve your ${appName} email change`,
           template: ConfirmEmailChangeEmail({
             currentEmail: user.email,
             newEmail: newEmail,
             confirmUrl: url,
+            appName,
+            appUrl,
           }),
         });
       },
     },
   },
+
+  databaseHooks: isSolo
+    ? {
+        user: {
+          create: {
+            after: async (user) => {
+              try {
+                const { sendEmail } = await import("@repo/transactional");
+                const { SellerWelcomeEmail } = await import(
+                  "@repo/transactional/emails/seller-welcome"
+                );
+                await sendEmail({
+                  to: user.email,
+                  subject: "Welcome to AutoSolo – your account is ready",
+                  template: SellerWelcomeEmail({
+                    sellerName: user.name,
+                    dashboardUrl: `${appUrl}/dashboard`,
+                  }),
+                });
+              } catch {
+                // non-critical — don't block signup
+              }
+            },
+          },
+        },
+      }
+    : undefined,
 
   trustedOrigins: [
     "https://autovendo.ch",
