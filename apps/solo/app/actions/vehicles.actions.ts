@@ -1318,6 +1318,10 @@ export async function prepareVehicleListing(existingVehicleId?: string) {
   };
 }
 
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const MAX_IMAGES = 10;
+const MAX_FILENAME_LENGTH = 200;
+
 export async function getPresignedUrls(
   listingId: string,
   files: { name: string; type: string }[],
@@ -1328,12 +1332,24 @@ export async function getPresignedUrls(
     throw new Error("Seller profile not found");
   }
 
+  if (!files.length || files.length > MAX_IMAGES) {
+    throw new Error(`Between 1 and ${MAX_IMAGES} images allowed`);
+  }
+
   const urls = await Promise.all(
     files.map(async (file) => {
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        throw new Error(`Invalid file type: ${file.type}`);
+      }
+
+      const safeFilename = file.name
+        .replace(/[^a-zA-Z0-9._-]/g, "_")
+        .slice(0, MAX_FILENAME_LENGTH);
+
       const key = StorageService.formatPath(
         seller.id,
         "listing",
-        file.name,
+        safeFilename,
         listingId,
       );
 
@@ -1360,9 +1376,9 @@ export async function createVehicle(
   const schema = createVehicleFormSchema(t);
   const validatedData = schema.parse(formData);
 
-  // In Solo app, we allow creating a DRAFT without immediate payment.
-  // The payment happens in a subsequent step.
-  const status = validatedData.status || "DRAFT";
+  // Always create as DRAFT regardless of what the client sends.
+  // Status is set to PUBLISHED only by the Stripe webhook after confirmed payment.
+  const status = "DRAFT";
 
   const vehicle = await prisma.vehicle.create({
     data: {
@@ -1678,9 +1694,19 @@ export async function updateVehicle(
   revalidatePath("/dashboard/vehicles");
 }
 
+// Statuses a seller can set manually.
+// PUBLISHED is excluded — only the Stripe webhook sets it after payment.
+// BANNED/ARCHIVED are admin-only.
+const SELLER_ALLOWED_STATUSES = ["DRAFT", "SOLD"] as const;
+type SellerAllowedStatus = (typeof SELLER_ALLOWED_STATUSES)[number];
+
 export async function updateVehicleStatus(id: string, status: string) {
   const seller = await getCurrentSeller();
   if (!seller) throw new Error("Unauthorized");
+
+  if (!SELLER_ALLOWED_STATUSES.includes(status as SellerAllowedStatus)) {
+    throw new Error("Invalid status");
+  }
 
   await prisma.vehicle.update({
     where: { id, sellerId: seller.id },
@@ -1723,9 +1749,13 @@ export async function publishOrPay(id: string): Promise<{ checkoutUrl: string } 
     return { published: true };
   }
 
-  // Not paid — create a new Stripe checkout session
+  // Not paid — create a new Stripe checkout session using the saved plan
+  if (!vehicle.listingPlan) {
+    throw new Error("No plan selected. Please edit the listing and select a plan.");
+  }
+
   const { createListingCheckoutSession } = await import("./listings.actions");
-  const planId = (vehicle.listingPlan as "standard" | "best_value") || "standard";
+  const planId = vehicle.listingPlan as "standard" | "best_value";
   const checkoutUrl = await createListingCheckoutSession(id, planId);
   return { checkoutUrl };
 }
@@ -1739,11 +1769,16 @@ export async function deleteVehicle(id: string) {
 
   const vehicle = await prisma.vehicle.findUnique({
     where: { id, sellerId: seller.id },
-    select: { images: true },
+    select: { images: true, status: true, listingPaidAt: true },
   });
 
   if (!vehicle) {
     throw new Error("Vehicle not found");
+  }
+
+  // Prevent deletion of paid listings — seller must mark as SOLD first
+  if (vehicle.listingPaidAt) {
+    throw new Error("Paid listings cannot be deleted. Mark as sold instead.");
   }
 
   // Delete images from storage

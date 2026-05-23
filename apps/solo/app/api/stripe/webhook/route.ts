@@ -31,6 +31,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing metadata" }, { status: 400 });
     }
 
+    // Idempotency — if Stripe retries this webhook, skip if already processed
+    const existing = await prisma.vehicle.findUnique({
+      where: { id: vehicleId },
+      select: { listingPaidAt: true },
+    });
+
+    if (existing?.listingPaidAt) {
+      return NextResponse.json({ received: true });
+    }
+
     const now = new Date();
     const expiresAt =
       planId === "standard"
