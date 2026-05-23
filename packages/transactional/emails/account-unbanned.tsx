@@ -70,36 +70,40 @@ const footer = {
 };
 
 interface AccountUnbannedEmailProps {
-  dealerName: string;
+  userName: string;
   loginUrl: string;
+  appName?: string;
+  appUrl?: string;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://autovendo.ch";
+const defaultBaseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 
 export const AccountUnbannedEmail = ({
-  dealerName,
+  userName,
   loginUrl,
+  appName = "Autovendo",
+  appUrl = defaultBaseUrl,
 }: AccountUnbannedEmailProps) => {
   return (
     <Html>
       <Head />
-      <Preview>Your Autovendo account access has been restored</Preview>
+      <Preview>Your {appName} account access has been restored</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={logoSection}>
             <Img
-              src={`${baseUrl}/email-logo.png`}
+              src={`${appUrl}/email-logo.png`}
               width="200"
-              alt="Autovendo"
+              alt={appName}
               style={logo}
             />
           </Section>
-          <Text style={text}>Hello {dealerName},</Text>
+          <Text style={text}>Hello {userName},</Text>
           <Text style={text}>
-            We are pleased to inform you that your Autovendo dealer account access
+            We are pleased to inform you that your {appName} account access
             has been restored.
           </Text>
-          
+
           <Text style={text}>
             You can now log in to your account and resume managing your
             listings and services. Any hidden listings have been restored to
@@ -111,15 +115,15 @@ export const AccountUnbannedEmail = ({
               Log In to Your Account
             </Button>
           </Section>
-          
+
           <Text style={text}>
             Thank you for your patience.
             <br />
-            The Autovendo Team
+            The {appName} Team
           </Text>
           <Hr style={hr} />
           <Text style={footer}>
-            This is an automated message from autovendo.ch
+            This is an automated message from {appUrl.replace("https://", "")}
           </Text>
         </Container>
       </Body>

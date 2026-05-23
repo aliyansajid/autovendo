@@ -281,7 +281,7 @@ export async function banUser({
           ? "Important: Your account has been permanently banned"
           : "Notice: Your account has been temporarily suspended",
         template: AccountBannedEmail({
-          dealerName: user.dealer?.contactPerson || user.name || "Dealer",
+          userName: user.dealer?.contactPerson || user.name || "Dealer",
           reason: reason || "Violation of platform policies",
           duration: durationText,
           isPermanent,
@@ -340,7 +340,7 @@ export async function unbanUser(userId: string) {
         to: user.email,
         subject: "Your Autovendo account access has been restored",
         template: AccountUnbannedEmail({
-          dealerName: user.dealer?.contactPerson || user.name || "Dealer",
+          userName: user.dealer?.contactPerson || user.name || "Dealer",
           loginUrl: loginUrl,
         }),
       });
@@ -467,7 +467,7 @@ export async function removeUser(userId: string) {
         to: user.email,
         subject: "Your Autovendo account has been closed",
         template: AccountDeletedEmail({
-          dealerName: user.dealer?.contactPerson || user.name || "Dealer",
+          userName: user.dealer?.contactPerson || user.name || "Dealer",
         }),
       });
     }

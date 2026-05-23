@@ -53,53 +53,57 @@ const footer = {
 };
 
 interface AccountDeletedEmailProps {
-  dealerName: string;
+  userName: string;
+  appName?: string;
+  appUrl?: string;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://autovendo.ch";
+const defaultBaseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 
 export const AccountDeletedEmail = ({
-  dealerName,
+  userName,
+  appName = "Autovendo",
+  appUrl = defaultBaseUrl,
 }: AccountDeletedEmailProps) => {
   return (
     <Html>
       <Head />
-      <Preview>Your Autovendo account has been closed</Preview>
+      <Preview>Your {appName} account has been closed</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={logoSection}>
             <Img
-              src={`${baseUrl}/email-logo.png`}
+              src={`${appUrl}/email-logo.png`}
               width="200"
-              alt="Autovendo"
+              alt={appName}
               style={logo}
             />
           </Section>
-          <Text style={text}>Hello {dealerName},</Text>
+          <Text style={text}>Hello {userName},</Text>
           <Text style={text}>
-            We are writing to confirm that your Autovendo dealer account has
+            We are writing to confirm that your {appName} account has
             been successfully closed and removed from our system.
           </Text>
-          
+
           <Text style={text}>
-            In accordance with our data policy, your business profile, listings,
+            In accordance with our data policy, your profile, listings,
             and personal information have been deleted. Please note that this
             action is irreversible.
           </Text>
 
           <Text style={text}>
             If you have any remaining questions or if this was not requested by you,
-            please contact our support team immediately at info@autovendo.ch.
+            please contact our support team immediately at info@{appUrl.replace("https://", "")}.
           </Text>
-          
+
           <Text style={text}>
-            We thank you for the time you spent with Autovendo.
+            We thank you for the time you spent with {appName}.
             <br />
-            The Autovendo Team
+            The {appName} Team
           </Text>
           <Hr style={hr} />
           <Text style={footer}>
-            This is an automated message from autovendo.ch
+            This is an automated message from {appUrl.replace("https://", "")}
           </Text>
         </Container>
       </Body>

@@ -68,19 +68,23 @@ const reasonText = {
 };
 
 interface AccountBannedEmailProps {
-  dealerName: string;
+  userName: string;
   reason: string;
   duration?: string;
   isPermanent?: boolean;
+  appName?: string;
+  appUrl?: string;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://autovendo.ch";
+const defaultBaseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 
 export const AccountBannedEmail = ({
-  dealerName,
+  userName,
   reason,
   duration = "Permanent",
   isPermanent = true,
+  appName = "Autovendo",
+  appUrl = defaultBaseUrl,
 }: AccountBannedEmailProps) => {
   return (
     <Html>
@@ -94,18 +98,18 @@ export const AccountBannedEmail = ({
         <Container style={container}>
           <Section style={logoSection}>
             <Img
-              src={`${baseUrl}/email-logo.png`}
+              src={`${appUrl}/email-logo.png`}
               width="200"
-              alt="Autovendo"
+              alt={appName}
               style={logo}
             />
           </Section>
-          <Text style={text}>Hello {dealerName},</Text>
+          <Text style={text}>Hello {userName},</Text>
           <Text style={text}>
-            We are sorry to inform you that your Autovendo dealer account has
+            We are sorry to inform you that your {appName} account has
             been {isPermanent ? "permanently banned" : "temporarily suspended"}.
           </Text>
-          
+
           <Section style={reasonBox}>
             <Text style={reasonText}>Reason for this decision:</Text>
             <Text style={{ ...text, margin: "8px 0 0 0", color: "#b91c1c" }}>
@@ -119,25 +123,25 @@ export const AccountBannedEmail = ({
           </Section>
 
           <Text style={text}>
-            {isPermanent 
+            {isPermanent
               ? "As this is a permanent ban, you will no longer have access to our services. All your listings and data associated with this account have been removed."
               : "During this temporary suspension, you will not be able to log in or manage your listings. Your active listings have been hidden and will be restored once the suspension is lifted."
             }
           </Text>
-          
+
           <Text style={text}>
-            If you have questions or wish to appeal this decision, please contact 
-            our support team at info@autovendo.ch.
+            If you have questions or wish to appeal this decision, please contact
+            our support team at info@{appUrl.replace("https://", "")}.
           </Text>
-          
+
           <Text style={text}>
             Regards,
             <br />
-            The Autovendo Team
+            The {appName} Team
           </Text>
           <Hr style={hr} />
           <Text style={footer}>
-            This is an automated message from autovendo.ch
+            This is an automated message from {appUrl.replace("https://", "")}
           </Text>
         </Container>
       </Body>
