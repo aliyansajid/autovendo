@@ -81,10 +81,10 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold mb-1">{t("emailLabel")}</h3>
                     <Link
-                      href="mailto:info@autovendo.ch"
+                      href="mailto:info@autosolo.ch"
                       className="text-primary underline-offset-4 hover:underline"
                     >
-                      info@autovendo.ch
+                      info@autosolo.ch
                     </Link>
                   </div>
                 </div>

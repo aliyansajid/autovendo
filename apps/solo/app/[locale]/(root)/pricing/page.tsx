@@ -33,7 +33,7 @@ export default async function PricingPage(props: {
   const pricingSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "AutoVendo Solo Pricing",
+    name: "AutoSolo Solo Pricing",
     description: "Simple and transparent pricing for private car sellers in Switzerland.",
     itemListElement: [
       {
@@ -98,7 +98,7 @@ export default async function PricingPage(props: {
               </ul>
             </CardContent>
             <CardFooter className="pt-6">
-              <Button asChild className="w-full text-lg py-6" variant="outline">
+              <Button asChild className="w-full" variant="outline">
                 <Link href="/signup">
                   {t("standard.button")}
                 </Link>
@@ -115,7 +115,7 @@ export default async function PricingPage(props: {
             </div>
             <CardHeader className="text-center pb-2 pt-8">
               <CardTitle className="text-3xl font-black text-green-700 dark:text-green-400">
-                ⭐ {t("bestValue.name")}
+                {t("bestValue.name")}
               </CardTitle>
               <div className="pt-4">
                 <span className="text-5xl font-black text-primary">{formatPrice(49)}</span>
@@ -134,8 +134,8 @@ export default async function PricingPage(props: {
                 ))}
               </ul>
             </CardContent>
-            <CardFooter className="pt-6 pb-8">
-              <Button asChild className="w-full text-xl py-8 bg-green-600 hover:bg-green-700 text-white shadow-xl hover:scale-105 transition-transform">
+            <CardFooter>
+              <Button asChild className="w-full">
                 <Link href="/signup">
                   {t("bestValue.button")}
                 </Link>

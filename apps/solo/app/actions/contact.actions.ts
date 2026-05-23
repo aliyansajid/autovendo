@@ -7,7 +7,7 @@ import { z } from "zod";
 import { createContactFormSchema } from "@/schema/contact-schema";
 import { getTranslations } from "next-intl/server";
 
-const CONTACT_EMAIL = "info@autovendo.ch";
+const CONTACT_EMAIL = "info@autosolo.ch";
 
 export async function sendContactMessage(input: any) {
   const t = await getTranslations("ContactSchema");
@@ -19,7 +19,7 @@ export async function sendContactMessage(input: any) {
     to: CONTACT_EMAIL,
     subject: subject?.trim()
       ? `Kontaktanfrage: ${subject.trim()}`
-      : "Kontaktanfrage von autovendo.ch",
+      : "Kontaktanfrage von autosolo.ch",
     template: React.createElement(ContactMessage, {
       name: name.trim(),
       email: email.trim(),
