@@ -50,7 +50,7 @@ export const SignupForm = () => {
         email: values.email,
         password: values.password,
         name: values.name,
-        callbackURL: "/",
+        callbackURL: `/${locale}/dashboard`,
       });
 
       if (error) {
