@@ -137,7 +137,8 @@ export async function buildWhereClause(
   params: VehicleSearchParams,
   omitFilters: Partial<Record<keyof VehicleSearchParams, boolean>> = {},
 ): Promise<Prisma.VehicleWhereInput> {
-  const where: Prisma.VehicleWhereInput = {};
+  // Only show seller vehicles on the solo platform
+  const where: Prisma.VehicleWhereInput = { sellerId: { not: null } };
 
   // Text search - assumes full-text index on make, model, version
   // For production: Use PostgreSQL full-text search or Elasticsearch
@@ -404,11 +405,6 @@ export async function buildWhereClause(
   // Has warranty
   if (!omitFilters.hasWarranty && params.hasWarranty === true) {
     where.warranty = { not: null };
-  }
-
-  // Dealer filter
-  if (!omitFilters.dealerId && params.dealerId) {
-    where.dealerId = params.dealerId;
   }
 
   // Interior color
@@ -1196,7 +1192,7 @@ export async function getVehicleCached(id: string) {
 }
 
 /**
- * Get similar vehicles from the same dealer (excluding current vehicle)
+ * Get similar vehicles from the same seller (excluding current vehicle)
  */
 export async function getSimilarVehicles(
   sellerId: string,
@@ -1463,7 +1459,7 @@ export async function createVehicle(
   return listingId;
 }
 
-export async function getDealerVehicles() {
+export async function getSellerVehicles() {
   const seller = await getCurrentSeller();
 
   if (!seller) {
