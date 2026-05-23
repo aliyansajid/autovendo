@@ -461,7 +461,7 @@ export function VehicleForm({
               </Button>
             ) : (
               <Button type="submit" disabled={isSubmitting} onClick={() => form.setValue("status", "PUBLISHED")}>
-                {isSubmitting ? <Spinner /> : <><Send className="mr-2" /> Pay & Publish</>}
+                {isSubmitting ? <Spinner /> : <><Send className="mr-2" /> Publish</>}
               </Button>
             )}
           </div>
