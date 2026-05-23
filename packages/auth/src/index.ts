@@ -38,12 +38,11 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-02-25.clover",
 });
 
-const appUrl = process.env.BETTER_AUTH_URL ?? "https://autovendo.ch";
-const isSolo = appUrl.includes("autosolo");
-const appName = isSolo ? "AutoSolo" : "Autovendo";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
+const appName = process.env.APP_NAME ?? "Autovendo";
 
 export const auth = betterAuth({
-  baseURL: appUrl,
+  baseURL: process.env.BETTER_AUTH_URL ?? appUrl,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -107,32 +106,30 @@ export const auth = betterAuth({
     },
   },
 
-  databaseHooks: isSolo
-    ? {
-        user: {
-          create: {
-            after: async (user) => {
-              try {
-                const { sendEmail } = await import("@repo/transactional");
-                const { SellerWelcomeEmail } = await import(
-                  "@repo/transactional/emails/seller-welcome"
-                );
-                await sendEmail({
-                  to: user.email,
-                  subject: "Welcome to AutoSolo – your account is ready",
-                  template: SellerWelcomeEmail({
-                    sellerName: user.name,
-                    dashboardUrl: `${appUrl}/dashboard`,
-                  }),
-                });
-              } catch {
-                // non-critical — don't block signup
-              }
-            },
-          },
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          try {
+            const { sendEmail } = await import("@repo/transactional");
+            const { SellerWelcomeEmail } = await import(
+              "@repo/transactional/emails/seller-welcome"
+            );
+            await sendEmail({
+              to: user.email,
+              subject: `Welcome to ${appName} – your account is ready`,
+              template: SellerWelcomeEmail({
+                sellerName: user.name,
+                dashboardUrl: `${appUrl}/dashboard`,
+              }),
+            });
+          } catch {
+            // non-critical — don't block signup
+          }
         },
-      }
-    : undefined,
+      },
+    },
+  },
 
   trustedOrigins: [
     "https://autovendo.ch",
