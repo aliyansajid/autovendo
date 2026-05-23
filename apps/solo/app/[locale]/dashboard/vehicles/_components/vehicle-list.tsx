@@ -25,7 +25,6 @@ import {
   deleteVehicle,
   updateVehicleStatus,
   publishOrPay,
-  type SubscriptionStatus,
 } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
@@ -102,13 +101,7 @@ const statusVariantMap: Record<
  * - Direct actions for editing and deleting vehicles
  * - Formatted display using Swiss (de-CH) technical standards
  */
-export function VehicleList({
-  vehicles,
-  subscriptionStatus,
-}: {
-  vehicles: Vehicle[];
-  subscriptionStatus?: SubscriptionStatus;
-}) {
+export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
   const t = useTranslations("VehicleList");
   const params = useParams();
   const locale = (params.locale as string) || "de";
@@ -220,12 +213,7 @@ export function VehicleList({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <VehicleActions
-                    vehicle={vehicle}
-                    t={t}
-                    router={router}
-                    subscriptionStatus={subscriptionStatus}
-                  />
+                  <VehicleActions vehicle={vehicle} t={t} router={router} />
                 </TableCell>
               </TableRow>
             ))}
@@ -240,12 +228,10 @@ function VehicleActions({
   vehicle,
   t,
   router,
-  subscriptionStatus,
 }: {
   vehicle: Vehicle;
   t: any;
   router: any;
-  subscriptionStatus?: SubscriptionStatus;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -277,12 +263,6 @@ function VehicleActions({
     });
   };
 
-  const isCanceled =
-    subscriptionStatus?.type === "no_subscription" ||
-    subscriptionStatus?.type === "expired";
-  const isPastDue = subscriptionStatus?.type === "past_due";
-
-  // Restricted by car state (Sold, Archived, etc.)
   const isStateRestricted = ["SOLD", "ARCHIVED", "BANNED", "PAUSED"].includes(
     vehicle.status,
   );
@@ -298,7 +278,7 @@ function VehicleActions({
         <DropdownMenuContent align="end">
           <DropdownMenuItem
             asChild
-            disabled={isStateRestricted || isCanceled || isPending}
+            disabled={isStateRestricted || isPending}
           >
             <Link href={`/dashboard/vehicles/${vehicle.id}`}>
               <Pencil />
@@ -320,7 +300,7 @@ function VehicleActions({
             <>
               <DropdownMenuItem
                 onSelect={() => handleStatusUpdate("DRAFT")}
-                disabled={isStateRestricted || isCanceled || isPending}
+                disabled={isStateRestricted || isPending}
               >
                 <FileText />
                 {t("statusDraft")}

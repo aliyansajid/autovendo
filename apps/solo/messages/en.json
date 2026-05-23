@@ -991,8 +991,8 @@
     "subtitle": "Manage your plan and billing details."
   },
   "BillingPage": {
-    "title": "Billing & Usage",
-    "subtitle": "Manage your subscription, payment method and invoices.",
+    "title": "Payments",
+    "subtitle": "View your payment history and manage your payment details.",
     "planDescription": {
       "starter": "Ideal for small first-time sellers.",
       "professional": "Perfect for growing sellers with multiple vehicles.",

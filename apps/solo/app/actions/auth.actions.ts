@@ -11,18 +11,11 @@ export async function onSignup(name: string, email: string, locale: string) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (session?.user?.id) {
-      const nameParts = name.trim().split(" ");
-      const firstName = nameParts[0] || "";
-      const lastName = nameParts.slice(1).join(" ") || firstName;
-
       await prisma.seller.upsert({
         where: { userId: session.user.id },
         update: {},
         create: {
           userId: session.user.id,
-          firstName,
-          lastName,
-          email,
           phoneNumber: "",
           streetAddress: "",
           zipCode: "",

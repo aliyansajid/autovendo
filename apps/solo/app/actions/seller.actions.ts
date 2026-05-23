@@ -14,10 +14,7 @@ export type SellerProfile = {
   id: string;
   userId: string;
   user: { id: string; name: string; email: string; image: string | null };
-  firstName: string;
-  lastName: string;
   phoneNumber: string;
-  email: string;
   streetAddress: string;
   zipCode: string;
   city: string;
@@ -34,10 +31,7 @@ export async function getSellerProfile(): Promise<SellerProfile | null> {
       id: true,
       userId: true,
       user: { select: { id: true, name: true, email: true, image: true } },
-      firstName: true,
-      lastName: true,
       phoneNumber: true,
-      email: true,
       streetAddress: true,
       zipCode: true,
       city: true,

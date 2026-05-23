@@ -986,8 +986,8 @@
     "subtitle": "Gérez votre plan et vos détails de facturation."
   },
   "BillingPage": {
-    "title": "Facturation & Utilisation",
-    "subtitle": "Gérez votre abonnement, votre mode de paiement et vos factures.",
+    "title": "Paiements",
+    "subtitle": "Consultez votre historique de paiement et gérez vos informations de paiement.",
     "planDescription": {
       "bronze": "Idéal pour les petits concessionnaires débutant leur aventure numérique.",
       "silver": "Parfait pour les concessionnaires en croissance avec un inventaire moyen.",

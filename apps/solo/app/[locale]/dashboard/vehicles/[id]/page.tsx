@@ -1,10 +1,7 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { getSellerProfile } from "@/app/actions/seller.actions";
-import {
-  getVehicleById,
-  getVehicleSubscriptionStatus,
-} from "@/app/actions/vehicles.actions";
+import { getVehicleById } from "@/app/actions/vehicles.actions";
 import { VehicleForm } from "../_components/vehicle-form";
 import { mapVehicleToForm } from "@/lib/helpers/vehicle";
 import { notFound } from "next/navigation";
@@ -24,10 +21,9 @@ export default async function EditVehiclePage({
     headers: await headers(),
   });
 
-  const [sellerProfile, vehicle, subscriptionStatus] = await Promise.all([
+  const [sellerProfile, vehicle] = await Promise.all([
     session?.user?.id ? getSellerProfile() : null,
     getVehicleById(id),
-    getVehicleSubscriptionStatus(),
   ]);
 
   if (!vehicle) {
@@ -54,7 +50,6 @@ export default async function EditVehiclePage({
         sellerProfile={sellerProfile}
         initialData={initialData}
         vehicleId={id}
-        subscriptionStatus={subscriptionStatus}
         isPaid={!!vehicle.listingPaidAt}
         listingPlan={(vehicle.listingPlan as "standard" | "best_value") || undefined}
       />

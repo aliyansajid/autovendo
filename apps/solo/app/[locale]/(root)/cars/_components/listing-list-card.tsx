@@ -198,9 +198,7 @@ export function ListingListCard({
           <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 ">
             <div className="flex flex-col gap-1">
               <span className="text-sm font-bold truncate">
-                {item.seller
-                  ? `${item.seller.firstName} ${item.seller.lastName}`
-                  : ""}
+                {item.seller?.user?.name ?? ""}
               </span>
               <span className="text-xs text-muted-foreground truncate">
                 {item.seller?.zipCode} {item.seller?.city}

@@ -103,7 +103,7 @@ export async function generateMetadata({
     .join(" – ");
   const description = [
     item.seller
-      ? `${name} kaufen bei ${item.seller.firstName} ${item.seller.lastName}`
+      ? `${name} kaufen bei ${(item.seller as any).user?.name ?? ""}`
       : name,
     kmFormatted,
     item.fuelType,
@@ -337,22 +337,18 @@ export default async function ListingPage({
       ? item.vehicleDescription
       : null;
 
-  const sellerUser = (
-    item.seller as typeof item.seller & { user?: { emailVerified: boolean } }
-  )?.user;
+  const sellerUser = (item.seller as any)?.user;
 
   const seller = {
     id: item.seller?.id ?? "",
-    name: item.seller
-      ? `${item.seller.firstName} ${item.seller.lastName}`
-      : "",
+    name: (item.seller as any)?.user?.name ?? "",
     address: item.seller
       ? `${item.seller.streetAddress}, ${item.seller.zipCode} ${item.seller.city}`
       : "",
     phone: item.seller?.phoneNumber ?? undefined,
-    logo: item.seller?.image ? getImageUrl(item.seller.image) : undefined,
+    logo: (item.seller as any)?.user?.image ? getImageUrl((item.seller as any).user.image) : undefined,
     website: undefined as string | undefined,
-    businessEmail: item.seller?.email ?? undefined,
+    businessEmail: (item.seller as any)?.user?.email ?? undefined,
     description: undefined as string | undefined,
     openingHours: undefined as { day: string; hours: string }[] | undefined,
     isVerified: sellerUser?.emailVerified === true,
@@ -371,9 +367,7 @@ export default async function ListingPage({
       formatKilometers(sim.kilometer),
       sim.fuelType ? getLabel("fuelTypes", sim.fuelType) : undefined,
     ].filter((d): d is string => d != null && d !== ""),
-    garageName: sim.seller
-      ? `${sim.seller.firstName} ${sim.seller.lastName}`
-      : "",
+    garageName: sim.seller?.user?.name ?? "",
     garageId: sim.seller?.id ?? sim.id,
     garageLocation: sim.seller ? `${sim.seller.city}, CH` : "",
     badge: sim.vehicleCondition

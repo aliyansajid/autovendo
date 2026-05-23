@@ -1,9 +1,8 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { getSellerProfile } from "@/app/actions/seller.actions";
-import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
 import { VehicleForm } from "../_components/vehicle-form";
-import { Link, redirect } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@repo/ui/src/components/button";
@@ -17,16 +16,7 @@ export default async function AddNewVehiclePage(props: {
     headers: await headers(),
   });
 
-  const [sellerProfile, subscriptionStatus] = await Promise.all([
-    session?.user?.id ? getSellerProfile() : null,
-    getVehicleSubscriptionStatus(),
-  ]);
-
-  const isBlocked = subscriptionStatus.type !== "active";
-
-  if (isBlocked) {
-    redirect({ href: "/dashboard/vehicles", locale: locale });
-  }
+  const sellerProfile = session?.user?.id ? await getSellerProfile() : null;
 
   return (
     <div className="space-y-8">
@@ -42,10 +32,7 @@ export default async function AddNewVehiclePage(props: {
           <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
       </div>
-      <VehicleForm
-        sellerProfile={sellerProfile}
-        subscriptionStatus={subscriptionStatus}
-      />
+      <VehicleForm sellerProfile={sellerProfile} />
     </div>
   );
 }

@@ -990,8 +990,8 @@
     "subtitle": "Verwalten Sie Ihr Paket und Ihre Rechnungsdetails."
   },
   "BillingPage": {
-    "title": "Abrechnung & Nutzung",
-    "subtitle": "Verwalten Sie Ihr Abonnement, Ihre Zahlungsmethode und Rechnungen.",
+    "title": "Zahlungen",
+    "subtitle": "Sehen Sie Ihre Zahlungshistorie und verwalten Sie Ihre Zahlungsdetails.",
     "planDescription": {
       "bronze": "Ideal für kleine Händler, die ihre digitale Reise beginnen.",
       "silver": "Perfekt für wachsende Autohäuser mit mittlerem Bestand.",

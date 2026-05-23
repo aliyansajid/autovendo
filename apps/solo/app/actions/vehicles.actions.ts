@@ -76,18 +76,11 @@ async function getCurrentSeller() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.id) return null;
 
-  const nameParts = (session.user.name ?? "").trim().split(" ");
-  const firstName = nameParts[0] || "";
-  const lastName = nameParts.slice(1).join(" ") || firstName;
-
   return await prisma.seller.upsert({
     where: { userId: session.user.id },
     update: {},
     create: {
       userId: session.user.id,
-      firstName,
-      lastName,
-      email: session.user.email,
       phoneNumber: "",
       streetAddress: "",
       zipCode: "",
@@ -130,8 +123,7 @@ const VEHICLE_LIST_SELECT = {
   seller: {
     select: {
       id: true,
-      firstName: true,
-      lastName: true,
+      user: { select: { name: true } },
       city: true,
       zipCode: true,
       phoneNumber: true,
@@ -1170,15 +1162,11 @@ export async function getVehicle(id: string): Promise<VehicleDetails | null> {
       seller: {
         select: {
           id: true,
-          firstName: true,
-          lastName: true,
           streetAddress: true,
           zipCode: true,
           city: true,
           phoneNumber: true,
-          email: true,
-          image: true,
-          user: { select: { emailVerified: true } },
+          user: { select: { name: true, email: true, image: true, emailVerified: true } },
         },
       },
     },

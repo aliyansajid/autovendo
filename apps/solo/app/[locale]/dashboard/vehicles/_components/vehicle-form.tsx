@@ -8,29 +8,6 @@ import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
 import { SellerProfile } from "@/app/actions/seller.actions";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
-import {
-  carMakes,
-  carModels,
-  carBodyTypeEnum,
-  carFuelTypeEnum,
-} from "@/constants/cars";
-import {
-  utilityMakes,
-  utilityModels,
-  utilityBodyTypeEnum,
-  utilityFuelTypeEnum,
-} from "@/constants/commercial-vehicles";
-import {
-  truckMakes,
-  truckModels,
-  truckBodyTypeEnum,
-  truckFuelTypeEnum,
-} from "@/constants/truck";
-import {
-  camperMakes,
-  camperBodyTypeEnum,
-  camperFuelTypeEnum,
-} from "@/constants/camper";
 import { BasicDataSection } from "./form-sections/basic-data-section";
 import { TechnicalDataSection } from "./form-sections/technical-data-section";
 import { MediaSection } from "./form-sections/media-section";
@@ -40,19 +17,7 @@ import { EquipmentSection } from "./form-sections/equipment-section";
 import { createListingCheckoutSession } from "@/app/actions/listings.actions";
 import { useState, useTransition, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { useParams } from "next/navigation";
-import {
-  formatPrice,
-  formatKilometers,
-  formatRegistrationDate,
-} from "@/lib/helpers/format";
-import {
-  AlertCircleIcon,
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Send,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Send } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -64,46 +29,10 @@ import {
   getPresignedUrls,
   createVehicle,
   updateVehicle,
-  type SubscriptionStatus,
 } from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
 import { Spinner } from "@repo/ui/components/spinner";
-import { getImageUrl } from "@/lib/helpers/image";
-import {
-  Alert,
-  AlertAction,
-  AlertDescription,
-  AlertTitle,
-} from "@repo/ui/components/alert";
-import { Link } from "@/i18n/routing";
-
-const VEHICLE_DATA_MAP: Record<string, any> = {
-  car: {
-    makes: carMakes,
-    models: carModels,
-    bodyTypes: carBodyTypeEnum,
-    fuelTypes: carFuelTypeEnum,
-  },
-  utility: {
-    makes: utilityMakes,
-    models: utilityModels,
-    bodyTypes: utilityBodyTypeEnum,
-    fuelTypes: utilityFuelTypeEnum,
-  },
-  truck: {
-    makes: truckMakes,
-    models: truckModels,
-    bodyTypes: truckBodyTypeEnum,
-    fuelTypes: truckFuelTypeEnum,
-  },
-  camper: {
-    makes: camperMakes,
-    models: {},
-    bodyTypes: camperBodyTypeEnum,
-    fuelTypes: camperFuelTypeEnum,
-  },
-};
 
 const STEP_FIELDS: Record<number, any[]> = {
   1: [
@@ -131,20 +60,16 @@ export function VehicleForm({
   sellerProfile,
   initialData,
   vehicleId,
-  subscriptionStatus,
   isPaid,
   listingPlan,
 }: {
   sellerProfile: SellerProfile | null;
   initialData?: z.infer<ReturnType<typeof createVehicleFormSchema>>;
   vehicleId?: string;
-  subscriptionStatus?: SubscriptionStatus;
   isPaid?: boolean;
   listingPlan?: "standard" | "best_value";
 }) {
   const t = useTranslations("VehicleForm");
-  const params = useParams();
-  const locale = (params.locale as string) || "de";
   const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
@@ -230,8 +155,8 @@ export function VehicleForm({
       equipment: {},
       extras: {},
       ...(initialData || {}),
-      companyName: initialData?.companyName || (sellerProfile ? `${sellerProfile.firstName} ${sellerProfile.lastName}` : ""),
-      businessEmail: initialData?.businessEmail || sellerProfile?.email || "",
+      companyName: initialData?.companyName || sellerProfile?.user?.name || "",
+      businessEmail: initialData?.businessEmail || sellerProfile?.user?.email || "",
       phoneNumber: initialData?.phoneNumber || sellerProfile?.phoneNumber || "",
       address: initialData?.address || sellerProfile?.streetAddress || "",
       zipCode: initialData?.zipCode || sellerProfile?.zipCode || "",
@@ -240,12 +165,7 @@ export function VehicleForm({
     },
   });
 
-  const {
-    control,
-    handleSubmit,
-    trigger,
-    formState: { isDirty },
-  } = form;
+  const { control, handleSubmit, trigger } = form;
 
   const watchMake = useWatch({ control, name: "make" });
 
@@ -297,11 +217,8 @@ export function VehicleForm({
     window.scrollTo(0, 0);
   };
 
-  const vehicleType = useWatch({ control, name: "vehicleType" });
-  const vehicleData = VEHICLE_DATA_MAP[vehicleType] || VEHICLE_DATA_MAP.car;
-  const activeMakes = vehicleData.makes;
-  const activeModels = vehicleData.models || {};
-  const activeBodyTypeEnum = vehicleData.bodyTypes;
+
+
 
   const uploadWithRetry = async (url: string, file: File, onProgress?: (p: number) => void, signal?: AbortSignal, retries = 3) => {
     for (let i = 0; i < retries; i++) {

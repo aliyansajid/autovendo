@@ -27,8 +27,7 @@ export interface VehicleListItem {
   priceRating?: PriceRating;
   seller: {
     id: string;
-    firstName: string;
-    lastName: string;
+    user: { name: string };
     city: string;
     zipCode: string;
     phoneNumber: string;
