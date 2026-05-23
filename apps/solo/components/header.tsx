@@ -53,8 +53,6 @@ const languages = [
 
 const navLinks = [
   { href: "/advanced-search", labelKey: "nav.advancedSearch" },
-  { href: "/dealers", labelKey: "nav.dealers" },
-  { href: "/sell", labelKey: "nav.sell" },
 ] as const;
 
 export const Header = () => {
@@ -85,7 +83,7 @@ export const Header = () => {
           <Link href="/" className="block">
             <Image
               src="/logo-header.svg"
-              alt="AutoVendo Logo"
+              alt="AutoSolo Logo"
               width={48}
               height={40}
               className="h-8 w-auto"

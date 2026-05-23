@@ -5,10 +5,8 @@ import { buildMetadata, PAGE_META } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { SearchForm } from "./_components/search-form";
 import { FeaturedListings } from "./_components/featured-listings";
-import { FeaturedGarage } from "./_components/featured-garage";
 import { About } from "./_components/about";
 import { getVehicles } from "@/app/actions/vehicles.actions";
-import { getDealers } from "@/app/actions/dealer.actions";
 import { buildVehicleTitle } from "@/lib/helpers/vehicle";
 import {
   formatPrice,
@@ -29,9 +27,7 @@ export async function generateMetadata(props: {
 export default async function HomePage(props: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await props.params;
-
-  const [vehiclesResult, dealersResult, tVehicle] = await Promise.all([
+  const [vehiclesResult, tVehicle] = await Promise.all([
     getVehicles({ pageSize: "12", sort: "created-desc" }).catch(() => ({
       vehicles: [],
       total: 0,
@@ -39,7 +35,6 @@ export default async function HomePage(props: {
       pageSize: 12,
       totalPages: 0,
     })),
-    getDealers({ pageSize: 8 }),
     getTranslations("Vehicle"),
   ]);
 
@@ -71,27 +66,16 @@ export default async function HomePage(props: {
     vehicleToListingProps,
   );
 
-  const garages = dealersResult.dealers.map((d) => ({
-    id: d.id,
-    name: d.companyName,
-    image: d.coverImage
-      ? getImageUrl(d.coverImage)
-      : d.logo
-        ? getImageUrl(d.logo)
-        : "/placeholder-car.jpg",
-    garageLocation: d.streetAddress || d.city,
-  }));
-
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "AutoVendo",
-    url: "https://autovendo.ch",
+    name: "AutoSolo",
+    url: "https://autosolo.ch",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `https://autovendo.ch/${locale}/cars?search={search_term_string}`,
+        urlTemplate: `https://autosolo.ch/cars?search={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -100,13 +84,12 @@ export default async function HomePage(props: {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "AutoVendo",
-    url: "https://autovendo.ch",
-    logo: "https://autovendo.ch/logo.svg",
-    sameAs: ["https://autovendo.ch"],
+    name: "AutoSolo",
+    url: "https://autosolo.ch",
+    logo: "https://autosolo.ch/logo.svg",
+    sameAs: ["https://autosolo.ch"],
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+41793223520",
       contactType: "customer service",
       availableLanguage: ["German", "French", "Italian", "English"],
     },
@@ -122,7 +105,6 @@ export default async function HomePage(props: {
         </div>
       </div>
       <FeaturedListings listings={listings} />
-      <FeaturedGarage garages={garages} />
       <About />
     </>
   );

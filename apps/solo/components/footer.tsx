@@ -29,7 +29,7 @@ export const Footer = () => {
               <Link href="/" className="block">
                 <Image
                   src="/logo-footer.svg"
-                  alt="Autovendo Logo"
+                  alt="Autosolo Logo"
                   width={320}
                   height={96}
                   className="h-16 w-auto object-contain"
@@ -133,7 +133,7 @@ export const Footer = () => {
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
                   <Mail className="size-4 text-muted-foreground" />
-                  <Link href="mailto:info@autovendo.ch">info@autovendo.ch</Link>
+                  <Link href="mailto:info@autosolo.ch">info@autosolo.ch</Link>
                 </li>
               </ul>
             </div>
@@ -141,7 +141,7 @@ export const Footer = () => {
 
           <div className="flex items-center justify-center pt-6 border-t border-border">
             <p className="text-xs text-muted-foreground">
-              &copy; {currentYear} Autovendo. {t("copyright")}
+              &copy; {currentYear} Autosolo. {t("copyright")}
             </p>
           </div>
         </div>

@@ -55,7 +55,7 @@ export const FeaturedGarage = ({
                 key={garage.id}
                 className="basis-full sm:basis-1/2 lg:basis-1/4"
               >
-                <Link href={`/dealers/${garage.id}`} className="group">
+                <Link href={`/cars?seller=${garage.id}`} className="group">
                   <Card className="pt-0 transition-shadow hover:shadow-lg cursor-pointer">
                     <CardHeader className="relative h-48 overflow-hidden rounded-t-xl">
                       <Image
