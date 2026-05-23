@@ -448,6 +448,11 @@ export async function buildWhereClause(
       banned: { not: true },
     },
   };
+  // Exclude expired standard listings (best_value has null = never expires)
+  where.OR = [
+    { listingExpiresAt: null },
+    { listingExpiresAt: { gte: new Date() } },
+  ];
   return where;
 }
 
