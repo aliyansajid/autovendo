@@ -11,6 +11,6 @@
     "@better-auth/stripe": "^1.5.4",
     "@repo/db": "*",
     "better-auth": "^1.5.4",
-    "stripe": "^20.4.1"
+    "stripe": "^22.1.1"
   }
 }
