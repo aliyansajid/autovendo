@@ -526,7 +526,7 @@ export async function sendDealerContactEmail(
   data: any,
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const tSchema = await getTranslations("ContactSchema");
+    const tSchema = await getTranslations("DealerContactSchema");
     const schema = createDealerContactSchema(tSchema);
     const validatedData = schema.parse(data);
     const dealer = await prisma.dealer.findUnique({
