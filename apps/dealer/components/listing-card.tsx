@@ -56,7 +56,7 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-0.5">
+        <CardFooter className="flex flex-col items-start gap-0.5">
           <span className="text-sm font-semibold truncate">
             {item.garageName}
           </span>
