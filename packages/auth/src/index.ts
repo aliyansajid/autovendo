@@ -119,7 +119,7 @@ trustedOrigins: [
     stripe({
       stripeClient,
       stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      createCustomerOnSignUp: true,
+      createCustomerOnSignUp: false,
       onEvent: handleListingPayment,
       subscription: {
         enabled: true,
