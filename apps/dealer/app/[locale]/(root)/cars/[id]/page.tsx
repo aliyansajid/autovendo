@@ -618,15 +618,19 @@ export default async function ListingPage({
 
             {description && (
               <ListingSection title={t("description")}>
-                <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
-                  {description
-                    .split(/\n\n+/)
-                    .filter(Boolean)
-                    .map((para, i) => (
+                <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  {(() => {
+                    const norm = description.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+                    const parts = norm
+                      .split(/\n\n+/.test(norm) ? /\n\n+/ : /\n/)
+                      .map((p) => p.trim())
+                      .filter(Boolean);
+                    return parts.map((para, i) => (
                       <p key={i} className="whitespace-pre-line">
-                        {para.trim()}
+                        {para}
                       </p>
-                    ))}
+                    ));
+                  })()}
                 </div>
               </ListingSection>
             )}
