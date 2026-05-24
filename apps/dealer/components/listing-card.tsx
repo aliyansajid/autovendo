@@ -7,9 +7,7 @@ import {
   CardHeader,
 } from "@repo/ui/components/card";
 import { Badge } from "@repo/ui/components/badge";
-import { Button } from "@repo/ui/components/button";
 import Image from "next/image";
-import { Heart } from "lucide-react";
 import { Separator } from "@repo/ui/components/separator";
 import { Link } from "@/i18n/routing";
 import { ListingProps } from "@/types/vehicle";
@@ -58,22 +56,13 @@ export const ListingCard = ({ item }: { item: ListingProps }) => {
           </div>
         </CardContent>
 
-        <CardFooter className="flex items-center justify-between">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-semibold truncate">
-              {item.garageName}
-            </span>
-            <span className="text-xs text-muted-foreground truncate">
-              {item.garageLocation}
-            </span>
-          </div>
-          <Button
-            variant="outline"
-            size="icon-sm"
-            aria-label={t("saveToFavorites")}
-          >
-            <Heart className="text-muted-foreground" />
-          </Button>
+        <CardFooter className="flex flex-col gap-0.5">
+          <span className="text-sm font-semibold truncate">
+            {item.garageName}
+          </span>
+          <span className="text-xs text-muted-foreground truncate">
+            {item.garageLocation}
+          </span>
         </CardFooter>
       </Card>
     </Link>

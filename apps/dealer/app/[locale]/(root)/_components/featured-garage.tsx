@@ -31,9 +31,7 @@ export const FeaturedGarage = ({
       <section className="bg-secondary">
         <div className="w-full max-w-285 mx-auto px-4 py-12">
           <h2 className="text-2xl font-bold mb-6">{t("title")}</h2>
-          <p className="text-muted-foreground">
-            {t("emptyState")}
-          </p>
+          <p className="text-muted-foreground">{t("emptyState")}</p>
         </div>
       </section>
     );
@@ -69,7 +67,9 @@ export const FeaturedGarage = ({
 
                     <CardContent className="space-y-6">
                       <div className="space-y-2">
-                        <h2 className="text-lg font-bold">{garage.name}</h2>
+                        <h2 className="text-lg font-bold truncate">
+                          {garage.name}
+                        </h2>
                         <div className="flex items-center text-muted-foreground gap-1">
                           <MapPin className="size-4 shrink-0" />
                           <span className="text-sm truncate">
