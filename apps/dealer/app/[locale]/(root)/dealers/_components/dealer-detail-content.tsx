@@ -330,9 +330,16 @@ export const DealerDetailContent = ({
               </CardHeader>
               <CardContent>
                 {dealer.description ? (
-                  <p className="whitespace-pre-line text-sm text-muted-foreground leading-relaxed">
-                    {dealer.description}
-                  </p>
+                  <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+                    {dealer.description
+                      .split(/\n\n+/)
+                      .filter(Boolean)
+                      .map((para, i) => (
+                        <p key={i} className="whitespace-pre-line">
+                          {para.trim()}
+                        </p>
+                      ))}
+                  </div>
                 ) : (
                   <p className="text-sm text-muted-foreground italic">
                     {t("noDescription")}
