@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
   },
   fuelBadge: {
     position: 'absolute',
-    bottom: Spacing[3],
+    top: Spacing[3],
     left: Spacing[3],
     paddingHorizontal: Spacing[2],
     paddingVertical: 3,
