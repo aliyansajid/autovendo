@@ -19,7 +19,6 @@ model User {
   accounts      Account[]
 
   role        String?
-  accountType String?
   banned      Boolean?
   banReason  String?
   banExpires DateTime? @db.Timestamptz(3)
