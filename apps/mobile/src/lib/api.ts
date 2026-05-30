@@ -21,9 +21,6 @@ export type HomeData = {
 
 export async function fetchHome(category = 'all'): Promise<HomeData> {
   const res = await fetch(`${BASE_URL}/api/home?category=${category}`);
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`HTTP ${res.status}${body ? `: ${body}` : ''}`);
-  }
+  if (!res.ok) throw new Error('request_failed');
   return res.json();
 }
