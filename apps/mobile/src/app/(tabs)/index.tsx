@@ -7,16 +7,21 @@ import {
   TextInput,
   FlatList,
   Dimensions,
+  Image,
+  RefreshControl,
 } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SymbolView } from 'expo-symbols';
 import { Colors, FontFamily, FontSize, Spacing, Radius } from '@/constants/theme';
+import { fetchHome, type Vehicle, type HomeData } from '@/lib/api';
+import { useSession } from '@/lib/auth-client';
 
 const C = Colors.dark;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = SCREEN_WIDTH * 0.68;
 
-// ─── Mock Data ──────────────────────────────────────────────────────────────
+// ─── Categories ───────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
   { id: 'all', label: 'All', symbol: 'square.grid.2x2.fill' },
@@ -27,90 +32,6 @@ const CATEGORIES = [
   { id: 'luxury', label: 'Luxury', symbol: 'star.fill' },
   { id: 'van', label: 'Van', symbol: 'bus.fill' },
 ] as const;
-
-const FEATURED = [
-  {
-    id: '1',
-    make: 'BMW',
-    model: 'X5 xDrive40i',
-    year: 2023,
-    price: 74900,
-    mileage: 12400,
-    fuel: 'Petrol',
-    location: 'Zürich',
-    accent: '#1a3a6b',
-    badge: '#2c5bc8',
-  },
-  {
-    id: '2',
-    make: 'Mercedes',
-    model: 'C 300 AMG Line',
-    year: 2024,
-    price: 68500,
-    mileage: 4200,
-    fuel: 'Petrol',
-    location: 'Basel',
-    accent: '#1a1a2e',
-    badge: '#4a4a6a',
-  },
-  {
-    id: '3',
-    make: 'Tesla',
-    model: 'Model 3 Long Range',
-    year: 2024,
-    price: 52900,
-    mileage: 8100,
-    fuel: 'Electric',
-    location: 'Bern',
-    accent: '#0d2b1a',
-    badge: '#1a6b3a',
-  },
-  {
-    id: '4',
-    make: 'Porsche',
-    model: '911 Carrera S',
-    year: 2022,
-    price: 142000,
-    mileage: 18600,
-    fuel: 'Petrol',
-    location: 'Geneva',
-    accent: '#2d1a00',
-    badge: '#8b4513',
-  },
-];
-
-const NEW_ARRIVALS = [
-  {
-    id: '1',
-    make: 'Audi',
-    model: 'Q5 Sportback 45 TFSI',
-    year: 2024,
-    price: 61900,
-    mileage: 2100,
-    fuel: 'Petrol',
-    daysAgo: 1,
-  },
-  {
-    id: '2',
-    make: 'Volkswagen',
-    model: 'Golf R 2.0 TSI',
-    year: 2023,
-    price: 44500,
-    mileage: 9800,
-    fuel: 'Petrol',
-    daysAgo: 2,
-  },
-  {
-    id: '3',
-    make: 'Volvo',
-    model: 'XC90 B5 AWD Inscription',
-    year: 2023,
-    price: 79200,
-    mileage: 21000,
-    fuel: 'Mild Hybrid',
-    daysAgo: 3,
-  },
-];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -133,6 +54,14 @@ function getGreeting() {
   return 'Good evening';
 }
 
+function daysAgo(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const d = Math.floor(diff / 86_400_000);
+  if (d === 0) return 'Today';
+  if (d === 1) return '1d ago';
+  return `${d}d ago`;
+}
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function Avatar({ name }: { name: string }) {
@@ -149,9 +78,9 @@ function Avatar({ name }: { name: string }) {
   );
 }
 
-function FeaturedCard({ item }: { item: typeof FEATURED[number] }) {
+function FeaturedCard({ item }: { item: Vehicle }) {
   return (
-    <View style={[styles.featCard, { backgroundColor: item.accent }]}>
+    <Pressable style={styles.featCard}>
       {/* Decorative circle */}
       <View style={styles.featCircle} />
 
@@ -160,62 +89,71 @@ function FeaturedCard({ item }: { item: typeof FEATURED[number] }) {
         <SymbolView name="heart" size={18} tintColor="rgba(255,255,255,0.7)" />
       </Pressable>
 
-      {/* Fuel badge */}
-      <View style={[styles.fuelBadge, { backgroundColor: item.badge }]}>
-        <Text style={styles.fuelText}>{item.fuel}</Text>
-      </View>
-
-      {/* Car image placeholder */}
-      <View style={styles.featImageArea}>
-        <SymbolView name="car.side.fill" size={80} tintColor="rgba(255,255,255,0.12)" />
-      </View>
+      {/* Image or placeholder */}
+      {item.image ? (
+        <Image source={{ uri: item.image }} style={styles.featImage} resizeMode="cover" />
+      ) : (
+        <View style={styles.featImagePlaceholder}>
+          <SymbolView name="car.side.fill" size={80} tintColor="rgba(255,255,255,0.12)" />
+        </View>
+      )}
 
       {/* Info */}
       <View style={styles.featInfo}>
+        {item.fuel && (
+          <View style={styles.fuelBadge}>
+            <Text style={styles.fuelText}>{item.fuel}</Text>
+          </View>
+        )}
         <Text style={styles.featYear}>{item.year}</Text>
         <Text style={styles.featMake}>{item.make}</Text>
         <Text style={styles.featModel} numberOfLines={1}>{item.model}</Text>
         <View style={styles.featMeta}>
           <SymbolView name="gauge.medium" size={12} tintColor="rgba(255,255,255,0.5)" />
           <Text style={styles.featMetaText}>{formatMileage(item.mileage)}</Text>
-          <View style={styles.dot} />
-          <SymbolView name="location.fill" size={12} tintColor="rgba(255,255,255,0.5)" />
-          <Text style={styles.featMetaText}>{item.location}</Text>
+          {item.city && (
+            <>
+              <View style={styles.dot} />
+              <SymbolView name="location.fill" size={12} tintColor="rgba(255,255,255,0.5)" />
+              <Text style={styles.featMetaText}>{item.city}</Text>
+            </>
+          )}
         </View>
         <Text style={styles.featPrice}>{formatPrice(item.price)}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
-function ArrivalCard({ item }: { item: typeof NEW_ARRIVALS[number] }) {
+function ArrivalCard({ item }: { item: Vehicle }) {
   return (
     <Pressable style={styles.arrivalCard}>
-      {/* Placeholder image */}
-      <View style={styles.arrivalImg}>
-        <SymbolView name="car.side.fill" size={36} tintColor="rgba(255,255,255,0.15)" />
-      </View>
+      {item.image ? (
+        <Image source={{ uri: item.image }} style={styles.arrivalImg} resizeMode="cover" />
+      ) : (
+        <View style={[styles.arrivalImg, styles.arrivalImgPlaceholder]}>
+          <SymbolView name="car.side.fill" size={36} tintColor="rgba(255,255,255,0.15)" />
+        </View>
+      )}
 
-      {/* Info */}
       <View style={styles.arrivalInfo}>
         <View style={styles.arrivalHeader}>
           <Text style={styles.arrivalMake}>{item.make}</Text>
-          <View style={styles.fuelBadgeSm}>
-            <Text style={styles.fuelTextSm}>{item.fuel}</Text>
-          </View>
+          {item.fuel && (
+            <View style={styles.fuelBadgeSm}>
+              <Text style={styles.fuelTextSm}>{item.fuel}</Text>
+            </View>
+          )}
         </View>
         <Text style={styles.arrivalModel} numberOfLines={1}>{item.year} {item.model}</Text>
         <View style={styles.arrivalMeta}>
           <SymbolView name="gauge.medium" size={11} tintColor={C.mutedForeground} />
           <Text style={styles.arrivalMetaText}>{formatMileage(item.mileage)}</Text>
           <View style={styles.dot} />
-          <Text style={styles.arrivalMetaText}>
-            {item.daysAgo === 1 ? 'Today' : `${item.daysAgo}d ago`}
-          </Text>
+          <Text style={styles.arrivalMetaText}>{daysAgo(item.createdAt)}</Text>
         </View>
       </View>
 
-      {/* Price */}
       <View style={styles.arrivalPriceCol}>
         <Text style={styles.arrivalPrice}>{formatPrice(item.price)}</Text>
         <SymbolView name="chevron.right" size={14} tintColor={C.mutedForeground} />
@@ -224,27 +162,76 @@ function ArrivalCard({ item }: { item: typeof NEW_ARRIVALS[number] }) {
   );
 }
 
+function SkeletonCard({ width, height }: { width: number | string; height: number }) {
+  return <View style={[styles.skeleton, { width: width as any, height, borderRadius: Radius.xl }]} />;
+}
+
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
-  const user = { name: 'Aliyan Sajid' };
-  const activeCategory = 'all';
+  const { data: sessionData } = useSession();
+  const user = sessionData?.user;
+
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [data, setData] = useState<HomeData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async (category: string, isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    setError(null);
+    try {
+      const result = await fetchHome(category);
+      setData(result);
+    } catch (e: any) {
+      setError(e?.message ?? 'Failed to load listings');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load(activeCategory);
+  }, [activeCategory]);
+
+  const onRefresh = () => load(activeCategory, true);
+
+  const onCategory = (id: string) => {
+    setActiveCategory(id);
+  };
+
+  const stats = data?.stats;
+  const firstName = user?.name?.split(' ')[0] ?? 'there';
 
   return (
     <View style={styles.root}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={C.mutedForeground}
+          />
+        }>
 
         {/* ── Header ──────────────────────────────────────────────────── */}
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
-              <Avatar name={user.name} />
+              {user ? (
+                <Avatar name={user.name} />
+              ) : (
+                <View style={[styles.avatar, styles.avatarPlaceholder]} />
+              )}
               <View>
                 <Text style={styles.greeting}>{getGreeting()}</Text>
-                <Text style={styles.username}>{user.name.split(' ')[0]}</Text>
+                <Text style={styles.username}>{firstName}</Text>
               </View>
             </View>
             <Pressable style={styles.notifBtn} hitSlop={8}>
@@ -265,16 +252,16 @@ export default function HomeScreen() {
             />
           </View>
           <Pressable style={styles.filterBtn}>
-            <SymbolView name="slider.horizontal.3" size={18} tintColor={C.foreground} />
+            <SymbolView name="slider.horizontal.3" size={18} tintColor="#fff" />
           </Pressable>
         </View>
 
         {/* ── Stats ────────────────────────────────────────────────────── */}
         <View style={styles.statsRow}>
           {[
-            { value: '2,840', label: 'Cars' },
-            { value: '148', label: 'Dealers' },
-            { value: '34', label: 'New Today' },
+            { value: stats ? stats.totalCars.toLocaleString('de-CH') : '—', label: 'Cars' },
+            { value: stats ? stats.totalDealers.toLocaleString('de-CH') : '—', label: 'Dealers' },
+            { value: stats ? stats.newToday.toLocaleString('de-CH') : '—', label: 'New Today' },
           ].map((s, i) => (
             <View key={i} style={[styles.statItem, i < 2 && styles.statDivider]}>
               <Text style={styles.statValue}>{s.value}</Text>
@@ -294,7 +281,10 @@ export default function HomeScreen() {
           {CATEGORIES.map(cat => {
             const active = cat.id === activeCategory;
             return (
-              <Pressable key={cat.id} style={[styles.catChip, active && styles.catChipActive]}>
+              <Pressable
+                key={cat.id}
+                style={[styles.catChip, active && styles.catChipActive]}
+                onPress={() => onCategory(cat.id)}>
                 <SymbolView
                   name={cat.symbol as any}
                   size={15}
@@ -315,17 +305,32 @@ export default function HomeScreen() {
             <Text style={styles.seeAll}>See all</Text>
           </Pressable>
         </View>
-        <FlatList
-          data={FEATURED}
-          keyExtractor={i => i.id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={CARD_WIDTH + 12}
-          decelerationRate="fast"
-          contentContainerStyle={styles.featList}
-          renderItem={({ item }) => <FeaturedCard item={item} />}
-          scrollEnabled
-        />
+
+        {loading ? (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.featList}>
+            {[1, 2].map(k => <SkeletonCard key={k} width={CARD_WIDTH} height={240} />)}
+          </ScrollView>
+        ) : error ? (
+          <View style={styles.errorBox}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={data?.featured ?? []}
+            keyExtractor={i => i.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={CARD_WIDTH + 12}
+            decelerationRate="fast"
+            contentContainerStyle={styles.featList}
+            ListEmptyComponent={
+              <View style={styles.emptyBox}>
+                <Text style={styles.emptyText}>No listings yet</Text>
+              </View>
+            }
+            renderItem={({ item }) => <FeaturedCard item={item} />}
+          />
+        )}
 
         {/* ── New Arrivals ─────────────────────────────────────────────── */}
         <View style={styles.sectionHeader}>
@@ -334,11 +339,24 @@ export default function HomeScreen() {
             <Text style={styles.seeAll}>See all</Text>
           </Pressable>
         </View>
-        <View style={styles.arrivalsList}>
-          {NEW_ARRIVALS.map(item => (
-            <ArrivalCard key={item.id} item={item} />
-          ))}
-        </View>
+
+        {loading ? (
+          <View style={styles.arrivalsList}>
+            {[1, 2, 3].map(k => <SkeletonCard key={k} width="100%" height={80} />)}
+          </View>
+        ) : (
+          <View style={styles.arrivalsList}>
+            {(data?.newArrivals ?? []).length === 0 ? (
+              <View style={styles.emptyBox}>
+                <Text style={styles.emptyText}>No new arrivals</Text>
+              </View>
+            ) : (
+              (data?.newArrivals ?? []).map(item => (
+                <ArrivalCard key={item.id} item={item} />
+              ))
+            )}
+          </View>
+        )}
 
         {/* Bottom padding for tab bar */}
         <View style={{ height: 120 }} />
@@ -381,6 +399,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#1e4da6',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  avatarPlaceholder: {
+    backgroundColor: 'rgba(255,255,255,0.08)',
   },
   avatarText: {
     fontFamily: FontFamily.sansBold,
@@ -537,9 +558,9 @@ const styles = StyleSheet.create({
   },
   featCard: {
     width: CARD_WIDTH,
-    height: 240,
+    height: 260,
     borderRadius: Radius.xl,
-    padding: Spacing[4],
+    backgroundColor: '#1a2a4a',
     overflow: 'hidden',
   },
   featCircle: {
@@ -550,37 +571,47 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.04)',
     top: -60,
     right: -60,
+    zIndex: 0,
   },
   heartBtn: {
     position: 'absolute',
-    top: Spacing[4],
-    right: Spacing[4],
+    top: Spacing[3],
+    right: Spacing[3],
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: 'rgba(0,0,0,0.25)',
+    backgroundColor: 'rgba(0,0,0,0.3)',
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 2,
+  },
+  featImage: {
+    width: '100%',
+    height: 150,
+  },
+  featImagePlaceholder: {
+    width: '100%',
+    height: 150,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.03)',
+  },
+  featInfo: {
+    padding: Spacing[3],
+    gap: 2,
   },
   fuelBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: Spacing[2],
     paddingVertical: 3,
     borderRadius: Radius.sm,
+    backgroundColor: 'rgba(44,91,200,0.4)',
     marginBottom: Spacing[1],
   },
   fuelText: {
     fontFamily: FontFamily.sansMedium,
     fontSize: FontSize.xs,
     color: 'rgba(255,255,255,0.9)',
-  },
-  featImageArea: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  featInfo: {
-    gap: 2,
   },
   featYear: {
     fontFamily: FontFamily.sans,
@@ -639,6 +670,8 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: Radius.md,
+  },
+  arrivalImgPlaceholder: {
     backgroundColor: 'rgba(255,255,255,0.06)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -693,5 +726,29 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.sansBold,
     fontSize: FontSize.base,
     color: C.foreground,
+  },
+
+  // States
+  skeleton: {
+    backgroundColor: 'rgba(255,255,255,0.07)',
+    marginRight: 12,
+  },
+  errorBox: {
+    padding: Spacing[4],
+    alignItems: 'center',
+  },
+  errorText: {
+    fontFamily: FontFamily.sans,
+    fontSize: FontSize.sm,
+    color: C.mutedForeground,
+  },
+  emptyBox: {
+    padding: Spacing[5],
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontFamily: FontFamily.sans,
+    fontSize: FontSize.sm,
+    color: C.mutedForeground,
   },
 });

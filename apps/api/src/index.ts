@@ -2,6 +2,7 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { auth } from "@repo/auth";
+import home from "./routes/home";
 
 const app = new Hono<{
   Variables: {
@@ -51,6 +52,9 @@ app.on(["GET", "POST"], "/api/auth/*", (c) => auth.handler(c.req.raw));
 
 // Health check
 app.get("/health", (c) => c.json({ status: "ok" }));
+
+// Home screen data
+app.route("/api/home", home);
 
 // Session endpoint
 app.get("/api/session", (c) => {
