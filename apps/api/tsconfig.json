@@ -9,9 +9,5 @@
     "skipLibCheck": true,
     "esModuleInterop": true
   },
-  "include": ["src"],
-  "references": [
-    { "path": "../../packages/auth" },
-    { "path": "../../packages/database" }
-  ]
+  "include": ["src"]
 }
