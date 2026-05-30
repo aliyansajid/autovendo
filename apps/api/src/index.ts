@@ -1,7 +1,10 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { auth } from "@repo/auth";
+import { createAuth } from "@repo/auth";
+import { expo } from "@better-auth/expo";
+
+const auth = createAuth([expo()]);
 import home from "./routes/home";
 
 const app = new Hono<{

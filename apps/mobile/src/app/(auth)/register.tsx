@@ -40,13 +40,18 @@ export default function RegisterScreen() {
     setError(null);
     try {
       const name = [firstName, lastName].filter(Boolean).join(' ');
-      const { error: err } = await authClient.signUp.email({ email, password, name });
+      const { error: err } = await authClient.signUp.email({
+        email,
+        password,
+        name,
+        callbackURL: '/verify-success',
+      });
       setLoading(false);
       if (err) {
         setError(err.message ?? 'Registration failed. Please try again.');
         return;
       }
-      router.replace('/(tabs)' as any);
+      router.replace('/(auth)/verify-email' as any);
     } catch (e) {
       setLoading(false);
       setError('Something went wrong. Please try again.');

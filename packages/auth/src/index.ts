@@ -1,4 +1,4 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, type BetterAuthPlugin } from "better-auth";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@repo/db";
 import { admin } from "better-auth/plugins";
@@ -42,7 +42,8 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 const appName = process.env.APP_NAME ?? "AutoVendo";
 
-export const auth = betterAuth({
+export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
+  return betterAuth({
   baseURL: process.env.BETTER_AUTH_URL ?? "https://api.autovendo.ch",
 
   database: prismaAdapter(prisma, {
@@ -103,6 +104,7 @@ export const auth = betterAuth({
 
   emailVerification: {
     sendOnSignIn: true,
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       const { sendEmail } = await import("@repo/transactional");
       const { VerifyEmail } =
@@ -183,7 +185,11 @@ export const auth = betterAuth({
         },
       },
     }),
+    ...additionalPlugins,
   ],
-});
+  });
+}
+
+export const auth = createAuth();
 
 export { stripeClient };
