@@ -3,6 +3,15 @@ import { prisma } from "@repo/db";
 
 const home = new Hono();
 
+const R2_DOMAIN = process.env.R2_PUBLIC_DOMAIN ?? "";
+
+function getImageUrl(key: string | undefined | null): string | null {
+  if (!key) return null;
+  if (key.startsWith("http")) return key;
+  const cleanKey = key.startsWith("/") ? key.slice(1) : key;
+  return R2_DOMAIN ? `${R2_DOMAIN}/${cleanKey}` : null;
+}
+
 // Fuel type display labels
 const FUEL_LABELS: Record<string, string> = {
   PETROL: "Petrol",
@@ -103,7 +112,7 @@ home.get("/", async (c) => {
     mileage: v.kilometer,
     fuel: v.fuelType ? (FUEL_LABELS[v.fuelType] ?? v.fuelType) : null,
     year: v.registrationYear,
-    image: v.images[0] ?? null,
+    image: getImageUrl(v.images[0]),
     city: v.dealer?.city ?? v.seller?.city ?? null,
     createdAt: v.createdAt.toISOString(),
   });
