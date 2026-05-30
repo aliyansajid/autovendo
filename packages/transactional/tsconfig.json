@@ -4,6 +4,8 @@
   "include": ["."],
   "exclude": ["dist", "build", "node_modules"],
   "compilerOptions": {
+    "outDir": "dist",
+    "composite": true,
     "strict": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,

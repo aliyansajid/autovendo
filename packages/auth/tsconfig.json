@@ -5,13 +5,17 @@
     "moduleResolution": "Bundler",
     "outDir": "dist",
     "rootDir": "src",
+    "jsx": "react-jsx",
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true
   },
-  "include": ["src"],
   "references": [
-    { "path": "../../packages/auth" },
-    { "path": "../../packages/database" }
-  ]
+    { "path": "../database" },
+    { "path": "../transactional" }
+  ],
+  "include": ["src"]
 }
