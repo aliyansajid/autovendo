@@ -170,7 +170,7 @@ export const auth = betterAuth({
         enabled: true,
         plans: async () => {
           const plans = await prisma.plan.findMany();
-          return plans.map((plan) => ({
+          return plans.map((plan: typeof plans[number]) => ({
             name: plan.name,
             priceId: plan.priceId,
             limits: plan.limits as Record<string, any>,
