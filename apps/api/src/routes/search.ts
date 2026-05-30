@@ -65,6 +65,13 @@ const COLOR_MAP: Record<string, string> = {
   other: "OTHER",
 };
 
+const VEHICLE_TYPE_MAP: Record<string, string> = {
+  car: "CAR",
+  camper: "CAMPER",
+  utility: "UTILITY",
+  truck: "TRUCK",
+};
+
 const CONDITION_MAP: Record<string, string> = {
   new: "NEW",
   used: "USED",
@@ -147,6 +154,10 @@ search.get("/", async (c) => {
   const page = Math.max(1, toInt(c.req.query("page")) ?? 1);
   const pageSize = Math.min(50, Math.max(1, toInt(c.req.query("pageSize")) ?? 20));
 
+  // Vehicle type
+  const vehicleTypeRaw = c.req.query("vehicleType");
+  const vehicleType = vehicleTypeRaw ? VEHICLE_TYPE_MAP[vehicleTypeRaw] : undefined;
+
   // Text search
   const query = c.req.query("q")?.trim();
 
@@ -197,6 +208,8 @@ search.get("/", async (c) => {
   const where: Record<string, unknown> = {
     status: "PUBLISHED",
   };
+
+  if (vehicleType) where.vehicleType = vehicleType;
 
   if (query) {
     where.OR = [

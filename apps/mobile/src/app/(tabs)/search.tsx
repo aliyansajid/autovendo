@@ -13,56 +13,41 @@ import { SymbolView } from 'expo-symbols';
 import { FontFamily, FontSize, Spacing, Radius, type ThemeColors } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useTabBarHeight } from '@/hooks/use-tab-bar-height';
+import { router } from 'expo-router';
+import type { SearchParams } from '@/lib/api';
+import {
+  type VehicleType,
+  VEHICLE_TYPES,
+  CAR_BODY_TYPES, CAMPER_BODY_TYPES, UTILITY_BODY_TYPES, TRUCK_BODY_TYPES,
+  CAR_FUEL_TYPES, CAMPER_FUEL_TYPES, UTILITY_FUEL_TYPES, TRUCK_FUEL_TYPES,
+  CAR_EXTRAS, CAMPER_EXTRAS, UTILITY_EXTRAS, TRUCK_EXTRAS,
+  CAR_TOP_MAKES, CAR_ALL_MAKES,
+  CAMPER_TOP_MAKES, CAMPER_ALL_MAKES,
+  UTILITY_TOP_MAKES, UTILITY_ALL_MAKES,
+  TRUCK_TOP_MAKES, TRUCK_ALL_MAKES,
+} from '@/constants/vehicle';
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const FUEL_OPTIONS = [
-  { id: 'petrol', label: 'Petrol' },
-  { id: 'diesel', label: 'Diesel' },
-  { id: 'electric', label: 'Electric' },
-  { id: 'mhev-petrol', label: 'Mild Hybrid (P)' },
-  { id: 'mhev-diesel', label: 'Mild Hybrid (D)' },
-  { id: 'phev-petrol', label: 'Plug-in Hybrid (P)' },
-  { id: 'phev-diesel', label: 'Plug-in Hybrid (D)' },
-  { id: 'hev-petrol', label: 'Hybrid (P)' },
-  { id: 'hev-diesel', label: 'Hybrid (D)' },
-  { id: 'ethanol-petrol', label: 'Ethanol' },
-  { id: 'cng-petrol', label: 'CNG' },
-  { id: 'lpg-petrol', label: 'LPG' },
-  { id: 'hydrogen', label: 'Hydrogen' },
-];
-
-const BODY_TYPES = [
-  { id: 'suv', label: 'SUV' },
-  { id: 'saloon', label: 'Sedan' },
-  { id: 'estate', label: 'Estate' },
-  { id: 'coupe', label: 'Coupé' },
-  { id: 'cabriolet', label: 'Convertible' },
-  { id: 'small-car', label: 'Small Car' },
-  { id: 'minivan', label: 'Van' },
-  { id: 'pickup', label: 'Pickup' },
-  { id: 'bus', label: 'Bus' },
-];
+// ─── Static Constants ─────────────────────────────────────────────────────────
 
 const TRANSMISSION = [
-  { id: 'automatic', label: 'Automatic' },
-  { id: 'manual', label: 'Manual' },
-  { id: 'automatic-stepless', label: 'CVT' },
-  { id: 'semi-automatic', label: 'Semi-Auto' },
+  { value: 'automatic', label: 'Automatik' },
+  { value: 'manual', label: 'Schaltgetriebe' },
+  { value: 'automatic-stepless', label: 'Stufenloses Getriebe' },
+  { value: 'semi-automatic', label: 'Halbautomatik' },
 ];
 
 const DRIVE_TYPE = [
-  { id: 'all', label: 'AWD / 4WD' },
-  { id: 'front', label: 'Front-wheel' },
-  { id: 'rear', label: 'Rear-wheel' },
+  { value: 'all', label: 'Allrad / 4x4' },
+  { value: 'front', label: 'Frontantrieb' },
+  { value: 'rear', label: 'Hinterradantrieb' },
 ];
 
 const CONDITION = [
-  { id: 'new', label: 'New' },
-  { id: 'used', label: 'Used' },
-  { id: 'demonstration', label: 'Demo' },
-  { id: 'pre-registered', label: 'Pre-registered' },
-  { id: 'oldtimer', label: 'Oldtimer' },
+  { value: 'new', label: 'Neu' },
+  { value: 'used', label: 'Occasion' },
+  { value: 'demonstration', label: 'Vorführwagen' },
+  { value: 'pre-registered', label: 'Tageszulassung' },
+  { value: 'oldtimer', label: 'Oldtimer' },
 ];
 
 const ENERGY_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -73,83 +58,111 @@ const ENERGY_COLORS: Record<string, string> = {
 };
 
 const EURO_NORMS = [
-  { id: 'euro-6e', label: 'Euro 6e' },
-  { id: 'euro-6d-isc-fcm', label: 'Euro 6d-ISC-FCM' },
-  { id: 'euro-6d-isc', label: 'Euro 6d-ISC' },
-  { id: 'euro-6d-temp-evap-isc', label: 'Euro 6d-Temp-EVAP-ISC' },
-  { id: 'euro-6d-temp-evap', label: 'Euro 6d-Temp-EVAP' },
-  { id: 'euro-6d-temp-isc', label: 'Euro 6d-Temp-ISC' },
-  { id: 'euro-6d-temp', label: 'Euro 6d-Temp' },
-  { id: 'euro-6d', label: 'Euro 6d' },
-  { id: 'euro-6c', label: 'Euro 6c' },
-  { id: 'euro-6b', label: 'Euro 6b' },
-  { id: 'euro-6a', label: 'Euro 6a' },
-  { id: 'euro-6', label: 'Euro 6' },
-  { id: 'euro-5-plus', label: 'Euro 5+' },
-  { id: 'euro-5', label: 'Euro 5' },
-  { id: 'euro-4', label: 'Euro 4' },
-  { id: 'euro-3', label: 'Euro 3' },
-  { id: 'euro-2', label: 'Euro 2' },
-  { id: 'euro-1', label: 'Euro 1' },
+  { value: 'euro-6e', label: 'Euro 6e' },
+  { value: 'euro-6d-isc-fcm', label: 'Euro 6d-ISC-FCM' },
+  { value: 'euro-6d-isc', label: 'Euro 6d-ISC' },
+  { value: 'euro-6d-temp-evap-isc', label: 'Euro 6d-Temp-EVAP-ISC' },
+  { value: 'euro-6d-temp-evap', label: 'Euro 6d-Temp-EVAP' },
+  { value: 'euro-6d-temp-isc', label: 'Euro 6d-Temp-ISC' },
+  { value: 'euro-6d-temp', label: 'Euro 6d-Temp' },
+  { value: 'euro-6d', label: 'Euro 6d' },
+  { value: 'euro-6c', label: 'Euro 6c' },
+  { value: 'euro-6b', label: 'Euro 6b' },
+  { value: 'euro-6a', label: 'Euro 6a' },
+  { value: 'euro-6', label: 'Euro 6' },
+  { value: 'euro-5-plus', label: 'Euro 5+' },
+  { value: 'euro-5', label: 'Euro 5' },
+  { value: 'euro-4', label: 'Euro 4' },
+  { value: 'euro-3', label: 'Euro 3' },
+  { value: 'euro-2', label: 'Euro 2' },
+  { value: 'euro-1', label: 'Euro 1' },
 ];
 
 const COLORS_EXT = [
-  { id: 'black', label: 'Black', hex: '#1a1a1a' },
-  { id: 'white', label: 'White', hex: '#f5f5f5' },
-  { id: 'gray', label: 'Gray', hex: '#808080' },
-  { id: 'silver', label: 'Silver', hex: '#c0c0c0' },
-  { id: 'blue', label: 'Blue', hex: '#1e4da6' },
-  { id: 'red', label: 'Red', hex: '#c0392b' },
-  { id: 'green', label: 'Green', hex: '#27ae60' },
-  { id: 'brown', label: 'Brown', hex: '#7b4a2d' },
-  { id: 'beige', label: 'Beige', hex: '#d9c8a0' },
-  { id: 'orange', label: 'Orange', hex: '#e67e22' },
-  { id: 'yellow', label: 'Yellow', hex: '#f1c40f' },
-  { id: 'gold', label: 'Gold', hex: '#c9a227' },
-  { id: 'bordeaux', label: 'Bordeaux', hex: '#6b1a2a' },
-  { id: 'violet', label: 'Violet', hex: '#8e44ad' },
-  { id: 'turquoise', label: 'Turquoise', hex: '#1abc9c' },
-  { id: 'pink', label: 'Pink', hex: '#ff69b4' },
-  { id: 'anthracite', label: 'Anthracite', hex: '#3c3c3c' },
-  { id: 'multicoloured', label: 'Multi', hex: '' },
-  { id: 'other', label: 'Other', hex: '#999' },
+  { value: 'black', label: 'Schwarz', hex: '#1a1a1a' },
+  { value: 'white', label: 'Weiss', hex: '#f5f5f5' },
+  { value: 'gray', label: 'Grau', hex: '#808080' },
+  { value: 'silver', label: 'Silber', hex: '#c0c0c0' },
+  { value: 'blue', label: 'Blau', hex: '#1e4da6' },
+  { value: 'red', label: 'Rot', hex: '#c0392b' },
+  { value: 'green', label: 'Grün', hex: '#27ae60' },
+  { value: 'brown', label: 'Braun', hex: '#7b4a2d' },
+  { value: 'beige', label: 'Beige', hex: '#d9c8a0' },
+  { value: 'orange', label: 'Orange', hex: '#e67e22' },
+  { value: 'yellow', label: 'Gelb', hex: '#f1c40f' },
+  { value: 'gold', label: 'Gold', hex: '#c9a227' },
+  { value: 'bordeaux', label: 'Bordeaux', hex: '#6b1a2a' },
+  { value: 'violet', label: 'Violett', hex: '#8e44ad' },
+  { value: 'turquoise', label: 'Türkis', hex: '#1abc9c' },
+  { value: 'pink', label: 'Pink', hex: '#ff69b4' },
+  { value: 'anthracite', label: 'Anthrazit', hex: '#3c3c3c' },
+  { value: 'multicoloured', label: 'Mehrfarbig', hex: '' },
+  { value: 'other', label: 'Andere', hex: '#999' },
 ];
 
 const EQUIPMENT = [
-  '360° Camera', 'ABS', 'Adaptive Headlights', 'Adaptive Cruise Control',
-  'Alarm System', 'Alloy Wheels', 'Android Auto', 'Apple CarPlay',
-  'Bluetooth', 'Brake Assist', 'DAB Radio', 'Differential Lock',
-  'Electric Windows', 'Electric Tailgate', 'Electric Seat Adjustment',
-  'Hands-Free Kit', 'Head-Up Display', 'Heated Seats', 'Ventilated Seats',
-  'ISOFIX', 'Air Conditioning', 'Auto Climate Control', 'Navigation System',
-  'Panoramic Roof', 'Parking Assist', 'Rear Parking Sensors', 'Front Parking Sensors',
-  'Backup Camera', 'LED Headlights', 'Xenon Headlights', 'Laser Headlights',
-  'Sunroof', 'Sliding Door', 'Keyless Entry & Start', 'Fast Charging',
-  'Leather Seats', 'Alcantara', 'Sport Seats', 'Seat Covers',
-  'Lane Keep Assist', 'Blind Spot Assist', 'ESP', 'Start-Stop System',
-  'Cruise Control', 'Auxiliary Heating', 'Tow Hitch', 'Air Suspension',
-  'Roof Rack', 'Special Paint', 'Custom Exhaust', 'Reinforced Suspension',
-];
-
-const EXTRAS = [
-  { id: '8-tyres', label: '8 Tyres' },
-  { id: 'accessible', label: 'Disabled Access' },
-  { id: 'direct-import', label: 'Direct Import' },
-  { id: 'race-car', label: 'Race Car' },
-  { id: 'tuning', label: 'Tuning' },
-  { id: 'accident-vehicle', label: 'Accident Vehicle' },
+  '360°-kamera', 'abs', 'adaptiver-fernlicht-assistent', 'adaptiver-tempomat',
+  'alarmanlage', 'alufelgen', 'android-auto', 'apple-carplay',
+  'bluetooth', 'bremsassistent', 'dab-radio', 'differentialsperre',
+  'elektrische-fensterheber', 'elektrische-heckklappe', 'elektrische-sitzeinstellung',
+  'freisprechanlage', 'head-up-display', 'sitzheizung', 'sitzbeluftung',
+  'isofix', 'klimaanlage', 'klimaautomatik', 'navigationssystem',
+  'panoramadach', 'einparkassistent', 'einparkpiepser-hinten', 'einparkpiepser-vorne',
+  'rueckfahrkamera', 'led-scheinwerfer', 'xenon-scheinwerfer', 'laser-scheinwerfer',
+  'schiebedach', 'schiebetuer', 'keyless-entry-start', 'schnellladen',
+  'ledersitze', 'alcantara', 'sportsitze', 'sitzverkleidung',
+  'spurhalteassistent', 'totwinkel-assistent', 'esp', 'start-stopp-system',
+  'tempomat', 'standheizung', 'anhaengerkupplung', 'luftfederung',
+  'dachreling', 'sonderlackierung', 'sportauspuff', 'sportfahrwerk',
 ];
 
 const DAYS_LISTED = [
-  { id: 'any', label: 'Any' },
-  { id: '1', label: '1 day' },
-  { id: '2', label: '2 days' },
-  { id: '3', label: '3 days' },
-  { id: '5', label: '5 days' },
-  { id: '7', label: '1 week' },
-  { id: '14', label: '2 weeks' },
-  { id: '28', label: '4 weeks' },
+  { value: 'any', label: 'Beliebig' },
+  { value: '1', label: '1 Tag' },
+  { value: '2', label: '2 Tage' },
+  { value: '3', label: '3 Tage' },
+  { value: '5', label: '5 Tage' },
+  { value: '7', label: '7 Tage' },
+  { value: '14', label: '14 Tage' },
+  { value: '28', label: '28 Tage' },
 ];
+
+// ─── Per-type data helpers ────────────────────────────────────────────────────
+
+function getBodyTypes(t: VehicleType) {
+  if (t === 'camper') return CAMPER_BODY_TYPES;
+  if (t === 'utility') return UTILITY_BODY_TYPES;
+  if (t === 'truck') return TRUCK_BODY_TYPES;
+  return CAR_BODY_TYPES;
+}
+
+function getFuelTypes(t: VehicleType) {
+  if (t === 'camper') return CAMPER_FUEL_TYPES;
+  if (t === 'utility') return UTILITY_FUEL_TYPES;
+  if (t === 'truck') return TRUCK_FUEL_TYPES;
+  return CAR_FUEL_TYPES;
+}
+
+function getExtras(t: VehicleType) {
+  if (t === 'camper') return CAMPER_EXTRAS;
+  if (t === 'utility') return UTILITY_EXTRAS;
+  if (t === 'truck') return TRUCK_EXTRAS;
+  return CAR_EXTRAS;
+}
+
+function getTopMakes(t: VehicleType) {
+  if (t === 'camper') return CAMPER_TOP_MAKES;
+  if (t === 'utility') return UTILITY_TOP_MAKES;
+  if (t === 'truck') return TRUCK_TOP_MAKES;
+  return CAR_TOP_MAKES;
+}
+
+function getAllMakes(t: VehicleType) {
+  if (t === 'camper') return CAMPER_ALL_MAKES;
+  if (t === 'utility') return UTILITY_ALL_MAKES;
+  if (t === 'truck') return TRUCK_ALL_MAKES;
+  return CAR_ALL_MAKES;
+}
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -220,7 +233,7 @@ function RangeInputs({
 function ChipGroup({
   options, selected, onToggle, styles,
 }: {
-  options: { id: string; label: string }[];
+  options: { value: string; label: string }[];
   selected: string[];
   onToggle: (id: string) => void;
   styles: ReturnType<typeof createStyles>;
@@ -228,14 +241,67 @@ function ChipGroup({
   return (
     <View style={styles.chipGrid}>
       {options.map(o => {
-        const active = selected.includes(o.id);
+        const active = selected.includes(o.value);
         return (
-          <Pressable key={o.id} style={[styles.chip, active && styles.chipActive]}
-            onPress={() => onToggle(o.id)}>
+          <Pressable key={o.value} style={[styles.chip, active && styles.chipActive]}
+            onPress={() => onToggle(o.value)}>
             <Text style={[styles.chipLabel, active && styles.chipLabelActive]}>{o.label}</Text>
           </Pressable>
         );
       })}
+    </View>
+  );
+}
+
+function RadioGroup({
+  options, selected, onSelect, styles,
+}: {
+  options: { value: string; label: string }[];
+  selected: string;
+  onSelect: (id: string) => void;
+  styles: ReturnType<typeof createStyles>;
+}) {
+  return (
+    <View style={styles.chipGrid}>
+      {options.map(o => {
+        const active = selected === o.value;
+        return (
+          <Pressable key={o.value} style={[styles.chip, active && styles.chipActive]}
+            onPress={() => onSelect(o.value)}>
+            <Text style={[styles.chipLabel, active && styles.chipLabelActive]}>{o.label}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+function MakesPicker({
+  vehicleType, selected, onToggle, styles, C,
+}: {
+  vehicleType: VehicleType;
+  selected: string[];
+  onToggle: (id: string) => void;
+  styles: ReturnType<typeof createStyles>;
+  C: ThemeColors;
+}) {
+  const [showAll, setShowAll] = useState(false);
+  const topMakes = getTopMakes(vehicleType);
+  const allMakes = getAllMakes(vehicleType);
+  return (
+    <View style={{ gap: Spacing[3] }}>
+      <Text style={styles.groupLabel}>Top-Marken</Text>
+      <ChipGroup options={topMakes} selected={selected} onToggle={onToggle} styles={styles} />
+      {showAll && (
+        <>
+          <Text style={styles.groupLabel}>Alle Marken</Text>
+          <ChipGroup options={allMakes} selected={selected} onToggle={onToggle} styles={styles} />
+        </>
+      )}
+      <Pressable style={styles.showMoreBtn} onPress={() => setShowAll(v => !v)}>
+        <Text style={styles.showMoreText}>{showAll ? 'Weniger anzeigen' : 'Alle Marken anzeigen'}</Text>
+        <SymbolView name={showAll ? 'chevron.up' : 'chevron.down'} size={12} tintColor={C.sidebarPrimary} />
+      </Pressable>
     </View>
   );
 }
@@ -251,22 +317,22 @@ function ColorPicker({
   return (
     <View style={styles.colorGrid}>
       {COLORS_EXT.map(c => {
-        const active = selected.includes(c.id);
+        const active = selected.includes(c.value);
         return (
-          <Pressable key={c.id} style={styles.colorItem} onPress={() => onToggle(c.id)}>
+          <Pressable key={c.value} style={styles.colorItem} onPress={() => onToggle(c.value)}>
             <View style={[
               styles.colorSwatch,
               { backgroundColor: c.hex || '#888' },
               active && styles.colorSwatchActive,
-              c.id === 'white' && styles.colorSwatchBorder,
+              c.value === 'white' && styles.colorSwatchBorder,
             ]}>
               {active && (
                 <SymbolView name="checkmark" size={12}
-                  tintColor={['white', 'beige', 'silver', 'yellow', 'gold'].includes(c.id) ? '#000' : '#fff'} />
+                  tintColor={['white', 'beige', 'silver', 'yellow', 'gold'].includes(c.value) ? '#000' : '#fff'} />
               )}
-              {c.id === 'multicoloured' && (
+              {c.value === 'multicoloured' && (
                 <View style={styles.multiColor}>
-                  {['#c0392b','#1e4da6','#27ae60','#f1c40f'].map((col, i) => (
+                  {['#c0392b', '#1e4da6', '#27ae60', '#f1c40f'].map((col, i) => (
                     <View key={i} style={[styles.multiSlice, { backgroundColor: col }]} />
                   ))}
                 </View>
@@ -275,29 +341,6 @@ function ColorPicker({
             <Text style={[styles.colorLabel, active && styles.colorLabelActive]} numberOfLines={1}>
               {c.label}
             </Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
-
-function RadioGroup({
-  options, selected, onSelect, styles,
-}: {
-  options: { id: string; label: string }[];
-  selected: string;
-  onSelect: (id: string) => void;
-  styles: ReturnType<typeof createStyles>;
-}) {
-  return (
-    <View style={styles.chipGrid}>
-      {options.map(o => {
-        const active = selected === o.id;
-        return (
-          <Pressable key={o.id} style={[styles.chip, active && styles.chipActive]}
-            onPress={() => onSelect(o.id)}>
-            <Text style={[styles.chipLabel, active && styles.chipLabelActive]}>{o.label}</Text>
           </Pressable>
         );
       })}
@@ -329,24 +372,10 @@ function EquipmentPicker({
         })}
       </View>
       <Pressable style={styles.showMoreBtn} onPress={() => setShowAll(v => !v)}>
-        <Text style={styles.showMoreText}>{showAll ? 'Show less' : `Show all ${EQUIPMENT.length} options`}</Text>
+        <Text style={styles.showMoreText}>{showAll ? 'Weniger anzeigen' : `Alle ${EQUIPMENT.length} Optionen anzeigen`}</Text>
         <SymbolView name={showAll ? 'chevron.up' : 'chevron.down'} size={12} tintColor={C.sidebarPrimary} />
       </Pressable>
     </View>
-  );
-}
-
-function SelectField({ label, value, placeholder, styles, C }: { label: string; value?: string; placeholder: string; styles: ReturnType<typeof createStyles>; C: ThemeColors }) {
-  return (
-    <Pressable style={styles.selectField}>
-      <Text style={styles.selectLabel}>{label}</Text>
-      <View style={styles.selectRight}>
-        <Text style={[styles.selectValue, !value && styles.selectPlaceholder]}>
-          {value ?? placeholder}
-        </Text>
-        <SymbolView name="chevron.down" size={12} tintColor={C.mutedForeground} />
-      </View>
-    </Pressable>
   );
 }
 
@@ -371,8 +400,12 @@ export default function SearchScreen() {
   const C = useTheme();
   const styles = useMemo(() => createStyles(C), [C]);
   const tabBarHeight = useTabBarHeight();
+
+  // Vehicle type
+  const [vehicleType, setVehicleType] = useState<VehicleType>('car');
+
   const [query, setQuery] = useState('');
-  // Make/Model
+  // Make
   const [makes, setMakes] = useState<string[]>([]);
   // Price / Year / Mileage
   const [priceFrom, setPriceFrom] = useState('');
@@ -418,8 +451,17 @@ export default function SearchScreen() {
   const toggle = (arr: string[], setArr: (v: string[]) => void, id: string) =>
     setArr(arr.includes(id) ? arr.filter(x => x !== id) : [...arr, id]);
 
+  const handleTypeChange = (t: VehicleType) => {
+    setVehicleType(t);
+    // Reset type-specific filters when switching
+    setMakes([]);
+    setBodyTypes([]);
+    setFuels([]);
+    setExtras([]);
+  };
+
   const activeCount = [
-    fuels.length, bodyTypes.length, transmissions.length, drives.length,
+    makes.length, fuels.length, bodyTypes.length, transmissions.length, drives.length,
     conditions.length, extColors.length, intColors.length, equipment.length,
     extras.length, energyLabels.length, euroNorms.length,
     priceFrom || priceTo, yearFrom || yearTo, kmFrom || kmTo,
@@ -428,6 +470,47 @@ export default function SearchScreen() {
     mfk, warranty, metallic,
     daysListed !== 'any',
   ].filter(Boolean).length;
+
+  const handleSearch = () => {
+    const toNum = (v: string) => (v ? Number(v) : undefined);
+    const params: SearchParams = {
+      vehicleType,
+      ...(query ? { q: query } : {}),
+      ...(makes.length ? { make: makes } : {}),
+      ...(fuels.length ? { fuel: fuels } : {}),
+      ...(transmissions.length ? { transmission: transmissions } : {}),
+      ...(drives.length ? { drive: drives } : {}),
+      ...(bodyTypes.length ? { bodyType: bodyTypes } : {}),
+      ...(conditions.length ? { condition: conditions } : {}),
+      ...(extColors.length ? { color: extColors } : {}),
+      ...(intColors.length ? { intColor: intColors } : {}),
+      ...(energyLabels.length ? { energyLabel: energyLabels } : {}),
+      ...(euroNorms.length ? { euroNorm: euroNorms } : {}),
+      ...(equipment.length ? { equipment } : {}),
+      ...(toNum(priceFrom) !== undefined ? { priceFrom: toNum(priceFrom) } : {}),
+      ...(toNum(priceTo) !== undefined ? { priceTo: toNum(priceTo) } : {}),
+      ...(toNum(yearFrom) !== undefined ? { yearFrom: toNum(yearFrom) } : {}),
+      ...(toNum(yearTo) !== undefined ? { yearTo: toNum(yearTo) } : {}),
+      ...(toNum(kmFrom) !== undefined ? { kmFrom: toNum(kmFrom) } : {}),
+      ...(toNum(kmTo) !== undefined ? { kmTo: toNum(kmTo) } : {}),
+      ...(toNum(powerFrom) !== undefined ? { powerFrom: toNum(powerFrom) } : {}),
+      ...(toNum(powerTo) !== undefined ? { powerTo: toNum(powerTo) } : {}),
+      ...(toNum(capFrom) !== undefined ? { cubicFrom: toNum(capFrom) } : {}),
+      ...(toNum(capTo) !== undefined ? { cubicTo: toNum(capTo) } : {}),
+      ...(toNum(cylFrom) !== undefined ? { cylinderFrom: toNum(cylFrom) } : {}),
+      ...(toNum(cylTo) !== undefined ? { cylinderTo: toNum(cylTo) } : {}),
+      ...(toNum(consumFrom) !== undefined ? { consumFrom: toNum(consumFrom) } : {}),
+      ...(toNum(consumTo) !== undefined ? { consumTo: toNum(consumTo) } : {}),
+      ...(toNum(co2From) !== undefined ? { co2From: toNum(co2From) } : {}),
+      ...(toNum(co2To) !== undefined ? { co2To: toNum(co2To) } : {}),
+      powerUnit,
+      ...(metallic ? { metallic } : {}),
+      ...(mfk ? { mfk } : {}),
+      ...(warranty ? { warranty } : {}),
+      ...(daysListed !== 'any' ? { daysListed: Number(daysListed) } : {}),
+    };
+    router.push({ pathname: '/search-results', params: { filters: JSON.stringify(params) } } as any);
+  };
 
   const handleReset = () => {
     setQuery(''); setMakes([]);
@@ -445,18 +528,22 @@ export default function SearchScreen() {
     setDaysListed('any');
   };
 
+  const bodyTypeOptions = getBodyTypes(vehicleType);
+  const fuelTypeOptions = getFuelTypes(vehicleType);
+  const extrasOptions = getExtras(vehicleType);
+
   return (
     <View style={styles.root}>
       {/* Header */}
       <SafeAreaView edges={['top']} style={styles.headerSafe}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.heading}>Search</Text>
-            <Text style={styles.subheading}>Find your perfect car</Text>
+            <Text style={styles.heading}>Suche</Text>
+            <Text style={styles.subheading}>Finde dein Fahrzeug</Text>
           </View>
           {activeCount > 0 && (
             <Pressable style={styles.resetBtn} onPress={handleReset}>
-              <Text style={styles.resetText}>Reset</Text>
+              <Text style={styles.resetText}>Zurücksetzen</Text>
               <View style={styles.resetBadge}>
                 <Text style={styles.resetBadgeText}>{activeCount}</Text>
               </View>
@@ -466,7 +553,7 @@ export default function SearchScreen() {
         <View style={styles.searchBar}>
           <SymbolView name="magnifyingglass" size={16} tintColor={C.mutedForeground} />
           <TextInput style={styles.searchInput} value={query} onChangeText={setQuery}
-            placeholder="Make, model, keyword…" placeholderTextColor={C.mutedForeground}
+            placeholder="Marke, Modell, Stichwort…" placeholderTextColor={C.mutedForeground}
             returnKeyType="search" />
           {query.length > 0 && (
             <Pressable onPress={() => setQuery('')} hitSlop={8}>
@@ -474,53 +561,70 @@ export default function SearchScreen() {
             </Pressable>
           )}
         </View>
+
+        {/* Vehicle Type Tabs */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeTabs}
+          contentContainerStyle={styles.typeTabsContent}>
+          {VEHICLE_TYPES.map(t => {
+            const active = vehicleType === t.value;
+            return (
+              <Pressable key={t.value} style={[styles.typeTab, active && styles.typeTabActive]}
+                onPress={() => handleTypeChange(t.value as VehicleType)}>
+                <Text style={[styles.typeTabLabel, active && styles.typeTabLabelActive]}>
+                  {t.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
       </SafeAreaView>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + 80 }]}
+      <ScrollView style={styles.scroll}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + 80 }]}
         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
-        {/* Make & Model */}
-        <AccordionSection title="Make & Model" defaultOpen styles={styles} C={C}>
-          <SelectField label="Make" placeholder="Any make" styles={styles} C={C} />
-          <Divider styles={styles} />
-          <SelectField label="Model" placeholder="Any model" styles={styles} C={C} />
+        {/* Make */}
+        <AccordionSection title="Marke" defaultOpen
+          count={makes.length || undefined} styles={styles} C={C}>
+          <MakesPicker vehicleType={vehicleType} selected={makes}
+            onToggle={id => toggle(makes, setMakes, id)} styles={styles} C={C} />
         </AccordionSection>
 
         {/* Basic Data */}
-        <AccordionSection title="Basic Data" defaultOpen styles={styles} C={C}
-          count={[priceFrom||priceTo, yearFrom||yearTo, kmFrom||kmTo, conditions.length, bodyTypes.length].filter(Boolean).length || undefined}>
-          <Text style={styles.groupLabel}>Price</Text>
+        <AccordionSection title="Grunddaten" defaultOpen styles={styles} C={C}
+          count={[priceFrom || priceTo, yearFrom || yearTo, kmFrom || kmTo, conditions.length, bodyTypes.length].filter(Boolean).length || undefined}>
+          <Text style={styles.groupLabel}>Preis</Text>
           <RangeInputs from={priceFrom} to={priceTo} onFromChange={setPriceFrom} onToChange={setPriceTo} suffix="CHF" styles={styles} C={C} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Year</Text>
+          <Text style={styles.groupLabel}>Jahrgang</Text>
           <RangeInputs from={yearFrom} to={yearTo} onFromChange={setYearFrom} onToChange={setYearTo} styles={styles} C={C} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Mileage</Text>
+          <Text style={styles.groupLabel}>Kilometerstand</Text>
           <RangeInputs from={kmFrom} to={kmTo} onFromChange={setKmFrom} onToChange={setKmTo} suffix="km" styles={styles} C={C} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Condition</Text>
+          <Text style={styles.groupLabel}>Zustand</Text>
           <ChipGroup options={CONDITION} selected={conditions} onToggle={id => toggle(conditions, setConditions, id)} styles={styles} />
-          <Toggle label="Inspection passed (MFK)" value={mfk} onToggle={() => setMfk(v => !v)} styles={styles} />
-          <Toggle label="Has warranty" value={warranty} onToggle={() => setWarranty(v => !v)} styles={styles} />
+          <Toggle label="MFK bestanden" value={mfk} onToggle={() => setMfk(v => !v)} styles={styles} />
+          <Toggle label="Mit Garantie" value={warranty} onToggle={() => setWarranty(v => !v)} styles={styles} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Body Type</Text>
-          <ChipGroup options={BODY_TYPES} selected={bodyTypes} onToggle={id => toggle(bodyTypes, setBodyTypes, id)} styles={styles} />
+          <Text style={styles.groupLabel}>Fahrzeugtyp</Text>
+          <ChipGroup options={bodyTypeOptions} selected={bodyTypes} onToggle={id => toggle(bodyTypes, setBodyTypes, id)} styles={styles} />
         </AccordionSection>
 
         {/* Technical Data */}
-        <AccordionSection title="Technical Data" styles={styles} C={C}
-          count={[fuels.length, transmissions.length, drives.length, powerFrom||powerTo, capFrom||capTo, cylFrom||cylTo].filter(Boolean).length || undefined}>
-          <Text style={styles.groupLabel}>Fuel Type</Text>
-          <ChipGroup options={FUEL_OPTIONS} selected={fuels} onToggle={id => toggle(fuels, setFuels, id)} styles={styles} />
+        <AccordionSection title="Technische Daten" styles={styles} C={C}
+          count={[fuels.length, transmissions.length, drives.length, powerFrom || powerTo, capFrom || capTo, cylFrom || cylTo].filter(Boolean).length || undefined}>
+          <Text style={styles.groupLabel}>Treibstoff</Text>
+          <ChipGroup options={fuelTypeOptions} selected={fuels} onToggle={id => toggle(fuels, setFuels, id)} styles={styles} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Transmission</Text>
+          <Text style={styles.groupLabel}>Getriebe</Text>
           <ChipGroup options={TRANSMISSION} selected={transmissions} onToggle={id => toggle(transmissions, setTransmissions, id)} styles={styles} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Drive Type</Text>
+          <Text style={styles.groupLabel}>Antrieb</Text>
           <ChipGroup options={DRIVE_TYPE} selected={drives} onToggle={id => toggle(drives, setDrives, id)} styles={styles} />
           <Divider styles={styles} />
           <View style={styles.powerHeader}>
-            <Text style={styles.groupLabel}>Power</Text>
+            <Text style={styles.groupLabel}>Leistung</Text>
             <View style={styles.unitToggle}>
               {(['ps', 'kw'] as const).map(u => (
                 <Pressable key={u} style={[styles.unitBtn, powerUnit === u && styles.unitBtnActive]}
@@ -534,45 +638,47 @@ export default function SearchScreen() {
           </View>
           <RangeInputs from={powerFrom} to={powerTo} onFromChange={setPowerFrom} onToChange={setPowerTo} suffix={powerUnit === 'ps' ? 'PS' : 'kW'} styles={styles} C={C} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Cubic Capacity</Text>
+          <Text style={styles.groupLabel}>Hubraum</Text>
           <RangeInputs from={capFrom} to={capTo} onFromChange={setCapFrom} onToChange={setCapTo} suffix="cm³" styles={styles} C={C} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Cylinders</Text>
+          <Text style={styles.groupLabel}>Zylinder</Text>
           <RangeInputs from={cylFrom} to={cylTo} onFromChange={setCylFrom} onToChange={setCylTo} styles={styles} C={C} />
         </AccordionSection>
 
         {/* Appearance */}
-        <AccordionSection title="Appearance" styles={styles} C={C}
+        <AccordionSection title="Erscheinungsbild" styles={styles} C={C}
           count={[extColors.length, intColors.length, metallic].filter(Boolean).length || undefined}>
-          <Text style={styles.groupLabel}>Exterior Color</Text>
+          <Text style={styles.groupLabel}>Aussenfarbe</Text>
           <ColorPicker selected={extColors} onToggle={id => toggle(extColors, setExtColors, id)} styles={styles} C={C} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Interior Color</Text>
+          <Text style={styles.groupLabel}>Innenfarbe</Text>
           <ColorPicker selected={intColors} onToggle={id => toggle(intColors, setIntColors, id)} styles={styles} C={C} />
           <Divider styles={styles} />
           <Toggle label="Metallic" value={metallic} onToggle={() => setMetallic(v => !v)} styles={styles} />
         </AccordionSection>
 
         {/* Equipment */}
-        <AccordionSection title="Equipment" count={equipment.length || undefined} styles={styles} C={C}>
+        <AccordionSection title="Ausstattung" count={equipment.length || undefined} styles={styles} C={C}>
           <EquipmentPicker selected={equipment} onToggle={eq => toggle(equipment, setEquipment, eq)} styles={styles} C={C} />
         </AccordionSection>
 
         {/* Extras */}
-        <AccordionSection title="Extras" count={extras.length || undefined} styles={styles} C={C}>
-          <ChipGroup options={EXTRAS} selected={extras} onToggle={id => toggle(extras, setExtras, id)} styles={styles} />
-        </AccordionSection>
+        {extrasOptions.length > 0 && (
+          <AccordionSection title="Extras" count={extras.length || undefined} styles={styles} C={C}>
+            <ChipGroup options={extrasOptions} selected={extras} onToggle={id => toggle(extras, setExtras, id)} styles={styles} />
+          </AccordionSection>
+        )}
 
         {/* Energy & Emissions */}
-        <AccordionSection title="Energy & Emissions" styles={styles} C={C}
-          count={[energyLabels.length, euroNorms.length, consumFrom||consumTo, co2From||co2To].filter(Boolean).length || undefined}>
-          <Text style={styles.groupLabel}>Fuel Consumption</Text>
+        <AccordionSection title="Energie & Emissionen" styles={styles} C={C}
+          count={[energyLabels.length, euroNorms.length, consumFrom || consumTo, co2From || co2To].filter(Boolean).length || undefined}>
+          <Text style={styles.groupLabel}>Verbrauch</Text>
           <RangeInputs from={consumFrom} to={consumTo} onFromChange={setConsumFrom} onToChange={setConsumTo} suffix="l/100km" styles={styles} C={C} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>CO₂ Emissions</Text>
+          <Text style={styles.groupLabel}>CO₂-Emissionen</Text>
           <RangeInputs from={co2From} to={co2To} onFromChange={setCo2From} onToChange={setCo2To} suffix="g/km" styles={styles} C={C} />
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Energy Label</Text>
+          <Text style={styles.groupLabel}>Energieetikette</Text>
           <View style={styles.energyGrid}>
             {ENERGY_LABELS.map(l => {
               const active = energyLabels.includes(l);
@@ -585,13 +691,13 @@ export default function SearchScreen() {
             })}
           </View>
           <Divider styles={styles} />
-          <Text style={styles.groupLabel}>Euro Norm</Text>
+          <Text style={styles.groupLabel}>Euro-Norm</Text>
           <ChipGroup options={EURO_NORMS} selected={euroNorms} onToggle={id => toggle(euroNorms, setEuroNorms, id)} styles={styles} />
         </AccordionSection>
 
         {/* Listing */}
-        <AccordionSection title="Listing" count={daysListed !== 'any' ? 1 : undefined} styles={styles} C={C}>
-          <Text style={styles.groupLabel}>Listed within</Text>
+        <AccordionSection title="Inserat" count={daysListed !== 'any' ? 1 : undefined} styles={styles} C={C}>
+          <Text style={styles.groupLabel}>Eingestellt innerhalb</Text>
           <RadioGroup options={DAYS_LISTED} selected={daysListed} onSelect={setDaysListed} styles={styles} />
         </AccordionSection>
 
@@ -599,9 +705,9 @@ export default function SearchScreen() {
 
       {/* Sticky button */}
       <View style={[styles.footer, { paddingBottom: tabBarHeight }]}>
-        <Pressable style={styles.searchBtn}>
+        <Pressable style={styles.searchBtn} onPress={handleSearch}>
           <SymbolView name="magnifyingglass" size={16} tintColor="#fff" />
-          <Text style={styles.searchBtnText}>Show Results</Text>
+          <Text style={styles.searchBtnText}>Ergebnisse anzeigen</Text>
         </Pressable>
       </View>
     </View>
@@ -615,8 +721,7 @@ function createStyles(C: ThemeColors) {
     root: { flex: 1, backgroundColor: C.background },
 
     headerSafe: {
-      paddingHorizontal: Spacing[5],
-      paddingBottom: Spacing[3],
+      paddingBottom: Spacing[2],
       borderBottomWidth: 1,
       borderBottomColor: C.secondary,
     },
@@ -624,6 +729,7 @@ function createStyles(C: ThemeColors) {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
+      paddingHorizontal: Spacing[5],
       paddingTop: Spacing[4],
       paddingBottom: Spacing[3],
     },
@@ -671,6 +777,7 @@ function createStyles(C: ThemeColors) {
       backgroundColor: C.secondary,
       borderRadius: Radius.xl,
       paddingHorizontal: Spacing[4],
+      marginHorizontal: Spacing[5],
       height: 46,
       borderWidth: 1,
       borderColor: C.border,
@@ -681,6 +788,36 @@ function createStyles(C: ThemeColors) {
       fontSize: FontSize.base,
       color: C.foreground,
       height: 46,
+    },
+
+    // Vehicle type tabs
+    typeTabs: {
+      marginTop: Spacing[3],
+    },
+    typeTabsContent: {
+      paddingHorizontal: Spacing[5],
+      gap: Spacing[2],
+      flexDirection: 'row',
+    },
+    typeTab: {
+      paddingHorizontal: Spacing[4],
+      paddingVertical: Spacing[2],
+      borderRadius: Radius.full,
+      borderWidth: 1,
+      borderColor: C.border,
+      backgroundColor: C.secondary,
+    },
+    typeTabActive: {
+      backgroundColor: C.primary,
+      borderColor: C.sidebarPrimary,
+    },
+    typeTabLabel: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+    },
+    typeTabLabelActive: {
+      color: '#fff',
     },
 
     scroll: { flex: 1 },
@@ -915,30 +1052,6 @@ function createStyles(C: ThemeColors) {
       alignSelf: 'flex-start',
     },
     toggleThumbOn: { alignSelf: 'flex-end' },
-
-    // Select
-    selectField: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingVertical: Spacing[2],
-    },
-    selectLabel: {
-      fontFamily: FontFamily.sansMedium,
-      fontSize: FontSize.base,
-      color: C.foreground,
-    },
-    selectRight: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: Spacing[2],
-    },
-    selectValue: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.base,
-      color: C.foreground,
-    },
-    selectPlaceholder: { color: C.mutedForeground },
 
     // Show more
     showMoreBtn: {

@@ -65,6 +65,7 @@ export type SearchResult = {
 
 export type SearchParams = {
   q?: string;
+  vehicleType?: string;
   make?: string[];
   fuel?: string[];
   transmission?: string[];
@@ -127,6 +128,7 @@ export async function fetchSearch(
   }
 
   // Scalar params
+  if (params.vehicleType) qs.set("vehicleType", params.vehicleType);
   if (params.q) qs.set("q", params.q);
   if (params.priceFrom !== undefined)
     qs.set("priceFrom", String(params.priceFrom));
