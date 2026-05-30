@@ -153,9 +153,8 @@ export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
     "https://admin.autovendo.ch",
     "autovendo://",
     "autovendo://*",
-    ...(process.env.NODE_ENV === "development"
-      ? ["exp://", "exp://**", "exp://192.168.*.*:*/**"]
-      : []),
+    "exp://",
+    "exp://**",
   ],
 
   plugins: [
