@@ -3,6 +3,7 @@ import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@repo/db";
 import { admin } from "better-auth/plugins";
 import { stripe } from "@better-auth/stripe";
+import { expo } from "@better-auth/expo";
 import Stripe from "stripe";
 
 async function handleListingPayment(event: Stripe.Event) {
@@ -112,9 +113,16 @@ trustedOrigins: [
     "https://autosolo.ch",
     "https://www.autosolo.ch",
     "https://admin.autovendo.ch",
+    // Mobile app
+    "autovendo://",
+    "autovendo://*",
+    ...(process.env.NODE_ENV === "development"
+      ? ["exp://", "exp://**", "exp://192.168.*.*:*/**"]
+      : []),
   ],
 
   plugins: [
+    expo(),
     admin(),
     stripe({
       stripeClient,

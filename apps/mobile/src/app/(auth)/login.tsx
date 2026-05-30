@@ -8,12 +8,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 
 import { Colors, FontFamily, FontSize, Radius, Spacing, Shadow } from '@/constants/theme';
+import { authClient } from '@/lib/auth-client';
 
 const C = Colors.dark;
 const BG = '#0c0c15';
@@ -24,6 +26,21 @@ export default function LoginScreen() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLogin = async () => {
+    if (!email || !password) return;
+    setLoading(true);
+    setError(null);
+    const { error: err } = await authClient.signIn.email({ email, password });
+    setLoading(false);
+    if (err) {
+      setError(err.message ?? 'Sign in failed. Please try again.');
+      return;
+    }
+    router.replace('/(tabs)' as any);
+  };
 
   return (
     <View style={styles.container}>
@@ -45,9 +62,16 @@ export default function LoginScreen() {
               <Text style={styles.subtitle}>Sign in to your AutoVendo account</Text>
             </View>
 
+            {/* Error */}
+            {error && (
+              <View style={styles.errorBox}>
+                <SymbolView name="exclamationmark.circle" size={14} tintColor={C.destructive} weight="medium" />
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            )}
+
             {/* Form */}
             <View style={styles.form}>
-              {/* Email */}
               <View style={styles.fieldGroup}>
                 <Text style={styles.label}>Email</Text>
                 <View style={[styles.inputWrapper, emailFocused && styles.inputWrapperFocused]}>
@@ -74,7 +98,6 @@ export default function LoginScreen() {
                 </View>
               </View>
 
-              {/* Password */}
               <View style={styles.fieldGroup}>
                 <View style={styles.labelRow}>
                   <Text style={styles.label}>Password</Text>
@@ -102,11 +125,9 @@ export default function LoginScreen() {
                     onBlur={() => setPasswordFocused(false)}
                     secureTextEntry={!passwordVisible}
                     returnKeyType="done"
+                    onSubmitEditing={handleLogin}
                   />
-                  <Pressable
-                    onPress={() => setPasswordVisible(v => !v)}
-                    hitSlop={8}
-                    style={styles.eyeBtn}>
+                  <Pressable onPress={() => setPasswordVisible(v => !v)} hitSlop={8} style={styles.eyeBtn}>
                     <SymbolView
                       name={passwordVisible ? 'eye.slash' : 'eye'}
                       size={16}
@@ -117,19 +138,22 @@ export default function LoginScreen() {
                 </View>
               </View>
 
-              {/* Submit */}
-              <Pressable style={styles.submitBtn}>
-                <Text style={styles.submitBtnText}>Sign In</Text>
+              <Pressable
+                style={[styles.submitBtn, (!email || !password || loading) && styles.submitBtnDisabled]}
+                onPress={handleLogin}
+                disabled={loading || !email || !password}>
+                {loading
+                  ? <ActivityIndicator color="#ffffff" size="small" />
+                  : <Text style={styles.submitBtnText}>Sign In</Text>}
               </Pressable>
 
-              {/* Divider */}
               <View style={styles.divider}>
                 <View style={styles.dividerLine} />
                 <Text style={styles.dividerText}>or continue with</Text>
                 <View style={styles.dividerLine} />
               </View>
 
-              {/* Social */}
+              {/* Social — UI only, wired up when OAuth providers are configured */}
               <View style={styles.socialRow}>
                 <Pressable style={styles.socialBtn}>
                   <SymbolView name="globe" size={18} tintColor="#ffffff" weight="medium" />
@@ -142,7 +166,6 @@ export default function LoginScreen() {
               </View>
             </View>
 
-            {/* Footer */}
             <View style={styles.footer}>
               <Text style={styles.footerText}>Don't have an account? </Text>
               <Link href="/(auth)/register" asChild>
@@ -160,23 +183,14 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: BG,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  keyboardView: {
-    flex: 1,
-  },
+  container: { flex: 1, backgroundColor: BG },
+  safeArea: { flex: 1 },
+  keyboardView: { flex: 1 },
   scroll: {
     flexGrow: 1,
     paddingHorizontal: Spacing[6],
     paddingBottom: Spacing[8],
   },
-
-  // Header
   header: {
     paddingTop: Spacing[8],
     paddingBottom: Spacing[8],
@@ -204,14 +218,26 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.45)',
     marginTop: Spacing[1],
   },
-
-  // Form
-  form: {
-    gap: Spacing[5],
-  },
-  fieldGroup: {
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing[2],
+    backgroundColor: `${C.destructive}18`,
+    borderWidth: 1,
+    borderColor: `${C.destructive}40`,
+    borderRadius: Radius.md,
+    paddingHorizontal: Spacing[4],
+    paddingVertical: Spacing[3],
+    marginBottom: Spacing[2],
   },
+  errorText: {
+    fontFamily: FontFamily.sans,
+    fontSize: FontSize.sm,
+    color: C.destructive,
+    flex: 1,
+  },
+  form: { gap: Spacing[5] },
+  fieldGroup: { gap: Spacing[2] },
   labelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -241,9 +267,7 @@ const styles = StyleSheet.create({
     borderColor: `${C.primary}80`,
     backgroundColor: `${C.primary}0D`,
   },
-  inputIcon: {
-    marginRight: Spacing[3],
-  },
+  inputIcon: { marginRight: Spacing[3] },
   input: {
     flex: 1,
     fontFamily: FontFamily.sans,
@@ -251,12 +275,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     height: '100%',
   },
-  eyeBtn: {
-    padding: Spacing[1],
-    marginLeft: Spacing[2],
-  },
-
-  // Submit
+  eyeBtn: { padding: Spacing[1], marginLeft: Spacing[2] },
   submitBtn: {
     height: 54,
     borderRadius: Radius.lg,
@@ -266,34 +285,24 @@ const styles = StyleSheet.create({
     marginTop: Spacing[2],
     ...Shadow.md,
   },
+  submitBtnDisabled: { opacity: 0.5 },
   submitBtnText: {
     fontFamily: FontFamily.sansSemiBold,
     fontSize: FontSize.md,
     color: '#ffffff',
   },
-
-  // Divider
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing[3],
   },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-  },
+  dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.08)' },
   dividerText: {
     fontFamily: FontFamily.sans,
     fontSize: FontSize.xs,
     color: 'rgba(255,255,255,0.3)',
   },
-
-  // Social
-  socialRow: {
-    flexDirection: 'row',
-    gap: Spacing[3],
-  },
+  socialRow: { flexDirection: 'row', gap: Spacing[3] },
   socialBtn: {
     flex: 1,
     flexDirection: 'row',
@@ -311,8 +320,6 @@ const styles = StyleSheet.create({
     fontSize: FontSize.sm,
     color: '#ffffff',
   },
-
-  // Footer
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',

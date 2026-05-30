@@ -7,22 +7,27 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 
 import { Colors, FontFamily, FontSize, Radius, Spacing, Shadow } from '@/constants/theme';
+import { authClient } from '@/lib/auth-client';
 
 const C = Colors.dark;
 const BG = '#0c0c15';
 
 export default function ResetPasswordScreen() {
+  const { token } = useLocalSearchParams<{ token: string }>();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
   const isFocused = (f: string) => focused === f;
@@ -195,11 +200,36 @@ export default function ResetPasswordScreen() {
                 )}
               </View>
 
+              {/* Error */}
+              {error && (
+                <View style={styles.errorBox}>
+                  <SymbolView name="exclamationmark.circle" size={14} tintColor={C.destructive} weight="medium" />
+                  <Text style={styles.errorBoxText}>{error}</Text>
+                </View>
+              )}
+
               {/* Submit */}
               <Pressable
-                style={[styles.submitBtn, !canSubmit && styles.submitBtnDisabled]}
-                onPress={() => canSubmit && setDone(true)}>
-                <Text style={styles.submitBtnText}>Reset Password</Text>
+                style={[styles.submitBtn, (!canSubmit || loading) && styles.submitBtnDisabled]}
+                onPress={async () => {
+                  if (!canSubmit || loading) return;
+                  setLoading(true);
+                  setError(null);
+                  const { error: err } = await authClient.resetPassword({
+                    newPassword: password,
+                    token: token ?? '',
+                  });
+                  setLoading(false);
+                  if (err) {
+                    setError(err.message ?? 'Failed to reset password. Please try again.');
+                    return;
+                  }
+                  setDone(true);
+                }}
+                disabled={!canSubmit || loading}>
+                {loading
+                  ? <ActivityIndicator color="#ffffff" size="small" />
+                  : <Text style={styles.submitBtnText}>Reset Password</Text>}
               </Pressable>
             </View>
 
@@ -346,6 +376,15 @@ const styles = StyleSheet.create({
 
   // Requirements
   requirements: { gap: Spacing[1], marginTop: Spacing[1] },
+
+  // Error box
+  errorBox: {
+    flexDirection: 'row', alignItems: 'center', gap: Spacing[2],
+    backgroundColor: `${C.destructive}18`, borderWidth: 1,
+    borderColor: `${C.destructive}40`, borderRadius: Radius.md,
+    paddingHorizontal: Spacing[4], paddingVertical: Spacing[3],
+  },
+  errorBoxText: { fontFamily: FontFamily.sans, fontSize: FontSize.sm, color: C.destructive, flex: 1 },
 
   // Submit
   submitBtn: {

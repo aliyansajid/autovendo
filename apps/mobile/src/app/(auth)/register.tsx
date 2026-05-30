@@ -8,12 +8,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 
 import { Colors, FontFamily, FontSize, Radius, Spacing, Shadow } from '@/constants/theme';
+import { authClient } from '@/lib/auth-client';
 
 const C = Colors.dark;
 const BG = '#0c0c15';
@@ -34,8 +36,30 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const isFocused = (field: string) => focused === field;
+
+  const canSubmit = firstName && email && password.length >= 8;
+
+  const handleRegister = async () => {
+    if (!canSubmit) return;
+    setLoading(true);
+    setError(null);
+    const name = [firstName, lastName].filter(Boolean).join(' ');
+    const { error: err } = await authClient.signUp.email({
+      email,
+      password,
+      name,
+    });
+    setLoading(false);
+    if (err) {
+      setError(err.message ?? 'Registration failed. Please try again.');
+      return;
+    }
+    router.replace('/(tabs)' as any);
+  };
 
   return (
     <View style={styles.container}>
@@ -48,7 +72,6 @@ export default function RegisterScreen() {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}>
 
-            {/* Header */}
             <View style={styles.header}>
               <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={8}>
                 <SymbolView name="arrow.left" size={18} tintColor="rgba(255,255,255,0.6)" weight="medium" />
@@ -59,6 +82,14 @@ export default function RegisterScreen() {
               <Text style={styles.title}>Create account</Text>
               <Text style={styles.subtitle}>Join AutoVendo and start your journey</Text>
             </View>
+
+            {/* Error */}
+            {error && (
+              <View style={styles.errorBox}>
+                <SymbolView name="exclamationmark.circle" size={14} tintColor={C.destructive} weight="medium" />
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            )}
 
             {/* Account type */}
             <View style={styles.section}>
@@ -89,7 +120,6 @@ export default function RegisterScreen() {
 
             {/* Form */}
             <View style={styles.form}>
-              {/* Name row */}
               <View style={styles.nameRow}>
                 <View style={[styles.fieldGroup, { flex: 1 }]}>
                   <Text style={styles.label}>First name</Text>
@@ -125,7 +155,6 @@ export default function RegisterScreen() {
                 </View>
               </View>
 
-              {/* Email */}
               <View style={styles.fieldGroup}>
                 <Text style={styles.label}>Email</Text>
                 <View style={[styles.inputWrapper, isFocused('email') && styles.inputWrapperFocused]}>
@@ -152,7 +181,6 @@ export default function RegisterScreen() {
                 </View>
               </View>
 
-              {/* Password */}
               <View style={styles.fieldGroup}>
                 <Text style={styles.label}>Password</Text>
                 <View style={[styles.inputWrapper, isFocused('password') && styles.inputWrapperFocused]}>
@@ -173,6 +201,7 @@ export default function RegisterScreen() {
                     onBlur={() => setFocused(null)}
                     secureTextEntry={!passwordVisible}
                     returnKeyType="done"
+                    onSubmitEditing={handleRegister}
                   />
                   <Pressable onPress={() => setPasswordVisible(v => !v)} hitSlop={8} style={styles.eyeBtn}>
                     <SymbolView
@@ -183,7 +212,6 @@ export default function RegisterScreen() {
                     />
                   </Pressable>
                 </View>
-                {/* Password strength hint */}
                 <View style={styles.strengthRow}>
                   {[0, 1, 2, 3].map(i => (
                     <View
@@ -200,20 +228,22 @@ export default function RegisterScreen() {
                 </View>
               </View>
 
-              {/* Terms note */}
               <Text style={styles.termsText}>
                 By creating an account you agree to our{' '}
                 <Text style={styles.termsLink}>Terms of Service</Text> and{' '}
                 <Text style={styles.termsLink}>Privacy Policy</Text>.
               </Text>
 
-              {/* Submit */}
-              <Pressable style={styles.submitBtn}>
-                <Text style={styles.submitBtnText}>Create Account</Text>
+              <Pressable
+                style={[styles.submitBtn, (!canSubmit || loading) && styles.submitBtnDisabled]}
+                onPress={handleRegister}
+                disabled={!canSubmit || loading}>
+                {loading
+                  ? <ActivityIndicator color="#ffffff" size="small" />
+                  : <Text style={styles.submitBtnText}>Create Account</Text>}
               </Pressable>
             </View>
 
-            {/* Footer */}
             <View style={styles.footer}>
               <Text style={styles.footerText}>Already have an account? </Text>
               <Link href="/(auth)/login" asChild>
@@ -234,181 +264,71 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: BG },
   safeArea: { flex: 1 },
   keyboardView: { flex: 1 },
-  scroll: {
-    flexGrow: 1,
-    paddingHorizontal: Spacing[6],
-    paddingBottom: Spacing[8],
-  },
-
-  // Header
-  header: {
-    paddingTop: Spacing[6],
-    paddingBottom: Spacing[6],
-    gap: Spacing[2],
-  },
+  scroll: { flexGrow: 1, paddingHorizontal: Spacing[6], paddingBottom: Spacing[8] },
+  header: { paddingTop: Spacing[6], paddingBottom: Spacing[6], gap: Spacing[2] },
   backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: Radius.full,
+    width: 36, height: 36, borderRadius: Radius.full,
     backgroundColor: 'rgba(255,255,255,0.06)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing[4],
+    alignItems: 'center', justifyContent: 'center', marginBottom: Spacing[4],
   },
   logoMark: {
-    width: 48,
-    height: 48,
-    borderRadius: Radius.lg,
-    backgroundColor: `${C.primary}22`,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing[4],
-    borderWidth: 1,
-    borderColor: `${C.primary}30`,
+    width: 48, height: 48, borderRadius: Radius.lg,
+    backgroundColor: `${C.primary}22`, alignItems: 'center', justifyContent: 'center',
+    marginBottom: Spacing[4], borderWidth: 1, borderColor: `${C.primary}30`,
   },
-  title: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize['2xl'],
-    color: '#ffffff',
-  },
+  title: { fontFamily: FontFamily.sansBold, fontSize: FontSize['2xl'], color: '#ffffff' },
   subtitle: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.base,
-    color: 'rgba(255,255,255,0.45)',
-    marginTop: Spacing[1],
+    fontFamily: FontFamily.sans, fontSize: FontSize.base,
+    color: 'rgba(255,255,255,0.45)', marginTop: Spacing[1],
   },
-
-  // Account type
+  errorBox: {
+    flexDirection: 'row', alignItems: 'center', gap: Spacing[2],
+    backgroundColor: `${C.destructive}18`, borderWidth: 1,
+    borderColor: `${C.destructive}40`, borderRadius: Radius.md,
+    paddingHorizontal: Spacing[4], paddingVertical: Spacing[3], marginBottom: Spacing[2],
+  },
+  errorText: { fontFamily: FontFamily.sans, fontSize: FontSize.sm, color: C.destructive, flex: 1 },
   section: { gap: Spacing[3], marginBottom: Spacing[5] },
-  sectionLabel: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.sm,
-    color: 'rgba(255,255,255,0.6)',
-  },
+  sectionLabel: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm, color: 'rgba(255,255,255,0.6)' },
   typeRow: { flexDirection: 'row', gap: Spacing[3] },
   typeCard: {
-    flex: 1,
-    padding: Spacing[4],
-    borderRadius: Radius.md,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-    gap: Spacing[1],
-    alignItems: 'center',
+    flex: 1, padding: Spacing[4], borderRadius: Radius.md,
+    backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)', gap: Spacing[1], alignItems: 'center',
   },
-  typeCardActive: {
-    backgroundColor: `${C.primary}18`,
-    borderColor: `${C.primary}60`,
-  },
+  typeCardActive: { backgroundColor: `${C.primary}18`, borderColor: `${C.primary}60` },
   typeLabel: {
-    fontFamily: FontFamily.sansSemiBold,
-    fontSize: FontSize.xs,
-    color: 'rgba(255,255,255,0.5)',
-    textAlign: 'center',
+    fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.xs,
+    color: 'rgba(255,255,255,0.5)', textAlign: 'center',
   },
   typeLabelActive: { color: '#ffffff' },
-  typeDescription: {
-    fontFamily: FontFamily.sans,
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.3)',
-    textAlign: 'center',
-  },
-
-  // Form
+  typeDescription: { fontFamily: FontFamily.sans, fontSize: 10, color: 'rgba(255,255,255,0.3)', textAlign: 'center' },
   form: { gap: Spacing[5] },
   nameRow: { flexDirection: 'row', gap: Spacing[3] },
   fieldGroup: { gap: Spacing[2] },
-  label: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.sm,
-    color: 'rgba(255,255,255,0.6)',
-  },
+  label: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm, color: 'rgba(255,255,255,0.6)' },
   inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.10)',
-    paddingHorizontal: Spacing[4],
-    height: 52,
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: Radius.md,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)',
+    paddingHorizontal: Spacing[4], height: 52,
   },
-  inputWrapperFocused: {
-    borderColor: `${C.primary}80`,
-    backgroundColor: `${C.primary}0D`,
-  },
+  inputWrapperFocused: { borderColor: `${C.primary}80`, backgroundColor: `${C.primary}0D` },
   inputIcon: { marginRight: Spacing[3] },
-  input: {
-    flex: 1,
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.base,
-    color: '#ffffff',
-    height: '100%',
-  },
+  input: { flex: 1, fontFamily: FontFamily.sans, fontSize: FontSize.base, color: '#ffffff', height: '100%' },
   eyeBtn: { padding: Spacing[1], marginLeft: Spacing[2] },
-
-  // Password strength
-  strengthRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing[2],
-    marginTop: Spacing[1],
-  },
-  strengthBar: {
-    flex: 1,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-  },
-  strengthText: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.xs,
-    color: 'rgba(255,255,255,0.3)',
-    minWidth: 40,
-  },
-
-  // Terms
-  termsText: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.xs,
-    color: 'rgba(255,255,255,0.35)',
-    lineHeight: 18,
-  },
-  termsLink: {
-    color: C.sidebarPrimary,
-    fontFamily: FontFamily.sansMedium,
-  },
-
-  // Submit
+  strengthRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing[2], marginTop: Spacing[1] },
+  strengthBar: { flex: 1, height: 3, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.1)' },
+  strengthText: { fontFamily: FontFamily.sans, fontSize: FontSize.xs, color: 'rgba(255,255,255,0.3)', minWidth: 40 },
+  termsText: { fontFamily: FontFamily.sans, fontSize: FontSize.xs, color: 'rgba(255,255,255,0.35)', lineHeight: 18 },
+  termsLink: { color: C.sidebarPrimary, fontFamily: FontFamily.sansMedium },
   submitBtn: {
-    height: 54,
-    borderRadius: Radius.lg,
-    backgroundColor: C.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...Shadow.md,
+    height: 54, borderRadius: Radius.lg, backgroundColor: C.primary,
+    alignItems: 'center', justifyContent: 'center', ...Shadow.md,
   },
-  submitBtnText: {
-    fontFamily: FontFamily.sansSemiBold,
-    fontSize: FontSize.md,
-    color: '#ffffff',
-  },
-
-  // Footer
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: Spacing[8],
-  },
-  footerText: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.sm,
-    color: 'rgba(255,255,255,0.4)',
-  },
-  footerLink: {
-    fontFamily: FontFamily.sansSemiBold,
-    fontSize: FontSize.sm,
-    color: C.sidebarPrimary,
-  },
+  submitBtnDisabled: { opacity: 0.5 },
+  submitBtnText: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.md, color: '#ffffff' },
+  footer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: Spacing[8] },
+  footerText: { fontFamily: FontFamily.sans, fontSize: FontSize.sm, color: 'rgba(255,255,255,0.4)' },
+  footerLink: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.sm, color: C.sidebarPrimary },
 });

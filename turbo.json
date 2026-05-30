@@ -24,7 +24,8 @@
     "NEXT_PUBLIC_R2_PUBLIC_DOMAIN",
     "REDIS_URL",
     "SENTRY_AUTH_TOKEN",
-    "NEXT_PUBLIC_GOOGLE_MAPS_KEY"
+    "NEXT_PUBLIC_GOOGLE_MAPS_KEY",
+    "EXPO_PUBLIC_AUTH_URL"
   ],
   "tasks": {
     "build": {
