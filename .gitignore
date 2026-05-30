@@ -38,3 +38,5 @@ yarn-error.log*
 *.pem
 
 packages/database/generated
+# TypeScript build cache
+*.tsbuildinfo
