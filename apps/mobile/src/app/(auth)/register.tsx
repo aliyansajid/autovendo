@@ -20,16 +20,7 @@ import { authClient } from '@/lib/auth-client';
 const C = Colors.dark;
 const BG = '#0c0c15';
 
-type AccountType = 'buyer' | 'dealer' | 'seller';
-
-const ACCOUNT_TYPES: { key: AccountType; label: string; description: string; symbol: string }[] = [
-  { key: 'buyer', label: 'Buyer', description: 'Browse & contact sellers', symbol: 'magnifyingglass' },
-  { key: 'dealer', label: 'Dealer', description: 'Manage your dealership', symbol: 'building.2' },
-  { key: 'seller', label: 'Private Seller', description: 'List your vehicle', symbol: 'tag' },
-];
-
 export default function RegisterScreen() {
-  const [accountType, setAccountType] = useState<AccountType>('buyer');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -44,27 +35,19 @@ export default function RegisterScreen() {
   const canSubmit = firstName.length > 0 && email.length > 0 && password.length >= 8;
 
   const handleRegister = async () => {
-    console.log('handleRegister called', { canSubmit, firstName, email, passwordLength: password.length });
     if (!canSubmit) return;
     setLoading(true);
     setError(null);
     try {
       const name = [firstName, lastName].filter(Boolean).join(' ');
-      const { error: err } = await authClient.signUp.email({
-        email,
-        password,
-        name,
-        accountType: accountType === 'dealer' ? 'dealer' : 'user',
-      } as any);
+      const { error: err } = await authClient.signUp.email({ email, password, name });
       setLoading(false);
       if (err) {
-        console.log('signup error', err);
         setError(err.message ?? 'Registration failed. Please try again.');
         return;
       }
       router.replace('/(tabs)' as any);
     } catch (e) {
-      console.log('signup exception', e);
       setLoading(false);
       setError('Something went wrong. Please try again.');
     }
@@ -99,33 +82,6 @@ export default function RegisterScreen() {
                 <Text style={styles.errorText}>{error}</Text>
               </View>
             )}
-
-            {/* Account type */}
-            <View style={styles.section}>
-              <Text style={styles.sectionLabel}>I want to</Text>
-              <View style={styles.typeRow}>
-                {ACCOUNT_TYPES.map(type => {
-                  const active = accountType === type.key;
-                  return (
-                    <Pressable
-                      key={type.key}
-                      style={[styles.typeCard, active && styles.typeCardActive]}
-                      onPress={() => setAccountType(type.key)}>
-                      <SymbolView
-                        name={type.symbol as any}
-                        size={20}
-                        tintColor={active ? C.primary : 'rgba(255,255,255,0.35)'}
-                        weight="medium"
-                      />
-                      <Text style={[styles.typeLabel, active && styles.typeLabelActive]}>
-                        {type.label}
-                      </Text>
-                      <Text style={styles.typeDescription}>{type.description}</Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
 
             {/* Form */}
             <View style={styles.form}>
@@ -297,21 +253,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[4], paddingVertical: Spacing[3], marginBottom: Spacing[2],
   },
   errorText: { fontFamily: FontFamily.sans, fontSize: FontSize.sm, color: C.destructive, flex: 1 },
-  section: { gap: Spacing[3], marginBottom: Spacing[5] },
-  sectionLabel: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm, color: 'rgba(255,255,255,0.6)' },
-  typeRow: { flexDirection: 'row', gap: Spacing[3] },
-  typeCard: {
-    flex: 1, padding: Spacing[4], borderRadius: Radius.md,
-    backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)', gap: Spacing[1], alignItems: 'center',
-  },
-  typeCardActive: { backgroundColor: `${C.primary}18`, borderColor: `${C.primary}60` },
-  typeLabel: {
-    fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.xs,
-    color: 'rgba(255,255,255,0.5)', textAlign: 'center',
-  },
-  typeLabelActive: { color: '#ffffff' },
-  typeDescription: { fontFamily: FontFamily.sans, fontSize: 10, color: 'rgba(255,255,255,0.3)', textAlign: 'center' },
   form: { gap: Spacing[5] },
   nameRow: { flexDirection: 'row', gap: Spacing[3] },
   fieldGroup: { gap: Spacing[2] },

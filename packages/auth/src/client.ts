@@ -4,7 +4,7 @@ import { stripeClient } from "@better-auth/stripe/client";
 import { ac, admin, dealer, user } from "./permissions";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: process.env.NEXT_PUBLIC_AUTH_URL ?? "https://api.autovendo.ch",
   plugins: [
     adminClient({ ac, roles: { admin, dealer, user } }),
     stripeClient({

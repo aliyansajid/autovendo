@@ -40,12 +40,11 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
-const appName = process.env.APP_NAME ?? "Autovendo";
-
-const SELF_ASSIGNABLE_ROLES = ["user", "dealer"] as const;
+const appName = process.env.APP_NAME ?? "AutoVendo";
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: process.env.BETTER_AUTH_URL ?? "https://api.autovendo.ch",
+
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -57,26 +56,34 @@ export const auth = betterAuth({
     },
   },
 
-  databaseHooks: {
-    user: {
-      create: {
-        before: async (user) => {
-          const { accountType, ...rest } = user as any;
-          return {
-            data: {
-              ...rest,
-              role: SELF_ASSIGNABLE_ROLES.includes(accountType)
-                ? accountType
-                : "user",
-            },
-          };
-        },
-      },
+  socialProviders: {
+    google: {
+      clientId: [
+        process.env.GOOGLE_WEB_CLIENT_ID!,
+        process.env.GOOGLE_IOS_CLIENT_ID!,
+        process.env.GOOGLE_ANDROID_CLIENT_ID!,
+      ],
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+    apple: {
+      clientId: process.env.APPLE_CLIENT_ID!,
+      clientSecret: process.env.APPLE_CLIENT_SECRET!,
     },
   },
 
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
+    revokeSessionsOnPasswordReset: true,
+    customSyntheticUser: ({ coreFields, additionalFields, id }) => ({
+      ...coreFields,
+      role: "user",
+      banned: false,
+      banReason: null,
+      banExpires: null,
+      ...additionalFields,
+      id,
+    }),
     sendResetPassword: async ({ user, url }) => {
       const { sendEmail } = await import("@repo/transactional");
       const { ResetPasswordEmail } =
@@ -113,14 +120,6 @@ export const auth = betterAuth({
   },
 
   user: {
-    additionalFields: {
-      accountType: {
-        type: "string",
-        required: false,
-        defaultValue: "user",
-        input: true,
-      },
-    },
     changeEmail: {
       enabled: true,
       sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
@@ -143,12 +142,12 @@ export const auth = betterAuth({
   },
 
   trustedOrigins: [
+    "https://api.autovendo.ch",
     "https://autovendo.ch",
     "https://www.autovendo.ch",
     "https://autosolo.ch",
     "https://www.autosolo.ch",
     "https://admin.autovendo.ch",
-    // Mobile app
     "autovendo://",
     "autovendo://*",
     ...(process.env.NODE_ENV === "development"
@@ -177,9 +176,7 @@ export const auth = betterAuth({
             limits: plan.limits as Record<string, any>,
             freeTrial:
               plan.hasTrial && plan.trialDays
-                ? {
-                    days: plan.trialDays,
-                  }
+                ? { days: plan.trialDays }
                 : undefined,
           }));
         },
@@ -188,5 +185,4 @@ export const auth = betterAuth({
   ],
 });
 
-export { toNextJsHandler } from "better-auth/next-js";
 export { stripeClient };
