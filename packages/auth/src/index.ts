@@ -54,12 +54,12 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (user) => {
-          const requested = (user as any).accountType;
+          const { accountType, ...rest } = user as any;
           return {
             data: {
-              ...user,
-              role: SELF_ASSIGNABLE_ROLES.includes(requested)
-                ? requested
+              ...rest,
+              role: SELF_ASSIGNABLE_ROLES.includes(accountType)
+                ? accountType
                 : "user",
             },
           };
