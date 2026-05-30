@@ -90,9 +90,6 @@ function FeaturedCard({ item }: { item: Vehicle }) {
           imageStyle={styles.featImageStyle}
           resizeMode="cover">
           <View style={styles.featImageOverlay} />
-          <Pressable style={styles.heartBtn} hitSlop={8}>
-            <SymbolView name="heart" size={16} tintColor="#fff" />
-          </Pressable>
           {item.fuel && (
             <View style={styles.fuelBadge}>
               <Text style={styles.fuelText}>{item.fuel}</Text>
@@ -102,9 +99,6 @@ function FeaturedCard({ item }: { item: Vehicle }) {
       ) : (
         <View style={styles.featImagePlaceholder}>
           <SymbolView name="car.side.fill" size={72} tintColor="rgba(255,255,255,0.12)" />
-          <Pressable style={styles.heartBtn} hitSlop={8}>
-            <SymbolView name="heart" size={16} tintColor="#fff" />
-          </Pressable>
           {item.fuel && (
             <View style={styles.fuelBadge}>
               <Text style={styles.fuelText}>{item.fuel}</Text>
