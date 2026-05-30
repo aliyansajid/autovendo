@@ -8,6 +8,7 @@ import {
   FlatList,
   Dimensions,
   Image,
+  ImageBackground,
   RefreshControl,
 } from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
@@ -81,45 +82,57 @@ function Avatar({ name }: { name: string }) {
 function FeaturedCard({ item }: { item: Vehicle }) {
   return (
     <Pressable style={styles.featCard}>
-      {/* Decorative circle */}
-      <View style={styles.featCircle} />
-
-      {/* Heart */}
-      <Pressable style={styles.heartBtn} hitSlop={8}>
-        <SymbolView name="heart" size={18} tintColor="rgba(255,255,255,0.7)" />
-      </Pressable>
-
-      {/* Image or placeholder */}
+      {/* Image with gradient overlay */}
       {item.image ? (
-        <Image source={{ uri: item.image }} style={styles.featImage} resizeMode="cover" />
+        <ImageBackground
+          source={{ uri: item.image }}
+          style={styles.featImage}
+          imageStyle={styles.featImageStyle}
+          resizeMode="cover">
+          <View style={styles.featImageOverlay} />
+          <Pressable style={styles.heartBtn} hitSlop={8}>
+            <SymbolView name="heart" size={16} tintColor="#fff" />
+          </Pressable>
+          {item.fuel && (
+            <View style={styles.fuelBadge}>
+              <Text style={styles.fuelText}>{item.fuel}</Text>
+            </View>
+          )}
+        </ImageBackground>
       ) : (
         <View style={styles.featImagePlaceholder}>
-          <SymbolView name="car.side.fill" size={80} tintColor="rgba(255,255,255,0.12)" />
+          <SymbolView name="car.side.fill" size={72} tintColor="rgba(255,255,255,0.12)" />
+          <Pressable style={styles.heartBtn} hitSlop={8}>
+            <SymbolView name="heart" size={16} tintColor="#fff" />
+          </Pressable>
+          {item.fuel && (
+            <View style={styles.fuelBadge}>
+              <Text style={styles.fuelText}>{item.fuel}</Text>
+            </View>
+          )}
         </View>
       )}
 
       {/* Info */}
       <View style={styles.featInfo}>
-        {item.fuel && (
-          <View style={styles.fuelBadge}>
-            <Text style={styles.fuelText}>{item.fuel}</Text>
+        <View style={styles.featInfoRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.featMake}>{item.make}</Text>
+            <Text style={styles.featModel} numberOfLines={1}>{item.year} {item.model}</Text>
           </View>
-        )}
-        <Text style={styles.featYear}>{item.year}</Text>
-        <Text style={styles.featMake}>{item.make}</Text>
-        <Text style={styles.featModel} numberOfLines={1}>{item.model}</Text>
+          <Text style={styles.featPrice}>{formatPrice(item.price)}</Text>
+        </View>
         <View style={styles.featMeta}>
-          <SymbolView name="gauge.medium" size={12} tintColor="rgba(255,255,255,0.5)" />
+          <SymbolView name="gauge.medium" size={11} tintColor={C.mutedForeground} />
           <Text style={styles.featMetaText}>{formatMileage(item.mileage)}</Text>
           {item.city && (
             <>
               <View style={styles.dot} />
-              <SymbolView name="location.fill" size={12} tintColor="rgba(255,255,255,0.5)" />
+              <SymbolView name="location.fill" size={11} tintColor={C.mutedForeground} />
               <Text style={styles.featMetaText}>{item.city}</Text>
             </>
           )}
         </View>
-        <Text style={styles.featPrice}>{formatPrice(item.price)}</Text>
       </View>
     </Pressable>
   );
@@ -185,8 +198,8 @@ export default function HomeScreen() {
     try {
       const result = await fetchHome(category);
       setData(result);
-    } catch (e: any) {
-      setError(e?.message ?? 'Failed to load listings');
+    } catch {
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -558,92 +571,96 @@ const styles = StyleSheet.create({
   },
   featCard: {
     width: CARD_WIDTH,
-    height: 260,
     borderRadius: Radius.xl,
-    backgroundColor: '#1a2a4a',
+    backgroundColor: '#161624',
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
-  featCircle: {
-    position: 'absolute',
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+  featImage: {
+    width: '100%',
+    height: 180,
+    justifyContent: 'space-between',
+    flexDirection: 'column',
+  },
+  featImageStyle: {
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
+  },
+  featImageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.15)',
+  },
+  featImagePlaceholder: {
+    width: '100%',
+    height: 180,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.04)',
-    top: -60,
-    right: -60,
-    zIndex: 0,
   },
   heartBtn: {
     position: 'absolute',
     top: Spacing[3],
     right: Spacing[3],
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.4)',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2,
-  },
-  featImage: {
-    width: '100%',
-    height: 150,
-  },
-  featImagePlaceholder: {
-    width: '100%',
-    height: 150,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.03)',
-  },
-  featInfo: {
-    padding: Spacing[3],
-    gap: 2,
   },
   fuelBadge: {
-    alignSelf: 'flex-start',
+    position: 'absolute',
+    bottom: Spacing[3],
+    left: Spacing[3],
     paddingHorizontal: Spacing[2],
     paddingVertical: 3,
     borderRadius: Radius.sm,
-    backgroundColor: 'rgba(44,91,200,0.4)',
-    marginBottom: Spacing[1],
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
   },
   fuelText: {
     fontFamily: FontFamily.sansMedium,
     fontSize: FontSize.xs,
-    color: 'rgba(255,255,255,0.9)',
+    color: '#fff',
   },
-  featYear: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.xs,
-    color: 'rgba(255,255,255,0.5)',
+  featInfo: {
+    padding: Spacing[3],
+    gap: Spacing[2],
+  },
+  featInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: Spacing[2],
   },
   featMake: {
     fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.md,
-    color: '#fff',
+    fontSize: FontSize.base,
+    color: C.foreground,
   },
   featModel: {
     fontFamily: FontFamily.sans,
     fontSize: FontSize.sm,
-    color: 'rgba(255,255,255,0.7)',
-    marginBottom: Spacing[1],
+    color: C.mutedForeground,
+    marginTop: 1,
+  },
+  featPrice: {
+    fontFamily: FontFamily.sansBold,
+    fontSize: FontSize.base,
+    color: '#4a7ae8',
+    flexShrink: 0,
   },
   featMeta: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginBottom: 4,
   },
   featMetaText: {
     fontFamily: FontFamily.sans,
     fontSize: FontSize.xs,
-    color: 'rgba(255,255,255,0.5)',
-  },
-  featPrice: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.lg,
-    color: '#fff',
+    color: C.mutedForeground,
   },
   dot: {
     width: 3,
