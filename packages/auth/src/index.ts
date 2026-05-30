@@ -102,6 +102,7 @@ export const auth = betterAuth({
   },
 
   emailVerification: {
+    sendOnSignIn: true,
     sendVerificationEmail: async ({ user, url }) => {
       const { sendEmail } = await import("@repo/transactional");
       const { VerifyEmail } =
