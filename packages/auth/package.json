@@ -8,7 +8,6 @@
     "./permissions": "./src/permissions.ts"
   },
   "dependencies": {
-    "@better-auth/expo": "^1.6.12",
     "@better-auth/prisma-adapter": "^1.5.4",
     "@better-auth/stripe": "^1.6.11",
     "@repo/db": "*",

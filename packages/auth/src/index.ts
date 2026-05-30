@@ -4,7 +4,6 @@ import { prisma } from "@repo/db";
 import { admin } from "better-auth/plugins";
 import { ac, admin as adminRole, dealer, user } from "./permissions";
 import { stripe } from "@better-auth/stripe";
-import { expo } from "@better-auth/expo";
 import Stripe from "stripe";
 
 async function handleListingPayment(event: Stripe.Event) {
@@ -143,7 +142,6 @@ export const auth = betterAuth({
   ],
 
   plugins: [
-    expo(),
     admin({
       ac,
       roles: { admin: adminRole, dealer, user },
