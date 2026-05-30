@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   View,
   Text,
@@ -9,9 +10,9 @@ import {
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SymbolView } from 'expo-symbols';
-import { Colors, FontFamily, FontSize, Spacing, Radius } from '@/constants/theme';
-
-const C = Colors.dark;
+import { FontFamily, FontSize, Spacing, Radius, type ThemeColors } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
+import { useTabBarHeight } from '@/hooks/use-tab-bar-height';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -157,11 +158,15 @@ function AccordionSection({
   count,
   children,
   defaultOpen = false,
+  styles,
+  C,
 }: {
   title: string;
   count?: number;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  styles: ReturnType<typeof createStyles>;
+  C: ThemeColors;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
@@ -187,11 +192,13 @@ function AccordionSection({
 }
 
 function RangeInputs({
-  from, to, onFromChange, onToChange, suffix,
+  from, to, onFromChange, onToChange, suffix, styles, C,
 }: {
   from: string; to: string;
   onFromChange: (v: string) => void; onToChange: (v: string) => void;
   suffix?: string;
+  styles: ReturnType<typeof createStyles>;
+  C: ThemeColors;
 }) {
   return (
     <View style={styles.rangeRow}>
@@ -211,11 +218,12 @@ function RangeInputs({
 }
 
 function ChipGroup({
-  options, selected, onToggle,
+  options, selected, onToggle, styles,
 }: {
   options: { id: string; label: string }[];
   selected: string[];
   onToggle: (id: string) => void;
+  styles: ReturnType<typeof createStyles>;
 }) {
   return (
     <View style={styles.chipGrid}>
@@ -233,10 +241,12 @@ function ChipGroup({
 }
 
 function ColorPicker({
-  selected, onToggle,
+  selected, onToggle, styles, C,
 }: {
   selected: string[];
   onToggle: (id: string) => void;
+  styles: ReturnType<typeof createStyles>;
+  C: ThemeColors;
 }) {
   return (
     <View style={styles.colorGrid}>
@@ -273,11 +283,12 @@ function ColorPicker({
 }
 
 function RadioGroup({
-  options, selected, onSelect,
+  options, selected, onSelect, styles,
 }: {
   options: { id: string; label: string }[];
   selected: string;
   onSelect: (id: string) => void;
+  styles: ReturnType<typeof createStyles>;
 }) {
   return (
     <View style={styles.chipGrid}>
@@ -295,10 +306,12 @@ function RadioGroup({
 }
 
 function EquipmentPicker({
-  selected, onToggle,
+  selected, onToggle, styles, C,
 }: {
   selected: string[];
   onToggle: (id: string) => void;
+  styles: ReturnType<typeof createStyles>;
+  C: ThemeColors;
 }) {
   const [showAll, setShowAll] = useState(false);
   const visible = showAll ? EQUIPMENT : EQUIPMENT.slice(0, 16);
@@ -317,13 +330,13 @@ function EquipmentPicker({
       </View>
       <Pressable style={styles.showMoreBtn} onPress={() => setShowAll(v => !v)}>
         <Text style={styles.showMoreText}>{showAll ? 'Show less' : `Show all ${EQUIPMENT.length} options`}</Text>
-        <SymbolView name={showAll ? 'chevron.up' : 'chevron.down'} size={12} tintColor="#4a7ae8" />
+        <SymbolView name={showAll ? 'chevron.up' : 'chevron.down'} size={12} tintColor={C.sidebarPrimary} />
       </Pressable>
     </View>
   );
 }
 
-function SelectField({ label, value, placeholder }: { label: string; value?: string; placeholder: string }) {
+function SelectField({ label, value, placeholder, styles, C }: { label: string; value?: string; placeholder: string; styles: ReturnType<typeof createStyles>; C: ThemeColors }) {
   return (
     <Pressable style={styles.selectField}>
       <Text style={styles.selectLabel}>{label}</Text>
@@ -337,11 +350,11 @@ function SelectField({ label, value, placeholder }: { label: string; value?: str
   );
 }
 
-function Divider() {
+function Divider({ styles }: { styles: ReturnType<typeof createStyles> }) {
   return <View style={styles.divider} />;
 }
 
-function Toggle({ label, value, onToggle }: { label: string; value: boolean; onToggle: () => void }) {
+function Toggle({ label, value, onToggle, styles }: { label: string; value: boolean; onToggle: () => void; styles: ReturnType<typeof createStyles> }) {
   return (
     <Pressable style={styles.toggleRow} onPress={onToggle}>
       <Text style={styles.toggleLabel}>{label}</Text>
@@ -355,6 +368,9 @@ function Toggle({ label, value, onToggle }: { label: string; value: boolean; onT
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function SearchScreen() {
+  const C = useTheme();
+  const styles = useMemo(() => createStyles(C), [C]);
+  const tabBarHeight = useTabBarHeight();
   const [query, setQuery] = useState('');
   // Make/Model
   const [makes, setMakes] = useState<string[]>([]);
@@ -460,49 +476,49 @@ export default function SearchScreen() {
         </View>
       </SafeAreaView>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}
+      <ScrollView style={styles.scroll} contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarHeight + 80 }]}
         showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 
         {/* Make & Model */}
-        <AccordionSection title="Make & Model" defaultOpen>
-          <SelectField label="Make" placeholder="Any make" />
-          <Divider />
-          <SelectField label="Model" placeholder="Any model" />
+        <AccordionSection title="Make & Model" defaultOpen styles={styles} C={C}>
+          <SelectField label="Make" placeholder="Any make" styles={styles} C={C} />
+          <Divider styles={styles} />
+          <SelectField label="Model" placeholder="Any model" styles={styles} C={C} />
         </AccordionSection>
 
         {/* Basic Data */}
-        <AccordionSection title="Basic Data" defaultOpen
+        <AccordionSection title="Basic Data" defaultOpen styles={styles} C={C}
           count={[priceFrom||priceTo, yearFrom||yearTo, kmFrom||kmTo, conditions.length, bodyTypes.length].filter(Boolean).length || undefined}>
           <Text style={styles.groupLabel}>Price</Text>
-          <RangeInputs from={priceFrom} to={priceTo} onFromChange={setPriceFrom} onToChange={setPriceTo} suffix="CHF" />
-          <Divider />
+          <RangeInputs from={priceFrom} to={priceTo} onFromChange={setPriceFrom} onToChange={setPriceTo} suffix="CHF" styles={styles} C={C} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Year</Text>
-          <RangeInputs from={yearFrom} to={yearTo} onFromChange={setYearFrom} onToChange={setYearTo} />
-          <Divider />
+          <RangeInputs from={yearFrom} to={yearTo} onFromChange={setYearFrom} onToChange={setYearTo} styles={styles} C={C} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Mileage</Text>
-          <RangeInputs from={kmFrom} to={kmTo} onFromChange={setKmFrom} onToChange={setKmTo} suffix="km" />
-          <Divider />
+          <RangeInputs from={kmFrom} to={kmTo} onFromChange={setKmFrom} onToChange={setKmTo} suffix="km" styles={styles} C={C} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Condition</Text>
-          <ChipGroup options={CONDITION} selected={conditions} onToggle={id => toggle(conditions, setConditions, id)} />
-          <Toggle label="Inspection passed (MFK)" value={mfk} onToggle={() => setMfk(v => !v)} />
-          <Toggle label="Has warranty" value={warranty} onToggle={() => setWarranty(v => !v)} />
-          <Divider />
+          <ChipGroup options={CONDITION} selected={conditions} onToggle={id => toggle(conditions, setConditions, id)} styles={styles} />
+          <Toggle label="Inspection passed (MFK)" value={mfk} onToggle={() => setMfk(v => !v)} styles={styles} />
+          <Toggle label="Has warranty" value={warranty} onToggle={() => setWarranty(v => !v)} styles={styles} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Body Type</Text>
-          <ChipGroup options={BODY_TYPES} selected={bodyTypes} onToggle={id => toggle(bodyTypes, setBodyTypes, id)} />
+          <ChipGroup options={BODY_TYPES} selected={bodyTypes} onToggle={id => toggle(bodyTypes, setBodyTypes, id)} styles={styles} />
         </AccordionSection>
 
         {/* Technical Data */}
-        <AccordionSection title="Technical Data"
+        <AccordionSection title="Technical Data" styles={styles} C={C}
           count={[fuels.length, transmissions.length, drives.length, powerFrom||powerTo, capFrom||capTo, cylFrom||cylTo].filter(Boolean).length || undefined}>
           <Text style={styles.groupLabel}>Fuel Type</Text>
-          <ChipGroup options={FUEL_OPTIONS} selected={fuels} onToggle={id => toggle(fuels, setFuels, id)} />
-          <Divider />
+          <ChipGroup options={FUEL_OPTIONS} selected={fuels} onToggle={id => toggle(fuels, setFuels, id)} styles={styles} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Transmission</Text>
-          <ChipGroup options={TRANSMISSION} selected={transmissions} onToggle={id => toggle(transmissions, setTransmissions, id)} />
-          <Divider />
+          <ChipGroup options={TRANSMISSION} selected={transmissions} onToggle={id => toggle(transmissions, setTransmissions, id)} styles={styles} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Drive Type</Text>
-          <ChipGroup options={DRIVE_TYPE} selected={drives} onToggle={id => toggle(drives, setDrives, id)} />
-          <Divider />
+          <ChipGroup options={DRIVE_TYPE} selected={drives} onToggle={id => toggle(drives, setDrives, id)} styles={styles} />
+          <Divider styles={styles} />
           <View style={styles.powerHeader}>
             <Text style={styles.groupLabel}>Power</Text>
             <View style={styles.unitToggle}>
@@ -516,46 +532,46 @@ export default function SearchScreen() {
               ))}
             </View>
           </View>
-          <RangeInputs from={powerFrom} to={powerTo} onFromChange={setPowerFrom} onToChange={setPowerTo} suffix={powerUnit === 'ps' ? 'PS' : 'kW'} />
-          <Divider />
+          <RangeInputs from={powerFrom} to={powerTo} onFromChange={setPowerFrom} onToChange={setPowerTo} suffix={powerUnit === 'ps' ? 'PS' : 'kW'} styles={styles} C={C} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Cubic Capacity</Text>
-          <RangeInputs from={capFrom} to={capTo} onFromChange={setCapFrom} onToChange={setCapTo} suffix="cm³" />
-          <Divider />
+          <RangeInputs from={capFrom} to={capTo} onFromChange={setCapFrom} onToChange={setCapTo} suffix="cm³" styles={styles} C={C} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Cylinders</Text>
-          <RangeInputs from={cylFrom} to={cylTo} onFromChange={setCylFrom} onToChange={setCylTo} />
+          <RangeInputs from={cylFrom} to={cylTo} onFromChange={setCylFrom} onToChange={setCylTo} styles={styles} C={C} />
         </AccordionSection>
 
         {/* Appearance */}
-        <AccordionSection title="Appearance"
+        <AccordionSection title="Appearance" styles={styles} C={C}
           count={[extColors.length, intColors.length, metallic].filter(Boolean).length || undefined}>
           <Text style={styles.groupLabel}>Exterior Color</Text>
-          <ColorPicker selected={extColors} onToggle={id => toggle(extColors, setExtColors, id)} />
-          <Divider />
+          <ColorPicker selected={extColors} onToggle={id => toggle(extColors, setExtColors, id)} styles={styles} C={C} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Interior Color</Text>
-          <ColorPicker selected={intColors} onToggle={id => toggle(intColors, setIntColors, id)} />
-          <Divider />
-          <Toggle label="Metallic" value={metallic} onToggle={() => setMetallic(v => !v)} />
+          <ColorPicker selected={intColors} onToggle={id => toggle(intColors, setIntColors, id)} styles={styles} C={C} />
+          <Divider styles={styles} />
+          <Toggle label="Metallic" value={metallic} onToggle={() => setMetallic(v => !v)} styles={styles} />
         </AccordionSection>
 
         {/* Equipment */}
-        <AccordionSection title="Equipment" count={equipment.length || undefined}>
-          <EquipmentPicker selected={equipment} onToggle={eq => toggle(equipment, setEquipment, eq)} />
+        <AccordionSection title="Equipment" count={equipment.length || undefined} styles={styles} C={C}>
+          <EquipmentPicker selected={equipment} onToggle={eq => toggle(equipment, setEquipment, eq)} styles={styles} C={C} />
         </AccordionSection>
 
         {/* Extras */}
-        <AccordionSection title="Extras" count={extras.length || undefined}>
-          <ChipGroup options={EXTRAS} selected={extras} onToggle={id => toggle(extras, setExtras, id)} />
+        <AccordionSection title="Extras" count={extras.length || undefined} styles={styles} C={C}>
+          <ChipGroup options={EXTRAS} selected={extras} onToggle={id => toggle(extras, setExtras, id)} styles={styles} />
         </AccordionSection>
 
         {/* Energy & Emissions */}
-        <AccordionSection title="Energy & Emissions"
+        <AccordionSection title="Energy & Emissions" styles={styles} C={C}
           count={[energyLabels.length, euroNorms.length, consumFrom||consumTo, co2From||co2To].filter(Boolean).length || undefined}>
           <Text style={styles.groupLabel}>Fuel Consumption</Text>
-          <RangeInputs from={consumFrom} to={consumTo} onFromChange={setConsumFrom} onToChange={setConsumTo} suffix="l/100km" />
-          <Divider />
+          <RangeInputs from={consumFrom} to={consumTo} onFromChange={setConsumFrom} onToChange={setConsumTo} suffix="l/100km" styles={styles} C={C} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>CO₂ Emissions</Text>
-          <RangeInputs from={co2From} to={co2To} onFromChange={setCo2From} onToChange={setCo2To} suffix="g/km" />
-          <Divider />
+          <RangeInputs from={co2From} to={co2To} onFromChange={setCo2From} onToChange={setCo2To} suffix="g/km" styles={styles} C={C} />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Energy Label</Text>
           <View style={styles.energyGrid}>
             {ENERGY_LABELS.map(l => {
@@ -568,22 +584,21 @@ export default function SearchScreen() {
               );
             })}
           </View>
-          <Divider />
+          <Divider styles={styles} />
           <Text style={styles.groupLabel}>Euro Norm</Text>
-          <ChipGroup options={EURO_NORMS} selected={euroNorms} onToggle={id => toggle(euroNorms, setEuroNorms, id)} />
+          <ChipGroup options={EURO_NORMS} selected={euroNorms} onToggle={id => toggle(euroNorms, setEuroNorms, id)} styles={styles} />
         </AccordionSection>
 
         {/* Listing */}
-        <AccordionSection title="Listing" count={daysListed !== 'any' ? 1 : undefined}>
+        <AccordionSection title="Listing" count={daysListed !== 'any' ? 1 : undefined} styles={styles} C={C}>
           <Text style={styles.groupLabel}>Listed within</Text>
-          <RadioGroup options={DAYS_LISTED} selected={daysListed} onSelect={setDaysListed} />
+          <RadioGroup options={DAYS_LISTED} selected={daysListed} onSelect={setDaysListed} styles={styles} />
         </AccordionSection>
 
-        <View style={{ height: 130 }} />
       </ScrollView>
 
       {/* Sticky button */}
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: tabBarHeight }]}>
         <Pressable style={styles.searchBtn}>
           <SymbolView name="magnifyingglass" size={16} tintColor="#fff" />
           <Text style={styles.searchBtnText}>Show Results</Text>
@@ -595,375 +610,375 @@ export default function SearchScreen() {
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0c0c15' },
+function createStyles(C: ThemeColors) {
+  return StyleSheet.create({
+    root: { flex: 1, backgroundColor: C.background },
 
-  headerSafe: {
-    paddingHorizontal: Spacing[5],
-    paddingBottom: Spacing[3],
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.06)',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: Spacing[4],
-    paddingBottom: Spacing[3],
-  },
-  heading: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize['2xl'],
-    color: C.foreground,
-  },
-  subheading: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-    marginTop: 2,
-  },
-  resetBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing[1],
-    paddingHorizontal: Spacing[3],
-    paddingVertical: Spacing[2],
-    borderRadius: Radius.full,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-    backgroundColor: 'rgba(255,255,255,0.05)',
-  },
-  resetText: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-  },
-  resetBadge: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: '#1e4da6',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  resetBadgeText: { fontFamily: FontFamily.sansBold, fontSize: 10, color: '#fff' },
+    headerSafe: {
+      paddingHorizontal: Spacing[5],
+      paddingBottom: Spacing[3],
+      borderBottomWidth: 1,
+      borderBottomColor: C.secondary,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingTop: Spacing[4],
+      paddingBottom: Spacing[3],
+    },
+    heading: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize['2xl'],
+      color: C.foreground,
+    },
+    subheading: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+      marginTop: 2,
+    },
+    resetBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing[1],
+      paddingHorizontal: Spacing[3],
+      paddingVertical: Spacing[2],
+      borderRadius: Radius.full,
+      borderWidth: 1,
+      borderColor: C.border,
+      backgroundColor: C.border,
+    },
+    resetText: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+    },
+    resetBadge: {
+      width: 18,
+      height: 18,
+      borderRadius: 9,
+      backgroundColor: C.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    resetBadgeText: { fontFamily: FontFamily.sansBold, fontSize: 10, color: '#fff' },
 
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing[2],
-    backgroundColor: 'rgba(255,255,255,0.07)',
-    borderRadius: Radius.xl,
-    paddingHorizontal: Spacing[4],
-    height: 46,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-  },
-  searchInput: {
-    flex: 1,
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.base,
-    color: C.foreground,
-    height: 46,
-  },
+    searchBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing[2],
+      backgroundColor: C.secondary,
+      borderRadius: Radius.xl,
+      paddingHorizontal: Spacing[4],
+      height: 46,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    searchInput: {
+      flex: 1,
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.base,
+      color: C.foreground,
+      height: 46,
+    },
 
-  scroll: { flex: 1 },
-  scrollContent: {
-    paddingHorizontal: Spacing[4],
-    paddingTop: Spacing[4],
-    paddingBottom: Spacing[16],
-    gap: Spacing[3],
-  },
+    scroll: { flex: 1 },
+    scrollContent: {
+      paddingHorizontal: Spacing[4],
+      paddingTop: Spacing[4],
+      gap: Spacing[3],
+    },
 
-  // Accordion
-  card: {
-    backgroundColor: '#161624',
-    borderRadius: Radius.xl,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.07)',
-    overflow: 'hidden',
-  },
-  accordionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: Spacing[4],
-  },
-  accordionLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing[2],
-  },
-  accordionTitle: {
-    fontFamily: FontFamily.sansSemiBold,
-    fontSize: FontSize.base,
-    color: C.foreground,
-  },
-  accordionBody: {
-    paddingHorizontal: Spacing[4],
-    paddingBottom: Spacing[4],
-    gap: Spacing[3],
-  },
-  sectionBadge: {
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: Radius.full,
-    backgroundColor: '#1e4da6',
-  },
-  sectionBadgeText: { fontFamily: FontFamily.sansBold, fontSize: 10, color: '#fff' },
+    // Accordion
+    card: {
+      backgroundColor: C.card,
+      borderRadius: Radius.xl,
+      borderWidth: 1,
+      borderColor: C.border,
+      overflow: 'hidden',
+    },
+    accordionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: Spacing[4],
+    },
+    accordionLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing[2],
+    },
+    accordionTitle: {
+      fontFamily: FontFamily.sansSemiBold,
+      fontSize: FontSize.base,
+      color: C.foreground,
+    },
+    accordionBody: {
+      paddingHorizontal: Spacing[4],
+      paddingBottom: Spacing[4],
+      gap: Spacing[3],
+    },
+    sectionBadge: {
+      paddingHorizontal: 7,
+      paddingVertical: 2,
+      borderRadius: Radius.full,
+      backgroundColor: C.primary,
+    },
+    sectionBadgeText: { fontFamily: FontFamily.sansBold, fontSize: 10, color: '#fff' },
 
-  groupLabel: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-    marginBottom: -Spacing[1],
-  },
+    groupLabel: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+      marginBottom: -Spacing[1],
+    },
 
-  divider: {
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.06)',
-  },
+    divider: {
+      height: 1,
+      backgroundColor: C.secondary,
+    },
 
-  // Range
-  rangeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing[2],
-  },
-  rangeInputWrap: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: Radius.lg,
-    paddingHorizontal: Spacing[3],
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-    height: 44,
-  },
-  rangeInput: {
-    flex: 1,
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.base,
-    color: C.foreground,
-    height: 44,
-  },
-  rangeSuffix: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.xs,
-    color: C.mutedForeground,
-  },
-  rangeDash: {
-    width: 10,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-  },
+    // Range
+    rangeRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing[2],
+    },
+    rangeInputWrap: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: C.secondary,
+      borderRadius: Radius.lg,
+      paddingHorizontal: Spacing[3],
+      borderWidth: 1,
+      borderColor: C.border,
+      height: 44,
+    },
+    rangeInput: {
+      flex: 1,
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.base,
+      color: C.foreground,
+      height: 44,
+    },
+    rangeSuffix: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.xs,
+      color: C.mutedForeground,
+    },
+    rangeDash: {
+      width: 10,
+      height: 1,
+      backgroundColor: C.mutedForeground,
+    },
 
-  // Chips
-  chipGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing[2],
-  },
-  chip: {
-    paddingHorizontal: Spacing[3],
-    paddingVertical: Spacing[2],
-    borderRadius: Radius.full,
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-  },
-  chipActive: {
-    backgroundColor: '#1e4da6',
-    borderColor: '#2c5bc8',
-  },
-  chipLabel: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-  },
-  chipLabelActive: { color: '#fff' },
+    // Chips
+    chipGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: Spacing[2],
+    },
+    chip: {
+      paddingHorizontal: Spacing[3],
+      paddingVertical: Spacing[2],
+      borderRadius: Radius.full,
+      backgroundColor: C.secondary,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    chipActive: {
+      backgroundColor: C.primary,
+      borderColor: C.sidebarPrimary,
+    },
+    chipLabel: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+    },
+    chipLabelActive: { color: '#fff' },
 
-  // Power unit toggle
-  powerHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  unitToggle: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: Radius.lg,
-    padding: 2,
-  },
-  unitBtn: {
-    paddingHorizontal: Spacing[3],
-    paddingVertical: 5,
-    borderRadius: Radius.md,
-  },
-  unitBtnActive: { backgroundColor: '#1e4da6' },
-  unitBtnText: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-  },
-  unitBtnTextActive: { color: '#fff' },
+    // Power unit toggle
+    powerHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    unitToggle: {
+      flexDirection: 'row',
+      backgroundColor: C.secondary,
+      borderRadius: Radius.lg,
+      padding: 2,
+    },
+    unitBtn: {
+      paddingHorizontal: Spacing[3],
+      paddingVertical: 5,
+      borderRadius: Radius.md,
+    },
+    unitBtnActive: { backgroundColor: C.primary },
+    unitBtnText: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+    },
+    unitBtnTextActive: { color: '#fff' },
 
-  // Colors
-  colorGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing[3],
-  },
-  colorItem: {
-    alignItems: 'center',
-    gap: 4,
-    width: 44,
-  },
-  colorSwatch: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  colorSwatchActive: {
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  colorSwatchBorder: {
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-  },
-  colorLabel: {
-    fontFamily: FontFamily.sans,
-    fontSize: 9,
-    color: C.mutedForeground,
-    textAlign: 'center',
-  },
-  colorLabelActive: { color: C.foreground },
-  multiColor: {
-    ...StyleSheet.absoluteFillObject,
-    flexDirection: 'row',
-  },
-  multiSlice: { flex: 1 },
+    // Colors
+    colorGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: Spacing[3],
+    },
+    colorItem: {
+      alignItems: 'center',
+      gap: 4,
+      width: 44,
+    },
+    colorSwatch: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+    },
+    colorSwatchActive: {
+      borderWidth: 2,
+      borderColor: '#fff',
+    },
+    colorSwatchBorder: {
+      borderWidth: 1,
+      borderColor: C.mutedForeground,
+    },
+    colorLabel: {
+      fontFamily: FontFamily.sans,
+      fontSize: 9,
+      color: C.mutedForeground,
+      textAlign: 'center',
+    },
+    colorLabelActive: { color: C.foreground },
+    multiColor: {
+      ...StyleSheet.absoluteFillObject,
+      flexDirection: 'row',
+    },
+    multiSlice: { flex: 1 },
 
-  // Energy labels
-  energyGrid: {
-    flexDirection: 'row',
-    gap: Spacing[2],
-    flexWrap: 'wrap',
-  },
-  energyChip: {
-    width: 38,
-    height: 38,
-    borderRadius: Radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    backgroundColor: 'transparent',
-  },
-  energyLabel: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.base,
-    color: C.mutedForeground,
-  },
-  energyLabelActive: { color: '#fff' },
+    // Energy labels
+    energyGrid: {
+      flexDirection: 'row',
+      gap: Spacing[2],
+      flexWrap: 'wrap',
+    },
+    energyChip: {
+      width: 38,
+      height: 38,
+      borderRadius: Radius.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 2,
+      backgroundColor: 'transparent',
+    },
+    energyLabel: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.base,
+      color: C.mutedForeground,
+    },
+    energyLabelActive: { color: '#fff' },
 
-  // Toggle
-  toggleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  toggleLabel: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.base,
-    color: C.foreground,
-    flex: 1,
-  },
-  toggleTrack: {
-    width: 44,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    padding: 2,
-    justifyContent: 'center',
-  },
-  toggleTrackOn: { backgroundColor: '#1e4da6' },
-  toggleThumb: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#fff',
-    alignSelf: 'flex-start',
-  },
-  toggleThumbOn: { alignSelf: 'flex-end' },
+    // Toggle
+    toggleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    toggleLabel: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.base,
+      color: C.foreground,
+      flex: 1,
+    },
+    toggleTrack: {
+      width: 44,
+      height: 26,
+      borderRadius: 13,
+      backgroundColor: C.secondary,
+      padding: 2,
+      justifyContent: 'center',
+    },
+    toggleTrackOn: { backgroundColor: C.primary },
+    toggleThumb: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      backgroundColor: '#fff',
+      alignSelf: 'flex-start',
+    },
+    toggleThumbOn: { alignSelf: 'flex-end' },
 
-  // Select
-  selectField: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: Spacing[2],
-  },
-  selectLabel: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.base,
-    color: C.foreground,
-  },
-  selectRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing[2],
-  },
-  selectValue: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.base,
-    color: C.foreground,
-  },
-  selectPlaceholder: { color: C.mutedForeground },
+    // Select
+    selectField: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: Spacing[2],
+    },
+    selectLabel: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.base,
+      color: C.foreground,
+    },
+    selectRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing[2],
+    },
+    selectValue: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.base,
+      color: C.foreground,
+    },
+    selectPlaceholder: { color: C.mutedForeground },
 
-  // Show more
-  showMoreBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing[1],
-    paddingVertical: Spacing[2],
-  },
-  showMoreText: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.sm,
-    color: '#4a7ae8',
-  },
+    // Show more
+    showMoreBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: Spacing[1],
+      paddingVertical: Spacing[2],
+    },
+    showMoreText: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.sm,
+      color: C.sidebarPrimary,
+    },
 
-  // Footer
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: Spacing[5],
-    paddingBottom: 100,
-    paddingTop: Spacing[3],
-    backgroundColor: '#0c0c15',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.06)',
-  },
-  searchBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing[2],
-    height: 52,
-    borderRadius: Radius.xl,
-    backgroundColor: '#1e4da6',
-  },
-  searchBtnText: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.base,
-    color: '#fff',
-  },
-});
+    // Footer
+    footer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      paddingHorizontal: Spacing[5],
+      paddingTop: Spacing[3],
+      backgroundColor: C.background,
+      borderTopWidth: 1,
+      borderTopColor: C.secondary,
+    },
+    searchBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: Spacing[2],
+      height: 52,
+      borderRadius: Radius.xl,
+      backgroundColor: C.primary,
+    },
+    searchBtnText: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.base,
+      color: '#fff',
+    },
+  });
+}

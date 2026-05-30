@@ -3,10 +3,8 @@ import { View, Pressable, StyleSheet, Platform } from 'react-native';
 import { SymbolView } from 'expo-symbols';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GlassView, GlassContainer, isGlassEffectAPIAvailable } from 'expo-glass-effect';
-import { Colors } from '@/constants/theme';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-
-const C = Colors.dark;
+import { useTheme } from '@/hooks/use-theme';
 
 const TABS = [
   { name: 'index', title: 'Home', symbol: 'house.fill' },
@@ -16,6 +14,7 @@ const TABS = [
 
 function GlassTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
+  const C = useTheme();
   const glassAvailable = isGlassEffectAPIAvailable();
 
   return (
@@ -30,7 +29,7 @@ function GlassTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             const { options } = descriptors[route.key];
             const isFocused = state.index === index;
             const tab = TABS.find(t => t.name === route.name);
-            const color = isFocused ? '#ffffff' : 'rgba(255,255,255,0.4)';
+            const color = isFocused ? C.foreground : C.mutedForeground;
 
             const onPress = () => {
               const event = navigation.emit({
@@ -66,12 +65,14 @@ function GlassTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 }
 
 export default function TabsLayout() {
+  const C = useTheme();
+
   return (
     <Tabs
       tabBar={(props) => <GlassTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        sceneStyle: { backgroundColor: '#0c0c15' },
+        sceneStyle: { backgroundColor: C.background },
       }}>
       <Tabs.Screen name="index" options={{ title: 'Home' }} />
       <Tabs.Screen name="search" options={{ title: 'Search' }} />

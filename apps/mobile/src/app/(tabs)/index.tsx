@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   View,
   Text,
@@ -14,11 +15,12 @@ import {
 import { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SymbolView } from 'expo-symbols';
-import { Colors, FontFamily, FontSize, Spacing, Radius } from '@/constants/theme';
+import { FontFamily, FontSize, Spacing, Radius, type ThemeColors } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 import { fetchHome, type Vehicle, type HomeData } from '@/lib/api';
 import { useSession } from '@/lib/auth-client';
+import { useTabBarHeight } from '@/hooks/use-tab-bar-height';
 
-const C = Colors.dark;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = SCREEN_WIDTH * 0.68;
 
@@ -65,7 +67,7 @@ function daysAgo(iso: string) {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function Avatar({ name }: { name: string }) {
+function Avatar({ name, styles }: { name: string; styles: ReturnType<typeof createStyles> }) {
   const initials = name
     .split(' ')
     .slice(0, 2)
@@ -79,7 +81,7 @@ function Avatar({ name }: { name: string }) {
   );
 }
 
-function FeaturedCard({ item }: { item: Vehicle }) {
+function FeaturedCard({ item, styles, C }: { item: Vehicle; styles: ReturnType<typeof createStyles>; C: ThemeColors }) {
   return (
     <Pressable style={styles.featCard}>
       {/* Image with gradient overlay */}
@@ -132,7 +134,7 @@ function FeaturedCard({ item }: { item: Vehicle }) {
   );
 }
 
-function ArrivalCard({ item }: { item: Vehicle }) {
+function ArrivalCard({ item, styles, C }: { item: Vehicle; styles: ReturnType<typeof createStyles>; C: ThemeColors }) {
   return (
     <Pressable style={styles.arrivalCard}>
       {/* Thumbnail */}
@@ -163,18 +165,21 @@ function ArrivalCard({ item }: { item: Vehicle }) {
         <Text style={styles.arrivalPrice}>{formatPrice(item.price)}</Text>
       </View>
 
-      <SymbolView name="chevron.right" size={14} tintColor="rgba(255,255,255,0.2)" />
+      <SymbolView name="chevron.right" size={14} tintColor={C.muted} />
     </Pressable>
   );
 }
 
-function SkeletonCard({ width, height }: { width: number | string; height: number }) {
+function SkeletonCard({ width, height, styles }: { width: number | string; height: number; styles: ReturnType<typeof createStyles> }) {
   return <View style={[styles.skeleton, { width: width as any, height, borderRadius: Radius.xl }]} />;
 }
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
+  const C = useTheme();
+  const styles = useMemo(() => createStyles(C), [C]);
+  const tabBarHeight = useTabBarHeight();
   const { data: sessionData } = useSession();
   const user = sessionData?.user;
 
@@ -216,7 +221,7 @@ export default function HomeScreen() {
     <View style={styles.root}>
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, { paddingBottom: tabBarHeight }]}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -231,7 +236,7 @@ export default function HomeScreen() {
           <View style={styles.header}>
             <View style={styles.headerLeft}>
               {user ? (
-                <Avatar name={user.name} />
+                <Avatar name={user.name} styles={styles} />
               ) : (
                 <View style={[styles.avatar, styles.avatarPlaceholder]} />
               )}
@@ -314,7 +319,7 @@ export default function HomeScreen() {
 
         {loading ? (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.featList}>
-            {[1, 2].map(k => <SkeletonCard key={k} width={CARD_WIDTH} height={240} />)}
+            {[1, 2].map(k => <SkeletonCard key={k} width={CARD_WIDTH} height={240} styles={styles} />)}
           </ScrollView>
         ) : error ? (
           <View style={styles.errorBox}>
@@ -334,7 +339,7 @@ export default function HomeScreen() {
                 <Text style={styles.emptyText}>No listings yet</Text>
               </View>
             }
-            renderItem={({ item }) => <FeaturedCard item={item} />}
+            renderItem={({ item }) => <FeaturedCard item={item} styles={styles} C={C} />}
           />
         )}
 
@@ -348,7 +353,7 @@ export default function HomeScreen() {
 
         {loading ? (
           <View style={styles.arrivalsList}>
-            {[1, 2, 3].map(k => <SkeletonCard key={k} width="100%" height={80} />)}
+            {[1, 2, 3].map(k => <SkeletonCard key={k} width="100%" height={80} styles={styles} />)}
           </View>
         ) : (
           <View style={styles.arrivalsList}>
@@ -358,14 +363,12 @@ export default function HomeScreen() {
               </View>
             ) : (
               (data?.newArrivals ?? []).map(item => (
-                <ArrivalCard key={item.id} item={item} />
+                <ArrivalCard key={item.id} item={item} styles={styles} C={C} />
               ))
             )}
           </View>
         )}
 
-        {/* Bottom padding for tab bar */}
-        <View style={{ height: 120 }} />
       </ScrollView>
     </View>
   );
@@ -373,379 +376,381 @@ export default function HomeScreen() {
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#0c0c15',
-  },
-  scroll: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: Spacing[5],
-  },
+function createStyles(C: ThemeColors) {
+  return StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor: C.background,
+    },
+    scroll: {
+      flex: 1,
+    },
+    content: {
+      paddingHorizontal: Spacing[5],
+    },
 
-  // Header
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: Spacing[4],
-    paddingBottom: Spacing[4],
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing[3],
-  },
-  avatar: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: '#1e4da6',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarPlaceholder: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
-  },
-  avatarText: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.sm,
-    color: '#fff',
-    letterSpacing: 0.5,
-  },
-  greeting: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.xs,
-    color: C.mutedForeground,
-    marginBottom: 1,
-  },
-  username: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.md,
-    color: C.foreground,
-  },
-  notifBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.07)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  notifDot: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#e8526c',
-    borderWidth: 1.5,
-    borderColor: '#0c0c15',
-  },
+    // Header
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingTop: Spacing[4],
+      paddingBottom: Spacing[4],
+    },
+    headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing[3],
+    },
+    avatar: {
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      backgroundColor: C.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    avatarPlaceholder: {
+      backgroundColor: C.secondary,
+    },
+    avatarText: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.sm,
+      color: '#fff',
+      letterSpacing: 0.5,
+    },
+    greeting: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.xs,
+      color: C.mutedForeground,
+      marginBottom: 1,
+    },
+    username: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.md,
+      color: C.foreground,
+    },
+    notifBtn: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: C.secondary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    notifDot: {
+      position: 'absolute',
+      top: 8,
+      right: 8,
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: '#e8526c',
+      borderWidth: 1.5,
+      borderColor: C.background,
+    },
 
-  // Search
-  searchRow: {
-    flexDirection: 'row',
-    gap: Spacing[2],
-    marginBottom: Spacing[4],
-  },
-  searchWrap: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.07)',
-    borderRadius: Radius.xl,
-    paddingHorizontal: Spacing[4],
-    gap: Spacing[2],
-    height: 46,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-  },
-  searchInput: {
-    flex: 1,
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.base,
-    color: C.foreground,
-    height: 46,
-  },
-  filterBtn: {
-    width: 46,
-    height: 46,
-    borderRadius: Radius.xl,
-    backgroundColor: '#1e4da6',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    // Search
+    searchRow: {
+      flexDirection: 'row',
+      gap: Spacing[2],
+      marginBottom: Spacing[4],
+    },
+    searchWrap: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: C.secondary,
+      borderRadius: Radius.xl,
+      paddingHorizontal: Spacing[4],
+      gap: Spacing[2],
+      height: 46,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    searchInput: {
+      flex: 1,
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.base,
+      color: C.foreground,
+      height: 46,
+    },
+    filterBtn: {
+      width: 46,
+      height: 46,
+      borderRadius: Radius.xl,
+      backgroundColor: C.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
 
-  // Stats
-  statsRow: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    borderRadius: Radius.lg,
-    marginBottom: Spacing[5],
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.07)',
-    paddingVertical: Spacing[3],
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statDivider: {
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,0.08)',
-  },
-  statValue: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.md,
-    color: C.foreground,
-  },
-  statLabel: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.xs,
-    color: C.mutedForeground,
-    marginTop: 2,
-  },
+    // Stats
+    statsRow: {
+      flexDirection: 'row',
+      backgroundColor: C.border,
+      borderRadius: Radius.lg,
+      marginBottom: Spacing[5],
+      borderWidth: 1,
+      borderColor: C.border,
+      paddingVertical: Spacing[3],
+    },
+    statItem: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    statDivider: {
+      borderRightWidth: 1,
+      borderRightColor: C.border,
+    },
+    statValue: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.md,
+      color: C.foreground,
+    },
+    statLabel: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.xs,
+      color: C.mutedForeground,
+      marginTop: 2,
+    },
 
-  // Section header
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: Spacing[3],
-  },
-  sectionTitle: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.lg,
-    color: C.foreground,
-  },
-  seeAll: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.sm,
-    color: '#4a7ae8',
-  },
+    // Section header
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: Spacing[3],
+    },
+    sectionTitle: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.lg,
+      color: C.foreground,
+    },
+    seeAll: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.sm,
+      color: C.sidebarPrimary,
+    },
 
-  // Categories
-  categoriesList: {
-    paddingBottom: Spacing[4],
-    gap: Spacing[2],
-  },
-  catChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing[1],
-    paddingHorizontal: Spacing[3],
-    paddingVertical: Spacing[2],
-    borderRadius: Radius.full,
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-  },
-  catChipActive: {
-    backgroundColor: '#1e4da6',
-    borderColor: '#2c5bc8',
-  },
-  catLabel: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-  },
-  catLabelActive: {
-    color: '#fff',
-  },
+    // Categories
+    categoriesList: {
+      paddingBottom: Spacing[4],
+      gap: Spacing[2],
+    },
+    catChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: Spacing[1],
+      paddingHorizontal: Spacing[3],
+      paddingVertical: Spacing[2],
+      borderRadius: Radius.full,
+      backgroundColor: C.secondary,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    catChipActive: {
+      backgroundColor: C.primary,
+      borderColor: C.sidebarPrimary,
+    },
+    catLabel: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+    },
+    catLabelActive: {
+      color: '#fff',
+    },
 
-  // Featured cards
-  featList: {
-    paddingBottom: Spacing[4],
-    gap: 12,
-  },
-  featCard: {
-    width: CARD_WIDTH,
-    borderRadius: Radius.xl,
-    backgroundColor: '#161624',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
-  },
-  featImage: {
-    width: '100%',
-    height: 180,
-    justifyContent: 'space-between',
-    flexDirection: 'column',
-  },
-  featImageStyle: {
-    borderTopLeftRadius: Radius.xl,
-    borderTopRightRadius: Radius.xl,
-  },
-  featImageOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.15)',
-  },
-  featImagePlaceholder: {
-    width: '100%',
-    height: 180,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.04)',
-  },
-  heartBtn: {
-    position: 'absolute',
-    top: Spacing[3],
-    right: Spacing[3],
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fuelBadge: {
-    position: 'absolute',
-    top: Spacing[3],
-    left: Spacing[3],
-    paddingHorizontal: Spacing[2],
-    paddingVertical: 3,
-    borderRadius: Radius.sm,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
-  },
-  fuelText: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.xs,
-    color: '#fff',
-  },
-  featInfo: {
-    padding: Spacing[3],
-    gap: Spacing[2],
-  },
-  featInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: Spacing[2],
-  },
-  featMake: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.base,
-    color: C.foreground,
-  },
-  featModel: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-    marginTop: 1,
-  },
-  featPrice: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.base,
-    color: '#4a7ae8',
-    flexShrink: 0,
-  },
-  featMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  featMetaText: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.xs,
-    color: C.mutedForeground,
-  },
-  dot: {
-    width: 3,
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-  },
+    // Featured cards
+    featList: {
+      paddingBottom: Spacing[4],
+      gap: 12,
+    },
+    featCard: {
+      width: CARD_WIDTH,
+      borderRadius: Radius.xl,
+      backgroundColor: C.card,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+    featImage: {
+      width: '100%',
+      height: 180,
+      justifyContent: 'space-between',
+      flexDirection: 'column',
+    },
+    featImageStyle: {
+      borderTopLeftRadius: Radius.xl,
+      borderTopRightRadius: Radius.xl,
+    },
+    featImageOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.15)',
+    },
+    featImagePlaceholder: {
+      width: '100%',
+      height: 180,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: C.muted,
+    },
+    heartBtn: {
+      position: 'absolute',
+      top: Spacing[3],
+      right: Spacing[3],
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: 'rgba(0,0,0,0.4)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    fuelBadge: {
+      position: 'absolute',
+      top: Spacing[3],
+      left: Spacing[3],
+      paddingHorizontal: Spacing[2],
+      paddingVertical: 3,
+      borderRadius: Radius.sm,
+      backgroundColor: 'rgba(0,0,0,0.55)',
+      borderWidth: 1,
+      borderColor: C.secondary,
+    },
+    fuelText: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.xs,
+      color: '#fff',
+    },
+    featInfo: {
+      padding: Spacing[3],
+      gap: Spacing[2],
+    },
+    featInfoRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+      gap: Spacing[2],
+    },
+    featMake: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.base,
+      color: C.foreground,
+    },
+    featModel: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+      marginTop: 1,
+    },
+    featPrice: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.base,
+      color: C.sidebarPrimary,
+      flexShrink: 0,
+    },
+    featMeta: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    featMetaText: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.xs,
+      color: C.mutedForeground,
+    },
+    dot: {
+      width: 3,
+      height: 3,
+      borderRadius: 1.5,
+      backgroundColor: C.mutedForeground,
+    },
 
-  // New Arrivals
-  arrivalsList: {
-    gap: Spacing[2],
-  },
-  arrivalCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#161624',
-    borderRadius: Radius.lg,
-    padding: Spacing[3],
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.07)',
-    gap: Spacing[3],
-  },
-  arrivalImg: {
-    width: 72,
-    height: 72,
-    borderRadius: Radius.md,
-  },
-  arrivalImgPlaceholder: {
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  arrivalInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  arrivalTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: Spacing[2],
-  },
-  arrivalMake: {
-    flex: 1,
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.base,
-    color: C.foreground,
-  },
-  arrivalPrice: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.base,
-    color: '#4a7ae8',
-    marginTop: 4,
-  },
-  arrivalYear: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-  },
-  arrivalMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 2,
-  },
-  arrivalMetaText: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.xs,
-    color: C.mutedForeground,
-  },
+    // New Arrivals
+    arrivalsList: {
+      gap: Spacing[2],
+    },
+    arrivalCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: C.card,
+      borderRadius: Radius.lg,
+      padding: Spacing[3],
+      borderWidth: 1,
+      borderColor: C.border,
+      gap: Spacing[3],
+    },
+    arrivalImg: {
+      width: 72,
+      height: 72,
+      borderRadius: Radius.md,
+    },
+    arrivalImgPlaceholder: {
+      backgroundColor: C.border,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    arrivalInfo: {
+      flex: 1,
+      gap: 2,
+    },
+    arrivalTopRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: Spacing[2],
+    },
+    arrivalMake: {
+      flex: 1,
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.base,
+      color: C.foreground,
+    },
+    arrivalPrice: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.base,
+      color: C.sidebarPrimary,
+      marginTop: 4,
+    },
+    arrivalYear: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+    },
+    arrivalMeta: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      marginTop: 2,
+    },
+    arrivalMetaText: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.xs,
+      color: C.mutedForeground,
+    },
 
-  // States
-  skeleton: {
-    backgroundColor: 'rgba(255,255,255,0.07)',
-    marginRight: 12,
-  },
-  errorBox: {
-    padding: Spacing[4],
-    alignItems: 'center',
-  },
-  errorText: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-  },
-  emptyBox: {
-    padding: Spacing[5],
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-  },
-});
+    // States
+    skeleton: {
+      backgroundColor: C.secondary,
+      marginRight: 12,
+    },
+    errorBox: {
+      padding: Spacing[4],
+      alignItems: 'center',
+    },
+    errorText: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+    },
+    emptyBox: {
+      padding: Spacing[5],
+      alignItems: 'center',
+    },
+    emptyText: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.sm,
+      color: C.mutedForeground,
+    },
+  });
+}
