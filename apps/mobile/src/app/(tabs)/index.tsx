@@ -135,36 +135,37 @@ function FeaturedCard({ item }: { item: Vehicle }) {
 function ArrivalCard({ item }: { item: Vehicle }) {
   return (
     <Pressable style={styles.arrivalCard}>
+      {/* Thumbnail */}
       {item.image ? (
         <Image source={{ uri: item.image }} style={styles.arrivalImg} resizeMode="cover" />
       ) : (
         <View style={[styles.arrivalImg, styles.arrivalImgPlaceholder]}>
-          <SymbolView name="car.side.fill" size={36} tintColor="rgba(255,255,255,0.15)" />
+          <SymbolView name="car.side.fill" size={28} tintColor="rgba(255,255,255,0.2)" />
         </View>
       )}
 
+      {/* Info */}
       <View style={styles.arrivalInfo}>
-        <View style={styles.arrivalHeader}>
-          <Text style={styles.arrivalMake}>{item.make}</Text>
-          {item.fuel && (
-            <View style={styles.fuelBadgeSm}>
-              <Text style={styles.fuelTextSm}>{item.fuel}</Text>
-            </View>
-          )}
+        <View style={styles.arrivalTopRow}>
+          <Text style={styles.arrivalMake} numberOfLines={1}>{item.make} {item.model}</Text>
+          <Text style={styles.arrivalPrice}>{formatPrice(item.price)}</Text>
         </View>
-        <Text style={styles.arrivalModel} numberOfLines={1}>{item.year} {item.model}</Text>
+        <Text style={styles.arrivalYear}>{item.year}</Text>
         <View style={styles.arrivalMeta}>
           <SymbolView name="gauge.medium" size={11} tintColor={C.mutedForeground} />
           <Text style={styles.arrivalMetaText}>{formatMileage(item.mileage)}</Text>
+          {item.fuel && (
+            <>
+              <View style={styles.dot} />
+              <Text style={styles.arrivalMetaText}>{item.fuel}</Text>
+            </>
+          )}
           <View style={styles.dot} />
           <Text style={styles.arrivalMetaText}>{daysAgo(item.createdAt)}</Text>
         </View>
       </View>
 
-      <View style={styles.arrivalPriceCol}>
-        <Text style={styles.arrivalPrice}>{formatPrice(item.price)}</Text>
-        <SymbolView name="chevron.right" size={14} tintColor={C.mutedForeground} />
-      </View>
+      <SymbolView name="chevron.right" size={14} tintColor="rgba(255,255,255,0.2)" />
     </Pressable>
   );
 }
@@ -670,7 +671,7 @@ const styles = StyleSheet.create({
   arrivalCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: '#161624',
     borderRadius: Radius.lg,
     padding: Spacing[3],
     borderWidth: 1,
@@ -678,43 +679,38 @@ const styles = StyleSheet.create({
     gap: Spacing[3],
   },
   arrivalImg: {
-    width: 64,
-    height: 64,
+    width: 72,
+    height: 72,
     borderRadius: Radius.md,
   },
   arrivalImgPlaceholder: {
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: 'rgba(255,255,255,0.05)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   arrivalInfo: {
     flex: 1,
-    gap: 3,
+    gap: 2,
   },
-  arrivalHeader: {
+  arrivalTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: Spacing[2],
   },
   arrivalMake: {
+    flex: 1,
     fontFamily: FontFamily.sansBold,
     fontSize: FontSize.base,
     color: C.foreground,
   },
-  fuelBadgeSm: {
-    paddingHorizontal: Spacing[2],
-    paddingVertical: 2,
-    borderRadius: Radius.sm,
-    backgroundColor: 'rgba(74,122,232,0.2)',
-    borderWidth: 1,
-    borderColor: 'rgba(74,122,232,0.3)',
-  },
-  fuelTextSm: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: 10,
+  arrivalPrice: {
+    fontFamily: FontFamily.sansBold,
+    fontSize: FontSize.base,
     color: '#4a7ae8',
+    flexShrink: 0,
   },
-  arrivalModel: {
+  arrivalYear: {
     fontFamily: FontFamily.sans,
     fontSize: FontSize.sm,
     color: C.mutedForeground,
@@ -723,20 +719,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    marginTop: 2,
   },
   arrivalMetaText: {
     fontFamily: FontFamily.sans,
     fontSize: FontSize.xs,
     color: C.mutedForeground,
-  },
-  arrivalPriceCol: {
-    alignItems: 'flex-end',
-    gap: 4,
-  },
-  arrivalPrice: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.base,
-    color: C.foreground,
   },
 
   // States
