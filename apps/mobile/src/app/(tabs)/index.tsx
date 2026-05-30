@@ -146,10 +146,7 @@ function ArrivalCard({ item }: { item: Vehicle }) {
 
       {/* Info */}
       <View style={styles.arrivalInfo}>
-        <View style={styles.arrivalTopRow}>
-          <Text style={styles.arrivalMake} numberOfLines={1}>{item.make} {item.model}</Text>
-          <Text style={styles.arrivalPrice}>{formatPrice(item.price)}</Text>
-        </View>
+        <Text style={styles.arrivalMake} numberOfLines={1}>{item.make} {item.model}</Text>
         <Text style={styles.arrivalYear}>{item.year}</Text>
         <View style={styles.arrivalMeta}>
           <SymbolView name="gauge.medium" size={11} tintColor={C.mutedForeground} />
@@ -163,6 +160,7 @@ function ArrivalCard({ item }: { item: Vehicle }) {
           <View style={styles.dot} />
           <Text style={styles.arrivalMetaText}>{daysAgo(item.createdAt)}</Text>
         </View>
+        <Text style={styles.arrivalPrice}>{formatPrice(item.price)}</Text>
       </View>
 
       <SymbolView name="chevron.right" size={14} tintColor="rgba(255,255,255,0.2)" />
@@ -708,7 +706,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.sansBold,
     fontSize: FontSize.base,
     color: '#4a7ae8',
-    flexShrink: 0,
+    marginTop: 4,
   },
   arrivalYear: {
     fontFamily: FontFamily.sans,
