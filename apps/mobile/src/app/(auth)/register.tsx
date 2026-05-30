@@ -54,7 +54,7 @@ export default function RegisterScreen() {
         email,
         password,
         name,
-        role: accountType === 'dealer' ? 'dealer' : 'user',
+        accountType: accountType === 'dealer' ? 'dealer' : 'user',
       } as any);
       setLoading(false);
       if (err) {

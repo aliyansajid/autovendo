@@ -54,7 +54,7 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (user) => {
-          const requested = (user as any).role;
+          const requested = (user as any).accountType;
           return {
             data: {
               ...user,
@@ -106,6 +106,14 @@ export const auth = betterAuth({
   },
 
   user: {
+    additionalFields: {
+      accountType: {
+        type: "string",
+        required: false,
+        defaultValue: "user",
+        input: true,
+      },
+    },
     changeEmail: {
       enabled: true,
       sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
