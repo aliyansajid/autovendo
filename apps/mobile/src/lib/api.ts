@@ -168,3 +168,83 @@ export async function fetchSearch(
   if (!res.ok) throw new Error("request_failed");
   return res.json();
 }
+
+// ─── Vehicle Detail ───────────────────────────────────────────────────────────
+
+export type VehicleDealer = {
+  id: string;
+  name: string | null;
+  address: string | null;
+  city: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  logo: string | null;
+  description: string | null;
+};
+
+export type VehicleDetail = {
+  id: string;
+  make: string;
+  model: string;
+  version: string | null;
+  price: number;
+  newPrice: number | null;
+  images: string[];
+  vehicleType: string | null;
+  bodyType: string | null;
+  condition: string | null;
+  driveType: string | null;
+  seats: number | null;
+  doors: number | null;
+  kilometer: number;
+  registrationMonth: number | null;
+  registrationYear: number;
+  lastInspectionDate: string | null;
+  inspectionPassed: boolean | null;
+  warranty: string | null;
+  warrantyStartDate: string | null;
+  warrantyDuration: number | null;
+  warrantyMaxKm: number | null;
+  hp: number | null;
+  kw: number | null;
+  transmission: string | null;
+  cubicCapacity: number | null;
+  cylinders: number | null;
+  numberOfGears: number | null;
+  emptyWeight: number | null;
+  loadCapacity: number | null;
+  wheelbase: number | null;
+  length: number | null;
+  width: number | null;
+  height: number | null;
+  towingCapacityBraked: number | null;
+  fuel: string | null;
+  co2Emission: number | null;
+  consumptionCity: number | null;
+  consumptionCountry: number | null;
+  consumptionTotal: number | null;
+  emissionStandard: string | null;
+  energyLabel: string | null;
+  range: number | null;
+  batteryCapacity: number | null;
+  powerConsumption: number | null;
+  chargingPower: number | null;
+  color: string | null;
+  interiorColor: string | null;
+  metallic: boolean | null;
+  vin: string | null;
+  serialNumber: string | null;
+  typeApproval: string | null;
+  equipment: Record<string, boolean> | null;
+  extras: Record<string, boolean> | null;
+  description: string | null;
+  dealer: VehicleDealer | null;
+  createdAt: string;
+};
+
+export async function fetchVehicle(id: string): Promise<VehicleDetail> {
+  const res = await fetch(`${BASE_URL}/api/vehicles/${id}`);
+  if (!res.ok) throw new Error("request_failed");
+  return res.json();
+}

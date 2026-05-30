@@ -7,6 +7,7 @@ import { expo } from "@better-auth/expo";
 const auth = createAuth([expo()]);
 import home from "./routes/home";
 import search from "./routes/search";
+import vehicle from "./routes/vehicle";
 
 const app = new Hono<{
   Variables: {
@@ -62,6 +63,9 @@ app.route("/api/home", home);
 
 // Vehicle search
 app.route("/api/search", search);
+
+// Vehicle detail
+app.route("/api/vehicles", vehicle);
 
 // Session endpoint
 app.get("/api/session", (c) => {

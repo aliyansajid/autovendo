@@ -20,6 +20,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { fetchHome, type Vehicle, type HomeData } from '@/lib/api';
 import { useSession } from '@/lib/auth-client';
 import { useTabBarHeight } from '@/hooks/use-tab-bar-height';
+import { router } from 'expo-router';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = SCREEN_WIDTH * 0.68;
@@ -83,7 +84,7 @@ function Avatar({ name, styles }: { name: string; styles: ReturnType<typeof crea
 
 function FeaturedCard({ item, styles, C }: { item: Vehicle; styles: ReturnType<typeof createStyles>; C: ThemeColors }) {
   return (
-    <Pressable style={styles.featCard}>
+    <Pressable style={styles.featCard} onPress={() => router.push(`/vehicle/${item.id}` as any)}>
       {/* Image with gradient overlay */}
       {item.image ? (
         <ImageBackground
@@ -136,7 +137,7 @@ function FeaturedCard({ item, styles, C }: { item: Vehicle; styles: ReturnType<t
 
 function ArrivalCard({ item, styles, C }: { item: Vehicle; styles: ReturnType<typeof createStyles>; C: ThemeColors }) {
   return (
-    <Pressable style={styles.arrivalCard}>
+    <Pressable style={styles.arrivalCard} onPress={() => router.push(`/vehicle/${item.id}` as any)}>
       {/* Thumbnail */}
       {item.image ? (
         <Image source={{ uri: item.image }} style={styles.arrivalImg} resizeMode="cover" />

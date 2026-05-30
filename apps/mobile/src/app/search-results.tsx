@@ -33,7 +33,10 @@ function formatMileage(n: number) {
 
 function VehicleCard({ item, styles, C }: { item: SearchVehicle; styles: ReturnType<typeof createStyles>; C: ThemeColors }) {
   return (
-    <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}>
+    <Pressable
+      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      onPress={() => router.push(`/vehicle/${item.id}` as any)}
+    >
       {item.image ? (
         <Image source={{ uri: item.image }} style={styles.cardImage} resizeMode="cover" />
       ) : (
