@@ -82,7 +82,7 @@ export const Header = () => {
         <div className="flex items-center gap-8">
           <Link href="/" className="block">
             <Image
-              src="/logo-header.svg"
+              src="/logo.svg"
               alt="AutoSolo Logo"
               width={48}
               height={40}

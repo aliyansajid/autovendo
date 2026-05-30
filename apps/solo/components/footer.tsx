@@ -28,7 +28,7 @@ export const Footer = () => {
             <div className="space-y-3">
               <Link href="/" className="block">
                 <Image
-                  src="/logo-footer.svg"
+                  src="/logo.svg"
                   alt="Autosolo Logo"
                   width={320}
                   height={96}
@@ -104,7 +104,9 @@ export const Footer = () => {
                 {t("sections.legal")}
               </h4>
               <ul className="space-y-2 text-sm">
-                <FooterLink href="/datenschutz">{t("links.privacy")}</FooterLink>
+                <FooterLink href="/datenschutz">
+                  {t("links.privacy")}
+                </FooterLink>
                 <FooterLink href="/agb">{t("links.terms")}</FooterLink>
                 <FooterLink href="/privatsphaere">
                   {t("links.privacySettings")}
@@ -120,9 +122,7 @@ export const Footer = () => {
               <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-2 text-muted-foreground">
                   <MapPin className="size-4 text-muted-foreground mt-0.5" />
-                  <span className="whitespace-pre-line">
-                    {t("address")}
-                  </span>
+                  <span className="whitespace-pre-line">{t("address")}</span>
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
                   <Phone className="size-4 text-muted-foreground" />

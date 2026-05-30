@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "@repo/ui/globals.css";
+import "../solo.css";
 import { Toaster } from "@repo/ui/src/components/sonner";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";

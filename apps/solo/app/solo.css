@@ -1,0 +1,11 @@
+@import "@repo/ui/globals.css";
+
+:root {
+  --primary: oklch(0.6144 0.2083 142.56);
+  --primary-foreground: oklch(0.97 0.014 254.604);
+}
+
+.dark {
+  --primary: oklch(0.6144 0.2083 142.56);
+  --primary-foreground: oklch(0.97 0.014 254.604);
+}
