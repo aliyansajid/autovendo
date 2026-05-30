@@ -41,24 +41,33 @@ export default function RegisterScreen() {
 
   const isFocused = (field: string) => focused === field;
 
-  const canSubmit = firstName && email && password.length >= 8;
+  const canSubmit = firstName.length > 0 && email.length > 0 && password.length >= 8;
 
   const handleRegister = async () => {
+    console.log('handleRegister called', { canSubmit, firstName, email, passwordLength: password.length });
     if (!canSubmit) return;
     setLoading(true);
     setError(null);
-    const name = [firstName, lastName].filter(Boolean).join(' ');
-    const { error: err } = await authClient.signUp.email({
-      email,
-      password,
-      name,
-    });
-    setLoading(false);
-    if (err) {
-      setError(err.message ?? 'Registration failed. Please try again.');
-      return;
+    try {
+      const name = [firstName, lastName].filter(Boolean).join(' ');
+      const { error: err } = await authClient.signUp.email({
+        email,
+        password,
+        name,
+        role: accountType === 'dealer' ? 'dealer' : 'user',
+      } as any);
+      setLoading(false);
+      if (err) {
+        console.log('signup error', err);
+        setError(err.message ?? 'Registration failed. Please try again.');
+        return;
+      }
+      router.replace('/(tabs)' as any);
+    } catch (e) {
+      console.log('signup exception', e);
+      setLoading(false);
+      setError('Something went wrong. Please try again.');
     }
-    router.replace('/(tabs)' as any);
   };
 
   return (

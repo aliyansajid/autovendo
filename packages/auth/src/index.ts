@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@repo/db";
 import { admin } from "better-auth/plugins";
+import { ac, admin as adminRole, dealer, user } from "./permissions";
 import { stripe } from "@better-auth/stripe";
 import { expo } from "@better-auth/expo";
 import Stripe from "stripe";
@@ -18,12 +19,12 @@ async function handleListingPayment(event: Stripe.Event) {
   const expiresAt =
     planId === "standard"
       ? new Date(paidAt.getTime() + 30 * 24 * 60 * 60 * 1000)
-      : null; // best_value = null means until sold
+      : null;
 
   await prisma.vehicle.updateMany({
     where: {
       id: vehicleId,
-      stripeSessionId: null, // idempotency — only process once
+      stripeSessionId: null,
     },
     data: {
       status: "PUBLISHED",
@@ -42,11 +43,31 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 const appName = process.env.APP_NAME ?? "Autovendo";
 
+const SELF_ASSIGNABLE_ROLES = ["user", "dealer"] as const;
+
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL ?? appUrl,
+  baseURL: process.env.BETTER_AUTH_URL,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const requested = (user as any).role;
+          return {
+            data: {
+              ...user,
+              role: SELF_ASSIGNABLE_ROLES.includes(requested)
+                ? requested
+                : "user",
+            },
+          };
+        },
+      },
+    },
+  },
 
   emailAndPassword: {
     enabled: true,
@@ -107,7 +128,7 @@ export const auth = betterAuth({
     },
   },
 
-trustedOrigins: [
+  trustedOrigins: [
     "https://autovendo.ch",
     "https://www.autovendo.ch",
     "https://autosolo.ch",
@@ -123,11 +144,15 @@ trustedOrigins: [
 
   plugins: [
     expo(),
-    admin(),
+    admin({
+      ac,
+      roles: { admin: adminRole, dealer, user },
+      defaultRole: "user",
+    }),
     stripe({
       stripeClient,
       stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      createCustomerOnSignUp: false,
+      createCustomerOnSignUp: true,
       onEvent: handleListingPayment,
       subscription: {
         enabled: true,
