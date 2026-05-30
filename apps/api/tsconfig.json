@@ -6,7 +6,8 @@
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "noEmit": true
+    "noEmit": true,
+    "jsx": "react-jsx"
   },
   "include": ["src"]
 }
