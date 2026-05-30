@@ -14,8 +14,7 @@
     "esModuleInterop": true
   },
   "references": [
-    { "path": "../database" },
-    { "path": "../transactional" }
+    { "path": "../database" }
   ],
   "include": ["src"]
 }
