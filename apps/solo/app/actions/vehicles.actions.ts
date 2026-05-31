@@ -34,7 +34,7 @@ import type {
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { createId } from "@paralleldrive/cuid2";
-import { storage } from "@/lib/helpers/storage";
+import { storage } from "@repo/ui/lib/helpers/storage";
 import { StorageService } from "@repo/storage";
 import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
 import { getTranslations } from "next-intl/server";
@@ -50,7 +50,7 @@ import {
   type VehicleSearchParams,
 } from "@/schema/vehicle-search-schema";
 
-import { parseSearchParams } from "@/lib/helpers/vehicle";
+import { parseSearchParams } from "@repo/ui/lib/helpers/vehicle";
 
 // PLAN_LIMITS removed - now dynamic from DB via auth plugin
 

@@ -25,7 +25,7 @@ import { updateSellerProfile } from "@/app/actions/seller.actions";
 import { Spinner } from "@repo/ui/components/spinner";
 import type { SellerProfile } from "@/app/actions/seller.actions";
 import { SelectItem } from "@repo/ui/components/select";
-import { swissCities } from "@/lib/constants/swiss-cities";
+import { swissCities } from "@repo/vehicle-constants";
 
 type FormValues = z.infer<ReturnType<typeof createSellerProfileSchema>>;
 
@@ -188,8 +188,8 @@ export const SellerProfileForm = ({ initialData }: SellerProfileFormProps) => {
                   disabled={isPending}
                 >
                   {swissCities.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city}
+                    <SelectItem key={city.value} value={city.value}>
+                      {city.label}
                     </SelectItem>
                   ))}
                 </CustomFormField>

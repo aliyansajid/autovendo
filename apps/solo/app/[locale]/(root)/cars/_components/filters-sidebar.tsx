@@ -21,7 +21,7 @@ import {
   KILOMETER_OPTIONS,
   COLOR_OPTIONS,
   EQUIPMENT_LABELS,
-} from "@/lib/constants/vehicle-constants";
+} from "@repo/vehicle-constants";
 import { carMakes } from "@repo/vehicle-constants";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import { Separator } from "@repo/ui/components/separator";
@@ -41,7 +41,7 @@ import { MakeModelDialog } from "./filters/make-model-dialog";
 import type { VehicleFacets } from "@/types/vehicle";
 import { createVehicleFiltersSchema } from "@/schema/vehicle-filters-schema";
 import { useTranslations, useLocale } from "next-intl";
-import { formatKilometers } from "@/lib/helpers/format";
+import { formatKilometers } from "@repo/ui/lib/helpers/format";
 import { useMemo } from "react";
 
 export const FiltersSidebar = ({

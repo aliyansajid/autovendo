@@ -17,7 +17,7 @@ import {
   formatDateShort,
   formatCardNumber,
   formatCardExpiry,
-} from "@/lib/helpers/format";
+} from "@repo/ui/lib/helpers/format";
 
 export default async function BillingPage(props: {
   params: Promise<{ locale: string }>;

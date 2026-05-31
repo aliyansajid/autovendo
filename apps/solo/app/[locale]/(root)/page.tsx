@@ -7,13 +7,13 @@ import { SearchForm } from "./_components/search-form";
 import { FeaturedListings } from "./_components/featured-listings";
 import { About } from "./_components/about";
 import { getVehicles } from "@/app/actions/vehicles.actions";
-import { buildVehicleTitle } from "@/lib/helpers/vehicle";
+import { buildVehicleTitle } from "@repo/ui/lib/helpers/vehicle";
 import {
   formatPrice,
   formatNumber,
   formatRegistrationDate,
-} from "@/lib/helpers/format";
-import { getImageUrl } from "@/lib/helpers/image";
+} from "@repo/ui/lib/helpers/format";
+import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import type { VehicleListItem, ListingProps } from "@/types/vehicle";
 import { getTranslations } from "next-intl/server";
 

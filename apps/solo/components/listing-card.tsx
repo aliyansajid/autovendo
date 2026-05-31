@@ -14,7 +14,7 @@ import { Separator } from "@repo/ui/components/separator";
 import { Link } from "@/i18n/routing";
 import { ListingProps } from "@/types/vehicle";
 import { useTranslations } from "next-intl";
-import { formatVehicleName } from "@/lib/helpers/vehicle";
+import { formatVehicleName } from "@repo/ui/lib/helpers/vehicle";
 
 export const ListingCard = ({ item }: { item: ListingProps }) => {
   const t = useTranslations("ListingCard");

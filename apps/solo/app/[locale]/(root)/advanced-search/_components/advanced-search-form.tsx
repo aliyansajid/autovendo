@@ -21,7 +21,7 @@ import { MoreFiltersSection } from "./form-sections/more-filters-section";
 import { buildSearchParams } from "../_lib/build-search-params";
 import { getVehicleCountAndFacets } from "@/app/actions/vehicles.actions";
 import type { VehicleFacets } from "@/types/vehicle";
-import { formatCount } from "@/lib/helpers/format";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 

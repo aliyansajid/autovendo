@@ -14,7 +14,7 @@ import {
   CardFooter,
 } from "@repo/ui/src/components/card";
 import { getTranslations } from "next-intl/server";
-import { formatPrice } from "@/lib/helpers/format";
+import { formatPrice } from "@repo/ui/lib/helpers/format";
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;

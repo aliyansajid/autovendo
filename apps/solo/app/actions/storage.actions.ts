@@ -1,6 +1,6 @@
 "use server";
 
-import { storage } from "@/lib/helpers/storage";
+import { storage } from "@repo/ui/lib/helpers/storage";
 import { StorageService } from "@repo/storage";
 import { auth } from "@repo/auth";
 import { prisma } from "@repo/db";

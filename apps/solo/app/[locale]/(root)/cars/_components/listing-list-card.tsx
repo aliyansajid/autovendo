@@ -13,13 +13,13 @@ import {
   formatPrice,
   formatNumber,
   formatRegistrationDate,
-} from "@/lib/helpers/format";
-import { getImageUrl } from "@/lib/helpers/image";
+} from "@repo/ui/lib/helpers/format";
+import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import {
   extractEquipment,
   formatEquipmentLabel,
   formatVehicleName,
-} from "@/lib/helpers/vehicle";
+} from "@repo/ui/lib/helpers/vehicle";
 
 export interface ListingListCardProps {
   item: VehicleListItem;

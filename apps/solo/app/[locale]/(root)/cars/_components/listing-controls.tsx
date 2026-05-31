@@ -17,7 +17,7 @@ import {
   InputGroupInput,
 } from "@repo/ui/src/components/input-group";
 
-import { SORT_OPTIONS, SORT_LABELS } from "@/lib/constants/vehicle-constants";
+import { SORT_OPTIONS, SORT_LABELS } from "@repo/vehicle-constants";
 import { useTranslations } from "next-intl";
 
 export function ListingControls({

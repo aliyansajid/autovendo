@@ -14,7 +14,7 @@ import {
 import { ColorEnum } from "@repo/vehicle-constants";
 import { Separator } from "@repo/ui/src/components/separator";
 import type { VehicleFacets } from "@/types/vehicle";
-import { formatCount } from "@/lib/helpers/format";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 import { useTranslations } from "next-intl";
 
 export function AppearanceSection({
