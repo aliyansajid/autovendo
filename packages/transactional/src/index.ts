@@ -25,7 +25,12 @@ interface SendEmailOptions {
 /**
  * Render React Email template and send email
  */
-export async function sendEmail({ to, subject, template, replyTo }: SendEmailOptions) {
+export async function sendEmail({
+  to,
+  subject,
+  template,
+  replyTo,
+}: SendEmailOptions) {
   try {
     const html = await render(template);
 
@@ -55,12 +60,7 @@ export async function sendEmail({ to, subject, template, replyTo }: SendEmailOpt
 }
 
 export default sendEmail;
-
 export { ListingContactEmail } from "../emails/listing-contact";
-export type { ListingContactEmailProps } from "../emails/listing-contact";
-
 export { AccountBannedEmail } from "../emails/account-banned";
 export { AccountUnbannedEmail } from "../emails/account-unbanned";
 export { AccountDeletedEmail } from "../emails/account-deleted";
-
-

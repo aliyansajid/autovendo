@@ -1,4 +1,4 @@
-import { betterAuth, type BetterAuthPlugin } from "better-auth";
+import { betterAuth } from "better-auth";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@repo/db";
 import { admin } from "better-auth/plugins";
@@ -35,15 +35,14 @@ async function handleListingPayment(event: Stripe.Event) {
   });
 }
 
-const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY ?? "sk_placeholder", {
+const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-04-22.dahlia",
 });
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 const appName = process.env.APP_NAME ?? "AutoVendo";
 
-export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
-  return betterAuth({
+export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL ?? "https://api.autovendo.ch",
 
   database: prismaAdapter(prisma, {
@@ -172,7 +171,7 @@ export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         enabled: true,
         plans: async () => {
           const plans = await prisma.plan.findMany();
-          return plans.map((plan: typeof plans[number]) => ({
+          return plans.map((plan: (typeof plans)[number]) => ({
             name: plan.name,
             priceId: plan.priceId,
             limits: plan.limits as Record<string, any>,
@@ -184,11 +183,7 @@ export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         },
       },
     }),
-    ...additionalPlugins,
   ],
-  });
-}
-
-export const auth = createAuth();
+});
 
 export { stripeClient };
