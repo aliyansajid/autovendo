@@ -4,14 +4,14 @@ type TFn = (key: string) => string;
 
 export const createLoginSchema = (t: TFn) =>
   z.object({
-    email: z.string().email(t("invalidEmail")),
+    email: z.email(t("invalidEmail")),
     password: z.string().min(1, t("passwordRequired")),
     rememberme: z.boolean(),
   });
 
 export const createForgotPasswordSchema = (t: TFn) =>
   z.object({
-    email: z.string().email(t("invalidEmail")),
+    email: z.email(t("invalidEmail")),
   });
 
 export const createResetPasswordSchema = (t: TFn) =>

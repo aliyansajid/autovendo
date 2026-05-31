@@ -119,12 +119,6 @@ const numericField = (min: number, max: number) =>
     z.number().min(min).max(max).optional(),
   );
 
-const positiveNumericField = (min: number, max: number) =>
-  z.preprocess(
-    (val) => (val === "" || val === undefined ? undefined : Number(val)),
-    z.number().min(min).max(max).optional(),
-  );
-
 const enumField = (validValues: string[], errorMsg: string) =>
   z.string().refine((val) => !val || validValues.includes(val), errorMsg);
 

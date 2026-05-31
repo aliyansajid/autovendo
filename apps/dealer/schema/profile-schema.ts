@@ -11,7 +11,7 @@ const ACCEPTED_IMAGE_TYPES = [
 
 const createOptionalImage = (t: TFn) =>
   z
-    .union([z.instanceof(File), z.string().url()])
+    .union([z.instanceof(File), z.url()])
     .refine(
       (file) =>
         typeof file === "string" ||
@@ -27,13 +27,13 @@ const createOptionalString = () =>
   z.string().optional().or(z.literal("")).nullable();
 
 const createOptionalUrl = (t: TFn) =>
-  z.string().url(t("invalidUrl")).optional().or(z.literal("")).nullable();
+  z.url(t("invalidUrl")).optional().or(z.literal("")).nullable();
 
 export const createDealerProfileSchema = (t: TFn) =>
   z.object({
     // User fields
     name: z.string().min(3, t("nameMinLength")).max(50, t("nameMaxLength")),
-    email: z.string().email(t("invalidEmail")),
+    email: z.email(t("invalidEmail")),
     image: createOptionalImage(t),
 
     // Dealer fields
@@ -70,7 +70,7 @@ export const createDealerProfileSchema = (t: TFn) =>
         /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/,
         t("invalidPhoneFormat"),
       ),
-    businessEmail: z.string().email(t("invalidEmail")),
+    businessEmail: z.email(t("invalidEmail")),
 
     // Opening Hours
     openingHours: z.array(

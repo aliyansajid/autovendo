@@ -5,7 +5,7 @@ type TFn = (key: string) => string;
 export const createContactFormSchema = (t: TFn) =>
   z.object({
     name: z.string().min(3, t("nameMin")).max(50, t("nameMax")),
-    email: z.string().email(t("invalidEmail")),
+    email: z.email(t("invalidEmail")),
     phone: z
       .string()
       .min(1, t("phoneRequired"))
