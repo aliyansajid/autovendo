@@ -10,7 +10,7 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { EquipmentEnum } from "@/constants";
+import { EquipmentEnum } from "@repo/vehicle-constants";
 import { useTranslations } from "next-intl";
 
 export function EquipmentSection() {

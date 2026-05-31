@@ -1,7 +1,7 @@
 export const carMakes = [
   {
     label: "Top-Marken",
-    ITEMS: [
+    items: [
       { value: "MERCEDES", label: "Mercedes-Benz" },
       { value: "BMW", label: "BMW" },
       { value: "AUDI", label: "Audi" },
@@ -16,7 +16,7 @@ export const carMakes = [
   },
   {
     label: "Alle Marken",
-    ITEMS: [
+    items: [
       { value: "9FF", label: "9ff" },
       { value: "ABARTH", label: "Abarth" },
       { value: "AC", label: "AC" },

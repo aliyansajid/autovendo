@@ -1,10 +1,8 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { getDealerProfile } from "@/app/actions/dealer.actions";
-import {
-  getVehicleById,
-  getVehicleSubscriptionStatus,
-} from "@/app/actions/vehicles.actions";
+import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
+import { getDealerVehicleById } from "@/lib/api/dealer-vehicles";
 import { VehicleForm } from "../_components/vehicle-form";
 import { mapVehicleToForm } from "@/lib/helpers/vehicle";
 import { notFound } from "next/navigation";
@@ -26,7 +24,7 @@ export default async function EditVehiclePage({
 
   const [dealerProfile, vehicle, subscriptionStatus] = await Promise.all([
     session?.user?.id ? getDealerProfile() : null,
-    getVehicleById(id),
+    getDealerVehicleById(id),
     getVehicleSubscriptionStatus(),
   ]);
 

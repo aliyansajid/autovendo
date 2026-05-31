@@ -11,7 +11,7 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { ColorEnum } from "@/constants";
+import { ColorEnum } from "@repo/vehicle-constants";
 import { Separator } from "@repo/ui/src/components/separator";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";
@@ -34,7 +34,9 @@ export function AppearanceSection({
       <AccordionContent className="pt-6 px-1 space-y-12">
         <div className="space-y-4">
           <div className="flex flex-col">
-            <Label className="text-base font-semibold">{t("exteriorColor")}</Label>
+            <Label className="text-base font-semibold">
+              {t("exteriorColor")}
+            </Label>
             <span
               className="text-xs text-muted-foreground cursor-pointer hover:underline"
               onClick={() => {
@@ -96,7 +98,9 @@ export function AppearanceSection({
 
         <div className="space-y-4">
           <div className="flex flex-col">
-            <Label className="text-base font-semibold">{t("interiorColor")}</Label>
+            <Label className="text-base font-semibold">
+              {t("interiorColor")}
+            </Label>
             <span
               className="text-xs text-muted-foreground cursor-pointer hover:underline"
               onClick={() =>

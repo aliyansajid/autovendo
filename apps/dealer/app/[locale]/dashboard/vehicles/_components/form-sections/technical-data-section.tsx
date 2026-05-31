@@ -18,7 +18,7 @@ import {
   ChargingPlugTypeStandardEnum,
   ChargingPlugTypeFastEnum,
   EmissionStandardEnum,
-} from "@/constants";
+} from "@repo/vehicle-constants";
 import { Separator } from "@repo/ui/components/separator";
 
 export function TechnicalDataSection() {
@@ -173,7 +173,10 @@ export function TechnicalDataSection() {
             </>
           )}
 
-          {(showCombustionOrMild || showFullHybrid || showPluginHybrid || showHydrogen) && (
+          {(showCombustionOrMild ||
+            showFullHybrid ||
+            showPluginHybrid ||
+            showHydrogen) && (
             <CustomFormField
               control={control}
               fieldType={FormFieldType.SELECT}

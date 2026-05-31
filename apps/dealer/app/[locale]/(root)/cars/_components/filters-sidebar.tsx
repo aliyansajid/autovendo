@@ -22,7 +22,7 @@ import {
   COLOR_OPTIONS,
   EQUIPMENT_LABELS,
 } from "@/lib/constants/vehicle-constants";
-import { carMakes } from "@/constants/cars";
+import { carMakes } from "@repo/vehicle-constants";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import { Separator } from "@repo/ui/components/separator";
 import {
@@ -421,7 +421,12 @@ export const FiltersSidebar = ({
                     "saloon",
                     "pickup",
                     "suv",
-                  ].map((v) => ({ value: v, label: tVehicle(`types.${v.toUpperCase().replace(/-/g, "_")}`) })),
+                  ].map((v) => ({
+                    value: v,
+                    label: tVehicle(
+                      `types.${v.toUpperCase().replace(/-/g, "_")}`,
+                    ),
+                  })),
                 )}
                 <VehicleTypeDialog counts={facets?.bodyType} />
               </div>
@@ -465,7 +470,9 @@ export const FiltersSidebar = ({
               <div className="flex flex-wrap gap-1">
                 {COLOR_OPTIONS.map((color) => {
                   const isSelected = watchColor.includes(color.value);
-                  const colorLabel = tVehicle(`colors.${color.value.toUpperCase()}`);
+                  const colorLabel = tVehicle(
+                    `colors.${color.value.toUpperCase()}`,
+                  );
                   return (
                     <div
                       key={color.value}
@@ -512,7 +519,9 @@ export const FiltersSidebar = ({
                       control={form.control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={value}
-                      label={tVehicle(`equipment.${value.toUpperCase().replace(/-/g, "_")}`)}
+                      label={tVehicle(
+                        `equipment.${value.toUpperCase().replace(/-/g, "_")}`,
+                      )}
                     />
                   ))}
               </div>

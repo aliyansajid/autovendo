@@ -22,7 +22,7 @@ import {
 } from "@repo/ui/components/custom-form-field";
 import { ChevronRight, Search, ChevronLeft, Check, X } from "lucide-react";
 import { ScrollArea } from "@repo/ui/components/scroll-area";
-import { carMakes, popularCarMakes, carModels } from "@/constants/cars";
+import { carMakes, popularCarMakes, carModels } from "@repo/vehicle-constants";
 import Image from "next/image";
 import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";

@@ -9,35 +9,24 @@
  */
 
 import { revalidatePath } from "next/cache";
-import {
-  cacheGet,
-  cacheSet,
-  cacheDelete,
-  cacheDeletePattern,
-} from "@/lib/cache";
+import { cacheGet, cacheSet, cacheDeletePattern } from "@/lib/cache";
 import { prisma } from "@repo/db";
 import type {
   Prisma,
   VehicleType,
   FuelType,
-  GearTransmission,
   TransmissionType,
   DriveType,
   Color,
   VehicleCondition,
-  Warranty,
   EnergyLabel,
   EmissionStandard,
-  BatteryOwnership,
-  ChargingPlugTypeStandard,
-  ChargingPlugTypeFast,
 } from "@repo/db";
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { createId } from "@paralleldrive/cuid2";
 import { storage } from "@/lib/helpers/storage";
 import { StorageService } from "@repo/storage";
-import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
 import { getTranslations } from "next-intl/server";
 import {
   type VehicleListItem,
@@ -56,7 +45,12 @@ import { parseSearchParams } from "@/lib/helpers/vehicle";
 // PLAN_LIMITS removed - now dynamic from DB via auth plugin
 
 export type SubscriptionStatus = {
-  type: "active" | "no_subscription" | "quota_exhausted" | "expired" | "past_due";
+  type:
+    | "active"
+    | "no_subscription"
+    | "quota_exhausted"
+    | "expired"
+    | "past_due";
   plan: string;
   maxVehicles: number;
   currentCount: number;
@@ -1373,7 +1367,6 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
   };
 }
 
-
 export async function prepareVehicleListing(existingVehicleId?: string) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -1452,492 +1445,22 @@ export async function getPresignedUrls(
   return urls;
 }
 
-export async function createVehicle(
-  listingId: string,
-  formData: any,
-  imageKeys: string[],
-) {
-  const t = await getTranslations("VehicleSchema");
-  const schema = createVehicleFormSchema(t);
-  const validatedData = schema.parse(formData);
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  const subscriptionStatus = await getVehicleSubscriptionStatus();
-
-  if (subscriptionStatus.type !== "active") {
-    return {
-      error:
-        subscriptionStatus.type === "no_subscription"
-          ? "noSubscription"
-          : subscriptionStatus.type === "quota_exhausted"
-            ? "limitReached"
-            : subscriptionStatus.type, // Block everything else (past_due, expired, etc.)
-    };
-  }
-
-  const vehicle = await prisma.vehicle.create({
-    data: {
-      id: listingId,
-      dealerId: dealer.id,
-      vehicleType: validatedData.vehicleType.toUpperCase() as VehicleType,
-      make: validatedData.make,
-      model: validatedData.model || null,
-      version: validatedData.version || null,
-      bodyType: validatedData.bodyType,
-      fuelType: validatedData.fuelType
-        ? (validatedData.fuelType.toUpperCase().replace(/-/g, "_") as FuelType)
-        : null,
-      registrationMonth: validatedData.registrationMonth,
-      registrationYear: validatedData.registrationYear,
-      kilometer: validatedData.kilometer,
-      price: validatedData.price,
-      newPrice: validatedData.newPrice || null,
-      color: validatedData.color.toUpperCase() as Color,
-      gearTransmission: validatedData.gearTransmission
-        ? (validatedData.gearTransmission.toUpperCase() as GearTransmission)
-        : null,
-      transmissionType: validatedData.transmissionType
-        ? (validatedData.transmissionType
-            .toUpperCase()
-            .replace(/-/g, "_") as TransmissionType)
-        : null,
-      driveType: validatedData.driveType
-        ? (validatedData.driveType.toUpperCase() as DriveType)
-        : null,
-      interiorColor: validatedData.interiorColor
-        ? (validatedData.interiorColor.toUpperCase() as Color)
-        : null,
-      metallic: validatedData.metallic,
-      status: validatedData.status,
-      vehicleCondition: validatedData.vehicleCondition
-        ? (validatedData.vehicleCondition
-            .toUpperCase()
-            .replace(/-/g, "_") as VehicleCondition)
-        : null,
-      lastInspectionDate: validatedData.lastInspectionDate || null,
-      inspectionPassed: validatedData.inspectionPassed,
-      warranty: validatedData.warranty
-        ? (validatedData.warranty.toUpperCase().replace(/-/g, "_") as Warranty)
-        : null,
-      warrantyStartDate: validatedData.warrantyStartDate || null,
-      duration: validatedData.duration || null,
-      maxKm: validatedData.maxKm || null,
-      doors: validatedData.doors || null,
-      seats: validatedData.seats || null,
-      hp: validatedData.hp || null,
-      kw: validatedData.kw || null,
-      energyLabel: validatedData.energyLabel
-        ? (validatedData.energyLabel.toUpperCase() as EnergyLabel)
-        : null,
-      typeApproval: validatedData.typeApproval || null,
-      wheelbase: validatedData.wheelbase || null,
-      vin: validatedData.vehicleIdentificationNumber || null,
-      emptyWeight: validatedData.emptyWeight || null,
-      loadCapacity: validatedData.loadCapacity || null,
-      serialNumber: validatedData.serialNumber || null,
-      height: validatedData.height || null,
-      width: validatedData.width || null,
-      length: validatedData.length || null,
-      towingCapacityBraked: validatedData.towingCapacityBraked || null,
-      cubicCapacity: validatedData.cubicCapacity || null,
-      co2Emission: validatedData.co2Emission || null,
-      cylinders: validatedData.cylinders || null,
-      numberOfGears: validatedData.numberOfGears || null,
-      emissionStandard: validatedData.emissionStandard
-        ? (validatedData.emissionStandard
-            .toUpperCase()
-            .replace(/-/g, "_") as EmissionStandard)
-        : null,
-      consumptionCity: validatedData.consumptionCity || null,
-      consumptionCountry: validatedData.consumptionCountry || null,
-      consumptionTotal: validatedData.consumptionTotal || null,
-      range: validatedData.range || null,
-      batteryCapacity: validatedData.batteryCapacity || null,
-      batteryRentalMonth: validatedData.batteryRentalMonth || null,
-      powerConsumption: validatedData.powerConsumption || null,
-      batteryOwnership: validatedData.batteryOwnership
-        ? (validatedData.batteryOwnership
-            .toUpperCase()
-            .replace(/-/g, "_") as BatteryOwnership)
-        : null,
-      chargingPlugTypeStandard: validatedData.chargingPlugTypeStandard
-        ? (validatedData.chargingPlugTypeStandard
-            .toUpperCase()
-            .replace(/-/g, "_") as ChargingPlugTypeStandard)
-        : null,
-      chargingPlugTypeFast: validatedData.chargingPlugTypeFast
-        ? (validatedData.chargingPlugTypeFast
-            .toUpperCase()
-            .replace(/-/g, "_") as ChargingPlugTypeFast)
-        : null,
-      chargingPower: validatedData.chargingPower || null,
-      combustionEnginePowerHp: validatedData.combustionEnginePowerHp || null,
-      electricMotorPowerHp: validatedData.electricMotorPowerHp || null,
-      vehicleDescription: validatedData.vehicleDescription || null,
-      equipment: validatedData.equipment || {},
-      extras: validatedData.extras || {},
-      images: imageKeys,
-    },
-  });
-
-  await Promise.all([
-    cacheDeletePattern("vehicles:*"),
-    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
-  ]);
-  revalidatePath("/dashboard/vehicles");
-  return listingId;
-}
-
-export async function getDealerVehicles() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  const vehicles = await prisma.vehicle.findMany({
-    where: { dealerId: dealer.id },
-    orderBy: { createdAt: "desc" },
-    select: VEHICLE_LIST_SELECT,
-  });
-
-  return vehicles as VehicleListItem[];
-}
-
-export async function getVehicleById(id: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  const vehicle = await prisma.vehicle.findUnique({
-    where: {
-      id,
-      dealerId: dealer.id,
-    },
-  });
-
-  return vehicle;
-}
-
-export async function updateVehicle(
-  vehicleId: string,
-  formData: any,
-  imageKeys: string[],
-) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  // SECURITY GUARD:
-  // Only allow saving edits if the subscription is active, trialing, or past_due.
-  // We block if it's expired or no_subscription.
-  const subStatus = await getVehicleSubscriptionStatus();
-  if (subStatus.type === "no_subscription" || subStatus.type === "expired") {
-    throw new Error("Subscription inactive. Cannot save edits.");
-  }
-
-  const tSchema = await getTranslations("VehicleSchema");
-  const schema = createVehicleFormSchema(tSchema);
-  const validatedData = schema.parse(formData);
-
-  const existingVehicle = await prisma.vehicle.findUnique({
-    where: { id: vehicleId, dealerId: dealer.id },
-    select: { images: true },
-  });
-
-  if (existingVehicle) {
-    const oldImages = existingVehicle.images;
-    const imagesToDelete = oldImages.filter((img) => !imageKeys.includes(img));
-
-    if (imagesToDelete.length > 0) {
-      await Promise.all(
-        imagesToDelete.map(async (key) => {
-          try {
-            await storage.deleteFile(key);
-          } catch (e) {
-            console.error(`Failed to delete image: ${key}`, e);
-          }
-        }),
-      );
-    }
-  }
-
-  await prisma.vehicle.update({
-    where: {
-      id: vehicleId,
-      dealerId: dealer.id,
-    },
-    data: {
-      vehicleType: validatedData.vehicleType.toUpperCase() as VehicleType,
-      make: validatedData.make,
-      model: validatedData.model || null,
-      version: validatedData.version || null,
-      bodyType: validatedData.bodyType,
-      fuelType: validatedData.fuelType
-        ? (validatedData.fuelType.toUpperCase().replace(/-/g, "_") as FuelType)
-        : null,
-      registrationMonth: validatedData.registrationMonth,
-      registrationYear: validatedData.registrationYear,
-      kilometer: validatedData.kilometer,
-      price: validatedData.price,
-      newPrice: validatedData.newPrice || null,
-      color: validatedData.color.toUpperCase() as Color,
-      gearTransmission: validatedData.gearTransmission
-        ? (validatedData.gearTransmission.toUpperCase() as GearTransmission)
-        : null,
-      transmissionType: validatedData.transmissionType
-        ? (validatedData.transmissionType
-            .toUpperCase()
-            .replace(/-/g, "_") as TransmissionType)
-        : null,
-      driveType: validatedData.driveType
-        ? (validatedData.driveType.toUpperCase() as DriveType)
-        : null,
-      interiorColor: validatedData.interiorColor
-        ? (validatedData.interiorColor.toUpperCase() as Color)
-        : null,
-      metallic: validatedData.metallic,
-      status: validatedData.status,
-      vehicleCondition: validatedData.vehicleCondition
-        ? (validatedData.vehicleCondition
-            .toUpperCase()
-            .replace(/-/g, "_") as VehicleCondition)
-        : null,
-      lastInspectionDate: validatedData.lastInspectionDate || null,
-      inspectionPassed: validatedData.inspectionPassed,
-      warranty: validatedData.warranty
-        ? (validatedData.warranty.toUpperCase().replace("-", "_") as Warranty)
-        : null,
-      warrantyStartDate: validatedData.warrantyStartDate || null,
-      duration: validatedData.duration || null,
-      maxKm: validatedData.maxKm || null,
-      doors: validatedData.doors || null,
-      seats: validatedData.seats || null,
-      hp: validatedData.hp || null,
-      kw: validatedData.kw || null,
-      energyLabel: validatedData.energyLabel
-        ? (validatedData.energyLabel.toUpperCase() as EnergyLabel)
-        : null,
-      typeApproval: validatedData.typeApproval || null,
-      wheelbase: validatedData.wheelbase || null,
-      vin: validatedData.vehicleIdentificationNumber || null,
-      emptyWeight: validatedData.emptyWeight || null,
-      loadCapacity: validatedData.loadCapacity || null,
-      serialNumber: validatedData.serialNumber || null,
-      height: validatedData.height || null,
-      width: validatedData.width || null,
-      length: validatedData.length || null,
-      towingCapacityBraked: validatedData.towingCapacityBraked || null,
-      cubicCapacity: validatedData.cubicCapacity || null,
-      co2Emission: validatedData.co2Emission || null,
-      cylinders: validatedData.cylinders || null,
-      numberOfGears: validatedData.numberOfGears || null,
-      emissionStandard: validatedData.emissionStandard
-        ? (validatedData.emissionStandard
-            .toUpperCase()
-            .replace(/-/g, "_") as EmissionStandard)
-        : null,
-      consumptionCity: validatedData.consumptionCity || null,
-      consumptionCountry: validatedData.consumptionCountry || null,
-      consumptionTotal: validatedData.consumptionTotal || null,
-      range: validatedData.range || null,
-      batteryCapacity: validatedData.batteryCapacity || null,
-      batteryRentalMonth: validatedData.batteryRentalMonth || null,
-      powerConsumption: validatedData.powerConsumption || null,
-      batteryOwnership: validatedData.batteryOwnership
-        ? (validatedData.batteryOwnership
-            .toUpperCase()
-            .replace(/-/g, "_") as BatteryOwnership)
-        : null,
-      chargingPlugTypeStandard: validatedData.chargingPlugTypeStandard
-        ? (validatedData.chargingPlugTypeStandard
-            .toUpperCase()
-            .replace(/-/g, "_") as ChargingPlugTypeStandard)
-        : null,
-      chargingPlugTypeFast: validatedData.chargingPlugTypeFast
-        ? (validatedData.chargingPlugTypeFast
-            .toUpperCase()
-            .replace(/-/g, "_") as ChargingPlugTypeFast)
-        : null,
-      chargingPower: validatedData.chargingPower || null,
-      combustionEnginePowerHp: validatedData.combustionEnginePowerHp || null,
-      electricMotorPowerHp: validatedData.electricMotorPowerHp || null,
-      vehicleDescription: validatedData.vehicleDescription || null,
-      equipment: validatedData.equipment || {},
-      extras: validatedData.extras || {},
-      images: imageKeys,
-    },
-  });
-
-  await Promise.all([
-    cacheDeletePattern("vehicles:*"),
-    cacheDelete(`vehicle:${vehicleId}`),
-    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
-  ]);
-  revalidatePath("/dashboard/vehicles");
-  return vehicleId;
-}
-
-export async function deleteVehicle(id: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  // Fetch the vehicle to get its images before deleting
-  const vehicle = await prisma.vehicle.findUnique({
-    where: { id, dealerId: dealer.id },
-    select: { images: true },
-  });
-
-  if (vehicle && vehicle.images.length > 0) {
-    // Delete all images from storage
-    await Promise.all(
-      vehicle.images.map(async (key) => {
-        try {
-          await storage.deleteFile(key);
-        } catch (e) {
-          console.error(
-            `Failed to delete image during vehicle deletion: ${key}`,
-            e,
-          );
-        }
-      }),
-    );
-  }
-
-  await prisma.vehicle.delete({
-    where: {
-      id,
-      dealerId: dealer.id,
-    },
-  });
-
-  await Promise.all([
-    cacheDeletePattern("vehicles:*"),
-    cacheDelete(`vehicle:${id}`),
-    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
-  ]);
-  revalidatePath("/", "layout");
-  return { success: true };
-}
-
 /**
- * Quick status update for a vehicle
+ * Delete S3 image files that are no longer referenced by a vehicle.
+ * Called after API delete/update to clean up orphaned storage objects.
  */
-export async function updateVehicleStatus(vehicleId: string, status: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+export async function cleanupImages(keys: string[]) {
+  if (!keys.length) return;
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) throw new Error("Unauthorized");
 
-  if (!session) {
-    throw new Error("Unauthorized");
-  }
-
-  const dealer = await prisma.dealer.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (!dealer) {
-    throw new Error("Dealer profile not found");
-  }
-
-  const subStatus = await getVehicleSubscriptionStatus();
-
-  // SECURITY GUARD:
-  // We ALWAYS allow taking a car offline (SOLD or DRAFT) regardless of subscription.
-  // We ONLY allow putting a car live (PUBLISHED) if the subscription is healthy.
-  
-  if (status === "PUBLISHED") {
-    if (subStatus.type !== "active") {
-      throw new Error("Subscription not active. Cannot publish.");
-    }
-  } else {
-    // For SOLD or DRAFT, we just ensure the user isn't totally missing (no_subscription)
-    // but we allow it even if expired.
-    if (subStatus.type === "no_subscription") {
-      throw new Error("Unauthorized");
-    }
-  }
-
-  const updated = await prisma.vehicle.update({
-    where: {
-      id: vehicleId,
-      dealerId: dealer.id,
-    },
-    data: {
-      status: status as any,
-    },
-  });
-
-  await Promise.all([
-    cacheDeletePattern("vehicles:*"),
-    cacheDelete(`vehicle:${vehicleId}`),
-    cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
-  ]);
-  revalidatePath("/", "layout");
-  return { success: true, status: updated.status };
+  await Promise.all(
+    keys.map(async (key) => {
+      try {
+        await storage.deleteFile(key);
+      } catch (e) {
+        console.error(`Failed to delete image: ${key}`, e);
+      }
+    }),
+  );
 }

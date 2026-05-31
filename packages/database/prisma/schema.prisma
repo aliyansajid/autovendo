@@ -18,8 +18,8 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role        String?
-  banned      Boolean?
+  role       String?
+  banned     Boolean?
   banReason  String?
   banExpires DateTime? @db.Timestamptz(3)
 
@@ -104,9 +104,9 @@ model Plan {
   id          String   @id @default(cuid())
   name        String   @unique
   description String?
-  price       Float    // Price in CHF (e.g., 180, 19.99)
+  price       Float // Price in CHF (e.g., 180, 19.99)
   priceId     String   @unique
-  limits      Json     // e.g., {"vehicles": 5}
+  limits      Json // e.g., {"vehicles": 5}
   popular     Boolean  @default(false)
   hasTrial    Boolean  @default(false)
   trialDays   Int?
@@ -117,28 +117,28 @@ model Plan {
 }
 
 model Dealer {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  companyName   String
-  description   String?
-  website       String?
-  logo          String?
-  coverImage    String?
-  streetAddress String
-  zipCode       String
-  city          String
-  country       String   @default("Switzerland")
-  uidNumber     String   @unique // UID-Nr. (Tax ID)
-  contactPerson String
-  phoneNumber   String
-  businessEmail String
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName       String
+  description       String?
+  website           String?
+  logo              String?
+  coverImage        String?
+  streetAddress     String
+  zipCode           String
+  city              String
+  country           String   @default("Switzerland")
+  uidNumber         String   @unique // UID-Nr. (Tax ID)
+  contactPerson     String
+  phoneNumber       String
+  businessEmail     String
   googlePlaceId     String?
   googleRating      Float?
   googleReviewCount Int?
   googleReviews     Json?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   openingHours OpeningHour[]
   vehicles     Vehicle[]
@@ -334,11 +334,11 @@ enum VehicleStatus {
 }
 
 model Vehicle {
-  id          String      @id @default(cuid())
+  id          String        @id @default(cuid())
   dealerId    String?
-  dealer      Dealer?     @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  dealer      Dealer?       @relation(fields: [dealerId], references: [id], onDelete: Cascade)
   sellerId    String?
-  seller      Seller?     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  seller      Seller?       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   vehicleType VehicleType
   status      VehicleStatus @default(PUBLISHED)
 

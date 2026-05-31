@@ -13,11 +13,11 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Separator } from "@repo/ui/src/components/separator";
-import { VehicleConditionEnum } from "@/constants";
-import { carBodyTypeEnum } from "@/constants/cars";
-import { utilityBodyTypeEnum } from "@/constants/commercial-vehicles";
-import { truckBodyTypeEnum } from "@/constants/truck";
-import { camperBodyTypeEnum } from "@/constants/camper";
+import { VehicleConditionEnum } from "@repo/vehicle-constants";
+import { carBodyTypeEnum } from "@repo/vehicle-constants";
+import { utilityBodyTypeEnum } from "@repo/vehicle-constants";
+import { truckBodyTypeEnum } from "@repo/vehicle-constants";
+import { camperBodyTypeEnum } from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";
@@ -249,7 +249,9 @@ export function BasicDataSection({
 
           <div className="space-y-4">
             <div className="flex flex-col">
-              <Label className="text-base font-semibold">{t("kilometer")}</Label>
+              <Label className="text-base font-semibold">
+                {t("kilometer")}
+              </Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
@@ -394,7 +396,9 @@ export function BasicDataSection({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
             <div className="flex flex-col">
-              <Label className="text-base font-semibold">{t("condition")}</Label>
+              <Label className="text-base font-semibold">
+                {t("condition")}
+              </Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() =>
@@ -419,7 +423,9 @@ export function BasicDataSection({
                         control={control}
                         fieldType={FormFieldType.CHECKBOX}
                         name={`condition-${item.value}`}
-                        label={tVehicle(`conditions.${item.value.toUpperCase().replace(/-/g, "_")}`)}
+                        label={tVehicle(
+                          `conditions.${item.value.toUpperCase().replace(/-/g, "_")}`,
+                        )}
                       />
                       <span className="text-sm text-muted-foreground">
                         {formatCount(count ?? 0)}
@@ -433,7 +439,9 @@ export function BasicDataSection({
 
           <div className="space-y-4">
             <div className="flex flex-col">
-              <Label className="text-base font-semibold">{t("inspectionAndWarranty")}</Label>
+              <Label className="text-base font-semibold">
+                {t("inspectionAndWarranty")}
+              </Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
@@ -515,7 +523,9 @@ export function BasicDataSection({
                     control={control}
                     fieldType={FormFieldType.CHECKBOX}
                     name={`bodyType-${type.value}`}
-                    label={tVehicle(`types.${type.value.toUpperCase().replace(/-/g, "_")}`)}
+                    label={tVehicle(
+                      `types.${type.value.toUpperCase().replace(/-/g, "_")}`,
+                    )}
                   />
                   <span className="text-sm text-muted-foreground">
                     {formatCount(count ?? 0)}

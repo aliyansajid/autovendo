@@ -248,28 +248,6 @@ export const daysListedOptions = [
   { label: "28 Tage", value: "28 tage" },
 ] as const;
 
-export const qualityLabels = [
-  { label: "AMAG", count: "7'967" },
-  { label: "Audi Occasion :plus", count: "768" },
-  { label: "Auto Welt von Rotz AG", count: "902" },
-  { label: "BMW", count: "1'873" },
-  { label: "BMW Premium Selection", count: "2'725" },
-  { label: "BYD Official Partner", count: "145" },
-  { label: "CUPRA Approved", count: "153" },
-  { label: "Jaguar Approved", count: "2" },
-  { label: "Land Rover Approved", count: "37" },
-  { label: "Merbag", count: "1'601" },
-  { label: "Mercedes-Benz Certified", count: "2'899" },
-  { label: "Mini", count: "133" },
-  { label: "Occasionen MINI NEXT", count: "227" },
-  { label: "Quality1", count: "30'309" },
-  { label: "SEAT Occasion Plus", count: "145" },
-  { label: "Skoda Occasion Plus", count: "424" },
-  { label: "VFAS", count: "2'046" },
-  { label: "Volvo Selekt", count: "1'581" },
-  { label: "VW Occasion Plus", count: "770" },
-] as const;
-
 const _CURRENT_YEAR = new Date().getFullYear();
 
 export const yearHistogram = [
@@ -320,3 +298,62 @@ export const priceHistogram = [
   { value: 200000, h: 10 },
   { value: 1000000, h: 5 },
 ];
+
+// ─── Vehicle-type specific constants ──────────────────────────────────────────
+
+export * from "./cars.js";
+export * from "./commercial-vehicles.js";
+export * from "./truck.js";
+export * from "./camper.js";
+
+// ─── API validation helpers ───────────────────────────────────────────────────
+
+import { carMakes, carExtrasEnum } from "./cars.js";
+import { utilityMakes, utilityExtrasEnum } from "./commercial-vehicles.js";
+import { truckMakes, truckExtrasEnum } from "./truck.js";
+import { camperMakes, camperExtrasEnum } from "./camper.js";
+
+type MakeGroup = {
+  label: string;
+  items: readonly { value: string; label: string }[];
+};
+
+function extractMakeValues(makes: readonly MakeGroup[]): string[] {
+  return makes.flatMap((group) => group.items.map((item) => item.value));
+}
+
+export const VALID_CAR_MAKES = extractMakeValues(carMakes);
+export const VALID_UTILITY_MAKES = extractMakeValues(utilityMakes);
+export const VALID_TRUCK_MAKES = extractMakeValues(truckMakes);
+export const VALID_CAMPER_MAKES = extractMakeValues(camperMakes);
+
+export const VALID_MAKES_BY_TYPE: Record<string, string[]> = {
+  CAR: VALID_CAR_MAKES,
+  UTILITY: VALID_UTILITY_MAKES,
+  TRUCK: VALID_TRUCK_MAKES,
+  CAMPER: VALID_CAMPER_MAKES,
+};
+
+export const VALID_EQUIPMENT_KEYS: string[] = EquipmentEnum.map(
+  (e: { value: string }) => e.value,
+);
+
+export const VALID_CAR_EXTRAS_KEYS: string[] = carExtrasEnum.map(
+  (e: { value: string }) => e.value,
+);
+export const VALID_UTILITY_EXTRAS_KEYS: string[] = utilityExtrasEnum.map(
+  (e: { value: string }) => e.value,
+);
+export const VALID_TRUCK_EXTRAS_KEYS: string[] = truckExtrasEnum.map(
+  (e: { value: string }) => e.value,
+);
+export const VALID_CAMPER_EXTRAS_KEYS: string[] = camperExtrasEnum.map(
+  (e: { value: string }) => e.value,
+);
+
+export const VALID_EXTRAS_KEYS_BY_TYPE: Record<string, string[]> = {
+  CAR: VALID_CAR_EXTRAS_KEYS,
+  UTILITY: VALID_UTILITY_EXTRAS_KEYS,
+  TRUCK: VALID_TRUCK_EXTRAS_KEYS,
+  CAMPER: VALID_CAMPER_EXTRAS_KEYS,
+};

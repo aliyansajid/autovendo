@@ -8,6 +8,7 @@ const auth = createAuth([expo()]);
 import home from "./routes/home";
 import search from "./routes/search";
 import vehicle from "./routes/vehicle";
+import dealerVehicles from "./routes/dealer-vehicles";
 
 const app = new Hono<{
   Variables: {
@@ -64,8 +65,11 @@ app.route("/api/home", home);
 // Vehicle search
 app.route("/api/search", search);
 
-// Vehicle detail
+// Vehicle detail (public)
 app.route("/api/vehicles", vehicle);
+
+// Dealer vehicle CRUD (authenticated)
+app.route("/api/dealer/vehicles", dealerVehicles);
 
 // Session endpoint
 app.get("/api/session", (c) => {

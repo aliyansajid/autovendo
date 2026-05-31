@@ -12,7 +12,7 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { EnergyLabelEnum, EmissionStandardEnum } from "@/constants";
+import { EnergyLabelEnum, EmissionStandardEnum } from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";
@@ -110,7 +110,9 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           <div className="space-y-4">
             <div className="flex flex-col">
-              <Label className="text-base font-semibold">{t("consumption")}</Label>
+              <Label className="text-base font-semibold">
+                {t("consumption")}
+              </Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
@@ -151,7 +153,9 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
 
           <div className="space-y-4">
             <div className="flex flex-col">
-              <Label className="text-base font-semibold">{t("emissions")}</Label>
+              <Label className="text-base font-semibold">
+                {t("emissions")}
+              </Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {

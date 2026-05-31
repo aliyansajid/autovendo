@@ -13,24 +13,24 @@ import {
   carModels,
   carBodyTypeEnum,
   carFuelTypeEnum,
-} from "@/constants/cars";
+} from "@repo/vehicle-constants";
 import {
   utilityMakes,
   utilityModels,
   utilityBodyTypeEnum,
   utilityFuelTypeEnum,
-} from "@/constants/commercial-vehicles";
+} from "@repo/vehicle-constants";
 import {
   truckMakes,
   truckModels,
   truckBodyTypeEnum,
   truckFuelTypeEnum,
-} from "@/constants/truck";
+} from "@repo/vehicle-constants";
 import {
   camperMakes,
   camperBodyTypeEnum,
   camperFuelTypeEnum,
-} from "@/constants/camper";
+} from "@repo/vehicle-constants";
 import { BasicDataSection } from "./form-sections/basic-data-section";
 import { TechnicalDataSection } from "./form-sections/technical-data-section";
 import { MediaSection } from "./form-sections/media-section";
@@ -60,10 +60,10 @@ import { EquipmentSection } from "./form-sections/equipment-section";
 import {
   prepareVehicleListing,
   getPresignedUrls,
-  createVehicle,
-  updateVehicle,
+  cleanupImages,
   type SubscriptionStatus,
 } from "@/app/actions/vehicles.actions";
+import { apiCreateVehicle, apiUpdateVehicle } from "@/lib/api/dealer-vehicles";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
 import { useEffect, useRef } from "react";
@@ -78,25 +78,25 @@ import {
 import { Link } from "@/i18n/routing";
 
 const VEHICLE_DATA_MAP: Record<string, any> = {
-  car: {
+  CAR: {
     makes: carMakes,
     models: carModels,
     bodyTypes: carBodyTypeEnum,
     fuelTypes: carFuelTypeEnum,
   },
-  utility: {
+  UTILITY: {
     makes: utilityMakes,
     models: utilityModels,
     bodyTypes: utilityBodyTypeEnum,
     fuelTypes: utilityFuelTypeEnum,
   },
-  truck: {
+  TRUCK: {
     makes: truckMakes,
     models: truckModels,
     bodyTypes: truckBodyTypeEnum,
     fuelTypes: truckFuelTypeEnum,
   },
-  camper: {
+  CAMPER: {
     makes: camperMakes,
     models: {},
     bodyTypes: camperBodyTypeEnum,
@@ -280,18 +280,16 @@ export function VehicleForm({
       prevFuelTypeRef.current &&
       fuelType !== prevFuelTypeRef.current
     ) {
-      const showElectric = fuelType === "electric";
-      const showHydrogen = fuelType === "hydrogen";
+      const showElectric = fuelType === "ELECTRIC";
+      const showHydrogen = fuelType === "HYDROGEN";
       const showCombustionOrMild = [
-        "petrol",
-        "diesel",
-        "mhev-petrol",
-        "mhev-diesel",
+        "PETROL",
+        "DIESEL",
+        "MHEV_PETROL",
+        "MHEV_DIESEL",
       ].includes(fuelType);
-      const showFullHybrid = ["hev-petrol", "hev-diesel", "hybrid"].includes(
-        fuelType,
-      );
-      const showPluginHybrid = ["phev-petrol", "phev-diesel"].includes(
+      const showFullHybrid = ["HEV_PETROL", "HEV_DIESEL"].includes(fuelType);
+      const showPluginHybrid = ["PHEV_PETROL", "PHEV_DIESEL"].includes(
         fuelType,
       );
 
@@ -566,24 +564,21 @@ export function VehicleForm({
           setUploadProgress(90);
         }
 
-        // Phase 3: Create or Update Vehicle in DB
+        // Phase 3: Create or Update Vehicle in DB via API
         setUploadStatus(t("uploadStatusSaving"));
         setUploadProgress(95);
 
-        // Remove images from data to avoid exceeding 1MB Server Action limit
         const { images: _, ...submitData } = data;
         if (vehicleId) {
-          await updateVehicle(vehicleId, submitData, finalImageKeys);
+          const removedKeys =
+            (initialData?.images as string[] | undefined)?.filter(
+              (k) => !finalImageKeys.includes(k),
+            ) ?? [];
+          await apiUpdateVehicle(vehicleId, submitData, finalImageKeys);
+          if (removedKeys.length) await cleanupImages(removedKeys);
           toast.success(t("successUpdate"));
         } else {
-          const result = await createVehicle(
-            listingId,
-            submitData,
-            finalImageKeys,
-          );
-          if (typeof result === "object" && result && "error" in result) {
-            throw new Error(result.error as string);
-          }
+          await apiCreateVehicle(submitData, finalImageKeys);
           toast.success(t("successPublish"));
         }
 

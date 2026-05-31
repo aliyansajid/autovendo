@@ -1,10 +1,8 @@
 import { Button } from "@repo/ui/components/button";
 import { Plus, AlertCircleIcon } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import {
-  getDealerVehicles,
-  getVehicleSubscriptionStatus,
-} from "@/app/actions/vehicles.actions";
+import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
+import { getDealerVehiclesList } from "@/lib/api/dealer-vehicles";
 import { VehicleList } from "./_components/vehicle-list";
 import { getTranslations } from "next-intl/server";
 import {
@@ -34,7 +32,7 @@ export default async function VehiclesPage(props: {
    * Fetches the dealer's vehicles and their current subscription quota status in parallel
    */
   const [vehicles, subscriptionStatus] = await Promise.all([
-    getDealerVehicles(),
+    getDealerVehiclesList(),
     getVehicleSubscriptionStatus(),
   ]);
 

@@ -13,31 +13,31 @@ import {
   ChargingPlugTypeFastEnum,
   EmissionStandardEnum,
   EquipmentEnum,
-} from "@/constants";
+} from "@repo/vehicle-constants";
 import {
   carMakes,
   carBodyTypeEnum,
   carFuelTypeEnum,
   carExtrasEnum,
-} from "@/constants/cars";
+} from "@repo/vehicle-constants";
 import {
   utilityMakes,
   utilityBodyTypeEnum,
   utilityFuelTypeEnum,
   utilityExtrasEnum,
-} from "@/constants/commercial-vehicles";
+} from "@repo/vehicle-constants";
 import {
   truckMakes,
   truckBodyTypeEnum,
   truckFuelTypeEnum,
   truckExtrasEnum,
-} from "@/constants/truck";
+} from "@repo/vehicle-constants";
 import {
   camperMakes,
   camperBodyTypeEnum,
   camperFuelTypeEnum,
   camperExtrasEnum,
-} from "@/constants/camper";
+} from "@repo/vehicle-constants";
 
 type TFn = (key: string) => string;
 
@@ -109,36 +109,50 @@ const ACCEPTED_IMAGE_TYPES = [
   "image/jpg",
   "image/webp",
 ];
-
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-// --- Helpers ---
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const createOptionalNonNegativeNumber = (t: TFn) =>
+const numericField = (min: number, max: number) =>
   z.preprocess(
     (val) => (val === "" || val === undefined ? undefined : Number(val)),
-    z.number().min(0, t("negativeError")).optional(),
+    z.number().min(min).max(max).optional(),
+  );
+
+const positiveNumericField = (min: number, max: number) =>
+  z.preprocess(
+    (val) => (val === "" || val === undefined ? undefined : Number(val)),
+    z.number().min(min).max(max).optional(),
   );
 
 const enumField = (validValues: string[], errorMsg: string) =>
   z.string().refine((val) => !val || validValues.includes(val), errorMsg);
 
-// --- Schema ---
+// ─── Schema ───────────────────────────────────────────────────────────────────
 
 export const createVehicleFormSchema = (t: TFn) =>
   z.object({
-    // Vehicle Type (Mandatory)
+    // ── Vehicle type ────────────────────────────────────────────────────────
     vehicleType: z
       .string({ error: t("vehicleTypeRequired") })
       .refine((val) => VALID_VEHICLE_TYPES.includes(val), t("invalidType")),
-    status: z.enum(["DRAFT", "PUBLISHED", "PAUSED", "SOLD", "ARCHIVED", "BANNED"]).default("PUBLISHED"),
+    status: z
+      .enum(["DRAFT", "PUBLISHED", "PAUSED", "SOLD", "ARCHIVED", "BANNED"])
+      .default("PUBLISHED"),
 
-    // Vehicle Features (Mandatory: make, bodyType, color)
+    // ── Identity ─────────────────────────────────────────────────────────────
     make: z
       .string({ error: t("makeRequired") })
+      .max(50, t("makeTooLong"))
       .refine((val) => VALID_MAKES.includes(val), t("invalidMake")),
-    model: z.string().optional(),
-    version: z.string().optional(),
+    model: z.string().max(50, t("modelTooLong")).optional(),
+    version: z.string().max(50, t("versionTooLong")).optional(),
+
+    // ── Body & drivetrain ────────────────────────────────────────────────────
+    bodyType: z
+      .string({ error: t("bodyTypeRequired") })
+      .refine((val) => VALID_BODY_TYPES.includes(val), t("invalidBodyType")),
+    fuelType: enumField(VALID_FUEL_TYPES, t("invalidFuelType")).optional(),
     gearTransmission: enumField(
       VALID_GEAR_TRANSMISSIONS,
       t("invalidGearTransmission"),
@@ -148,10 +162,8 @@ export const createVehicleFormSchema = (t: TFn) =>
       t("invalidTransmissionType"),
     ).optional(),
     driveType: enumField(VALID_DRIVE_TYPES, t("invalidDriveType")).optional(),
-    bodyType: z
-      .string({ error: t("bodyTypeRequired") })
-      .refine((val) => VALID_BODY_TYPES.includes(val), t("invalidBodyType")),
-    fuelType: enumField(VALID_FUEL_TYPES, t("invalidFuelType")).optional(),
+
+    // ── Appearance ───────────────────────────────────────────────────────────
     color: z
       .string({ error: t("colorRequired") })
       .refine((val) => VALID_COLORS.includes(val), t("invalidColor")),
@@ -161,12 +173,11 @@ export const createVehicleFormSchema = (t: TFn) =>
     ).optional(),
     metallic: z.boolean().default(false),
 
-    // State (Mandatory: registrationMonth, registrationYear, kilometer)
+    // ── Condition & registration ─────────────────────────────────────────────
     vehicleCondition: enumField(
       VALID_CONDITIONS,
       t("invalidCondition"),
     ).optional(),
-    lastInspectionDate: z.date().optional(),
     registrationMonth: z.coerce
       .number({ error: t("monthRequired") })
       .min(1)
@@ -175,7 +186,6 @@ export const createVehicleFormSchema = (t: TFn) =>
       .number({ error: t("yearRequired") })
       .min(1900)
       .max(new Date().getFullYear()),
-    inspectionPassed: z.boolean().default(false),
     kilometer: z.preprocess(
       (val) => (val === "" || val === undefined ? undefined : Number(val)),
       z
@@ -183,53 +193,74 @@ export const createVehicleFormSchema = (t: TFn) =>
         .min(0, t("negativeKilometerError")),
     ),
 
-    // Warranty
+    // ── Inspection ───────────────────────────────────────────────────────────
+    lastInspectionDate: z.date().optional(),
+    inspectionPassed: z.boolean().default(false),
+
+    // ── Warranty ─────────────────────────────────────────────────────────────
     warranty: enumField(VALID_WARRANTIES, t("invalidWarranty")).optional(),
     warrantyStartDate: z.date().optional(),
-    duration: createOptionalNonNegativeNumber(t),
-    maxKm: createOptionalNonNegativeNumber(t),
+    duration: numericField(1, 120), // 1–120 months (max 10 years)
+    maxKm: numericField(0, 500000),
 
-    // Price (Mandatory)
+    // ── Price ────────────────────────────────────────────────────────────────
     price: z.preprocess(
       (val) => (val === "" || val === undefined ? undefined : Number(val)),
       z.number({ error: t("priceRequired") }).min(0, t("negativePriceError")),
     ),
-    newPrice: createOptionalNonNegativeNumber(t),
+    newPrice: numericField(0, 100000000),
 
-    // Technical Data
-    doors: createOptionalNonNegativeNumber(t),
-    seats: createOptionalNonNegativeNumber(t),
-    hp: createOptionalNonNegativeNumber(t),
-    kw: createOptionalNonNegativeNumber(t),
+    // ── Cabin ────────────────────────────────────────────────────────────────
+    seats: numericField(1, 150), // buses/coaches can exceed 80
+    doors: numericField(1, 20), // buses have multiple entry sets
+
+    // ── Power ────────────────────────────────────────────────────────────────
+    // Total: Yangwang U9 Xtreme 3,000 hp is production max
+    hp: numericField(1, 4000),
+    kw: numericField(1, 3000),
+    // Combustion: Hennessey Venom F5 1,817 hp
+    combustionEnginePowerHp: numericField(1, 2500),
+    // Electric: Yangwang U9 Xtreme 3,000 hp
+    electricMotorPowerHp: numericField(1, 4000),
+
+    // ── Engine ───────────────────────────────────────────────────────────────
+    cubicCapacity: numericField(1, 30000), // up to ~16,000cc for trucks
+    cylinders: numericField(1, 16), // V16 Bugatti Tourbillon is max
+    numberOfGears: numericField(1, 10), // 10-speed is production max
+
+    // ── Dimensions (mm) ──────────────────────────────────────────────────────
+    length: numericField(1, 30000),
+    width: numericField(1, 5000),
+    height: numericField(1, 6000),
+    wheelbase: numericField(1, 15000),
+
+    // ── Weight & capacity (kg) ───────────────────────────────────────────────
+    emptyWeight: numericField(1, 100000),
+    loadCapacity: numericField(0, 100000),
+    towingCapacityBraked: numericField(0, 100000),
+
+    // ── Emissions ────────────────────────────────────────────────────────────
+    co2Emission: numericField(0, 1000), // Bugatti ~520 g/km is production max
+    emissionStandard: enumField(
+      VALID_EMISSION_STANDARDS,
+      t("invalidEmissionStandard"),
+    ).optional(),
     energyLabel: enumField(
       VALID_ENERGY_LABELS,
       t("invalidEnergyLabel"),
     ).optional(),
-    typeApproval: z.string().optional(),
-    wheelbase: createOptionalNonNegativeNumber(t),
-    vehicleIdentificationNumber: z.string().optional(),
-    emptyWeight: createOptionalNonNegativeNumber(t),
-    loadCapacity: createOptionalNonNegativeNumber(t),
-    serialNumber: z.string().optional(),
-    height: createOptionalNonNegativeNumber(t),
-    width: createOptionalNonNegativeNumber(t),
-    length: createOptionalNonNegativeNumber(t),
-    towingCapacityBraked: createOptionalNonNegativeNumber(t),
 
-    // Combustion / Hybrid
-    consumptionCity: createOptionalNonNegativeNumber(t),
-    consumptionCountry: createOptionalNonNegativeNumber(t),
-    consumptionTotal: createOptionalNonNegativeNumber(t),
-    cubicCapacity: createOptionalNonNegativeNumber(t),
-    co2Emission: createOptionalNonNegativeNumber(t),
-    cylinders: createOptionalNonNegativeNumber(t),
-    numberOfGears: createOptionalNonNegativeNumber(t),
+    // ── Consumption (l/100km or kWh/100km) ───────────────────────────────────
+    consumptionCity: numericField(0, 100),
+    consumptionCountry: numericField(0, 100),
+    consumptionTotal: numericField(0, 100),
 
-    // Electric
-    range: createOptionalNonNegativeNumber(t),
-    batteryCapacity: createOptionalNonNegativeNumber(t),
-    batteryRentalMonth: createOptionalNonNegativeNumber(t),
-    powerConsumption: createOptionalNonNegativeNumber(t),
+    // ── Electric ─────────────────────────────────────────────────────────────
+    range: numericField(1, 1500), // BYD 1,036 km is production max
+    batteryCapacity: numericField(0, 500), // current max ~200 kWh
+    powerConsumption: numericField(0, 100), // kWh/100km
+    chargingPower: numericField(0, 1000), // fastest current ~350 kW
+    batteryRentalMonth: numericField(1, 120),
     batteryOwnership: enumField(
       VALID_BATTERY_OWNERSHIPS,
       t("invalidBatteryOwnership"),
@@ -242,17 +273,21 @@ export const createVehicleFormSchema = (t: TFn) =>
       VALID_CHARGING_DC,
       t("invalidChargingDC"),
     ).optional(),
-    chargingPower: createOptionalNonNegativeNumber(t),
-    combustionEnginePowerHp: createOptionalNonNegativeNumber(t),
-    electricMotorPowerHp: createOptionalNonNegativeNumber(t),
-    emissionStandard: enumField(
-      VALID_EMISSION_STANDARDS,
-      t("invalidEmissionStandard"),
-    ).optional(),
 
+    // ── Identifiers ──────────────────────────────────────────────────────────
+    // VIN: ISO 3779 — exactly 17 alphanumeric chars, no I/O/Q
+    vehicleIdentificationNumber: z
+      .string()
+      .regex(/^[A-HJ-NPR-Z0-9]{17}$/, t("invalidVin"))
+      .optional()
+      .or(z.literal("")),
+    serialNumber: z.string().max(100, t("serialNumberTooLong")).optional(),
+    typeApproval: z.string().max(50, t("typeApprovalTooLong")).optional(),
+
+    // ── Description ──────────────────────────────────────────────────────────
     vehicleDescription: z.string().optional(),
 
-    // Equipment & Extras
+    // ── Equipment & Extras ───────────────────────────────────────────────────
     equipment: z
       .record(z.string(), z.boolean().optional())
       .refine(
@@ -270,7 +305,7 @@ export const createVehicleFormSchema = (t: TFn) =>
       )
       .optional(),
 
-    // Images with MIME type validation
+    // ── Images ───────────────────────────────────────────────────────────────
     images: z
       .array(
         z
@@ -280,24 +315,20 @@ export const createVehicleFormSchema = (t: TFn) =>
               typeof file === "string" ||
               (file instanceof File &&
                 ACCEPTED_IMAGE_TYPES.includes(file.type)),
-            {
-              message: t("invalidImageType"),
-            },
+            { message: t("invalidImageType") },
           )
           .refine(
             (file) =>
               typeof file === "string" ||
               (file instanceof File && file.size <= MAX_FILE_SIZE),
-            {
-              message: t("fileTooLarge"),
-            },
+            { message: t("fileTooLarge") },
           ),
       )
       .min(5, t("minImagesError"))
       .max(10, t("maxImagesError"))
       .optional(),
 
-    // Contact Details
+    // ── Contact ──────────────────────────────────────────────────────────────
     companyName: z.string().optional(),
     businessEmail: z
       .string()

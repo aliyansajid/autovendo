@@ -24,8 +24,8 @@ import {
   InputGroupText,
   InputGroupInput,
 } from "@repo/ui/components/input-group";
-import { TransmissionTypeEnum, DriveTypeEnum } from "@/constants";
-import { carBodyTypeEnum, carFuelTypeEnum } from "@/constants/cars";
+import { TransmissionTypeEnum, DriveTypeEnum } from "@repo/vehicle-constants";
+import { carBodyTypeEnum, carFuelTypeEnum } from "@repo/vehicle-constants";
 import { formatNumber } from "@/lib/helpers/format";
 import { FieldLabel } from "@repo/ui/components/field";
 import { useTranslations } from "next-intl";

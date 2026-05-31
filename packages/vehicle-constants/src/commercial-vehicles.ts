@@ -1,7 +1,7 @@
 export const utilityMakes = [
   {
     label: "Top-Marken",
-    ITEMS: [
+    items: [
       { value: "FIAT", label: "Fiat" },
       { value: "FORD", label: "Ford" },
       { value: "IVECO", label: "Iveco" },
@@ -16,7 +16,7 @@ export const utilityMakes = [
   },
   {
     label: "Alle Marken",
-    ITEMS: [
+    items: [
       { value: "AC", label: "AC" },
       { value: "ADDAX_MOTORS", label: "Addax Motors" },
       { value: "AEBI", label: "Aebi" },

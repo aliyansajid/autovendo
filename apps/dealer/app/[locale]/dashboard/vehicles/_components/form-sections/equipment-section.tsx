@@ -11,11 +11,11 @@ import {
   AccordionTrigger,
 } from "@repo/ui/components/accordion";
 import { Label } from "@repo/ui/components/label";
-import { EquipmentEnum } from "@/constants";
-import { carExtrasEnum } from "@/constants/cars";
-import { utilityExtrasEnum } from "@/constants/commercial-vehicles";
-import { truckExtrasEnum } from "@/constants/truck";
-import { camperExtrasEnum } from "@/constants/camper";
+import { EquipmentEnum } from "@repo/vehicle-constants";
+import { carExtrasEnum } from "@repo/vehicle-constants";
+import { utilityExtrasEnum } from "@repo/vehicle-constants";
+import { truckExtrasEnum } from "@repo/vehicle-constants";
+import { camperExtrasEnum } from "@repo/vehicle-constants";
 
 export function EquipmentSection() {
   const t = useTranslations("VehicleFormSections");
@@ -51,7 +51,9 @@ export function EquipmentSection() {
                 control={control}
                 fieldType={FormFieldType.CHECKBOX}
                 name={`equipment.${item.value}`}
-                label={t_vehicle(`equipment.${item.value.toUpperCase().replace(/-/g, "_")}`)}
+                label={t_vehicle(
+                  `equipment.${item.value.toUpperCase().replace(/-/g, "_")}`,
+                )}
               />
             ))}
           </div>
@@ -67,7 +69,9 @@ export function EquipmentSection() {
                   control={control}
                   fieldType={FormFieldType.CHECKBOX}
                   name={`extras.${extra.value}`}
-                  label={t_vehicle(`extras.${extra.value.toUpperCase().replace(/-/g, "_")}`)}
+                  label={t_vehicle(
+                    `extras.${extra.value.toUpperCase().replace(/-/g, "_")}`,
+                  )}
                 />
               ))}
             </div>

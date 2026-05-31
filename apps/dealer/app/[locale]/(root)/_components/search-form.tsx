@@ -20,27 +20,28 @@ import {
   SelectItem,
 } from "@repo/ui/src/components/select";
 import { Button } from "@repo/ui/src/components/button";
-import { carMakes, carModels } from "@/constants/cars";
+import { carMakes, carModels } from "@repo/vehicle-constants";
 import { getRegistrationYears } from "@/lib/constants/vehicle-constants";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
 import { Search, Settings2 } from "lucide-react";
 import { Link, useRouter } from "@/i18n/routing";
-import { prices } from "@/constants";
+import { prices } from "@repo/vehicle-constants";
 import { useTranslations } from "next-intl";
 
-const createFormSchema = (t: any) => z.object({
-  query: z.string().optional(),
-  make: z.string().optional(),
-  model: z.string().optional(),
-  price: z.string().optional(),
-  registration: z.string().optional(),
-});
+const createFormSchema = (t: any) =>
+  z.object({
+    query: z.string().optional(),
+    make: z.string().optional(),
+    model: z.string().optional(),
+    price: z.string().optional(),
+    registration: z.string().optional(),
+  });
 
 export const SearchForm = () => {
   const t = useTranslations("SearchForm");
   const router = useRouter();
   const formSchema = createFormSchema(t);
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

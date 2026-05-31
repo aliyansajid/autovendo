@@ -21,11 +21,12 @@ import {
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { getImageUrl } from "@/lib/helpers/image";
+import { type SubscriptionStatus } from "@/app/actions/vehicles.actions";
+import { cleanupImages } from "@/app/actions/vehicles.actions";
 import {
-  deleteVehicle,
-  updateVehicleStatus,
-  type SubscriptionStatus,
-} from "@/app/actions/vehicles.actions";
+  apiDeleteVehicle,
+  apiUpdateVehicleStatus,
+} from "@/lib/api/dealer-vehicles";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
 import { useState, useMemo, useTransition } from "react";
@@ -249,10 +250,10 @@ function VehicleActions({
   const handleStatusUpdate = (newStatus: string) => {
     startTransition(async () => {
       try {
-        await updateVehicleStatus(vehicle.id, newStatus);
+        await apiUpdateVehicleStatus(vehicle.id, newStatus);
         toast.success(t("statusUpdateSuccess"));
         router.refresh();
-      } catch (error) {
+      } catch {
         toast.error(t("statusUpdateError"));
       }
     });
@@ -290,7 +291,9 @@ function VehicleActions({
           {vehicle.status === "DRAFT" && (
             <DropdownMenuItem
               onSelect={() => handleStatusUpdate("PUBLISHED")}
-              disabled={isStateRestricted || isCanceled || isPastDue || isPending}
+              disabled={
+                isStateRestricted || isCanceled || isPastDue || isPending
+              }
             >
               <Send />
               {t("publish")}
@@ -343,10 +346,12 @@ function VehicleActions({
                   variant="destructive"
                   onClick={async () => {
                     try {
-                      await deleteVehicle(vehicle.id);
+                      const imageKeys = vehicle.images ?? [];
+                      await apiDeleteVehicle(vehicle.id);
+                      if (imageKeys.length) await cleanupImages(imageKeys);
                       toast.success(t("deleteSuccess"));
                       router.refresh();
-                    } catch (error) {
+                    } catch {
                       toast.error(t("deleteError"));
                     }
                   }}
