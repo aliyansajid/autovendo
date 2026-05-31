@@ -21,8 +21,8 @@ import {
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { getImageUrl } from "@/lib/helpers/image";
-import { type SubscriptionStatus } from "@/app/actions/vehicles.actions";
-import { cleanupImages } from "@/app/actions/vehicles.actions";
+import { type SubscriptionStatus } from "@/lib/api/vehicles";
+import { apiCleanupImages } from "@/lib/api/dealer-vehicles";
 import {
   apiDeleteVehicle,
   apiUpdateVehicleStatus,
@@ -348,7 +348,7 @@ function VehicleActions({
                     try {
                       const imageKeys = vehicle.images ?? [];
                       await apiDeleteVehicle(vehicle.id);
-                      if (imageKeys.length) await cleanupImages(imageKeys);
+                      if (imageKeys.length) await apiCleanupImages(imageKeys);
                       toast.success(t("deleteSuccess"));
                       router.refresh();
                     } catch {

@@ -4,10 +4,7 @@ import type { Metadata } from "next";
 import { buildAlternates } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { getTranslations } from "next-intl/server";
-import {
-  getVehicleCached,
-  getSimilarVehicles,
-} from "@/app/actions/vehicles.actions";
+import { getVehicleFromApi, getSimilarVehiclesFromApi } from "@/lib/api/vehicles";
 import { notFound } from "next/navigation";
 import { formatVehicleName } from "@/lib/helpers/vehicle";
 import { getImageUrl } from "@/lib/helpers/image";
@@ -89,7 +86,7 @@ export async function generateMetadata({
   params: Promise<{ id: string; locale: string }>;
 }): Promise<Metadata> {
   const { id, locale } = await params;
-  const item = await getVehicleCached(id);
+  const item = await getVehicleFromApi(id);
   if (!item) return {};
 
   const name = [item.make, item.model, item.version].filter(Boolean).join(" ");
@@ -147,7 +144,7 @@ export default async function ListingPage({
   const tVehicle = await getTranslations("Vehicle");
   const tProfile = await getTranslations("DealerProfileForm");
   const { id, locale } = await params;
-  const item = await getVehicleCached(id);
+  const item = await getVehicleFromApi(id);
 
   if (!item || !item.dealer) notFound();
 
@@ -383,9 +380,9 @@ export default async function ListingPage({
     reviewCount: (item.dealer as any).googleReviewCount ?? null,
   };
 
-  const similarItems = await getSimilarVehicles(item.dealerId!, item.id);
+  const { vehicles: similarItems } = await getSimilarVehiclesFromApi(item.id);
 
-  const similarListings: ListingProps[] = similarItems.map((sim) => ({
+  const similarListings: ListingProps[] = similarItems.map((sim: any) => ({
     id: sim.id,
     title: `${sim.make} ${sim.model || ""}`.trim(),
     price: formatPrice(sim.price),
@@ -623,9 +620,9 @@ export default async function ListingPage({
                     const norm = description.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
                     const parts = norm
                       .split(/\n\n+/.test(norm) ? /\n\n+/ : /\n/)
-                      .map((p) => p.trim())
+                      .map((p: string) => p.trim())
                       .filter(Boolean);
-                    return parts.map((para, i) => (
+                    return parts.map((para: string, i: number) => (
                       <p key={i} className="whitespace-pre-line">
                         {para}
                       </p>

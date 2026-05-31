@@ -57,12 +57,8 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import { EquipmentSection } from "./form-sections/equipment-section";
-import {
-  prepareVehicleListing,
-  getPresignedUrls,
-  cleanupImages,
-  type SubscriptionStatus,
-} from "@/app/actions/vehicles.actions";
+import { prepareVehicleListingFromApi, type SubscriptionStatus } from "@/lib/api/vehicles";
+import { apiGetPresignedUrls, apiCleanupImages } from "@/lib/api/dealer-vehicles";
 import { apiCreateVehicle, apiUpdateVehicle } from "@/lib/api/dealer-vehicles";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
@@ -493,7 +489,7 @@ export function VehicleForm({
         setUploadProgress(10);
 
         // Phase 1: Prepare
-        const { listingId } = await prepareVehicleListing(vehicleId);
+        const { listingId } = await prepareVehicleListingFromApi(vehicleId);
 
         // Phase 2: Separate new files and existing keys
         const images = data.images || [];
@@ -506,7 +502,7 @@ export function VehicleForm({
 
         if (newFiles.length > 0) {
           setUploadStatus(t("uploadStatusGettingUrls"));
-          const presignedData = await getPresignedUrls(
+          const presignedData = await apiGetPresignedUrls(
             listingId,
             newFiles.map((f) => ({ name: f.name, type: f.type })),
           );
@@ -575,7 +571,7 @@ export function VehicleForm({
               (k) => !finalImageKeys.includes(k),
             ) ?? [];
           await apiUpdateVehicle(vehicleId, submitData, finalImageKeys);
-          if (removedKeys.length) await cleanupImages(removedKeys);
+          if (removedKeys.length) await apiCleanupImages(removedKeys);
           toast.success(t("successUpdate"));
         } else {
           await apiCreateVehicle(submitData, finalImageKeys);

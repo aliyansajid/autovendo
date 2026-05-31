@@ -19,7 +19,7 @@ import { AppearanceSection } from "./form-sections/appearance-section";
 import { EnergySection } from "./form-sections/energy-section";
 import { MoreFiltersSection } from "./form-sections/more-filters-section";
 import { buildSearchParams } from "../_lib/build-search-params";
-import { getVehicleCountAndFacets } from "@/app/actions/vehicles.actions";
+import { getVehicleFacetsFromApi } from "@/lib/api/vehicles";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";
 import { useTranslations } from "next-intl";
@@ -75,7 +75,7 @@ export const AdvancedSearchForm = () => {
       ...(dealerId ? { dealerId } : {}),
     };
 
-    getVehicleCountAndFacets(params)
+    getVehicleFacetsFromApi(params)
       .then(({ total: t, facets: f }) => {
         setTotal(t);
         setFacets(f);
@@ -92,7 +92,7 @@ export const AdvancedSearchForm = () => {
           ...buildSearchParams(values as Record<string, unknown>, vehicleType),
           ...(dealerId ? { dealerId } : {}),
         };
-        getVehicleCountAndFacets(params)
+        getVehicleFacetsFromApi(params)
           .then(({ total: t, facets: f }) => {
             setTotal(t);
             setFacets(f);

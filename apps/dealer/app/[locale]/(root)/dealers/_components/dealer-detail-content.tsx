@@ -61,7 +61,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
-import { getVehicleCountAndFacets } from "@/app/actions/vehicles.actions";
+import { getVehicleFacetsFromApi } from "@/lib/api/vehicles";
 import { formatCount } from "@/lib/helpers/format";
 import type {
   DealerDetail,
@@ -136,7 +136,7 @@ export const DealerDetailContent = ({
   };
 
   useEffect(() => {
-    getVehicleCountAndFacets({ dealerId: dealer.id }).then((res) =>
+    getVehicleFacetsFromApi({ dealerId: dealer.id }).then((res) =>
       setFacets(res.facets),
     );
   }, [dealer.id]);

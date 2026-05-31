@@ -301,17 +301,17 @@ export const priceHistogram = [
 
 // ─── Vehicle-type specific constants ──────────────────────────────────────────
 
-export * from "./cars.js";
-export * from "./commercial-vehicles.js";
-export * from "./truck.js";
-export * from "./camper.js";
+export * from "./cars";
+export * from "./commercial-vehicles";
+export * from "./truck";
+export * from "./camper";
 
 // ─── API validation helpers ───────────────────────────────────────────────────
 
-import { carMakes, carExtrasEnum } from "./cars.js";
-import { utilityMakes, utilityExtrasEnum } from "./commercial-vehicles.js";
-import { truckMakes, truckExtrasEnum } from "./truck.js";
-import { camperMakes, camperExtrasEnum } from "./camper.js";
+import { carMakes, carExtrasEnum } from "./cars";
+import { utilityMakes, utilityExtrasEnum } from "./commercial-vehicles";
+import { truckMakes, truckExtrasEnum } from "./truck";
+import { camperMakes, camperExtrasEnum } from "./camper";
 
 type MakeGroup = {
   label: string;

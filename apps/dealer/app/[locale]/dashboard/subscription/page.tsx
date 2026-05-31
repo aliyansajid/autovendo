@@ -1,7 +1,7 @@
 import { auth } from "@repo/auth";
 import { prisma } from "@repo/db";
 import { headers } from "next/headers";
-import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
+import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
 import { getBillingData } from "@/app/actions/billing.actions";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@repo/ui/components/badge";
@@ -74,7 +74,7 @@ export default async function SubscriptionPage(props: {
       (auth.api as any).listActiveSubscriptions({
         headers: await headers(),
       }),
-      getVehicleSubscriptionStatus(),
+      getSubscriptionStatusFromApi(),
       getBillingData(),
       prisma.plan.findMany({
         orderBy: { price: "asc" },

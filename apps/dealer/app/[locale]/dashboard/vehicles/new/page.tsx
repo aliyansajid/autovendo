@@ -1,7 +1,7 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import { getDealerProfile } from "@/app/actions/dealer.actions";
-import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
+import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
 import { VehicleForm } from "../_components/vehicle-form";
 import { Link, redirect } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
@@ -19,7 +19,7 @@ export default async function AddNewVehiclePage(props: {
 
   const [dealerProfile, subscriptionStatus] = await Promise.all([
     session?.user?.id ? getDealerProfile() : null,
-    getVehicleSubscriptionStatus(),
+    getSubscriptionStatusFromApi(),
   ]);
 
   const isBlocked = subscriptionStatus.type !== "active";

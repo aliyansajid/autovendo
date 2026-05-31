@@ -7,7 +7,7 @@ import { SearchForm } from "./_components/search-form";
 import { FeaturedListings } from "./_components/featured-listings";
 import { FeaturedGarage } from "./_components/featured-garage";
 import { About } from "./_components/about";
-import { getVehicles } from "@/app/actions/vehicles.actions";
+import { getVehiclesFromApi } from "@/lib/api/vehicles";
 import { getDealers } from "@/app/actions/dealer.actions";
 import { buildVehicleTitle } from "@/lib/helpers/vehicle";
 import {
@@ -32,7 +32,7 @@ export default async function HomePage(props: {
   const { locale } = await props.params;
 
   const [vehiclesResult, dealersResult, tVehicle] = await Promise.all([
-    getVehicles({ pageSize: "12", sort: "created-desc" }).catch(() => ({
+    getVehiclesFromApi({ pageSize: "12", sort: "created-desc" }).catch(() => ({
       vehicles: [],
       total: 0,
       page: 1,

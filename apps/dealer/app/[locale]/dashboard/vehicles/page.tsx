@@ -1,7 +1,7 @@
 import { Button } from "@repo/ui/components/button";
 import { Plus, AlertCircleIcon } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { getVehicleSubscriptionStatus } from "@/app/actions/vehicles.actions";
+import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
 import { getDealerVehiclesList } from "@/lib/api/dealer-vehicles";
 import { VehicleList } from "./_components/vehicle-list";
 import { getTranslations } from "next-intl/server";
@@ -33,7 +33,7 @@ export default async function VehiclesPage(props: {
    */
   const [vehicles, subscriptionStatus] = await Promise.all([
     getDealerVehiclesList(),
-    getVehicleSubscriptionStatus(),
+    getSubscriptionStatusFromApi(),
   ]);
 
   /**

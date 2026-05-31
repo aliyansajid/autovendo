@@ -1,6 +1,4 @@
-import { auth } from "@repo/auth";
 import { prisma } from "@repo/db";
-import { headers } from "next/headers";
 import {
   Card,
   CardContent,
@@ -20,10 +18,7 @@ import {
   AlertCircle,
   CreditCard,
 } from "lucide-react";
-import {
-  getVehicleSubscriptionStatus,
-  getDashboardSummary,
-} from "@/app/actions/vehicles.actions";
+import { getSubscriptionStatusFromApi, getDashboardSummaryFromApi } from "@/lib/api/vehicles";
 import { getTranslations } from "next-intl/server";
 import {
   formatPrice,
@@ -41,25 +36,14 @@ export default async function DashboardPage(props: {
   const { locale } = await props.params;
   const t = await getTranslations("DashboardPage");
 
-  const [subscriptionsResponse, subscriptionStatus, summary, plans] =
-    await Promise.all([
-      (auth.api as any).listActiveSubscriptions({ headers: await headers() }),
-      getVehicleSubscriptionStatus(),
-      getDashboardSummary(),
-      prisma.plan.findMany({ select: { name: true, price: true } }),
-    ]);
-
-  const subscriptions = Array.isArray(subscriptionsResponse)
-    ? subscriptionsResponse
-    : (subscriptionsResponse as any)?.data || [];
-  const activeSubscription = subscriptions.find((s: any) =>
-    ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(
-      s.status,
-    ),
-  );
+  const [subscriptionStatus, summary, plans] = await Promise.all([
+    getSubscriptionStatusFromApi(),
+    getDashboardSummaryFromApi(),
+    prisma.plan.findMany({ select: { name: true, price: true } }),
+  ]);
 
   const currentPlan = plans.find(
-    (p) => p.name.toLowerCase() === activeSubscription?.plan?.toLowerCase(),
+    (p) => p.name.toLowerCase() === subscriptionStatus.plan?.toLowerCase(),
   );
 
   const quotaPct =
@@ -137,16 +121,15 @@ export default async function DashboardPage(props: {
                   <LayoutDashboard className="size-5 text-primary" />
                   {t("planOverview")}
                 </CardTitle>
-                {activeSubscription && (
+                {subscriptionStatus.type !== "no_subscription" && (
                   <Badge
                     className={
-                      activeSubscription.status === "active" ||
-                      activeSubscription.status === "trialing"
+                      subscriptionStatus.type === "active"
                         ? "bg-green-500 hover:bg-green-600 border-0"
                         : "bg-destructive border-0 text-white"
                     }
                   >
-                    {activeSubscription.status.toUpperCase()}
+                    {subscriptionStatus.type.toUpperCase()}
                   </Badge>
                 )}
               </div>
@@ -160,16 +143,6 @@ export default async function DashboardPage(props: {
                   <p className="text-2xl font-bold">
                     {currentPlan?.name || "No Active Plan"}
                   </p>
-                  {activeSubscription?.periodEnd && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {t("nextBilling", {
-                        date: formatDateShort(
-                          activeSubscription.periodEnd,
-                          locale,
-                        ),
-                      })}
-                    </p>
-                  )}
                 </div>
                 <div className="text-right sm:text-left">
                   <p className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">

@@ -23,7 +23,7 @@ import type {
 } from "@/types/dealer";
 import { DAY_ORDER } from "@/lib/helpers/format";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
-import { buildWhereClause } from "./vehicles.actions";
+import { buildWhereClause } from "@/lib/helpers/search";
 import { storage } from "@/lib/helpers/storage";
 
 // -----------------------------------------------------------------------------

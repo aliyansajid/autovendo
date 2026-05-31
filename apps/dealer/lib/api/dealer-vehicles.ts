@@ -4,8 +4,7 @@
  * Client-side calls rely on the browser sending cookies automatically (credentials: include).
  */
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 // ─── Server-side helpers (RSC / Server Actions) ───────────────────────────────
 
@@ -72,7 +71,10 @@ function clientFetch(path: string, init?: RequestInit) {
   });
 }
 
-export async function apiCreateVehicle(data: Record<string, any>, imageKeys: string[]) {
+export async function apiCreateVehicle(
+  data: Record<string, any>,
+  imageKeys: string[],
+) {
   const res = await clientFetch("/api/dealer/vehicles", {
     method: "POST",
     body: JSON.stringify({
@@ -116,6 +118,29 @@ export async function apiDeleteVehicle(id: string) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || "Failed to delete vehicle");
   }
+}
+
+export async function apiGetPresignedUrls(
+  listingId: string,
+  files: { name: string; type: string }[],
+): Promise<{ url: string; key: string }[]> {
+  const res = await clientFetch("/api/dealer/storage/presign", {
+    method: "POST",
+    body: JSON.stringify({ listingId, files }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as any).error || "Failed to get presigned URLs");
+  }
+  return res.json();
+}
+
+export async function apiCleanupImages(keys: string[]): Promise<void> {
+  if (!keys.length) return;
+  await clientFetch("/api/dealer/storage/cleanup", {
+    method: "DELETE",
+    body: JSON.stringify({ keys }),
+  });
 }
 
 export async function apiUpdateVehicleStatus(id: string, status: string) {
