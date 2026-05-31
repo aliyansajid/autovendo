@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@repo/auth/client";
+import { openBillingPortal } from "@/lib/api/auth-client";
 import { Button } from "@repo/ui/components/button";
 import {
   Card,
@@ -85,7 +85,7 @@ export function SubscriptionCard({
 
   const handleManageBilling = () => {
     startTransition(async () => {
-      const { data, error } = await authClient.subscription.billingPortal({
+      const { data, error } = await openBillingPortal({
         returnUrl: window.location.href,
       });
 

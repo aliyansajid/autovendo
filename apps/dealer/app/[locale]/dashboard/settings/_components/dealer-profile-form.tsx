@@ -18,7 +18,7 @@ import {
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
 import { useTranslations, useLocale } from "next-intl";
-import { authClient } from "@repo/auth/client";
+import { updateUser, changeEmail } from "@/lib/api/auth-client";
 import { useTransition, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -337,22 +337,22 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         }
 
         if (Object.keys(userUpdates).length > 0) {
-          const { error } = await authClient.updateUser(userUpdates);
+          const { error } = await updateUser(userUpdates);
           if (error) {
-            toast.error(error.message || t("userUpdateError"));
+            toast.error((error as any).message || t("userUpdateError"));
             return;
           }
         }
 
         // 4. Handle Email Change
         if (values.email !== initialData?.user?.email) {
-          const { error } = await authClient.changeEmail({
+          const { error } = await changeEmail({
             newEmail: values.email,
             callbackURL: `/${locale}/dashboard/settings/profile`,
           });
 
           if (error) {
-            toast.error(error.message || t("emailChangeError"));
+            toast.error((error as any).message || t("emailChangeError"));
             return;
           }
 

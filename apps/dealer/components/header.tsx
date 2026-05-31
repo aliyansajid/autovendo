@@ -26,7 +26,7 @@ import {
   SheetClose,
 } from "@repo/ui/src/components/sheet";
 import { Separator } from "@repo/ui/src/components/separator";
-import { authClient } from "@repo/auth/client";
+import { useSession, signOut } from "@/lib/api/auth-client";
 import {
   Avatar,
   AvatarFallback,
@@ -62,16 +62,10 @@ export const Header = () => {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending } = useSession();
 
   const handleLogout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/login");
-        },
-      },
-    });
+    await signOut(() => router.push("/login"));
   };
 
   const handleLanguageChange = (value: string) => {

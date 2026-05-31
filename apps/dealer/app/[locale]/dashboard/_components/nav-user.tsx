@@ -20,7 +20,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@repo/ui/components/sidebar";
-import { authClient } from "@repo/auth/client";
+import { signOut } from "@/lib/api/auth-client";
 import { useRouter } from "@/i18n/routing";
 import { useTransition } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
@@ -42,13 +42,7 @@ export function NavUser({
 
   const handleLogout = () => {
     startSignOut(async () => {
-      await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            router.push("/login");
-          },
-        },
-      });
+      await signOut(() => router.push("/login"));
     });
   };
 

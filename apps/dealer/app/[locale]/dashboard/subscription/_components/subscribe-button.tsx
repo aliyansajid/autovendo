@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@repo/auth/client";
+import { useSession, listSubscriptions, upgradeSubscription } from "@/lib/api/auth-client";
 import { Button } from "@repo/ui/src/components/button";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { useRouter } from "@/i18n/routing";
@@ -27,7 +27,7 @@ export const SubscribeButton = ({
 }: SubscribeButtonProps) => {
   const t = useTranslations("SubscribeButton");
   const router = useRouter();
-  const { data: session } = authClient.useSession();
+  const { data: session } = useSession();
   const [isPending, startTransition] = useTransition();
 
   const handleSubscribe = () => {
@@ -38,8 +38,8 @@ export const SubscribeButton = ({
     }
 
     startTransition(async () => {
-      const { data: subscriptions } = await authClient.subscription.list();
-      const activeSubscription = subscriptions?.find(
+      const { data: subscriptions } = await listSubscriptions();
+      const activeSubscription = (subscriptions as any[])?.find(
         (sub: any) => sub.status === "active" || sub.status === "trialing",
       );
 
@@ -48,7 +48,7 @@ export const SubscribeButton = ({
         return url.startsWith("http") ? url : `${window.location.origin}${url}`;
       };
 
-      const { data, error } = await authClient.subscription.upgrade({
+      const { data, error } = await upgradeSubscription({
         plan: planName.toLowerCase(),
         successUrl: toAbsolute(
           successUrl,

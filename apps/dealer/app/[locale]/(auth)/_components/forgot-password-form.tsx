@@ -16,7 +16,7 @@ import {
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authClient } from "@repo/auth/client";
+import { requestPasswordReset } from "@/lib/api/auth-client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { Spinner } from "@repo/ui/src/components/spinner";
@@ -50,7 +50,7 @@ export const ForgotPasswordForm = () => {
 
   function onSubmit(values: z.infer<typeof forgotPasswordSchema>) {
     startTransition(async () => {
-      const { data, error } = await authClient.requestPasswordReset({
+      const { data, error } = await requestPasswordReset({
         email: values.email,
         redirectTo: `/${locale}/reset-password`,
       });

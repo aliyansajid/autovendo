@@ -12,7 +12,7 @@ import { FieldGroup, Field } from "@repo/ui/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authClient } from "@repo/auth/client";
+import { changePassword } from "@/lib/api/auth-client";
 import { toast } from "sonner";
 import { useTransition } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
@@ -45,7 +45,7 @@ export const UpdatePasswordForm = () => {
 
   function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
-      const { error } = await authClient.changePassword({
+      const { error } = await changePassword({
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
         revokeOtherSessions: true,

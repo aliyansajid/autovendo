@@ -12,7 +12,7 @@ import { FieldGroup, Field } from "@repo/ui/src/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authClient } from "@repo/auth/client";
+import { resetPassword } from "@/lib/api/auth-client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { useRouter } from "@/i18n/routing";
@@ -55,7 +55,7 @@ export const ResetPasswordForm = () => {
     }
 
     startTransition(async () => {
-      const { error } = await authClient.resetPassword({
+      const { error } = await resetPassword({
         newPassword: values.password,
         token: token,
       });
