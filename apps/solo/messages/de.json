@@ -674,7 +674,13 @@
     "fileTooLarge": "Datei darf maximal 10MB groß sein",
     "minImagesError": "Mindestens 5 Bilder sind erforderlich",
     "maxImagesError": "Maximal 10 Bilder sind erlaubt",
-    "invalidEmail": "Ungültige E-Mail-Adresse"
+    "invalidEmail": "Ungültige E-Mail-Adresse",
+    "invalidVin": "FIN muss 17 alphanumerische Zeichen enthalten (I, O, Q nicht erlaubt)",
+    "makeTooLong": "Marke darf maximal 50 Zeichen enthalten",
+    "modelTooLong": "Modell darf maximal 50 Zeichen enthalten",
+    "versionTooLong": "Version darf maximal 50 Zeichen enthalten",
+    "serialNumberTooLong": "Seriennummer darf maximal 100 Zeichen enthalten",
+    "typeApprovalTooLong": "Typgenehmigung darf maximal 50 Zeichen enthalten"
   },
   "Common": {
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",

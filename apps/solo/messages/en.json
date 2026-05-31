@@ -673,7 +673,13 @@
     "fileTooLarge": "File must be maximum 10MB",
     "minImagesError": "At least 5 images are required",
     "maxImagesError": "Maximum 10 images are allowed",
-    "invalidEmail": "Invalid email address"
+    "invalidEmail": "Invalid email address",
+    "invalidVin": "VIN must be 17 alphanumeric characters (I, O, Q not allowed)",
+    "makeTooLong": "Make cannot exceed 50 characters",
+    "modelTooLong": "Model cannot exceed 50 characters",
+    "versionTooLong": "Version cannot exceed 50 characters",
+    "serialNumberTooLong": "Serial number cannot exceed 100 characters",
+    "typeApprovalTooLong": "Type approval cannot exceed 50 characters"
   },
   "Common": {
     "errorDefault": "An error occurred. Please try again.",

@@ -670,7 +670,13 @@
     "fileTooLarge": "Le fichier ne doit pas dépasser 10 Mo",
     "minImagesError": "Au moins 5 images sont requises",
     "maxImagesError": "Au maximum 10 images sont autorisées",
-    "invalidEmail": "Adresse e-mail invalide"
+    "invalidEmail": "Adresse e-mail invalide",
+    "invalidVin": "Le NIV doit comporter 17 caractères alphanumériques (I, O, Q non autorisés)",
+    "makeTooLong": "La marque ne peut pas dépasser 50 caractères",
+    "modelTooLong": "Le modèle ne peut pas dépasser 50 caractères",
+    "versionTooLong": "La version ne peut pas dépasser 50 caractères",
+    "serialNumberTooLong": "Le numéro de série ne peut pas dépasser 100 caractères",
+    "typeApprovalTooLong": "La réception par type ne peut pas dépasser 50 caractères"
   },
   "Common": {
     "errorDefault": "Une erreur est survenue. Veuillez réessayer.",
