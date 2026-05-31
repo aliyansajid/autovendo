@@ -104,17 +104,6 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Script
-          src="https://plausible.io/js/pa-DzlMYGkJm6FkvJ_MeBOD2.js"
-          strategy="afterInteractive"
-        />
-        <Script id="plausible-init" strategy="afterInteractive">
-          {`
-            window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)};
-            window.plausible.init=window.plausible.init||function(i){window.plausible.o=i||{}};
-            window.plausible.init();
-          `}
-        </Script>
-        <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-QSHVMEN9ZJ"
           strategy="afterInteractive"
         />
