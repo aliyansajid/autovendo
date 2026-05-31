@@ -30,7 +30,11 @@ export const LoginForm = () => {
   const tAuthErrors = useTranslations("AuthErrors");
   const tSchema = useTranslations("AuthSchema");
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const rawCallback = searchParams.get("callbackUrl");
+  const callbackUrl =
+    rawCallback?.startsWith("/") && !rawCallback.startsWith("//")
+      ? rawCallback
+      : "/";
   const [isPending, startTransition] = useTransition();
 
   const loginSchema = useMemo(() => createLoginSchema(tSchema), [tSchema]);
