@@ -1,5 +1,3 @@
-import { auth } from "@repo/auth";
-import { headers } from "next/headers";
 import { getDealerProfileFromApi } from "@/lib/api/dealers";
 import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
 import { getDealerVehicleById } from "@/lib/api/dealer-vehicles";
@@ -18,12 +16,8 @@ export default async function EditVehiclePage({
 }) {
   const t = await getTranslations("EditVehiclePage");
   const { id } = await params;
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
   const [dealerProfile, vehicle, subscriptionStatus] = await Promise.all([
-    session?.user?.id ? getDealerProfileFromApi() : null,
+    getDealerProfileFromApi(),
     getDealerVehicleById(id),
     getSubscriptionStatusFromApi(),
   ]);

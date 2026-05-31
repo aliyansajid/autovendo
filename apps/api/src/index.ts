@@ -1,10 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { createAuth } from "@repo/auth";
-import { expo } from "@better-auth/expo";
-
-const auth = createAuth([expo()]);
+import { auth } from "./lib/auth.js";
 import home from "./routes/home";
 import search from "./routes/search";
 import vehicle from "./routes/vehicle";
@@ -15,6 +12,9 @@ import dealerBilling from "./routes/dealer-billing";
 import contact from "./routes/contact";
 import dealerProfile from "./routes/dealer-profile";
 import dealers from "./routes/dealers";
+import plans from "./routes/plans";
+import dealerSubscriptions from "./routes/dealer-subscriptions";
+import sitemapData from "./routes/sitemap";
 
 const app = new Hono<{
   Variables: {
@@ -94,6 +94,15 @@ app.route("/api/dealer/profile", dealerProfile);
 
 // Public dealers list and detail
 app.route("/api/dealers", dealers);
+
+// Plans (public)
+app.route("/api/plans", plans);
+
+// Active subscriptions (authenticated)
+app.route("/api/dealer/subscriptions", dealerSubscriptions);
+
+// Sitemap data (public)
+app.route("/api/sitemap", sitemapData);
 
 // Session endpoint
 app.get("/api/session", (c) => {

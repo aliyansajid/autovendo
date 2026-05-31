@@ -1,4 +1,3 @@
-import { prisma } from "@repo/db";
 import {
   Card,
   CardContent,
@@ -18,7 +17,7 @@ import {
   AlertCircle,
   CreditCard,
 } from "lucide-react";
-import { getSubscriptionStatusFromApi, getDashboardSummaryFromApi } from "@/lib/api/vehicles";
+import { getSubscriptionStatusFromApi, getDashboardSummaryFromApi, getPlansFromApi } from "@/lib/api/vehicles";
 import { getTranslations } from "next-intl/server";
 import {
   formatPrice,
@@ -39,7 +38,7 @@ export default async function DashboardPage(props: {
   const [subscriptionStatus, summary, plans] = await Promise.all([
     getSubscriptionStatusFromApi(),
     getDashboardSummaryFromApi(),
-    prisma.plan.findMany({ select: { name: true, price: true } }),
+    getPlansFromApi(),
   ]);
 
   const currentPlan = plans.find(

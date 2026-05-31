@@ -1,8 +1,4 @@
-import { auth } from "@repo/auth";
-import { prisma } from "@repo/db";
-import { headers } from "next/headers";
-import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
-import { getBillingDataFromApi } from "@/lib/api/vehicles";
+import { getSubscriptionStatusFromApi, getBillingDataFromApi, getPlansFromApi, getActiveSubscriptionsFromApi } from "@/lib/api/vehicles";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
@@ -58,41 +54,13 @@ export default async function SubscriptionPage(props: {
   // Extract locale from params (Next.js 15 Promise-based approach)
   const { locale } = await props.params;
 
-  // Fetch current session for identity
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  /**
-   * Data Aggregation Phase
-   * Parallel fetch for all required dashboard data:
-   * 1. Historical subscriptions from DB
-   * 2. Calculated vehicle quota status
-   * 3. Live billing data from Stripe (invoices, cards)
-   * 4. Available subscription plans
-   */
-  const [subscriptionsResponse, subscriptionStatus, billingData, plans] =
+  const [subscriptions, subscriptionStatus, billingData, plans] =
     await Promise.all([
-      (auth.api as any).listActiveSubscriptions({
-        headers: await headers(),
-      }),
+      getActiveSubscriptionsFromApi(),
       getSubscriptionStatusFromApi(),
       getBillingDataFromApi(),
-      prisma.plan.findMany({
-        orderBy: { price: "asc" },
-        select: {
-          name: true,
-          price: true,
-          description: true,
-          limits: true,
-          popular: true,
-          hasTrial: true,
-          trialDays: true,
-        },
-      }),
+      getPlansFromApi(),
     ]);
-
-  const subscriptions = Array.isArray(subscriptionsResponse)
-    ? subscriptionsResponse
-    : (subscriptionsResponse as any)?.data || [];
 
   const activeSubscription = subscriptions.find((s: any) =>
     ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(

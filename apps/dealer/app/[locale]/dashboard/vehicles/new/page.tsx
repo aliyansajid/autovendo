@@ -1,5 +1,3 @@
-import { auth } from "@repo/auth";
-import { headers } from "next/headers";
 import { getDealerProfileFromApi } from "@/lib/api/dealers";
 import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
 import { VehicleForm } from "../_components/vehicle-form";
@@ -13,12 +11,8 @@ export default async function AddNewVehiclePage(props: {
 }) {
   const { locale } = await props.params;
   const t = await getTranslations("NewVehiclePage");
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
   const [dealerProfile, subscriptionStatus] = await Promise.all([
-    session?.user?.id ? getDealerProfileFromApi() : null,
+    getDealerProfileFromApi(),
     getSubscriptionStatusFromApi(),
   ]);
 

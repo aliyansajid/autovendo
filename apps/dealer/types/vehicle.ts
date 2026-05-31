@@ -1,5 +1,3 @@
-import type { Prisma } from "@repo/db";
-
 export interface PriceRating {
   label: string;
   bars: number;
@@ -23,7 +21,7 @@ export interface VehicleListItem {
   color: string;
   createdAt: Date;
   images: string[];
-  equipment: Prisma.JsonValue | null;
+  equipment: unknown;
   priceRating?: PriceRating;
   dealer: {
     id: string;
@@ -36,9 +34,7 @@ export interface VehicleListItem {
   };
 }
 
-export type VehicleDetails = Prisma.VehicleGetPayload<{
-  include: { dealer: true };
-}>;
+export type VehicleDetails = Record<string, unknown>;
 
 export interface VehicleFacets {
   make: Record<string, number>;

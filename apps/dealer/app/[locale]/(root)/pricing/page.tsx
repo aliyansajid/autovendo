@@ -26,7 +26,7 @@ import { XCircle } from "lucide-react";
 import { PricingButton } from "./_components/pricing-button";
 import { getTranslations } from "next-intl/server";
 import { formatPrice } from "@repo/ui/lib/helpers/format";
-import { prisma } from "@repo/db";
+import { getPlansFromApi } from "@/lib/api/vehicles";
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -41,18 +41,7 @@ export default async function PricingPage(props: {
   const { locale } = await props.params;
   const t = await getTranslations("PricingPage");
 
-  const plans = await prisma.plan.findMany({
-    orderBy: { price: "asc" },
-    select: {
-      name: true,
-      price: true,
-      description: true,
-      limits: true,
-      popular: true,
-      hasTrial: true,
-      trialDays: true,
-    },
-  });
+  const plans = await getPlansFromApi();
 
   const pricingSchema = {
     "@context": "https://schema.org",

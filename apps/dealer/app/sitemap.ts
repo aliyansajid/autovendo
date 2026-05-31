@@ -1,5 +1,4 @@
 import type { MetadataRoute } from "next";
-import { prisma } from "@repo/db";
 
 const BASE_URL = "https://autovendo.ch";
 const LOCALES = ["de", "en", "fr", "it"];
@@ -15,11 +14,13 @@ const STATIC_PATHS = [
   { path: "/how-it-works", priority: 0.6, changeFrequency: "monthly" as const },
 ];
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [vehicles, dealers] = await Promise.all([
-    prisma.vehicle.findMany({ select: { id: true, updatedAt: true } }),
-    prisma.dealer.findMany({ select: { id: true, updatedAt: true } }),
-  ]);
+  const res = await fetch(`${API_BASE}/api/sitemap`, { cache: "no-store" });
+  const { vehicles, dealers } = res.ok
+    ? await res.json()
+    : { vehicles: [], dealers: [] };
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.flatMap(
     ({ path, priority, changeFrequency }) =>

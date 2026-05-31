@@ -36,6 +36,27 @@ export type BillingData = {
   invoices: Invoice[];
 };
 
+export type Plan = {
+  name: string;
+  price: number;
+  description: string;
+  limits: unknown;
+  popular: boolean;
+  hasTrial: boolean;
+  trialDays: number | null;
+};
+
+export type CurrentUser = {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    image: string | null;
+    [key: string]: unknown;
+  };
+  session: unknown;
+};
+
 export type DashboardSummary = {
   totalCount: number;
   publishedCount: number;
@@ -136,6 +157,32 @@ export async function prepareVehicleListingFromApi(
     throw new Error((err as any).error || "Failed to prepare listing");
   }
   return res.json();
+}
+
+export async function getPlansFromApi(): Promise<Plan[]> {
+  const res = await fetch(`${API_BASE}/api/plans`, { cache: "no-store" });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function getCurrentUserFromApi(): Promise<CurrentUser | null> {
+  try {
+    const res = await serverFetch("/api/session");
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function getActiveSubscriptionsFromApi(): Promise<any[]> {
+  try {
+    const res = await serverFetch("/api/dealer/subscriptions");
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

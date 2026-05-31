@@ -8,20 +8,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint --max-warnings 0",
-    "check-types": "next typegen && tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@paralleldrive/cuid2": "^3.3.0",
     "@repo/auth": "*",
-    "@repo/db": "*",
     "@repo/vehicle-constants": "*",
-    "@repo/storage": "*",
-    "@repo/transactional": "*",
     "@repo/ui": "*",
     "@sentry/nextjs": "^10.50.0",
-    "ioredis": "^5.10.1",
     "lucide-react": "^0.563.0",
     "next": "16.1.5",
     "next-intl": "^4.8.3",
@@ -35,7 +28,6 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "eslint": "^9.17.0",
-    "typescript": "5.9.2",
-    "vitest": "^3.2.4"
+    "typescript": "5.9.2"
   }
 }

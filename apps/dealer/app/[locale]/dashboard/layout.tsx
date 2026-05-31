@@ -1,5 +1,4 @@
-import { auth } from "@repo/auth";
-import { headers } from "next/headers";
+import { getCurrentUserFromApi } from "@/lib/api/vehicles";
 import {
   SidebarInset,
   SidebarProvider,
@@ -14,13 +13,11 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const currentUser = await getCurrentUserFromApi();
 
   return (
     <SidebarProvider>
-      <DashboardSidebar user={session?.user ?? null} />
+      <DashboardSidebar user={currentUser?.user ?? null} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
