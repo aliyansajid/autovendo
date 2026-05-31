@@ -90,7 +90,7 @@ export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         const { sendEmail } = await import("@repo/transactional");
         const { ResetPasswordEmail } =
           await import("@repo/transactional/emails/reset-password");
-        await sendEmail({
+        void sendEmail({
           to: user.email,
           subject: `Reset your ${appName} password`,
           template: ResetPasswordEmail({
@@ -111,7 +111,7 @@ export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         const { sendEmail } = await import("@repo/transactional");
         const { VerifyEmail } =
           await import("@repo/transactional/emails/verify-email");
-        await sendEmail({
+        void sendEmail({
           to: user.email,
           subject: `Verify your ${appName} email address`,
           template: VerifyEmail({
@@ -131,7 +131,7 @@ export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
           const { sendEmail } = await import("@repo/transactional");
           const { ConfirmEmailChangeEmail } =
             await import("@repo/transactional/emails/confirm-email-change");
-          await sendEmail({
+          void sendEmail({
             to: user.email,
             subject: `Approve your ${appName} email change`,
             template: ConfirmEmailChangeEmail({
