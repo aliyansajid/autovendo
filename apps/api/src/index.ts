@@ -11,6 +11,7 @@ import vehicle from "./routes/vehicle";
 import dealerVehicles from "./routes/dealer-vehicles";
 import dealerDashboard from "./routes/dealer-dashboard";
 import dealerStorage from "./routes/dealer-storage";
+import contact from "./routes/contact";
 
 const app = new Hono<{
   Variables: {
@@ -78,6 +79,9 @@ app.route("/api/dealer/dashboard", dealerDashboard);
 
 // Dealer storage — presigned URLs + cleanup (authenticated)
 app.route("/api/dealer/storage", dealerStorage);
+
+// Contact form
+app.route("/api/contact", contact);
 
 // Session endpoint
 app.get("/api/session", (c) => {

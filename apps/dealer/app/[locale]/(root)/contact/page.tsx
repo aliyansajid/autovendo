@@ -13,11 +13,13 @@ import { Separator } from "@repo/ui/src/components/separator";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
-import { sendContactMessage } from "@/app/actions/contact.actions";
+
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { toast } from "sonner";
 import { createContactFormSchema } from "@/schema/contact-schema";
 import { useTranslations } from "next-intl";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export default function ContactPage() {
   const t = useTranslations("ContactPage");
@@ -42,15 +44,20 @@ export default function ContactPage() {
 
   function onSubmit(data: z.infer<typeof contactFormSchema>) {
     startTransition(async () => {
-      const result = await sendContactMessage({
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        subject: data.subject || undefined,
-        message: data.message || undefined,
+      const res = await fetch(`${API_BASE}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          subject: data.subject || undefined,
+          message: data.message || undefined,
+        }),
       });
+      const result = await res.json().catch(() => ({}));
 
-      result.ok
+      res.ok
         ? toast.success(result.message ?? t("successDefault"))
         : toast.error(result.error ?? t("errorDefault"));
       form.reset();
