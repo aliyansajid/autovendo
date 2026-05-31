@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 const BASE_URL = "https://autosolo.ch";
 const LOCALES = ["de", "en", "fr", "it"];
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.autovendo.ch";
 
 const STATIC_PATHS = [
   { path: "", priority: 1.0, changeFrequency: "daily" as const },
@@ -17,9 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const res = await fetch(`${API_BASE}/api/sitemap?sellerOnly=true`, {
     cache: "no-store",
   });
-  const { vehicles } = res.ok
-    ? await res.json()
-    : { vehicles: [] };
+  const { vehicles } = res.ok ? await res.json() : { vehicles: [] };
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.flatMap(
     ({ path, priority, changeFrequency }) =>
@@ -31,13 +29,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })),
   );
 
-  const vehicleEntries: MetadataRoute.Sitemap = vehicles.flatMap((v: { id: string; updatedAt: string }) =>
-    LOCALES.map((locale) => ({
-      url: `${BASE_URL}/${locale}/cars/${v.id}`,
-      lastModified: v.updatedAt,
-      priority: 0.8,
-      changeFrequency: "weekly" as const,
-    })),
+  const vehicleEntries: MetadataRoute.Sitemap = vehicles.flatMap(
+    (v: { id: string; updatedAt: string }) =>
+      LOCALES.map((locale) => ({
+        url: `${BASE_URL}/${locale}/cars/${v.id}`,
+        lastModified: v.updatedAt,
+        priority: 0.8,
+        changeFrequency: "weekly" as const,
+      })),
   );
 
   return [...staticEntries, ...vehicleEntries];
