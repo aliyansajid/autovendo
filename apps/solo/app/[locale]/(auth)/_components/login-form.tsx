@@ -31,11 +31,7 @@ export const LoginForm = () => {
   const tSchema = useTranslations("AuthSchema");
   const locale = useLocale();
   const searchParams = useSearchParams();
-  const rawCallback = searchParams.get("callbackUrl");
-  const callbackUrl =
-    rawCallback?.startsWith("/") && !rawCallback.startsWith("//")
-      ? rawCallback
-      : `/${locale}/dashboard`;
+  const callbackUrl = searchParams.get("callbackUrl") || `/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
 
   const loginSchema = useMemo(() => createLoginSchema(tSchema), [tSchema]);
