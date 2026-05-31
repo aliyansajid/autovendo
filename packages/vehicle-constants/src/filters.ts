@@ -89,85 +89,6 @@ export const COLORS = [
   "other",
 ] as const;
 
-// German label maps
-export const FUEL_LABELS: Record<string, string> = {
-  PETROL: "Benzin",
-  DIESEL: "Diesel",
-  ELECTRIC: "Elektro",
-  ETHANOL_PETROL: "Ethanol/Benzin",
-  CNG_PETROL: "Erdgas/Benzin",
-  LPG_PETROL: "Flüssiggas/Benzin",
-  MHEV_DIESEL: "Mild-Hybrid Diesel",
-  MHEV_PETROL: "Mild-Hybrid Benzin",
-  PHEV_DIESEL: "Plug-in-Hybrid Diesel",
-  PHEV_PETROL: "Plug-in-Hybrid Benzin",
-  HEV_DIESEL: "Hybrid Diesel",
-  HEV_PETROL: "Hybrid Benzin",
-  HYDROGEN: "Wasserstoff",
-};
-
-export const TRANSMISSION_LABELS: Record<string, string> = {
-  AUTOMATIC: "Automatik",
-  MANUAL: "Manuell",
-  AUTOMATIC_STEPLESS: "Stufenautomatik",
-  SEMI_AUTOMATIC: "Halbautomatik",
-};
-
-export const DRIVE_LABELS: Record<string, string> = {
-  ALL: "Allrad",
-  FRONT: "Frontantrieb",
-  REAR: "Hinterradantrieb",
-};
-
-export const CONDITION_LABELS: Record<string, string> = {
-  NEW: "Neu",
-  DEMONSTRATION: "Vorführfahrzeug",
-  PRE_REGISTERED: "Neuimmatrikuliert",
-  USED: "Occasion",
-  OLDTIMER: "Oldtimer",
-};
-
-export const BODY_TYPE_LABELS: Record<string, string> = {
-  bus: "Bus",
-  cabriolet: "Cabriolet",
-  coupe: "Coupé",
-  "small-car": "Kleinwagen",
-  estate: "Kombi",
-  minivan: "Kompaktvan / Minivan",
-  saloon: "Limousine",
-  pickup: "Pick-up",
-  suv: "SUV / Geländewagen",
-};
-
-export const VEHICLE_TYPE_LABELS: Record<string, string> = {
-  CAR: "Personenwagen",
-  UTILITY: "Nutzfahrzeug",
-  TRUCK: "Lastwagen",
-  CAMPER: "Wohnmobil",
-};
-
-export const COLOR_LABELS: Record<string, string> = {
-  ANTHRACITE: "Anthrazit",
-  BEIGE: "Beige",
-  BLACK: "Schwarz",
-  BLUE: "Blau",
-  BORDEAUX: "Bordeaux",
-  BROWN: "Braun",
-  GOLD: "Gold",
-  GRAY: "Grau",
-  GREEN: "Grün",
-  MULTICOLOURED: "Mehrfarbig",
-  ORANGE: "Orange",
-  PINK: "Pink",
-  RED: "Rot",
-  SILVER: "Silber",
-  TURQUOISE: "Türkis",
-  VIOLET: "Violett",
-  WHITE: "Weiss",
-  YELLOW: "Gelb",
-  OTHER: "Andere",
-};
-
 export const COLOR_OPTIONS = [
   { value: "anthracite", label: "Anthrazit", hex: "#383E42" },
   { value: "beige", label: "Beige", hex: "#F5F5DC" },
@@ -198,50 +119,6 @@ export const COLOR_OPTIONS = [
       "repeating-linear-gradient(45deg, #ccc, #ccc 10px, #eee 10px, #eee 20px)",
   },
 ] as const;
-
-export const BATTERY_OWNERSHIP_LABELS: Record<string, string> = {
-  BATTERY_INCLUDED: "Batterie inklusive",
-  BATTERY_RENT_REQUIRED: "Batteriemiete erforderlich",
-};
-
-export const CHARGING_STANDARD_LABELS: Record<string, string> = {
-  TYPE_1: "Typ 1",
-  TYPE_2: "Typ 2",
-};
-
-export const CHARGING_FAST_LABELS: Record<string, string> = {
-  CCS: "CCS",
-  CSS_2: "CCS 2",
-  CHADEMO: "CHAdeMO",
-  SUPERCHARGER: "Supercharger",
-};
-
-export const WARRANTY_LABELS: Record<string, string> = {
-  FROM_DELIVERY: "Ab Lieferung",
-  FROM_FIRST_REGISTRATION: "Ab Erstzulassung",
-  FROM_DATE: "Ab Datum",
-};
-
-export const EMISSION_LABELS: Record<string, string> = {
-  EURO_1: "Euro 1",
-  EURO_2: "Euro 2",
-  EURO_3: "Euro 3",
-  EURO_4: "Euro 4",
-  EURO_5: "Euro 5",
-  EURO_5_PLUS: "Euro 5+",
-  EURO_6: "Euro 6",
-  EURO_6A: "Euro 6a",
-  EURO_6B: "Euro 6b",
-  EURO_6C: "Euro 6c",
-  EURO_6D: "Euro 6d",
-  EURO_6D_ISC: "Euro 6d ISC",
-  EURO_6D_ISC_FCM: "Euro 6d ISC FCM",
-  EURO_6D_TEMP: "Euro 6d-temp",
-  EURO_6D_TEMP_EVAP: "Euro 6d-temp EVAP",
-  EURO_6D_TEMP_EVAP_ISC: "Euro 6d-temp EVAP ISC",
-  EURO_6D_TEMP_ISC: "Euro 6d-temp ISC",
-  EURO_6E: "Euro 6e",
-};
 
 export const EQUIPMENT_LABELS: Record<string, string> = {
   "360-camera": "360°-Kamera",
@@ -350,19 +227,6 @@ export const POWER_OPTIONS = [
   { value: "400", label: "ab 400 PS" },
 ];
 
-export const EV_OPTIONS = [
-  { value: "only_ev", label: "Nur E-Autos" },
-  { value: "no_ev", label: "Keine E-Autos" },
-];
-
-export const getRegistrationYears = () => {
-  const currentYear = new Date().getFullYear();
-  return Array.from({ length: currentYear - 1900 + 1 }, (_, i) => {
-    const year = (currentYear - i).toString();
-    return { value: year, label: year };
-  });
-};
-
 export const KILOMETER_OPTIONS = [
   ...Array.from({ length: 11 }, (_, i) => (i === 0 ? 5000 : i * 10000)),
   125000,
@@ -371,5 +235,13 @@ export const KILOMETER_OPTIONS = [
   200000,
 ].map((m) => ({
   value: m.toString(),
-  label: m === 0 ? "0 km" : `${new Intl.NumberFormat("de-CH").format(m)} km`,
+  label: `${new Intl.NumberFormat("de-CH").format(m)} km`,
 }));
+
+export const getRegistrationYears = () => {
+  const currentYear = new Date().getFullYear();
+  return Array.from({ length: currentYear - 1900 + 1 }, (_, i) => {
+    const year = (currentYear - i).toString();
+    return { value: year, label: year };
+  });
+};

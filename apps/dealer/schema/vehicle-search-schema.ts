@@ -7,7 +7,7 @@ import {
   BODY_TYPES,
   COLORS,
   SORT_OPTIONS,
-} from "@/lib/constants/vehicle-constants";
+} from "@repo/vehicle-constants";
 
 type TFn = (key: string) => string;
 

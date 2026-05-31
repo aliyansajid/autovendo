@@ -301,6 +301,7 @@ export const priceHistogram = [
 
 // ─── Vehicle-type specific constants ──────────────────────────────────────────
 
+export * from "./filters";
 export * from "./cars";
 export * from "./commercial-vehicles";
 export * from "./truck";
