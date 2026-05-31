@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-const AUTH_BASE =
-  process.env.NEXT_PUBLIC_AUTH_URL ?? "https://api.autovendo.ch";
+const AUTH_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://api.autovendo.ch";
 
 // ─── Base fetch ───────────────────────────────────────────────────────────────
 
