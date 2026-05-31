@@ -23,30 +23,22 @@ import {
   VehicleConditionEnum,
   WarrantyEnum,
   VehicleTypeEnum,
-} from "@/constants";
-import {
   carMakes,
   carModels,
   carBodyTypeEnum,
   carFuelTypeEnum,
-} from "@/constants/cars";
-import {
   utilityMakes,
   utilityModels,
   utilityBodyTypeEnum,
   utilityFuelTypeEnum,
-} from "@/constants/commercial-vehicles";
-import {
   truckMakes,
   truckModels,
   truckBodyTypeEnum,
   truckFuelTypeEnum,
-} from "@/constants/truck";
-import {
   camperMakes,
   camperBodyTypeEnum,
   camperFuelTypeEnum,
-} from "@/constants/camper";
+} from "@repo/vehicle-constants";
 import { Separator } from "@repo/ui/components/separator";
 
 export function BasicDataSection() {
@@ -98,12 +90,12 @@ export function BasicDataSection() {
   const activeFuelTypeEnum = vehicleData.fuelTypes;
 
   const showWarrantyDetails = [
-    "from-delivery",
-    "from-first-registration",
-    "from-date",
+    "FROM_DELIVERY",
+    "FROM_FIRST_REGISTRATION",
+    "FROM_DATE",
   ].includes(warranty || "");
 
-  const showWarrantyStartDate = warranty === "from-date";
+  const showWarrantyStartDate = warranty === "FROM_DATE";
 
   const currentYear = new Date().getFullYear();
 
@@ -230,15 +222,15 @@ export function BasicDataSection() {
             >
               {TransmissionTypeEnum.filter((t_type) => {
                 if (!gearTransmission) return true;
-                if (gearTransmission === "automatic") {
+                if (gearTransmission === "AUTOMATIC") {
                   return [
-                    "automatic",
-                    "automatic-stepless",
-                    "semi-automatic",
+                    "AUTOMATIC",
+                    "AUTOMATIC_STEPLESS",
+                    "SEMI_AUTOMATIC",
                   ].includes(t_type.value);
                 }
-                if (gearTransmission === "manual") {
-                  return t_type.value === "manual";
+                if (gearTransmission === "MANUAL") {
+                  return t_type.value === "MANUAL";
                 }
                 return true;
               }).map((type) => (
@@ -279,7 +271,7 @@ export function BasicDataSection() {
             placeholder={t("bodyTypePlaceholder")}
           >
             {activeBodyTypeEnum.map(
-              (type: { value: string; label: string }) => (
+              (type: { value: string }) => (
                 <SelectItem key={type.value} value={type.value}>
                   {t_vehicle(`types.${type.value.toUpperCase().replace(/-/g, "_")}`)}
                 </SelectItem>
@@ -295,7 +287,7 @@ export function BasicDataSection() {
             placeholder={t("fuelTypePlaceholder")}
           >
             {activeFuelTypeEnum.map(
-              (type: { value: string; label: string }) => (
+              (type: { value: string }) => (
                 <SelectItem key={type.value} value={type.value}>
                   {t_vehicle(`fuelTypes.${type.value.toUpperCase().replace(/-/g, "_")}`)}
                 </SelectItem>
@@ -354,7 +346,7 @@ export function BasicDataSection() {
             label={t("vehicleCondition")}
             placeholder={t("vehicleConditionPlaceholder")}
           >
-            {VehicleConditionEnum.map((c: { value: string; label: string }) => (
+            {VehicleConditionEnum.map((c: { value: string }) => (
               <SelectItem key={c.value} value={c.value}>
                 {t_vehicle(`conditions.${c.value.toUpperCase().replace(/-/g, "_")}`)}
               </SelectItem>

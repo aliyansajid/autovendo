@@ -11,7 +11,7 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { ColorEnum } from "@/constants";
+import { ColorEnum } from "@repo/vehicle-constants";
 import { Separator } from "@repo/ui/src/components/separator";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";

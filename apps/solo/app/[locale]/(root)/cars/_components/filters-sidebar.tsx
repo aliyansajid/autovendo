@@ -22,7 +22,7 @@ import {
   COLOR_OPTIONS,
   EQUIPMENT_LABELS,
 } from "@/lib/constants/vehicle-constants";
-import { carMakes } from "@/constants/cars";
+import { carMakes } from "@repo/vehicle-constants";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import { Separator } from "@repo/ui/components/separator";
 import {

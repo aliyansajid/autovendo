@@ -12,11 +12,14 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { TransmissionTypeEnum, DriveTypeEnum } from "@/constants";
-import { carFuelTypeEnum } from "@/constants/cars";
-import { utilityFuelTypeEnum } from "@/constants/commercial-vehicles";
-import { truckFuelTypeEnum } from "@/constants/truck";
-import { camperFuelTypeEnum } from "@/constants/camper";
+import {
+  TransmissionTypeEnum,
+  DriveTypeEnum,
+  carFuelTypeEnum,
+  utilityFuelTypeEnum,
+  truckFuelTypeEnum,
+  camperFuelTypeEnum,
+} from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";
@@ -194,7 +197,7 @@ export function TechnicalDataSection({
               </span>
             </div>
             <div className="space-y-3">
-              {currentFuelEnum.map((type: { value: string; label: string }) => {
+              {currentFuelEnum.map((type: { value: string }) => {
                 const count = facets?.fuelType?.[type.value];
                 return (
                   <div

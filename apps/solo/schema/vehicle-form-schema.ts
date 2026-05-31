@@ -13,31 +13,23 @@ import {
   ChargingPlugTypeFastEnum,
   EmissionStandardEnum,
   EquipmentEnum,
-} from "@/constants";
-import {
   carMakes,
   carBodyTypeEnum,
   carFuelTypeEnum,
   carExtrasEnum,
-} from "@/constants/cars";
-import {
   utilityMakes,
   utilityBodyTypeEnum,
   utilityFuelTypeEnum,
   utilityExtrasEnum,
-} from "@/constants/commercial-vehicles";
-import {
   truckMakes,
   truckBodyTypeEnum,
   truckFuelTypeEnum,
   truckExtrasEnum,
-} from "@/constants/truck";
-import {
   camperMakes,
   camperBodyTypeEnum,
   camperFuelTypeEnum,
   camperExtrasEnum,
-} from "@/constants/camper";
+} from "@repo/vehicle-constants";
 
 type TFn = (key: string) => string;
 

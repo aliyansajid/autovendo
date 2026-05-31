@@ -18,7 +18,7 @@ import {
   ChargingPlugTypeStandardEnum,
   ChargingPlugTypeFastEnum,
   EmissionStandardEnum,
-} from "@/constants";
+} from "@repo/vehicle-constants";
 import { Separator } from "@repo/ui/components/separator";
 
 export function TechnicalDataSection() {
@@ -29,18 +29,18 @@ export function TechnicalDataSection() {
   const batteryOwnership = useWatch({ control, name: "batteryOwnership" });
 
   const showCombustionOrMild = [
-    "petrol",
-    "diesel",
-    "lpg-petrol",
-    "mhev-diesel",
-    "mhev-petrol",
-    "cng-petrol",
-    "ethanol-petrol",
+    "PETROL",
+    "DIESEL",
+    "LPG_PETROL",
+    "MHEV_DIESEL",
+    "MHEV_PETROL",
+    "CNG_PETROL",
+    "ETHANOL_PETROL",
   ].includes(fuelType || "");
-  const showElectric = fuelType === "electric";
-  const showFullHybrid = ["hev-diesel", "hev-petrol"].includes(fuelType || "");
-  const showHydrogen = fuelType === "hydrogen";
-  const showPluginHybrid = ["phev-diesel", "phev-petrol"].includes(
+  const showElectric = fuelType === "ELECTRIC";
+  const showFullHybrid = ["HEV_DIESEL", "HEV_PETROL"].includes(fuelType || "");
+  const showHydrogen = fuelType === "HYDROGEN";
+  const showPluginHybrid = ["PHEV_DIESEL", "PHEV_PETROL"].includes(
     fuelType || "",
   );
 
@@ -183,7 +183,7 @@ export function TechnicalDataSection() {
             >
               {EmissionStandardEnum.map((e) => (
                 <SelectItem key={e.value} value={e.value}>
-                  {e.label}
+                  {t_vehicle(`emissions.${e.value}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -232,7 +232,7 @@ export function TechnicalDataSection() {
           >
             {EnergyLabelEnum.map((e) => (
               <SelectItem key={e.value} value={e.value}>
-                {e.label}
+                {e.value}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -345,7 +345,7 @@ export function TechnicalDataSection() {
                     </CustomFormField>
                   </div>
 
-                  {batteryOwnership === "battery-rent-required" && (
+                  {batteryOwnership === "BATTERY_RENT_REQUIRED" && (
                     <CustomFormField
                       control={control}
                       fieldType={FormFieldType.INPUT_GROUP}

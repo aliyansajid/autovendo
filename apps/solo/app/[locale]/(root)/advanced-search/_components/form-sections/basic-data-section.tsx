@@ -13,11 +13,13 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Separator } from "@repo/ui/src/components/separator";
-import { VehicleConditionEnum } from "@/constants";
-import { carBodyTypeEnum } from "@/constants/cars";
-import { utilityBodyTypeEnum } from "@/constants/commercial-vehicles";
-import { truckBodyTypeEnum } from "@/constants/truck";
-import { camperBodyTypeEnum } from "@/constants/camper";
+import {
+  VehicleConditionEnum,
+  carBodyTypeEnum,
+  utilityBodyTypeEnum,
+  truckBodyTypeEnum,
+  camperBodyTypeEnum,
+} from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";
@@ -408,7 +410,7 @@ export function BasicDataSection({
             </div>
             <div className="space-y-3">
               {VehicleConditionEnum.map(
-                (item: { value: string; label: string }) => {
+                (item: { value: string }) => {
                   const count = facets?.vehicleCondition?.[item.value];
                   return (
                     <div
@@ -504,7 +506,7 @@ export function BasicDataSection({
                 : vehicleType === "camper"
                   ? camperBodyTypeEnum
                   : carBodyTypeEnum
-            ).map((type: { value: string; label: string }) => {
+            ).map((type: { value: string }) => {
               const count = facets?.bodyType?.[type.value];
               return (
                 <div

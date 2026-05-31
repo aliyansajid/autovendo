@@ -10,10 +10,12 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { carExtrasEnum } from "@/constants/cars";
-import { utilityExtrasEnum } from "@/constants/commercial-vehicles";
-import { truckExtrasEnum } from "@/constants/truck";
-import { camperExtrasEnum } from "@/constants/camper";
+import {
+  carExtrasEnum,
+  utilityExtrasEnum,
+  truckExtrasEnum,
+  camperExtrasEnum,
+} from "@repo/vehicle-constants";
 import { useTranslations } from "next-intl";
 
 export function ExtrasSection({ vehicleType }: { vehicleType: string }) {
@@ -35,7 +37,7 @@ export function ExtrasSection({ vehicleType }: { vehicleType: string }) {
               : vehicleType === "camper"
                 ? camperExtrasEnum
                 : carExtrasEnum
-          ).map((extra: { value: string; label: string }) => (
+          ).map((extra: { value: string }) => (
             <CustomFormField
               key={extra.value}
               control={control}
