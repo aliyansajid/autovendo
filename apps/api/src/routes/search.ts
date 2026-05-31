@@ -219,7 +219,7 @@ search.get("/", async (c) => {
     ];
   }
 
-  if (makes.length) where.make = { in: makes, mode: "insensitive" };
+  if (makes.length) where.make = { in: makes };
   if (fuels.length) where.fuelType = { in: fuels };
   if (transmissions.length) where.transmissionType = { in: transmissions };
   if (drives.length) where.driveType = { in: drives };
@@ -230,7 +230,7 @@ search.get("/", async (c) => {
   if (euroNorms.length) where.emissionStandard = { in: euroNorms };
 
   if (bodyTypes.length) {
-    where.bodyType = { in: bodyTypes, mode: "insensitive" };
+    where.bodyType = { in: bodyTypes };
   }
 
   if (priceFrom !== undefined || priceTo !== undefined) {
