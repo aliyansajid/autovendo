@@ -1,9 +1,6 @@
 import { Hono } from "hono";
 import { prisma } from "@repo/db";
-import { createAuth } from "@repo/auth";
-import { expo } from "@better-auth/expo";
-
-const auth = createAuth([expo()]);
+import { auth } from "../lib/auth.js";
 
 type Variables = {
   user: { id: string; email: string; role?: string | null } | null;

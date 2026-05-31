@@ -1,4 +1,4 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, type BetterAuthPlugin } from "better-auth";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@repo/db";
 import { admin } from "better-auth/plugins";
@@ -43,194 +43,200 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 const appName = process.env.APP_NAME ?? "AutoVendo";
 
-export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL ?? "https://api.autovendo.ch",
+export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
+  return betterAuth({
+    baseURL: process.env.BETTER_AUTH_URL ?? "https://api.autovendo.ch",
 
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
-  }),
-
-  advanced: {
-    crossSubDomainCookies: {
-      enabled: true,
-      domain: ".autovendo.ch",
-    },
-  },
-
-  socialProviders: {
-    google: {
-      clientId: [
-        process.env.GOOGLE_WEB_CLIENT_ID!,
-        process.env.GOOGLE_IOS_CLIENT_ID!,
-        process.env.GOOGLE_ANDROID_CLIENT_ID!,
-      ],
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    },
-    apple: {
-      clientId: process.env.APPLE_CLIENT_ID!,
-      clientSecret: process.env.APPLE_CLIENT_SECRET!,
-    },
-  },
-
-  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: true,
-    revokeSessionsOnPasswordReset: true,
-    customSyntheticUser: ({ coreFields, additionalFields, id }) => ({
-      ...coreFields,
-      role: "user",
-      banned: false,
-      banReason: null,
-      banExpires: null,
-      ...additionalFields,
-      id,
+    database: prismaAdapter(prisma, {
+      provider: "postgresql",
     }),
-    sendResetPassword: async ({ user, url }) => {
-      const { sendEmail } = await import("@repo/transactional");
-      const { ResetPasswordEmail } =
-        await import("@repo/transactional/emails/reset-password");
-      await sendEmail({
-        to: user.email,
-        subject: `Reset your ${appName} password`,
-        template: ResetPasswordEmail({
-          userEmail: user.email,
-          resetPasswordUrl: url,
-          appName,
-          appUrl,
-        }),
-      });
-    },
-  },
 
-  emailVerification: {
-    sendOnSignIn: true,
-    autoSignInAfterVerification: true,
-    sendVerificationEmail: async ({ user, url }) => {
-      const { sendEmail } = await import("@repo/transactional");
-      const { VerifyEmail } =
-        await import("@repo/transactional/emails/verify-email");
-      await sendEmail({
-        to: user.email,
-        subject: `Verify your ${appName} email address`,
-        template: VerifyEmail({
-          userEmail: user.email,
-          verificationUrl: url,
-          appName,
-          appUrl,
-        }),
-      });
+    advanced: {
+      crossSubDomainCookies: {
+        enabled: true,
+        domain: ".autovendo.ch",
+      },
     },
-  },
 
-  user: {
-    changeEmail: {
+    socialProviders: {
+      google: {
+        clientId: [
+          process.env.GOOGLE_WEB_CLIENT_ID!,
+          process.env.GOOGLE_IOS_CLIENT_ID!,
+          process.env.GOOGLE_ANDROID_CLIENT_ID!,
+        ],
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      },
+      apple: {
+        clientId: process.env.APPLE_CLIENT_ID!,
+        clientSecret: process.env.APPLE_CLIENT_SECRET!,
+      },
+    },
+
+    emailAndPassword: {
       enabled: true,
-      sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+      requireEmailVerification: true,
+      revokeSessionsOnPasswordReset: true,
+      customSyntheticUser: ({ coreFields, additionalFields, id }) => ({
+        ...coreFields,
+        role: "user",
+        banned: false,
+        banReason: null,
+        banExpires: null,
+        ...additionalFields,
+        id,
+      }),
+      sendResetPassword: async ({ user, url }) => {
         const { sendEmail } = await import("@repo/transactional");
-        const { ConfirmEmailChangeEmail } =
-          await import("@repo/transactional/emails/confirm-email-change");
+        const { ResetPasswordEmail } =
+          await import("@repo/transactional/emails/reset-password");
         await sendEmail({
           to: user.email,
-          subject: `Approve your ${appName} email change`,
-          template: ConfirmEmailChangeEmail({
-            currentEmail: user.email,
-            newEmail: newEmail,
-            confirmUrl: url,
+          subject: `Reset your ${appName} password`,
+          template: ResetPasswordEmail({
+            userEmail: user.email,
+            resetPasswordUrl: url,
             appName,
             appUrl,
           }),
         });
       },
     },
-  },
 
-  trustedOrigins: [
-    "https://api.autovendo.ch",
-    "https://autovendo.ch",
-    "https://www.autovendo.ch",
-    "https://autosolo.ch",
-    "https://www.autosolo.ch",
-    "https://admin.autovendo.ch",
-    "autovendo://",
-    "autovendo://*",
-    "exp://",
-    "exp://**",
-  ],
-
-  plugins: [
-    admin({
-      ac,
-      roles: { admin: adminRole, dealer, user },
-      defaultRole: "user",
-    }),
-    i18n({
-      detection: ["cookie", "header"],
-      localeCookie: "NEXT_LOCALE",
-      locales: {
-        de: {
-          INVALID_EMAIL_OR_PASSWORD: "E-Mail oder Passwort ungültig",
-          USER_NOT_FOUND: "Benutzer nicht gefunden",
-          EMAIL_NOT_VERIFIED: "E-Mail nicht verifiziert",
-          TOO_MANY_REQUESTS:
-            "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
-          INVALID_TOKEN: "Ungültiger oder abgelaufener Token",
-          SESSION_EXPIRED:
-            "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
-          BANNED_USER:
-            "Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Support.",
-          UNKNOWN_ERROR:
-            "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
-        },
-        fr: {
-          INVALID_EMAIL_OR_PASSWORD: "E-mail ou mot de passe invalide",
-          USER_NOT_FOUND: "Utilisateur non trouvé",
-          EMAIL_NOT_VERIFIED: "E-mail non vérifié",
-          TOO_MANY_REQUESTS: "Trop de requêtes. Veuillez réessayer plus tard.",
-          INVALID_TOKEN: "Jeton invalide ou expiré",
-          SESSION_EXPIRED: "Session expirée. Veuillez vous reconnecter.",
-          BANNED_USER:
-            "Votre compte a été banni. Veuillez contacter le support.",
-          UNKNOWN_ERROR:
-            "Une erreur inconnue s'est produite. Veuillez réessayer.",
-        },
-        it: {
-          INVALID_EMAIL_OR_PASSWORD: "E-mail o password non validi",
-          USER_NOT_FOUND: "Utente non trovato",
-          EMAIL_NOT_VERIFIED: "E-mail non verificata",
-          TOO_MANY_REQUESTS:
-            "Troppe richieste. Per favore riprova più tardi.",
-          INVALID_TOKEN: "Token non valido o scaduto",
-          SESSION_EXPIRED:
-            "Sessione scaduta. Per favore effettua di nuovo il login.",
-          BANNED_USER:
-            "Il tuo account è stato bandito. Si prega di contattare il supporto.",
-          UNKNOWN_ERROR:
-            "Si è verificato un errore sconosciuto. Per favore riprova.",
-        },
+    emailVerification: {
+      sendOnSignUp: true,
+      sendOnSignIn: true,
+      autoSignInAfterVerification: true,
+      sendVerificationEmail: async ({ user, url }) => {
+        const { sendEmail } = await import("@repo/transactional");
+        const { VerifyEmail } =
+          await import("@repo/transactional/emails/verify-email");
+        await sendEmail({
+          to: user.email,
+          subject: `Verify your ${appName} email address`,
+          template: VerifyEmail({
+            userEmail: user.email,
+            verificationUrl: url,
+            appName,
+            appUrl,
+          }),
+        });
       },
-    }),
-    stripe({
-      stripeClient,
-      stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      createCustomerOnSignUp: true,
-      onEvent: handleListingPayment,
-      subscription: {
+    },
+
+    user: {
+      changeEmail: {
         enabled: true,
-        plans: async () => {
-          const plans = await prisma.plan.findMany();
-          return plans.map((plan: (typeof plans)[number]) => ({
-            name: plan.name,
-            priceId: plan.priceId,
-            limits: plan.limits as Record<string, any>,
-            freeTrial:
-              plan.hasTrial && plan.trialDays
-                ? { days: plan.trialDays }
-                : undefined,
-          }));
+        sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+          const { sendEmail } = await import("@repo/transactional");
+          const { ConfirmEmailChangeEmail } =
+            await import("@repo/transactional/emails/confirm-email-change");
+          await sendEmail({
+            to: user.email,
+            subject: `Approve your ${appName} email change`,
+            template: ConfirmEmailChangeEmail({
+              currentEmail: user.email,
+              newEmail: newEmail,
+              confirmUrl: url,
+              appName,
+              appUrl,
+            }),
+          });
         },
       },
-    }),
-  ],
-});
+    },
 
+    trustedOrigins: [
+      "https://api.autovendo.ch",
+      "https://autovendo.ch",
+      "https://www.autovendo.ch",
+      "https://autosolo.ch",
+      "https://www.autosolo.ch",
+      "https://admin.autovendo.ch",
+      "autovendo://",
+      "autovendo://*",
+      "exp://",
+      "exp://**",
+    ],
+
+    plugins: [
+      admin({
+        ac,
+        roles: { admin: adminRole, dealer, user },
+        defaultRole: "user",
+      }),
+      i18n({
+        detection: ["cookie", "header"],
+        localeCookie: "NEXT_LOCALE",
+        translations: {
+          de: {
+            INVALID_EMAIL_OR_PASSWORD: "E-Mail oder Passwort ungültig",
+            USER_NOT_FOUND: "Benutzer nicht gefunden",
+            EMAIL_NOT_VERIFIED: "E-Mail nicht verifiziert",
+            TOO_MANY_REQUESTS:
+              "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
+            INVALID_TOKEN: "Ungültiger oder abgelaufener Token",
+            SESSION_EXPIRED:
+              "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+            BANNED_USER:
+              "Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Support.",
+            UNKNOWN_ERROR:
+              "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+          },
+          fr: {
+            INVALID_EMAIL_OR_PASSWORD: "E-mail ou mot de passe invalide",
+            USER_NOT_FOUND: "Utilisateur non trouvé",
+            EMAIL_NOT_VERIFIED: "E-mail non vérifié",
+            TOO_MANY_REQUESTS:
+              "Trop de requêtes. Veuillez réessayer plus tard.",
+            INVALID_TOKEN: "Jeton invalide ou expiré",
+            SESSION_EXPIRED: "Session expirée. Veuillez vous reconnecter.",
+            BANNED_USER:
+              "Votre compte a été banni. Veuillez contacter le support.",
+            UNKNOWN_ERROR:
+              "Une erreur inconnue s'est produite. Veuillez réessayer.",
+          },
+          it: {
+            INVALID_EMAIL_OR_PASSWORD: "E-mail o password non validi",
+            USER_NOT_FOUND: "Utente non trovato",
+            EMAIL_NOT_VERIFIED: "E-mail non verificata",
+            TOO_MANY_REQUESTS:
+              "Troppe richieste. Per favore riprova più tardi.",
+            INVALID_TOKEN: "Token non valido o scaduto",
+            SESSION_EXPIRED:
+              "Sessione scaduta. Per favore effettua di nuovo il login.",
+            BANNED_USER:
+              "Il tuo account è stato bandito. Si prega di contattare il supporto.",
+            UNKNOWN_ERROR:
+              "Si è verificato un errore sconosciuto. Per favore riprova.",
+          },
+        },
+      }),
+      stripe({
+        stripeClient,
+        stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+        createCustomerOnSignUp: true,
+        onEvent: handleListingPayment,
+        subscription: {
+          enabled: true,
+          plans: async () => {
+            const plans = await prisma.plan.findMany();
+            return plans.map((plan: (typeof plans)[number]) => ({
+              name: plan.name,
+              priceId: plan.priceId,
+              limits: plan.limits as Record<string, any>,
+              freeTrial:
+                plan.hasTrial && plan.trialDays
+                  ? { days: plan.trialDays }
+                  : undefined,
+            }));
+          },
+        },
+      }),
+      ...additionalPlugins,
+    ],
+  });
+}
+
+export const auth = createAuth();
 export { stripeClient };
