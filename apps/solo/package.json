@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@repo/auth": "*",
-    "@repo/db": "*",
     "@repo/ui": "*",
     "@sentry/nextjs": "^10.50.0",
     "lucide-react": "^0.563.0",
