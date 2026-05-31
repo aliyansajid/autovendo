@@ -1,10 +1,8 @@
 import type { MetadataRoute } from "next";
-import { prisma } from "@repo/db";
-
-export const dynamic = "force-dynamic";
 
 const BASE_URL = "https://autosolo.ch";
 const LOCALES = ["de", "en", "fr", "it"];
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const STATIC_PATHS = [
   { path: "", priority: 1.0, changeFrequency: "daily" as const },
@@ -16,10 +14,12 @@ const STATIC_PATHS = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const vehicles = await prisma.vehicle.findMany({
-    where: { sellerId: { not: null } },
-    select: { id: true, updatedAt: true },
+  const res = await fetch(`${API_BASE}/api/sitemap?sellerOnly=true`, {
+    cache: "no-store",
   });
+  const { vehicles } = res.ok
+    ? await res.json()
+    : { vehicles: [] };
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.flatMap(
     ({ path, priority, changeFrequency }) =>
@@ -28,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority,
         changeFrequency,
         lastModified: new Date(),
-      }))
+      })),
   );
 
   const vehicleEntries: MetadataRoute.Sitemap = vehicles.flatMap((v) =>
@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: v.updatedAt,
       priority: 0.8,
       changeFrequency: "weekly" as const,
-    }))
+    })),
   );
 
   return [...staticEntries, ...vehicleEntries];
