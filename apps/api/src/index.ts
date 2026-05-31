@@ -11,6 +11,7 @@ import vehicle from "./routes/vehicle";
 import dealerVehicles from "./routes/dealer-vehicles";
 import dealerDashboard from "./routes/dealer-dashboard";
 import dealerStorage from "./routes/dealer-storage";
+import dealerBilling from "./routes/dealer-billing";
 import contact from "./routes/contact";
 
 const app = new Hono<{
@@ -79,6 +80,9 @@ app.route("/api/dealer/dashboard", dealerDashboard);
 
 // Dealer storage — presigned URLs + cleanup (authenticated)
 app.route("/api/dealer/storage", dealerStorage);
+
+// Dealer billing — payment method, invoices, billing portal
+app.route("/api/dealer/billing", dealerBilling);
 
 // Contact form
 app.route("/api/contact", contact);

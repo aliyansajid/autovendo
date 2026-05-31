@@ -2,7 +2,7 @@ import { auth } from "@repo/auth";
 import { prisma } from "@repo/db";
 import { headers } from "next/headers";
 import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
-import { getBillingData } from "@/app/actions/billing.actions";
+import { getBillingDataFromApi } from "@/lib/api/vehicles";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
@@ -75,7 +75,7 @@ export default async function SubscriptionPage(props: {
         headers: await headers(),
       }),
       getSubscriptionStatusFromApi(),
-      getBillingData(),
+      getBillingDataFromApi(),
       prisma.plan.findMany({
         orderBy: { price: "asc" },
         select: {

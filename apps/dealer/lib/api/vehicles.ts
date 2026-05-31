@@ -13,6 +13,29 @@ export type SubscriptionStatus = {
   remainingQuota: number;
 };
 
+export type PaymentMethod = {
+  brand: string;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+};
+
+export type Invoice = {
+  id: string;
+  number: string | null;
+  date: number;
+  amount: number;
+  currency: string;
+  status: string;
+  pdfUrl: string | null;
+  hostedUrl: string | null;
+};
+
+export type BillingData = {
+  paymentMethod: PaymentMethod | null;
+  invoices: Invoice[];
+};
+
 export type DashboardSummary = {
   totalCount: number;
   publishedCount: number;
@@ -92,6 +115,12 @@ export async function getDashboardSummaryFromApi(): Promise<DashboardSummary> {
 export async function getSubscriptionStatusFromApi(): Promise<SubscriptionStatus> {
   const res = await serverFetch("/api/dealer/dashboard/subscription");
   if (!res.ok) throw new Error("Failed to fetch subscription status");
+  return res.json();
+}
+
+export async function getBillingDataFromApi(): Promise<BillingData> {
+  const res = await serverFetch("/api/dealer/billing/data");
+  if (!res.ok) throw new Error("Failed to fetch billing data");
   return res.json();
 }
 
