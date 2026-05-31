@@ -1,4 +1,4 @@
-import { getBillingData } from "@/app/actions/billing.actions";
+import { getBillingDataFromApi } from "@/lib/api/billing";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
@@ -24,7 +24,7 @@ export default async function BillingPage(props: {
 }) {
   const t = await getTranslations("BillingPage");
   const { locale } = await props.params;
-  const billingData = await getBillingData();
+  const billingData = await getBillingDataFromApi();
 
   return (
     <div className="space-y-6">

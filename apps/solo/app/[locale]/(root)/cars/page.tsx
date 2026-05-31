@@ -20,9 +20,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
-import { getVehiclesWithFacetsCached } from "@/app/actions/vehicles.actions";
 import { createVehicleSearchSchema } from "@/schema/vehicle-search-schema";
 import { parseSearchParams } from "@repo/ui/lib/helpers/vehicle";
+
+import { getSellerVehiclesWithFacetsFromApi } from "@/lib/api/vehicles";
 import { ListingControls } from "./_components/listing-controls";
 import { formatCount } from "@repo/ui/lib/helpers/format";
 import { getTranslations } from "next-intl/server";
@@ -54,9 +55,8 @@ export default async function CarsPage(props: {
   });
   const schema = createVehicleSearchSchema(t_schema);
 
-  // Get data from server action (cached)
   const { vehicles, total, totalPages, facets } =
-    await getVehiclesWithFacetsCached(searchParams);
+    await getSellerVehiclesWithFacetsFromApi(searchParams);
 
   // Parse for UI needs
   const parsed = parseSearchParams(searchParams);

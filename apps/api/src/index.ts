@@ -15,6 +15,10 @@ import dealers from "./routes/dealers";
 import plans from "./routes/plans";
 import dealerSubscriptions from "./routes/dealer-subscriptions";
 import sitemapData from "./routes/sitemap";
+import seller from "./routes/seller";
+import sellerBilling from "./routes/seller-billing";
+import sellerListings from "./routes/seller-listings";
+import sellerVehicles from "./routes/seller-vehicles";
 
 const app = new Hono<{
   Variables: {
@@ -103,6 +107,18 @@ app.route("/api/dealer/subscriptions", dealerSubscriptions);
 
 // Sitemap data (public)
 app.route("/api/sitemap", sitemapData);
+
+// Seller onboarding (authenticated)
+app.route("/api/seller", seller);
+
+// Seller billing — payment method, invoices, billing portal
+app.route("/api/seller/billing", sellerBilling);
+
+// Seller listings — checkout sessions
+app.route("/api/seller/listings", sellerListings);
+
+// Seller vehicles — public listing + authenticated dashboard
+app.route("/api/seller/vehicles", sellerVehicles);
 
 // Session endpoint
 app.get("/api/session", (c) => {

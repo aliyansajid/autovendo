@@ -1,12 +1,12 @@
 "use client";
 
-import { createBillingPortalUrl } from "@/app/actions/billing.actions";
 import { Button } from "@repo/ui/components/button";
 import { Spinner } from "@repo/ui/components/spinner";
 import { ExternalLink } from "lucide-react";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { apiBillingPortal } from "@/lib/api/billing";
 
 export function BillingPortalButton() {
   const t = useTranslations("BillingPage");
@@ -14,10 +14,10 @@ export function BillingPortalButton() {
 
   const handleClick = () => {
     startTransition(async () => {
-      try {
-        const url = await createBillingPortalUrl(window.location.href);
-        window.location.href = url;
-      } catch {
+      const data = await apiBillingPortal(window.location.href);
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
         toast.error(t("billingPortalError"));
       }
     });

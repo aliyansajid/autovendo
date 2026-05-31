@@ -1,22 +1,17 @@
-import { auth } from "@repo/auth";
-import { headers } from "next/headers";
-import { getSellerProfile } from "@/app/actions/seller.actions";
 import { VehicleForm } from "../_components/vehicle-form";
 import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@repo/ui/src/components/button";
+import { getSellerProfileFromApi } from "@/lib/api/vehicles";
 
 export default async function AddNewVehiclePage(props: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await props.params;
   const t = await getTranslations("NewVehiclePage");
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
 
-  const sellerProfile = session?.user?.id ? await getSellerProfile() : null;
+  const sellerProfile = await getSellerProfileFromApi();
 
   return (
     <div className="space-y-8">

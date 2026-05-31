@@ -13,7 +13,7 @@ import { Separator } from "@repo/ui/src/components/separator";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
-import { sendContactMessage } from "@/app/actions/contact.actions";
+import { apiSendContact } from "@/lib/api/contact";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { toast } from "sonner";
 import { createContactFormSchema } from "@/schema/contact-schema";
@@ -42,7 +42,7 @@ export default function ContactPage() {
 
   function onSubmit(data: z.infer<typeof contactFormSchema>) {
     startTransition(async () => {
-      const result = await sendContactMessage({
+      const result = await apiSendContact({
         name: data.name,
         email: data.email,
         phone: data.phone,
@@ -50,9 +50,9 @@ export default function ContactPage() {
         message: data.message || undefined,
       });
 
-      result.ok
-        ? toast.success(result.message ?? t("successDefault"))
-        : toast.error(result.error ?? t("errorDefault"));
+      result.error
+        ? toast.error(result.error ?? t("errorDefault"))
+        : toast.success(result.message ?? t("successDefault"));
       form.reset();
     });
   }

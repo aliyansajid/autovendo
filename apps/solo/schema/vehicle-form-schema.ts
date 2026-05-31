@@ -123,7 +123,9 @@ export const createVehicleFormSchema = (t: TFn) =>
     vehicleType: z
       .string({ error: t("vehicleTypeRequired") })
       .refine((val) => VALID_VEHICLE_TYPES.includes(val), t("invalidType")),
-    status: z.enum(["DRAFT", "PUBLISHED", "PAUSED", "SOLD", "ARCHIVED", "BANNED"]).default("PUBLISHED"),
+    status: z
+      .enum(["DRAFT", "PUBLISHED", "PAUSED", "SOLD", "ARCHIVED", "BANNED"])
+      .default("PUBLISHED"),
 
     // Vehicle Features (Mandatory: make, bodyType, color)
     make: z
@@ -199,8 +201,12 @@ export const createVehicleFormSchema = (t: TFn) =>
     ).optional(),
     typeApproval: z.string().optional(),
     wheelbase: createOptionalNonNegativeNumber(t),
-    vehicleIdentificationNumber: z.string({ error: t("vinRequired") }).length(17, t("vinLength")),
-    planId: z.enum(["standard", "best_value"], { error: t("planRequired") }).optional(),
+    vehicleIdentificationNumber: z
+      .string({ error: t("vinRequired") })
+      .length(17, t("vinLength")),
+    planId: z
+      .enum(["standard", "best_value"], { error: t("planRequired") })
+      .optional(),
     emptyWeight: createOptionalNonNegativeNumber(t),
     loadCapacity: createOptionalNonNegativeNumber(t),
     serialNumber: z.string().optional(),
@@ -292,11 +298,7 @@ export const createVehicleFormSchema = (t: TFn) =>
 
     // Contact Details
     companyName: z.string().optional(),
-    businessEmail: z
-      .string()
-      .email(t("invalidEmail"))
-      .optional()
-      .or(z.literal("")),
+    businessEmail: z.email(t("invalidEmail")).optional().or(z.literal("")),
     phoneNumber: z.string().optional(),
     address: z.string().optional(),
     zipCode: z.string().optional(),

@@ -22,10 +22,10 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import {
-  deleteVehicle,
-  updateVehicleStatus,
-  publishOrPay,
-} from "@/app/actions/vehicles.actions";
+  apiDeleteVehicle,
+  apiUpdateVehicleStatus,
+  apiPublishOrPay,
+} from "@/lib/api/seller-vehicles";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
 import { useState, useMemo, useTransition } from "react";
@@ -240,7 +240,7 @@ function VehicleActions({
   const handleStatusUpdate = (newStatus: string) => {
     startTransition(async () => {
       try {
-        await updateVehicleStatus(vehicle.id, newStatus);
+        await apiUpdateVehicleStatus(vehicle.id, newStatus);
         toast.success(t("statusUpdateSuccess"));
         router.refresh();
       } catch (error) {
@@ -252,7 +252,7 @@ function VehicleActions({
   const handlePublish = () => {
     startTransition(async () => {
       try {
-        const result = await publishOrPay(vehicle.id, locale);
+        const result = await apiPublishOrPay(vehicle.id, locale);
         if ("checkoutUrl" in result) {
           window.location.href = result.checkoutUrl;
         } else {
@@ -344,7 +344,7 @@ function VehicleActions({
                   variant="destructive"
                   onClick={async () => {
                     try {
-                      await deleteVehicle(vehicle.id);
+                      await apiDeleteVehicle(vehicle.id);
                       toast.success(t("deleteSuccess"));
                       router.refresh();
                     } catch (error) {

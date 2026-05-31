@@ -1,7 +1,3 @@
-import { auth } from "@repo/auth";
-import { headers } from "next/headers";
-import { getSellerProfile } from "@/app/actions/seller.actions";
-import { getVehicleById } from "@/app/actions/vehicles.actions";
 import { VehicleForm } from "../_components/vehicle-form";
 import { mapVehicleToForm } from "@repo/ui/lib/helpers/vehicle";
 import { notFound } from "next/navigation";
@@ -9,6 +5,7 @@ import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@repo/ui/src/components/button";
+import { getMyVehicleByIdFromApi, getSellerProfileFromApi } from "@/lib/api/vehicles";
 
 export default async function EditVehiclePage({
   params,
@@ -17,13 +14,10 @@ export default async function EditVehiclePage({
 }) {
   const t = await getTranslations("EditVehiclePage");
   const { id } = await params;
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
 
   const [sellerProfile, vehicle] = await Promise.all([
-    session?.user?.id ? getSellerProfile() : null,
-    getVehicleById(id),
+    getSellerProfileFromApi(),
+    getMyVehicleByIdFromApi(id),
   ]);
 
   if (!vehicle) {

@@ -86,7 +86,6 @@ export const createVehicleSearchSchema = (t: TFn) =>
     // Inspection / warranty
     inspectionPassed: z.boolean().optional(),
     hasWarranty: z.boolean().optional(),
-
   });
 
 export type VehicleSearchParams = z.infer<

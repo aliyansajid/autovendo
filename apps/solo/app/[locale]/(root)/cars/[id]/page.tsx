@@ -4,10 +4,7 @@ import type { Metadata } from "next";
 import { buildAlternates } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { getTranslations } from "next-intl/server";
-import {
-  getVehicleCached,
-  getSimilarVehicles,
-} from "@/app/actions/vehicles.actions";
+import { getSellerVehicleFromApi, getSimilarSellerVehiclesFromApi } from "@/lib/api/vehicles";
 import { notFound } from "next/navigation";
 import { formatVehicleName } from "@repo/ui/lib/helpers/vehicle";
 import { getImageUrl } from "@repo/ui/lib/helpers/image";
@@ -87,7 +84,7 @@ export async function generateMetadata({
   params: Promise<{ id: string; locale: string }>;
 }): Promise<Metadata> {
   const { id, locale } = await params;
-  const item = await getVehicleCached(id);
+  const item = await getSellerVehicleFromApi(id);
   if (!item) return {};
 
   const name = [item.make, item.model, item.version].filter(Boolean).join(" ");
@@ -146,7 +143,7 @@ export default async function ListingPage({
   const t = await getTranslations("VehicleDetail");
   const tVehicle = await getTranslations("Vehicle");
   const { id, locale } = await params;
-  const item = await getVehicleCached(id);
+  const item = await getSellerVehicleFromApi(id);
 
   if (!item) notFound();
 
@@ -356,7 +353,7 @@ export default async function ListingPage({
     reviewCount: null as number | null,
   };
 
-  const similarItems = await getSimilarVehicles(item.sellerId!, item.id);
+  const { vehicles: similarItems } = await getSimilarSellerVehiclesFromApi(item.id);
 
   const similarListings: ListingProps[] = similarItems.map((sim) => ({
     id: sim.id,

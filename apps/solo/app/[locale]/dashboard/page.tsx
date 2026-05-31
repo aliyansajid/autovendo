@@ -1,6 +1,4 @@
-import { auth } from "@repo/auth";
-import { prisma } from "@repo/db";
-import { headers } from "next/headers";
+import { getDashboardSummaryFromApi } from "@/lib/api/vehicles";
 import {
   Card,
   CardContent,
@@ -17,7 +15,6 @@ import {
   ArrowRight,
   TrendingUp,
 } from "lucide-react";
-import { getDashboardSummary } from "@/app/actions/vehicles.actions";
 import { getTranslations } from "next-intl/server";
 import {
   formatPrice,
@@ -35,7 +32,7 @@ export default async function DashboardPage(props: {
   const { locale } = await props.params;
   const t = await getTranslations("DashboardPage");
 
-  const summary = await getDashboardSummary();
+  const summary = await getDashboardSummaryFromApi();
 
   return (
     <div className="space-y-8 pb-10">

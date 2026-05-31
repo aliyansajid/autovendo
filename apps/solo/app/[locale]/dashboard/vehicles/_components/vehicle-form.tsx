@@ -5,7 +5,14 @@ import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@repo/ui/lib/utils";
 import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
-import { SellerProfile } from "@/app/actions/seller.actions";
+import {
+  apiPrepareListing,
+  apiGetPresignedUrls,
+  apiCreateVehicle,
+  apiUpdateVehicle,
+  apiCreateListingCheckout,
+} from "@/lib/api/seller-vehicles";
+import type { SellerProfile } from "@/lib/api/vehicles";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import { BasicDataSection } from "./form-sections/basic-data-section";
@@ -14,7 +21,6 @@ import { MediaSection } from "./form-sections/media-section";
 import { PricingSection } from "./form-sections/pricing-section";
 import { ContactSection } from "./form-sections/contact-section";
 import { EquipmentSection } from "./form-sections/equipment-section";
-import { createListingCheckoutSession } from "@/app/actions/listings.actions";
 import { useState, useTransition, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
@@ -25,12 +31,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/ui/components/card";
-import {
-  prepareVehicleListing,
-  getPresignedUrls,
-  createVehicle,
-  updateVehicle,
-} from "@/app/actions/vehicles.actions";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
 import { Spinner } from "@repo/ui/components/spinner";
@@ -254,7 +254,7 @@ export function VehicleForm({
       try {
         setUploadStatus(t("uploadStatusPreparing"));
         setUploadProgress(10);
-        const { listingId } = await prepareVehicleListing(vehicleId);
+        const { listingId } = await apiPrepareListing(vehicleId);
         const images = data.images || [];
         const newFiles = images.filter((img: any) => img instanceof File);
         const existingKeys = images.filter((img: any) => typeof img === "string");
@@ -262,7 +262,7 @@ export function VehicleForm({
 
         if (newFiles.length > 0) {
           setUploadStatus(t("uploadStatusGettingUrls"));
-          const presignedData = await getPresignedUrls(listingId, newFiles.map((f: File) => ({ name: f.name, type: f.type })));
+          const presignedData = await apiGetPresignedUrls(listingId, newFiles.map((f: File) => ({ name: f.name, type: f.type })));
           setUploadStatus(t("uploadStatusUploading"));
           const uploadedKeys = await Promise.all(newFiles.map(async (file: File, idx: number) => {
             const prep = presignedData[idx];
@@ -277,29 +277,29 @@ export function VehicleForm({
         setUploadStatus(t("uploadStatusSaving"));
         setUploadProgress(95);
         const { images: _, ...submitData } = data;
-        
+
         if (vehicleId) {
           if (isPaid) {
             // Already paid — update and stay published
-            await updateVehicle(vehicleId, submitData, finalImageKeys);
+            await apiUpdateVehicle(vehicleId, submitData, finalImageKeys);
             toast.success(t("successUpdate"));
           } else {
             // Not paid — save as draft, then redirect to Stripe
-            await updateVehicle(vehicleId, { ...submitData, status: "DRAFT" }, finalImageKeys);
+            await apiUpdateVehicle(vehicleId, { ...submitData, status: "DRAFT" }, finalImageKeys);
             const planId = data.planId || listingPlan || "standard";
             if (!planId) throw new Error("No plan selected");
             setUploadStatus("Redirecting to payment...");
-            const checkoutUrl = await createListingCheckoutSession(vehicleId, planId as "standard" | "best_value", locale);
+            const checkoutUrl = await apiCreateListingCheckout(vehicleId, planId as "standard" | "best_value", locale);
             window.location.href = checkoutUrl;
             return;
           }
         } else {
-          const result = await createVehicle(listingId, submitData, finalImageKeys) as any;
+          const result = await apiCreateVehicle(listingId, submitData, finalImageKeys) as any;
           if (result && typeof result === "object" && "error" in result) throw new Error(result.error as string);
-          
+
           if (!data.planId) throw new Error("No plan selected");
           setUploadStatus("Redirecting to payment...");
-          const checkoutUrl = await createListingCheckoutSession(listingId, data.planId, locale);
+          const checkoutUrl = await apiCreateListingCheckout(listingId, data.planId, locale);
           window.location.href = checkoutUrl;
           return;
         }

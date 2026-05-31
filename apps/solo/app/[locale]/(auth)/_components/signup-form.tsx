@@ -19,11 +19,11 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { signUp } from "@/lib/api/auth-client";
+import { apiSellerSignup } from "@/lib/api/seller-vehicles";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { createSignupSchema } from "@/schema/auth-schema";
 import { useTranslations, useLocale } from "next-intl";
-import { onSignup } from "@/app/actions/auth.actions";
 
 export const SignupForm = () => {
   const t = useTranslations("SignupForm");
@@ -59,7 +59,7 @@ export const SignupForm = () => {
         return;
       }
 
-      await onSignup(values.name, values.email, locale);
+      await apiSellerSignup({ name: values.name, email: values.email, locale });
       toast.success("Account created successfully!");
     });
   }

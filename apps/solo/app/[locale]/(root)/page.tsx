@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/json-ld";
 import { SearchForm } from "./_components/search-form";
 import { FeaturedListings } from "./_components/featured-listings";
 import { About } from "./_components/about";
-import { getVehicles } from "@/app/actions/vehicles.actions";
+import { getSellerVehiclesFromApi } from "@/lib/api/vehicles";
 import { buildVehicleTitle } from "@repo/ui/lib/helpers/vehicle";
 import {
   formatPrice,
@@ -28,13 +28,7 @@ export default async function HomePage(props: {
   params: Promise<{ locale: string }>;
 }) {
   const [vehiclesResult, tVehicle] = await Promise.all([
-    getVehicles({ pageSize: "12", sort: "created-desc" }).catch(() => ({
-      vehicles: [],
-      total: 0,
-      page: 1,
-      pageSize: 12,
-      totalPages: 0,
-    })),
+    getSellerVehiclesFromApi({ pageSize: "12", sort: "created-desc" }),
     getTranslations("Vehicle"),
   ]);
 

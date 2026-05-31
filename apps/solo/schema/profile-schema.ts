@@ -5,7 +5,7 @@ type TFn = (key: string) => string;
 export const createSellerProfileSchema = (t: TFn) =>
   z.object({
     name: z.string().min(3, t("nameMinLength")).max(50, t("nameMaxLength")),
-    email: z.string().email(t("invalidEmail")),
+    email: z.email(t("invalidEmail")),
     phoneNumber: z
       .string()
       .min(1, t("phoneRequired"))

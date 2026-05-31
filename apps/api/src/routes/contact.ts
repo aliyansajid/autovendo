@@ -8,9 +8,10 @@ const contactSchema = z.object({
   phone: z.string().regex(/^\+?[0-9\s\-().]{7,20}$/),
   subject: z.string().max(100).optional(),
   message: z.string().max(500).optional(),
+  contactEmail: z.string().email().optional(),
+  appName: z.string().max(50).optional(),
+  appUrl: z.string().url().optional(),
 });
-
-const CONTACT_EMAIL = "info@autovendo.ch";
 
 const contact = new Hono();
 
@@ -23,22 +24,28 @@ contact.post("/", async (c) => {
     return c.json({ error: "Validation failed", issues: parsed.error.issues }, 400);
   }
 
-  const { name, email, phone, subject, message } = parsed.data;
+  const { name, email, phone, subject, message, contactEmail, appName, appUrl } = parsed.data;
+
+  const toEmail = contactEmail ?? "info@autovendo.ch";
+  const resolvedAppName = appName ?? "AutoVendo";
+  const resolvedAppUrl = appUrl ?? "https://autovendo.ch";
 
   const { default: sendEmail } = await import("@repo/transactional");
   const { default: ContactMessage } = await import("@repo/transactional/emails/contact-message");
 
   const result = await sendEmail({
-    to: CONTACT_EMAIL,
+    to: toEmail,
     subject: subject?.trim()
       ? `Kontaktanfrage: ${subject.trim()}`
-      : "Kontaktanfrage von autovendo.ch",
+      : `Kontaktanfrage von ${resolvedAppUrl.replace("https://", "")}`,
     template: React.createElement(ContactMessage, {
       name: name.trim(),
       email: email.trim(),
       phone: phone.trim(),
       subject: subject?.trim() || undefined,
       message: message?.trim() || undefined,
+      appName: resolvedAppName,
+      appUrl: resolvedAppUrl,
     }),
   });
 
