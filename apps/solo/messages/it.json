@@ -568,7 +568,8 @@
     "submit": "Crea account",
     "alreadyHaveAccount": "Hai già un account?",
     "login": "Accedi",
-    "errorDefault": "Si è verificato un errore. Riprovi."
+    "errorDefault": "Si è verificato un errore. Riprovi.",
+    "successDefault": "Account creato con successo!"
   },
   "ForgotPasswordForm": {
     "title": "Password dimenticata",

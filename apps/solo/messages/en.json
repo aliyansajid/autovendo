@@ -568,7 +568,8 @@
     "submit": "Create account",
     "alreadyHaveAccount": "Already have an account?",
     "login": "Sign in",
-    "errorDefault": "An error occurred. Please try again."
+    "errorDefault": "An error occurred. Please try again.",
+    "successDefault": "Account created successfully!"
   },
   "ForgotPasswordForm": {
     "title": "Forgot password",

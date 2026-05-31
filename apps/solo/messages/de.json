@@ -572,7 +572,8 @@
     "submit": "Konto erstellen",
     "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
     "login": "Anmelden",
-    "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "successDefault": "Konto erfolgreich erstellt!"
   },
   "ForgotPasswordForm": {
     "title": "Passwort vergessen",

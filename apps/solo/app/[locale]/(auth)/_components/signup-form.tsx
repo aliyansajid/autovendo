@@ -60,7 +60,7 @@ export const SignupForm = () => {
       }
 
       await apiSellerSignup({ name: values.name, email: values.email, locale });
-      toast.success("Account created successfully!");
+      toast.success(t("successDefault"));
     });
   }
 

@@ -568,7 +568,8 @@
     "submit": "Créer un compte",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "login": "Se connecter",
-    "errorDefault": "Une erreur est survenue. Veuillez réessayer."
+    "errorDefault": "Une erreur est survenue. Veuillez réessayer.",
+    "successDefault": "Compte créé avec succès !"
   },
   "ForgotPasswordForm": {
     "title": "Mot de passe oublié",
