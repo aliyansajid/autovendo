@@ -412,7 +412,7 @@ export function BasicDataSection({
             </div>
             <div className="space-y-3">
               {VehicleConditionEnum.map(
-                (item: { value: string; label: string }) => {
+                (item: { value: string }) => {
                   const count = facets?.vehicleCondition?.[item.value];
                   return (
                     <div

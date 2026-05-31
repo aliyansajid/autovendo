@@ -367,7 +367,7 @@ export function BasicDataSection() {
             label={t("vehicleCondition")}
             placeholder={t("vehicleConditionPlaceholder")}
           >
-            {VehicleConditionEnum.map((c: { value: string; label: string }) => (
+            {VehicleConditionEnum.map((c: { value: string }) => (
               <SelectItem key={c.value} value={c.value}>
                 {t_vehicle(
                   `conditions.${c.value.toUpperCase().replace(/-/g, "_")}`,
