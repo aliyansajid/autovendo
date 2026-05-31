@@ -21,7 +21,6 @@ import { useTranslations, useLocale } from "next-intl";
 import { authClient } from "@repo/auth/client";
 import { useTransition, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { getPresignedUploadUrl } from "@/app/actions/storage.actions";
 import { updateDealerProfile } from "@/app/actions/dealer.actions";
 import { Spinner } from "@repo/ui/components/spinner";
 import { DealerProfile } from "@/types/dealer";
@@ -264,17 +263,19 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   const logoPreviewUrl = useObjectUrl(logoValue as File | string | undefined);
   const coverPreviewUrl = useObjectUrl(coverValue as File | string | undefined);
 
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
   const uploadFile = async (file: File, type: "branding" | "profiles") => {
-    const res = await getPresignedUploadUrl({
-      dealerId: initialData?.id || "temp",
-      type,
-      filename: file.name,
-      contentType: file.type,
+    const res = await fetch(`${API_BASE}/api/dealer/storage/presign-profile`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, filename: file.name, contentType: file.type }),
     });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.success || !data.uploadUrl) throw new Error(data.error ?? t("uploadFailed"));
 
-    if (!res.success || !res.uploadUrl) throw new Error(res.error);
-
-    const uploadRes = await fetch(res.uploadUrl, {
+    const uploadRes = await fetch(data.uploadUrl, {
       method: "PUT",
       body: file,
       headers: { "Content-Type": file.type },
@@ -282,7 +283,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
 
     if (!uploadRes.ok) throw new Error(t("uploadFailed"));
 
-    return res.publicUrl;
+    return data.publicUrl as string;
   };
 
   function onSubmit(values: FormValues) {

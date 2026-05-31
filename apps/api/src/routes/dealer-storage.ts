@@ -49,6 +49,65 @@ router.post("/presign", async (c) => {
   return c.json(urls);
 });
 
+// ─── POST /presign-profile — presigned URL for profile/branding uploads ──────
+
+const ALLOWED_PROFILE_TYPES = ["branding", "profiles"] as const;
+type AllowedProfileType = (typeof ALLOWED_PROFILE_TYPES)[number];
+
+const ALLOWED_CONTENT_TYPES: Record<AllowedProfileType, RegExp> = {
+  profiles: /^image\/(jpeg|png|webp|gif)$/,
+  branding: /^image\/(jpeg|png|webp|gif|svg\+xml)$/,
+};
+
+const MAX_FILENAME_LENGTH = 200;
+
+router.post("/presign-profile", async (c) => {
+  const user = c.get("user")!;
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: user.id },
+    select: { id: true },
+  });
+  if (!dealer) return c.json({ success: false, error: "Dealer profile not found" }, 404);
+
+  const body = await c.req.json().catch(() => null);
+  const { type, filename, contentType } = (body ?? {}) as {
+    type?: string;
+    filename?: string;
+    contentType?: string;
+  };
+
+  if (!type || !filename || !contentType) {
+    return c.json({ success: false, error: "type, filename and contentType are required" }, 400);
+  }
+
+  if (!ALLOWED_PROFILE_TYPES.includes(type as AllowedProfileType)) {
+    return c.json({ success: false, error: "Invalid upload type" }, 400);
+  }
+
+  if (!ALLOWED_CONTENT_TYPES[type as AllowedProfileType].test(contentType)) {
+    return c.json({ success: false, error: "Invalid file type" }, 400);
+  }
+
+  const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, MAX_FILENAME_LENGTH);
+  if (!safeFilename) return c.json({ success: false, error: "Invalid filename" }, 400);
+
+  const key = StorageService.formatPath(dealer.id, type as AllowedProfileType, safeFilename);
+
+  try {
+    const uploadUrl = await storage.getUploadUrl(key, contentType);
+    return c.json({
+      success: true,
+      uploadUrl,
+      key,
+      publicUrl: storage.getPublicUrl(key),
+    });
+  } catch (err) {
+    console.error("Failed to generate presigned URL:", err);
+    return c.json({ success: false, error: "Failed to generate upload URL" }, 500);
+  }
+});
+
 // ─── DELETE /cleanup — delete orphaned S3 keys ───────────────────────────────
 
 router.delete("/cleanup", async (c) => {
