@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { buildAlternates } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
-import { getImageUrl } from "@/lib/helpers/image";
+import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import {
   getDealerByIdFromApi,
   getDealerVehiclesFromApi,
@@ -9,7 +9,7 @@ import {
 } from "@/lib/api/dealers";
 import { notFound } from "next/navigation";
 import { DealerDetailContent } from "../_components/dealer-detail-content";
-import { parseSearchParams } from "@/lib/helpers/vehicle";
+import { parseSearchParams } from "@repo/ui/lib/helpers/vehicle";
 import { createVehicleSearchSchema } from "@/schema/vehicle-search-schema";
 import { getTranslations } from "next-intl/server";
 

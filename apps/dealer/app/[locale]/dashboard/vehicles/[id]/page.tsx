@@ -4,7 +4,7 @@ import { getDealerProfileFromApi } from "@/lib/api/dealers";
 import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
 import { getDealerVehicleById } from "@/lib/api/dealer-vehicles";
 import { VehicleForm } from "../_components/vehicle-form";
-import { mapVehicleToForm } from "@/lib/helpers/vehicle";
+import { mapVehicleToForm } from "@repo/ui/lib/helpers/vehicle";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";

@@ -42,7 +42,7 @@ import {
   formatPrice,
   formatKilometers,
   formatRegistrationDate,
-} from "@/lib/helpers/format";
+} from "@repo/ui/lib/helpers/format";
 import {
   AlertCircleIcon,
   ArrowLeft,
@@ -64,7 +64,7 @@ import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
 import { useEffect, useRef } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
-import { getImageUrl } from "@/lib/helpers/image";
+import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import {
   Alert,
   AlertAction,

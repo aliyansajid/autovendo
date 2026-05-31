@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { Link } from "@/i18n/routing";
 import { CreditCard, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { formatDate } from "@/lib/helpers/format";
+import { formatDate } from "@repo/ui/lib/helpers/format";
 
 type SubscriptionData = {
   id: string;

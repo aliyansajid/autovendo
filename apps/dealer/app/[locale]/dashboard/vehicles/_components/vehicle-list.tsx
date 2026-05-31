@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
-import { getImageUrl } from "@/lib/helpers/image";
+import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import { type SubscriptionStatus } from "@/lib/api/vehicles";
 import { apiCleanupImages } from "@/lib/api/dealer-vehicles";
 import {
@@ -61,7 +61,7 @@ import {
   formatKilometers,
   formatRegistrationDate,
   formatDate,
-} from "@/lib/helpers/format";
+} from "@repo/ui/lib/helpers/format";
 
 interface Vehicle {
   id: string;

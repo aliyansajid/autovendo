@@ -22,9 +22,9 @@ import {
 } from "@repo/ui/components/pagination";
 import { getVehiclesWithFacetsFromApi } from "@/lib/api/vehicles";
 import { createVehicleSearchSchema } from "@/schema/vehicle-search-schema";
-import { parseSearchParams } from "@/lib/helpers/vehicle";
+import { parseSearchParams } from "@repo/ui/lib/helpers/vehicle";
 import { ListingControls } from "./_components/listing-controls";
-import { formatCount } from "@/lib/helpers/format";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata(props: {

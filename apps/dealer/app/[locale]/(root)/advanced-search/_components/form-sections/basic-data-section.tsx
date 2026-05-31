@@ -19,7 +19,7 @@ import { utilityBodyTypeEnum } from "@repo/vehicle-constants";
 import { truckBodyTypeEnum } from "@repo/vehicle-constants";
 import { camperBodyTypeEnum } from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
-import { formatCount } from "@/lib/helpers/format";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";
 
 const CURRENT_YEAR = new Date().getFullYear();

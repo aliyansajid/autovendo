@@ -24,11 +24,11 @@ import {
   formatPrice,
   formatDateShort,
   formatNumber,
-} from "@/lib/helpers/format";
+} from "@repo/ui/lib/helpers/format";
 import { Link } from "@/i18n/routing";
 import { Button } from "@repo/ui/components/button";
 import Image from "next/image";
-import { getImageUrl } from "@/lib/helpers/image";
+import { getImageUrl } from "@repo/ui/lib/helpers/image";
 
 export default async function DashboardPage(props: {
   params: Promise<{ locale: string }>;

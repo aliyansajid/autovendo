@@ -12,7 +12,7 @@ import {
 } from "@repo/ui/src/components/breadcrumb";
 import { Separator } from "@repo/ui/src/components/separator";
 import { Link } from "@/i18n/routing";
-import { formatVehicleName } from "@/lib/helpers/vehicle";
+import { formatVehicleName } from "@repo/ui/lib/helpers/vehicle";
 import { useTranslations } from "next-intl";
 
 interface ListingHeaderProps {

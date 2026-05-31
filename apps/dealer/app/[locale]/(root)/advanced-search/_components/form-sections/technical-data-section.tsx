@@ -18,7 +18,7 @@ import { utilityFuelTypeEnum } from "@repo/vehicle-constants";
 import { truckFuelTypeEnum } from "@repo/vehicle-constants";
 import { camperFuelTypeEnum } from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
-import { formatCount } from "@/lib/helpers/format";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";
 
 export function TechnicalDataSection({

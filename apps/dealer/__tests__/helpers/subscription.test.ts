@@ -7,7 +7,7 @@ import {
   isUIBlocked,
   isBanned,
   type RawSubscription,
-} from "@/lib/helpers/subscription";
+} from "@repo/ui/lib/helpers/subscription";
 
 // ---------------------------------------------------------------------------
 // computeSubscriptionStatus

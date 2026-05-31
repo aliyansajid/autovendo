@@ -6,8 +6,8 @@ import { JsonLd } from "@/components/json-ld";
 import { getTranslations } from "next-intl/server";
 import { getVehicleFromApi, getSimilarVehiclesFromApi } from "@/lib/api/vehicles";
 import { notFound } from "next/navigation";
-import { formatVehicleName } from "@/lib/helpers/vehicle";
-import { getImageUrl } from "@/lib/helpers/image";
+import { formatVehicleName } from "@repo/ui/lib/helpers/vehicle";
+import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import { ImageGallery } from "../_components/image-gallery";
@@ -39,7 +39,7 @@ import {
   formatPrice,
   formatKilometers,
   formatDateTime,
-} from "@/lib/helpers/format";
+} from "@repo/ui/lib/helpers/format";
 import type { ListingProps } from "@/types/vehicle";
 import { KeyDetailCard } from "../_components/key-detail-card";
 import { ListingSection } from "../_components/listing-section";

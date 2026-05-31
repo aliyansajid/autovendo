@@ -9,13 +9,13 @@ import { FeaturedGarage } from "./_components/featured-garage";
 import { About } from "./_components/about";
 import { getVehiclesFromApi } from "@/lib/api/vehicles";
 import { getDealersFromApi } from "@/lib/api/dealers";
-import { buildVehicleTitle } from "@/lib/helpers/vehicle";
+import { buildVehicleTitle } from "@repo/ui/lib/helpers/vehicle";
 import {
   formatPrice,
   formatNumber,
   formatRegistrationDate,
-} from "@/lib/helpers/format";
-import { getImageUrl } from "@/lib/helpers/image";
+} from "@repo/ui/lib/helpers/format";
+import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import type { VehicleListItem, ListingProps } from "@/types/vehicle";
 import { getTranslations } from "next-intl/server";
 

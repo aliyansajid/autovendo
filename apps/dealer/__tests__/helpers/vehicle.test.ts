@@ -8,7 +8,7 @@ import {
   isNew,
   parseSearchParams,
   mapVehicleToForm,
-} from "@/lib/helpers/vehicle";
+} from "@repo/ui/lib/helpers/vehicle";
 
 describe("buildVehicleTitle", () => {
   it("joins make, model and version", () => {

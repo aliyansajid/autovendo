@@ -38,7 +38,7 @@ import {
   formatDateShort,
   formatCardNumber,
   formatCardExpiry,
-} from "@/lib/helpers/format";
+} from "@repo/ui/lib/helpers/format";
 
 /**
  * Subscription Management Page

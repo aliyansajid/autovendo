@@ -25,7 +25,7 @@ import {
 import { XCircle } from "lucide-react";
 import { PricingButton } from "./_components/pricing-button";
 import { getTranslations } from "next-intl/server";
-import { formatPrice } from "@/lib/helpers/format";
+import { formatPrice } from "@repo/ui/lib/helpers/format";
 import { prisma } from "@repo/db";
 
 export async function generateMetadata(props: {

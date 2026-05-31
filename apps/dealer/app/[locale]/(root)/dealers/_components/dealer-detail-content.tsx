@@ -62,7 +62,7 @@ import {
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
 import { getVehicleFacetsFromApi } from "@/lib/api/vehicles";
-import { formatCount } from "@/lib/helpers/format";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 import type {
   DealerDetail,
   DealerVehiclesResult,
@@ -78,7 +78,7 @@ import { Spinner } from "@repo/ui/components/spinner";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { getImageUrl } from "@/lib/helpers/image";
+import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import { useMemo } from "react";
 
 interface DealerDetailContentProps {

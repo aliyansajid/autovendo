@@ -14,7 +14,7 @@ import {
   formatCount,
   formatCardNumber,
   formatCardExpiry,
-} from "@/lib/helpers/format";
+} from "@repo/ui/lib/helpers/format";
 
 describe("formatPrice", () => {
   it("formats price in CHF with Swiss separators", () => {
