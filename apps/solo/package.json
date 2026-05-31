@@ -11,14 +11,10 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@paralleldrive/cuid2": "^3.3.0",
     "@repo/auth": "*",
     "@repo/db": "*",
-    "@repo/storage": "*",
-    "@repo/transactional": "*",
     "@repo/ui": "*",
     "@sentry/nextjs": "^10.50.0",
-    "ioredis": "^5.10.1",
     "lucide-react": "^0.563.0",
     "next": "16.1.5",
     "next-intl": "^4.8.3",
