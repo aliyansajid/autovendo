@@ -171,6 +171,41 @@ enum VehicleType {
   CAMPER
 }
 
+enum BodyType {
+  // Car
+  SUV
+  SALOON
+  ESTATE
+  COUPE
+  CABRIOLET
+  SMALL_CAR
+  MINIVAN
+  PICKUP
+  BUS
+  // Camper
+  ALCOVE
+  TRAILER
+  INTEGRATED
+  CAB
+  BOX
+  SEMI_INTEGRATED
+  MOTORHOME
+  CARAVAN
+  OTHER
+  // Utility
+  BRIDGE
+  BRIDGE_DOUBLE_CAB
+  CHASSIS_CAB
+  BOX_GLAZED
+  BOX_DOUBLE_CAB
+  TIPPER
+  PLATFORM
+  SEMI_TRAILER
+  // Truck
+  CAB_OVER
+  COACH
+}
+
 enum FuelType {
   PETROL
   ETHANOL_PETROL
@@ -311,7 +346,7 @@ model Vehicle {
   make              String
   model             String?
   version           String?
-  bodyType          String
+  bodyType          BodyType
   fuelType          FuelType?
   registrationMonth Int
   registrationYear  Int
