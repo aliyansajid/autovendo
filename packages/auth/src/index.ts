@@ -4,6 +4,7 @@ import { prisma } from "@repo/db";
 import { admin } from "better-auth/plugins";
 import { ac, admin as adminRole, dealer, user } from "./permissions";
 import { stripe } from "@better-auth/stripe";
+import { i18n } from "@better-auth/i18n";
 import Stripe from "stripe";
 
 async function handleListingPayment(event: Stripe.Event) {
@@ -161,6 +162,52 @@ export const auth = betterAuth({
       ac,
       roles: { admin: adminRole, dealer, user },
       defaultRole: "user",
+    }),
+    i18n({
+      detection: ["cookie", "header"],
+      localeCookie: "NEXT_LOCALE",
+      locales: {
+        de: {
+          INVALID_EMAIL_OR_PASSWORD: "E-Mail oder Passwort ungültig",
+          USER_NOT_FOUND: "Benutzer nicht gefunden",
+          EMAIL_NOT_VERIFIED: "E-Mail nicht verifiziert",
+          TOO_MANY_REQUESTS:
+            "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
+          INVALID_TOKEN: "Ungültiger oder abgelaufener Token",
+          SESSION_EXPIRED:
+            "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+          BANNED_USER:
+            "Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Support.",
+          UNKNOWN_ERROR:
+            "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+        },
+        fr: {
+          INVALID_EMAIL_OR_PASSWORD: "E-mail ou mot de passe invalide",
+          USER_NOT_FOUND: "Utilisateur non trouvé",
+          EMAIL_NOT_VERIFIED: "E-mail non vérifié",
+          TOO_MANY_REQUESTS: "Trop de requêtes. Veuillez réessayer plus tard.",
+          INVALID_TOKEN: "Jeton invalide ou expiré",
+          SESSION_EXPIRED: "Session expirée. Veuillez vous reconnecter.",
+          BANNED_USER:
+            "Votre compte a été banni. Veuillez contacter le support.",
+          UNKNOWN_ERROR:
+            "Une erreur inconnue s'est produite. Veuillez réessayer.",
+        },
+        it: {
+          INVALID_EMAIL_OR_PASSWORD: "E-mail o password non validi",
+          USER_NOT_FOUND: "Utente non trovato",
+          EMAIL_NOT_VERIFIED: "E-mail non verificata",
+          TOO_MANY_REQUESTS:
+            "Troppe richieste. Per favore riprova più tardi.",
+          INVALID_TOKEN: "Token non valido o scaduto",
+          SESSION_EXPIRED:
+            "Sessione scaduta. Per favore effettua di nuovo il login.",
+          BANNED_USER:
+            "Il tuo account è stato bandito. Si prega di contattare il supporto.",
+          UNKNOWN_ERROR:
+            "Si è verificato un errore sconosciuto. Per favore riprova.",
+        },
+      },
     }),
     stripe({
       stripeClient,

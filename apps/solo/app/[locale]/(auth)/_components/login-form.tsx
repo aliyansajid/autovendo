@@ -27,7 +27,6 @@ import { useTranslations, useLocale } from "next-intl";
 
 export const LoginForm = () => {
   const t = useTranslations("LoginForm");
-  const tAuthErrors = useTranslations("AuthErrors");
   const tSchema = useTranslations("AuthSchema");
   const locale = useLocale();
   const searchParams = useSearchParams();
@@ -55,8 +54,7 @@ export const LoginForm = () => {
       });
 
       if (error) {
-        const errorCode = (error as any).code || "UNKNOWN_ERROR";
-        toast.error(tAuthErrors(errorCode) || error.message || t("errorDefault"));
+        toast.error(error.message || t("errorDefault"));
         return;
       }
 

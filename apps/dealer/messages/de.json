@@ -614,16 +614,6 @@
     "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
     "newPasswordMinLength": "Neues Passwort muss mindestens 8 Zeichen lang sein"
   },
-  "AuthErrors": {
-    "INVALID_EMAIL_OR_PASSWORD": "E-Mail oder Passwort ungültig",
-    "USER_NOT_FOUND": "Benutzer nicht gefunden",
-    "EMAIL_NOT_VERIFIED": "E-Mail nicht verifiziert",
-    "TOO_MANY_REQUESTS": "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
-    "INVALID_TOKEN": "Ungültiger oder abgelaufener Token",
-    "SESSION_EXPIRED": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
-    "BANNED_USER": "Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Support.",
-    "UNKNOWN_ERROR": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
-  },
   "ProfileSchema": {
     "invalidEmail": "Ungültige E-Mail-Adresse",
     "invalidImageType": "Nur PNG, JPG, JPEG oder WEBP Bilder sind erlaubt",

@@ -27,7 +27,6 @@ import { useTranslations, useLocale } from "next-intl";
 
 export const SignupForm = () => {
   const t = useTranslations("SignupForm");
-  const tAuthErrors = useTranslations("AuthErrors");
   const tSchema = useTranslations("AuthSchema");
   const locale = useLocale();
   const [isPending, startTransition] = useTransition();
@@ -54,8 +53,7 @@ export const SignupForm = () => {
       });
 
       if (error) {
-        const errorCode = (error as any).code || "UNKNOWN_ERROR";
-        toast.error(tAuthErrors(errorCode) || error.message || t("errorDefault"));
+        toast.error(error.message || t("errorDefault"));
         return;
       }
 

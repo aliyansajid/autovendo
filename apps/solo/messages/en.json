@@ -606,16 +606,6 @@
     "newPasswordMinLength": "New password must be at least 8 characters long",
     "nameMinLength": "Name must be at least 3 characters long"
   },
-  "AuthErrors": {
-    "INVALID_EMAIL_OR_PASSWORD": "Invalid email or password",
-    "USER_NOT_FOUND": "User not found",
-    "EMAIL_NOT_VERIFIED": "Email not verified",
-    "TOO_MANY_REQUESTS": "Too many requests. Please try again later.",
-    "INVALID_TOKEN": "Invalid or expired token",
-    "SESSION_EXPIRED": "Session expired. Please log in again.",
-    "BANNED_USER": "Your account has been banned. Please contact support.",
-    "UNKNOWN_ERROR": "An unknown error occurred. Please try again."
-  },
   "ProfileSchema": {
     "invalidEmail": "Invalid email address",
     "invalidImageType": "Only PNG, JPG, JPEG or WEBP images are allowed",

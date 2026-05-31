@@ -609,16 +609,6 @@
     "currentPasswordRequired": "La password attuale è obbligatoria",
     "newPasswordMinLength": "La nuova password deve contenere almeno 8 caratteri"
   },
-  "AuthErrors": {
-    "INVALID_EMAIL_OR_PASSWORD": "E-mail o password non validi",
-    "USER_NOT_FOUND": "Utente non trovato",
-    "EMAIL_NOT_VERIFIED": "E-mail non verificata",
-    "TOO_MANY_REQUESTS": "Troppe richieste. Per favore riprova più tardi.",
-    "INVALID_TOKEN": "Token non valido o scaduto",
-    "SESSION_EXPIRED": "Sessione scaduta. Per favore effettua di nuovo il login.",
-    "BANNED_USER": "Il tuo account è stato bandito. Si prega di contattare il supporto.",
-    "UNKNOWN_ERROR": "Si è verificato un errore sconosciuto. Per favore riprova."
-  },
   "ProfileSchema": {
     "invalidEmail": "Indirizzo e-mail non valido",
     "invalidImageType": "Sono consentite solo immagini PNG, JPG, JPEG o WEBP",
