@@ -25,7 +25,7 @@ import { toast } from "sonner";
 import { updateDealerProfileFromApi } from "@/lib/api/dealers";
 import { Spinner } from "@repo/ui/components/spinner";
 import { DealerProfile } from "@/types/dealer";
-import { swissCities } from "@/lib/constants/swiss-cities";
+import { swissCities } from "@repo/vehicle-constants";
 import { SelectItem } from "@repo/ui/components/select";
 
 // ---------------------------------------------------------------------------
