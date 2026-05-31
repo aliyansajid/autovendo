@@ -19,6 +19,7 @@ import seller from "./routes/seller";
 import sellerBilling from "./routes/seller-billing";
 import sellerListings from "./routes/seller-listings";
 import sellerVehicles from "./routes/seller-vehicles";
+import sellerWebhook from "./routes/seller-webhook";
 
 const app = new Hono<{
   Variables: {
@@ -119,6 +120,9 @@ app.route("/api/seller/listings", sellerListings);
 
 // Seller vehicles — public listing + authenticated dashboard
 app.route("/api/seller/vehicles", sellerVehicles);
+
+// Seller Stripe webhook
+app.route("/api/seller/webhook", sellerWebhook);
 
 // Session endpoint
 app.get("/api/session", (c) => {
