@@ -71,9 +71,9 @@ import type {
 import type { VehicleFacets, VehicleListItem } from "@/types/vehicle";
 import { createDealerContactSchema } from "@/schema/dealer-contact-schema";
 import {
-  sendDealerContactEmail,
-  getDealerVehicles,
-} from "@/app/actions/dealer.actions";
+  sendDealerContactEmailFromApi,
+  getDealerVehiclesFromApi,
+} from "@/lib/api/dealers";
 import { Spinner } from "@repo/ui/components/spinner";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { useSearchParams } from "next/navigation";
@@ -117,7 +117,7 @@ export const DealerDetailContent = ({
 
   const handlePageChange = (next: number) => {
     startFilterTransition(async () => {
-      const result = await getDealerVehicles(
+      const result = await getDealerVehiclesFromApi(
         dealer.id,
         next,
         12,
@@ -145,7 +145,7 @@ export const DealerDetailContent = ({
     (newFilters: Partial<VehicleSearchParams>) => {
       setCurrentFilters(newFilters);
       startFilterTransition(async () => {
-        const result = await getDealerVehicles(
+        const result = await getDealerVehiclesFromApi(
           dealer.id,
           1,
           12,
@@ -165,7 +165,7 @@ export const DealerDetailContent = ({
   const handleSortChange = (newSort: string) => {
     setSortBy(newSort);
     startFilterTransition(async () => {
-      const result = await getDealerVehicles(
+      const result = await getDealerVehiclesFromApi(
         dealer.id,
         1,
         12,
@@ -194,7 +194,7 @@ export const DealerDetailContent = ({
     setIsSubmitting(true);
     startTransition(async () => {
       try {
-        const result = await sendDealerContactEmail(dealer.id, values);
+        const result = await sendDealerContactEmailFromApi(dealer.id, values);
 
         if (result.success) {
           toast.success(t("successToast"));

@@ -8,7 +8,7 @@ import { FeaturedListings } from "./_components/featured-listings";
 import { FeaturedGarage } from "./_components/featured-garage";
 import { About } from "./_components/about";
 import { getVehiclesFromApi } from "@/lib/api/vehicles";
-import { getDealers } from "@/app/actions/dealer.actions";
+import { getDealersFromApi } from "@/lib/api/dealers";
 import { buildVehicleTitle } from "@/lib/helpers/vehicle";
 import {
   formatPrice,
@@ -39,7 +39,7 @@ export default async function HomePage(props: {
       pageSize: 12,
       totalPages: 0,
     })),
-    getDealers({ pageSize: 8 }),
+    getDealersFromApi({ pageSize: 8 }),
     getTranslations("Vehicle"),
   ]);
 

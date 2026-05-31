@@ -20,8 +20,9 @@ import {
 import { useTranslations, useLocale } from "next-intl";
 import { authClient } from "@repo/auth/client";
 import { useTransition, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { updateDealerProfile } from "@/app/actions/dealer.actions";
+import { updateDealerProfileFromApi } from "@/lib/api/dealers";
 import { Spinner } from "@repo/ui/components/spinner";
 import { DealerProfile } from "@/types/dealer";
 import { swissCities } from "@/lib/constants/swiss-cities";
@@ -161,6 +162,7 @@ interface DealerProfileFormProps {
 export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   const t = useTranslations("DealerProfileForm");
   const locale = useLocale();
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const tSchema = useTranslations("ProfileSchema");
@@ -309,9 +311,9 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           coverImageUrl = await uploadFile(values.coverImage, "branding");
         }
 
-        // 2. Update Dealer Profile (Server Action) first
+        // 2. Update Dealer Profile via API
         // This handles R2 cleanup by comparing with current DB state
-        const result = await updateDealerProfile({
+        const result = await updateDealerProfileFromApi({
           ...values,
           image: (imageUrl as string) || null,
           logo: (logoUrl as string) || null,
@@ -359,6 +361,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
 
         // 5. Final Success
         toast.success(t("profileUpdateSuccess"));
+        router.refresh();
         form.reset({
           ...values,
           image: imageUrl as string | undefined,

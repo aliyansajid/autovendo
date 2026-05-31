@@ -3,10 +3,10 @@ import { buildAlternates } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { getImageUrl } from "@/lib/helpers/image";
 import {
-  getDealerById,
-  getDealerVehicles,
-  getDealerGoogleReviews,
-} from "@/app/actions/dealer.actions";
+  getDealerByIdFromApi,
+  getDealerVehiclesFromApi,
+  getDealerGoogleReviewsFromApi,
+} from "@/lib/api/dealers";
 import { notFound } from "next/navigation";
 import { DealerDetailContent } from "../_components/dealer-detail-content";
 import { parseSearchParams } from "@/lib/helpers/vehicle";
@@ -19,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ id: string; locale: string }>;
 }): Promise<Metadata> {
   const { id, locale } = await params;
-  const dealer = await getDealerById(id);
+  const dealer = await getDealerByIdFromApi(id);
   if (!dealer) return {};
 
   const location = [dealer.zipCode, dealer.city].filter(Boolean).join(" ");
@@ -61,15 +61,15 @@ export default async function DealerPage({
   const t_schema = await getTranslations("VehicleSearchSchema");
   const schema = createVehicleSearchSchema(t_schema);
   const filters = schema.parse(parsedFilters);
-  const dealer = await getDealerById(id);
+  const dealer = await getDealerByIdFromApi(id);
 
   if (!dealer) {
     notFound();
   }
 
   const [initialVehicles, googleData] = await Promise.all([
-    getDealerVehicles(dealer.id, 1, 12, filters),
-    getDealerGoogleReviews(dealer.id),
+    getDealerVehiclesFromApi(dealer.id, 1, 12, filters),
+    getDealerGoogleReviewsFromApi(dealer.id),
   ]);
 
   const dealerSchema = {

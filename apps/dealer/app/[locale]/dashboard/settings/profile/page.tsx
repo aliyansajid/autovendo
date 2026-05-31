@@ -1,11 +1,11 @@
-import { getDealerProfile } from "@/app/actions/dealer.actions";
+import { getDealerProfileFromApi } from "@/lib/api/dealers";
 import { DealerProfileForm } from "@/app/[locale]/dashboard/settings/_components/dealer-profile-form";
 import { getTranslations } from "next-intl/server";
 
 export default async function ProfilePage() {
   const t = await getTranslations("ProfilePage");
 
-  const dealerProfile = await getDealerProfile();
+  const dealerProfile = await getDealerProfileFromApi();
 
   return (
     <div className="space-y-6">

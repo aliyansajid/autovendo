@@ -13,6 +13,8 @@ import dealerDashboard from "./routes/dealer-dashboard";
 import dealerStorage from "./routes/dealer-storage";
 import dealerBilling from "./routes/dealer-billing";
 import contact from "./routes/contact";
+import dealerProfile from "./routes/dealer-profile";
+import dealers from "./routes/dealers";
 
 const app = new Hono<{
   Variables: {
@@ -86,6 +88,12 @@ app.route("/api/dealer/billing", dealerBilling);
 
 // Contact form
 app.route("/api/contact", contact);
+
+// Dealer profile (authenticated)
+app.route("/api/dealer/profile", dealerProfile);
+
+// Public dealers list and detail
+app.route("/api/dealers", dealers);
 
 // Session endpoint
 app.get("/api/session", (c) => {

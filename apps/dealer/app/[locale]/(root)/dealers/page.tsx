@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { buildMetadata, PAGE_META } from "@/lib/seo";
 import { Suspense } from "react";
 import { DealersList } from "./_components/dealers-list";
-import { getDealers } from "@/app/actions/dealer.actions";
+import { getDealersFromApi } from "@/lib/api/dealers";
 import { createDealerSearchSchema } from "@/schema/dealer-search-schema";
 import { getTranslations } from "next-intl/server";
 
@@ -26,7 +26,7 @@ export default async function DealersPage(props: {
   const schema = createDealerSearchSchema(t_schema);
   const query = schema.parse(searchParams);
 
-  const initialData = await getDealers({
+  const initialData = await getDealersFromApi({
     searchQuery: query.q,
     page: query.page,
     pageSize: 12,

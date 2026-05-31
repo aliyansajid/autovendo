@@ -1,6 +1,6 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
-import { getDealerProfile } from "@/app/actions/dealer.actions";
+import { getDealerProfileFromApi } from "@/lib/api/dealers";
 import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
 import { VehicleForm } from "../_components/vehicle-form";
 import { Link, redirect } from "@/i18n/routing";
@@ -18,7 +18,7 @@ export default async function AddNewVehiclePage(props: {
   });
 
   const [dealerProfile, subscriptionStatus] = await Promise.all([
-    session?.user?.id ? getDealerProfile() : null,
+    session?.user?.id ? getDealerProfileFromApi() : null,
     getSubscriptionStatusFromApi(),
   ]);
 

@@ -1,6 +1,6 @@
 import { auth } from "@repo/auth";
 import { headers } from "next/headers";
-import { getDealerProfile } from "@/app/actions/dealer.actions";
+import { getDealerProfileFromApi } from "@/lib/api/dealers";
 import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
 import { getDealerVehicleById } from "@/lib/api/dealer-vehicles";
 import { VehicleForm } from "../_components/vehicle-form";
@@ -23,7 +23,7 @@ export default async function EditVehiclePage({
   });
 
   const [dealerProfile, vehicle, subscriptionStatus] = await Promise.all([
-    session?.user?.id ? getDealerProfile() : null,
+    session?.user?.id ? getDealerProfileFromApi() : null,
     getDealerVehicleById(id),
     getSubscriptionStatusFromApi(),
   ]);
