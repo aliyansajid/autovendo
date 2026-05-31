@@ -18,7 +18,7 @@ import {
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
 import { useTranslations, useLocale } from "next-intl";
-import { authClient } from "@repo/auth/client";
+import { updateUser, changeEmail } from "@/lib/api/auth-client";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { updateSellerProfile } from "@/app/actions/seller.actions";
@@ -81,7 +81,7 @@ export const SellerProfileForm = ({ initialData }: SellerProfileFormProps) => {
 
         // 2. Update name via Better Auth (user table)
         if (nameChanged) {
-          const { error } = await authClient.updateUser({ name: values.name });
+          const { error } = await updateUser({ name: values.name });
           if (error) {
             toast.error(error.message || t("userUpdateError"));
             return;
@@ -91,7 +91,7 @@ export const SellerProfileForm = ({ initialData }: SellerProfileFormProps) => {
         // 3. Email change via Better Auth — sends confirmation to new email,
         //    user.email is only updated after they click the link
         if (emailChanged) {
-          const { error } = await authClient.changeEmail({
+          const { error } = await changeEmail({
             newEmail: values.email,
             callbackURL: `/${locale}/dashboard/settings/profile`,
           });

@@ -18,7 +18,7 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import { authClient } from "@repo/auth/client";
+import { signUp } from "@/lib/api/auth-client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { createSignupSchema } from "@/schema/auth-schema";
@@ -46,7 +46,7 @@ export const SignupForm = () => {
 
   function onSubmit(values: z.infer<typeof signupSchema>) {
     startTransition(async () => {
-      const { error } = await authClient.signUp.email({
+      const { error } = await signUp({
         email: values.email,
         password: values.password,
         name: values.name,

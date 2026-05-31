@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@repo/auth/client";
+import { useSession } from "@/lib/api/auth-client";
 import { Button } from "@repo/ui/src/components/button";
 import { useRouter } from "@/i18n/routing";
 import { useLocale } from "next-intl";
@@ -18,7 +18,7 @@ export const PricingButton = ({
 }: PricingButtonProps) => {
   const router = useRouter();
   const locale = useLocale();
-  const { data: session } = authClient.useSession();
+  const { data: session } = useSession();
 
   const handleClick = () => {
     const destination = "/dashboard/billing";

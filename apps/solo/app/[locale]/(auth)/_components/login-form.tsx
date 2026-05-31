@@ -18,7 +18,7 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import { authClient } from "@repo/auth/client";
+import { signIn } from "@/lib/api/auth-client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
@@ -47,7 +47,7 @@ export const LoginForm = () => {
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
     startTransition(async () => {
-      const { error } = await authClient.signIn.email({
+      const { error } = await signIn({
         email: values.email,
         password: values.password,
         rememberMe: values.rememberme,
@@ -55,11 +55,12 @@ export const LoginForm = () => {
       });
 
       if (error) {
-        // Better Auth returns error codes in some versions/configs, or we fallback to statusText or message
         const errorCode = (error as any).code || "UNKNOWN_ERROR";
         toast.error(tAuthErrors(errorCode) || error.message || t("errorDefault"));
         return;
       }
+
+      window.location.href = callbackUrl;
     });
   }
 
