@@ -32,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }))
   );
 
-  const vehicleEntries: MetadataRoute.Sitemap = vehicles.flatMap((v) =>
+  const vehicleEntries: MetadataRoute.Sitemap = vehicles.flatMap((v: { id: string; updatedAt: string }) =>
     LOCALES.map((locale) => ({
       url: `${BASE_URL}/${locale}/cars/${v.id}`,
       lastModified: v.updatedAt,
@@ -41,7 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  const dealerEntries: MetadataRoute.Sitemap = dealers.flatMap((d) =>
+  const dealerEntries: MetadataRoute.Sitemap = dealers.flatMap((d: { id: string; updatedAt: string }) =>
     LOCALES.map((locale) => ({
       url: `${BASE_URL}/${locale}/dealers/${d.id}`,
       lastModified: d.updatedAt,
