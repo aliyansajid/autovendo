@@ -57,8 +57,6 @@ export const LoginForm = () => {
         toast.error(error.message || t("errorDefault"));
         return;
       }
-
-      window.location.href = callbackUrl;
     });
   }
 
@@ -121,7 +119,7 @@ export const LoginForm = () => {
             </Field>
 
             <div className="text-center text-sm">
-              {t("noAccount")}{" "}
+              {t("noAccount")}&nbsp;
               <Link href="/signup" className="underline underline-offset-4">
                 {t("signup")}
               </Link>
