@@ -9,32 +9,29 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://api.autovendo.ch";
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Run next-intl middleware
+  // Run next-intl middleware first (handles locale redirects)
   const response = intlMiddleware(request);
 
-  // Check if it's a dashboard route
-  const isDashboardRoute = pathname.match(
-    /^\/(de|en|fr|it)\/dashboard(\/.*)?$/,
-  );
+  // Only protect dashboard routes
+  const isDashboardRoute = pathname.match(/^\/(de|en|fr|it)\/dashboard(\/.*)?$/);
+  if (!isDashboardRoute) return response;
 
-  if (isDashboardRoute) {
-    const cookie = request.headers.get("cookie") ?? "";
-    let session: { user?: unknown } | null = null;
+  const cookie = request.headers.get("cookie") ?? "";
+  let session: { user?: { role?: string } } | null = null;
 
-    try {
-      const res = await fetch(`${API_BASE}/api/auth/get-session`, {
-        headers: { cookie },
-        cache: "no-store",
-      });
-      if (res.ok) session = await res.json();
-    } catch {}
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/get-session`, {
+      headers: { cookie },
+      cache: "no-store",
+    });
+    if (res.ok) session = await res.json();
+  } catch {}
 
-    if (!session?.user) {
-      const locale = pathname.split("/")[1] || routing.defaultLocale;
-      const loginUrl = new URL(`/${locale}/login`, request.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
+  if (!session?.user || session.user.role !== "user") {
+    const locale = pathname.split("/")[1] || routing.defaultLocale;
+    const loginUrl = new URL(`/${locale}/login`, request.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   return response;
