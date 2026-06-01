@@ -209,7 +209,7 @@ function buildWhereClause(
   }
 
   if (!omit.bodyType && params.bodyType.length > 0) {
-    const bodyTypeOr = params.bodyType.map((b) => ({ bodyType: { equals: b, mode: "insensitive" as const } }));
+    const bodyTypeOr = params.bodyType.map((b) => ({ bodyType: b.toUpperCase().replace(/-/g, "_") as any }));
     where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), { OR: bodyTypeOr }];
   }
 
@@ -682,10 +682,10 @@ vehicle.get("/:id", async (c) => {
       seller: {
         select: {
           id: true,
-          name: true,
           city: true,
           phoneNumber: true,
           email: true,
+          user: { select: { name: true } },
         },
       },
     },
@@ -764,7 +764,7 @@ vehicle.get("/:id", async (c) => {
       : v.seller
         ? {
             id: v.seller.id,
-            name: v.seller.name ?? null,
+            name: v.seller.user?.name ?? null,
             address: v.seller.city ?? null,
             city: v.seller.city ?? null,
             phone: v.seller.phoneNumber ?? null,
