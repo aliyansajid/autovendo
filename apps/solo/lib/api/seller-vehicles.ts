@@ -96,19 +96,6 @@ export async function apiPublishOrPay(
   return json;
 }
 
-// ─── Seller signup post-hook ──────────────────────────────────────────────────
-
-export async function apiSellerSignup(data: {
-  name: string;
-  email: string;
-  locale: string;
-}): Promise<void> {
-  await clientFetch("/api/seller/signup", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-}
-
 // ─── Listing checkout ─────────────────────────────────────────────────────────
 
 export async function apiCreateListingCheckout(

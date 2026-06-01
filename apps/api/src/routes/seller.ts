@@ -1,8 +1,6 @@
 import { Hono } from "hono";
 import { prisma } from "@repo/db";
 import { z } from "zod";
-import sendEmail from "@repo/transactional";
-import { SellerWelcomeEmail } from "@repo/transactional/emails/seller-welcome";
 
 type Variables = {
   user: { id: string; email: string; name?: string | null } | null;
@@ -21,57 +19,6 @@ const updateSchema = z.object({
   streetAddress: z.string().min(5).max(100),
   zipCode: z.string().min(4).max(10),
   city: z.string().min(2).max(50),
-});
-
-// ─── POST /signup ─────────────────────────────────────────────────────────────
-// Called after successful sign-up to create seller profile + send welcome email
-
-router.post("/signup", async (c) => {
-  const user = c.get("user");
-  if (!user) return c.json({ error: "Unauthorized" }, 401);
-
-  const { name, email, locale } = await c.req.json<{
-    name: string;
-    email: string;
-    locale: string;
-  }>();
-
-  // Create seller profile (non-critical — ignore if already exists)
-  try {
-    await prisma.seller.upsert({
-      where: { userId: user.id },
-      update: {},
-      create: {
-        userId: user.id,
-        phoneNumber: "",
-        streetAddress: "",
-        zipCode: "",
-        city: "",
-        country: "ch",
-      },
-    });
-  } catch {
-    // non-critical
-  }
-
-  // Send welcome email (non-critical)
-  try {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autosolo.ch";
-    const appName = process.env.APP_NAME ?? "AutoSolo";
-
-    await sendEmail({
-      to: email,
-      subject: `Welcome to ${appName} – your account is ready`,
-      template: SellerWelcomeEmail({
-        sellerName: name,
-        dashboardUrl: `${appUrl}/${locale}/dashboard`,
-      }),
-    });
-  } catch {
-    // non-critical
-  }
-
-  return c.json({ success: true });
 });
 
 // ─── GET /profile ─────────────────────────────────────────────────────────────

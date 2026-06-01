@@ -19,7 +19,6 @@ import {
 } from "@repo/ui/components/custom-form-field";
 import { Spinner } from "@repo/ui/components/spinner";
 import { signUp } from "@/lib/api/auth-client";
-import { apiSellerSignup } from "@/lib/api/seller-vehicles";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
@@ -60,7 +59,6 @@ export const SignupForm = () => {
         return;
       }
 
-      await apiSellerSignup({ name: values.name, email: values.email, locale });
       toast.success(t("successDefault"));
     });
   }

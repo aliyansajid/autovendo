@@ -1,4 +1,5 @@
 import { betterAuth, type BetterAuthPlugin } from "better-auth";
+import { createAuthMiddleware } from "better-auth/api";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@repo/db";
 import { admin } from "better-auth/plugins";
@@ -230,7 +231,8 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
           fr: {
             INVALID_EMAIL_OR_PASSWORD: "E-mail ou mot de passe invalide",
             INVALID_PASSWORD: "Mot de passe invalide",
-            CREDENTIAL_ACCOUNT_NOT_FOUND: "Aucun compte avec mot de passe trouvé",
+            CREDENTIAL_ACCOUNT_NOT_FOUND:
+              "Aucun compte avec mot de passe trouvé",
             USER_NOT_FOUND: "Utilisateur non trouvé",
             EMAIL_NOT_VERIFIED: "E-mail non vérifié",
             TOO_MANY_REQUESTS:
@@ -283,6 +285,51 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
       }),
       ...additionalPlugins,
     ],
+
+    hooks: {
+      after: createAuthMiddleware(async (ctx) => {
+        if (ctx.path !== "/sign-up/email") return;
+        const newSession = ctx.context.newSession;
+        if (!newSession) return;
+        const { user } = newSession;
+
+        // Create seller profile (non-critical)
+        try {
+          await prisma.seller.upsert({
+            where: { userId: user.id },
+            update: {},
+            create: {
+              userId: user.id,
+              phoneNumber: "",
+              streetAddress: "",
+              zipCode: "",
+              city: "",
+              country: "ch",
+            },
+          });
+        } catch {}
+
+        // Send welcome email (fire-and-forget)
+        void (async () => {
+          try {
+            const { sendEmail } = await import("@repo/transactional");
+            const { SellerWelcomeEmail } = await import(
+              "@repo/transactional/emails/seller-welcome"
+            );
+            const soloUrl =
+              process.env.NEXT_PUBLIC_SOLO_URL ?? "https://autosolo.ch";
+            await sendEmail({
+              to: user.email,
+              subject: `Welcome to AutoSolo – your account is ready`,
+              template: SellerWelcomeEmail({
+                sellerName: user.name,
+                dashboardUrl: `${soloUrl}/dashboard`,
+              }),
+            });
+          } catch {}
+        })();
+      }),
+    },
   });
 }
 
