@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPassword } from "@/lib/api/auth-client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
+import { useLocale } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { Spinner } from "@repo/ui/components/spinner";
@@ -29,6 +30,7 @@ import { useTranslations } from "next-intl";
 export const ResetPasswordForm = () => {
   const t = useTranslations("ResetPasswordForm");
   const tSchema = useTranslations("AuthSchema");
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -65,7 +67,7 @@ export const ResetPasswordForm = () => {
       }
 
       toast.success(t("successReset"));
-      router.push("/login");
+      router.push(`/${locale}/login`);
     });
   }
 
