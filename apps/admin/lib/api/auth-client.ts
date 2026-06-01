@@ -35,9 +35,17 @@ export type SessionUser = {
   [key: string]: unknown;
 };
 
+export type SessionData = {
+  id: string;
+  userId: string;
+  expiresAt: string;
+  impersonatedBy?: string | null;
+  [key: string]: unknown;
+};
+
 export type Session = {
   user: SessionUser;
-  session: unknown;
+  session: SessionData;
 } | null;
 
 export function useSession(): { data: Session; isPending: boolean } {
