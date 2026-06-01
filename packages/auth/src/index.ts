@@ -213,6 +213,8 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         translations: {
           de: {
             INVALID_EMAIL_OR_PASSWORD: "E-Mail oder Passwort ungültig",
+            INVALID_PASSWORD: "Ungültiges Passwort",
+            CREDENTIAL_ACCOUNT_NOT_FOUND: "Kein Passwort-Konto gefunden",
             USER_NOT_FOUND: "Benutzer nicht gefunden",
             EMAIL_NOT_VERIFIED: "E-Mail nicht verifiziert",
             TOO_MANY_REQUESTS:
@@ -227,6 +229,8 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
           },
           fr: {
             INVALID_EMAIL_OR_PASSWORD: "E-mail ou mot de passe invalide",
+            INVALID_PASSWORD: "Mot de passe invalide",
+            CREDENTIAL_ACCOUNT_NOT_FOUND: "Aucun compte avec mot de passe trouvé",
             USER_NOT_FOUND: "Utilisateur non trouvé",
             EMAIL_NOT_VERIFIED: "E-mail non vérifié",
             TOO_MANY_REQUESTS:
@@ -240,6 +244,8 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
           },
           it: {
             INVALID_EMAIL_OR_PASSWORD: "E-mail o password non validi",
+            INVALID_PASSWORD: "Password non valida",
+            CREDENTIAL_ACCOUNT_NOT_FOUND: "Nessun account con password trovato",
             USER_NOT_FOUND: "Utente non trovato",
             EMAIL_NOT_VERIFIED: "E-mail non verificata",
             TOO_MANY_REQUESTS:
