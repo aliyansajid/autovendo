@@ -434,6 +434,10 @@
         }
       }
     },
+    "AdvancedSearchSchema": {
+      "negativeError": "Value cannot be negative",
+      "invalidNumber": "Invalid number"
+    },
     "CarsPage": {
       "title": "Find Vehicles",
       "subtitle": "Discover our wide range of vehicles",

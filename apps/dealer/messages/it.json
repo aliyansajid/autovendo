@@ -434,6 +434,10 @@
         }
       }
     },
+    "AdvancedSearchSchema": {
+      "negativeError": "Il valore non può essere negativo",
+      "invalidNumber": "Numero non valido"
+    },
     "CarsPage": {
       "title": "Trova veicoli",
       "subtitle": "Scopri la nostra vasta gamma di veicoli",
