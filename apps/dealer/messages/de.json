@@ -276,7 +276,6 @@
       "REINFORCED_SUSPENSION": "Verstärkte Federung",
       "ADDITIONAL_INSTRUMENTS": "Zusätzliche Instrumente"
     },
-
     "warranty": {
       "FROM_DELIVERY": "Ab Lieferung",
       "FROM_FIRST_REGISTRATION": "Ab Erstzulassung",
@@ -988,11 +987,26 @@
         "period": "/ Monat",
         "description": "Ideal für kleinere Bestände.",
         "features": [
-          { "name": "Bis zu 5 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
+          {
+            "name": "Bis zu 5 Fahrzeuge",
+            "included": true
+          },
+          {
+            "name": "Volle Sichtbarkeit",
+            "included": true
+          },
+          {
+            "name": "Persönlicher Support",
+            "included": true
+          },
+          {
+            "name": "Keine versteckten Kosten",
+            "included": true
+          },
+          {
+            "name": "Laufzeit flexibel",
+            "included": true
+          }
         ],
         "buttonText": "Paket wählen",
         "popular": false
@@ -1003,11 +1017,26 @@
         "period": "/ Monat",
         "description": "Perfekt für wachsende Händler.",
         "features": [
-          { "name": "Bis zu 10 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
+          {
+            "name": "Bis zu 10 Fahrzeuge",
+            "included": true
+          },
+          {
+            "name": "Volle Sichtbarkeit",
+            "included": true
+          },
+          {
+            "name": "Persönlicher Support",
+            "included": true
+          },
+          {
+            "name": "Keine versteckten Kosten",
+            "included": true
+          },
+          {
+            "name": "Laufzeit flexibel",
+            "included": true
+          }
         ],
         "buttonText": "Paket wählen",
         "popular": false
@@ -1018,11 +1047,26 @@
         "period": "/ Monat",
         "description": "Für etablierte Händler.",
         "features": [
-          { "name": "Bis zu 15 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
+          {
+            "name": "Bis zu 15 Fahrzeuge",
+            "included": true
+          },
+          {
+            "name": "Volle Sichtbarkeit",
+            "included": true
+          },
+          {
+            "name": "Persönlicher Support",
+            "included": true
+          },
+          {
+            "name": "Keine versteckten Kosten",
+            "included": true
+          },
+          {
+            "name": "Laufzeit flexibel",
+            "included": true
+          }
         ],
         "buttonText": "Paket wählen",
         "popular": true
@@ -1033,11 +1077,26 @@
         "period": "/ Monat",
         "description": "Für Händler mit höherem Volumen.",
         "features": [
-          { "name": "Bis zu 25 Fahrzeuge", "included": true },
-          { "name": "Volle Sichtbarkeit", "included": true },
-          { "name": "Persönlicher Support", "included": true },
-          { "name": "Keine versteckten Kosten", "included": true },
-          { "name": "Laufzeit flexibel", "included": true }
+          {
+            "name": "Bis zu 25 Fahrzeuge",
+            "included": true
+          },
+          {
+            "name": "Volle Sichtbarkeit",
+            "included": true
+          },
+          {
+            "name": "Persönlicher Support",
+            "included": true
+          },
+          {
+            "name": "Keine versteckten Kosten",
+            "included": true
+          },
+          {
+            "name": "Laufzeit flexibel",
+            "included": true
+          }
         ],
         "buttonText": "Paket wählen",
         "popular": false
@@ -1852,5 +1911,9 @@
     "button": "Zurück zur Startseite",
     "metaTitle": "404 - Seite nicht gefunden | AutoVendo",
     "metaDescription": "Entschuldigung, die angeforderte Seite konnte auf AutoVendo nicht gefunden werden."
+  },
+  "AdvancedSearchSchema": {
+    "negativeError": "Wert darf nicht negativ sein",
+    "invalidNumber": "Ungültige Zahl"
   }
 }

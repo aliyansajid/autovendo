@@ -981,11 +981,26 @@
         "period": "/ month",
         "description": "Ideal for smaller inventories.",
         "features": [
-          { "name": "Up to 5 vehicles", "included": true },
-          { "name": "Full visibility", "included": true },
-          { "name": "Personal support", "included": true },
-          { "name": "No hidden costs", "included": true },
-          { "name": "Flexible duration", "included": true }
+          {
+            "name": "Up to 5 vehicles",
+            "included": true
+          },
+          {
+            "name": "Full visibility",
+            "included": true
+          },
+          {
+            "name": "Personal support",
+            "included": true
+          },
+          {
+            "name": "No hidden costs",
+            "included": true
+          },
+          {
+            "name": "Flexible duration",
+            "included": true
+          }
         ],
         "buttonText": "Choose plan",
         "popular": false
@@ -996,11 +1011,26 @@
         "period": "/ month",
         "description": "Perfect for growing dealers.",
         "features": [
-          { "name": "Up to 10 vehicles", "included": true },
-          { "name": "Full visibility", "included": true },
-          { "name": "Personal support", "included": true },
-          { "name": "No hidden costs", "included": true },
-          { "name": "Flexible duration", "included": true }
+          {
+            "name": "Up to 10 vehicles",
+            "included": true
+          },
+          {
+            "name": "Full visibility",
+            "included": true
+          },
+          {
+            "name": "Personal support",
+            "included": true
+          },
+          {
+            "name": "No hidden costs",
+            "included": true
+          },
+          {
+            "name": "Flexible duration",
+            "included": true
+          }
         ],
         "buttonText": "Choose plan",
         "popular": false
@@ -1011,11 +1041,26 @@
         "period": "/ month",
         "description": "For established dealers.",
         "features": [
-          { "name": "Up to 15 vehicles", "included": true },
-          { "name": "Full visibility", "included": true },
-          { "name": "Personal support", "included": true },
-          { "name": "No hidden costs", "included": true },
-          { "name": "Flexible duration", "included": true }
+          {
+            "name": "Up to 15 vehicles",
+            "included": true
+          },
+          {
+            "name": "Full visibility",
+            "included": true
+          },
+          {
+            "name": "Personal support",
+            "included": true
+          },
+          {
+            "name": "No hidden costs",
+            "included": true
+          },
+          {
+            "name": "Flexible duration",
+            "included": true
+          }
         ],
         "buttonText": "Choose plan",
         "popular": true
@@ -1026,11 +1071,26 @@
         "period": "/ month",
         "description": "For dealers with higher volume.",
         "features": [
-          { "name": "Up to 25 vehicles", "included": true },
-          { "name": "Full visibility", "included": true },
-          { "name": "Personal support", "included": true },
-          { "name": "No hidden costs", "included": true },
-          { "name": "Flexible duration", "included": true }
+          {
+            "name": "Up to 25 vehicles",
+            "included": true
+          },
+          {
+            "name": "Full visibility",
+            "included": true
+          },
+          {
+            "name": "Personal support",
+            "included": true
+          },
+          {
+            "name": "No hidden costs",
+            "included": true
+          },
+          {
+            "name": "Flexible duration",
+            "included": true
+          }
         ],
         "buttonText": "Choose plan",
         "popular": false
@@ -1841,5 +1901,9 @@
     "button": "Back to Home",
     "metaTitle": "404 - Page Not Found | AutoVendo",
     "metaDescription": "Sorry, the requested page could not be found on AutoVendo."
+  },
+  "AdvancedSearchSchema": {
+    "negativeError": "Value cannot be negative",
+    "invalidNumber": "Invalid number"
   }
 }

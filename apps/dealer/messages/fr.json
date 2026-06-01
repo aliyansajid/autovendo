@@ -981,11 +981,26 @@
         "period": "/ mois",
         "description": "Idéal pour les petits stocks.",
         "features": [
-          { "name": "Jusqu'à 5 véhicules", "included": true },
-          { "name": "Visibilité totale", "included": true },
-          { "name": "Support personnel", "included": true },
-          { "name": "Pas de frais cachés", "included": true },
-          { "name": "Durée flexible", "included": true }
+          {
+            "name": "Jusqu'à 5 véhicules",
+            "included": true
+          },
+          {
+            "name": "Visibilité totale",
+            "included": true
+          },
+          {
+            "name": "Support personnel",
+            "included": true
+          },
+          {
+            "name": "Pas de frais cachés",
+            "included": true
+          },
+          {
+            "name": "Durée flexible",
+            "included": true
+          }
         ],
         "buttonText": "Choisir le forfait",
         "popular": false
@@ -996,11 +1011,26 @@
         "period": "/ mois",
         "description": "Parfait pour les concessionnaires en croissance.",
         "features": [
-          { "name": "Jusqu'à 10 véhicules", "included": true },
-          { "name": "Visibilité totale", "included": true },
-          { "name": "Support personnel", "included": true },
-          { "name": "Pas de frais cachés", "included": true },
-          { "name": "Durée flexible", "included": true }
+          {
+            "name": "Jusqu'à 10 véhicules",
+            "included": true
+          },
+          {
+            "name": "Visibilité totale",
+            "included": true
+          },
+          {
+            "name": "Support personnel",
+            "included": true
+          },
+          {
+            "name": "Pas de frais cachés",
+            "included": true
+          },
+          {
+            "name": "Durée flexible",
+            "included": true
+          }
         ],
         "buttonText": "Choisir le forfait",
         "popular": false
@@ -1011,11 +1041,26 @@
         "period": "/ mois",
         "description": "Pour les concessionnaires établis.",
         "features": [
-          { "name": "Jusqu'à 15 véhicules", "included": true },
-          { "name": "Visibilité totale", "included": true },
-          { "name": "Support personnel", "included": true },
-          { "name": "Pas de frais cachés", "included": true },
-          { "name": "Durée flexible", "included": true }
+          {
+            "name": "Jusqu'à 15 véhicules",
+            "included": true
+          },
+          {
+            "name": "Visibilité totale",
+            "included": true
+          },
+          {
+            "name": "Support personnel",
+            "included": true
+          },
+          {
+            "name": "Pas de frais cachés",
+            "included": true
+          },
+          {
+            "name": "Durée flexible",
+            "included": true
+          }
         ],
         "buttonText": "Choisir le forfait",
         "popular": true
@@ -1026,11 +1071,26 @@
         "period": "/ mois",
         "description": "Pour les concessionnaires à volume plus élevé.",
         "features": [
-          { "name": "Jusqu'à 25 véhicules", "included": true },
-          { "name": "Visibilité totale", "included": true },
-          { "name": "Support personnel", "included": true },
-          { "name": "Pas de frais cachés", "included": true },
-          { "name": "Durée flexible", "included": true }
+          {
+            "name": "Jusqu'à 25 véhicules",
+            "included": true
+          },
+          {
+            "name": "Visibilité totale",
+            "included": true
+          },
+          {
+            "name": "Support personnel",
+            "included": true
+          },
+          {
+            "name": "Pas de frais cachés",
+            "included": true
+          },
+          {
+            "name": "Durée flexible",
+            "included": true
+          }
         ],
         "buttonText": "Choisir le forfait",
         "popular": false
@@ -1842,5 +1902,9 @@
     "button": "Retour à l'accueil",
     "metaTitle": "404 - Page non trouvée | AutoVendo",
     "metaDescription": "Désolé, la page demandée n'a pas pu être trouvée sur AutoVendo."
+  },
+  "AdvancedSearchSchema": {
+    "negativeError": "La valeur ne peut pas être négative",
+    "invalidNumber": "Nombre invalide"
   }
 }

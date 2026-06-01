@@ -981,11 +981,26 @@
         "period": "/ mese",
         "description": "Ideale per inventari ridotti.",
         "features": [
-          { "name": "Fino a 5 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
+          {
+            "name": "Fino a 5 veicoli",
+            "included": true
+          },
+          {
+            "name": "Piena visibilità",
+            "included": true
+          },
+          {
+            "name": "Supporto personale",
+            "included": true
+          },
+          {
+            "name": "Nessun costo nascosto",
+            "included": true
+          },
+          {
+            "name": "Durata flessibile",
+            "included": true
+          }
         ],
         "buttonText": "Scegli pacchetto",
         "popular": false
@@ -996,11 +1011,26 @@
         "period": "/ mese",
         "description": "Perfetto per concessionari in crescita.",
         "features": [
-          { "name": "Fino a 10 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
+          {
+            "name": "Fino a 10 veicoli",
+            "included": true
+          },
+          {
+            "name": "Piena visibilità",
+            "included": true
+          },
+          {
+            "name": "Supporto personale",
+            "included": true
+          },
+          {
+            "name": "Nessun costo nascosto",
+            "included": true
+          },
+          {
+            "name": "Durata flessibile",
+            "included": true
+          }
         ],
         "buttonText": "Scegli pacchetto",
         "popular": false
@@ -1011,11 +1041,26 @@
         "period": "/ mese",
         "description": "Per concessionari affermati.",
         "features": [
-          { "name": "Fino a 15 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
+          {
+            "name": "Fino a 15 veicoli",
+            "included": true
+          },
+          {
+            "name": "Piena visibilità",
+            "included": true
+          },
+          {
+            "name": "Supporto personale",
+            "included": true
+          },
+          {
+            "name": "Nessun costo nascosto",
+            "included": true
+          },
+          {
+            "name": "Durata flessibile",
+            "included": true
+          }
         ],
         "buttonText": "Scegli pacchetto",
         "popular": true
@@ -1026,11 +1071,26 @@
         "period": "/ mese",
         "description": "Per concessionari con volumi elevati.",
         "features": [
-          { "name": "Fino a 25 veicoli", "included": true },
-          { "name": "Piena visibilità", "included": true },
-          { "name": "Supporto personale", "included": true },
-          { "name": "Nessun costo nascosto", "included": true },
-          { "name": "Durata flessibile", "included": true }
+          {
+            "name": "Fino a 25 veicoli",
+            "included": true
+          },
+          {
+            "name": "Piena visibilità",
+            "included": true
+          },
+          {
+            "name": "Supporto personale",
+            "included": true
+          },
+          {
+            "name": "Nessun costo nascosto",
+            "included": true
+          },
+          {
+            "name": "Durata flessibile",
+            "included": true
+          }
         ],
         "buttonText": "Scegli pacchetto",
         "popular": false
@@ -1843,5 +1903,9 @@
     "button": "Torna alla Home",
     "metaTitle": "404 - Pagina non trovata | AutoVendo",
     "metaDescription": "Spiacenti, la pagina richiesta non è stata trovata su AutoVendo."
+  },
+  "AdvancedSearchSchema": {
+    "negativeError": "Il valore non può essere negativo",
+    "invalidNumber": "Numero non valido"
   }
 }
