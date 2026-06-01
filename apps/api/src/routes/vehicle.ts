@@ -248,6 +248,10 @@ function buildWhereClause(
     const equipmentClauses = params.equipment.map((item) => ({ equipment: { path: [item], equals: true } }));
     where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), ...equipmentClauses];
   }
+  if (!omit.extras && params.extras.length > 0) {
+    const extrasClauses = params.extras.map((item) => ({ extras: { path: [item], equals: true } }));
+    where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), ...extrasClauses];
+  }
 
   where.status = "PUBLISHED";
   where.dealer = { user: { banned: { not: true } } };
@@ -347,6 +351,7 @@ function parseParams(c: Context) {
     energyLabels: qa(c, "energyLabels"),
     emissionStandards: qa(c, "emissionStandards"),
     equipment: qa(c, "equipment"),
+    extras: qa(c, "extras"),
     evs: c.req.query("evs") as "only_ev" | "no_ev" | undefined,
     metallic: qb(c, "metallic"),
     inspectionPassed: qb(c, "inspectionPassed"),

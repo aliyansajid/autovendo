@@ -1,6 +1,9 @@
 /**
  * Build /cars search params from advanced search form values and vehicle type.
  * Used for submit navigation and for fetching count/facets.
+ *
+ * IMPORTANT: Form field names use the raw UPPERCASE enum value (e.g. color-BLUE,
+ * fuel-PETROL, condition-NEW). Keys here must match exactly.
  */
 export function buildSearchParams(
   formValues: Record<string, unknown>,
@@ -46,6 +49,7 @@ export function buildSearchParams(
   if (formValues["price-to"] != null && formValues["price-to"] !== "") {
     params.priceTo = String(formValues["price-to"]);
   }
+
   // Power: emit kwFrom/kwTo if powerType=kw, else powerFrom/powerTo (hp)
   const powerType = formValues["powerType"] ?? "ps";
   if (powerType === "kw") {
@@ -64,54 +68,61 @@ export function buildSearchParams(
     }
   }
 
-  // Condition (condition-new, condition-demonstration, ...)
+  // Condition — form fields: condition-NEW, condition-USED, etc.
   const condition: string[] = [];
-  for (const key of ["new", "demonstration", "pre-registered", "used", "oldtimer"]) {
+  for (const key of ["NEW", "DEMONSTRATION", "PRE_REGISTERED", "USED", "OLDTIMER"]) {
     if (formValues[`condition-${key}`] === true) condition.push(key);
   }
   if (condition.length > 0) params.condition = condition;
 
-  // Body type (bodyType-bus, ...)
+  // Body type — form fields: bodyType-SUV, bodyType-SMALL_CAR, etc.
   const bodyType: string[] = [];
   const bodyKeys = [
-    "bus", "cabriolet", "coupe", "small-car", "estate", "minivan", "saloon", "pickup", "suv",
-    "box", "platform", "tipper", "van", "flatbed", "other", // utility/truck/camper
+    // Car
+    "BUS", "CABRIOLET", "COUPE", "SMALL_CAR", "ESTATE", "MINIVAN", "SALOON", "PICKUP", "SUV",
+    // Utility
+    "BRIDGE", "BRIDGE_DOUBLE_CAB", "CHASSIS_CAB", "BOX", "BOX_GLAZED", "BOX_DOUBLE_CAB",
+    "TIPPER", "PLATFORM", "SEMI_TRAILER",
+    // Truck
+    "CAB_OVER", "COACH",
+    // Camper
+    "ALCOVE", "TRAILER", "INTEGRATED", "CAB", "OTHER", "SEMI_INTEGRATED", "MOTORHOME", "CARAVAN",
   ];
   for (const key of bodyKeys) {
     if (formValues[`bodyType-${key}`] === true) bodyType.push(key);
   }
   if (bodyType.length > 0) params.bodyType = bodyType;
 
-  // Fuel (fuel-petrol, ...)
+  // Fuel — form fields: fuel-PETROL, fuel-CNG_PETROL, etc.
   const fuel: string[] = [];
   const fuelKeys = [
-    "petrol", "ethanol-petrol", "diesel", "electric", "cng-petrol", "lpg-petrol",
-    "mhev-diesel", "mhev-petrol", "phev-diesel", "phev-petrol", "hev-diesel", "hev-petrol", "hydrogen",
+    "PETROL", "ETHANOL_PETROL", "DIESEL", "ELECTRIC", "CNG_PETROL", "LPG_PETROL",
+    "MHEV_DIESEL", "MHEV_PETROL", "PHEV_DIESEL", "PHEV_PETROL", "HEV_DIESEL", "HEV_PETROL", "HYDROGEN",
   ];
   for (const key of fuelKeys) {
     if (formValues[`fuel-${key}`] === true) fuel.push(key);
   }
   if (fuel.length > 0) params.fuel = fuel;
 
-  // Transmission (transmission-automatic, ...)
+  // Transmission — form fields: transmission-AUTOMATIC, transmission-SEMI_AUTOMATIC, etc.
   const transmission: string[] = [];
-  for (const key of ["automatic", "automatic-stepless", "semi-automatic", "manual"]) {
+  for (const key of ["AUTOMATIC", "AUTOMATIC_STEPLESS", "SEMI_AUTOMATIC", "MANUAL"]) {
     if (formValues[`transmission-${key}`] === true) transmission.push(key);
   }
   if (transmission.length > 0) params.transmission = transmission;
 
-  // Exterior color (color-black, ...)
+  // Exterior color — form fields: color-BLUE, color-BLACK, etc.
   const color: string[] = [];
   const colorKeys = [
-    "anthracite", "beige", "black", "blue", "bordeaux", "brown", "gold", "gray", "green",
-    "multicoloured", "orange", "pink", "red", "silver", "turquoise", "violet", "white", "yellow", "other",
+    "ANTHRACITE", "BEIGE", "BLACK", "BLUE", "BORDEAUX", "BROWN", "GOLD", "GRAY", "GREEN",
+    "MULTICOLOURED", "ORANGE", "PINK", "RED", "SILVER", "TURQUOISE", "VIOLET", "WHITE", "YELLOW", "OTHER",
   ];
   for (const key of colorKeys) {
     if (formValues[`color-${key}`] === true) color.push(key);
   }
   if (color.length > 0) params.color = color;
 
-  // Equipment (equipment-abs, ...)
+  // Equipment — form fields: equipment-<VALUE> (dynamic, scanned via Object.entries)
   const equipment: string[] = [];
   for (const [key, value] of Object.entries(formValues)) {
     if (key.startsWith("equipment-") && value === true) {
@@ -120,13 +131,22 @@ export function buildSearchParams(
   }
   if (equipment.length > 0) params.equipment = equipment;
 
+  // Extras — form fields: extra-<VALUE> (dynamic, scanned via Object.entries)
+  const extras: string[] = [];
+  for (const [key, value] of Object.entries(formValues)) {
+    if (key.startsWith("extra-") && value === true) {
+      extras.push(key.replace("extra-", ""));
+    }
+  }
+  if (extras.length > 0) params.extras = extras;
+
   // Metallic
   if (formValues.metallic === true) params.metallic = "true";
   if (formValues.metallic === false) params.metallic = "false";
 
-  // Drive type (drive-all, drive-front, drive-rear)
+  // Drive type — form fields: drive-ALL, drive-FRONT, drive-REAR
   const driveType: string[] = [];
-  for (const key of ["all", "front", "rear"]) {
+  for (const key of ["ALL", "FRONT", "REAR"]) {
     if (formValues[`drive-${key}`] === true) driveType.push(key);
   }
   if (driveType.length > 0) params.driveType = driveType;
@@ -163,14 +183,14 @@ export function buildSearchParams(
     params.co2To = String(formValues["emissions-to"]);
   }
 
-  // Energy efficiency label (energy-a, energy-b, ...)
+  // Energy efficiency label — form fields: energy-A, energy-B, etc.
   const energyLabels: string[] = [];
-  for (const key of ["a", "b", "c", "d", "e", "f", "g"]) {
+  for (const key of ["A", "B", "C", "D", "E", "F", "G"]) {
     if (formValues[`energy-${key}`] === true) energyLabels.push(key);
   }
   if (energyLabels.length > 0) params.energyLabels = energyLabels;
 
-  // Emission standard / Euronorm (eu-euro-1, eu-euro-2, ...)
+  // Emission standard / Euronorm — form fields: eu-EURO_1, eu-EURO_2, etc. (dynamic)
   const emissionStandards: string[] = [];
   for (const [key, value] of Object.entries(formValues)) {
     if (key.startsWith("eu-") && value === true) {
@@ -185,7 +205,7 @@ export function buildSearchParams(
   // Has warranty
   if (formValues["condition-warranty"] === true) params.hasWarranty = "true";
 
-  // Interior color (int-black, ...)
+  // Interior color — form fields: int-BLUE, int-BLACK, etc.
   const interiorColor: string[] = [];
   for (const key of colorKeys) {
     if (formValues[`int-${key}`] === true) interiorColor.push(key);
