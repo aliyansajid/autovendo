@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { prisma } from "@repo/db";
-import { auth, stripeClient } from "../lib/auth.js";
+import { auth } from "../lib/auth.js";
+import { stripeClient } from "@repo/auth";
 import { StorageService } from "@repo/storage";
 import { z } from "zod";
 

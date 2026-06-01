@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "node --env-file=.env --env-file=.env.local --import tsx/esm --watch src/index.ts",
     "build": "echo 'build skipped'",
     "start": "tsx src/index.ts"
   },
