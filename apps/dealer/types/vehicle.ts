@@ -21,7 +21,7 @@ export interface VehicleListItem {
   color: string;
   createdAt: Date;
   images: string[];
-  equipment: unknown;
+  equipment: Record<string, unknown> | null;
   priceRating?: PriceRating;
   dealer: {
     id: string;

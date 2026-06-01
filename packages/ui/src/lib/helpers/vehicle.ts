@@ -5,8 +5,6 @@
  * Vehicle-specific business logic helpers
  */
 
-import type { Prisma } from "@repo/db";
-
 /**
  * Build vehicle title from parts
  */
@@ -49,7 +47,7 @@ export function formatVehicleName(
  * Extract equipment keys from JSON
  */
 export function extractEquipment(
-  equipment: Prisma.JsonValue | null,
+  equipment: Record<string, unknown> | null | undefined,
   limit?: number,
 ): string[] {
   if (!equipment || typeof equipment !== "object") return [];
