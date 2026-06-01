@@ -677,6 +677,12 @@ vehicle.get("/:id", async (c) => {
           website: true,
           logo: true,
           description: true,
+          googleRating: true,
+          googleReviewCount: true,
+          user: { select: { emailVerified: true } },
+          openingHours: {
+            select: { day: true, openTime: true, closeTime: true, isOpen: true },
+          },
         },
       },
       seller: {
@@ -751,14 +757,19 @@ vehicle.get("/:id", async (c) => {
     dealer: v.dealer
       ? {
           id: v.dealer.id,
-          name: v.dealer.companyName,
-          address: [v.dealer.streetAddress, v.dealer.zipCode, v.dealer.city].filter(Boolean).join(", "),
-          city: v.dealer.city,
-          phone: v.dealer.phoneNumber ?? null,
-          email: v.dealer.businessEmail ?? null,
+          companyName: v.dealer.companyName,
+          streetAddress: v.dealer.streetAddress ?? null,
+          zipCode: v.dealer.zipCode ?? null,
+          city: v.dealer.city ?? null,
+          phoneNumber: v.dealer.phoneNumber ?? null,
+          businessEmail: v.dealer.businessEmail ?? null,
           website: v.dealer.website ?? null,
           logo: v.dealer.logo ? getImageUrl(v.dealer.logo) : null,
           description: v.dealer.description ?? null,
+          googleRating: v.dealer.googleRating ?? null,
+          googleReviewCount: v.dealer.googleReviewCount ?? null,
+          user: v.dealer.user ?? null,
+          openingHours: v.dealer.openingHours ?? [],
         }
       : v.seller
         ? {

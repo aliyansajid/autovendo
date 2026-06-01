@@ -335,15 +335,7 @@ export default async function ListingPage({
       ? item.vehicleDescription
       : null;
 
-  const dealerWithHours = item.dealer as typeof item.dealer & {
-    openingHours?: Array<{
-      day: string;
-      openTime: Date | string | null;
-      closeTime: Date | string | null;
-      isOpen: boolean;
-    }>;
-  };
-  const openingHours = [...(dealerWithHours.openingHours || [])]
+  const openingHours = [...(item.dealer.openingHours || [])]
     .sort(
       (a, b) =>
         DAY_ORDER.indexOf(a.day as (typeof DAY_ORDER)[number]) -
@@ -361,14 +353,12 @@ export default async function ListingPage({
       };
     });
 
-  const dealerUser = (
-    item.dealer as typeof item.dealer & { user?: { emailVerified: boolean } }
-  ).user;
+  const dealerUser = item.dealer.user;
 
   const seller = {
     id: item.dealer.id,
     name: item.dealer.companyName,
-    address: `${item.dealer.streetAddress}, ${item.dealer.zipCode} ${item.dealer.city}`,
+    address: [item.dealer.streetAddress, item.dealer.zipCode, item.dealer.city].filter(Boolean).join(", "),
     phone: item.dealer.phoneNumber ?? undefined,
     logo: item.dealer.logo ? getImageUrl(item.dealer.logo) : undefined,
     website: item.dealer.website ?? undefined,
@@ -376,8 +366,8 @@ export default async function ListingPage({
     description: item.dealer.description ?? undefined,
     openingHours: openingHours.length > 0 ? openingHours : undefined,
     isVerified: dealerUser?.emailVerified === true,
-    rating: (item.dealer as any).googleRating ?? null,
-    reviewCount: (item.dealer as any).googleReviewCount ?? null,
+    rating: item.dealer.googleRating ?? null,
+    reviewCount: item.dealer.googleReviewCount ?? null,
   };
 
   const { vehicles: similarItems } = await getSimilarVehiclesFromApi(item.id);
