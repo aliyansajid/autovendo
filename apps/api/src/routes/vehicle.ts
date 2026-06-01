@@ -285,12 +285,7 @@ function toFacetCounts<T extends string>(
 }
 
 function toFrontendFacetKeys(counts: Record<string, number>): Record<string, number> {
-  const out: Record<string, number> = {};
-  for (const [key, count] of Object.entries(counts)) {
-    const normalized = key.toLowerCase().replace(/_/g, "-");
-    out[normalized] = (out[normalized] ?? 0) + count;
-  }
-  return out;
+  return counts;
 }
 
 function toLowerFacetKeys(counts: Record<string, number>): Record<string, number> {
