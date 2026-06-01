@@ -63,6 +63,15 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 const appName = process.env.APP_NAME ?? "AutoVendo";
 
+function getBranding(request?: Request | null) {
+  const origin = request?.headers.get("origin") ?? "";
+  const isSolo = origin.includes("autosolo.ch");
+  return {
+    appName: isSolo ? "AutoSolo" : appName,
+    appUrl: isSolo ? "https://autosolo.ch" : appUrl,
+  };
+}
+
 export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
   const hasAppleCredentials =
     !!process.env.APPLE_PRIVATE_KEY &&
@@ -141,18 +150,19 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         ...additionalFields,
         id,
       }),
-      sendResetPassword: async ({ user, url }) => {
+      sendResetPassword: async ({ user, url, request }) => {
+        const { appName: name, appUrl: url_ } = getBranding(request);
         const { sendEmail } = await import("@repo/transactional");
         const { ResetPasswordEmail } =
           await import("@repo/transactional/emails/reset-password");
         void sendEmail({
           to: user.email,
-          subject: `Reset your ${appName} password`,
+          subject: `Reset your ${name} password`,
           template: ResetPasswordEmail({
             userEmail: user.email,
             resetPasswordUrl: url,
-            appName,
-            appUrl,
+            appName: name,
+            appUrl: url_,
           }),
         });
       },
@@ -162,18 +172,19 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
       sendOnSignUp: true,
       sendOnSignIn: true,
       autoSignInAfterVerification: true,
-      sendVerificationEmail: async ({ user, url }) => {
+      sendVerificationEmail: async ({ user, url, request }) => {
+        const { appName: name, appUrl: url_ } = getBranding(request);
         const { sendEmail } = await import("@repo/transactional");
         const { VerifyEmail } =
           await import("@repo/transactional/emails/verify-email");
         void sendEmail({
           to: user.email,
-          subject: `Verify your ${appName} email address`,
+          subject: `Verify your ${name} email address`,
           template: VerifyEmail({
             userEmail: user.email,
             verificationUrl: url,
-            appName,
-            appUrl,
+            appName: name,
+            appUrl: url_,
           }),
         });
       },
@@ -182,19 +193,20 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
     user: {
       changeEmail: {
         enabled: true,
-        sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+        sendChangeEmailConfirmation: async ({ user, newEmail, url, request }) => {
+          const { appName: name, appUrl: url_ } = getBranding(request);
           const { sendEmail } = await import("@repo/transactional");
           const { ConfirmEmailChangeEmail } =
             await import("@repo/transactional/emails/confirm-email-change");
           void sendEmail({
             to: user.email,
-            subject: `Approve your ${appName} email change`,
+            subject: `Approve your ${name} email change`,
             template: ConfirmEmailChangeEmail({
               currentEmail: user.email,
               newEmail: newEmail,
               confirmUrl: url,
-              appName,
-              appUrl,
+              appName: name,
+              appUrl: url_,
             }),
           });
         },
