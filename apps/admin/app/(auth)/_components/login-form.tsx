@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@repo/ui/components/button";
 import {
   Card,
@@ -23,6 +24,9 @@ import { Spinner } from "@repo/ui/src/components/spinner";
 import { loginSchema } from "@/schema";
 
 export const LoginForm = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -38,6 +42,7 @@ export const LoginForm = () => {
       const result = await signIn({
         email: data.email,
         password: data.password,
+        callbackURL: callbackUrl,
       });
 
       if (result.error) {
@@ -47,7 +52,7 @@ export const LoginForm = () => {
         return;
       }
 
-      window.location.href = "/";
+      router.push(callbackUrl);
     });
   }
 

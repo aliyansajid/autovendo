@@ -52,10 +52,14 @@ export function useSession(): { data: SessionData; isPending: boolean } {
 
 // ─── Auth actions ─────────────────────────────────────────────────────────────
 
-export async function signIn(params: { email: string; password: string }) {
+export async function signIn(params: {
+  email: string;
+  password: string;
+  callbackURL?: string;
+}) {
   return authFetch("/api/auth/sign-in/email", {
     method: "POST",
-    body: JSON.stringify({ ...params, callbackURL: "/" }),
+    body: JSON.stringify(params),
   });
 }
 
