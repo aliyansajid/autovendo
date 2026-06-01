@@ -275,22 +275,17 @@ const RenderField = ({
     case FormFieldType.SLIDER:
       // Range sliders: always treat as controlled [min, max] array
       // eslint-disable-next-line no-case-declarations
-      const sliderMin = props.min ?? 0;
-      // eslint-disable-next-line no-case-declarations
-      const sliderMax = props.max ?? 100;
-      // eslint-disable-next-line no-case-declarations
       const sliderValue =
         Array.isArray(field.value) && field.value.length > 0
           ? field.value
-          : undefined;
+          : [props.min ?? 0, props.max ?? 100];
 
       return (
         <div className={cn(props.className)}>
           <Slider
-            min={sliderMin}
-            max={sliderMax}
+            min={props.min}
+            max={props.max}
             step={props.step}
-            defaultValue={[sliderMin, sliderMax]}
             value={sliderValue}
             onValueChange={field.onChange}
             className="py-2"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext, useWatch } from "react-hook-form";
-import { useEffect } from "react";
+import { Slider } from "@repo/ui/components/slider";
 import { Label } from "@repo/ui/src/components/label";
 import {
   AccordionContent,
@@ -41,13 +41,32 @@ export function BasicDataSection({
   const kmMax = 400000;
   const priceMax = 1000000;
 
-  const yearValue = useWatch({ control, name: "year" });
-  const kilometerValue = useWatch({ control, name: "kilometer" });
-  const priceValue = useWatch({ control, name: "price" });
+  const yearFrom = useWatch({ control, name: "year-from" });
+  const yearTo = useWatch({ control, name: "year-to" });
+  const kilometerFrom = useWatch({ control, name: "kilometer-from" });
+  const kilometerTo = useWatch({ control, name: "kilometer-to" });
+  const priceFrom = useWatch({ control, name: "price-from" });
+  const priceTo = useWatch({ control, name: "price-to" });
 
-  const yearRange = yearValue ?? [yearMin, yearMax];
-  const kilometerRange = kilometerValue ?? [0, kmMax];
-  const priceRange = priceValue ?? [0, priceMax];
+  const parseNum = (val: unknown, fallback: number) => {
+    if (val === undefined || val === null || val === "") return fallback;
+    const cleaned = String(val).replace(/[^0-9.-]/g, "");
+    const num = Number(cleaned);
+    return Number.isFinite(num) ? num : fallback;
+  };
+
+  const yearRange: [number, number] = [
+    parseNum(yearFrom, yearMin),
+    parseNum(yearTo, yearMax),
+  ];
+  const kilometerRange: [number, number] = [
+    parseNum(kilometerFrom, 0),
+    parseNum(kilometerTo, kmMax),
+  ];
+  const priceRange: [number, number] = [
+    parseNum(priceFrom, 0),
+    parseNum(priceTo, priceMax),
+  ];
 
   // Fallbacks for histograms if data is not yet loaded
   const yearHistogramData = facets?.yearHistogram ?? [];
@@ -73,104 +92,6 @@ export function BasicDataSection({
     }));
   };
 
-  const yearFrom = useWatch({ control, name: "year-from" });
-  const yearTo = useWatch({ control, name: "year-to" });
-  const kilometerFrom = useWatch({ control, name: "kilometer-from" });
-  const kilometerTo = useWatch({ control, name: "kilometer-to" });
-  const priceFrom = useWatch({ control, name: "price-from" });
-  const priceTo = useWatch({ control, name: "price-to" });
-
-  useEffect(() => {
-    if (yearValue === undefined) {
-      if (getValues("year-from") !== "" || getValues("year-to") !== "") {
-        setValue("year-from", "");
-        setValue("year-to", "");
-      }
-      return;
-    }
-    const [from, to] = yearValue as [number, number];
-    const nextFrom = from <= yearMin ? "" : from.toString();
-    const nextTo = to >= yearMax ? "" : to.toString();
-    if (getValues("year-from") !== nextFrom) setValue("year-from", nextFrom);
-    if (getValues("year-to") !== nextTo) setValue("year-to", nextTo);
-  }, [yearValue, yearMin, yearMax, setValue, getValues]);
-
-  useEffect(() => {
-    if (kilometerValue === undefined) {
-      if (
-        getValues("kilometer-from") !== "" ||
-        getValues("kilometer-to") !== ""
-      ) {
-        setValue("kilometer-from", "");
-        setValue("kilometer-to", "");
-      }
-      return;
-    }
-    const [from, to] = kilometerValue as [number, number];
-    const nextFrom = from === 0 ? "" : from.toString();
-    const nextTo = to >= kmMax ? "" : to.toString();
-    if (getValues("kilometer-from") !== nextFrom)
-      setValue("kilometer-from", nextFrom);
-    if (getValues("kilometer-to") !== nextTo) setValue("kilometer-to", nextTo);
-  }, [kilometerValue, kmMax, setValue, getValues]);
-
-  useEffect(() => {
-    if (priceValue === undefined) {
-      if (getValues("price-from") !== "" || getValues("price-to") !== "") {
-        setValue("price-from", "");
-        setValue("price-to", "");
-      }
-      return;
-    }
-    const [from, to] = priceValue as [number, number];
-    const nextFrom = from === 0 ? "" : from.toString();
-    const nextTo = to >= priceMax ? "" : to.toString();
-    if (getValues("price-from") !== nextFrom) setValue("price-from", nextFrom);
-    if (getValues("price-to") !== nextTo) setValue("price-to", nextTo);
-  }, [priceValue, priceMax, setValue, getValues]);
-
-  useEffect(() => {
-    const parseNumber = (val: unknown, fallback: number) => {
-      if (val === undefined || val === null || val === "") return fallback;
-      const cleaned = String(val).replace(/[^0-9.-]/g, "");
-      const num = Number(cleaned);
-      return Number.isFinite(num) ? num : fallback;
-    };
-    const from = parseNumber(yearFrom, yearMin);
-    const to = parseNumber(yearTo, yearMax);
-    const [curFrom, curTo] = getValues("year") ?? [yearMin, yearMax];
-    if (from === curFrom && to === curTo) return;
-    setValue("year", [from, to], { shouldDirty: true });
-  }, [yearFrom, yearTo, getValues, setValue, yearMin, yearMax]);
-
-  useEffect(() => {
-    const parseNumber = (val: unknown, fallback: number) => {
-      if (val === undefined || val === null || val === "") return fallback;
-      const cleaned = String(val).replace(/[^0-9.-]/g, "");
-      const num = Number(cleaned);
-      return Number.isFinite(num) ? num : fallback;
-    };
-    const from = parseNumber(kilometerFrom, 0);
-    const to = parseNumber(kilometerTo, kmMax);
-    const [curFrom, curTo] = getValues("kilometer") ?? [0, kmMax];
-    if (from === curFrom && to === curTo) return;
-    setValue("kilometer", [from, to], { shouldDirty: true });
-  }, [kilometerFrom, kilometerTo, getValues, setValue, kmMax]);
-
-  useEffect(() => {
-    const parseNumber = (val: unknown, fallback: number) => {
-      if (val === undefined || val === null || val === "") return fallback;
-      const cleaned = String(val).replace(/[^0-9.-]/g, "");
-      const num = Number(cleaned);
-      return Number.isFinite(num) ? num : fallback;
-    };
-    const from = parseNumber(priceFrom, 0);
-    const to = parseNumber(priceTo, priceMax);
-    const [curFrom, curTo] = getValues("price") ?? [0, priceMax];
-    if (from === curFrom && to === curTo) return;
-    setValue("price", [from, to], { shouldDirty: true });
-  }, [priceFrom, priceTo, getValues, setValue, priceMax]);
-
   return (
     <AccordionItem value="basic" className="border-none">
       <AccordionTrigger className="text-xl font-bold text-primary hover:no-underline flex items-center">
@@ -184,7 +105,6 @@ export function BasicDataSection({
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
-                  setValue("year", undefined as any);
                   setValue("year-from", "");
                   setValue("year-to", "");
                 }}
@@ -222,29 +142,31 @@ export function BasicDataSection({
                 },
               )}
             </div>
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.SLIDER}
-              name="year"
+            <Slider
               min={yearMin}
               max={yearMax}
               step={1}
-            >
-              <div className="flex gap-2 text-sm">
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="year-from"
-                  placeholder={yearMin.toString()}
-                />
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="year-to"
-                  placeholder={yearMax.toString()}
-                />
-              </div>
-            </CustomFormField>
+              value={yearRange}
+              onValueChange={([from, to]) => {
+                setValue("year-from", from <= yearMin ? "" : String(from));
+                setValue("year-to", to >= yearMax ? "" : String(to));
+              }}
+              className="py-2"
+            />
+            <div className="flex gap-2 text-sm">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="year-from"
+                placeholder={yearMin.toString()}
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="year-to"
+                placeholder={yearMax.toString()}
+              />
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -255,7 +177,6 @@ export function BasicDataSection({
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
-                  setValue("kilometer", undefined as any);
                   setValue("kilometer-from", "");
                   setValue("kilometer-to", "");
                 }}
@@ -292,31 +213,33 @@ export function BasicDataSection({
                 },
               )}
             </div>
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.SLIDER}
-              name="kilometer"
+            <Slider
               min={0}
               max={kmMax}
               step={1000}
-            >
-              <div className="flex gap-2 text-sm">
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="kilometer-from"
-                  placeholder="0"
-                  inputGroupText="km"
-                />
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="kilometer-to"
-                  placeholder={`${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(kmMax)}${kilometerRange?.[1] && kilometerRange[1] >= kmMax ? "+" : ""}`}
-                  inputGroupText="km"
-                />
-              </div>
-            </CustomFormField>
+              value={kilometerRange}
+              onValueChange={([from, to]) => {
+                setValue("kilometer-from", from === 0 ? "" : String(from));
+                setValue("kilometer-to", to >= kmMax ? "" : String(to));
+              }}
+              className="py-2"
+            />
+            <div className="flex gap-2 text-sm">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="kilometer-from"
+                placeholder="0"
+                inputGroupText="km"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="kilometer-to"
+                placeholder={`${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(kmMax)}+`}
+                inputGroupText="km"
+              />
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -325,7 +248,6 @@ export function BasicDataSection({
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
-                  setValue("price", undefined as any);
                   setValue("price-from", "");
                   setValue("price-to", "");
                 }}
@@ -363,31 +285,33 @@ export function BasicDataSection({
                 },
               )}
             </div>
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.SLIDER}
-              name="price"
+            <Slider
               min={0}
               max={priceMax}
               step={1000}
-            >
-              <div className="flex gap-2 text-sm">
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="price-from"
-                  placeholder="0"
-                  inputGroupText="CHF"
-                />
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="price-to"
-                  placeholder={`${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(priceMax)}${priceRange?.[1] && priceRange[1] >= priceMax ? "+" : ""}`}
-                  inputGroupText="CHF"
-                />
-              </div>
-            </CustomFormField>
+              value={priceRange}
+              onValueChange={([from, to]) => {
+                setValue("price-from", from === 0 ? "" : String(from));
+                setValue("price-to", to >= priceMax ? "" : String(to));
+              }}
+              className="py-2"
+            />
+            <div className="flex gap-2 text-sm">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="price-from"
+                placeholder="0"
+                inputGroupText="CHF"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="price-to"
+                placeholder={`${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(priceMax)}+`}
+                inputGroupText="CHF"
+              />
+            </div>
           </div>
         </div>
 
