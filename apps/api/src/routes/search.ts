@@ -80,6 +80,41 @@ const CONDITION_MAP: Record<string, string> = {
   oldtimer: "OLDTIMER",
 };
 
+const BODY_TYPE_MAP: Record<string, string> = {
+  // Car
+  suv: "SUV",
+  saloon: "SALOON",
+  estate: "ESTATE",
+  coupe: "COUPE",
+  cabriolet: "CABRIOLET",
+  "small-car": "SMALL_CAR",
+  minivan: "MINIVAN",
+  pickup: "PICKUP",
+  bus: "BUS",
+  // Camper
+  alcove: "ALCOVE",
+  trailer: "TRAILER",
+  integrated: "INTEGRATED",
+  cab: "CAB",
+  box: "BOX",
+  "semi-integrated": "SEMI_INTEGRATED",
+  motorhome: "MOTORHOME",
+  caravan: "CARAVAN",
+  other: "OTHER",
+  // Utility
+  bridge: "BRIDGE",
+  "bridge-double-cab": "BRIDGE_DOUBLE_CAB",
+  "chassis-cab": "CHASSIS_CAB",
+  "box-glazed": "BOX_GLAZED",
+  "box-double-cab": "BOX_DOUBLE_CAB",
+  tipper: "TIPPER",
+  platform: "PLATFORM",
+  "semi-trailer": "SEMI_TRAILER",
+  // Truck
+  "cab-over": "CAB_OVER",
+  coach: "COACH",
+};
+
 const EURO_NORM_MAP: Record<string, string> = {
   "euro-6e": "EURO_6E",
   "euro-6d-isc-fcm": "EURO_6D_ISC_FCM",
@@ -169,7 +204,7 @@ search.get("/", async (c) => {
   const colors = mapArray(getArray(q["color"]), COLOR_MAP);
   const intColors = mapArray(getArray(q["intColor"]), COLOR_MAP);
   const conditions = mapArray(getArray(q["condition"]), CONDITION_MAP);
-  const bodyTypes = getArray(q["bodyType"]);
+  const bodyTypes = mapArray(getArray(q["bodyType"]), BODY_TYPE_MAP);
   const energyLabels = getArray(q["energyLabel"]).map((l) => l.toUpperCase());
   const euroNorms = mapArray(getArray(q["euroNorm"]), EURO_NORM_MAP);
   const equipment = getArray(q["equipment"]);
