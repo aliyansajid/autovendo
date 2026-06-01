@@ -302,9 +302,14 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
     hooks: {
       after: createAuthMiddleware(async (ctx) => {
         if (ctx.path !== "/sign-up/email") return;
-        const newSession = ctx.context.newSession;
-        if (!newSession) return;
-        const { user } = newSession;
+
+        const body = ctx.body as { email?: string; name?: string } | undefined;
+        if (!body?.email) return;
+
+        const user = await prisma.user.findUnique({
+          where: { email: body.email },
+        });
+        if (!user) return;
 
         // Create seller profile (non-critical)
         try {
