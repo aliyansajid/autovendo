@@ -55,6 +55,7 @@ export function useSession(): { data: SessionData; isPending: boolean } {
 export async function signIn(params: {
   email: string;
   password: string;
+  rememberMe?: boolean;
   callbackURL?: string;
 }) {
   return authFetch("/api/auth/sign-in/email", {
