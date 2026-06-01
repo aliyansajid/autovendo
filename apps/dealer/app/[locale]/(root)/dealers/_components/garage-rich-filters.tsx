@@ -607,7 +607,7 @@ export default function GarageRichFilters({
               title={t("bodyType")}
               items={carBodyTypeEnum.map((t) => ({
                 ...t,
-                label: getLabel("types", t.value) || t.label,
+                label: getLabel("types", t.value) || t.value,
                 icon: Car,
               }))}
               selectedValues={selectedBodyTypes}
@@ -633,7 +633,7 @@ export default function GarageRichFilters({
               title={t("fuel")}
               items={carFuelTypeEnum.map((t) => ({
                 ...t,
-                label: getLabel("fuelTypes", t.value) || t.label,
+                label: getLabel("fuelTypes", t.value) || t.value,
               }))}
               selectedValues={selectedFuels}
               onChange={setSelectedFuels}
@@ -658,7 +658,7 @@ export default function GarageRichFilters({
               title={t("transmission")}
               items={TransmissionTypeEnum.map((t) => ({
                 ...t,
-                label: getLabel("transmissionTypes", t.value) || t.label,
+                label: getLabel("transmissionTypes", t.value) || t.value,
               }))}
               selectedValues={selectedTransmissions}
               onChange={setSelectedTransmissions}
@@ -683,7 +683,7 @@ export default function GarageRichFilters({
               title={t("drive")}
               items={DriveTypeEnum.map((t) => ({
                 ...t,
-                label: getLabel("driveTypes", t.value) || t.label,
+                label: getLabel("driveTypes", t.value) || t.value,
               }))}
               selectedValues={selectedDrives}
               onChange={setSelectedDrives}
