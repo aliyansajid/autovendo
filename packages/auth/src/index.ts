@@ -6,6 +6,21 @@ import { ac, admin as adminRole, dealer, user } from "./permissions";
 import { stripe } from "@better-auth/stripe";
 import { i18n } from "@better-auth/i18n";
 import Stripe from "stripe";
+import { importPKCS8, SignJWT } from "jose";
+
+async function generateAppleClientSecret() {
+  const privateKey = process.env.APPLE_PRIVATE_KEY!.replace(/\\n/g, "\n");
+  const key = await importPKCS8(privateKey, "ES256");
+  const now = Math.floor(Date.now() / 1000);
+  return new SignJWT({})
+    .setProtectedHeader({ alg: "ES256", kid: process.env.APPLE_KEY_ID! })
+    .setIssuer(process.env.APPLE_TEAM_ID!)
+    .setSubject(process.env.APPLE_CLIENT_ID!)
+    .setAudience("https://appleid.apple.com")
+    .setIssuedAt(now)
+    .setExpirationTime(now + 180 * 24 * 60 * 60)
+    .sign(key);
+}
 
 async function handleListingPayment(event: Stripe.Event) {
   if (event.type !== "checkout.session.completed") return;
@@ -43,7 +58,9 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 const appName = process.env.APP_NAME ?? "AutoVendo";
 
-export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
+export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
+  const appleClientSecret = await generateAppleClientSecret();
+
   return betterAuth({
     baseURL: process.env.BETTER_AUTH_URL ?? "https://api.autovendo.ch",
 
@@ -58,6 +75,13 @@ export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
       },
     },
 
+    session: {
+      cookieCache: {
+        enabled: true,
+        maxAge: 5 * 60,
+      },
+    },
+
     socialProviders: {
       google: {
         clientId: [
@@ -69,7 +93,8 @@ export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
       },
       apple: {
         clientId: process.env.APPLE_CLIENT_ID!,
-        clientSecret: process.env.APPLE_CLIENT_SECRET!,
+        clientSecret: appleClientSecret,
+        appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER!,
       },
     },
 
@@ -153,6 +178,7 @@ export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
       "https://autosolo.ch",
       "https://www.autosolo.ch",
       "https://admin.autovendo.ch",
+      "https://appleid.apple.com",
       "autovendo://",
       "autovendo://*",
       "exp://",
@@ -238,5 +264,5 @@ export function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
   });
 }
 
-export const auth = createAuth();
+export const auth = await createAuth();
 export { stripeClient };

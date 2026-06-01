@@ -12,6 +12,7 @@
     "@better-auth/stripe": "^1.6.11",
     "@repo/db": "*",
     "better-auth": "^1.5.4",
+    "jose": "^6.2.3",
     "stripe": "^22.1.1"
   }
 }
