@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getBillingDataFromApi } from "@/lib/api/billing";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@repo/ui/components/badge";

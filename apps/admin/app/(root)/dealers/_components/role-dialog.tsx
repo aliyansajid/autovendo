@@ -21,7 +21,7 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { SelectItem } from "@repo/ui/components/select";
 import { toast } from "sonner";
-import { setRole } from "@/app/actions/dealer.actions";
+import { setRole } from "@/lib/api/dealers";
 import { roleSchema } from "@/schema";
 import { Spinner } from "@repo/ui/src/components/spinner";
 
@@ -55,7 +55,7 @@ export function RoleDialog({
       });
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success("Success");
         onOpenChange(false);
       } else {
         toast.error(result.error);

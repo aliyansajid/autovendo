@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { planSchema } from "@/schema";
-import { createPlan, updatePlan } from "@/app/actions/plan.actions";
+import { createPlan, updatePlan } from "@/lib/api/plans";
 import {
   Dialog,
   DialogContent,
@@ -65,7 +65,7 @@ export function PlanFormDialog({ children, plan }: PlanFormDialogProps) {
           : await createPlan(values);
 
         if (result.success) {
-          toast.success(result.message);
+          toast.success("Success");
           setOpen(false);
           form.reset();
         } else {

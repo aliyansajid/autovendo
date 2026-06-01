@@ -26,7 +26,7 @@ async function authFetch(path: string, options?: RequestInit) {
 // ─── Session hook ─────────────────────────────────────────────────────────────
 
 export type SessionData = {
-  user: Record<string, unknown>;
+  user: { name: string; email: string; image?: string | null; [key: string]: unknown };
   session: { impersonatedBy?: string | null; [key: string]: unknown };
 } | null;
 

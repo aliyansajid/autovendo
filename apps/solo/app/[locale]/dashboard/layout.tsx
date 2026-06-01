@@ -1,4 +1,3 @@
-import { auth } from "@repo/auth";
 import { headers } from "next/headers";
 import {
   SidebarInset,
@@ -9,14 +8,23 @@ import { Separator } from "@repo/ui/components/separator";
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import { DashboardBreadcrumb } from "./_components/dashboard-breadcrumb";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://api.autovendo.ch";
+
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const cookie = (await headers()).get("cookie") ?? "";
+  let session: { user?: { name: string; email: string; image?: string | null } } | null = null;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/get-session`, {
+      headers: { cookie },
+      cache: "no-store",
+    });
+    if (res.ok) session = await res.json();
+  } catch {}
 
   return (
     <SidebarProvider>

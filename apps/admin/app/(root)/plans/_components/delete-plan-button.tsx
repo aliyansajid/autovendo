@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@repo/ui/components/button";
-import { deletePlan } from "@/app/actions/plan.actions";
+import { deletePlan } from "@/lib/api/plans";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,7 +26,7 @@ export function DeletePlanButton({ id }: { id: string }) {
       try {
         const result = await deletePlan(id);
         if (result.success) {
-          toast.success(result.message);
+          toast.success("Success");
         } else {
           toast.error(result.error);
         }

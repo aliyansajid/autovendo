@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { SellerProfileForm } from "@/app/[locale]/dashboard/settings/_components/seller-profile-form";
 import { getTranslations } from "next-intl/server";
 import { getSellerProfileFromApi } from "@/lib/api/vehicles";

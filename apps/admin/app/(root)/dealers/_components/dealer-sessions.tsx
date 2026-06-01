@@ -12,7 +12,7 @@ import {
 import { Button } from "@repo/ui/components/button";
 import { Badge } from "@repo/ui/components/badge";
 import { toast } from "sonner";
-import { revokeSession, revokeAllSessions } from "@/app/actions/dealer.actions";
+import { revokeSession, revokeAllSessions } from "@/lib/api/dealers";
 import {
   Laptop,
   Tablet,
@@ -44,7 +44,7 @@ export function DealerSessions({ dealerId, sessions }: DealerSessionsProps) {
     startTransition(async () => {
       const result = await revokeSession(token);
       if (result.success) {
-        toast.success(result.message);
+        toast.success("Success");
       } else {
         toast.error(result.error);
       }
@@ -55,7 +55,7 @@ export function DealerSessions({ dealerId, sessions }: DealerSessionsProps) {
     startTransition(async () => {
       const result = await revokeAllSessions(dealerId);
       if (result.success) {
-        toast.success(result.message);
+        toast.success("Success");
       } else {
         toast.error(result.error);
       }

@@ -19,7 +19,7 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import { createDealer, updateDealer } from "@/app/actions/dealer.actions";
+import { createDealer, updateDealer } from "@/lib/api/dealers";
 import { PlusCircle, Save } from "lucide-react";
 import { dealerSchema, updateDealerSchema } from "@/schema";
 import { swissCities } from "@/lib/swiss-cities";
@@ -68,7 +68,7 @@ export function DealerForm({ initialData, dealerId }: DealerFormProps) {
         toast.error(result.error);
         return;
       }
-      toast.success(result.message);
+      toast.success("Success");
       router.push(`/dealers/${dealerId || ""}`);
     });
   }

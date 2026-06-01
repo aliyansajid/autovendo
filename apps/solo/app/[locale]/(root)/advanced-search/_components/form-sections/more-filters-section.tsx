@@ -11,7 +11,7 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { daysListedOptions } from "@/constants";
+import { daysListedOptions } from "@repo/vehicle-constants";
 import { useTranslations } from "next-intl";
 
 export function MoreFiltersSection() {

@@ -21,7 +21,7 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { SelectItem } from "@repo/ui/components/select";
 import { toast } from "sonner";
-import { banUser } from "@/app/actions/dealer.actions";
+import { banUser } from "@/lib/api/dealers";
 import { banSchema } from "@/schema";
 import { Spinner } from "@repo/ui/src/components/spinner";
 
@@ -54,7 +54,7 @@ export function BanDialog({ dealerId, isOpen, onOpenChange }: BanDialogProps) {
       });
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success("Success");
         form.reset();
         onOpenChange(false);
       } else {

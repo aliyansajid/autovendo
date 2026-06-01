@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { LoginForm } from "../_components/login-form";
 
 export default function LoginPage() {
@@ -9,7 +10,9 @@ export default function LoginPage() {
         <Link href="/" className="flex self-center">
           <Image src="/logo.svg" alt="Logo" width={250} height={250} />
         </Link>
-        <LoginForm />
+        <Suspense>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { unbanUser } from "@/app/actions/dealer.actions";
+import { unbanUser } from "@/lib/api/dealers";
 import {
   useSession,
   impersonateUser,
@@ -64,7 +64,7 @@ export function DealerListActions({
     startTransition(async () => {
       const result = await unbanUser(dealerId);
       if (result.success) {
-        toast.success(result.message || "Operation successful");
+        toast.success("Success");
       } else {
         toast.error(result.error || "Something went wrong");
       }

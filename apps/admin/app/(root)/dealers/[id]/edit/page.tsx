@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getDealer } from "@/app/actions/dealer.actions";
+import { getDealer } from "@/lib/api/dealers";
 import { DealerForm } from "../../_components/dealer-form";
 
 interface EditDealerPageProps {

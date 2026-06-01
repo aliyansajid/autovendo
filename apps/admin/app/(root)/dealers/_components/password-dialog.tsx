@@ -20,7 +20,7 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { toast } from "sonner";
-import { setUserPasswordAdmin } from "@/app/actions/dealer.actions";
+import { setUserPasswordAdmin } from "@/lib/api/dealers";
 import { passwordChangeSchema } from "@/schema";
 import { Spinner } from "@repo/ui/src/components/spinner";
 
@@ -55,7 +55,7 @@ export function PasswordDialog({
       });
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success("Success");
         form.reset();
         onOpenChange(false);
       } else {

@@ -237,7 +237,7 @@ function VehicleActions({
 }) {
   const [isPending, startTransition] = useTransition();
 
-  const handleStatusUpdate = (newStatus: string) => {
+  const handleStatusUpdate = (newStatus: "DRAFT" | "SOLD") => {
     startTransition(async () => {
       try {
         await apiUpdateVehicleStatus(vehicle.id, newStatus);

@@ -1,4 +1,14 @@
 import { serverFetch, buildQueryString, API_BASE } from "./fetch-helpers";
+import type { VehicleListItem, VehicleFacets } from "@/types/vehicle";
+
+type PaginatedVehicles = {
+  vehicles: VehicleListItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  facets?: VehicleFacets;
+};
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,7 +47,7 @@ export async function getSellerVehiclesFromApi(
 
 export async function getSellerVehiclesWithFacetsFromApi(
   rawParams: Record<string, string | string[] | undefined>,
-): Promise<any> {
+): Promise<PaginatedVehicles> {
   const qs = buildQueryString({ ...rawParams, facets: "true" });
   const res = await fetch(`${API_BASE}/api/seller/vehicles?${qs}`, {
     cache: "no-store",

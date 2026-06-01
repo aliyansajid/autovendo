@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
 } from "@repo/ui/components/alert-dialog";
 import { toast } from "sonner";
-import { removeUser } from "@/app/actions/dealer.actions";
+import { removeUser } from "@/lib/api/dealers";
 import { Spinner } from "@repo/ui/src/components/spinner";
 
 interface DeleteAlertDialogProps {
@@ -32,7 +32,7 @@ export function DeleteAlertDialog({
     startTransition(async () => {
       const result = await removeUser(dealerId);
       if (result.success) {
-        toast.success(result.message);
+        toast.success("Success");
         onOpenChange(false);
       } else {
         toast.error(result.error);
