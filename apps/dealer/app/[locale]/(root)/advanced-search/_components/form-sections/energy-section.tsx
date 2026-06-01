@@ -19,6 +19,7 @@ import { useTranslations, useLocale } from "next-intl";
 
 export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
   const t = useTranslations("AdvancedSearch.sections.energy");
+  const tVehicle = useTranslations("Vehicle");
   const locale = useLocale();
   const { control, watch, setValue, getValues } = useFormContext();
 
@@ -215,14 +216,14 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
                 const count = facets?.energyLabel?.[item.value];
                 return (
                   <div
-                    key={item.label}
+                    key={item.value}
                     className="flex items-center justify-between"
                   >
                     <CustomFormField
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`energy-${item.value}`}
-                      label={item.label}
+                      label={item.value}
                     />
                     <span className="text-sm text-muted-foreground">
                       {formatCount(count ?? 0)}
@@ -253,14 +254,14 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               const count = facets?.emissionStandard?.[item.value];
               return (
                 <div
-                  key={item.label}
+                  key={item.value}
                   className="flex items-center justify-between"
                 >
                   <CustomFormField
                     control={control}
                     fieldType={FormFieldType.CHECKBOX}
                     name={`eu-${item.value}`}
-                    label={item.label}
+                    label={tVehicle(`emissions.${item.value}`)}
                   />
                   <span className="text-sm text-muted-foreground">
                     {formatCount(count ?? 0)}
