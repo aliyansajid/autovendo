@@ -1,5 +1,6 @@
 import type {
   Prisma,
+  BodyType,
   FuelType,
   TransmissionType,
   DriveType,
@@ -131,8 +132,7 @@ export function buildWhereClause(
   }
 
   if (!omitFilters.bodyType && params.bodyType && params.bodyType.length > 0) {
-    const bodyTypeOr = params.bodyType.map((b) => ({ bodyType: { equals: b, mode: "insensitive" as const } }));
-    where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), { OR: bodyTypeOr }];
+    where.bodyType = { in: params.bodyType.map(toDbEnum) as BodyType[] };
   }
 
   if (!omitFilters.color && params.color && params.color.length > 0) {

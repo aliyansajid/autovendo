@@ -29,14 +29,14 @@ const FUEL_LABELS: Record<string, string> = {
   HYDROGEN: "Hydrogen",
 };
 
-// Category → bodyType filter
+// Category → bodyType filter (values must match DB enum exactly)
 const CATEGORY_FILTERS: Record<string, string[]> = {
-  suv: ["SUV", "Crossover"],
-  sedan: ["Sedan", "Saloon"],
+  suv: ["SUV"],
+  sedan: ["SALOON"],
   electric: [], // filtered by fuelType
-  sports: ["Coupe", "Convertible", "Cabriolet", "Roadster"],
-  luxury: ["Limousine"],
-  van: ["Van", "Minivan", "Bus"],
+  sports: ["COUPE", "CABRIOLET"],
+  luxury: ["SALOON"],
+  van: ["MINIVAN", "BUS"],
 };
 
 home.get("/", async (c) => {
@@ -49,7 +49,6 @@ home.get("/", async (c) => {
       ? {
           bodyType: {
             in: CATEGORY_FILTERS[category] ?? [],
-            mode: "insensitive" as const,
           },
         }
       : {}),
