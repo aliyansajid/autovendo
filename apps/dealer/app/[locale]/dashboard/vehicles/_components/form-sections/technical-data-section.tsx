@@ -186,7 +186,7 @@ export function TechnicalDataSection() {
             >
               {EmissionStandardEnum.map((e) => (
                 <SelectItem key={e.value} value={e.value}>
-                  {e.label}
+                  {t_vehicle(`emissions.${e.value}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
