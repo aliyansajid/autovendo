@@ -7,6 +7,10 @@ import { stripe } from "@better-auth/stripe";
 import { i18n } from "@better-auth/i18n";
 import Stripe from "stripe";
 import { importPKCS8, SignJWT } from "jose";
+import { Redis } from "ioredis";
+import { redisStorage } from "@better-auth/redis-storage";
+
+const redis = new Redis(process.env.REDIS_AUTH_URL ?? "redis://localhost:6379");
 
 async function generateAppleClientSecret() {
   const privateKey = process.env.APPLE_PRIVATE_KEY!.replace(/\\n/g, "\n");
@@ -68,6 +72,15 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
       provider: "postgresql",
     }),
 
+    secondaryStorage: redisStorage({
+      client: redis,
+      keyPrefix: "better-auth:",
+    }),
+
+    experimental: {
+      joins: true,
+    },
+
     advanced: {
       crossSubDomainCookies: {
         enabled: true,
@@ -95,6 +108,9 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         clientId: process.env.APPLE_CLIENT_ID!,
         clientSecret: appleClientSecret,
         appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER!,
+        mapProfileToUser: (profile) => ({
+          email: profile.email ?? `${profile.sub}@apple.placeholder.local`,
+        }),
       },
     },
 

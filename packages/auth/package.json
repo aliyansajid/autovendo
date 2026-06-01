@@ -9,9 +9,11 @@
   "dependencies": {
     "@better-auth/i18n": "^1.6.13",
     "@better-auth/prisma-adapter": "^1.5.4",
+    "@better-auth/redis-storage": "^1.6.13",
     "@better-auth/stripe": "^1.6.11",
     "@repo/db": "*",
     "better-auth": "^1.5.4",
+    "ioredis": "^5.11.0",
     "jose": "^6.2.3",
     "stripe": "^22.1.1"
   }
