@@ -64,7 +64,15 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
 const appName = process.env.APP_NAME ?? "AutoVendo";
 
 export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
-  const appleClientSecret = await generateAppleClientSecret();
+  const hasAppleCredentials =
+    !!process.env.APPLE_PRIVATE_KEY &&
+    !!process.env.APPLE_KEY_ID &&
+    !!process.env.APPLE_TEAM_ID &&
+    !!process.env.APPLE_CLIENT_ID;
+
+  const appleClientSecret = hasAppleCredentials
+    ? await generateAppleClientSecret()
+    : null;
 
   return betterAuth({
     baseURL: process.env.BETTER_AUTH_URL ?? "https://api.autovendo.ch",
@@ -105,14 +113,19 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         ],
         clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       },
-      apple: {
-        clientId: process.env.APPLE_CLIENT_ID!,
-        clientSecret: appleClientSecret,
-        appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER!,
-        mapProfileToUser: (profile) => ({
-          email: profile.email ?? `${profile.sub}@apple.placeholder.local`,
-        }),
-      },
+      ...(hasAppleCredentials && appleClientSecret
+        ? {
+            apple: {
+              clientId: process.env.APPLE_CLIENT_ID!,
+              clientSecret: appleClientSecret,
+              appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER!,
+              mapProfileToUser: (profile: { email?: string; sub: string }) => ({
+                email:
+                  profile.email ?? `${profile.sub}@apple.placeholder.local`,
+              }),
+            },
+          }
+        : {}),
     },
 
     emailAndPassword: {
