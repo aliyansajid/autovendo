@@ -1,14 +1,14 @@
 "use client";
 
-import { Button } from "@repo/ui/src/components/button";
+import { Button } from "@repo/ui/components/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@repo/ui/src/components/card";
-import { FieldGroup, Field } from "@repo/ui/src/components/field";
+} from "@repo/ui/components/card";
+import { FieldGroup, Field } from "@repo/ui/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,8 +16,8 @@ import { Link } from "@/i18n/routing";
 import {
   CustomFormField,
   FormFieldType,
-} from "@repo/ui/src/components/custom-form-field";
-import { Spinner } from "@repo/ui/src/components/spinner";
+} from "@repo/ui/components/custom-form-field";
+import { Spinner } from "@repo/ui/components/spinner";
 import { signUp } from "@/lib/api/auth-client";
 import { apiSellerSignup } from "@/lib/api/seller-vehicles";
 import { toast } from "sonner";

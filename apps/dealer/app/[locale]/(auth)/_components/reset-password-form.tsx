@@ -1,14 +1,14 @@
 "use client";
 
-import { Button } from "@repo/ui/src/components/button";
+import { Button } from "@repo/ui/components/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from "@repo/ui/src/components/card";
-import { FieldGroup, Field } from "@repo/ui/src/components/field";
+} from "@repo/ui/components/card";
+import { FieldGroup, Field } from "@repo/ui/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,11 +17,11 @@ import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { useRouter } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
-import { Spinner } from "@repo/ui/src/components/spinner";
+import { Spinner } from "@repo/ui/components/spinner";
 import {
   CustomFormField,
   FormFieldType,
-} from "@repo/ui/src/components/custom-form-field";
+} from "@repo/ui/components/custom-form-field";
 import { Link } from "@/i18n/routing";
 import { createResetPasswordSchema } from "@/schema/auth-schema";
 import { useTranslations } from "next-intl";
@@ -115,7 +115,7 @@ export const ResetPasswordForm = () => {
             />
 
             <Field>
-              <Button type="submit" disabled={isPending}>
+              <Button type="submit" disabled={isPending} className="w-full">
                 {isPending ? (
                   <>
                     <Spinner />
