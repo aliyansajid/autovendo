@@ -209,7 +209,7 @@ function buildWhereClause(
   }
 
   if (!omit.bodyType && params.bodyType.length > 0) {
-    const bodyTypeOr = params.bodyType.map((b) => ({ bodyType: b.toUpperCase().replace(/-/g, "_") as any }));
+    const bodyTypeOr = params.bodyType.map((b) => ({ bodyType: toDbEnum(b) as any }));
     where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), { OR: bodyTypeOr }];
   }
 
