@@ -573,7 +573,11 @@
     "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
     "login": "Anmelden",
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
-    "successDefault": "Konto erfolgreich erstellt!"
+    "verifyTitle": "Überprüfen Sie Ihre E-Mail",
+    "verifyDescription": "Wir haben einen Bestätigungslink an {email} gesendet. Klicken Sie darauf, um Ihr Konto zu aktivieren.",
+    "resend": "Bestätigungs-E-Mail erneut senden",
+    "resendSuccess": "Bestätigungs-E-Mail erneut gesendet.",
+    "resendError": "Erneut senden fehlgeschlagen. Bitte versuchen Sie es erneut."
   },
   "ForgotPasswordForm": {
     "title": "Passwort vergessen",

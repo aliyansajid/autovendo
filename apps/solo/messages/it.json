@@ -569,7 +569,11 @@
     "alreadyHaveAccount": "Hai già un account?",
     "login": "Accedi",
     "errorDefault": "Si è verificato un errore. Riprovi.",
-    "successDefault": "Account creato con successo!"
+    "verifyTitle": "Controlla la tua email",
+    "verifyDescription": "Abbiamo inviato un link di verifica a {email}. Cliccalo per attivare il tuo account.",
+    "resend": "Invia di nuovo l'email di verifica",
+    "resendSuccess": "Email di verifica inviata di nuovo.",
+    "resendError": "Reinvio fallito. Riprovi."
   },
   "ForgotPasswordForm": {
     "title": "Password dimenticata",

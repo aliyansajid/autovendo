@@ -18,9 +18,9 @@ import {
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
 import { Spinner } from "@repo/ui/components/spinner";
-import { signUp } from "@/lib/api/auth-client";
+import { signUp, resendVerificationEmail } from "@/lib/api/auth-client";
 import { toast } from "sonner";
-import { useTransition, useMemo } from "react";
+import { useTransition, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createSignupSchema } from "@/schema/auth-schema";
 import { useTranslations, useLocale } from "next-intl";
@@ -30,8 +30,12 @@ export const SignupForm = () => {
   const tSchema = useTranslations("AuthSchema");
   const locale = useLocale();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || `/${locale}/dashboard`;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autosolo.ch";
+  const callbackUrl =
+    searchParams.get("callbackUrl") || `${appUrl}/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
+  const [isResending, startResendTransition] = useTransition();
+  const [verifyEmail, setVerifyEmail] = useState<string | null>(null);
 
   const signupSchema = useMemo(() => createSignupSchema(tSchema), [tSchema]);
 
@@ -59,8 +63,58 @@ export const SignupForm = () => {
         return;
       }
 
-      toast.success(t("successDefault"));
+      form.reset();
+      setVerifyEmail(values.email);
     });
+  }
+
+  function onResend() {
+    if (!verifyEmail) return;
+    startResendTransition(async () => {
+      const { error } = await resendVerificationEmail({
+        email: verifyEmail,
+        callbackURL: callbackUrl,
+      });
+      if (error) {
+        toast.error(t("resendError"));
+      } else {
+        toast.success(t("resendSuccess"));
+      }
+    });
+  }
+
+  if (verifyEmail) {
+    return (
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">{t("verifyTitle")}</CardTitle>
+          <CardDescription>
+            {t("verifyDescription", { email: verifyEmail })}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup>
+            <Field>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                disabled={isResending}
+                onClick={onResend}
+              >
+                {isResending ? <Spinner /> : t("resend")}
+              </Button>
+            </Field>
+            <div className="text-center text-sm">
+              {t("alreadyHaveAccount")}&nbsp;
+              <Link href="/login" className="underline underline-offset-4">
+                {t("login")}
+              </Link>
+            </div>
+          </FieldGroup>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

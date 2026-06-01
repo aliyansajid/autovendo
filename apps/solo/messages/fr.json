@@ -569,7 +569,11 @@
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "login": "Se connecter",
     "errorDefault": "Une erreur est survenue. Veuillez réessayer.",
-    "successDefault": "Compte créé avec succès !"
+    "verifyTitle": "Vérifiez votre e-mail",
+    "verifyDescription": "Nous avons envoyé un lien de vérification à {email}. Cliquez dessus pour activer votre compte.",
+    "resend": "Renvoyer l'e-mail de vérification",
+    "resendSuccess": "E-mail de vérification renvoyé.",
+    "resendError": "Échec du renvoi. Veuillez réessayer."
   },
   "ForgotPasswordForm": {
     "title": "Mot de passe oublié",

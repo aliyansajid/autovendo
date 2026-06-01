@@ -93,6 +93,16 @@ export async function signUp(params: {
   });
 }
 
+export async function resendVerificationEmail(params: {
+  email: string;
+  callbackURL?: string;
+}) {
+  return authFetch("/api/auth/send-verification-email", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+}
+
 export async function signOut(onSuccess?: () => void) {
   const result = await authFetch("/api/auth/sign-out", {
     method: "POST",

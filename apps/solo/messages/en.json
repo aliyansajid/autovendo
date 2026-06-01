@@ -569,7 +569,11 @@
     "alreadyHaveAccount": "Already have an account?",
     "login": "Sign in",
     "errorDefault": "An error occurred. Please try again.",
-    "successDefault": "Account created successfully!"
+    "verifyTitle": "Check your email",
+    "verifyDescription": "We sent a verification link to {email}. Click it to activate your account.",
+    "resend": "Resend verification email",
+    "resendSuccess": "Verification email resent.",
+    "resendError": "Failed to resend. Please try again."
   },
   "ForgotPasswordForm": {
     "title": "Forgot password",
