@@ -235,7 +235,7 @@ export function TechnicalDataSection() {
           >
             {EnergyLabelEnum.map((e) => (
               <SelectItem key={e.value} value={e.value}>
-                {e.label}
+                {e.value}
               </SelectItem>
             ))}
           </CustomFormField>
