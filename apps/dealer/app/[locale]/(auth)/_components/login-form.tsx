@@ -23,13 +23,14 @@ import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { createLoginSchema } from "@/schema/auth-schema";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export const LoginForm = () => {
   const t = useTranslations("LoginForm");
   const tSchema = useTranslations("AuthSchema");
+  const locale = useLocale();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("callbackUrl") || `/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
 
   const loginSchema = useMemo(() => createLoginSchema(tSchema), [tSchema]);
@@ -56,8 +57,6 @@ export const LoginForm = () => {
         toast.error(error.message || t("errorDefault"));
         return;
       }
-
-      window.location.href = callbackUrl;
     });
   }
 

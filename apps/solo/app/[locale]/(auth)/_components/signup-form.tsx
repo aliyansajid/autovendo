@@ -22,6 +22,7 @@ import { signUp } from "@/lib/api/auth-client";
 import { apiSellerSignup } from "@/lib/api/seller-vehicles";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { createSignupSchema } from "@/schema/auth-schema";
 import { useTranslations, useLocale } from "next-intl";
 
@@ -29,6 +30,8 @@ export const SignupForm = () => {
   const t = useTranslations("SignupForm");
   const tSchema = useTranslations("AuthSchema");
   const locale = useLocale();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || `/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
 
   const signupSchema = useMemo(() => createSignupSchema(tSchema), [tSchema]);
@@ -49,7 +52,7 @@ export const SignupForm = () => {
         email: values.email,
         password: values.password,
         name: values.name,
-        callbackURL: `/${locale}/dashboard`,
+        callbackURL: callbackUrl,
       });
 
       if (error) {
@@ -124,7 +127,7 @@ export const SignupForm = () => {
             </Field>
 
             <div className="text-center text-sm">
-              {t("alreadyHaveAccount")}{" "}
+              {t("alreadyHaveAccount")}&nbsp;
               <Link href="/login" className="underline underline-offset-4">
                 {t("login")}
               </Link>

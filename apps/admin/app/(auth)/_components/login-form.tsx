@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@repo/ui/components/button";
 import {
   Card,
@@ -21,10 +21,9 @@ import {
 import { signIn } from "@/lib/api/auth-client";
 import { toast } from "sonner";
 import { Spinner } from "@repo/ui/src/components/spinner";
-import { loginSchema } from "@/schema";
+import { loginSchema } from "@/schema/auth-schema";
 
 export const LoginForm = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   const [isPending, startTransition] = useTransition();
@@ -34,25 +33,23 @@ export const LoginForm = () => {
     defaultValues: {
       email: "",
       password: "",
+      rememberme: false,
     },
   });
 
-  async function onSubmit(data: z.infer<typeof loginSchema>) {
+  function onSubmit(values: z.infer<typeof loginSchema>) {
     startTransition(async () => {
-      const result = await signIn({
-        email: data.email,
-        password: data.password,
+      const { error } = await signIn({
+        email: values.email,
+        password: values.password,
+        rememberMe: values.rememberme,
         callbackURL: callbackUrl,
       });
 
-      if (result.error) {
-        toast.error(
-          (result.error as { message?: string })?.message ?? "Login failed",
-        );
+      if (error) {
+        toast.error(error.message || "Login failed");
         return;
       }
-
-      router.push(callbackUrl);
     });
   }
 
@@ -84,6 +81,14 @@ export const LoginForm = () => {
               name="password"
               label="Password"
               placeholder="********"
+              disabled={isPending}
+            />
+
+            <CustomFormField
+              control={form.control}
+              fieldType={FormFieldType.CHECKBOX}
+              name="rememberme"
+              label="Remember me"
               disabled={isPending}
             />
 

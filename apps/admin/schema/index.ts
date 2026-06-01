@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-export const loginSchema = z.object({
-  email: z.email("Please enter a valid email"),
-  password: z.string().min(1, "Password is required"),
-});
+export { loginSchema } from "./auth-schema";
 
 export const dealerSchema = z.object({
   name: z
