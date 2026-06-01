@@ -149,6 +149,25 @@ export async function upgradeSubscription(params: {
   });
 }
 
+export async function cancelSubscription(params: {
+  returnUrl: string;
+  subscriptionId?: string;
+}) {
+  return authFetch("/api/auth/subscription/cancel", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+}
+
+export async function restoreSubscription(params: {
+  subscriptionId?: string;
+}) {
+  return authFetch("/api/auth/subscription/restore", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+}
+
 export async function openBillingPortal(params: { returnUrl: string }) {
   return authFetch("/api/auth/subscription/billing-portal", {
     method: "POST",
