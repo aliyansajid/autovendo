@@ -583,8 +583,8 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
                   disabled={isPending}
                 >
                   {swissCities.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city}
+                    <SelectItem key={city.value} value={city.value}>
+                      {city.label}
                     </SelectItem>
                   ))}
                 </CustomFormField>
