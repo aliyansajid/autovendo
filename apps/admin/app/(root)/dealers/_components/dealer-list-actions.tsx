@@ -27,8 +27,11 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { unbanUser } from "@/app/actions/dealer.actions";
-import { authClient } from "@repo/auth/client";
-import { useRouter } from "next/navigation";
+import {
+  useSession,
+  impersonateUser,
+  stopImpersonating,
+} from "@/lib/api/auth-client";
 import { RoleDialog } from "./role-dialog";
 import { PasswordDialog } from "./password-dialog";
 import { BanDialog } from "./ban-dialog";
@@ -47,11 +50,9 @@ export function DealerListActions({
   isBanned,
   currentRole = "user",
 }: DealerListActionsProps) {
-  const router = useRouter();
-  const { data: session } = authClient.useSession();
+  const { data: session } = useSession();
   const isImpersonating = !!session?.session?.impersonatedBy;
 
-  // Dialog Visibility States
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
@@ -61,7 +62,7 @@ export function DealerListActions({
 
   const handleUnbanUser = () => {
     startTransition(async () => {
-      const result = await unbanUser(userId);
+      const result = await unbanUser(dealerId);
       if (result.success) {
         toast.success(result.message || "Operation successful");
       } else {
@@ -71,30 +72,25 @@ export function DealerListActions({
   };
 
   const handleImpersonate = async () => {
-    await authClient.admin.impersonateUser(
-      {
-        userId: userId,
-      },
-      {
-        onSuccess: () => {
-          toast.success("Now impersonating user");
-          const baseUrl =
-            process.env.NEXT_PUBLIC_APP_URL || "https://autovendo.ch";
-          window.location.href = `${baseUrl}/en/dashboard`;
-        },
-        onError: (ctx: { error: { message: string } }) => {
-          toast.error(ctx.error.message);
-        },
-      },
-    );
+    const result = await impersonateUser(userId);
+    if (result.error) {
+      toast.error(
+        (result.error as { message?: string })?.message ?? "Failed to impersonate",
+      );
+      return;
+    }
+    toast.success("Now impersonating user");
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://autovendo.ch";
+    window.location.href = `${baseUrl}/en/dashboard`;
   };
 
   const handleStopImpersonating = async () => {
-    await authClient.admin.stopImpersonating(undefined, {
-      onSuccess: () => {
-        toast.success("Stopped impersonating");
-      },
-    });
+    const result = await stopImpersonating();
+    if (result.error) {
+      toast.error("Failed to stop impersonating");
+      return;
+    }
+    toast.success("Stopped impersonating");
   };
 
   return (
@@ -183,28 +179,28 @@ export function DealerListActions({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Modularized Dialogs */}
       <RoleDialog
-        userId={userId}
+        dealerId={dealerId}
         currentRole={currentRole}
         isOpen={isRoleDialogOpen}
         onOpenChange={setIsRoleDialogOpen}
       />
 
       <PasswordDialog
+        dealerId={dealerId}
         userId={userId}
         isOpen={isPasswordDialogOpen}
         onOpenChange={setIsPasswordDialogOpen}
       />
 
       <BanDialog
-        userId={userId}
+        dealerId={dealerId}
         isOpen={isBanDialogOpen}
         onOpenChange={setIsBanDialogOpen}
       />
 
       <DeleteAlertDialog
-        userId={userId}
+        dealerId={dealerId}
         isOpen={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       />

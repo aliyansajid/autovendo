@@ -25,7 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@repo/ui/components/sidebar";
-import { authClient } from "@repo/auth/client";
+import { signOut } from "@/lib/api/auth-client";
 import { useRouter } from "next/navigation";
 
 export function NavUser({
@@ -41,13 +41,8 @@ export function NavUser({
   const { isMobile } = useSidebar();
 
   const handleLogout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/login");
-        },
-      },
-    });
+    await signOut();
+    router.push("/login");
   };
 
   return (

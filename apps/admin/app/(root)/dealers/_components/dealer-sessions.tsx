@@ -33,11 +33,11 @@ interface Session {
 }
 
 interface DealerSessionsProps {
-  userId: string;
+  dealerId: string;
   sessions: Session[];
 }
 
-export function DealerSessions({ userId, sessions }: DealerSessionsProps) {
+export function DealerSessions({ dealerId, sessions }: DealerSessionsProps) {
   const [isPending, startTransition] = useTransition();
 
   const handleRevoke = (token: string) => {
@@ -53,7 +53,7 @@ export function DealerSessions({ userId, sessions }: DealerSessionsProps) {
 
   const handleRevokeAll = () => {
     startTransition(async () => {
-      const result = await revokeAllSessions(userId);
+      const result = await revokeAllSessions(dealerId);
       if (result.success) {
         toast.success(result.message);
       } else {

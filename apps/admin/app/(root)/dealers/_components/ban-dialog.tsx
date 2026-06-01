@@ -26,12 +26,12 @@ import { banSchema } from "@/schema";
 import { Spinner } from "@repo/ui/src/components/spinner";
 
 interface BanDialogProps {
-  userId: string;
+  dealerId: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function BanDialog({ userId, isOpen, onOpenChange }: BanDialogProps) {
+export function BanDialog({ dealerId, isOpen, onOpenChange }: BanDialogProps) {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof banSchema>>({
@@ -48,7 +48,7 @@ export function BanDialog({ userId, isOpen, onOpenChange }: BanDialogProps) {
 
     startTransition(async () => {
       const result = await banUser({
-        userId,
+        dealerId,
         reason: values.reason,
         expiresIn: expiresInSeconds,
       });

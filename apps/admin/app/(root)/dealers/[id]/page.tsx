@@ -1,6 +1,4 @@
 import { notFound } from "next/navigation";
-import { getDealer } from "@/app/actions/dealer.actions";
-import { prisma } from "@repo/db";
 import { Badge } from "@repo/ui/components/badge";
 import {
   Card,
@@ -28,6 +26,7 @@ import {
   AvatarImage,
 } from "@repo/ui/src/components/avatar";
 import { DealerSessions } from "../_components/dealer-sessions";
+import { serverFetch } from "@/lib/api/client";
 
 interface ViewDealerPageProps {
   params: Promise<{ id: string }>;
@@ -35,39 +34,35 @@ interface ViewDealerPageProps {
 
 export default async function ViewDealerPage({ params }: ViewDealerPageProps) {
   const { id } = await params;
-  const dealer = await getDealer(id);
 
-  if (!dealer) {
-    notFound();
+  const [dealerRes, sessionsRes] = await Promise.all([
+    serverFetch(`/api/admin/dealers/${id}`),
+    serverFetch(`/api/admin/dealers/${id}/sessions`),
+  ]);
+
+  if (dealerRes.status === 404) notFound();
+  if (!dealerRes.ok) throw new Error("Failed to fetch dealer");
+
+  const dealer = await dealerRes.json();
+  const sessions: any[] = sessionsRes.ok ? await sessionsRes.json() : [];
+
+  // Derive subscription from dealer user's subscription data embedded in dealer.user
+  const stripeCustomerId = dealer.user?.stripeCustomerId;
+
+  let subscription: any = null;
+  if (stripeCustomerId) {
+    const subRes = await serverFetch("/api/admin/subscriptions");
+    if (subRes.ok) {
+      const allSubs: any[] = await subRes.json();
+      subscription = allSubs.find(
+        (s) =>
+          s.stripeCustomerId === stripeCustomerId &&
+          (s.status === "active" || s.status === "trialing"),
+      ) ?? null;
+    }
   }
 
-  // Fetch subscription status
-  const subscription = dealer.user?.stripeCustomerId
-    ? await prisma.subscription.findFirst({
-        where: {
-          stripeCustomerId: dealer.user.stripeCustomerId,
-          status: { in: ["active", "trialing"] },
-        },
-        orderBy: {
-          periodStart: "desc",
-        },
-      })
-    : null;
-
   const hasActiveSubscription = !!subscription;
-
-  // Fetch active sessions
-  const sessions = await prisma.session.findMany({
-    where: {
-      userId: dealer.userId,
-      expiresAt: {
-        gt: new Date(),
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
 
   return (
     <div className="flex-1 space-y-6">
@@ -252,7 +247,7 @@ export default async function ViewDealerPage({ params }: ViewDealerPageProps) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <DealerSessions userId={dealer.userId} sessions={sessions} />
+              <DealerSessions dealerId={id} sessions={sessions} />
             </CardContent>
           </Card>
         </div>

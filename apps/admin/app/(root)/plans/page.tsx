@@ -1,6 +1,5 @@
 import { Plus, Edit } from "lucide-react";
 import { Badge } from "@repo/ui/components/badge";
-import { prisma } from "@repo/db";
 import { Button } from "@repo/ui/components/button";
 import {
   Table,
@@ -12,15 +11,13 @@ import {
 } from "@repo/ui/components/table";
 import { PlanFormDialog } from "./_components/plan-form-dialog";
 import { DeletePlanButton } from "./_components/delete-plan-button";
+import { serverFetch } from "@/lib/api/client";
 
 export const dynamic = "force-dynamic";
 
 export default async function PlansPage() {
-  const plans = await prisma.plan.findMany({
-    orderBy: {
-      price: "asc",
-    },
-  });
+  const res = await serverFetch("/api/admin/plans");
+  const plans: any[] = res.ok ? await res.json() : [];
 
   return (
     <div className="flex-1 space-y-6">

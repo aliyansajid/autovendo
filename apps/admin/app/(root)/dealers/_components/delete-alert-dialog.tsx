@@ -16,13 +16,13 @@ import { removeUser } from "@/app/actions/dealer.actions";
 import { Spinner } from "@repo/ui/src/components/spinner";
 
 interface DeleteAlertDialogProps {
-  userId: string;
+  dealerId: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function DeleteAlertDialog({
-  userId,
+  dealerId,
   isOpen,
   onOpenChange,
 }: DeleteAlertDialogProps) {
@@ -30,7 +30,7 @@ export function DeleteAlertDialog({
 
   const handleDeleteUser = () => {
     startTransition(async () => {
-      const result = await removeUser(userId);
+      const result = await removeUser(dealerId);
       if (result.success) {
         toast.success(result.message);
         onOpenChange(false);

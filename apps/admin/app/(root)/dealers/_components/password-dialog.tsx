@@ -25,12 +25,14 @@ import { passwordChangeSchema } from "@/schema";
 import { Spinner } from "@repo/ui/src/components/spinner";
 
 interface PasswordDialogProps {
+  dealerId: string;
   userId: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function PasswordDialog({
+  dealerId,
   userId,
   isOpen,
   onOpenChange,
@@ -47,6 +49,7 @@ export function PasswordDialog({
   const onSubmit = (values: z.infer<typeof passwordChangeSchema>) => {
     startTransition(async () => {
       const result = await setUserPasswordAdmin({
+        dealerId,
         userId,
         newPassword: values.password,
       });

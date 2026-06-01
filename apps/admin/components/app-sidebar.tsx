@@ -14,7 +14,7 @@ import {
   SidebarMenuItem,
 } from "@repo/ui/components/sidebar";
 import { Skeleton } from "@repo/ui/components/skeleton";
-import { authClient } from "@repo/auth/client";
+import { useSession } from "@/lib/api/auth-client";
 import Link from "next/link";
 
 const data = {
@@ -38,7 +38,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending } = useSession();
 
   return (
     <Sidebar collapsible="icon" {...props}>

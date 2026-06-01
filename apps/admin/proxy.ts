@@ -1,10 +1,10 @@
-import { auth } from "@repo/auth";
 import { type NextRequest, NextResponse } from "next/server";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://api.autovendo.ch";
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Paths that should NOT be protected
   const isAuthRoute = pathname.startsWith("/login");
   const isApiRoute = pathname.startsWith("/api");
 
@@ -12,11 +12,21 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
+  const cookie = request.headers.get("cookie") ?? "";
 
-  if (!session) {
+  let session: { user?: { role?: string } } | null = null;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/get-session`, {
+      headers: { cookie },
+      cache: "no-store",
+    });
+    if (res.ok) {
+      session = await res.json();
+    }
+  } catch {}
+
+  if (!session?.user) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

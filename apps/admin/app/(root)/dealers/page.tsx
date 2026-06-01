@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { prisma } from "@repo/db";
 import { Button } from "@repo/ui/components/button";
 import {
   Table,
@@ -18,41 +17,13 @@ import {
   AvatarImage,
 } from "@repo/ui/src/components/avatar";
 import { DealerListActions } from "./_components/dealer-list-actions";
+import { serverFetch } from "@/lib/api/client";
 
 export const dynamic = "force-dynamic";
 
 export default async function DealersPage() {
-  const dealers = await prisma.dealer.findMany({
-    include: {
-      user: {
-        select: {
-          id: true,
-          role: true,
-          banned: true,
-          stripeCustomerId: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
-  // Fetch all subscriptions for these users to determine subscription status
-  const stripeCustomerIds = dealers
-    .map((d) => d.user?.stripeCustomerId)
-    .filter((id): id is string => !!id);
-
-  const subscriptions = await prisma.subscription.findMany({
-    where: {
-      stripeCustomerId: { in: stripeCustomerIds },
-      status: "active",
-    },
-  });
-
-  const activeSubscriptionCustomerIds = new Set(
-    subscriptions.map((s) => s.stripeCustomerId),
-  );
+  const res = await serverFetch("/api/admin/dealers");
+  const dealers: any[] = res.ok ? await res.json() : [];
 
   return (
     <div className="flex-1 space-y-6">
@@ -90,62 +61,54 @@ export default async function DealersPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              dealers.map((dealer) => {
-                const hasSubscription =
-                  !!dealer.user?.stripeCustomerId &&
-                  activeSubscriptionCustomerIds.has(
-                    dealer.user.stripeCustomerId,
-                  );
-
-                return (
-                  <TableRow key={dealer.id}>
-                    <TableCell>
-                      <Avatar>
-                        <AvatarImage src={getImageUrl(dealer.logo)} />
-                        <AvatarFallback>
-                          {dealer.companyName.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {dealer.companyName}
-                    </TableCell>
-                    <TableCell>{dealer.contactPerson}</TableCell>
-                    <TableCell>{dealer.businessEmail}</TableCell>
-                    <TableCell>{dealer.phoneNumber}</TableCell>
-                    <TableCell>{dealer.city}</TableCell>
-                    <TableCell>
-                      {dealer.user?.banned ? (
-                        <Badge variant="destructive">Banned</Badge>
-                      ) : (
-                        <Badge className="bg-green-500 text-white hover:bg-green-600">
-                          Active
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {hasSubscription ? (
-                        <Badge className="bg-green-500 text-white hover:bg-green-600">
-                          Subscribed
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary">No Subscription</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(dealer.createdAt).toLocaleDateString("de-CH")}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DealerListActions
-                        dealerId={dealer.id}
-                        userId={dealer.userId}
-                        isBanned={!!dealer.user?.banned}
-                        currentRole={dealer.user?.role || "user"}
-                      />
-                    </TableCell>
-                  </TableRow>
-                );
-              })
+              dealers.map((dealer) => (
+                <TableRow key={dealer.id}>
+                  <TableCell>
+                    <Avatar>
+                      <AvatarImage src={getImageUrl(dealer.logo)} />
+                      <AvatarFallback>
+                        {dealer.companyName.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {dealer.companyName}
+                  </TableCell>
+                  <TableCell>{dealer.contactPerson}</TableCell>
+                  <TableCell>{dealer.businessEmail}</TableCell>
+                  <TableCell>{dealer.phoneNumber}</TableCell>
+                  <TableCell>{dealer.city}</TableCell>
+                  <TableCell>
+                    {dealer.user?.banned ? (
+                      <Badge variant="destructive">Banned</Badge>
+                    ) : (
+                      <Badge className="bg-green-500 text-white hover:bg-green-600">
+                        Active
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {dealer.hasActiveSubscription ? (
+                      <Badge className="bg-green-500 text-white hover:bg-green-600">
+                        Subscribed
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary">No Subscription</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(dealer.createdAt).toLocaleDateString("de-CH")}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DealerListActions
+                      dealerId={dealer.id}
+                      userId={dealer.userId}
+                      isBanned={!!dealer.user?.banned}
+                      currentRole={dealer.user?.role || "user"}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>

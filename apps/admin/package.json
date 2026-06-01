@@ -11,10 +11,6 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@repo/auth": "*",
-    "@repo/db": "*",
-    "@repo/storage": "*",
-    "@repo/transactional": "*",
     "@repo/ui": "*",
     "ioredis": "^5.10.1",
     "lucide-react": "^0.563.0",

@@ -17,7 +17,7 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { authClient } from "@repo/auth/client";
+import { signIn } from "@/lib/api/auth-client";
 import { toast } from "sonner";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { loginSchema } from "@/schema";
@@ -35,16 +35,19 @@ export const LoginForm = () => {
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
     startTransition(async () => {
-      const result = await authClient.signIn.email({
+      const result = await signIn({
         email: data.email,
         password: data.password,
-        callbackURL: "/",
       });
 
       if (result.error) {
-        toast.error(result.error.message);
+        toast.error(
+          (result.error as { message?: string })?.message ?? "Login failed",
+        );
         return;
       }
+
+      window.location.href = "/";
     });
   }
 

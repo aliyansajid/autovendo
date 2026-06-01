@@ -26,14 +26,14 @@ import { roleSchema } from "@/schema";
 import { Spinner } from "@repo/ui/src/components/spinner";
 
 interface RoleDialogProps {
-  userId: string;
+  dealerId: string;
   currentRole: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function RoleDialog({
-  userId,
+  dealerId,
   currentRole,
   isOpen,
   onOpenChange,
@@ -50,7 +50,7 @@ export function RoleDialog({
   const onSubmit = (values: z.infer<typeof roleSchema>) => {
     startTransition(async () => {
       const result = await setRole({
-        userId,
+        dealerId,
         role: values.role,
       });
 

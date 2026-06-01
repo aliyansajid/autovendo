@@ -20,6 +20,9 @@ import sellerBilling from "./routes/seller-billing";
 import sellerListings from "./routes/seller-listings";
 import sellerVehicles from "./routes/seller-vehicles";
 import sellerWebhook from "./routes/seller-webhook";
+import adminDealers from "./routes/admin-dealers";
+import adminPlans from "./routes/admin-plans";
+import adminSubscriptions from "./routes/admin-subscriptions";
 
 const app = new Hono<{
   Variables: {
@@ -123,6 +126,15 @@ app.route("/api/seller/vehicles", sellerVehicles);
 
 // Seller Stripe webhook
 app.route("/api/seller/webhook", sellerWebhook);
+
+// Admin — dealer management
+app.route("/api/admin/dealers", adminDealers);
+
+// Admin — plan management
+app.route("/api/admin/plans", adminPlans);
+
+// Admin — subscriptions
+app.route("/api/admin/subscriptions", adminSubscriptions);
 
 // Session endpoint
 app.get("/api/session", (c) => {

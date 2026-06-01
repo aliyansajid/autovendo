@@ -1,40 +1,21 @@
 "use server";
 
 import { z } from "zod";
-import { auth, stripeClient } from "@repo/auth";
-import { prisma } from "@repo/db";
-import { StorageService } from "@repo/storage";
 import { revalidatePath } from "next/cache";
 import { dealerSchema, updateDealerSchema } from "@/schema";
 import { cacheDelete, cacheDeletePattern } from "@/lib/cache";
+import { serverFetch } from "@/lib/api/client";
 
 export async function createDealer(formData: z.infer<typeof dealerSchema>) {
   try {
     const validatedData = dealerSchema.parse(formData);
 
-    // 1. Create User via Better Auth Admin API
-    const newUser = await auth.api.createUser({
-      body: {
+    const res = await serverFetch("/api/admin/dealers", {
+      method: "POST",
+      body: JSON.stringify({
         name: validatedData.name,
         email: validatedData.email,
         password: validatedData.password,
-        role: "user",
-      },
-    });
-
-    if (!newUser || !newUser.user) {
-      return { error: "Failed to create authentication account" };
-    }
-
-    await prisma.user.update({
-      where: { id: newUser.user.id },
-      data: { emailVerified: true },
-    });
-
-    // 2. Create Dealer Record
-    await prisma.dealer.create({
-      data: {
-        userId: newUser.user.id,
         companyName: validatedData.companyName,
         streetAddress: validatedData.streetAddress,
         zipCode: validatedData.zipCode,
@@ -43,57 +24,32 @@ export async function createDealer(formData: z.infer<typeof dealerSchema>) {
         contactPerson: validatedData.contactPerson,
         phoneNumber: validatedData.phoneNumber,
         businessEmail: validatedData.businessEmail,
-      },
+      }),
     });
 
-    // 3. Send Welcome Email
-    try {
-      const { sendEmail } = await import("@repo/transactional");
-      const { DealerWelcomeEmail } =
-        await import("@repo/transactional/emails/dealer-welcome");
-
-      await sendEmail({
-        to: validatedData.email,
-        subject: "Welcome to Autovendo",
-        template: DealerWelcomeEmail({
-          dealerName: validatedData.name,
-          loginUrl: `${process.env.NEXT_PUBLIC_APP_URL}/login`,
-          locale: "de",
-        }),
-      });
-    } catch (emailError) {
-      console.error("Failed to send welcome email:", emailError);
-      // We don't return error here because the account was successfully created
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return { success: false, error: (err as any).error ?? "Failed to create dealer" };
     }
 
     await cacheDeletePattern("dealers:list:*");
     revalidatePath("/dealers");
 
-    return {
-      success: true,
-      message: "Dealer created successfully",
-    };
+    return { success: true, message: "Dealer created successfully" };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return { error: error.issues[0]?.message || "Validation error" };
     }
-
     console.error("Dealer creation error:", error);
-
-    return {
-      success: false,
-      error: "An unexpected error occurred. Please try again later.",
-    };
+    return { success: false, error: "An unexpected error occurred. Please try again later." };
   }
 }
 
 export async function getDealer(id: string) {
-  return await prisma.dealer.findUnique({
-    where: { id },
-    include: {
-      user: true,
-    },
-  });
+  const res = await serverFetch(`/api/admin/dealers/${id}`);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error("Failed to fetch dealer");
+  return res.json();
 }
 
 export async function updateDealer(
@@ -103,40 +59,12 @@ export async function updateDealer(
   try {
     const validatedData = updateDealerSchema.parse(formData);
 
-    const dealer = await prisma.dealer.findUnique({
-      where: { id },
-      include: { user: true },
-    });
-
-    if (!dealer) {
-      return { error: "Dealer not found" };
-    }
-
-    // 1. Update User via Better Auth Admin API
-    await auth.api.adminUpdateUser({
-      body: {
-        userId: dealer.userId,
-        data: {
-          name: validatedData.name,
-          email: validatedData.email,
-        },
-      },
-    });
-
-    // 2. Update password if provided via Admin API
-    if (validatedData.password) {
-      await auth.api.setUserPassword({
-        body: {
-          userId: dealer.userId,
-          newPassword: validatedData.password,
-        },
-      });
-    }
-
-    // 3. Update Dealer Record
-    await prisma.dealer.update({
-      where: { id },
-      data: {
+    const res = await serverFetch(`/api/admin/dealers/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        name: validatedData.name,
+        email: validatedData.email,
+        password: validatedData.password,
         companyName: validatedData.companyName,
         streetAddress: validatedData.streetAddress,
         zipCode: validatedData.zipCode,
@@ -145,8 +73,13 @@ export async function updateDealer(
         contactPerson: validatedData.contactPerson,
         phoneNumber: validatedData.phoneNumber,
         businessEmail: validatedData.businessEmail,
-      },
+      }),
     });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return { success: false, error: (err as any).error ?? "Failed to update dealer" };
+    }
 
     await Promise.all([
       cacheDelete(`dealer:${id}`),
@@ -156,38 +89,35 @@ export async function updateDealer(
     revalidatePath("/dealers");
     revalidatePath(`/dealers/${id}`);
 
-    return {
-      success: true,
-      message: "Dealer updated successfully",
-    };
+    return { success: true, message: "Dealer updated successfully" };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return { error: error.issues[0]?.message || "Validation error" };
     }
-
     console.error("Dealer update error:", error);
-
-    return {
-      success: false,
-      error: "An unexpected error occurred. Please try again later.",
-    };
+    return { success: false, error: "An unexpected error occurred. Please try again later." };
   }
 }
 
 export async function setUserPasswordAdmin({
+  dealerId,
   userId,
   newPassword,
 }: {
+  dealerId: string;
   userId: string;
   newPassword: string;
 }) {
   try {
-    await auth.api.setUserPassword({
-      body: {
-        userId,
-        newPassword,
-      },
+    const res = await serverFetch(`/api/admin/dealers/${dealerId}/set-password`, {
+      method: "POST",
+      body: JSON.stringify({ userId, newPassword }),
     });
+
+    if (!res.ok) {
+      return { success: false, error: "Failed to set password" };
+    }
+
     return { success: true, message: "Password updated successfully" };
   } catch (error) {
     console.error("Set password error:", error);
@@ -196,21 +126,22 @@ export async function setUserPasswordAdmin({
 }
 
 export async function setRole({
-  userId,
+  dealerId,
   role,
 }: {
-  userId: string;
+  dealerId: string;
   role: "user" | "admin";
 }) {
   try {
-    const { headers } = await import("next/headers");
-    await auth.api.setRole({
-      body: {
-        userId,
-        role,
-      },
-      headers: await headers(),
+    const res = await serverFetch(`/api/admin/dealers/${dealerId}/set-role`, {
+      method: "POST",
+      body: JSON.stringify({ role }),
     });
+
+    if (!res.ok) {
+      return { success: false, error: "Failed to set role" };
+    }
+
     revalidatePath("/dealers");
     return { success: true, message: `Role updated to ${role}` };
   } catch (error) {
@@ -220,73 +151,22 @@ export async function setRole({
 }
 
 export async function banUser({
-  userId,
+  dealerId,
   reason,
   expiresIn,
 }: {
-  userId: string;
+  dealerId: string;
   reason?: string;
   expiresIn?: number;
 }) {
   try {
-    const { headers } = await import("next/headers");
-
-    // 1. Get user and dealer info for the email
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: { dealer: true },
+    const res = await serverFetch(`/api/admin/dealers/${dealerId}/ban`, {
+      method: "POST",
+      body: JSON.stringify({ reason, expiresIn }),
     });
 
-    // 2. Perform the ban
-    await auth.api.banUser({
-      body: {
-        userId,
-        banReason: reason,
-        banExpiresIn: expiresIn,
-      },
-      headers: await headers(),
-    });
-
-    // 2.5 Pause all PUBLISHED listings if the user has a dealer profile
-    if (user && user.dealer) {
-      await prisma.vehicle.updateMany({
-        where: {
-          dealerId: user.dealer.id,
-          status: "PUBLISHED",
-        },
-        data: {
-          status: "PAUSED",
-        },
-      });
-    }
-
-    // 3. Send the notification email
-    if (user && user.email) {
-      const { sendEmail, AccountBannedEmail } =
-        await import("@repo/transactional");
-
-      let durationText = "Permanent";
-      if (expiresIn) {
-        if (expiresIn === 3600) durationText = "1 Hour";
-        else if (expiresIn === 86400) durationText = "24 Hours";
-        else if (expiresIn === 604800) durationText = "7 Days";
-        else if (expiresIn === 2592000) durationText = "30 Days";
-      }
-
-      const isPermanent = !expiresIn;
-      
-      await sendEmail({
-        to: user.email,
-        subject: isPermanent 
-          ? "Important: Your account has been permanently banned"
-          : "Notice: Your account has been temporarily suspended",
-        template: AccountBannedEmail({
-          userName: user.dealer?.contactPerson || user.name || "Dealer",
-          reason: reason || "Violation of platform policies",
-          duration: durationText,
-          isPermanent,
-        }),
-      });
+    if (!res.ok) {
+      return { success: false, error: "Failed to ban user" };
     }
 
     revalidatePath("/dealers");
@@ -297,53 +177,15 @@ export async function banUser({
   }
 }
 
-export async function unbanUser(userId: string) {
+export async function unbanUser(dealerId: string) {
   try {
-    const { headers } = await import("next/headers");
-
-    // 1. Get user and dealer info for the email
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: { dealer: true },
+    const res = await serverFetch(`/api/admin/dealers/${dealerId}/unban`, {
+      method: "POST",
+      body: JSON.stringify({}),
     });
 
-    // 2. Perform the unban
-    await auth.api.unbanUser({
-      body: {
-        userId,
-      },
-      headers: await headers(),
-    });
-
-    // 2.5 Automatically republish PAUSED listings if the user has a dealer profile
-    if (user && user.dealer) {
-      await prisma.vehicle.updateMany({
-        where: {
-          dealerId: user.dealer.id,
-          status: "PAUSED",
-        },
-        data: {
-          status: "PUBLISHED",
-        },
-      });
-    }
-
-    // 3. Send the notification email
-    if (user && user.email) {
-      const { sendEmail, AccountUnbannedEmail } =
-        await import("@repo/transactional");
-
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://autovendo.ch";
-      const loginUrl = `${baseUrl}/de/dashboard`;
-
-      await sendEmail({
-        to: user.email,
-        subject: "Your Autovendo account access has been restored",
-        template: AccountUnbannedEmail({
-          userName: user.dealer?.contactPerson || user.name || "Dealer",
-          loginUrl: loginUrl,
-        }),
-      });
+    if (!res.ok) {
+      return { success: false, error: "Failed to unban user" };
     }
 
     revalidatePath("/dealers");
@@ -354,129 +196,24 @@ export async function unbanUser(userId: string) {
   }
 }
 
-export async function removeUser(userId: string) {
+export async function removeUser(dealerId: string) {
   try {
-    const { headers } = await import("next/headers");
+    const dealer = await getDealer(dealerId);
+    if (!dealer) return { success: false, error: "User not found" };
 
-    // 1. Get user and dealer info (including vehicles) BEFORE deleting
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        dealer: {
-          include: {
-            vehicles: true,
-          },
-        },
-      },
+    const res = await serverFetch(`/api/admin/dealers/${dealerId}`, {
+      method: "DELETE",
     });
 
-    if (!user) {
-      return { success: false, error: "User not found" };
+    if (!res.ok) {
+      return { success: false, error: "Failed to remove user" };
     }
 
-    // Initialize StorageService for image deletion
-    const storage = new StorageService({
-      accessKeyId: process.env.R2_ACCESS_KEY_ID || "",
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || "",
-      accountId: process.env.R2_ACCOUNT_ID || "",
-      bucket: process.env.R2_BUCKET_NAME || "autovendo",
-      publicDomain: process.env.R2_PUBLIC_DOMAIN,
-    });
-
-    // 2. Delete Dealer, Vehicles, and their Images
-    if (user.dealer) {
-      // 2a. Delete vehicle images
-      for (const vehicle of user.dealer.vehicles) {
-        if (vehicle.images && vehicle.images.length > 0) {
-          await Promise.all(
-            vehicle.images.map(async (key) => {
-              try {
-                await storage.deleteFile(key);
-              } catch (e) {
-                console.error(`Failed to delete vehicle image: ${key}`, e);
-              }
-            })
-          );
-        }
-      }
-
-      // 2b. Delete dealer logos/covers/profile image
-      if (user.dealer.logo) {
-        try { await storage.deleteFile(user.dealer.logo); } catch (e) {}
-      }
-      if (user.dealer.coverImage) {
-        try { await storage.deleteFile(user.dealer.coverImage); } catch (e) {}
-      }
-      if (user.image) {
-        try { await storage.deleteFile(user.image); } catch (e) {}
-      }
-
-      // 2c. Delete vehicles from DB
-      await prisma.vehicle.deleteMany({
-        where: { dealerId: user.dealer.id },
-      });
-
-      // 2d. Delete dealer record
-      await prisma.dealer.delete({
-        where: { id: user.dealer.id },
-      });
-    }
-
-    // 3. Cancel Stripe subscriptions
-    const uniqueSubsMap = new Map();
-    
-    if (user.stripeCustomerId) {
-      const subsByCustomer = await prisma.subscription.findMany({
-        where: { stripeCustomerId: user.stripeCustomerId },
-      });
-      subsByCustomer.forEach(s => uniqueSubsMap.set(s.stripeSubscriptionId, s));
-    }
-    
-    const subsByRef = await prisma.subscription.findMany({
-      where: { referenceId: userId },
-    });
-    subsByRef.forEach(s => uniqueSubsMap.set(s.stripeSubscriptionId, s));
-
-    const uniqueSubs = Array.from(uniqueSubsMap.values());
-
-    for (const sub of uniqueSubs) {
-      if (sub.stripeSubscriptionId && sub.status !== "canceled") {
-        try {
-          await stripeClient.subscriptions.cancel(sub.stripeSubscriptionId);
-        } catch (e) {
-          console.error(`Failed to cancel Stripe subscription: ${sub.stripeSubscriptionId}`, e);
-        }
-      }
-    }
-
-    // 4. Remove User from Better Auth (this cascades Account, Session, etc.)
-    await auth.api.removeUser({
-      body: {
-        userId,
-      },
-      headers: await headers(),
-    });
-
-    // 5. Send Notification Email
-    if (user.email) {
-      const { sendEmail, AccountDeletedEmail } = await import(
-        "@repo/transactional"
-      );
-
-      await sendEmail({
-        to: user.email,
-        subject: "Your Autovendo account has been closed",
-        template: AccountDeletedEmail({
-          userName: user.dealer?.contactPerson || user.name || "Dealer",
-        }),
-      });
-    }
-
-    if (user.dealer) {
+    if (dealer?.id) {
       await Promise.all([
-        cacheDelete(`dealer:${user.dealer.id}`),
+        cacheDelete(`dealer:${dealer.id}`),
         cacheDeletePattern("dealers:list:*"),
-        cacheDeletePattern(`dealer:vehicles:${user.dealer.id}:*`),
+        cacheDeletePattern(`dealer:vehicles:${dealer.id}:*`),
         cacheDeletePattern("vehicles:*"),
       ]);
     }
@@ -490,13 +227,15 @@ export async function removeUser(userId: string) {
 
 export async function revokeSession(sessionToken: string) {
   try {
-    const { headers } = await import("next/headers");
-    await auth.api.revokeUserSession({
-      body: {
-        sessionToken,
-      },
-      headers: await headers(),
-    });
+    const res = await serverFetch(
+      `/api/admin/dealers/sessions/${encodeURIComponent(sessionToken)}`,
+      { method: "DELETE" },
+    );
+
+    if (!res.ok) {
+      return { success: false, error: "Failed to revoke session" };
+    }
+
     revalidatePath("/dealers");
     return { success: true, message: "Session revoked successfully" };
   } catch (error) {
@@ -505,15 +244,16 @@ export async function revokeSession(sessionToken: string) {
   }
 }
 
-export async function revokeAllSessions(userId: string) {
+export async function revokeAllSessions(dealerId: string) {
   try {
-    const { headers } = await import("next/headers");
-    await auth.api.revokeUserSessions({
-      body: {
-        userId,
-      },
-      headers: await headers(),
+    const res = await serverFetch(`/api/admin/dealers/${dealerId}/sessions`, {
+      method: "DELETE",
     });
+
+    if (!res.ok) {
+      return { success: false, error: "Failed to revoke sessions" };
+    }
+
     revalidatePath("/dealers");
     return { success: true, message: "All sessions revoked successfully" };
   } catch (error) {

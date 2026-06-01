@@ -1,32 +1,37 @@
 "use server";
 
 import { z } from "zod";
-import { prisma } from "@repo/db";
 import { revalidatePath } from "next/cache";
 import { planSchema } from "@/schema";
+import { serverFetch } from "@/lib/api/client";
 
 export async function getPlans() {
-  return await prisma.plan.findMany({
-    orderBy: { price: "asc" },
-  });
+  const res = await serverFetch("/api/admin/plans");
+  if (!res.ok) throw new Error("Failed to fetch plans");
+  return res.json();
 }
 
 export async function createPlan(formData: z.infer<typeof planSchema>) {
   try {
     const validatedData = planSchema.parse(formData);
 
-    await prisma.plan.create({
-      data: {
+    const res = await serverFetch("/api/admin/plans", {
+      method: "POST",
+      body: JSON.stringify({
         name: validatedData.name,
         description: validatedData.description,
         price: validatedData.price,
         priceId: validatedData.priceId,
-        limits: { vehicles: validatedData.vehicles },
+        vehicles: validatedData.vehicles,
         popular: validatedData.popular,
         hasTrial: validatedData.hasTrial,
-        trialDays: validatedData.hasTrial ? validatedData.trialDays : null,
-      },
+        trialDays: validatedData.trialDays,
+      }),
     });
+
+    if (!res.ok) {
+      return { success: false, error: "Failed to create plan" };
+    }
 
     revalidatePath("/plans");
     return { success: true, message: "Plan created successfully" };
@@ -43,19 +48,23 @@ export async function updatePlan(
   try {
     const validatedData = planSchema.parse(formData);
 
-    await prisma.plan.update({
-      where: { id },
-      data: {
+    const res = await serverFetch(`/api/admin/plans/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({
         name: validatedData.name,
         description: validatedData.description,
         price: validatedData.price,
         priceId: validatedData.priceId,
-        limits: { vehicles: validatedData.vehicles },
+        vehicles: validatedData.vehicles,
         popular: validatedData.popular,
         hasTrial: validatedData.hasTrial,
-        trialDays: validatedData.hasTrial ? validatedData.trialDays : null,
-      },
+        trialDays: validatedData.trialDays,
+      }),
     });
+
+    if (!res.ok) {
+      return { success: false, error: "Failed to update plan" };
+    }
 
     revalidatePath("/plans");
     return { success: true, message: "Plan updated successfully" };
@@ -67,9 +76,13 @@ export async function updatePlan(
 
 export async function deletePlan(id: string) {
   try {
-    await prisma.plan.delete({
-      where: { id },
+    const res = await serverFetch(`/api/admin/plans/${id}`, {
+      method: "DELETE",
     });
+
+    if (!res.ok) {
+      return { success: false, error: "Failed to delete plan" };
+    }
 
     revalidatePath("/plans");
     return { success: true, message: "Plan deleted successfully" };
