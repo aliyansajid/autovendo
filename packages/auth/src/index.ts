@@ -311,6 +311,13 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         });
         if (!user) return;
 
+        const cookieHeader = ctx.headers?.get("cookie") ?? "";
+        const localeCookie = cookieHeader
+          .split(";")
+          .map((c) => c.trim())
+          .find((c) => c.startsWith("NEXT_LOCALE="));
+        const locale = localeCookie?.split("=")[1] ?? "de";
+
         // Create seller profile (non-critical)
         try {
           await prisma.seller.upsert({
@@ -341,7 +348,7 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
               subject: `Welcome to AutoSolo – your account is ready`,
               template: SellerWelcomeEmail({
                 sellerName: user.name,
-                dashboardUrl: `${soloUrl}/dashboard`,
+                dashboardUrl: `${soloUrl}/${locale}/dashboard`,
               }),
             });
           } catch {}
