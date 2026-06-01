@@ -67,13 +67,13 @@ export const WarrantyEnum = [
 ] as const;
 
 export const EnergyLabelEnum = [
-  { value: "A" },
-  { value: "B" },
-  { value: "C" },
-  { value: "D" },
-  { value: "E" },
-  { value: "F" },
-  { value: "G" },
+  { value: "A", label: "A" },
+  { value: "B", label: "B" },
+  { value: "C", label: "C" },
+  { value: "D", label: "D" },
+  { value: "E", label: "E" },
+  { value: "F", label: "F" },
+  { value: "G", label: "G" },
 ] as const;
 
 export const EmissionStandardEnum = [
