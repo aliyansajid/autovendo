@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import { prisma } from "@repo/db";
 import type {
   Prisma,
+  BodyType,
   FuelType,
   TransmissionType,
   DriveType,
@@ -209,8 +210,7 @@ function buildWhereClause(
   }
 
   if (!omit.bodyType && params.bodyType.length > 0) {
-    const bodyTypeOr = params.bodyType.map((b) => ({ bodyType: toDbEnum(b) as any }));
-    where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), { OR: bodyTypeOr }];
+    where.bodyType = { in: params.bodyType.map(toDbEnum) as BodyType[] };
   }
 
   if (!omit.color && params.color.length > 0) {
