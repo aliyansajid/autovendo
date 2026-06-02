@@ -565,7 +565,8 @@
     "fuel": "Treibstoff",
     "transmission": "Getriebe",
     "drive": "Antrieb",
-    "resetFilters": "Filter zurücksetzen"
+    "resetFilters": "Filter zurücksetzen",
+    "moreFilters": "Mehr Filter"
   },
   "LoginForm": {
     "title": "Willkommen zurück",

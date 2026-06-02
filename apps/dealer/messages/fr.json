@@ -565,7 +565,8 @@
     "fuel": "Carburant",
     "transmission": "Transmission",
     "drive": "Traction",
-    "resetFilters": "Réinitialiser les filtres"
+    "resetFilters": "Réinitialiser les filtres",
+    "moreFilters": "Plus de filtres"
   },
   "LoginForm": {
     "title": "Bon retour",

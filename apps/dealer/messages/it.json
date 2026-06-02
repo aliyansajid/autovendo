@@ -565,7 +565,8 @@
     "fuel": "Carburante",
     "transmission": "Trasmissione",
     "drive": "Trazione",
-    "resetFilters": "Reimposta filtri"
+    "resetFilters": "Reimposta filtri",
+    "moreFilters": "Altri filtri"
   },
   "LoginForm": {
     "title": "Bentornato",
