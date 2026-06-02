@@ -83,11 +83,11 @@ export function TechnicalDataSection({
   ];
 
   const currentFuelEnum =
-    vehicleType === "utility"
+    vehicleType === "UTILITY"
       ? utilityFuelTypeEnum
-      : vehicleType === "truck"
+      : vehicleType === "TRUCK"
         ? truckFuelTypeEnum
-        : vehicleType === "camper"
+        : vehicleType === "CAMPER"
           ? camperFuelTypeEnum
           : carFuelTypeEnum;
 

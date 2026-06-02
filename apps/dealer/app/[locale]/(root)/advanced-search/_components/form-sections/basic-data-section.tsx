@@ -413,11 +413,11 @@ export function BasicDataSection({
               className="text-xs text-muted-foreground cursor-pointer hover:underline"
               onClick={() => {
                 const bodyEnum =
-                  vehicleType === "utility"
+                  vehicleType === "UTILITY"
                     ? utilityBodyTypeEnum
-                    : vehicleType === "truck"
+                    : vehicleType === "TRUCK"
                       ? truckBodyTypeEnum
-                      : vehicleType === "camper"
+                      : vehicleType === "CAMPER"
                         ? camperBodyTypeEnum
                         : carBodyTypeEnum;
                 bodyEnum.forEach((t: { value: string }) =>
@@ -429,11 +429,11 @@ export function BasicDataSection({
             </span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
-            {(vehicleType === "utility"
+            {(vehicleType === "UTILITY"
               ? utilityBodyTypeEnum
-              : vehicleType === "truck"
+              : vehicleType === "TRUCK"
                 ? truckBodyTypeEnum
-                : vehicleType === "camper"
+                : vehicleType === "CAMPER"
                   ? camperBodyTypeEnum
                   : carBodyTypeEnum
             ).map((type: { value: string; label: string }) => {

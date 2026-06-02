@@ -53,7 +53,7 @@ export const AdvancedSearchForm = () => {
     defaultValues: { make: [], powerType: "ps", daysListed: "any" },
   });
 
-  const [vehicleType, setVehicleType] = useState("car");
+  const [vehicleType, setVehicleType] = useState("CAR");
   const [total, setTotal] = useState<number | null>(null);
   const [facets, setFacets] = useState<VehicleFacets | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -137,10 +137,10 @@ export const AdvancedSearchForm = () => {
 
           <div className="flex overflow-x-auto gap-8 mb-8 pt-8 scrollbar-hide border-b">
             {[
-              { id: "car", label: t("vehicleTypes.car"), icon: Car },
-              { id: "camper", label: t("vehicleTypes.camper"), icon: Caravan },
-              { id: "utility", label: t("vehicleTypes.utility"), icon: Truck },
-              { id: "truck", label: t("vehicleTypes.truck"), icon: Truck },
+              { id: "CAR", label: t("vehicleTypes.car"), icon: Car },
+              { id: "CAMPER", label: t("vehicleTypes.camper"), icon: Caravan },
+              { id: "UTILITY", label: t("vehicleTypes.utility"), icon: Truck },
+              { id: "TRUCK", label: t("vehicleTypes.truck"), icon: Truck },
             ].map((type) => (
               <button
                 key={type.id}

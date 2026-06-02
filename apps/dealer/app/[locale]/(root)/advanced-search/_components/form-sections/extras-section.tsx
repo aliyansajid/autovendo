@@ -28,11 +28,11 @@ export function ExtrasSection({ vehicleType }: { vehicleType: string }) {
       </AccordionTrigger>
       <AccordionContent className="pt-6 px-1">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
-          {(vehicleType === "utility"
+          {(vehicleType === "UTILITY"
             ? utilityExtrasEnum
-            : vehicleType === "truck"
+            : vehicleType === "TRUCK"
               ? truckExtrasEnum
-              : vehicleType === "camper"
+              : vehicleType === "CAMPER"
                 ? camperExtrasEnum
                 : carExtrasEnum
           ).map((extra: { value: string; label: string }) => (
