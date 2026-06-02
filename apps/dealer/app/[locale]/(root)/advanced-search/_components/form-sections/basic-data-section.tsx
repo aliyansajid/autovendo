@@ -37,7 +37,7 @@ export function BasicDataSection({
   const { control, watch, setValue, getValues } = useFormContext();
 
   const yearMin = 1900;
-  const yearMax = 2026;
+  const yearMax = CURRENT_YEAR;
   const kmMax = 400000;
   const priceMax = 1000000;
 

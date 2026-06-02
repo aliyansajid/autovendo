@@ -2,9 +2,59 @@
  * Build /cars search params from advanced search form values and vehicle type.
  * Used for submit navigation and for fetching count/facets.
  *
- * IMPORTANT: Form field names use the raw UPPERCASE enum value (e.g. color-BLUE,
- * fuel-PETROL, condition-NEW). Keys here must match exactly.
+ * All enum key lists are derived from @repo/vehicle-constants — the single
+ * source of truth. Adding/removing a value there automatically propagates here.
  */
+import {
+  VehicleConditionEnum,
+  TransmissionTypeEnum,
+  DriveTypeEnum,
+  ColorEnum,
+  EnergyLabelEnum,
+} from "@repo/vehicle-constants";
+import {
+  carBodyTypeEnum,
+  utilityBodyTypeEnum,
+  truckBodyTypeEnum,
+  camperBodyTypeEnum,
+  carFuelTypeEnum,
+  utilityFuelTypeEnum,
+  truckFuelTypeEnum,
+  camperFuelTypeEnum,
+} from "@repo/vehicle-constants";
+
+// ─── Derived key lists (single source of truth) ───────────────────────────────
+
+const CONDITION_KEYS = VehicleConditionEnum.map((v) => v.value);
+
+const BODY_TYPE_KEYS = Array.from(
+  new Set([
+    ...carBodyTypeEnum.map((v) => v.value),
+    ...utilityBodyTypeEnum.map((v) => v.value),
+    ...truckBodyTypeEnum.map((v) => v.value),
+    ...camperBodyTypeEnum.map((v) => v.value),
+  ]),
+);
+
+const FUEL_KEYS = Array.from(
+  new Set([
+    ...carFuelTypeEnum.map((v) => v.value),
+    ...utilityFuelTypeEnum.map((v) => v.value),
+    ...truckFuelTypeEnum.map((v) => v.value),
+    ...camperFuelTypeEnum.map((v) => v.value),
+  ]),
+);
+
+const TRANSMISSION_KEYS = TransmissionTypeEnum.map((v) => v.value);
+
+const COLOR_KEYS = ColorEnum.map((v) => v.value);
+
+const DRIVE_TYPE_KEYS = DriveTypeEnum.map((v) => v.value);
+
+const ENERGY_LABEL_KEYS = EnergyLabelEnum.map((v) => v.value);
+
+// ─── Builder ──────────────────────────────────────────────────────────────────
+
 export function buildSearchParams(
   formValues: Record<string, unknown>,
   vehicleType: string,
@@ -70,59 +120,40 @@ export function buildSearchParams(
 
   // Condition — form fields: condition-NEW, condition-USED, etc.
   const condition: string[] = [];
-  for (const key of ["NEW", "DEMONSTRATION", "PRE_REGISTERED", "USED", "OLDTIMER"]) {
+  for (const key of CONDITION_KEYS) {
     if (formValues[`condition-${key}`] === true) condition.push(key);
   }
   if (condition.length > 0) params.condition = condition;
 
   // Body type — form fields: bodyType-SUV, bodyType-SMALL_CAR, etc.
   const bodyType: string[] = [];
-  const bodyKeys = [
-    // Car
-    "BUS", "CABRIOLET", "COUPE", "SMALL_CAR", "ESTATE", "MINIVAN", "SALOON", "PICKUP", "SUV",
-    // Utility
-    "BRIDGE", "BRIDGE_DOUBLE_CAB", "CHASSIS_CAB", "BOX", "BOX_GLAZED", "BOX_DOUBLE_CAB",
-    "TIPPER", "PLATFORM", "SEMI_TRAILER",
-    // Truck
-    "CAB_OVER", "COACH",
-    // Camper
-    "ALCOVE", "TRAILER", "INTEGRATED", "CAB", "OTHER", "SEMI_INTEGRATED", "MOTORHOME", "CARAVAN",
-  ];
-  for (const key of bodyKeys) {
+  for (const key of BODY_TYPE_KEYS) {
     if (formValues[`bodyType-${key}`] === true) bodyType.push(key);
   }
   if (bodyType.length > 0) params.bodyType = bodyType;
 
   // Fuel — form fields: fuel-PETROL, fuel-CNG_PETROL, etc.
   const fuel: string[] = [];
-  const fuelKeys = [
-    "PETROL", "ETHANOL_PETROL", "DIESEL", "ELECTRIC", "CNG_PETROL", "LPG_PETROL",
-    "MHEV_DIESEL", "MHEV_PETROL", "PHEV_DIESEL", "PHEV_PETROL", "HEV_DIESEL", "HEV_PETROL", "HYDROGEN",
-  ];
-  for (const key of fuelKeys) {
+  for (const key of FUEL_KEYS) {
     if (formValues[`fuel-${key}`] === true) fuel.push(key);
   }
   if (fuel.length > 0) params.fuel = fuel;
 
-  // Transmission — form fields: transmission-AUTOMATIC, transmission-SEMI_AUTOMATIC, etc.
+  // Transmission — form fields: transmission-AUTOMATIC, etc.
   const transmission: string[] = [];
-  for (const key of ["AUTOMATIC", "AUTOMATIC_STEPLESS", "SEMI_AUTOMATIC", "MANUAL"]) {
+  for (const key of TRANSMISSION_KEYS) {
     if (formValues[`transmission-${key}`] === true) transmission.push(key);
   }
   if (transmission.length > 0) params.transmission = transmission;
 
   // Exterior color — form fields: color-BLUE, color-BLACK, etc.
   const color: string[] = [];
-  const colorKeys = [
-    "ANTHRACITE", "BEIGE", "BLACK", "BLUE", "BORDEAUX", "BROWN", "GOLD", "GRAY", "GREEN",
-    "MULTICOLOURED", "ORANGE", "PINK", "RED", "SILVER", "TURQUOISE", "VIOLET", "WHITE", "YELLOW", "OTHER",
-  ];
-  for (const key of colorKeys) {
+  for (const key of COLOR_KEYS) {
     if (formValues[`color-${key}`] === true) color.push(key);
   }
   if (color.length > 0) params.color = color;
 
-  // Equipment — form fields: equipment-<VALUE> (dynamic, scanned via Object.entries)
+  // Equipment — form fields: equipment-<VALUE> (dynamic)
   const equipment: string[] = [];
   for (const [key, value] of Object.entries(formValues)) {
     if (key.startsWith("equipment-") && value === true) {
@@ -131,7 +162,7 @@ export function buildSearchParams(
   }
   if (equipment.length > 0) params.equipment = equipment;
 
-  // Extras — form fields: extra-<VALUE> (dynamic, scanned via Object.entries)
+  // Extras — form fields: extra-<VALUE> (dynamic)
   const extras: string[] = [];
   for (const [key, value] of Object.entries(formValues)) {
     if (key.startsWith("extra-") && value === true) {
@@ -146,7 +177,7 @@ export function buildSearchParams(
 
   // Drive type — form fields: drive-ALL, drive-FRONT, drive-REAR
   const driveType: string[] = [];
-  for (const key of ["ALL", "FRONT", "REAR"]) {
+  for (const key of DRIVE_TYPE_KEYS) {
     if (formValues[`drive-${key}`] === true) driveType.push(key);
   }
   if (driveType.length > 0) params.driveType = driveType;
@@ -185,7 +216,7 @@ export function buildSearchParams(
 
   // Energy efficiency label — form fields: energy-A, energy-B, etc.
   const energyLabels: string[] = [];
-  for (const key of ["A", "B", "C", "D", "E", "F", "G"]) {
+  for (const key of ENERGY_LABEL_KEYS) {
     if (formValues[`energy-${key}`] === true) energyLabels.push(key);
   }
   if (energyLabels.length > 0) params.energyLabels = energyLabels;
@@ -207,7 +238,7 @@ export function buildSearchParams(
 
   // Interior color — form fields: int-BLUE, int-BLACK, etc.
   const interiorColor: string[] = [];
-  for (const key of colorKeys) {
+  for (const key of COLOR_KEYS) {
     if (formValues[`int-${key}`] === true) interiorColor.push(key);
   }
   if (interiorColor.length > 0) params.interiorColor = interiorColor;
