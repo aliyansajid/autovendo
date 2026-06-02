@@ -469,12 +469,12 @@ router.delete("/:id", async (c) => {
     const subsByCustomer = await prisma.subscription.findMany({
       where: { stripeCustomerId: dealer.user.stripeCustomerId },
     });
-    subsByCustomer.forEach((s) => uniqueSubsMap.set(s.stripeSubscriptionId, s as any));
+    subsByCustomer.forEach((s) => { if (s.stripeSubscriptionId) uniqueSubsMap.set(s.stripeSubscriptionId, s as any); });
   }
   const subsByRef = await prisma.subscription.findMany({
     where: { referenceId: userId },
   });
-  subsByRef.forEach((s) => uniqueSubsMap.set(s.stripeSubscriptionId, s as any));
+  subsByRef.forEach((s) => { if (s.stripeSubscriptionId) uniqueSubsMap.set(s.stripeSubscriptionId, s as any); });
 
   for (const sub of uniqueSubsMap.values()) {
     if (sub.stripeSubscriptionId && sub.status !== "canceled") {

@@ -60,3 +60,9 @@ export async function sendEmail({
 }
 
 export default sendEmail;
+
+// Email templates
+export { AccountBannedEmail } from "../emails/account-banned";
+export { AccountUnbannedEmail } from "../emails/account-unbanned";
+export { AccountDeletedEmail } from "../emails/account-deleted";
+export { ListingContactEmail } from "../emails/listing-contact";

@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { prisma } from "@repo/db";
+import type { BodyType } from "@repo/db";
 
 const home = new Hono();
 
@@ -48,7 +49,7 @@ home.get("/", async (c) => {
     ...(category !== "all" && category !== "electric"
       ? {
           bodyType: {
-            in: CATEGORY_FILTERS[category] ?? [],
+            in: (CATEGORY_FILTERS[category] ?? []) as BodyType[],
           },
         }
       : {}),
@@ -112,7 +113,7 @@ home.get("/", async (c) => {
     fuel: v.fuelType ? (FUEL_LABELS[v.fuelType] ?? v.fuelType) : null,
     year: v.registrationYear,
     image: getImageUrl(v.images[0]),
-    city: v.dealer?.city ?? v.seller?.city ?? null,
+    city: (v as any).dealer?.city ?? (v as any).seller?.city ?? null,
     createdAt: v.createdAt.toISOString(),
   });
 

@@ -150,8 +150,8 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         ...additionalFields,
         id,
       }),
-      sendResetPassword: async ({ user, url, request }) => {
-        const { appName: name, appUrl: url_ } = getBranding(request);
+      sendResetPassword: async ({ user, url }) => {
+        const { appName: name, appUrl: url_ } = getBranding();
         const { sendEmail } = await import("@repo/transactional");
         const { ResetPasswordEmail } =
           await import("@repo/transactional/emails/reset-password");
@@ -172,8 +172,8 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
       sendOnSignUp: true,
       sendOnSignIn: true,
       autoSignInAfterVerification: true,
-      sendVerificationEmail: async ({ user, url, request }) => {
-        const { appName: name, appUrl: url_ } = getBranding(request);
+      sendVerificationEmail: async ({ user, url }) => {
+        const { appName: name, appUrl: url_ } = getBranding();
         const { sendEmail } = await import("@repo/transactional");
         const { VerifyEmail } =
           await import("@repo/transactional/emails/verify-email");
@@ -193,8 +193,8 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
     user: {
       changeEmail: {
         enabled: true,
-        sendChangeEmailConfirmation: async ({ user, newEmail, url, request }) => {
-          const { appName: name, appUrl: url_ } = getBranding(request);
+        sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+          const { appName: name, appUrl: url_ } = getBranding();
           const { sendEmail } = await import("@repo/transactional");
           const { ConfirmEmailChangeEmail } =
             await import("@repo/transactional/emails/confirm-email-change");
