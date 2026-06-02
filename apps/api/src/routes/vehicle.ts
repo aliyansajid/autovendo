@@ -77,6 +77,11 @@ function toDbEnum(value: string): string {
   return value.toUpperCase().replace(/-/g, "_");
 }
 
+function clamp(value: number | undefined, min: number, max: number): number | undefined {
+  if (value === undefined) return undefined;
+  return Math.min(max, Math.max(min, value));
+}
+
 // ─── Shared SELECT for vehicle lists ──────────────────────────────────────────
 
 const VEHICLE_LIST_SELECT = {
@@ -292,15 +297,6 @@ function toFrontendFacetKeys(counts: Record<string, number>): Record<string, num
   return counts;
 }
 
-function toLowerFacetKeys(counts: Record<string, number>): Record<string, number> {
-  const out: Record<string, number> = {};
-  for (const [key, count] of Object.entries(counts)) {
-    const k = key.toLowerCase();
-    out[k] = (out[k] ?? 0) + count;
-  }
-  return out;
-}
-
 // ─── Price rating ─────────────────────────────────────────────────────────────
 
 async function fetchAvgPriceMap(): Promise<Map<string, number>> {
@@ -356,24 +352,24 @@ function parseParams(c: Context) {
     metallic: qb(c, "metallic"),
     inspectionPassed: qb(c, "inspectionPassed"),
     hasWarranty: qb(c, "hasWarranty"),
-    priceFrom: qi(c, "priceFrom"),
-    priceTo: qi(c, "priceTo"),
-    registrationFrom: qi(c, "registrationFrom"),
-    registrationTo: qi(c, "registrationTo"),
-    kilometerFrom: qi(c, "kilometerFrom"),
-    kilometerTo: qi(c, "kilometerTo"),
-    powerFrom: qi(c, "powerFrom"),
-    powerTo: qi(c, "powerTo"),
-    kwFrom: qi(c, "kwFrom"),
-    kwTo: qi(c, "kwTo"),
-    cubicCapacityFrom: qi(c, "cubicCapacityFrom"),
-    cubicCapacityTo: qi(c, "cubicCapacityTo"),
-    cylindersFrom: qi(c, "cylindersFrom"),
-    cylindersTo: qi(c, "cylindersTo"),
-    consumptionFrom: qf(c, "consumptionFrom"),
-    consumptionTo: qf(c, "consumptionTo"),
-    co2From: qi(c, "co2From"),
-    co2To: qi(c, "co2To"),
+    priceFrom: clamp(qi(c, "priceFrom"), 0, Number.MAX_SAFE_INTEGER),
+    priceTo: clamp(qi(c, "priceTo"), 0, Number.MAX_SAFE_INTEGER),
+    registrationFrom: clamp(qi(c, "registrationFrom"), 1900, new Date().getFullYear()),
+    registrationTo: clamp(qi(c, "registrationTo"), 1900, new Date().getFullYear()),
+    kilometerFrom: clamp(qi(c, "kilometerFrom"), 0, Number.MAX_SAFE_INTEGER),
+    kilometerTo: clamp(qi(c, "kilometerTo"), 0, Number.MAX_SAFE_INTEGER),
+    powerFrom: clamp(qi(c, "powerFrom"), 0, 4000),
+    powerTo: clamp(qi(c, "powerTo"), 0, 4000),
+    kwFrom: clamp(qi(c, "kwFrom"), 0, 3000),
+    kwTo: clamp(qi(c, "kwTo"), 0, 3000),
+    cubicCapacityFrom: clamp(qi(c, "cubicCapacityFrom"), 0, 30000),
+    cubicCapacityTo: clamp(qi(c, "cubicCapacityTo"), 0, 30000),
+    cylindersFrom: clamp(qi(c, "cylindersFrom"), 0, 16),
+    cylindersTo: clamp(qi(c, "cylindersTo"), 0, 16),
+    consumptionFrom: clamp(qf(c, "consumptionFrom"), 0, 100),
+    consumptionTo: clamp(qf(c, "consumptionTo"), 0, 100),
+    co2From: clamp(qi(c, "co2From"), 0, 1000),
+    co2To: clamp(qi(c, "co2To"), 0, 1000),
     daysListed: qi(c, "daysListed"),
     dealerId: c.req.query("dealerId"),
   };
@@ -455,7 +451,7 @@ vehicle.get("/", async (c) => {
   ]);
 
   const facets = {
-    make: toLowerFacetKeys(toFacetCounts(makeRows, "make")),
+    make: toFrontendFacetKeys(toFacetCounts(makeRows, "make")),
     fuelType: toFrontendFacetKeys(toFacetCounts(fuelRows, "fuelType")),
     transmissionType: toFrontendFacetKeys(toFacetCounts(transmissionRows, "transmissionType")),
     vehicleCondition: toFrontendFacetKeys(toFacetCounts(conditionRows, "vehicleCondition")),
@@ -548,7 +544,7 @@ vehicle.get("/facets", async (c) => {
   const maxYearCount = Math.max(...(yearRows as any[]).map((r) => r._count._all), 1);
 
   const facets = {
-    make: toLowerFacetKeys(toFacetCounts(makeRows, "make")),
+    make: toFrontendFacetKeys(toFacetCounts(makeRows, "make")),
     fuelType: toFrontendFacetKeys(toFacetCounts(fuelRows, "fuelType")),
     transmissionType: toFrontendFacetKeys(toFacetCounts(transmissionRows, "transmissionType")),
     vehicleCondition: toFrontendFacetKeys(toFacetCounts(conditionRows, "vehicleCondition")),

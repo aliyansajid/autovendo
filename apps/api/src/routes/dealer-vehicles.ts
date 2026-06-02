@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { prisma } from "@repo/db";
 import {
   VALID_MAKES_BY_TYPE,
+  VALID_MODELS_BY_TYPE,
   VALID_EQUIPMENT_KEYS,
   VALID_EXTRAS_KEYS_BY_TYPE,
   VehicleTypeEnum,
@@ -16,6 +17,10 @@ import {
   ChargingPlugTypeStandardEnum,
   ChargingPlugTypeFastEnum,
   EmissionStandardEnum,
+  carFuelTypeEnum,
+  utilityFuelTypeEnum,
+  truckFuelTypeEnum,
+  camperFuelTypeEnum,
 } from "@repo/vehicle-constants";
 import type {
   VehicleType,
@@ -52,6 +57,12 @@ router.use("*", async (c, next) => {
 // ─── Enum sets (derived from shared constants) ────────────────────────────────
 
 const VALID_VEHICLE_TYPES = new Set(VehicleTypeEnum.map((v) => v.value));
+const VALID_FUEL_TYPES = new Set([
+  ...carFuelTypeEnum.map((v) => v.value),
+  ...utilityFuelTypeEnum.map((v) => v.value),
+  ...truckFuelTypeEnum.map((v) => v.value),
+  ...camperFuelTypeEnum.map((v) => v.value),
+]);
 const VALID_GEAR_TRANSMISSIONS = new Set(GearTransmissionEnum.map((v) => v.value));
 const VALID_TRANSMISSION_TYPES = new Set(TransmissionTypeEnum.map((v) => v.value));
 const VALID_DRIVE_TYPES = new Set(DriveTypeEnum.map((v) => v.value));
@@ -80,12 +91,17 @@ function validateBody(body: Record<string, any>): string | null {
   if (!validMakes?.includes(b.make))
     return `Invalid make for vehicleType ${b.vehicleType}: ${b.make}`;
 
+  if (b.model != null) {
+    const validModels = VALID_MODELS_BY_TYPE[b.vehicleType as string]?.[b.make as string];
+    if (validModels && validModels.length > 0 && !validModels.includes(b.model))
+      return `Invalid model for ${b.vehicleType}/${b.make}: ${b.model}`;
+  }
+
   if (!VALID_COLORS.has(b.color)) return `Invalid color: ${b.color}`;
 
   // ── Optional enums ──────────────────────────────────────────────────────────
-  if (b.fuelType != null && !b.fuelType === false) {
-    // validated per vehicle type by DB enum — check against full union here
-  }
+  if (b.fuelType != null && !VALID_FUEL_TYPES.has(b.fuelType))
+    return `Invalid fuelType: ${b.fuelType}`;
   if (b.gearTransmission && !VALID_GEAR_TRANSMISSIONS.has(b.gearTransmission))
     return `Invalid gearTransmission: ${b.gearTransmission}`;
   if (b.transmissionType && !VALID_TRANSMISSION_TYPES.has(b.transmissionType))

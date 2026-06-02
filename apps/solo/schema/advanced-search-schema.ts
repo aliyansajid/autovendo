@@ -2,27 +2,38 @@ import { z } from "zod";
 
 type TFn = (key: string) => string;
 
+const CURRENT_YEAR = new Date().getFullYear();
+
 const createOptionalNonNegativeNumberArray = (t: TFn) =>
   z.array(z.number().nonnegative(t("negativeError"))).optional();
 
-const createOptionalNonNegativeNumberString = (t: TFn) =>
+const nonNegativeField = (t: TFn) =>
   z.preprocess(
     (val) => {
       if (val === "" || val === undefined || val === null) return undefined;
-      const num = Number(val);
-      // If it's a string like "1'000+" we might want to strip non-digits,
-      // but for now let's just use standard Number parsing or custom numeric extraction.
       if (typeof val === "string") {
         const cleaned = val.replace(/[^0-9.-]/g, "");
         if (cleaned === "") return undefined;
         return Number(cleaned);
       }
-      return num;
+      return Number(val);
     },
-    z
-      .number({ error: t("invalidNumber") })
-      .nonnegative(t("negativeError"))
-      .optional(),
+    z.number({ error: t("invalidNumber") }).nonnegative(t("negativeError")).optional(),
+  );
+
+// Used only for year — real UX value to show feedback
+const rangeField = (t: TFn, min: number, max: number) =>
+  z.preprocess(
+    (val) => {
+      if (val === "" || val === undefined || val === null) return undefined;
+      if (typeof val === "string") {
+        const cleaned = val.replace(/[^0-9.-]/g, "");
+        if (cleaned === "") return undefined;
+        return Number(cleaned);
+      }
+      return Number(val);
+    },
+    z.number({ error: t("invalidNumber") }).min(min).max(max).optional(),
   );
 
 const optionalStr = z.string().optional();
@@ -33,39 +44,48 @@ export const createAdvancedSearchFormSchema = (t: TFn) =>
       make: z.array(z.string()).optional(),
       excludeMake: z.array(z.string()).optional(),
       model: z.array(z.string()).optional(),
+
+      // Year: 1900 – current year (UX feedback for typed input)
       year: createOptionalNonNegativeNumberArray(t),
-      "year-from": createOptionalNonNegativeNumberString(t),
-      "year-to": createOptionalNonNegativeNumberString(t),
+      "year-from": rangeField(t, 1900, CURRENT_YEAR),
+      "year-to": rangeField(t, 1900, CURRENT_YEAR),
 
+      // Kilometer: ≥ 0
       kilometer: createOptionalNonNegativeNumberArray(t),
-      "kilometer-from": createOptionalNonNegativeNumberString(t),
-      "kilometer-to": createOptionalNonNegativeNumberString(t),
+      "kilometer-from": nonNegativeField(t),
+      "kilometer-to": nonNegativeField(t),
 
+      // Price: ≥ 0
       price: createOptionalNonNegativeNumberArray(t),
-      "price-from": createOptionalNonNegativeNumberString(t),
-      "price-to": createOptionalNonNegativeNumberString(t),
+      "price-from": nonNegativeField(t),
+      "price-to": nonNegativeField(t),
       priceType: optionalStr,
 
+      // Power: ≥ 0
       power: createOptionalNonNegativeNumberArray(t),
-      "power-from": createOptionalNonNegativeNumberString(t),
-      "power-to": createOptionalNonNegativeNumberString(t),
+      "power-from": nonNegativeField(t),
+      "power-to": nonNegativeField(t),
       powerType: optionalStr,
 
+      // Cubic capacity: ≥ 0
       capacity: createOptionalNonNegativeNumberArray(t),
-      "capacity-from": createOptionalNonNegativeNumberString(t),
-      "capacity-to": createOptionalNonNegativeNumberString(t),
+      "capacity-from": nonNegativeField(t),
+      "capacity-to": nonNegativeField(t),
 
+      // Cylinders: ≥ 0
       cylinder: createOptionalNonNegativeNumberArray(t),
-      "cylinder-from": createOptionalNonNegativeNumberString(t),
-      "cylinder-to": createOptionalNonNegativeNumberString(t),
+      "cylinder-from": nonNegativeField(t),
+      "cylinder-to": nonNegativeField(t),
 
+      // Consumption: ≥ 0
       consumption: createOptionalNonNegativeNumberArray(t),
-      "consumption-from": createOptionalNonNegativeNumberString(t),
-      "consumption-to": createOptionalNonNegativeNumberString(t),
+      "consumption-from": nonNegativeField(t),
+      "consumption-to": nonNegativeField(t),
 
+      // CO2 emissions: ≥ 0
       emissions: createOptionalNonNegativeNumberArray(t),
-      "emissions-from": createOptionalNonNegativeNumberString(t),
-      "emissions-to": createOptionalNonNegativeNumberString(t),
+      "emissions-from": nonNegativeField(t),
+      "emissions-to": nonNegativeField(t),
 
       daysListed: optionalStr,
     })

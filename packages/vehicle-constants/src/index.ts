@@ -299,9 +299,9 @@ export * from "./camper";
 
 // ─── API validation helpers ───────────────────────────────────────────────────
 
-import { carMakes, carExtrasEnum } from "./cars";
-import { utilityMakes, utilityExtrasEnum } from "./commercial-vehicles";
-import { truckMakes, truckExtrasEnum } from "./truck";
+import { carMakes, carModels, carExtrasEnum } from "./cars";
+import { utilityMakes, utilityModels, utilityExtrasEnum } from "./commercial-vehicles";
+import { truckMakes, truckModels, truckExtrasEnum } from "./truck";
 import { camperMakes, camperExtrasEnum } from "./camper";
 
 type MakeGroup = {
@@ -317,6 +317,19 @@ export const VALID_CAR_MAKES = extractMakeValues(carMakes);
 export const VALID_UTILITY_MAKES = extractMakeValues(utilityMakes);
 export const VALID_TRUCK_MAKES = extractMakeValues(truckMakes);
 export const VALID_CAMPER_MAKES = extractMakeValues(camperMakes);
+
+function extractModelValues(models: Record<string, { value: string; label: string }[]>): Record<string, string[]> {
+  return Object.fromEntries(
+    Object.entries(models).map(([make, list]) => [make, list.map((m) => m.value)]),
+  );
+}
+
+export const VALID_MODELS_BY_TYPE: Record<string, Record<string, string[]>> = {
+  CAR: extractModelValues(carModels),
+  UTILITY: extractModelValues(utilityModels),
+  TRUCK: extractModelValues(truckModels),
+  CAMPER: {}, // no predefined models for campers
+};
 
 export const VALID_MAKES_BY_TYPE: Record<string, string[]> = {
   CAR: VALID_CAR_MAKES,

@@ -43,13 +43,13 @@ export function TechnicalDataSection({
   const cylinderFrom = useWatch({ control, name: "cylinder-from" });
   const cylinderTo = useWatch({ control, name: "cylinder-to" });
 
-  const maxPs = 1500;
-  const maxKw = 1000;
+  const maxPs = 4000;
+  const maxKw = 3000;
   const currentMax = powerType === "kw" ? maxKw : maxPs;
   const currentStep = powerType === "kw" ? 5 : 10;
   const currentUnit = powerType === "kw" ? "kW" : "PS";
 
-  const cubicCapacityMax = 8000;
+  const cubicCapacityMax = 30000;
   const cylindersMax = 16;
 
   // Reset power inputs when switching between PS and kW
@@ -125,7 +125,7 @@ export function TechnicalDataSection({
                       fieldType={FormFieldType.CHECKBOX}
                       name={`fuel-${type.value}`}
                       label={tVehicle(
-                        `fuelTypes.${type.value.toUpperCase().replace("-", "_")}`,
+                        `fuelTypes.${type.value}`,
                       )}
                     />
                     <span className="text-sm text-muted-foreground">
@@ -166,7 +166,7 @@ export function TechnicalDataSection({
                       fieldType={FormFieldType.CHECKBOX}
                       name={`transmission-${type.value}`}
                       label={tVehicle(
-                        `transmissionTypes.${type.value.toUpperCase().replace("-", "_")}`,
+                        `transmissionTypes.${type.value}`,
                       )}
                     />
                     <span className="text-sm text-muted-foreground">
@@ -205,7 +205,7 @@ export function TechnicalDataSection({
                       fieldType={FormFieldType.CHECKBOX}
                       name={`drive-${type.value}`}
                       label={tVehicle(
-                        `driveTypes.${type.value.toUpperCase().replace("-", "_")}`,
+                        `driveTypes.${type.value}`,
                       )}
                     />
                     <span className="text-sm text-muted-foreground">

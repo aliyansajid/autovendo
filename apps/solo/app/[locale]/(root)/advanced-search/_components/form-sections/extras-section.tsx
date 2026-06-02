@@ -43,7 +43,7 @@ export function ExtrasSection({ vehicleType }: { vehicleType: string }) {
               control={control}
               fieldType={FormFieldType.CHECKBOX}
               name={`extra-${extra.value}`}
-              label={tExtras(extra.value.toUpperCase().replace(/-/g, "_"))}
+              label={tExtras(extra.value)}
             />
           ))}
         </div>

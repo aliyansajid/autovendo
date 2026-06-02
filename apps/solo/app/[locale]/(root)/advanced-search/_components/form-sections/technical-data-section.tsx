@@ -208,7 +208,7 @@ export function TechnicalDataSection({
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`fuel-${type.value}`}
-                      label={tVehicle(`fuelTypes.${type.value.toUpperCase().replace("-", "_")}`)}
+                      label={tVehicle(`fuelTypes.${type.value}`)}
                     />
                     <span className="text-sm text-muted-foreground">
                       {formatCount(count ?? 0)}
@@ -245,7 +245,7 @@ export function TechnicalDataSection({
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`transmission-${type.value}`}
-                      label={tVehicle(`transmissionTypes.${type.value.toUpperCase().replace("-", "_")}`)}
+                      label={tVehicle(`transmissionTypes.${type.value}`)}
                     />
                     <span className="text-sm text-muted-foreground">
                       {formatCount(count ?? 0)}
@@ -282,7 +282,7 @@ export function TechnicalDataSection({
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`drive-${type.value}`}
-                      label={tVehicle(`driveTypes.${type.value.toUpperCase().replace("-", "_")}`)}
+                      label={tVehicle(`driveTypes.${type.value}`)}
                     />
                     <span className="text-sm text-muted-foreground">
                       {formatCount(count ?? 0)}

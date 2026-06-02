@@ -81,7 +81,7 @@ export function AppearanceSection({
                               "gradient" in color ? color.gradient : color.hex,
                           }}
                         />
-                        {tColors(color.value.toUpperCase())}
+                        {tColors(color.value)}
                       </span>
                     }
                   />
@@ -132,7 +132,7 @@ export function AppearanceSection({
                               "gradient" in color ? color.gradient : color.hex,
                           }}
                         />
-                        {tColors(color.value.toUpperCase())}
+                        {tColors(color.value)}
                       </span>
                     }
                   />

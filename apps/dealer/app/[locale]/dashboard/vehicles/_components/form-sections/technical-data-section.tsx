@@ -340,15 +340,13 @@ export function TechnicalDataSection() {
                     >
                       {BatteryOwnershipEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {t_vehicle(
-                            `batteryOwnership.${e.value.toUpperCase().replace(/-/g, "_")}`,
-                          )}
+                          {t_vehicle(`batteryOwnership.${e.value}`)}
                         </SelectItem>
                       ))}
                     </CustomFormField>
                   </div>
 
-                  {batteryOwnership === "battery-rent-required" && (
+                  {batteryOwnership === "BATTERY_RENT_REQUIRED" && (
                     <CustomFormField
                       control={control}
                       fieldType={FormFieldType.INPUT_GROUP}
@@ -370,9 +368,7 @@ export function TechnicalDataSection() {
                     >
                       {ChargingPlugTypeStandardEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {t_vehicle(
-                            `chargingStandardAC.${e.value.toUpperCase().replace(/-/g, "_")}`,
-                          )}
+                          {t_vehicle(`chargingStandardAC.${e.value}`)}
                         </SelectItem>
                       ))}
                     </CustomFormField>
@@ -386,9 +382,7 @@ export function TechnicalDataSection() {
                     >
                       {ChargingPlugTypeFastEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {t_vehicle(
-                            `chargingStandardDC.${e.value.toUpperCase().replace(/-/g, "_")}`,
-                          )}
+                          {t_vehicle(`chargingStandardDC.${e.value}`)}
                         </SelectItem>
                       ))}
                     </CustomFormField>

@@ -147,9 +147,7 @@ export function BasicDataSection() {
             >
               {VehicleTypeEnum.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(
-                    `types.${type.value.toUpperCase().replace(/-/g, "_")}`,
-                  )}
+                  {t_vehicle(`types.${type.value}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -220,7 +218,7 @@ export function BasicDataSection() {
             >
               {GearTransmissionEnum.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(`transmissionTypes.${type.value.toUpperCase()}`)}
+                  {t_vehicle(`transmissionTypes.${type.value}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -248,9 +246,7 @@ export function BasicDataSection() {
                 return true;
               }).map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(
-                    `transmissionTypes.${type.value.toUpperCase().replace(/-/g, "_")}`,
-                  )}
+                  {t_vehicle(`transmissionTypes.${type.value}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -273,9 +269,7 @@ export function BasicDataSection() {
           >
             {DriveTypeEnum.map((type) => (
               <SelectItem key={type.value} value={type.value}>
-                {t_vehicle(
-                  `driveTypes.${type.value.toUpperCase().replace(/-/g, "_")}`,
-                )}
+                {t_vehicle(`driveTypes.${type.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -290,9 +284,7 @@ export function BasicDataSection() {
             {activeBodyTypeEnum.map(
               (type: { value: string; label: string }) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(
-                    `types.${type.value.toUpperCase().replace(/-/g, "_")}`,
-                  )}
+                  {t_vehicle(`types.${type.value}`)}
                 </SelectItem>
               ),
             )}
@@ -308,9 +300,7 @@ export function BasicDataSection() {
             {activeFuelTypeEnum.map(
               (type: { value: string; label: string }) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(
-                    `fuelTypes.${type.value.toUpperCase().replace(/-/g, "_")}`,
-                  )}
+                  {t_vehicle(`fuelTypes.${type.value}`)}
                 </SelectItem>
               ),
             )}
@@ -325,7 +315,7 @@ export function BasicDataSection() {
           >
             {ColorEnum.map((color) => (
               <SelectItem key={color.value} value={color.value}>
-                {t_vehicle(`colors.${color.value.toUpperCase()}`)}
+                {t_vehicle(`colors.${color.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -339,7 +329,7 @@ export function BasicDataSection() {
           >
             {ColorEnum.map((color) => (
               <SelectItem key={color.value} value={color.value}>
-                {t_vehicle(`colors.${color.value.toUpperCase()}`)}
+                {t_vehicle(`colors.${color.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -369,9 +359,7 @@ export function BasicDataSection() {
           >
             {VehicleConditionEnum.map((c: { value: string }) => (
               <SelectItem key={c.value} value={c.value}>
-                {t_vehicle(
-                  `conditions.${c.value.toUpperCase().replace(/-/g, "_")}`,
-                )}
+                {t_vehicle(`conditions.${c.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -431,9 +419,7 @@ export function BasicDataSection() {
           >
             {WarrantyEnum.map((warranty_item) => (
               <SelectItem key={warranty_item.value} value={warranty_item.value}>
-                {t_vehicle(
-                  `warranty.${warranty_item.value.replace(/-/g, "_").toUpperCase()}`,
-                )}
+                {t_vehicle(`warranty.${warranty_item.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>

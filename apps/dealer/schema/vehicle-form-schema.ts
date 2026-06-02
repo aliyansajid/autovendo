@@ -119,6 +119,13 @@ const numericField = (min: number, max: number) =>
     z.number().min(min).max(max).optional(),
   );
 
+// Converts empty string to undefined so the DB NULL check passes (LENGTH check only applies when NOT NULL)
+const optionalStringField = (max: number, maxMsg: string) =>
+  z.preprocess(
+    (val) => (val === "" || val === undefined || val === null ? undefined : val),
+    z.string().min(1).max(max, maxMsg).optional(),
+  );
+
 const enumField = (validValues: string[], errorMsg: string) =>
   z.string().refine((val) => !val || validValues.includes(val), errorMsg);
 
@@ -139,8 +146,8 @@ export const createVehicleFormSchema = (t: TFn) =>
       .string({ error: t("makeRequired") })
       .max(50, t("makeTooLong"))
       .refine((val) => VALID_MAKES.includes(val), t("invalidMake")),
-    model: z.string().max(50, t("modelTooLong")).optional(),
-    version: z.string().max(50, t("versionTooLong")).optional(),
+    model: optionalStringField(50, t("modelTooLong")),
+    version: optionalStringField(50, t("versionTooLong")),
 
     // ── Body & drivetrain ────────────────────────────────────────────────────
     bodyType: z
@@ -202,7 +209,10 @@ export const createVehicleFormSchema = (t: TFn) =>
       (val) => (val === "" || val === undefined ? undefined : Number(val)),
       z.number({ error: t("priceRequired") }).min(0, t("negativePriceError")),
     ),
-    newPrice: numericField(0, 100000000),
+    newPrice: z.preprocess(
+      (val) => (val === "" || val === undefined ? undefined : Number(val)),
+      z.number().min(0).optional(),
+    ),
 
     // ── Cabin ────────────────────────────────────────────────────────────────
     seats: numericField(1, 150), // buses/coaches can exceed 80
@@ -275,8 +285,8 @@ export const createVehicleFormSchema = (t: TFn) =>
       .regex(/^[A-HJ-NPR-Z0-9]{17}$/, t("invalidVin"))
       .optional()
       .or(z.literal("")),
-    serialNumber: z.string().max(100, t("serialNumberTooLong")).optional(),
-    typeApproval: z.string().max(50, t("typeApprovalTooLong")).optional(),
+    serialNumber: optionalStringField(100, t("serialNumberTooLong")),
+    typeApproval: optionalStringField(50, t("typeApprovalTooLong")),
 
     // ── Description ──────────────────────────────────────────────────────────
     vehicleDescription: z.string().optional(),

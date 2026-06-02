@@ -26,10 +26,10 @@ export function EquipmentSection() {
   const vehicleType = useWatch({ control, name: "vehicleType" });
 
   const vehicleExtrasMap: Record<string, readonly any[]> = {
-    car: carExtrasEnum,
-    utility: utilityExtrasEnum,
-    truck: truckExtrasEnum,
-    camper: camperExtrasEnum,
+    CAR: carExtrasEnum,
+    UTILITY: utilityExtrasEnum,
+    TRUCK: truckExtrasEnum,
+    CAMPER: camperExtrasEnum,
   };
 
   const activeExtrasEnum = (vehicleExtrasMap[vehicleType] ||
@@ -53,7 +53,7 @@ export function EquipmentSection() {
                 control={control}
                 fieldType={FormFieldType.CHECKBOX}
                 name={`equipment.${item.value}`}
-                label={t_vehicle(`equipment.${item.value.toUpperCase().replace(/-/g, "_")}`)}
+                label={t_vehicle(`equipment.${item.value}`)}
               />
             ))}
           </div>
@@ -69,7 +69,7 @@ export function EquipmentSection() {
                   control={control}
                   fieldType={FormFieldType.CHECKBOX}
                   name={`extras.${extra.value}`}
-                  label={t_vehicle(`extras.${extra.value.toUpperCase().replace(/-/g, "_")}`)}
+                  label={t_vehicle(`extras.${extra.value}`)}
                 />
               ))}
             </div>

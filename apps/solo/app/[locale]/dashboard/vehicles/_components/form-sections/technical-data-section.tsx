@@ -338,7 +338,7 @@ export function TechnicalDataSection() {
                       {BatteryOwnershipEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
                           {t_vehicle(
-                            `batteryOwnership.${e.value.toUpperCase().replace(/-/g, "_")}`,
+                            `batteryOwnership.${e.value}`,
                           )}
                         </SelectItem>
                       ))}
@@ -368,7 +368,7 @@ export function TechnicalDataSection() {
                       {ChargingPlugTypeStandardEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
                           {t_vehicle(
-                            `chargingStandardAC.${e.value.toUpperCase().replace(/-/g, "_")}`,
+                            `chargingStandardAC.${e.value}`,
                           )}
                         </SelectItem>
                       ))}
@@ -384,7 +384,7 @@ export function TechnicalDataSection() {
                       {ChargingPlugTypeFastEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
                           {t_vehicle(
-                            `chargingStandardDC.${e.value.toUpperCase().replace(/-/g, "_")}`,
+                            `chargingStandardDC.${e.value}`,
                           )}
                         </SelectItem>
                       ))}

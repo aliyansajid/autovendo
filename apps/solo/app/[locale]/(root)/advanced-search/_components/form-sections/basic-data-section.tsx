@@ -421,7 +421,7 @@ export function BasicDataSection({
                         control={control}
                         fieldType={FormFieldType.CHECKBOX}
                         name={`condition-${item.value}`}
-                        label={tVehicle(`conditions.${item.value.toUpperCase().replace(/-/g, "_")}`)}
+                        label={tVehicle(`conditions.${item.value}`)}
                       />
                       <span className="text-sm text-muted-foreground">
                         {formatCount(count ?? 0)}
@@ -517,7 +517,7 @@ export function BasicDataSection({
                     control={control}
                     fieldType={FormFieldType.CHECKBOX}
                     name={`bodyType-${type.value}`}
-                    label={tVehicle(`types.${type.value.toUpperCase().replace(/-/g, "_")}`)}
+                    label={tVehicle(`types.${type.value}`)}
                   />
                   <span className="text-sm text-muted-foreground">
                     {formatCount(count ?? 0)}

@@ -32,7 +32,7 @@ export function EquipmentSection() {
               control={control}
               fieldType={FormFieldType.CHECKBOX}
               name={`equipment-${equipment.value}`}
-              label={tEquip(equipment.value.toUpperCase().replace(/-/g, "_"))}
+              label={tEquip(equipment.value)}
             />
           ))}
         </div>

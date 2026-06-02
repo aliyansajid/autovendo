@@ -52,25 +52,25 @@ export function BasicDataSection() {
   const warranty = useWatch({ control, name: "warranty" });
 
   const vehicleDataMap: Record<string, any> = {
-    car: {
+    CAR: {
       makes: carMakes,
       models: carModels,
       bodyTypes: carBodyTypeEnum,
       fuelTypes: carFuelTypeEnum,
     },
-    utility: {
+    UTILITY: {
       makes: utilityMakes,
       models: utilityModels,
       bodyTypes: utilityBodyTypeEnum,
       fuelTypes: utilityFuelTypeEnum,
     },
-    truck: {
+    TRUCK: {
       makes: truckMakes,
       models: truckModels,
       bodyTypes: truckBodyTypeEnum,
       fuelTypes: truckFuelTypeEnum,
     },
-    camper: {
+    CAMPER: {
       makes: camperMakes,
       models: {},
       bodyTypes: camperBodyTypeEnum,
@@ -78,7 +78,7 @@ export function BasicDataSection() {
     },
   };
 
-  const vehicleData = vehicleDataMap[vehicleType] || vehicleDataMap.car;
+  const vehicleData = vehicleDataMap[vehicleType] || vehicleDataMap.CAR;
 
   const activeMakes = vehicleData.makes as ReadonlyArray<{
     label: string;
@@ -139,7 +139,7 @@ export function BasicDataSection() {
             >
               {VehicleTypeEnum.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(`types.${type.value.toUpperCase().replace(/-/g, "_")}`)}
+                  {t_vehicle(`types.${type.value}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -207,7 +207,7 @@ export function BasicDataSection() {
             >
               {GearTransmissionEnum.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(`transmissionTypes.${type.value.toUpperCase()}`)}
+                  {t_vehicle(`transmissionTypes.${type.value}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -235,7 +235,7 @@ export function BasicDataSection() {
                 return true;
               }).map((type) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(`transmissionTypes.${type.value.toUpperCase().replace(/-/g, "_")}`)}
+                  {t_vehicle(`transmissionTypes.${type.value}`)}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -258,7 +258,7 @@ export function BasicDataSection() {
           >
             {DriveTypeEnum.map((type) => (
               <SelectItem key={type.value} value={type.value}>
-                {t_vehicle(`driveTypes.${type.value.toUpperCase().replace(/-/g, "_")}`)}
+                {t_vehicle(`driveTypes.${type.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -273,7 +273,7 @@ export function BasicDataSection() {
             {activeBodyTypeEnum.map(
               (type: { value: string }) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(`types.${type.value.toUpperCase().replace(/-/g, "_")}`)}
+                  {t_vehicle(`types.${type.value}`)}
                 </SelectItem>
               ),
             )}
@@ -289,7 +289,7 @@ export function BasicDataSection() {
             {activeFuelTypeEnum.map(
               (type: { value: string }) => (
                 <SelectItem key={type.value} value={type.value}>
-                  {t_vehicle(`fuelTypes.${type.value.toUpperCase().replace(/-/g, "_")}`)}
+                  {t_vehicle(`fuelTypes.${type.value}`)}
                 </SelectItem>
               ),
             )}
@@ -304,7 +304,7 @@ export function BasicDataSection() {
           >
             {ColorEnum.map((color) => (
               <SelectItem key={color.value} value={color.value}>
-                {t_vehicle(`colors.${color.value.toUpperCase()}`)}
+                {t_vehicle(`colors.${color.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -318,7 +318,7 @@ export function BasicDataSection() {
           >
             {ColorEnum.map((color) => (
               <SelectItem key={color.value} value={color.value}>
-                {t_vehicle(`colors.${color.value.toUpperCase()}`)}
+                {t_vehicle(`colors.${color.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -348,7 +348,7 @@ export function BasicDataSection() {
           >
             {VehicleConditionEnum.map((c: { value: string }) => (
               <SelectItem key={c.value} value={c.value}>
-                {t_vehicle(`conditions.${c.value.toUpperCase().replace(/-/g, "_")}`)}
+                {t_vehicle(`conditions.${c.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
@@ -408,7 +408,7 @@ export function BasicDataSection() {
           >
             {WarrantyEnum.map((warranty_item) => (
               <SelectItem key={warranty_item.value} value={warranty_item.value}>
-                {t_vehicle(`warranty.${warranty_item.value.replace(/-/g, "_").toUpperCase()}`)}
+                {t_vehicle(`warranty.${warranty_item.value}`)}
               </SelectItem>
             ))}
           </CustomFormField>
