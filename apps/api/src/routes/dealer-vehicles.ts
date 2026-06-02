@@ -258,6 +258,9 @@ router.post("/", async (c) => {
   if (missing.length)
     return c.json({ error: `Missing required fields: ${missing.join(", ")}` }, 400);
 
+  if (!Array.isArray(body.images) || body.images.length < 5 || body.images.length > 10)
+    return c.json({ error: "images must be an array of 5–10 items" }, 400);
+
   const validationError = validateBody(body);
   if (validationError) return c.json({ error: validationError }, 400);
 
@@ -421,6 +424,9 @@ router.put("/:id", async (c) => {
   const missing = required.filter((f) => body[f] == null);
   if (missing.length)
     return c.json({ error: `Missing required fields: ${missing.join(", ")}` }, 400);
+
+  if (!Array.isArray(body.images) || body.images.length < 5 || body.images.length > 10)
+    return c.json({ error: "images must be an array of 5–10 items" }, 400);
 
   const validationError = validateBody(body);
   if (validationError) return c.json({ error: validationError }, 400);

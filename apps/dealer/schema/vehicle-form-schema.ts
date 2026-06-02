@@ -319,8 +319,7 @@ export const createVehicleFormSchema = (t: TFn) =>
           ),
       )
       .min(5, t("minImagesError"))
-      .max(10, t("maxImagesError"))
-      .optional(),
+      .max(10, t("maxImagesError")),
 
     // ── Contact ──────────────────────────────────────────────────────────────
     companyName: z.string().optional(),
