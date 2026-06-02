@@ -331,8 +331,8 @@ export default async function ListingPage({
       : [];
 
   const description =
-    item.vehicleDescription && item.vehicleDescription.trim().length > 0
-      ? item.vehicleDescription
+    item.description && item.description.trim().length > 0
+      ? item.description
       : null;
 
   const openingHours = [...(item.dealer.openingHours || [])]
