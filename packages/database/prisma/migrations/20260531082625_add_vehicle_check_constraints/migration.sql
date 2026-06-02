@@ -100,9 +100,9 @@ ALTER TABLE "vehicle"
   -- ── Strings ──────────────────────────────────────────────────────────────────
   -- VIN: ISO 3779 standard — exactly 17 alphanumeric chars, no I/O/Q
   ADD CONSTRAINT "chk_vin"
-    CHECK ("vin" IS NULL OR (
-      LENGTH("vin") = 17 AND
-      "vin" ~ '^[A-HJ-NPR-Z0-9]{17}$'
+    CHECK ("vehicleIdentificationNumber" IS NULL OR (
+      LENGTH("vehicleIdentificationNumber") = 17 AND
+      "vehicleIdentificationNumber" ~ '^[A-HJ-NPR-Z0-9]{17}$'
     )),
   -- Serial number: varies by manufacturer, cap at 100 chars
   ADD CONSTRAINT "chk_serial_number"
