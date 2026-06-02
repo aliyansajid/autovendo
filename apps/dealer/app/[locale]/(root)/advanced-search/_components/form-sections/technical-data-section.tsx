@@ -250,7 +250,7 @@ export function TechnicalDataSection({
               max={currentMax}
               step={currentStep}
               value={powerRange}
-              onValueChange={([from, to]) => {
+              onValueChange={([from = 0, to = 0]) => {
                 setValue("power-from", from === 0 ? "" : String(from));
                 setValue("power-to", to >= currentMax ? "" : String(to));
               }}
@@ -292,7 +292,7 @@ export function TechnicalDataSection({
               max={cubicCapacityMax}
               step={100}
               value={capacityRange}
-              onValueChange={([from, to]) => {
+              onValueChange={([from = 0, to = 0]) => {
                 setValue("capacity-from", from <= 1 ? "" : String(from));
                 setValue("capacity-to", to >= cubicCapacityMax ? "" : String(to));
               }}
@@ -334,7 +334,7 @@ export function TechnicalDataSection({
               max={cylindersMax}
               step={1}
               value={cylinderRange}
-              onValueChange={([from, to]) => {
+              onValueChange={([from = 0, to = 0]) => {
                 setValue("cylinder-from", from <= 1 ? "" : String(from));
                 setValue("cylinder-to", to >= cylindersMax ? "" : String(to));
               }}

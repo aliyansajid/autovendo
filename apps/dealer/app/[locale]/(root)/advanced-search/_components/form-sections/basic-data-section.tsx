@@ -147,7 +147,7 @@ export function BasicDataSection({
               max={yearMax}
               step={1}
               value={yearRange}
-              onValueChange={([from, to]) => {
+              onValueChange={([from = yearMin, to = yearMax]) => {
                 setValue("year-from", from <= yearMin ? "" : String(from));
                 setValue("year-to", to >= yearMax ? "" : String(to));
               }}
@@ -218,7 +218,7 @@ export function BasicDataSection({
               max={kmMax}
               step={1000}
               value={kilometerRange}
-              onValueChange={([from, to]) => {
+              onValueChange={([from = 0, to = 0]) => {
                 setValue("kilometer-from", from === 0 ? "" : String(from));
                 setValue("kilometer-to", to >= kmMax ? "" : String(to));
               }}
@@ -290,7 +290,7 @@ export function BasicDataSection({
               max={priceMax}
               step={1000}
               value={priceRange}
-              onValueChange={([from, to]) => {
+              onValueChange={([from = 0, to = 0]) => {
                 setValue("price-from", from === 0 ? "" : String(from));
                 setValue("price-to", to >= priceMax ? "" : String(to));
               }}
