@@ -29,18 +29,18 @@ export function TechnicalDataSection() {
   const batteryOwnership = useWatch({ control, name: "batteryOwnership" });
 
   const showCombustionOrMild = [
-    "petrol",
-    "diesel",
-    "lpg-petrol",
-    "mhev-diesel",
-    "mhev-petrol",
-    "cng-petrol",
-    "ethanol-petrol",
+    "PETROL",
+    "DIESEL",
+    "LPG_PETROL",
+    "MHEV_DIESEL",
+    "MHEV_PETROL",
+    "CNG_PETROL",
+    "ETHANOL_PETROL",
   ].includes(fuelType || "");
-  const showElectric = fuelType === "electric";
-  const showFullHybrid = ["hev-diesel", "hev-petrol"].includes(fuelType || "");
-  const showHydrogen = fuelType === "hydrogen";
-  const showPluginHybrid = ["phev-diesel", "phev-petrol"].includes(
+  const showElectric = fuelType === "ELECTRIC";
+  const showFullHybrid = ["HEV_DIESEL", "HEV_PETROL"].includes(fuelType || "");
+  const showHydrogen = fuelType === "HYDROGEN";
+  const showPluginHybrid = ["PHEV_DIESEL", "PHEV_PETROL"].includes(
     fuelType || "",
   );
 

@@ -60,25 +60,25 @@ export function BasicDataSection() {
   const warranty = useWatch({ control, name: "warranty" });
 
   const vehicleDataMap: Record<string, any> = {
-    car: {
+    CAR: {
       makes: carMakes,
       models: carModels,
       bodyTypes: carBodyTypeEnum,
       fuelTypes: carFuelTypeEnum,
     },
-    utility: {
+    UTILITY: {
       makes: utilityMakes,
       models: utilityModels,
       bodyTypes: utilityBodyTypeEnum,
       fuelTypes: utilityFuelTypeEnum,
     },
-    truck: {
+    TRUCK: {
       makes: truckMakes,
       models: truckModels,
       bodyTypes: truckBodyTypeEnum,
       fuelTypes: truckFuelTypeEnum,
     },
-    camper: {
+    CAMPER: {
       makes: camperMakes,
       models: {},
       bodyTypes: camperBodyTypeEnum,
@@ -86,7 +86,7 @@ export function BasicDataSection() {
     },
   };
 
-  const vehicleData = vehicleDataMap[vehicleType] || vehicleDataMap.car;
+  const vehicleData = vehicleDataMap[vehicleType] || vehicleDataMap.CAR;
 
   const activeMakes = vehicleData.makes as ReadonlyArray<{
     label: string;
@@ -98,12 +98,12 @@ export function BasicDataSection() {
   const activeFuelTypeEnum = vehicleData.fuelTypes;
 
   const showWarrantyDetails = [
-    "from-delivery",
-    "from-first-registration",
-    "from-date",
+    "FROM_DELIVERY",
+    "FROM_FIRST_REGISTRATION",
+    "FROM_DATE",
   ].includes(warranty || "");
 
-  const showWarrantyStartDate = warranty === "from-date";
+  const showWarrantyStartDate = warranty === "FROM_DATE";
 
   const currentYear = new Date().getFullYear();
 

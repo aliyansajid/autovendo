@@ -176,7 +176,7 @@ export function VehicleForm({
   const form = useForm<z.infer<ReturnType<typeof createVehicleFormSchema>>>({
     resolver: zodResolver(schema) as any,
     defaultValues: {
-      vehicleType: "car",
+      vehicleType: "CAR",
       model: undefined,
       version: "",
       kilometer: "" as any,
