@@ -247,8 +247,10 @@ interface GarageRichFiltersProps {
   facets?: VehicleFacets | null;
 }
 
+const CURRENT_YEAR = new Date().getFullYear();
+
 const DEFAULTS = {
-  YEAR: [1900, 2026] as [number, number],
+  YEAR: [1900, CURRENT_YEAR] as [number, number],
   KILOMETER: [0, 200000] as [number, number],
   PRICE: [0, 100000] as [number, number],
 };
@@ -264,11 +266,7 @@ export default function GarageRichFilters({
 
   const getLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
-    const normalizedKey = key
-      .replace(/([a-z])([A-Z])/g, "$1_$2")
-      .toUpperCase()
-      .replace(/[-]/g, "_");
-    const formattedKey = `${namespace}.${normalizedKey}`;
+    const formattedKey = `${namespace}.${key}`;
     // @ts-ignore
     return tVehicle.has(formattedKey) ? tVehicle(formattedKey) : key;
   };
@@ -532,7 +530,7 @@ export default function GarageRichFilters({
             <RangeFilter
               label={t("year")}
               min={1900}
-              max={2026}
+              max={CURRENT_YEAR}
               value={yearRange ?? DEFAULTS.YEAR}
               onValueChange={setYearRange}
             />
@@ -719,7 +717,7 @@ export default function GarageRichFilters({
         >
           <Button variant="secondary">
             <CircleEllipsis />
-            Mehr Filter
+            {t("moreFilters")}
           </Button>
         </Link>
       </div>

@@ -242,17 +242,11 @@ export const FiltersSidebar = ({
               <FieldLabel>{t("condition")}</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(watchCondition, [
-                  { value: "new", label: tVehicle("conditions.NEW") },
-                  {
-                    value: "demonstration",
-                    label: tVehicle("conditions.DEMONSTRATION"),
-                  },
-                  {
-                    value: "pre-registered",
-                    label: tVehicle("conditions.PRE_REGISTERED"),
-                  },
-                  { value: "used", label: tVehicle("conditions.USED") },
-                  { value: "oldtimer", label: tVehicle("conditions.OLDTIMER") },
+                  { value: "NEW", label: tVehicle("conditions.NEW") },
+                  { value: "DEMONSTRATION", label: tVehicle("conditions.DEMONSTRATION") },
+                  { value: "PRE_REGISTERED", label: tVehicle("conditions.PRE_REGISTERED") },
+                  { value: "USED", label: tVehicle("conditions.USED") },
+                  { value: "OLDTIMER", label: tVehicle("conditions.OLDTIMER") },
                 ])}
                 <ConditionDialog resultCount={resultCount} />
               </div>
@@ -412,20 +406,11 @@ export const FiltersSidebar = ({
                 {renderSelectedText(
                   watchBodyType,
                   [
-                    "bus",
-                    "cabriolet",
-                    "coupe",
-                    "small-car",
-                    "estate",
-                    "minivan",
-                    "saloon",
-                    "pickup",
-                    "suv",
+                    "BUS", "CABRIOLET", "COUPE", "SMALL_CAR",
+                    "ESTATE", "MINIVAN", "SALOON", "PICKUP", "SUV",
                   ].map((v) => ({
                     value: v,
-                    label: tVehicle(
-                      `types.${v.toUpperCase().replace(/-/g, "_")}`,
-                    ),
+                    label: tVehicle(`types.${v}`),
                   })),
                 )}
                 <VehicleTypeDialog counts={facets?.bodyType} />

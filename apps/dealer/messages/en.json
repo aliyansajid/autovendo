@@ -565,7 +565,8 @@
     "fuel": "Fuel",
     "transmission": "Transmission",
     "drive": "Drive",
-    "resetFilters": "Reset Filters"
+    "resetFilters": "Reset Filters",
+    "moreFilters": "More Filters"
   },
   "LoginForm": {
     "title": "Welcome back",

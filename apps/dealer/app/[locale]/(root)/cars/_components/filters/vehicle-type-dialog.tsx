@@ -74,10 +74,10 @@ export function VehicleTypeDialog({
   };
 
   const bodyTypeOptions = [
-    "bus", "cabriolet", "coupe", "small-car", "estate", "minivan", "saloon", "pickup", "suv"
+    "BUS", "CABRIOLET", "COUPE", "SMALL_CAR", "ESTATE", "MINIVAN", "SALOON", "PICKUP", "SUV",
   ].map((value) => {
     const count = counts?.[value];
-    const label = tVehicle(`types.${value.toUpperCase().replace(/-/g, "_")}`);
+    const label = tVehicle(`types.${value}`);
     return {
       label: count !== undefined ? `${label} (${formatCount(count)})` : label,
       value: value,
