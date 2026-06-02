@@ -36,7 +36,7 @@ import {
   EmissionStandardEnum,
 } from "@repo/vehicle-constants";
 import { cacheGet, cacheSet, cacheDelete, cacheDeletePattern } from "../lib/cache.js";
-import { soloStorage as storage } from "../lib/storage.js";
+import { storage } from "../lib/storage.js";
 import { StorageService } from "@repo/storage";
 import { createId } from "@paralleldrive/cuid2";
 
