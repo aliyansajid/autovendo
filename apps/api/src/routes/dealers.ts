@@ -74,8 +74,9 @@ router.get("/", async (c) => {
   const q = c.req.query("q") || "";
   const page = qi(c, "page") ?? 1;
   const pageSize = qi(c, "pageSize") ?? 12;
+  const sort = c.req.query("sort") || "name-asc";
 
-  const cacheKey = `dealers:list:${q}:${page}:${pageSize}`;
+  const cacheKey = `dealers:list:${q}:${page}:${pageSize}:${sort}`;
   const cached = await cacheGet<any>(cacheKey);
   if (cached) return c.json(cached);
 
@@ -95,12 +96,16 @@ router.get("/", async (c) => {
 
     where.user = { banned: { not: true } };
 
+    let orderBy: any = { companyName: "asc" };
+    if (sort === "name-desc") orderBy = { companyName: "desc" };
+    else if (sort === "newest") orderBy = { createdAt: "desc" };
+
     const [dealers, totalCount] = await Promise.all([
       prisma.dealer.findMany({
         where,
         skip,
         take: pageSize,
-        orderBy: { companyName: "asc" },
+        orderBy,
         select: {
           id: true,
           companyName: true,
@@ -145,7 +150,7 @@ router.get("/:id/vehicles", async (c) => {
   const sortBy = c.req.query("sortBy") || "created-desc";
 
   const parsedFilters = {
-    search: c.req.query("search"),
+    search: c.req.query("q"),
     make: qa(c, "make"),
     model: qa(c, "model"),
     excludeMake: qa(c, "excludeMake"),
