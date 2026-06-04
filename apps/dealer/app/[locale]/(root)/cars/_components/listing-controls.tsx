@@ -41,7 +41,7 @@ export function ListingControls({
 
   // Keep local state in sync with back/forward navigation.
   useEffect(() => {
-    setSearch(sp.get("search") ?? "");
+    setSearch(sp.get("q") ?? "");
     setSort(sp.get("sort") ?? "relevance");
   }, [sp]);
 
@@ -51,8 +51,8 @@ export function ListingControls({
   useEffect(() => {
     const timer = setTimeout(() => {
       const next = new URLSearchParams(nextBase.toString());
-      if (search.trim()) next.set("search", search.trim());
-      else next.delete("search");
+      if (search.trim()) next.set("q", search.trim());
+      else next.delete("q");
       // Reset to page 1 on search, but don't add page=1 to URL
       next.delete("page");
 

@@ -442,7 +442,7 @@ function parseParams(c: Context) {
     page: Math.max(1, qi(c, "page") ?? 1),
     pageSize: Math.min(100, Math.max(1, qi(c, "pageSize") ?? 10)),
     sort: c.req.query("sort"),
-    search: c.req.query("search")?.trim() ?? "",
+    search: c.req.query("q")?.trim() ?? "",
     make: qa(c, "make"),
     model: qa(c, "model"),
     excludeMake: qa(c, "excludeMake"),

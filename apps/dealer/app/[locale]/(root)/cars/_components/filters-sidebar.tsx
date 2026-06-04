@@ -142,7 +142,7 @@ export const FiltersSidebar = ({
           value !== ""
         ) {
           params.set(key, value.toString());
-        } else if (key !== "page" && key !== "sort" && key !== "search") {
+        } else if (key !== "page" && key !== "sort" && key !== "q") {
           params.delete(key);
         }
       });

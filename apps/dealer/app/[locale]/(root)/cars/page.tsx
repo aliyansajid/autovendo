@@ -126,7 +126,7 @@ export default async function CarsPage(props: {
                   }
                 >
                   <ListingControls
-                    initialSearch={query.search}
+                    initialSearch={query.q}
                     initialSort={query.sort}
                   />
                 </Suspense>

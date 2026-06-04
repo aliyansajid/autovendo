@@ -115,7 +115,7 @@ function filtersToParams(
   if (filters.inspectionPassed != null) params.set("inspectionPassed", String(filters.inspectionPassed));
   if (filters.hasWarranty != null) params.set("hasWarranty", String(filters.hasWarranty));
   if (filters.evs) params.set("evs", filters.evs);
-  if (filters.search) params.set("search", filters.search);
+  if (filters.q) params.set("q", filters.q);
 
   // Reset to page 1 on filter change
   params.delete("page");
