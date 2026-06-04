@@ -13,7 +13,7 @@ import type {
   EnergyLabel,
   EmissionStandard,
 } from "@repo/db";
-import { cacheGet, cacheSet } from "../lib/cache.js";
+import { cacheGet, cacheSet } from "../lib/cache";
 
 const vehicle = new Hono();
 
@@ -61,7 +61,9 @@ function qf(c: Context, key: string): number | undefined {
 function qa(c: Context, key: string): string[] {
   const arr = c.req.queries(key);
   if (arr && arr.length > 0) {
-    return arr.flatMap((v) => v.split(",").map((s) => s.trim())).filter(Boolean);
+    return arr
+      .flatMap((v) => v.split(",").map((s) => s.trim()))
+      .filter(Boolean);
   }
   return [];
 }
@@ -77,7 +79,11 @@ function toDbEnum(value: string): string {
   return value.toUpperCase().replace(/-/g, "_");
 }
 
-function clamp(value: number | undefined, min: number, max: number): number | undefined {
+function clamp(
+  value: number | undefined,
+  min: number,
+  max: number,
+): number | undefined {
   if (value === undefined) return undefined;
   return Math.min(max, Math.max(min, value));
 }
@@ -134,61 +140,120 @@ function buildWhereClause(
 
   // Multi-select make
   if (!omit.make && params.make.length > 0) {
-    const makeOr = params.make.map((m) => ({ make: { equals: m, mode: "insensitive" as const } }));
-    where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), { OR: makeOr }];
+    const makeOr = params.make.map((m) => ({
+      make: { equals: m, mode: "insensitive" as const },
+    }));
+    where.AND = [
+      ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+      { OR: makeOr },
+    ];
   }
 
   // Multi-select model
   if (!omit.model && params.model.length > 0) {
-    const modelOr = params.model.map((m) => ({ model: { equals: m, mode: "insensitive" as const } }));
-    where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), { OR: modelOr }];
+    const modelOr = params.model.map((m) => ({
+      model: { equals: m, mode: "insensitive" as const },
+    }));
+    where.AND = [
+      ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+      { OR: modelOr },
+    ];
   }
 
   // Exclude make
   if (params.excludeMake.length > 0) {
-    where.NOT = [...(Array.isArray(where.NOT) ? where.NOT : where.NOT ? [where.NOT] : []), { make: { in: params.excludeMake, mode: "insensitive" as const } }];
+    where.NOT = [
+      ...(Array.isArray(where.NOT) ? where.NOT : where.NOT ? [where.NOT] : []),
+      { make: { in: params.excludeMake, mode: "insensitive" as const } },
+    ];
   }
 
   // Exclude model
   if (params.excludeModel.length > 0) {
-    where.NOT = [...(Array.isArray(where.NOT) ? where.NOT : where.NOT ? [where.NOT] : []), { model: { in: params.excludeModel, mode: "insensitive" as const } }];
+    where.NOT = [
+      ...(Array.isArray(where.NOT) ? where.NOT : where.NOT ? [where.NOT] : []),
+      { model: { in: params.excludeModel, mode: "insensitive" as const } },
+    ];
   }
 
   // Range filters
-  if (!omit.priceFrom && (params.priceFrom !== undefined || params.priceTo !== undefined)) {
-    where.price = { ...(params.priceFrom ? { gte: params.priceFrom } : {}), ...(params.priceTo ? { lte: params.priceTo } : {}) };
+  if (
+    !omit.priceFrom &&
+    (params.priceFrom !== undefined || params.priceTo !== undefined)
+  ) {
+    where.price = {
+      ...(params.priceFrom ? { gte: params.priceFrom } : {}),
+      ...(params.priceTo ? { lte: params.priceTo } : {}),
+    };
   }
 
-  if (!omit.registrationFrom && (params.registrationFrom !== undefined || params.registrationTo !== undefined)) {
-    where.registrationYear = { ...(params.registrationFrom ? { gte: params.registrationFrom } : {}), ...(params.registrationTo ? { lte: params.registrationTo } : {}) };
+  if (
+    !omit.registrationFrom &&
+    (params.registrationFrom !== undefined ||
+      params.registrationTo !== undefined)
+  ) {
+    where.registrationYear = {
+      ...(params.registrationFrom ? { gte: params.registrationFrom } : {}),
+      ...(params.registrationTo ? { lte: params.registrationTo } : {}),
+    };
   }
 
-  if (!omit.kilometerFrom && (params.kilometerFrom !== undefined || params.kilometerTo !== undefined)) {
-    where.kilometer = { ...(params.kilometerFrom ? { gte: params.kilometerFrom } : {}), ...(params.kilometerTo ? { lte: params.kilometerTo } : {}) };
+  if (
+    !omit.kilometerFrom &&
+    (params.kilometerFrom !== undefined || params.kilometerTo !== undefined)
+  ) {
+    where.kilometer = {
+      ...(params.kilometerFrom ? { gte: params.kilometerFrom } : {}),
+      ...(params.kilometerTo ? { lte: params.kilometerTo } : {}),
+    };
   }
 
   if (params.powerFrom !== undefined || params.powerTo !== undefined) {
-    where.hp = { ...(params.powerFrom ? { gte: params.powerFrom } : {}), ...(params.powerTo ? { lte: params.powerTo } : {}) };
+    where.hp = {
+      ...(params.powerFrom ? { gte: params.powerFrom } : {}),
+      ...(params.powerTo ? { lte: params.powerTo } : {}),
+    };
   }
 
   if (params.kwFrom !== undefined || params.kwTo !== undefined) {
-    where.kw = { ...(params.kwFrom ? { gte: params.kwFrom } : {}), ...(params.kwTo ? { lte: params.kwTo } : {}) };
+    where.kw = {
+      ...(params.kwFrom ? { gte: params.kwFrom } : {}),
+      ...(params.kwTo ? { lte: params.kwTo } : {}),
+    };
   }
 
-  if (params.cubicCapacityFrom !== undefined || params.cubicCapacityTo !== undefined) {
-    where.cubicCapacity = { ...(params.cubicCapacityFrom ? { gte: params.cubicCapacityFrom } : {}), ...(params.cubicCapacityTo ? { lte: params.cubicCapacityTo } : {}) };
+  if (
+    params.cubicCapacityFrom !== undefined ||
+    params.cubicCapacityTo !== undefined
+  ) {
+    where.cubicCapacity = {
+      ...(params.cubicCapacityFrom ? { gte: params.cubicCapacityFrom } : {}),
+      ...(params.cubicCapacityTo ? { lte: params.cubicCapacityTo } : {}),
+    };
   }
 
   if (params.cylindersFrom !== undefined || params.cylindersTo !== undefined) {
-    where.cylinders = { ...(params.cylindersFrom ? { gte: params.cylindersFrom } : {}), ...(params.cylindersTo ? { lte: params.cylindersTo } : {}) };
+    where.cylinders = {
+      ...(params.cylindersFrom ? { gte: params.cylindersFrom } : {}),
+      ...(params.cylindersTo ? { lte: params.cylindersTo } : {}),
+    };
   }
 
-  if (params.consumptionFrom !== undefined || params.consumptionTo !== undefined) {
-    where.consumptionTotal = { ...(params.consumptionFrom ? { gte: params.consumptionFrom } : {}), ...(params.consumptionTo ? { lte: params.consumptionTo } : {}) };
+  if (
+    params.consumptionFrom !== undefined ||
+    params.consumptionTo !== undefined
+  ) {
+    where.consumptionTotal = {
+      ...(params.consumptionFrom ? { gte: params.consumptionFrom } : {}),
+      ...(params.consumptionTo ? { lte: params.consumptionTo } : {}),
+    };
   }
 
   if (params.co2From !== undefined || params.co2To !== undefined) {
-    where.co2Emission = { ...(params.co2From ? { gte: params.co2From } : {}), ...(params.co2To ? { lte: params.co2To } : {}) };
+    where.co2Emission = {
+      ...(params.co2From ? { gte: params.co2From } : {}),
+      ...(params.co2To ? { lte: params.co2To } : {}),
+    };
   }
 
   // EV filter
@@ -203,15 +268,21 @@ function buildWhereClause(
   }
 
   if (!omit.transmission && params.transmission.length > 0) {
-    where.transmissionType = { in: params.transmission.map(toDbEnum) as TransmissionType[] };
+    where.transmissionType = {
+      in: params.transmission.map(toDbEnum) as TransmissionType[],
+    };
   }
 
   if (!omit.condition && params.condition.length > 0) {
-    where.vehicleCondition = { in: params.condition.map(toDbEnum) as VehicleCondition[] };
+    where.vehicleCondition = {
+      in: params.condition.map(toDbEnum) as VehicleCondition[],
+    };
   }
 
   if (!omit.vehicleType && params.vehicleType.length > 0) {
-    where.vehicleType = { in: params.vehicleType.map(toDbEnum) as VehicleType[] };
+    where.vehicleType = {
+      in: params.vehicleType.map(toDbEnum) as VehicleType[],
+    };
   }
 
   if (!omit.bodyType && params.bodyType.length > 0) {
@@ -231,16 +302,23 @@ function buildWhereClause(
   }
 
   if (!omit.energyLabels && params.energyLabels.length > 0) {
-    where.energyLabel = { in: params.energyLabels.map(toDbEnum) as EnergyLabel[] };
+    where.energyLabel = {
+      in: params.energyLabels.map(toDbEnum) as EnergyLabel[],
+    };
   }
 
   if (!omit.emissionStandards && params.emissionStandards.length > 0) {
-    where.emissionStandard = { in: params.emissionStandards.map(toDbEnum) as EmissionStandard[] };
+    where.emissionStandard = {
+      in: params.emissionStandards.map(toDbEnum) as EmissionStandard[],
+    };
   }
 
-  if (!omit.metallic && params.metallic !== undefined) where.metallic = params.metallic;
-  if (!omit.inspectionPassed && params.inspectionPassed === true) where.inspectionPassed = true;
-  if (!omit.hasWarranty && params.hasWarranty === true) where.warranty = { not: null };
+  if (!omit.metallic && params.metallic !== undefined)
+    where.metallic = params.metallic;
+  if (!omit.inspectionPassed && params.inspectionPassed === true)
+    where.inspectionPassed = true;
+  if (!omit.hasWarranty && params.hasWarranty === true)
+    where.warranty = { not: null };
   if (!omit.dealerId && params.dealerId) where.dealerId = params.dealerId;
 
   if (!omit.daysListed && params.daysListed != null) {
@@ -250,12 +328,22 @@ function buildWhereClause(
   }
 
   if (!omit.equipment && params.equipment.length > 0) {
-    const equipmentClauses = params.equipment.map((item) => ({ equipment: { path: [item], equals: true } }));
-    where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), ...equipmentClauses];
+    const equipmentClauses = params.equipment.map((item) => ({
+      equipment: { path: [item], equals: true },
+    }));
+    where.AND = [
+      ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+      ...equipmentClauses,
+    ];
   }
   if (!omit.extras && params.extras.length > 0) {
-    const extrasClauses = params.extras.map((item) => ({ extras: { path: [item], equals: true } }));
-    where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), ...extrasClauses];
+    const extrasClauses = params.extras.map((item) => ({
+      extras: { path: [item], equals: true },
+    }));
+    where.AND = [
+      ...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []),
+      ...extrasClauses,
+    ];
   }
 
   where.status = "PUBLISHED";
@@ -265,17 +353,28 @@ function buildWhereClause(
 
 // ─── Order by builder ─────────────────────────────────────────────────────────
 
-function buildOrderBy(sort: string | undefined): Prisma.VehicleOrderByWithRelationInput {
+function buildOrderBy(
+  sort: string | undefined,
+): Prisma.VehicleOrderByWithRelationInput {
   switch (sort) {
-    case "price-asc": return { price: "asc" };
-    case "price-desc": return { price: "desc" };
-    case "kilometer-asc": return { kilometer: "asc" };
-    case "kilometer-desc": return { kilometer: "desc" };
-    case "registration-asc": return { registrationYear: "asc" };
-    case "registration-desc": return { registrationYear: "desc" };
-    case "created-asc": return { createdAt: "asc" };
-    case "created-desc": return { createdAt: "desc" };
-    default: return { createdAt: "desc" };
+    case "price-asc":
+      return { price: "asc" };
+    case "price-desc":
+      return { price: "desc" };
+    case "kilometer-asc":
+      return { kilometer: "asc" };
+    case "kilometer-desc":
+      return { kilometer: "desc" };
+    case "registration-asc":
+      return { registrationYear: "asc" };
+    case "registration-desc":
+      return { registrationYear: "desc" };
+    case "created-asc":
+      return { createdAt: "asc" };
+    case "created-desc":
+      return { createdAt: "desc" };
+    default:
+      return { createdAt: "desc" };
   }
 }
 
@@ -293,17 +392,23 @@ function toFacetCounts<T extends string>(
   return counts;
 }
 
-function toFrontendFacetKeys(counts: Record<string, number>): Record<string, number> {
+function toFrontendFacetKeys(
+  counts: Record<string, number>,
+): Record<string, number> {
   return counts;
 }
 
 // ─── Price rating ─────────────────────────────────────────────────────────────
 
 async function fetchAvgPriceMap(): Promise<Map<string, number>> {
-  const rows = await prisma.vehicle.groupBy({ by: ["make", "model"], _avg: { price: true } });
+  const rows = await prisma.vehicle.groupBy({
+    by: ["make", "model"],
+    _avg: { price: true },
+  });
   const map = new Map<string, number>();
   for (const row of rows) {
-    if (row._avg.price != null) map.set(`${row.make}::${row.model ?? ""}`, row._avg.price);
+    if (row._avg.price != null)
+      map.set(`${row.make}::${row.model ?? ""}`, row._avg.price);
   }
   return map;
 }
@@ -317,10 +422,16 @@ function computePriceRating(price: number, avgPrice: number) {
   return { label: "excellent", bars: 5, sentiment: "green" };
 }
 
-function attachPriceRatings(vehicles: any[], avgMap: Map<string, number>): any[] {
+function attachPriceRatings(
+  vehicles: any[],
+  avgMap: Map<string, number>,
+): any[] {
   return vehicles.map((v) => {
     const avg = avgMap.get(`${v.make}::${v.model ?? ""}`);
-    return { ...v, priceRating: avg != null ? computePriceRating(v.price, avg) : undefined };
+    return {
+      ...v,
+      priceRating: avg != null ? computePriceRating(v.price, avg) : undefined,
+    };
   });
 }
 
@@ -354,8 +465,16 @@ function parseParams(c: Context) {
     hasWarranty: qb(c, "hasWarranty"),
     priceFrom: clamp(qi(c, "priceFrom"), 0, Number.MAX_SAFE_INTEGER),
     priceTo: clamp(qi(c, "priceTo"), 0, Number.MAX_SAFE_INTEGER),
-    registrationFrom: clamp(qi(c, "registrationFrom"), 1900, new Date().getFullYear()),
-    registrationTo: clamp(qi(c, "registrationTo"), 1900, new Date().getFullYear()),
+    registrationFrom: clamp(
+      qi(c, "registrationFrom"),
+      1900,
+      new Date().getFullYear(),
+    ),
+    registrationTo: clamp(
+      qi(c, "registrationTo"),
+      1900,
+      new Date().getFullYear(),
+    ),
     kilometerFrom: clamp(qi(c, "kilometerFrom"), 0, Number.MAX_SAFE_INTEGER),
     kilometerTo: clamp(qi(c, "kilometerTo"), 0, Number.MAX_SAFE_INTEGER),
     powerFrom: clamp(qi(c, "powerFrom"), 0, 4000),
@@ -393,7 +512,13 @@ vehicle.get("/", async (c) => {
   if (!includeFacets) {
     const [total, vehicles, avgMap] = await Promise.all([
       prisma.vehicle.count({ where }),
-      prisma.vehicle.findMany({ where, orderBy, skip, take: params.pageSize, select: VEHICLE_LIST_SELECT }),
+      prisma.vehicle.findMany({
+        where,
+        orderBy,
+        skip,
+        take: params.pageSize,
+        select: VEHICLE_LIST_SELECT,
+      }),
       fetchAvgPriceMap(),
     ]);
 
@@ -432,36 +557,112 @@ vehicle.get("/", async (c) => {
     hasWarrantyCount,
   ] = await Promise.all([
     prisma.vehicle.count({ where }),
-    prisma.vehicle.findMany({ where, orderBy, skip, take: params.pageSize, select: VEHICLE_LIST_SELECT }),
+    prisma.vehicle.findMany({
+      where,
+      orderBy,
+      skip,
+      take: params.pageSize,
+      select: VEHICLE_LIST_SELECT,
+    }),
     fetchAvgPriceMap(),
-    prisma.vehicle.groupBy({ by: ["make"], where: facetBase, _count: { _all: true }, orderBy: { make: "asc" } }),
-    prisma.vehicle.groupBy({ by: ["fuelType"], where: buildWhereClause(params, { fuel: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["transmissionType"], where: buildWhereClause(params, { transmission: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["vehicleCondition"], where: buildWhereClause(params, { condition: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["vehicleType"], where: buildWhereClause(params, { vehicleType: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["bodyType"], where: buildWhereClause(params, { bodyType: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["color"], where: buildWhereClause(params, { color: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["interiorColor"], where: buildWhereClause(params, { interiorColor: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["driveType"], where: buildWhereClause(params, { driveType: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["energyLabel"], where: buildWhereClause(params, { energyLabels: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["emissionStandard"], where: buildWhereClause(params, { emissionStandards: true }), _count: { _all: true } }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { metallic: true }), metallic: true } }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { inspectionPassed: true }), inspectionPassed: true } }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { hasWarranty: true }), warranty: { not: null } } }),
+    prisma.vehicle.groupBy({
+      by: ["make"],
+      where: facetBase,
+      _count: { _all: true },
+      orderBy: { make: "asc" },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["fuelType"],
+      where: buildWhereClause(params, { fuel: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["transmissionType"],
+      where: buildWhereClause(params, { transmission: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["vehicleCondition"],
+      where: buildWhereClause(params, { condition: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["vehicleType"],
+      where: buildWhereClause(params, { vehicleType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["bodyType"],
+      where: buildWhereClause(params, { bodyType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["color"],
+      where: buildWhereClause(params, { color: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["interiorColor"],
+      where: buildWhereClause(params, { interiorColor: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["driveType"],
+      where: buildWhereClause(params, { driveType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["energyLabel"],
+      where: buildWhereClause(params, { energyLabels: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["emissionStandard"],
+      where: buildWhereClause(params, { emissionStandards: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...buildWhereClause(params, { metallic: true }),
+        metallic: true,
+      },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...buildWhereClause(params, { inspectionPassed: true }),
+        inspectionPassed: true,
+      },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...buildWhereClause(params, { hasWarranty: true }),
+        warranty: { not: null },
+      },
+    }),
   ]);
 
   const facets = {
     make: toFrontendFacetKeys(toFacetCounts(makeRows, "make")),
     fuelType: toFrontendFacetKeys(toFacetCounts(fuelRows, "fuelType")),
-    transmissionType: toFrontendFacetKeys(toFacetCounts(transmissionRows, "transmissionType")),
-    vehicleCondition: toFrontendFacetKeys(toFacetCounts(conditionRows, "vehicleCondition")),
+    transmissionType: toFrontendFacetKeys(
+      toFacetCounts(transmissionRows, "transmissionType"),
+    ),
+    vehicleCondition: toFrontendFacetKeys(
+      toFacetCounts(conditionRows, "vehicleCondition"),
+    ),
     vehicleType: toFrontendFacetKeys(toFacetCounts(typeRows, "vehicleType")),
     bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
     color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
-    interiorColor: toFrontendFacetKeys(toFacetCounts(interiorColorRows, "interiorColor")),
+    interiorColor: toFrontendFacetKeys(
+      toFacetCounts(interiorColorRows, "interiorColor"),
+    ),
     driveType: toFrontendFacetKeys(toFacetCounts(driveTypeRows, "driveType")),
-    energyLabel: toFrontendFacetKeys(toFacetCounts(energyLabelRows, "energyLabel")),
-    emissionStandard: toFrontendFacetKeys(toFacetCounts(emissionStandardRows, "emissionStandard")),
+    energyLabel: toFrontendFacetKeys(
+      toFacetCounts(energyLabelRows, "energyLabel"),
+    ),
+    emissionStandard: toFrontendFacetKeys(
+      toFacetCounts(emissionStandardRows, "emissionStandard"),
+    ),
     metallic: metallicCount,
     inspectionPassed: inspectionPassedCount,
     hasWarranty: hasWarrantyCount,
@@ -490,42 +691,149 @@ vehicle.get("/facets", async (c) => {
 
   const where = buildWhereClause(params);
   const facetBase = buildWhereClause(params, { make: true, model: true });
-  const yearBase = buildWhereClause(params, { registrationFrom: true, make: true, model: true });
-  const kmBase = buildWhereClause(params, { kilometerFrom: true, make: true, model: true });
-  const priceBase = buildWhereClause(params, { priceFrom: true, make: true, model: true });
+  const yearBase = buildWhereClause(params, {
+    registrationFrom: true,
+    make: true,
+    model: true,
+  });
+  const kmBase = buildWhereClause(params, {
+    kilometerFrom: true,
+    make: true,
+    model: true,
+  });
+  const priceBase = buildWhereClause(params, {
+    priceFrom: true,
+    make: true,
+    model: true,
+  });
 
   const [
-    total, makeRows, fuelRows, transmissionRows, conditionRows, typeRows, bodyTypeRows,
-    colorRows, interiorColorRows, driveTypeRows, energyLabelRows, emissionStandardRows,
-    metallicCount, inspectionPassedCount, hasWarrantyCount,
-    hpAgg, kwAgg, priceAgg, kilometerAgg, yearAgg, consumptionAgg, co2Agg, cubicCapacityAgg, cylindersAgg,
+    total,
+    makeRows,
+    fuelRows,
+    transmissionRows,
+    conditionRows,
+    typeRows,
+    bodyTypeRows,
+    colorRows,
+    interiorColorRows,
+    driveTypeRows,
+    energyLabelRows,
+    emissionStandardRows,
+    metallicCount,
+    inspectionPassedCount,
+    hasWarrantyCount,
+    hpAgg,
+    kwAgg,
+    priceAgg,
+    kilometerAgg,
+    yearAgg,
+    consumptionAgg,
+    co2Agg,
+    cubicCapacityAgg,
+    cylindersAgg,
     yearRows,
   ] = await Promise.all([
     prisma.vehicle.count({ where }),
-    prisma.vehicle.groupBy({ by: ["make"], where: facetBase, _count: { _all: true }, orderBy: { make: "asc" } }),
-    prisma.vehicle.groupBy({ by: ["fuelType"], where: buildWhereClause(params, { fuel: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["transmissionType"], where: buildWhereClause(params, { transmission: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["vehicleCondition"], where: buildWhereClause(params, { condition: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["vehicleType"], where: buildWhereClause(params, { vehicleType: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["bodyType"], where: buildWhereClause(params, { bodyType: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["color"], where: buildWhereClause(params, { color: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["interiorColor"], where: buildWhereClause(params, { interiorColor: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["driveType"], where: buildWhereClause(params, { driveType: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["energyLabel"], where: buildWhereClause(params, { energyLabels: true }), _count: { _all: true } }),
-    prisma.vehicle.groupBy({ by: ["emissionStandard"], where: buildWhereClause(params, { emissionStandards: true }), _count: { _all: true } }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { metallic: true }), metallic: true } }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { inspectionPassed: true }), inspectionPassed: true } }),
-    prisma.vehicle.count({ where: { ...buildWhereClause(params, { hasWarranty: true }), warranty: { not: null } } }),
+    prisma.vehicle.groupBy({
+      by: ["make"],
+      where: facetBase,
+      _count: { _all: true },
+      orderBy: { make: "asc" },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["fuelType"],
+      where: buildWhereClause(params, { fuel: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["transmissionType"],
+      where: buildWhereClause(params, { transmission: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["vehicleCondition"],
+      where: buildWhereClause(params, { condition: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["vehicleType"],
+      where: buildWhereClause(params, { vehicleType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["bodyType"],
+      where: buildWhereClause(params, { bodyType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["color"],
+      where: buildWhereClause(params, { color: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["interiorColor"],
+      where: buildWhereClause(params, { interiorColor: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["driveType"],
+      where: buildWhereClause(params, { driveType: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["energyLabel"],
+      where: buildWhereClause(params, { energyLabels: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.groupBy({
+      by: ["emissionStandard"],
+      where: buildWhereClause(params, { emissionStandards: true }),
+      _count: { _all: true },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...buildWhereClause(params, { metallic: true }),
+        metallic: true,
+      },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...buildWhereClause(params, { inspectionPassed: true }),
+        inspectionPassed: true,
+      },
+    }),
+    prisma.vehicle.count({
+      where: {
+        ...buildWhereClause(params, { hasWarranty: true }),
+        warranty: { not: null },
+      },
+    }),
     prisma.vehicle.aggregate({ _max: { hp: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { kw: true }, where: facetBase }),
     prisma.vehicle.aggregate({ _max: { price: true }, where: priceBase }),
     prisma.vehicle.aggregate({ _max: { kilometer: true }, where: kmBase }),
-    prisma.vehicle.aggregate({ _min: { registrationYear: true }, _max: { registrationYear: true }, where: yearBase }),
-    prisma.vehicle.aggregate({ _max: { consumptionTotal: true }, where: facetBase }),
+    prisma.vehicle.aggregate({
+      _min: { registrationYear: true },
+      _max: { registrationYear: true },
+      where: yearBase,
+    }),
+    prisma.vehicle.aggregate({
+      _max: { consumptionTotal: true },
+      where: facetBase,
+    }),
     prisma.vehicle.aggregate({ _max: { co2Emission: true }, where: facetBase }),
-    prisma.vehicle.aggregate({ _max: { cubicCapacity: true }, where: facetBase }),
+    prisma.vehicle.aggregate({
+      _max: { cubicCapacity: true },
+      where: facetBase,
+    }),
     prisma.vehicle.aggregate({ _max: { cylinders: true }, where: facetBase }),
-    prisma.vehicle.groupBy({ by: ["registrationYear"], where: yearBase, _count: { _all: true }, orderBy: { registrationYear: "asc" } }),
+    prisma.vehicle.groupBy({
+      by: ["registrationYear"],
+      where: yearBase,
+      _count: { _all: true },
+      orderBy: { registrationYear: "asc" },
+    }),
   ]);
 
   // Dynamic histograms
@@ -535,26 +843,57 @@ vehicle.get("/facets", async (c) => {
   const priceStep = Math.max(1000, Math.ceil(priceLimit / 20 / 1000) * 1000);
 
   const [kmCounts, priceCounts] = await Promise.all([
-    Promise.all(Array.from({ length: 20 }).map((_, i) => prisma.vehicle.count({ where: { ...kmBase, kilometer: { gte: i * kmStep, lt: (i + 1) * kmStep } } }))),
-    Promise.all(Array.from({ length: 20 }).map((_, i) => prisma.vehicle.count({ where: { ...priceBase, price: { gte: i * priceStep, lt: (i + 1) * priceStep } } }))),
+    Promise.all(
+      Array.from({ length: 20 }).map((_, i) =>
+        prisma.vehicle.count({
+          where: {
+            ...kmBase,
+            kilometer: { gte: i * kmStep, lt: (i + 1) * kmStep },
+          },
+        }),
+      ),
+    ),
+    Promise.all(
+      Array.from({ length: 20 }).map((_, i) =>
+        prisma.vehicle.count({
+          where: {
+            ...priceBase,
+            price: { gte: i * priceStep, lt: (i + 1) * priceStep },
+          },
+        }),
+      ),
+    ),
   ]);
 
   const maxKmCount = Math.max(...kmCounts, 1);
   const maxPriceCount = Math.max(...priceCounts, 1);
-  const maxYearCount = Math.max(...(yearRows as any[]).map((r) => r._count._all), 1);
+  const maxYearCount = Math.max(
+    ...(yearRows as any[]).map((r) => r._count._all),
+    1,
+  );
 
   const facets = {
     make: toFrontendFacetKeys(toFacetCounts(makeRows, "make")),
     fuelType: toFrontendFacetKeys(toFacetCounts(fuelRows, "fuelType")),
-    transmissionType: toFrontendFacetKeys(toFacetCounts(transmissionRows, "transmissionType")),
-    vehicleCondition: toFrontendFacetKeys(toFacetCounts(conditionRows, "vehicleCondition")),
+    transmissionType: toFrontendFacetKeys(
+      toFacetCounts(transmissionRows, "transmissionType"),
+    ),
+    vehicleCondition: toFrontendFacetKeys(
+      toFacetCounts(conditionRows, "vehicleCondition"),
+    ),
     vehicleType: toFrontendFacetKeys(toFacetCounts(typeRows, "vehicleType")),
     bodyType: toFrontendFacetKeys(toFacetCounts(bodyTypeRows, "bodyType")),
     color: toFrontendFacetKeys(toFacetCounts(colorRows, "color")),
-    interiorColor: toFrontendFacetKeys(toFacetCounts(interiorColorRows, "interiorColor")),
+    interiorColor: toFrontendFacetKeys(
+      toFacetCounts(interiorColorRows, "interiorColor"),
+    ),
     driveType: toFrontendFacetKeys(toFacetCounts(driveTypeRows, "driveType")),
-    energyLabel: toFrontendFacetKeys(toFacetCounts(energyLabelRows, "energyLabel")),
-    emissionStandard: toFrontendFacetKeys(toFacetCounts(emissionStandardRows, "emissionStandard")),
+    energyLabel: toFrontendFacetKeys(
+      toFacetCounts(energyLabelRows, "energyLabel"),
+    ),
+    emissionStandard: toFrontendFacetKeys(
+      toFacetCounts(emissionStandardRows, "emissionStandard"),
+    ),
     metallic: metallicCount,
     inspectionPassed: inspectionPassedCount,
     hasWarranty: hasWarrantyCount,
@@ -570,9 +909,18 @@ vehicle.get("/facets", async (c) => {
     cylindersMax: cylindersAgg._max.cylinders ?? undefined,
     yearHistogram: yearRows
       .filter((r) => r.registrationYear != null)
-      .map((r) => ({ year: (r as any).registrationYear!, h: Math.round(((r as any)._count._all / maxYearCount) * 100) })),
-    kilometerHistogram: kmCounts.map((count, i) => ({ value: i * kmStep, h: Math.round((count / maxKmCount) * 100) })),
-    priceHistogram: priceCounts.map((count, i) => ({ value: i * priceStep, h: Math.round((count / maxPriceCount) * 100) })),
+      .map((r) => ({
+        year: (r as any).registrationYear!,
+        h: Math.round(((r as any)._count._all / maxYearCount) * 100),
+      })),
+    kilometerHistogram: kmCounts.map((count, i) => ({
+      value: i * kmStep,
+      h: Math.round((count / maxKmCount) * 100),
+    })),
+    priceHistogram: priceCounts.map((count, i) => ({
+      value: i * priceStep,
+      h: Math.round((count / maxPriceCount) * 100),
+    })),
   };
 
   const result = { total, facets };
@@ -584,7 +932,10 @@ vehicle.get("/facets", async (c) => {
 vehicle.get("/:id/similar", async (c) => {
   const id = c.req.param("id");
 
-  const v = await prisma.vehicle.findFirst({ where: { id }, select: { dealerId: true } });
+  const v = await prisma.vehicle.findFirst({
+    where: { id },
+    select: { dealerId: true },
+  });
   if (!v?.dealerId) return c.json({ vehicles: [] });
 
   const vehicles = await prisma.vehicle.findMany({
@@ -683,7 +1034,12 @@ vehicle.get("/:id", async (c) => {
           googleReviewCount: true,
           user: { select: { emailVerified: true } },
           openingHours: {
-            select: { day: true, openTime: true, closeTime: true, isOpen: true },
+            select: {
+              day: true,
+              openTime: true,
+              closeTime: true,
+              isOpen: true,
+            },
           },
         },
       },
@@ -740,7 +1096,9 @@ vehicle.get("/:id", async (c) => {
     fuelType: v.fuelType ?? null,
     co2Emission: v.co2Emission ?? null,
     consumptionCity: v.consumptionCity ? Number(v.consumptionCity) : null,
-    consumptionCountry: v.consumptionCountry ? Number(v.consumptionCountry) : null,
+    consumptionCountry: v.consumptionCountry
+      ? Number(v.consumptionCountry)
+      : null,
     consumptionTotal: v.consumptionTotal ? Number(v.consumptionTotal) : null,
     emissionStandard: v.emissionStandard ?? null,
     energyLabel: v.energyLabel ?? null,

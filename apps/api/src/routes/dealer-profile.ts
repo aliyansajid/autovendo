@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { prisma, DayOfWeek } from "@repo/db";
 import { z } from "zod";
-import { storage } from "../lib/storage.js";
-import { cacheDelete, cacheDeletePattern } from "../lib/cache.js";
+import { storage } from "../lib/storage";
+import { cacheDelete, cacheDeletePattern } from "../lib/cache";
 
 type Variables = {
   user: { id: string; email: string; role?: string | null } | null;

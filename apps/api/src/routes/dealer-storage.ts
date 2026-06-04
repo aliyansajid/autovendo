@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { prisma } from "@repo/db";
 import { StorageService } from "@repo/storage";
-import { storage } from "../lib/storage.js";
+import { storage } from "../lib/storage";
 
 type Variables = {
   user: { id: string; email: string; role?: string | null } | null;
@@ -40,7 +40,12 @@ router.post("/presign", async (c) => {
 
   const urls = await Promise.all(
     files.map(async (file) => {
-      const key = StorageService.formatPath(dealer.id, "listing", file.name, listingId);
+      const key = StorageService.formatPath(
+        dealer.id,
+        "listing",
+        file.name,
+        listingId,
+      );
       const url = await storage.getUploadUrl(key, file.type);
       return { url, key };
     }),
@@ -68,7 +73,8 @@ router.post("/presign-profile", async (c) => {
     where: { userId: user.id },
     select: { id: true },
   });
-  if (!dealer) return c.json({ success: false, error: "Dealer profile not found" }, 404);
+  if (!dealer)
+    return c.json({ success: false, error: "Dealer profile not found" }, 404);
 
   const body = await c.req.json().catch(() => null);
   const { type, filename, contentType } = (body ?? {}) as {
@@ -78,7 +84,10 @@ router.post("/presign-profile", async (c) => {
   };
 
   if (!type || !filename || !contentType) {
-    return c.json({ success: false, error: "type, filename and contentType are required" }, 400);
+    return c.json(
+      { success: false, error: "type, filename and contentType are required" },
+      400,
+    );
   }
 
   if (!ALLOWED_PROFILE_TYPES.includes(type as AllowedProfileType)) {
@@ -89,10 +98,17 @@ router.post("/presign-profile", async (c) => {
     return c.json({ success: false, error: "Invalid file type" }, 400);
   }
 
-  const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, MAX_FILENAME_LENGTH);
-  if (!safeFilename) return c.json({ success: false, error: "Invalid filename" }, 400);
+  const safeFilename = filename
+    .replace(/[^a-zA-Z0-9._-]/g, "_")
+    .slice(0, MAX_FILENAME_LENGTH);
+  if (!safeFilename)
+    return c.json({ success: false, error: "Invalid filename" }, 400);
 
-  const key = StorageService.formatPath(dealer.id, type as AllowedProfileType, safeFilename);
+  const key = StorageService.formatPath(
+    dealer.id,
+    type as AllowedProfileType,
+    safeFilename,
+  );
 
   try {
     const uploadUrl = await storage.getUploadUrl(key, contentType);
@@ -104,7 +120,10 @@ router.post("/presign-profile", async (c) => {
     });
   } catch (err) {
     console.error("Failed to generate presigned URL:", err);
-    return c.json({ success: false, error: "Failed to generate upload URL" }, 500);
+    return c.json(
+      { success: false, error: "Failed to generate upload URL" },
+      500,
+    );
   }
 });
 

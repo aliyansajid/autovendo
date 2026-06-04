@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { auth } from "../lib/auth.js";
+import { auth } from "../lib/auth";
 
 type Variables = {
   user: { id: string; email: string; role?: string | null } | null;
@@ -15,12 +15,12 @@ router.use("*", async (c, next) => {
 
 router.get("/", async (c) => {
   try {
-    const result = await (auth.api as any).listActiveSubscriptions({
+    const result = await auth.api.listActiveSubscriptions({
       headers: c.req.raw.headers,
     });
     const subscriptions = Array.isArray(result)
       ? result
-      : (result as any)?.data ?? [];
+      : ((result as any)?.data ?? []);
     return c.json(subscriptions);
   } catch {
     return c.json([]);

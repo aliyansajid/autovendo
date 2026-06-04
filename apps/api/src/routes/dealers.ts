@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import type { Context } from "hono";
 import { prisma } from "@repo/db";
 import { z } from "zod";
-import { cacheGet, cacheSet, cacheDelete } from "../lib/cache.js";
-import { buildWhereClause } from "../lib/vehicle-query.js";
+import { cacheGet, cacheSet, cacheDelete } from "../lib/cache";
+import { buildWhereClause } from "../lib/vehicle-query";
 
 type Variables = {
   user: { id: string; email: string; role?: string | null } | null;

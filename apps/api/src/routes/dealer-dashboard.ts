@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { prisma } from "@repo/db";
-import { auth } from "../lib/auth.js";
+import { auth } from "../lib/auth";
 
 type Variables = {
   user: { id: string; email: string; role?: string | null } | null;
@@ -83,7 +83,7 @@ router.get("/subscription", async (c) => {
       where: { userId: user.id },
       select: { id: true },
     }),
-    (auth.api as any).listActiveSubscriptions({ headers: c.req.raw.headers }),
+    auth.api.listActiveSubscriptions({ headers: c.req.raw.headers }),
   ]);
 
   const currentCount = dealer
@@ -169,7 +169,7 @@ router.post("/prepare-listing", async (c) => {
 
   // Get subscription status inline
   const [subscriptionsResponse] = await Promise.all([
-    (auth.api as any).listActiveSubscriptions({ headers: c.req.raw.headers }),
+    auth.api.listActiveSubscriptions({ headers: c.req.raw.headers }),
   ]);
 
   const subscriptions = Array.isArray(subscriptionsResponse)

@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { prisma } from "@repo/db";
-import { auth } from "../lib/auth.js";
+import { auth } from "../lib/auth";
 import { stripeClient } from "@repo/auth";
 import { StorageService } from "@repo/storage";
 import { z } from "zod";
@@ -97,7 +97,10 @@ router.post("/", async (c) => {
   const body = await c.req.json().catch(() => null);
   const parsed = createDealerSchema.safeParse(body);
   if (!parsed.success) {
-    return c.json({ error: "Validation failed", issues: parsed.error.issues }, 400);
+    return c.json(
+      { error: "Validation failed", issues: parsed.error.issues },
+      400,
+    );
   }
 
   const data = parsed.data;
@@ -176,7 +179,10 @@ router.put("/:id", async (c) => {
   const body = await c.req.json().catch(() => null);
   const parsed = updateDealerSchema.safeParse(body);
   if (!parsed.success) {
-    return c.json({ error: "Validation failed", issues: parsed.error.issues }, 400);
+    return c.json(
+      { error: "Validation failed", issues: parsed.error.issues },
+      400,
+    );
   }
 
   const data = parsed.data;
@@ -455,26 +461,47 @@ router.delete("/:id", async (c) => {
   }
 
   // Delete dealer media from storage
-  if (dealer.logo) { try { await storage.deleteFile(dealer.logo); } catch {} }
-  if (dealer.coverImage) { try { await storage.deleteFile(dealer.coverImage); } catch {} }
-  if (dealer.user?.image) { try { await storage.deleteFile(dealer.user.image); } catch {} }
+  if (dealer.logo) {
+    try {
+      await storage.deleteFile(dealer.logo);
+    } catch {}
+  }
+  if (dealer.coverImage) {
+    try {
+      await storage.deleteFile(dealer.coverImage);
+    } catch {}
+  }
+  if (dealer.user?.image) {
+    try {
+      await storage.deleteFile(dealer.user.image);
+    } catch {}
+  }
 
   // Delete vehicles and dealer from DB
   await prisma.vehicle.deleteMany({ where: { dealerId: id } });
   await prisma.dealer.delete({ where: { id } });
 
   // Cancel Stripe subscriptions
-  const uniqueSubsMap = new Map<string, { stripeSubscriptionId: string; status: string }>();
+  const uniqueSubsMap = new Map<
+    string,
+    { stripeSubscriptionId: string; status: string }
+  >();
   if (dealer.user?.stripeCustomerId) {
     const subsByCustomer = await prisma.subscription.findMany({
       where: { stripeCustomerId: dealer.user.stripeCustomerId },
     });
-    subsByCustomer.forEach((s) => { if (s.stripeSubscriptionId) uniqueSubsMap.set(s.stripeSubscriptionId, s as any); });
+    subsByCustomer.forEach((s) => {
+      if (s.stripeSubscriptionId)
+        uniqueSubsMap.set(s.stripeSubscriptionId, s as any);
+    });
   }
   const subsByRef = await prisma.subscription.findMany({
     where: { referenceId: userId },
   });
-  subsByRef.forEach((s) => { if (s.stripeSubscriptionId) uniqueSubsMap.set(s.stripeSubscriptionId, s as any); });
+  subsByRef.forEach((s) => {
+    if (s.stripeSubscriptionId)
+      uniqueSubsMap.set(s.stripeSubscriptionId, s as any);
+  });
 
   for (const sub of uniqueSubsMap.values()) {
     if (sub.stripeSubscriptionId && sub.status !== "canceled") {

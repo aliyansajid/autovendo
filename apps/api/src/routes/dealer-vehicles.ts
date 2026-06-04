@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { prisma } from "@repo/db";
+import { auth } from "../lib/auth";
 import {
   VALID_MAKES_BY_TYPE,
   VALID_MODELS_BY_TYPE,
@@ -63,18 +64,34 @@ const VALID_FUEL_TYPES = new Set([
   ...truckFuelTypeEnum.map((v) => v.value),
   ...camperFuelTypeEnum.map((v) => v.value),
 ]);
-const VALID_GEAR_TRANSMISSIONS = new Set(GearTransmissionEnum.map((v) => v.value));
-const VALID_TRANSMISSION_TYPES = new Set(TransmissionTypeEnum.map((v) => v.value));
+const VALID_GEAR_TRANSMISSIONS = new Set(
+  GearTransmissionEnum.map((v) => v.value),
+);
+const VALID_TRANSMISSION_TYPES = new Set(
+  TransmissionTypeEnum.map((v) => v.value),
+);
 const VALID_DRIVE_TYPES = new Set(DriveTypeEnum.map((v) => v.value));
 const VALID_COLORS = new Set(ColorEnum.map((v) => v.value));
 const VALID_CONDITIONS = new Set(VehicleConditionEnum.map((v) => v.value));
 const VALID_WARRANTIES = new Set(WarrantyEnum.map((v) => v.value));
 const VALID_ENERGY_LABELS = new Set(EnergyLabelEnum.map((v) => v.value));
-const VALID_BATTERY_OWNERSHIPS = new Set(BatteryOwnershipEnum.map((v) => v.value));
-const VALID_CHARGING_AC = new Set(ChargingPlugTypeStandardEnum.map((v) => v.value));
+const VALID_BATTERY_OWNERSHIPS = new Set(
+  BatteryOwnershipEnum.map((v) => v.value),
+);
+const VALID_CHARGING_AC = new Set(
+  ChargingPlugTypeStandardEnum.map((v) => v.value),
+);
 const VALID_CHARGING_DC = new Set(ChargingPlugTypeFastEnum.map((v) => v.value));
-const VALID_EMISSION_STANDARDS = new Set(EmissionStandardEnum.map((v) => v.value));
-const VALID_STATUSES = new Set<string>(["DRAFT", "PUBLISHED", "PAUSED", "SOLD", "ARCHIVED"]);
+const VALID_EMISSION_STANDARDS = new Set(
+  EmissionStandardEnum.map((v) => v.value),
+);
+const VALID_STATUSES = new Set<string>([
+  "DRAFT",
+  "PUBLISHED",
+  "PAUSED",
+  "SOLD",
+  "ARCHIVED",
+]);
 
 const VIN_REGEX = /^[A-HJ-NPR-Z0-9]{17}$/;
 
@@ -92,7 +109,8 @@ function validateBody(body: Record<string, any>): string | null {
     return `Invalid make for vehicleType ${b.vehicleType}: ${b.make}`;
 
   if (b.model != null) {
-    const validModels = VALID_MODELS_BY_TYPE[b.vehicleType as string]?.[b.make as string];
+    const validModels =
+      VALID_MODELS_BY_TYPE[b.vehicleType as string]?.[b.make as string];
     if (validModels && validModels.length > 0 && !validModels.includes(b.model))
       return `Invalid model for ${b.vehicleType}/${b.make}: ${b.model}`;
   }
@@ -118,7 +136,10 @@ function validateBody(body: Record<string, any>): string | null {
     return `Invalid energyLabel: ${b.energyLabel}`;
   if (b.batteryOwnership && !VALID_BATTERY_OWNERSHIPS.has(b.batteryOwnership))
     return `Invalid batteryOwnership: ${b.batteryOwnership}`;
-  if (b.chargingPlugTypeStandard && !VALID_CHARGING_AC.has(b.chargingPlugTypeStandard))
+  if (
+    b.chargingPlugTypeStandard &&
+    !VALID_CHARGING_AC.has(b.chargingPlugTypeStandard)
+  )
     return `Invalid chargingPlugTypeStandard: ${b.chargingPlugTypeStandard}`;
   if (b.chargingPlugTypeFast && !VALID_CHARGING_DC.has(b.chargingPlugTypeFast))
     return `Invalid chargingPlugTypeFast: ${b.chargingPlugTypeFast}`;
@@ -135,8 +156,11 @@ function validateBody(body: Record<string, any>): string | null {
     if (invalid.length) return `Invalid equipment keys: ${invalid.join(", ")}`;
   }
   if (b.extras && typeof b.extras === "object") {
-    const validExtras = VALID_EXTRAS_KEYS_BY_TYPE[b.vehicleType as string] ?? [];
-    const invalid = Object.keys(b.extras).filter((k) => !validExtras.includes(k));
+    const validExtras =
+      VALID_EXTRAS_KEYS_BY_TYPE[b.vehicleType as string] ?? [];
+    const invalid = Object.keys(b.extras).filter(
+      (k) => !validExtras.includes(k),
+    );
     if (invalid.length) return `Invalid extras keys: ${invalid.join(", ")}`;
   }
 
@@ -147,58 +171,90 @@ function validateBody(body: Record<string, any>): string | null {
     return "model must be 1–50 characters";
   if (b.version != null && (b.version.length < 1 || b.version.length > 50))
     return "version must be 1–50 characters";
-  if (b.serialNumber != null && (b.serialNumber.length < 1 || b.serialNumber.length > 100))
+  if (
+    b.serialNumber != null &&
+    (b.serialNumber.length < 1 || b.serialNumber.length > 100)
+  )
     return "serialNumber must be 1–100 characters";
-  if (b.typeApproval != null && (b.typeApproval.length < 1 || b.typeApproval.length > 50))
+  if (
+    b.typeApproval != null &&
+    (b.typeApproval.length < 1 || b.typeApproval.length > 50)
+  )
     return "typeApproval must be 1–50 characters";
   if (b.vin != null && !VIN_REGEX.test(b.vin))
     return "vin must be exactly 17 alphanumeric characters (no I, O, Q)";
 
   // ── Int ranges (mirror DB CHECK constraints) ────────────────────────────────
   const inRange = (v: unknown, min: number, max: number) =>
-    v == null || (Number.isFinite(Number(v)) && Number(v) >= min && Number(v) <= max);
+    v == null ||
+    (Number.isFinite(Number(v)) && Number(v) >= min && Number(v) <= max);
 
-  if (!inRange(b.registrationMonth, 1, 12)) return "registrationMonth must be 1–12";
+  if (!inRange(b.registrationMonth, 1, 12))
+    return "registrationMonth must be 1–12";
   if (!inRange(b.registrationYear, 1900, new Date().getFullYear()))
     return `registrationYear must be 1900–${new Date().getFullYear()}`;
   if (Number(b.kilometer) < 0) return "kilometer must be >= 0";
   if (Number(b.price) < 0) return "price must be >= 0";
-  if (b.newPrice != null && Number(b.newPrice) < 0) return "newPrice must be >= 0";
+  if (b.newPrice != null && Number(b.newPrice) < 0)
+    return "newPrice must be >= 0";
   if (!inRange(b.hp, 1, 4000)) return "hp must be 1–4000";
   if (!inRange(b.kw, 1, 3000)) return "kw must be 1–3000";
-  if (!inRange(b.combustionEnginePowerHp, 1, 2500)) return "combustionEnginePowerHp must be 1–2500";
-  if (!inRange(b.electricMotorPowerHp, 1, 4000)) return "electricMotorPowerHp must be 1–4000";
+  if (!inRange(b.combustionEnginePowerHp, 1, 2500))
+    return "combustionEnginePowerHp must be 1–2500";
+  if (!inRange(b.electricMotorPowerHp, 1, 4000))
+    return "electricMotorPowerHp must be 1–4000";
   if (!inRange(b.seats, 1, 150)) return "seats must be 1–150";
   if (!inRange(b.doors, 1, 20)) return "doors must be 1–20";
   if (!inRange(b.cylinders, 1, 16)) return "cylinders must be 1–16";
   if (!inRange(b.numberOfGears, 1, 10)) return "numberOfGears must be 1–10";
-  if (!inRange(b.cubicCapacity, 1, 30000)) return "cubicCapacity must be 1–30000";
+  if (!inRange(b.cubicCapacity, 1, 30000))
+    return "cubicCapacity must be 1–30000";
   if (!inRange(b.length, 1, 30000)) return "length must be 1–30000";
   if (!inRange(b.width, 1, 5000)) return "width must be 1–5000";
   if (!inRange(b.height, 1, 6000)) return "height must be 1–6000";
   if (!inRange(b.wheelbase, 1, 15000)) return "wheelbase must be 1–15000";
   if (!inRange(b.emptyWeight, 1, 100000)) return "emptyWeight must be 1–100000";
-  if (!inRange(b.loadCapacity, 0, 100000)) return "loadCapacity must be 0–100000";
-  if (!inRange(b.towingCapacityBraked, 0, 100000)) return "towingCapacityBraked must be 0–100000";
+  if (!inRange(b.loadCapacity, 0, 100000))
+    return "loadCapacity must be 0–100000";
+  if (!inRange(b.towingCapacityBraked, 0, 100000))
+    return "towingCapacityBraked must be 0–100000";
   if (!inRange(b.co2Emission, 0, 1000)) return "co2Emission must be 0–1000";
-  if (!inRange(b.consumptionCity, 0, 100)) return "consumptionCity must be 0–100";
-  if (!inRange(b.consumptionCountry, 0, 100)) return "consumptionCountry must be 0–100";
-  if (!inRange(b.consumptionTotal, 0, 100)) return "consumptionTotal must be 0–100";
+  if (!inRange(b.consumptionCity, 0, 100))
+    return "consumptionCity must be 0–100";
+  if (!inRange(b.consumptionCountry, 0, 100))
+    return "consumptionCountry must be 0–100";
+  if (!inRange(b.consumptionTotal, 0, 100))
+    return "consumptionTotal must be 0–100";
   if (!inRange(b.range, 1, 1500)) return "range must be 1–1500";
-  if (!inRange(b.batteryCapacity, 0, 500)) return "batteryCapacity must be 0–500";
-  if (!inRange(b.powerConsumption, 0, 100)) return "powerConsumption must be 0–100";
+  if (!inRange(b.batteryCapacity, 0, 500))
+    return "batteryCapacity must be 0–500";
+  if (!inRange(b.powerConsumption, 0, 100))
+    return "powerConsumption must be 0–100";
   if (!inRange(b.chargingPower, 0, 1000)) return "chargingPower must be 0–1000";
-  if (!inRange(b.batteryRentalMonth, 1, 120)) return "batteryRentalMonth must be 1–120";
+  if (!inRange(b.batteryRentalMonth, 1, 120))
+    return "batteryRentalMonth must be 1–120";
   if (!inRange(b.duration, 1, 120)) return "duration must be 1–120";
   if (!inRange(b.maxKm, 0, 500000)) return "maxKm must be 0–500000";
 
   return null;
 }
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 async function getDealer(userId: string) {
   return prisma.dealer.findUnique({ where: { userId } });
+}
+
+async function hasActiveSubscription(headers: Headers): Promise<boolean> {
+  const subscriptionsResponse = await auth.api.listActiveSubscriptions({
+    headers,
+  });
+  const subscriptions = Array.isArray(subscriptionsResponse)
+    ? subscriptionsResponse
+    : (subscriptionsResponse as any)?.data || [];
+  return subscriptions.some(
+    (s: any) => s.status === "active" || s.status === "trialing",
+  );
 }
 
 // ─── GET / — list dealer's vehicles ──────────────────────────────────────────
@@ -261,6 +317,9 @@ router.post("/", async (c) => {
   const dealer = await getDealer(c.get("user")!.id);
   if (!dealer) return c.json({ error: "Dealer profile not found" }, 404);
 
+  if (!(await hasActiveSubscription(c.req.raw.headers)))
+    return c.json({ error: "subscription_required" }, 403);
+
   let body: Record<string, any>;
   try {
     body = await c.req.json();
@@ -269,12 +328,28 @@ router.post("/", async (c) => {
   }
 
   // Required field check
-  const required = ["vehicleType", "make", "bodyType", "color", "registrationMonth", "registrationYear", "kilometer", "price"];
+  const required = [
+    "vehicleType",
+    "make",
+    "bodyType",
+    "color",
+    "registrationMonth",
+    "registrationYear",
+    "kilometer",
+    "price",
+  ];
   const missing = required.filter((f) => body[f] == null);
   if (missing.length)
-    return c.json({ error: `Missing required fields: ${missing.join(", ")}` }, 400);
+    return c.json(
+      { error: `Missing required fields: ${missing.join(", ")}` },
+      400,
+    );
 
-  if (!Array.isArray(body.images) || body.images.length < 5 || body.images.length > 10)
+  if (
+    !Array.isArray(body.images) ||
+    body.images.length < 5 ||
+    body.images.length > 10
+  )
     return c.json({ error: "images must be an array of 5–10 items" }, 400);
 
   const validationError = validateBody(body);
@@ -423,6 +498,9 @@ router.put("/:id", async (c) => {
   const dealer = await getDealer(c.get("user")!.id);
   if (!dealer) return c.json({ error: "Dealer profile not found" }, 404);
 
+  if (!(await hasActiveSubscription(c.req.raw.headers)))
+    return c.json({ error: "subscription_required" }, 403);
+
   const existing = await prisma.vehicle.findFirst({
     where: { id: c.req.param("id"), dealerId: dealer.id },
     select: { id: true },
@@ -436,12 +514,28 @@ router.put("/:id", async (c) => {
     return c.json({ error: "Invalid JSON" }, 400);
   }
 
-  const required = ["vehicleType", "make", "bodyType", "color", "registrationMonth", "registrationYear", "kilometer", "price"];
+  const required = [
+    "vehicleType",
+    "make",
+    "bodyType",
+    "color",
+    "registrationMonth",
+    "registrationYear",
+    "kilometer",
+    "price",
+  ];
   const missing = required.filter((f) => body[f] == null);
   if (missing.length)
-    return c.json({ error: `Missing required fields: ${missing.join(", ")}` }, 400);
+    return c.json(
+      { error: `Missing required fields: ${missing.join(", ")}` },
+      400,
+    );
 
-  if (!Array.isArray(body.images) || body.images.length < 5 || body.images.length > 10)
+  if (
+    !Array.isArray(body.images) ||
+    body.images.length < 5 ||
+    body.images.length > 10
+  )
     return c.json({ error: "images must be an array of 5–10 items" }, 400);
 
   const validationError = validateBody(body);
@@ -580,6 +674,12 @@ router.patch("/:id/status", async (c) => {
       400,
     );
   }
+
+  if (
+    body.status !== "DRAFT" &&
+    !(await hasActiveSubscription(c.req.raw.headers))
+  )
+    return c.json({ error: "subscription_required" }, 403);
 
   const vehicle = await prisma.vehicle.update({
     where: { id: existing.id },

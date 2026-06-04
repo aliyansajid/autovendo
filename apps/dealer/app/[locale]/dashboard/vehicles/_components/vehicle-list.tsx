@@ -259,10 +259,10 @@ function VehicleActions({
     });
   };
 
-  const isCanceled =
-    subscriptionStatus?.type === "no_subscription" ||
-    subscriptionStatus?.type === "expired";
-  const isPastDue = subscriptionStatus?.type === "past_due";
+  // Only active and trialing subscriptions can add/edit/publish
+  const isSubRestricted =
+    subscriptionStatus?.type !== "active" &&
+    subscriptionStatus?.type !== "trialing";
 
   // Restricted by car state (Sold, Archived, etc.)
   const isStateRestricted = ["SOLD", "ARCHIVED", "BANNED", "PAUSED"].includes(
@@ -280,7 +280,7 @@ function VehicleActions({
         <DropdownMenuContent align="end">
           <DropdownMenuItem
             asChild
-            disabled={isStateRestricted || isCanceled || isPending}
+            disabled={isStateRestricted || isSubRestricted || isPending}
           >
             <Link href={`/dashboard/vehicles/${vehicle.id}`}>
               <Pencil />
@@ -291,9 +291,7 @@ function VehicleActions({
           {vehicle.status === "DRAFT" && (
             <DropdownMenuItem
               onSelect={() => handleStatusUpdate("PUBLISHED")}
-              disabled={
-                isStateRestricted || isCanceled || isPastDue || isPending
-              }
+              disabled={isStateRestricted || isSubRestricted || isPending}
             >
               <Send />
               {t("publish")}
@@ -304,7 +302,7 @@ function VehicleActions({
             <>
               <DropdownMenuItem
                 onSelect={() => handleStatusUpdate("DRAFT")}
-                disabled={isStateRestricted || isCanceled || isPending}
+                disabled={isStateRestricted || isPending}
               >
                 <FileText />
                 {t("statusDraft")}

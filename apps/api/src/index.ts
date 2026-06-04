@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { auth } from "./lib/auth.js";
+import { auth } from "./lib/auth";
 import home from "./routes/home";
 import search from "./routes/search";
 import vehicle from "./routes/vehicle";
