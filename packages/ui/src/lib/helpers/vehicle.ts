@@ -90,6 +90,8 @@ export function isNew(condition: string | null): boolean {
 const ARRAY_PARAM_KEYS = new Set([
   "make",
   "model",
+  "excludeMake",
+  "excludeModel",
   "fuel",
   "transmission",
   "condition",
