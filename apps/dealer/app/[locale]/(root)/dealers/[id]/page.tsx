@@ -7,6 +7,7 @@ import {
   getDealerVehiclesFromApi,
   getDealerGoogleReviewsFromApi,
 } from "@/lib/api/dealers";
+import { getVehicleFacetsFromApi } from "@/lib/api/vehicles";
 import { notFound } from "next/navigation";
 import { DealerDetailContent } from "../_components/dealer-detail-content";
 import { parseSearchParams } from "@repo/ui/lib/helpers/vehicle";
@@ -67,9 +68,13 @@ export default async function DealerPage({
     notFound();
   }
 
-  const [initialVehicles, googleData] = await Promise.all([
-    getDealerVehiclesFromApi(dealer.id, 1, 12, filters),
+  const page = filters.page ?? 1;
+  const sort = (sp.sort as string | undefined) ?? "relevance";
+
+  const [initialVehicles, googleData, facetsResult] = await Promise.all([
+    getDealerVehiclesFromApi(dealer.id, page, 12, filters, sort),
     getDealerGoogleReviewsFromApi(dealer.id),
+    getVehicleFacetsFromApi({ ...sp, dealerId: dealer.id }),
   ]);
 
   const dealerSchema = {
@@ -128,6 +133,7 @@ export default async function DealerPage({
         initialVehicles={initialVehicles}
         googleData={googleData}
         initialFilters={filters}
+        facets={facetsResult.facets}
       />
     </>
   );

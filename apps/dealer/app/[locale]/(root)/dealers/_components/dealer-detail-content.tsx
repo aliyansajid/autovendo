@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useCallback, useEffect } from "react";
+import { useState, useTransition, useCallback, useMemo } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,6 +48,7 @@ import {
   AvatarFallback,
 } from "@repo/ui/components/avatar";
 import { Link } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
 import {
   CustomFormField,
   FormFieldType,
@@ -61,130 +62,141 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
-import { getVehicleFacetsFromApi } from "@/lib/api/vehicles";
 import { formatCount } from "@repo/ui/lib/helpers/format";
 import type {
   DealerDetail,
   DealerVehiclesResult,
   GooglePlaceData,
 } from "@/types/dealer";
-import type { VehicleFacets, VehicleListItem } from "@/types/vehicle";
+import type { VehicleFacets } from "@/types/vehicle";
 import { createDealerContactSchema } from "@/schema/dealer-contact-schema";
-import {
-  sendDealerContactEmailFromApi,
-  getDealerVehiclesFromApi,
-} from "@/lib/api/dealers";
+import { sendDealerContactEmailFromApi } from "@/lib/api/dealers";
 import { Spinner } from "@repo/ui/components/spinner";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getImageUrl } from "@repo/ui/lib/helpers/image";
-import { useMemo } from "react";
+
+// ─── Serialise filter object → URLSearchParams ────────────────────────────────
+
+const ARRAY_KEYS = [
+  "make", "model", "excludeMake", "excludeModel",
+  "fuel", "transmission", "condition", "vehicleType", "bodyType", "color",
+  "driveType", "equipment", "energyLabels", "emissionStandards", "interiorColor",
+] as const;
+
+const NUM_KEYS = [
+  "priceFrom", "priceTo", "registrationFrom", "registrationTo",
+  "kilometerFrom", "kilometerTo", "powerFrom", "powerTo",
+  "kwFrom", "kwTo", "cubicCapacityFrom", "cubicCapacityTo",
+  "cylindersFrom", "cylindersTo", "co2From", "co2To", "daysListed",
+] as const;
+
+function filtersToParams(
+  filters: Partial<VehicleSearchParams>,
+  base: URLSearchParams,
+): URLSearchParams {
+  const params = new URLSearchParams(base);
+
+  // Clear all filter keys from base so we start fresh
+  [...ARRAY_KEYS, ...NUM_KEYS, "metallic", "inspectionPassed", "hasWarranty", "evs", "search"].forEach(
+    (k) => params.delete(k),
+  );
+
+  for (const key of ARRAY_KEYS) {
+    const val = (filters as any)[key] as string[] | undefined;
+    if (Array.isArray(val) && val.length > 0) val.forEach((v) => params.append(key, v));
+  }
+  for (const key of NUM_KEYS) {
+    const val = (filters as any)[key] as number | undefined;
+    if (val != null) params.set(key, String(val));
+  }
+  if (filters.metallic != null) params.set("metallic", String(filters.metallic));
+  if (filters.inspectionPassed != null) params.set("inspectionPassed", String(filters.inspectionPassed));
+  if (filters.hasWarranty != null) params.set("hasWarranty", String(filters.hasWarranty));
+  if (filters.evs) params.set("evs", filters.evs);
+  if (filters.search) params.set("search", filters.search);
+
+  // Reset to page 1 on filter change
+  params.delete("page");
+
+  return params;
+}
+
+// ─── Props ────────────────────────────────────────────────────────────────────
 
 interface DealerDetailContentProps {
   dealer: DealerDetail;
   initialVehicles: DealerVehiclesResult;
   googleData: GooglePlaceData | null;
   initialFilters?: Partial<VehicleSearchParams>;
+  facets?: VehicleFacets | null;
 }
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export const DealerDetailContent = ({
   dealer,
   initialVehicles,
   googleData,
   initialFilters = {},
+  facets,
 }: DealerDetailContentProps) => {
   const t = useTranslations("DealerDetail");
   const tForm = useTranslations("DealerProfileForm");
   const tSchema = useTranslations("DealerContactSchema");
   const searchParams = useSearchParams();
+  const router = useRouter();
   const activeTab = searchParams.get("tab") || "about";
   const [isPending, startTransition] = useTransition();
-
-  const [vehicles, setVehicles] = useState<VehicleListItem[]>(
-    initialVehicles.vehicles,
-  );
-  const [totalCount, setTotalCount] = useState(initialVehicles.totalCount);
-  const [totalPages, setTotalPages] = useState(initialVehicles.totalPages);
-  const [hasMore, setHasMore] = useState(initialVehicles.hasMore);
-  const [vehiclePage, setVehiclePage] = useState(initialVehicles.currentPage);
-  const [facets, setFacets] = useState<VehicleFacets | null>(null);
-  const [currentFilters, setCurrentFilters] =
-    useState<Partial<VehicleSearchParams>>(initialFilters);
-  const [sortBy, setSortBy] = useState("newest");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isFiltering, startFilterTransition] = useTransition();
 
-  const handlePageChange = (next: number) => {
-    startFilterTransition(async () => {
-      const result = await getDealerVehiclesFromApi(
-        dealer.id,
-        next,
-        12,
-        currentFilters,
-        sortBy,
-      );
-      setVehicles(result.vehicles);
-      setHasMore(result.hasMore);
-      setVehiclePage(next);
-      setTotalPages(result.totalPages);
-      // Scroll to top of cars section if needed
-      document
-        .getElementById("cars-tabs-content")
-        ?.scrollIntoView({ behavior: "smooth" });
-    });
-  };
+  // Read current sort from URL
+  const currentSort = searchParams.get("sort") ?? "newest";
 
-  useEffect(() => {
-    getVehicleFacetsFromApi({ dealerId: dealer.id }).then((res) =>
-      setFacets(res.facets),
-    );
-  }, [dealer.id]);
+  // Vehicles + pagination come from server props directly
+  const vehicles = initialVehicles.vehicles;
+  const totalCount = initialVehicles.totalCount;
+  const totalPages = initialVehicles.totalPages;
+  const currentPage = initialVehicles.currentPage;
+
+  // ── URL helpers ──────────────────────────────────────────────────────────────
+
+  const buildUrl = useCallback(
+    (page: number) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (page <= 1) params.delete("page");
+      else params.set("page", String(page));
+      const qs = params.toString();
+      return qs ? `?${qs}` : "?";
+    },
+    [searchParams],
+  );
+
+  // ── Filter change → update URL ───────────────────────────────────────────────
 
   const handleFilterChange = useCallback(
     (newFilters: Partial<VehicleSearchParams>) => {
-      setCurrentFilters(newFilters);
-      startFilterTransition(async () => {
-        const result = await getDealerVehiclesFromApi(
-          dealer.id,
-          1,
-          12,
-          newFilters,
-          sortBy,
-        );
-        setVehicles(result.vehicles);
-        setTotalCount(result.totalCount);
-        setTotalPages(result.totalPages);
-        setHasMore(result.hasMore);
-        setVehiclePage(1);
-      });
+      const params = filtersToParams(newFilters, new URLSearchParams(searchParams.toString()));
+      router.replace(`?${params.toString()}`, { scroll: false });
     },
-    [dealer.id, sortBy],
+    [router, searchParams],
   );
+
+  // ── Sort change → update URL ─────────────────────────────────────────────────
 
   const handleSortChange = (newSort: string) => {
-    setSortBy(newSort);
-    startFilterTransition(async () => {
-      const result = await getDealerVehiclesFromApi(
-        dealer.id,
-        1,
-        12,
-        currentFilters,
-        newSort,
-      );
-      setVehicles(result.vehicles);
-      setTotalCount(result.totalCount);
-      setTotalPages(result.totalPages);
-      setHasMore(result.hasMore);
-      setVehiclePage(1);
-    });
+    const params = new URLSearchParams(searchParams.toString());
+    if (!newSort || newSort === "newest") params.delete("sort");
+    else params.set("sort", newSort);
+    params.delete("page");
+    router.replace(`?${params.toString()}`, { scroll: false });
   };
 
-  const contactSchema = useMemo(
-    () => createDealerContactSchema(tSchema),
-    [tSchema]
-  );
-  
+  // ── Contact form ─────────────────────────────────────────────────────────────
+
+  const contactSchema = useMemo(() => createDealerContactSchema(tSchema), [tSchema]);
+
   const form = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
     defaultValues: { name: "", phone: "", email: "", message: "" },
@@ -195,20 +207,20 @@ export const DealerDetailContent = ({
     startTransition(async () => {
       try {
         const result = await sendDealerContactEmailFromApi(dealer.id, values);
-
         if (result.success) {
           toast.success(t("successToast"));
           form.reset();
         } else {
           toast.error(result.error ?? t("errorToast"));
         }
-      } catch (error) {
+      } catch {
         toast.error(t("unexpectedError"));
       } finally {
         setIsSubmitting(false);
       }
     });
   }
+
   const rating = googleData?.rating ?? null;
   const reviewCount = googleData?.reviewCount ?? null;
   const fullAddress = `${dealer.streetAddress}, ${dealer.zipCode} ${dealer.city}`;
@@ -563,12 +575,7 @@ export const DealerDetailContent = ({
               facets={facets}
             />
 
-            <div className="flex flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border relative">
-              {isFiltering && (
-                <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10 rounded-xl">
-                  <Loader2 className="animate-spin text-primary" />
-                </div>
-              )}
+            <div className="flex flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border">
               <p className="font-semibold">
                 {t("vehiclesCount", { count: formatCount(totalCount) })}
               </p>
@@ -576,7 +583,7 @@ export const DealerDetailContent = ({
                 <span className="text-sm text-muted-foreground hidden sm:inline">
                   {t("sortBy")}
                 </span>
-                <Select value={sortBy} onValueChange={handleSortChange}>
+                <Select value={currentSort} onValueChange={handleSortChange}>
                   <SelectTrigger className="w-[140px] sm:w-[180px]">
                     <SelectValue />
                   </SelectTrigger>
@@ -613,29 +620,16 @@ export const DealerDetailContent = ({
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (vehiclePage > 1) handlePageChange(vehiclePage - 1);
-                      }}
-                      className={
-                        vehiclePage <= 1
-                          ? "pointer-events-none opacity-50"
-                          : "cursor-pointer"
-                      }
+                      href={currentPage > 1 ? buildUrl(currentPage - 1) : "#"}
+                      className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
                     />
                   </PaginationItem>
 
                   {Array.from({ length: totalPages }).map((_, i) => (
                     <PaginationItem key={i}>
                       <PaginationLink
-                        href="#"
-                        isActive={vehiclePage === i + 1}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handlePageChange(i + 1);
-                        }}
-                        className="cursor-pointer"
+                        href={buildUrl(i + 1)}
+                        isActive={currentPage === i + 1}
                       >
                         {i + 1}
                       </PaginationLink>
@@ -644,17 +638,8 @@ export const DealerDetailContent = ({
 
                   <PaginationItem>
                     <PaginationNext
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (vehiclePage < totalPages)
-                          handlePageChange(vehiclePage + 1);
-                      }}
-                      className={
-                        vehiclePage >= totalPages
-                          ? "pointer-events-none opacity-50"
-                          : "cursor-pointer"
-                      }
+                      href={currentPage < totalPages ? buildUrl(currentPage + 1) : "#"}
+                      className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
                     />
                   </PaginationItem>
                 </PaginationContent>

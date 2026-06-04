@@ -37,20 +37,18 @@ export const DealersList = ({ initialData }: DealersListProps) => {
   const totalPages = initialData.totalPages;
   const dealers = initialData.dealers;
 
-  const updateParams = useCallback(
+  const buildUrl = useCallback(
     (updates: Record<string, string | null | number>) => {
       const params = new URLSearchParams(searchParams.toString());
       Object.entries(updates).forEach(([key, value]) => {
         if (value === null || value === undefined) params.delete(key);
         else params.set(key, String(value));
       });
-      // Skip page=1 for clean URL
       if (params.get("page") === "1") params.delete("page");
-
       const qs = params.toString();
-      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      return qs ? `${pathname}?${qs}` : pathname;
     },
-    [searchParams, router, pathname],
+    [searchParams, pathname],
   );
 
   const [localSearch, setLocalSearch] = useState(searchQuery);
@@ -61,13 +59,11 @@ export const DealersList = ({ initialData }: DealersListProps) => {
 
   useEffect(() => {
     if (localSearch === searchQuery) return;
-
     const timer = setTimeout(() => {
-      updateParams({ q: localSearch || null, page: 1 });
+      router.replace(buildUrl({ q: localSearch || null, page: null }), { scroll: false });
     }, 500);
-
     return () => clearTimeout(timer);
-  }, [localSearch, searchQuery, updateParams]);
+  }, [localSearch, searchQuery, buildUrl, router]);
 
   return (
     <div className="w-full max-w-285 mx-auto px-4 py-12 space-y-6">
@@ -99,11 +95,8 @@ export const DealersList = ({ initialData }: DealersListProps) => {
               <p className="text-muted-foreground text-sm">
                 {t("notFoundDescription", { query: searchQuery })}
               </p>
-              <Button
-                variant="outline"
-                onClick={() => updateParams({ q: null, page: 1 })}
-              >
-                {t("resetSearch")}
+              <Button variant="outline" asChild>
+                <Link href={pathname}>{t("resetSearch")}</Link>
               </Button>
             </>
           ) : (
@@ -161,30 +154,16 @@ export const DealersList = ({ initialData }: DealersListProps) => {
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (currentPage > 1)
-                        updateParams({ page: currentPage - 1 });
-                    }}
-                    className={
-                      currentPage <= 1
-                        ? "pointer-events-none opacity-50"
-                        : "cursor-pointer"
-                    }
+                    href={currentPage > 1 ? buildUrl({ page: currentPage - 1 }) : "#"}
+                    className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
 
                 {Array.from({ length: totalPages }).map((_, i) => (
                   <PaginationItem key={i}>
                     <PaginationLink
-                      href="#"
+                      href={buildUrl({ page: i + 1 })}
                       isActive={currentPage === i + 1}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        updateParams({ page: i + 1 });
-                      }}
-                      className="cursor-pointer"
                     >
                       {i + 1}
                     </PaginationLink>
@@ -193,17 +172,8 @@ export const DealersList = ({ initialData }: DealersListProps) => {
 
                 <PaginationItem>
                   <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (currentPage < totalPages)
-                        updateParams({ page: currentPage + 1 });
-                    }}
-                    className={
-                      currentPage >= totalPages
-                        ? "pointer-events-none opacity-50"
-                        : "cursor-pointer"
-                    }
+                    href={currentPage < totalPages ? buildUrl({ page: currentPage + 1 }) : "#"}
+                    className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
               </PaginationContent>

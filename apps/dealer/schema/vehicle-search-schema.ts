@@ -1,13 +1,5 @@
 import { z } from "zod";
-import {
-  FUEL_TYPES,
-  TRANSMISSION_TYPES,
-  VEHICLE_CONDITIONS,
-  VEHICLE_TYPES,
-  BODY_TYPES,
-  COLORS,
-  SORT_OPTIONS,
-} from "@repo/vehicle-constants";
+import { SORT_OPTIONS } from "@repo/vehicle-constants";
 
 type TFn = (key: string) => string;
 
@@ -42,12 +34,12 @@ export const createVehicleSearchSchema = (t: TFn) =>
     powerTo: z.number().int().nonnegative().optional(),
 
     // Multi-select filters
-    fuel: z.array(z.enum(FUEL_TYPES)).optional(),
-    transmission: z.array(z.enum(TRANSMISSION_TYPES)).optional(),
-    condition: z.array(z.enum(VEHICLE_CONDITIONS)).optional(),
-    vehicleType: z.array(z.enum(VEHICLE_TYPES)).optional(),
-    bodyType: z.array(z.enum(BODY_TYPES)).optional(),
-    color: z.array(z.enum(COLORS)).optional(),
+    fuel: z.array(z.string()).optional(),
+    transmission: z.array(z.string()).optional(),
+    condition: z.array(z.string()).optional(),
+    vehicleType: z.array(z.string()).optional(),
+    bodyType: z.array(z.string()).optional(),
+    color: z.array(z.string()).optional(),
     equipment: z.array(z.string()).optional(),
 
     // Special filters
