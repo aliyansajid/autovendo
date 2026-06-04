@@ -142,7 +142,7 @@ router.get("/:id/vehicles", async (c) => {
   const { id } = c.req.param();
   const page = qi(c, "page") ?? 1;
   const pageSize = qi(c, "pageSize") ?? 12;
-  const sortBy = c.req.query("sortBy") || "newest";
+  const sortBy = c.req.query("sortBy") || "created-desc";
 
   const parsedFilters = {
     search: c.req.query("search"),
@@ -195,9 +195,9 @@ router.get("/:id/vehicles", async (c) => {
     const where = buildWhereClause({ ...parsedFilters, dealerId: id });
 
     let orderBy: any = { createdAt: "desc" };
-    if (sortBy === "price_asc") orderBy = { price: "asc" };
-    if (sortBy === "price_desc") orderBy = { price: "desc" };
-    if (sortBy === "kilometer") orderBy = { kilometer: "asc" };
+    if (sortBy === "price-asc") orderBy = { price: "asc" };
+    if (sortBy === "price-desc") orderBy = { price: "desc" };
+    if (sortBy === "kilometer-asc") orderBy = { kilometer: "asc" };
 
     const [vehicles, totalCount] = await Promise.all([
       prisma.vehicle.findMany({

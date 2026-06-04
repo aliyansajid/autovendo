@@ -187,7 +187,7 @@ export const DealerDetailContent = ({
 
   const handleSortChange = (newSort: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (!newSort || newSort === "newest") params.delete("sort");
+    if (!newSort || newSort === "created-desc") params.delete("sort");
     else params.set("sort", newSort);
     params.delete("page");
     router.replace(`?${params.toString()}`, { scroll: false });
