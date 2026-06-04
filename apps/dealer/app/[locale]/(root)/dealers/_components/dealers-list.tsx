@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "@/i18n/routing";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@repo/ui/components/button";
