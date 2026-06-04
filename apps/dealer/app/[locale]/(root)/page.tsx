@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import type { Metadata } from "next";
 import { buildMetadata, PAGE_META } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
@@ -55,7 +53,9 @@ export default async function HomePage(props: {
       details: [
         formatRegistrationDate(item.registrationMonth, item.registrationYear),
         `${formatNumber(item.kilometer)} km`,
-        item.fuelType ? tVehicle(`fuelTypes.${item.fuelType.toUpperCase()}`) : "",
+        item.fuelType
+          ? tVehicle(`fuelTypes.${item.fuelType.toUpperCase()}`)
+          : "",
       ].filter(Boolean),
       garageName: item.dealer.companyName,
       garageId: item.dealer.id,

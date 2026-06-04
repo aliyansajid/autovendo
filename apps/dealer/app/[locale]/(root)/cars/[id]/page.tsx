@@ -1,10 +1,11 @@
-export const dynamic = "force-dynamic";
-
 import type { Metadata } from "next";
 import { buildAlternates } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { getTranslations } from "next-intl/server";
-import { getVehicleFromApi, getSimilarVehiclesFromApi } from "@/lib/api/vehicles";
+import {
+  getVehicleFromApi,
+  getSimilarVehiclesFromApi,
+} from "@/lib/api/vehicles";
 import { notFound } from "next/navigation";
 import { formatVehicleName } from "@repo/ui/lib/helpers/vehicle";
 import { getImageUrl } from "@repo/ui/lib/helpers/image";
@@ -205,7 +206,8 @@ export default async function ListingPage({
 
   const vehicleHistory = filterObj({
     [t("vehicleHistoryKeys.kilometer")]: formatKilometers(item.kilometer),
-    [t("vehicleHistoryKeys.firstRegistration")]: `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
+    [t("vehicleHistoryKeys.firstRegistration")]:
+      `${String(item.registrationMonth).padStart(2, "0")}/${item.registrationYear}`,
   });
 
   const lastInspectionDate = toDate(item.lastInspectionDate);
@@ -358,7 +360,9 @@ export default async function ListingPage({
   const seller = {
     id: item.dealer.id,
     name: item.dealer.companyName,
-    address: [item.dealer.streetAddress, item.dealer.zipCode, item.dealer.city].filter(Boolean).join(", "),
+    address: [item.dealer.streetAddress, item.dealer.zipCode, item.dealer.city]
+      .filter(Boolean)
+      .join(", "),
     phone: item.dealer.phoneNumber ?? undefined,
     logo: item.dealer.logo ? getImageUrl(item.dealer.logo) : undefined,
     website: item.dealer.website ?? undefined,
@@ -439,7 +443,8 @@ export default async function ListingPage({
       {
         "@type": "ListItem",
         position: 2,
-        name: locale === "fr" ? "Voitures" : locale === "it" ? "Auto" : "Fahrzeuge",
+        name:
+          locale === "fr" ? "Voitures" : locale === "it" ? "Auto" : "Fahrzeuge",
         item: `https://autovendo.ch/${locale}/cars`,
       },
       {
@@ -607,7 +612,9 @@ export default async function ListingPage({
               <ListingSection title={t("description")}>
                 <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
                   {(() => {
-                    const norm = description.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+                    const norm = description
+                      .replace(/\r\n/g, "\n")
+                      .replace(/\r/g, "\n");
                     const parts = norm
                       .split(/\n\n+/.test(norm) ? /\n\n+/ : /\n/)
                       .map((p: string) => p.trim())
@@ -676,7 +683,9 @@ export default async function ListingPage({
                         />
                       ))}
                     </div>
-                    <span className="font-semibold">{seller.rating.toFixed(1)}</span>
+                    <span className="font-semibold">
+                      {seller.rating.toFixed(1)}
+                    </span>
                     {seller.reviewCount != null && (
                       <span className="text-muted-foreground">
                         {t("reviewCount", { count: seller.reviewCount })}
@@ -731,9 +740,7 @@ export default async function ListingPage({
                   </Button>
                 )}
                 <Button variant="link" className="w-full" asChild>
-                  <Link href={`/dealers/${seller.id}`}>
-                    {t("allVehicles")}
-                  </Link>
+                  <Link href={`/dealers/${seller.id}`}>{t("allVehicles")}</Link>
                 </Button>
               </div>
             </CardContent>

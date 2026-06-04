@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { buildMetadata, PAGE_META } from "@/lib/seo";
-import { Suspense } from "react";
 import { DealersList } from "./_components/dealers-list";
 import { getDealersFromApi } from "@/lib/api/dealers";
 import { createDealerSearchSchema } from "@/schema/dealer-search-schema";
 import { getTranslations } from "next-intl/server";
-
-export const dynamic = "force-dynamic";
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -45,9 +42,7 @@ export default async function DealersPage(props: {
         </div>
       </div>
 
-      <Suspense fallback={null}>
-        <DealersList initialData={initialData} />
-      </Suspense>
+      <DealersList initialData={initialData} />
     </>
   );
 }

@@ -1,8 +1,5 @@
-export const dynamic = "force-dynamic";
-
 import type { Metadata } from "next";
 import { buildMetadata, PAGE_META } from "@/lib/seo";
-import { Suspense } from "react";
 import { FiltersSidebar } from "./_components/filters-sidebar";
 import { ListingListCard } from "./_components/listing-list-card";
 import {
@@ -99,17 +96,11 @@ export default async function CarsPage(props: {
       <div className="w-full max-w-285 mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <aside className="hidden lg:block lg:col-span-1">
-            <Suspense
-              fallback={
-                <div className="animate-pulse h-96 bg-muted rounded-lg" />
-              }
-            >
-              <FiltersSidebar
-                showActions={false}
-                resultCount={total}
-                facets={facets}
-              />
-            </Suspense>
+            <FiltersSidebar
+              showActions={false}
+              resultCount={total}
+              facets={facets}
+            />
           </aside>
 
           <div className="lg:col-span-3 flex flex-col gap-6">
@@ -120,16 +111,10 @@ export default async function CarsPage(props: {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex items-center gap-3">
-                <Suspense
-                  fallback={
-                    <div className="animate-pulse h-10 bg-muted rounded-lg w-full" />
-                  }
-                >
-                  <ListingControls
-                    initialSearch={query.q}
-                    initialSort={query.sort}
-                  />
-                </Suspense>
+                <ListingControls
+                  initialSearch={query.q}
+                  initialSort={query.sort}
+                />
               </CardContent>
             </Card>
 
