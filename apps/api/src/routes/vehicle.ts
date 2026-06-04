@@ -682,7 +682,7 @@ vehicle.get("/", async (c) => {
   return c.json(result);
   } catch (e: any) {
     console.error("[GET /api/vehicles] error:", e?.message ?? e);
-    return c.json({ error: "Failed to fetch vehicles", detail: e?.message }, 500);
+    return c.json({ vehicles: [], total: 0, page: 1, pageSize: 10, totalPages: 0 });
   }
 });
 
@@ -934,7 +934,7 @@ vehicle.get("/facets", async (c) => {
   return c.json(result);
   } catch (e: any) {
     console.error("[/facets] error:", e?.message ?? e);
-    return c.json({ error: "Failed to compute facets", detail: e?.message }, 500);
+    return c.json({ total: 0, facets: {} });
   }
 });
 
