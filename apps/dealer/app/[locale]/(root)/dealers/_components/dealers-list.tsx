@@ -51,6 +51,17 @@ export const DealersList = ({ initialData }: DealersListProps) => {
     [searchParams, pathname],
   );
 
+  const pageUrl = useCallback(
+    (page: number) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (page <= 1) params.delete("page");
+      else params.set("page", String(page));
+      const qs = params.toString();
+      return qs ? `?${qs}` : "?";
+    },
+    [searchParams],
+  );
+
   const [localSearch, setLocalSearch] = useState(searchQuery);
 
   useEffect(() => {
@@ -154,7 +165,7 @@ export const DealersList = ({ initialData }: DealersListProps) => {
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    href={currentPage > 1 ? buildUrl({ page: currentPage - 1 }) : "#"}
+                    href={currentPage > 1 ? pageUrl(currentPage - 1) : "#"}
                     className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
@@ -162,7 +173,7 @@ export const DealersList = ({ initialData }: DealersListProps) => {
                 {Array.from({ length: totalPages }).map((_, i) => (
                   <PaginationItem key={i}>
                     <PaginationLink
-                      href={buildUrl({ page: i + 1 })}
+                      href={pageUrl(i + 1)}
                       isActive={currentPage === i + 1}
                     >
                       {i + 1}
@@ -172,7 +183,7 @@ export const DealersList = ({ initialData }: DealersListProps) => {
 
                 <PaginationItem>
                   <PaginationNext
-                    href={currentPage < totalPages ? buildUrl({ page: currentPage + 1 }) : "#"}
+                    href={currentPage < totalPages ? pageUrl(currentPage + 1) : "#"}
                     className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
