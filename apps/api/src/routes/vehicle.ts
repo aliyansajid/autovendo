@@ -498,6 +498,7 @@ function parseParams(c: Context) {
 
 // GET /api/vehicles — list with optional facets (?facets=true)
 vehicle.get("/", async (c) => {
+  try {
   const params = parseParams(c);
   const includeFacets = c.req.query("facets") === "true";
   const cacheKey = `api:vehicles:${includeFacets ? "facets" : "list"}:${JSON.stringify(params)}`;
@@ -679,6 +680,10 @@ vehicle.get("/", async (c) => {
 
   await cacheSet(cacheKey, result, 60);
   return c.json(result);
+  } catch (e: any) {
+    console.error("[GET /api/vehicles] error:", e?.message ?? e);
+    return c.json({ error: "Failed to fetch vehicles", detail: e?.message }, 500);
+  }
 });
 
 // GET /api/vehicles/facets — count + full facets + histograms (for advanced search UI)
