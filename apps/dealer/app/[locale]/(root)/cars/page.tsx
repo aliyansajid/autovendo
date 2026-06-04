@@ -59,7 +59,7 @@ export default async function CarsPage(props: {
   const parsed = parseSearchParams(searchParams);
   const query = schema.parse(parsed);
 
-  // Helper to build pagination URLs (relative so locale prefix is preserved)
+  // Helper to build pagination URLs with locale prefix
   function buildUrl(
     params: Record<string, string | string[] | number | undefined>,
   ): string {
@@ -77,7 +77,7 @@ export default async function CarsPage(props: {
       }
     }
     const queryString = sp.toString();
-    return queryString ? `?${queryString}` : "?";
+    return queryString ? `/${locale}/cars?${queryString}` : `/${locale}/cars`;
   }
 
   return (
