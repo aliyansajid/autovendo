@@ -245,16 +245,40 @@ async function getDealer(userId: string) {
   return prisma.dealer.findUnique({ where: { userId } });
 }
 
-async function hasActiveSubscription(headers: Headers): Promise<boolean> {
-  const subscriptionsResponse = await auth.api.listActiveSubscriptions({
-    headers,
-  });
+async function getSubscriptionStatus(
+  headers: Headers,
+  dealerId?: string,
+): Promise<"active" | "no_subscription" | "quota_exhausted"> {
+  const subscriptionsResponse = await (auth.api as any).listActiveSubscriptions({ headers });
   const subscriptions = Array.isArray(subscriptionsResponse)
     ? subscriptionsResponse
     : (subscriptionsResponse as any)?.data || [];
-  return subscriptions.some(
+  const limits = (subscriptionsResponse as any)?.limits;
+
+  const activeSub = subscriptions.find(
     (s: any) => s.status === "active" || s.status === "trialing",
   );
+  if (!activeSub) return "no_subscription";
+
+  if (!dealerId) return "active";
+
+  let maxVehicles: number = limits?.vehicles || 0;
+  if (maxVehicles === 0 && activeSub.plan) {
+    const plan = await prisma.plan.findFirst({
+      where: { name: { contains: activeSub.plan, mode: "insensitive" } },
+      select: { limits: true },
+    });
+    if (plan && (plan.limits as any)?.vehicles) {
+      maxVehicles = (plan.limits as any).vehicles;
+    }
+  }
+
+  if (maxVehicles > 0) {
+    const currentCount = await prisma.vehicle.count({ where: { dealerId } });
+    if (currentCount >= maxVehicles) return "quota_exhausted";
+  }
+
+  return "active";
 }
 
 // ─── GET / — list dealer's vehicles ──────────────────────────────────────────
@@ -317,8 +341,11 @@ router.post("/", async (c) => {
   const dealer = await getDealer(c.get("user")!.id);
   if (!dealer) return c.json({ error: "Dealer profile not found" }, 404);
 
-  if (!(await hasActiveSubscription(c.req.raw.headers)))
+  const subStatus = await getSubscriptionStatus(c.req.raw.headers, dealer.id);
+  if (subStatus === "no_subscription")
     return c.json({ error: "subscription_required" }, 403);
+  if (subStatus === "quota_exhausted")
+    return c.json({ error: "quota_exhausted" }, 403);
 
   let body: Record<string, any>;
   try {
@@ -498,7 +525,7 @@ router.put("/:id", async (c) => {
   const dealer = await getDealer(c.get("user")!.id);
   if (!dealer) return c.json({ error: "Dealer profile not found" }, 404);
 
-  if (!(await hasActiveSubscription(c.req.raw.headers)))
+  if ((await getSubscriptionStatus(c.req.raw.headers)) === "no_subscription")
     return c.json({ error: "subscription_required" }, 403);
 
   const existing = await prisma.vehicle.findFirst({
@@ -677,7 +704,7 @@ router.patch("/:id/status", async (c) => {
 
   if (
     body.status !== "DRAFT" &&
-    !(await hasActiveSubscription(c.req.raw.headers))
+    (await getSubscriptionStatus(c.req.raw.headers)) === "no_subscription"
   )
     return c.json({ error: "subscription_required" }, 403);
 
