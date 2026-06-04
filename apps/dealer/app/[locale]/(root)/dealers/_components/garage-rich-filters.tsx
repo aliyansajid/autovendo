@@ -249,12 +249,6 @@ interface GarageRichFiltersProps {
 
 const CURRENT_YEAR = new Date().getFullYear();
 
-const DEFAULTS = {
-  YEAR: [1900, CURRENT_YEAR] as [number, number],
-  KILOMETER: [0, 200000] as [number, number],
-  PRICE: [0, 100000] as [number, number],
-};
-
 export default function GarageRichFilters({
   onFilterChange,
   dealerId,
@@ -263,6 +257,12 @@ export default function GarageRichFilters({
 }: GarageRichFiltersProps) {
   const t = useTranslations("GarageRichFilters");
   const tVehicle = useTranslations("Vehicle");
+
+  const DEFAULTS = useMemo(() => ({
+    YEAR: [facets?.yearMin ?? 1900, CURRENT_YEAR] as [number, number],
+    KILOMETER: [0, facets?.kilometerMax ?? 200000] as [number, number],
+    PRICE: [0, facets?.priceMax ?? 100000] as [number, number],
+  }), [facets?.yearMin, facets?.kilometerMax, facets?.priceMax]);
 
   const getLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
@@ -529,8 +529,8 @@ export default function GarageRichFilters({
           <PopoverContent align="start" className="w-[300px]">
             <RangeFilter
               label={t("year")}
-              min={1900}
-              max={CURRENT_YEAR}
+              min={DEFAULTS.YEAR[0]}
+              max={DEFAULTS.YEAR[1]}
               value={yearRange ?? DEFAULTS.YEAR}
               onValueChange={setYearRange}
             />
@@ -556,7 +556,7 @@ export default function GarageRichFilters({
             <RangeFilter
               label={t("mileage")}
               min={0}
-              max={200000}
+              max={DEFAULTS.KILOMETER[1]}
               unit="km"
               step={1000}
               value={kilometerRange ?? DEFAULTS.KILOMETER}
@@ -579,7 +579,7 @@ export default function GarageRichFilters({
             <RangeFilter
               label={t("price")}
               min={0}
-              max={100000}
+              max={DEFAULTS.PRICE[1]}
               unit="CHF"
               step={1000}
               value={priceRange ?? DEFAULTS.PRICE}
