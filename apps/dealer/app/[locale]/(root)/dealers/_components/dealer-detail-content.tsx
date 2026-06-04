@@ -152,7 +152,7 @@ export const DealerDetailContent = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Read current sort from URL
-  const currentSort = searchParams.get("sort") ?? "newest";
+  const currentSort = searchParams.get("sort") ?? "created-desc";
 
   // Vehicles + pagination come from server props directly
   const vehicles = initialVehicles.vehicles;
@@ -588,10 +588,10 @@ export const DealerDetailContent = ({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="newest">{t("sortNewest")}</SelectItem>
-                    <SelectItem value="price_asc">{t("sortPriceAsc")}</SelectItem>
-                    <SelectItem value="price_desc">{t("sortPriceDesc")}</SelectItem>
-                    <SelectItem value="kilometer">{t("sortMileage")}</SelectItem>
+                    <SelectItem value="created-desc">{t("sortNewest")}</SelectItem>
+                    <SelectItem value="price-asc">{t("sortPriceAsc")}</SelectItem>
+                    <SelectItem value="price-desc">{t("sortPriceDesc")}</SelectItem>
+                    <SelectItem value="kilometer-asc">{t("sortMileage")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
