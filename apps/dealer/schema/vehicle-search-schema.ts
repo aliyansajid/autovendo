@@ -10,7 +10,7 @@ export const createVehicleSearchSchema = (t: TFn) =>
     pageSize: z.number().int().min(1).max(100).default(10),
 
     // Sorting
-    sort: z.enum(SORT_OPTIONS).default("relevance"),
+    sort: z.enum(SORT_OPTIONS).catch("relevance").default("relevance"),
 
     // Text search
     q: z.string().trim().default(""),
@@ -21,17 +21,17 @@ export const createVehicleSearchSchema = (t: TFn) =>
     excludeMake: z.array(z.string().trim()).optional(),
     excludeModel: z.array(z.string().trim()).optional(),
 
-    priceFrom: z.number().int().nonnegative().optional(),
-    priceTo: z.number().int().nonnegative().optional(),
+    priceFrom: z.number().int().nonnegative().optional().catch(undefined),
+    priceTo: z.number().int().nonnegative().optional().catch(undefined),
 
-    registrationFrom: z.number().int().min(1900).max(2100).optional(),
-    registrationTo: z.number().int().min(1900).max(2100).optional(),
+    registrationFrom: z.number().int().min(1900).max(2100).optional().catch(undefined),
+    registrationTo: z.number().int().min(1900).max(2100).optional().catch(undefined),
 
-    kilometerFrom: z.number().int().nonnegative().optional(),
-    kilometerTo: z.number().int().nonnegative().optional(),
+    kilometerFrom: z.number().int().nonnegative().optional().catch(undefined),
+    kilometerTo: z.number().int().nonnegative().optional().catch(undefined),
 
-    powerFrom: z.number().int().nonnegative().optional(),
-    powerTo: z.number().int().nonnegative().optional(),
+    powerFrom: z.number().int().nonnegative().optional().catch(undefined),
+    powerTo: z.number().int().nonnegative().optional().catch(undefined),
 
     // Multi-select filters
     fuel: z.array(z.string()).optional(),
@@ -43,33 +43,33 @@ export const createVehicleSearchSchema = (t: TFn) =>
     equipment: z.array(z.string()).optional(),
 
     // Special filters
-    evs: z.enum(["only_ev", "no_ev"]).optional(),
+    evs: z.enum(["only_ev", "no_ev"]).optional().catch(undefined),
     metallic: z.boolean().optional(),
 
     // kW-based power filter (separate from hp/powerFrom/powerTo)
-    kwFrom: z.number().int().nonnegative().optional(),
-    kwTo: z.number().int().nonnegative().optional(),
+    kwFrom: z.number().int().nonnegative().optional().catch(undefined),
+    kwTo: z.number().int().nonnegative().optional().catch(undefined),
 
     // Interior color
     interiorColor: z.array(z.string()).optional(),
 
     // Days since listed
-    daysListed: z.number().int().positive().optional(),
+    daysListed: z.number().int().positive().optional().catch(undefined),
 
     // Drive type
     driveType: z.array(z.string()).optional(),
 
     // Engine / capacity
-    cubicCapacityFrom: z.number().int().nonnegative().optional(),
-    cubicCapacityTo: z.number().int().nonnegative().optional(),
-    cylindersFrom: z.number().int().nonnegative().optional(),
-    cylindersTo: z.number().int().nonnegative().optional(),
+    cubicCapacityFrom: z.number().int().nonnegative().optional().catch(undefined),
+    cubicCapacityTo: z.number().int().nonnegative().optional().catch(undefined),
+    cylindersFrom: z.number().int().nonnegative().optional().catch(undefined),
+    cylindersTo: z.number().int().nonnegative().optional().catch(undefined),
 
     // Consumption / emissions
-    consumptionFrom: z.number().nonnegative().optional(),
-    consumptionTo: z.number().nonnegative().optional(),
-    co2From: z.number().int().nonnegative().optional(),
-    co2To: z.number().int().nonnegative().optional(),
+    consumptionFrom: z.number().nonnegative().optional().catch(undefined),
+    consumptionTo: z.number().nonnegative().optional().catch(undefined),
+    co2From: z.number().int().nonnegative().optional().catch(undefined),
+    co2To: z.number().int().nonnegative().optional().catch(undefined),
 
     // Energy & emission standard
     energyLabels: z.array(z.string()).optional(),
