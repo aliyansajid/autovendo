@@ -6,7 +6,7 @@
 import type { PaginatedVehicles, VehicleListItem, VehicleFacets } from "@/types/vehicle";
 
 export type SubscriptionStatus = {
-  type: "active" | "no_subscription" | "quota_exhausted" | "expired" | "past_due";
+  type: "active" | "trialing" | "no_subscription" | "quota_exhausted" | "expired" | "past_due";
   plan: string;
   maxVehicles: number;
   currentCount: number;
