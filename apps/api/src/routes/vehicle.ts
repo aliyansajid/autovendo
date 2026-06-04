@@ -683,6 +683,7 @@ vehicle.get("/", async (c) => {
 
 // GET /api/vehicles/facets — count + full facets + histograms (for advanced search UI)
 vehicle.get("/facets", async (c) => {
+  try {
   const params = parseParams(c);
   const cacheKey = `api:vehicles:count-facets:${JSON.stringify(params)}`;
 
@@ -926,6 +927,10 @@ vehicle.get("/facets", async (c) => {
   const result = { total, facets };
   await cacheSet(cacheKey, result, 60);
   return c.json(result);
+  } catch (e: any) {
+    console.error("[/facets] error:", e?.message ?? e);
+    return c.json({ error: "Failed to compute facets", detail: e?.message }, 500);
+  }
 });
 
 // GET /api/vehicles/:id/similar — similar vehicles from same dealer

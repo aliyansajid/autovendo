@@ -76,9 +76,9 @@ export const AdvancedSearchForm = () => {
     };
 
     getVehicleFacetsFromApi(params)
-      .then(({ total: t, facets: f }) => {
-        setTotal(t);
-        setFacets(f);
+      .then((result) => {
+        setTotal(result?.total ?? null);
+        setFacets(result?.facets ?? null);
       })
       .catch(() => {
         setTotal(null);
@@ -93,9 +93,9 @@ export const AdvancedSearchForm = () => {
           ...(dealerId ? { dealerId } : {}),
         };
         getVehicleFacetsFromApi(params)
-          .then(({ total: t, facets: f }) => {
-            setTotal(t);
-            setFacets(f);
+          .then((result) => {
+            setTotal(result?.total ?? null);
+            setFacets(result?.facets ?? null);
           })
           .catch(() => {
             setTotal(null);

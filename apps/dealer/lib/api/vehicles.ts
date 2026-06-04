@@ -103,11 +103,15 @@ export async function getVehiclesWithFacetsFromApi(
 
 export async function getVehicleFacetsFromApi(
   rawParams: Record<string, string | string[] | undefined>,
-): Promise<{ total: number; facets: VehicleFacets }> {
-  const qs = buildQueryString(rawParams);
-  const res = await fetch(`${API_BASE}/api/vehicles/facets?${qs}`, { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to fetch facets");
-  return res.json();
+): Promise<{ total: number; facets: VehicleFacets } | null> {
+  try {
+    const qs = buildQueryString(rawParams);
+    const res = await fetch(`${API_BASE}/api/vehicles/facets?${qs}`, { cache: "no-store" });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 export async function getVehicleFromApi(id: string): Promise<any | null> {

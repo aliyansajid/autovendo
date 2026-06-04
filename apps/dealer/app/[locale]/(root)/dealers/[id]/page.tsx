@@ -133,7 +133,7 @@ export default async function DealerPage({
         initialVehicles={initialVehicles}
         googleData={googleData}
         initialFilters={filters}
-        facets={facetsResult.facets}
+        facets={facetsResult?.facets ?? null}
       />
     </>
   );
