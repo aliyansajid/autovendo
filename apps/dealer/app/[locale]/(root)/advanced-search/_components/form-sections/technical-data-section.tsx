@@ -50,7 +50,7 @@ export function TechnicalDataSection({
   const currentUnit = powerType === "kw" ? "kW" : "PS";
 
   const cubicCapacityMax = facets?.cubicCapacityMax ?? 30000;
-  const cylindersMax = 16;
+  const cylindersMax = facets?.cylindersMax ?? 16;
 
   // Reset power inputs when switching between PS and kW
   const prevPowerTypeRef = useRef(powerType);

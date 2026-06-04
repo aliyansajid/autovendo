@@ -28,8 +28,8 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
   const emissionsFrom = useWatch({ control, name: "emissions-from" });
   const emissionsTo = useWatch({ control, name: "emissions-to" });
 
-  const consumptionMax = 100;
-  const co2Max = 1000;
+  const consumptionMax = facets?.consumptionMax ?? 100;
+  const co2Max = facets?.co2Max ?? 1000;
 
   const consumptionValue = watch("consumption");
   const emissionsValue = watch("emissions");
