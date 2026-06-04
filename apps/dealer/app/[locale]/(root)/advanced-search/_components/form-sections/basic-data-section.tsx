@@ -36,10 +36,10 @@ export function BasicDataSection({
   const locale = useLocale();
   const { control, watch, setValue, getValues } = useFormContext();
 
-  const yearMin = 1900;
+  const yearMin = facets?.yearMin ?? 1900;
   const yearMax = CURRENT_YEAR;
-  const kmMax = 400000;
-  const priceMax = 1000000;
+  const kmMax = facets?.kilometerMax ?? 400000;
+  const priceMax = facets?.priceMax ?? 1000000;
 
   const yearFrom = useWatch({ control, name: "year-from" });
   const yearTo = useWatch({ control, name: "year-to" });
