@@ -52,8 +52,10 @@ export function ListingControls({
       const next = new URLSearchParams(nextBase.toString());
       if (search.trim()) next.set("q", search.trim());
       else next.delete("q");
-      // Reset to page 1 on search, but don't add page=1 to URL
-      next.delete("page");
+      // Only reset to page 1 if search actually changed from the URL value
+      if (search.trim() !== (sp.get("q") ?? "").trim()) {
+        next.delete("page");
+      }
 
       const queryString = next.toString();
       const currentQueryString = window.location.search.replace(/^\?/, "");
