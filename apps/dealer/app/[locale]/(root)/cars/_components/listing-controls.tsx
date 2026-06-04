@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { usePathname, useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
+import { usePathname } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import {

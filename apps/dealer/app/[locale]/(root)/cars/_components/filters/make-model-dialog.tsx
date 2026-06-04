@@ -24,7 +24,8 @@ import { ChevronRight, Search, ChevronLeft, Check, X } from "lucide-react";
 import { ScrollArea } from "@repo/ui/components/scroll-area";
 import { carMakes, popularCarMakes, carModels } from "@repo/vehicle-constants";
 import Image from "next/image";
-import { useRouter, usePathname } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
+import { usePathname } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 
