@@ -374,6 +374,7 @@
       "makeModel": {
         "title": "Marke & Modell",
         "addMake": "Marke hinzufügen",
+        "excludeMake": "Marke ausschliessen",
         "includeVehicles": "Fahrzeuge einschliessen",
         "excludeVehicles": "Fahrzeuge ausschliessen",
         "noSelections": "Keine Fahrzeuge ausgewählt."

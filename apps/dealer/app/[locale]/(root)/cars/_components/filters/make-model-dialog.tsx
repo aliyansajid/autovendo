@@ -61,6 +61,7 @@ interface MakeModelDialogProps {
   onOpenChange?: (open: boolean) => void;
   value?: MakeModelValue;
   onChange?: (value: MakeModelValue) => void;
+  defaultExcludeMode?: boolean;
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -71,6 +72,7 @@ export function MakeModelDialog({
   onOpenChange,
   value,
   onChange,
+  defaultExcludeMode = false,
 }: MakeModelDialogProps) {
   const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.makeModel");
   const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
@@ -92,7 +94,7 @@ export function MakeModelDialog({
   const [urlModels, setUrlModels] = useState<string[]>([]);
 
   // Shared UI state
-  const [isExcludeMode, setIsExcludeMode] = useState(false);
+  const [isExcludeMode, setIsExcludeMode] = useState(defaultExcludeMode);
   const [currentMake, setCurrentMake] = useState<{
     value: string;
     label: string;
@@ -223,10 +225,17 @@ export function MakeModelDialog({
     }
     if (!next) {
       setCurrentMake(null);
-      setIsExcludeMode(false);
+      setIsExcludeMode(defaultExcludeMode);
       form.reset();
     }
   };
+
+  // Sync exclude mode whenever the dialog opens (handles dynamic defaultExcludeMode)
+  useEffect(() => {
+    if (isOpen) {
+      setIsExcludeMode(defaultExcludeMode);
+    }
+  }, [isOpen, defaultExcludeMode]);
 
   const dialogContent = (
     <DialogContent>
@@ -239,10 +248,11 @@ export function MakeModelDialog({
                 id="exclude-toggle"
                 checked={isExcludeMode}
                 onCheckedChange={setIsExcludeMode}
+                disabled={defaultExcludeMode}
               />
               <Label
                 htmlFor="exclude-toggle"
-                className={`text-sm font-medium cursor-pointer ${isExcludeMode ? "text-destructive" : "text-muted-foreground"}`}
+                className={`text-sm font-medium ${defaultExcludeMode ? "cursor-default" : "cursor-pointer"} ${isExcludeMode ? "text-destructive" : "text-muted-foreground"}`}
               >
                 {t("excludeCars")}
               </Label>
