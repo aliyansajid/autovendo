@@ -962,7 +962,9 @@ vehicle.get("/:id/similar", async (c) => {
 vehicle.get("/:id", async (c) => {
   const id = c.req.param("id");
 
-  const v = await prisma.vehicle.findFirst({
+  let v: Awaited<ReturnType<typeof prisma.vehicle.findFirst>> | undefined;
+  try {
+    v = await prisma.vehicle.findFirst({
     where: { id, status: "PUBLISHED" },
     select: {
       id: true,
@@ -1062,7 +1064,11 @@ vehicle.get("/:id", async (c) => {
         },
       },
     },
-  });
+    });
+  } catch (e: any) {
+    console.error("[GET /api/vehicles/:id] error:", e?.message ?? e);
+    return c.body(null, 500);
+  }
 
   if (!v) return c.body(null, 404);
 
