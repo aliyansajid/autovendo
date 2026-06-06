@@ -140,7 +140,7 @@ const vehicleApiBodySchema = z
     inspectionPassed: z.boolean().optional(),
     lastInspectionDate: z.string().optional().nullable(),
     warrantyStartDate: z.string().optional().nullable(),
-    vehicleDescription: z.string().optional().nullable(),
+    vehicleDescription: z.string().max(1000).optional().nullable(),
     vin: z.preprocess(
       (v) => (v == null || v === "" ? undefined : v),
       z.string().regex(VIN_REGEX, "vin must be exactly 17 alphanumeric characters (no I, O, Q)").optional(),
