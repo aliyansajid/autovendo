@@ -440,7 +440,7 @@ function attachPriceRatings(
 function parseParams(c: Context) {
   return {
     page: Math.max(1, qi(c, "page") ?? 1),
-    pageSize: Math.min(100, Math.max(1, qi(c, "pageSize") ?? 10)),
+    pageSize: Math.min(100, Math.max(1, qi(c, "pageSize") ?? 12)),
     sort: c.req.query("sort"),
     search: c.req.query("q")?.trim() ?? "",
     make: qa(c, "make"),
@@ -682,7 +682,7 @@ vehicle.get("/", async (c) => {
   return c.json(result);
   } catch (e: any) {
     console.error("[GET /api/vehicles] error:", e?.message ?? e);
-    return c.json({ vehicles: [], total: 0, page: 1, pageSize: 10, totalPages: 0 });
+    return c.json({ vehicles: [], total: 0, page: 1, pageSize: 12, totalPages: 0 });
   }
 });
 

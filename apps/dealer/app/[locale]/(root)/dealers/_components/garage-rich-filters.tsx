@@ -425,7 +425,7 @@ export default function GarageRichFilters({
   useEffect(() => {
     const timer = setTimeout(() => {
       onFilterChange(filterValues);
-    }, 400);
+    }, 300);
     return () => clearTimeout(timer);
   }, [filterValues, onFilterChange]);
 

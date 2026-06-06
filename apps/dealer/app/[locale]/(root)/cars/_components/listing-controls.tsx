@@ -23,7 +23,7 @@ import { useTranslations } from "next-intl";
 export function ListingControls({
   initialSearch,
   initialSort,
-  debounceMs = 250,
+  debounceMs = 300,
 }: {
   initialSearch: string;
   initialSort: string;

@@ -173,7 +173,7 @@ export const FiltersSidebar = ({
       clearTimeout(timer);
       timer = setTimeout(() => {
         updateUrl(values);
-      }, 500);
+      }, 300);
     });
     return () => {
       subscription.unsubscribe();

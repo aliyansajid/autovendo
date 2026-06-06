@@ -72,7 +72,7 @@ export const DealersList = ({ initialData }: DealersListProps) => {
     if (localSearch === searchQuery) return;
     const timer = setTimeout(() => {
       router.replace(buildUrl({ q: localSearch || null, page: null }), { scroll: false });
-    }, 500);
+    }, 300);
     return () => clearTimeout(timer);
   }, [localSearch, searchQuery, buildUrl, router]);
 

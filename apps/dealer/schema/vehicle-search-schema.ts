@@ -7,7 +7,7 @@ export const createVehicleSearchSchema = (t: TFn) =>
   z.object({
     // Pagination
     page: z.number().int().min(1).default(1),
-    pageSize: z.number().int().min(1).max(100).default(10),
+    pageSize: z.number().int().min(1).max(100).default(12),
 
     // Sorting
     sort: z.enum(SORT_OPTIONS).catch("relevance").default("relevance"),
