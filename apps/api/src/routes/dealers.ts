@@ -72,8 +72,8 @@ const REVIEW_CACHE_TTL = 60 * 60 * 24 * 30; // 30 days in seconds
 
 router.get("/", async (c) => {
   const q = c.req.query("q") || "";
-  const page = qi(c, "page") ?? 1;
-  const pageSize = qi(c, "pageSize") ?? 12;
+  const page = Math.max(1, qi(c, "page") ?? 1);
+  const pageSize = Math.min(100, Math.max(1, qi(c, "pageSize") ?? 12));
   const sort = c.req.query("sort") || "name-asc";
 
   const cacheKey = `dealers:list:${q}:${page}:${pageSize}:${sort}`;
@@ -145,8 +145,8 @@ router.get("/", async (c) => {
 
 router.get("/:id/vehicles", async (c) => {
   const { id } = c.req.param();
-  const page = qi(c, "page") ?? 1;
-  const pageSize = qi(c, "pageSize") ?? 12;
+  const page = Math.max(1, qi(c, "page") ?? 1);
+  const pageSize = Math.min(100, Math.max(1, qi(c, "pageSize") ?? 12));
   const sortBy = c.req.query("sortBy") || "created-desc";
 
   const parsedFilters = {
