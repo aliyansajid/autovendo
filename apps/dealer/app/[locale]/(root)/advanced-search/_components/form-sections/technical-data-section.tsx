@@ -55,8 +55,8 @@ export function TechnicalDataSection({
 
   const cubicCapacityMax = facets?.cubicCapacityMax ?? 30000;
   const cylindersMax = facets?.cylindersMax ?? 16;
-  const doorsMax = 5;
-  const seatsMax = 9;
+  const doorsMax = 20;
+  const seatsMax = 150;
 
   // Reset power inputs when switching between PS and kW
   const prevPowerTypeRef = useRef(powerType);

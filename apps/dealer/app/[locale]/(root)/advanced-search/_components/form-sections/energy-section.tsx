@@ -39,7 +39,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
 
   const consumptionMax = facets?.consumptionMax ?? 100;
   const co2Max = facets?.co2Max ?? 1000;
-  const rangeMax = 1000;
+  const rangeMax = 1500;
 
   const rangeValue = watch("range");
 
