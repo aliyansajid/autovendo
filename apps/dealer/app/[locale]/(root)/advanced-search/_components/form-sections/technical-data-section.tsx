@@ -42,6 +42,10 @@ export function TechnicalDataSection({
   const capacityTo = useWatch({ control, name: "capacity-to" });
   const cylinderFrom = useWatch({ control, name: "cylinder-from" });
   const cylinderTo = useWatch({ control, name: "cylinder-to" });
+  const doorsFrom = useWatch({ control, name: "doors-from" });
+  const doorsTo = useWatch({ control, name: "doors-to" });
+  const seatsFrom = useWatch({ control, name: "seats-from" });
+  const seatsTo = useWatch({ control, name: "seats-to" });
 
   const maxPs = facets?.hpMax ?? 4000;
   const maxKw = facets?.kwMax ?? 3000;
@@ -51,6 +55,8 @@ export function TechnicalDataSection({
 
   const cubicCapacityMax = facets?.cubicCapacityMax ?? 30000;
   const cylindersMax = facets?.cylindersMax ?? 16;
+  const doorsMax = 5;
+  const seatsMax = 9;
 
   // Reset power inputs when switching between PS and kW
   const prevPowerTypeRef = useRef(powerType);
@@ -80,6 +86,14 @@ export function TechnicalDataSection({
   const cylinderRange: [number, number] = [
     parseNum(cylinderFrom, 1),
     parseNum(cylinderTo, cylindersMax),
+  ];
+  const doorsRange: [number, number] = [
+    parseNum(doorsFrom, 2),
+    parseNum(doorsTo, doorsMax),
+  ];
+  const seatsRange: [number, number] = [
+    parseNum(seatsFrom, 2),
+    parseNum(seatsTo, seatsMax),
   ];
 
   const currentFuelEnum =
@@ -232,6 +246,17 @@ export function TechnicalDataSection({
                 {tBasic("reset")}
               </span>
             </div>
+            <Slider
+              min={2}
+              max={doorsMax}
+              step={1}
+              value={doorsRange}
+              onValueChange={([from = 0, to = 0]) => {
+                setValue("doors-from", from <= 2 ? "" : String(from));
+                setValue("doors-to", to >= doorsMax ? "" : String(to));
+              }}
+              className="py-2"
+            />
             <div className="flex gap-2">
               <CustomFormField
                 control={control}
@@ -243,7 +268,7 @@ export function TechnicalDataSection({
                 control={control}
                 fieldType={FormFieldType.INPUT_GROUP}
                 name="doors-to"
-                placeholder="5"
+                placeholder={`${doorsMax}+`}
               />
             </div>
           </div>
@@ -261,6 +286,17 @@ export function TechnicalDataSection({
                 {tBasic("reset")}
               </span>
             </div>
+            <Slider
+              min={2}
+              max={seatsMax}
+              step={1}
+              value={seatsRange}
+              onValueChange={([from = 0, to = 0]) => {
+                setValue("seats-from", from <= 2 ? "" : String(from));
+                setValue("seats-to", to >= seatsMax ? "" : String(to));
+              }}
+              className="py-2"
+            />
             <div className="flex gap-2">
               <CustomFormField
                 control={control}
@@ -272,7 +308,7 @@ export function TechnicalDataSection({
                 control={control}
                 fieldType={FormFieldType.INPUT_GROUP}
                 name="seats-to"
-                placeholder="9"
+                placeholder={`${seatsMax}+`}
               />
             </div>
           </div>

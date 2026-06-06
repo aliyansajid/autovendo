@@ -34,9 +34,14 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
   const emissionsFrom = useWatch({ control, name: "emissions-from" });
   const emissionsTo = useWatch({ control, name: "emissions-to" });
 
+  const rangeFrom = useWatch({ control, name: "range-from" });
+  const rangeTo = useWatch({ control, name: "range-to" });
+
   const consumptionMax = facets?.consumptionMax ?? 100;
   const co2Max = facets?.co2Max ?? 1000;
   const rangeMax = 1000;
+
+  const rangeValue = watch("range");
 
   const consumptionValue = watch("consumption");
   const emissionsValue = watch("emissions");
@@ -109,18 +114,49 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
     setValue("emissions", [from, to], { shouldDirty: true });
   }, [emissionsFrom, emissionsTo, getValues, setValue, co2Max]);
 
+  // Slider -> inputs for range
+  useEffect(() => {
+    if (rangeValue === undefined) {
+      if (getValues("range-from") !== "" || getValues("range-to") !== "") {
+        setValue("range-from", "");
+        setValue("range-to", "");
+      }
+      return;
+    }
+    const [from, to] = rangeValue as [number, number];
+    const nextFrom = from === 0 ? "" : from.toString();
+    const nextTo = to >= rangeMax ? "" : to.toString();
+    if (getValues("range-from") !== nextFrom) setValue("range-from", nextFrom);
+    if (getValues("range-to") !== nextTo) setValue("range-to", nextTo);
+  }, [rangeValue, rangeMax, setValue, getValues]);
+
+  // Inputs -> slider for range
+  useEffect(() => {
+    const parseNumber = (val: unknown, fallback: number) => {
+      if (val === undefined || val === null || val === "") return fallback;
+      const cleaned = String(val).replace(/[^0-9.-]/g, "");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : fallback;
+    };
+    const from = parseNumber(rangeFrom, 0);
+    const to = parseNumber(rangeTo, rangeMax);
+    const [curFrom, curTo] = getValues("range") ?? [0, rangeMax];
+    if (from === curFrom && to === curTo) return;
+    setValue("range", [from, to], { shouldDirty: true });
+  }, [rangeFrom, rangeTo, getValues, setValue, rangeMax]);
+
   return (
     <AccordionItem value="energy" className="border-none">
       <AccordionTrigger className="flex items-center text-xl font-bold text-primary hover:no-underline">
         {t("title")}
       </AccordionTrigger>
       <AccordionContent className="pt-6 px-1 space-y-12">
+
+        {/* Row 1: Consumption | Emissions | EV Range */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           <div className="space-y-4">
             <div className="flex flex-col">
-              <Label className="text-base font-semibold">
-                {t("consumption")}
-              </Label>
+              <Label className="text-base font-semibold">{t("consumption")}</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
@@ -161,9 +197,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
 
           <div className="space-y-4">
             <div className="flex flex-col">
-              <Label className="text-base font-semibold">
-                {t("emissions")}
-              </Label>
+              <Label className="text-base font-semibold">{t("emissions")}</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
@@ -204,16 +238,54 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
 
           <div className="space-y-4">
             <div className="flex flex-col">
-              <Label className="text-base font-semibold">
-                {t("efficiency")}
-              </Label>
+              <Label className="text-base font-semibold">{t("evRange")}</Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
-                onClick={() =>
-                  EnergyLabelEnum.forEach((item) =>
-                    setValue(`energy-${item.value}`, false),
-                  )
-                }
+                onClick={() => {
+                  setValue("range", undefined as any);
+                  setValue("range-from", "");
+                  setValue("range-to", "");
+                }}
+              >
+                {t("reset")}
+              </span>
+            </div>
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.SLIDER}
+              name="range"
+              min={0}
+              max={rangeMax}
+              step={10}
+            >
+              <div className="flex gap-2 text-sm">
+                <CustomFormField
+                  control={control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  name="range-from"
+                  placeholder="0"
+                  inputGroupText="km"
+                />
+                <CustomFormField
+                  control={control}
+                  fieldType={FormFieldType.INPUT_GROUP}
+                  name="range-to"
+                  placeholder={`${rangeMax}+`}
+                  inputGroupText="km"
+                />
+              </div>
+            </CustomFormField>
+          </div>
+        </div>
+
+        {/* Row 2: Energy Efficiency | Battery Ownership | Charging AC */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          <div className="space-y-4">
+            <div className="flex flex-col">
+              <Label className="text-base font-semibold">{t("efficiency")}</Label>
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => EnergyLabelEnum.forEach((item) => setValue(`energy-${item.value}`, false))}
               >
                 {t("reset")}
               </span>
@@ -222,58 +294,20 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               {EnergyLabelEnum.map((item) => {
                 const count = facets?.energyLabel?.[item.value];
                 return (
-                  <div
-                    key={item.value}
-                    className="flex items-center justify-between"
-                  >
+                  <div key={item.value} className="flex items-center justify-between">
                     <CustomFormField
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`energy-${item.value}`}
                       label={item.value}
                     />
-                    <span className="text-sm text-muted-foreground">
-                      {formatCount(count ?? 0)}
-                    </span>
+                    <span className="text-sm text-muted-foreground">{formatCount(count ?? 0)}</span>
                   </div>
                 );
               })}
             </div>
           </div>
-        </div>
 
-        <div className="space-y-8">
-          <div className="flex flex-col">
-            <Label className="text-base font-semibold">{t("evRange")}</Label>
-            <span
-              className="text-xs text-muted-foreground cursor-pointer hover:underline"
-              onClick={() => {
-                setValue("range-from", "");
-                setValue("range-to", "");
-              }}
-            >
-              {t("reset")}
-            </span>
-          </div>
-          <div className="flex gap-2 text-sm">
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              name="range-from"
-              placeholder="0"
-              inputGroupText="km"
-            />
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              name="range-to"
-              placeholder={`${rangeMax}+`}
-              inputGroupText="km"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">{t("batteryOwnership")}</Label>
@@ -319,7 +353,10 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               ))}
             </div>
           </div>
+        </div>
 
+        {/* Row 3: Charging DC | Euro Norm */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           <div className="space-y-4">
             <div className="flex flex-col">
               <Label className="text-base font-semibold">{t("chargingStandardDC")}</Label>
@@ -342,44 +379,36 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               ))}
             </div>
           </div>
+
+          <div className="space-y-4 lg:col-span-2">
+            <div className="flex flex-col">
+              <Label className="text-base font-semibold">{t("euroNorm")}</Label>
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => EmissionStandardEnum.forEach((item) => setValue(`eu-${item.value}`, false))}
+              >
+                {t("reset")}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+              {EmissionStandardEnum.map((item) => {
+                const count = facets?.emissionStandard?.[item.value];
+                return (
+                  <div key={item.value} className="flex items-center justify-between">
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.CHECKBOX}
+                      name={`eu-${item.value}`}
+                      label={tVehicle(`emissions.${item.value}`)}
+                    />
+                    <span className="text-sm text-muted-foreground">{formatCount(count ?? 0)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex flex-col">
-            <Label className="text-base font-semibold">{t("euroNorm")}</Label>
-            <span
-              className="text-xs text-muted-foreground cursor-pointer hover:underline"
-              onClick={() =>
-                EmissionStandardEnum.forEach((item) =>
-                  setValue(`eu-${item.value}`, false),
-                )
-              }
-            >
-              {t("reset")}
-            </span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-3">
-            {EmissionStandardEnum.map((item) => {
-              const count = facets?.emissionStandard?.[item.value];
-              return (
-                <div
-                  key={item.value}
-                  className="flex items-center justify-between"
-                >
-                  <CustomFormField
-                    control={control}
-                    fieldType={FormFieldType.CHECKBOX}
-                    name={`eu-${item.value}`}
-                    label={tVehicle(`emissions.${item.value}`)}
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    {formatCount(count ?? 0)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
       </AccordionContent>
     </AccordionItem>
   );
