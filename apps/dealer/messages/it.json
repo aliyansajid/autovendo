@@ -396,7 +396,9 @@
         "drive": "Trazione",
         "power": "Potenza",
         "capacity": "Cilindrata",
-        "cylinder": "Cilindri"
+        "cylinder": "Cilindri",
+        "doors": "Porte",
+        "seats": "Posti"
       },
       "equipment": {
         "title": "Equipaggiamento"
@@ -417,6 +419,10 @@
         "emissions": "Emissioni di CO2",
         "efficiency": "Efficienza energetica",
         "euroNorm": "Norme Euro",
+        "evRange": "Autonomia",
+        "batteryOwnership": "Proprietà batteria",
+        "chargingStandardAC": "Standard di ricarica AC",
+        "chargingStandardDC": "Standard di ricarica DC",
         "reset": "Ripristina"
       },
       "more": {

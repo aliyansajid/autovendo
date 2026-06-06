@@ -396,7 +396,9 @@
         "drive": "Transmission",
         "power": "Puissance",
         "capacity": "Cylindrée",
-        "cylinder": "Cylindres"
+        "cylinder": "Cylindres",
+        "doors": "Portes",
+        "seats": "Places"
       },
       "equipment": {
         "title": "Équipement"
@@ -417,6 +419,10 @@
         "emissions": "Émissions de CO2",
         "efficiency": "Efficacité énergétique",
         "euroNorm": "Norme Euro",
+        "evRange": "Autonomie",
+        "batteryOwnership": "Propriété de batterie",
+        "chargingStandardAC": "Standard de charge AC",
+        "chargingStandardDC": "Standard de charge DC",
         "reset": "Réinitialiser"
       },
       "more": {

@@ -11,6 +11,9 @@ import {
   DriveTypeEnum,
   ColorEnum,
   EnergyLabelEnum,
+  BatteryOwnershipEnum,
+  ChargingPlugTypeStandardEnum,
+  ChargingPlugTypeFastEnum,
 } from "@repo/vehicle-constants";
 import {
   carBodyTypeEnum,
@@ -52,6 +55,10 @@ const COLOR_KEYS = ColorEnum.map((v) => v.value);
 const DRIVE_TYPE_KEYS = DriveTypeEnum.map((v) => v.value);
 
 const ENERGY_LABEL_KEYS = EnergyLabelEnum.map((v) => v.value);
+
+const BATTERY_OWNERSHIP_KEYS = BatteryOwnershipEnum.map((v) => v.value);
+const CHARGING_STANDARD_AC_KEYS = ChargingPlugTypeStandardEnum.map((v) => v.value);
+const CHARGING_STANDARD_DC_KEYS = ChargingPlugTypeFastEnum.map((v) => v.value);
 
 // ─── Builder ──────────────────────────────────────────────────────────────────
 
@@ -248,6 +255,51 @@ export function buildSearchParams(
   if (typeof daysListed === "string" && daysListed !== "any") {
     const days = parseInt(daysListed.split(" ")[0] ?? "", 10);
     if (!isNaN(days)) params.daysListed = String(days);
+  }
+
+  // EV range
+  if (formValues["range-from"] != null && formValues["range-from"] !== "") {
+    params.rangeFrom = String(formValues["range-from"]);
+  }
+  if (formValues["range-to"] != null && formValues["range-to"] !== "") {
+    params.rangeTo = String(formValues["range-to"]);
+  }
+
+  // Battery ownership — form fields: batteryOwnership-BATTERY_INCLUDED, etc.
+  const batteryOwnership: string[] = [];
+  for (const key of BATTERY_OWNERSHIP_KEYS) {
+    if (formValues[`batteryOwnership-${key}`] === true) batteryOwnership.push(key);
+  }
+  if (batteryOwnership.length > 0) params.batteryOwnership = batteryOwnership;
+
+  // Charging standard AC — form fields: chargingStandardAC-TYPE_1, etc.
+  const chargingPlugTypeStandard: string[] = [];
+  for (const key of CHARGING_STANDARD_AC_KEYS) {
+    if (formValues[`chargingStandardAC-${key}`] === true) chargingPlugTypeStandard.push(key);
+  }
+  if (chargingPlugTypeStandard.length > 0) params.chargingPlugTypeStandard = chargingPlugTypeStandard;
+
+  // Charging standard DC — form fields: chargingStandardDC-CCS, etc.
+  const chargingPlugTypeFast: string[] = [];
+  for (const key of CHARGING_STANDARD_DC_KEYS) {
+    if (formValues[`chargingStandardDC-${key}`] === true) chargingPlugTypeFast.push(key);
+  }
+  if (chargingPlugTypeFast.length > 0) params.chargingPlugTypeFast = chargingPlugTypeFast;
+
+  // Doors
+  if (formValues["doors-from"] != null && formValues["doors-from"] !== "") {
+    params.doorsFrom = String(formValues["doors-from"]);
+  }
+  if (formValues["doors-to"] != null && formValues["doors-to"] !== "") {
+    params.doorsTo = String(formValues["doors-to"]);
+  }
+
+  // Seats
+  if (formValues["seats-from"] != null && formValues["seats-from"] !== "") {
+    params.seatsFrom = String(formValues["seats-from"]);
+  }
+  if (formValues["seats-to"] != null && formValues["seats-to"] !== "") {
+    params.seatsTo = String(formValues["seats-to"]);
   }
 
   return params;

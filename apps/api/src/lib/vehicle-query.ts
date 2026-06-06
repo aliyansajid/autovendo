@@ -9,6 +9,9 @@ import type {
   VehicleType,
   EnergyLabel,
   EmissionStandard,
+  BatteryOwnership,
+  ChargingPlugTypeStandard,
+  ChargingPlugTypeFast,
 } from "@repo/db";
 
 export interface VehicleParams {
@@ -52,6 +55,15 @@ export interface VehicleParams {
   interiorColor?: string[];
   daysListed?: number;
   equipment?: string[];
+  rangeFrom?: number;
+  rangeTo?: number;
+  batteryOwnership?: string[];
+  chargingPlugTypeStandard?: string[];
+  chargingPlugTypeFast?: string[];
+  doorsFrom?: number;
+  doorsTo?: number;
+  seatsFrom?: number;
+  seatsTo?: number;
 }
 
 export function toDbEnum(value: string): string {
@@ -186,6 +198,30 @@ export function buildWhereClause(
   if (!omitFilters.equipment && params.equipment && params.equipment.length > 0) {
     const equipmentClauses = params.equipment.map((item) => ({ equipment: { path: [item], equals: true } }));
     where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), ...equipmentClauses];
+  }
+
+  if (params.rangeFrom !== undefined || params.rangeTo !== undefined) {
+    where.range = { ...(params.rangeFrom ? { gte: params.rangeFrom } : {}), ...(params.rangeTo ? { lte: params.rangeTo } : {}) };
+  }
+
+  if (!omitFilters.batteryOwnership && params.batteryOwnership && params.batteryOwnership.length > 0) {
+    where.batteryOwnership = { in: params.batteryOwnership.map(toDbEnum) as BatteryOwnership[] };
+  }
+
+  if (!omitFilters.chargingPlugTypeStandard && params.chargingPlugTypeStandard && params.chargingPlugTypeStandard.length > 0) {
+    where.chargingPlugTypeStandard = { in: params.chargingPlugTypeStandard.map(toDbEnum) as ChargingPlugTypeStandard[] };
+  }
+
+  if (!omitFilters.chargingPlugTypeFast && params.chargingPlugTypeFast && params.chargingPlugTypeFast.length > 0) {
+    where.chargingPlugTypeFast = { in: params.chargingPlugTypeFast.map(toDbEnum) as ChargingPlugTypeFast[] };
+  }
+
+  if (params.doorsFrom !== undefined || params.doorsTo !== undefined) {
+    where.doors = { ...(params.doorsFrom ? { gte: params.doorsFrom } : {}), ...(params.doorsTo ? { lte: params.doorsTo } : {}) };
+  }
+
+  if (params.seatsFrom !== undefined || params.seatsTo !== undefined) {
+    where.seats = { ...(params.seatsFrom ? { gte: params.seatsFrom } : {}), ...(params.seatsTo ? { lte: params.seatsTo } : {}) };
   }
 
   where.status = "PUBLISHED";

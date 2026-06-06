@@ -402,7 +402,9 @@
         "drive": "Antrieb",
         "power": "Leistung",
         "capacity": "Hubraum",
-        "cylinder": "Zylinder"
+        "cylinder": "Zylinder",
+        "doors": "Türen",
+        "seats": "Sitzplätze"
       },
       "appearance": {
         "title": "Farbe",
@@ -417,6 +419,10 @@
         "emissions": "CO2-Emissionen",
         "efficiency": "Energieeffizienz",
         "euroNorm": "Euronorm",
+        "evRange": "Reichweite",
+        "batteryOwnership": "Batteriemodell",
+        "chargingStandardAC": "Ladestandard AC",
+        "chargingStandardDC": "Ladestandard DC",
         "reset": "Zurücksetzen"
       },
       "more": {

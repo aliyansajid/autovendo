@@ -491,6 +491,15 @@ function parseParams(c: Context) {
     co2To: clamp(qi(c, "co2To"), 0, 1000),
     daysListed: qi(c, "daysListed"),
     dealerId: c.req.query("dealerId"),
+    rangeFrom: clamp(qi(c, "rangeFrom"), 0, 2000),
+    rangeTo: clamp(qi(c, "rangeTo"), 0, 2000),
+    batteryOwnership: qa(c, "batteryOwnership"),
+    chargingPlugTypeStandard: qa(c, "chargingPlugTypeStandard"),
+    chargingPlugTypeFast: qa(c, "chargingPlugTypeFast"),
+    doorsFrom: clamp(qi(c, "doorsFrom"), 1, 20),
+    doorsTo: clamp(qi(c, "doorsTo"), 1, 20),
+    seatsFrom: clamp(qi(c, "seatsFrom"), 1, 150),
+    seatsTo: clamp(qi(c, "seatsTo"), 1, 150),
   };
 }
 

@@ -12,7 +12,13 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { EnergyLabelEnum, EmissionStandardEnum } from "@repo/vehicle-constants";
+import {
+  EnergyLabelEnum,
+  EmissionStandardEnum,
+  BatteryOwnershipEnum,
+  ChargingPlugTypeStandardEnum,
+  ChargingPlugTypeFastEnum,
+} from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@repo/ui/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";
@@ -30,6 +36,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
 
   const consumptionMax = facets?.consumptionMax ?? 100;
   const co2Max = facets?.co2Max ?? 1000;
+  const rangeMax = 1000;
 
   const consumptionValue = watch("consumption");
   const emissionsValue = watch("emissions");
@@ -231,6 +238,108 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          <div className="flex flex-col">
+            <Label className="text-base font-semibold">{t("evRange")}</Label>
+            <span
+              className="text-xs text-muted-foreground cursor-pointer hover:underline"
+              onClick={() => {
+                setValue("range-from", "");
+                setValue("range-to", "");
+              }}
+            >
+              {t("reset")}
+            </span>
+          </div>
+          <div className="flex gap-2 text-sm">
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT_GROUP}
+              name="range-from"
+              placeholder="0"
+              inputGroupText="km"
+            />
+            <CustomFormField
+              control={control}
+              fieldType={FormFieldType.INPUT_GROUP}
+              name="range-to"
+              placeholder={`${rangeMax}+`}
+              inputGroupText="km"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="space-y-4">
+            <div className="flex flex-col">
+              <Label className="text-base font-semibold">{t("batteryOwnership")}</Label>
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => BatteryOwnershipEnum.forEach((item) => setValue(`batteryOwnership-${item.value}`, false))}
+              >
+                {t("reset")}
+              </span>
+            </div>
+            <div className="space-y-3">
+              {BatteryOwnershipEnum.map((item) => (
+                <CustomFormField
+                  key={item.value}
+                  control={control}
+                  fieldType={FormFieldType.CHECKBOX}
+                  name={`batteryOwnership-${item.value}`}
+                  label={tVehicle(`batteryOwnership.${item.value}`)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex flex-col">
+              <Label className="text-base font-semibold">{t("chargingStandardAC")}</Label>
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => ChargingPlugTypeStandardEnum.forEach((item) => setValue(`chargingStandardAC-${item.value}`, false))}
+              >
+                {t("reset")}
+              </span>
+            </div>
+            <div className="space-y-3">
+              {ChargingPlugTypeStandardEnum.map((item) => (
+                <CustomFormField
+                  key={item.value}
+                  control={control}
+                  fieldType={FormFieldType.CHECKBOX}
+                  name={`chargingStandardAC-${item.value}`}
+                  label={tVehicle(`chargingStandardAC.${item.value}`)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex flex-col">
+              <Label className="text-base font-semibold">{t("chargingStandardDC")}</Label>
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => ChargingPlugTypeFastEnum.forEach((item) => setValue(`chargingStandardDC-${item.value}`, false))}
+              >
+                {t("reset")}
+              </span>
+            </div>
+            <div className="space-y-3">
+              {ChargingPlugTypeFastEnum.map((item) => (
+                <CustomFormField
+                  key={item.value}
+                  control={control}
+                  fieldType={FormFieldType.CHECKBOX}
+                  name={`chargingStandardDC-${item.value}`}
+                  label={tVehicle(`chargingStandardDC.${item.value}`)}
+                />
+              ))}
             </div>
           </div>
         </div>

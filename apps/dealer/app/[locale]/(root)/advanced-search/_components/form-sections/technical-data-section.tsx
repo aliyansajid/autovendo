@@ -220,6 +220,64 @@ export function TechnicalDataSection({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
+            <div className="flex flex-col">
+              <Label className="text-base font-semibold">{t("doors")}</Label>
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => {
+                  setValue("doors-from", "");
+                  setValue("doors-to", "");
+                }}
+              >
+                {tBasic("reset")}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="doors-from"
+                placeholder="2"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="doors-to"
+                placeholder="5"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex flex-col">
+              <Label className="text-base font-semibold">{t("seats")}</Label>
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => {
+                  setValue("seats-from", "");
+                  setValue("seats-to", "");
+                }}
+              >
+                {tBasic("reset")}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="seats-from"
+                placeholder="2"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="seats-to"
+                placeholder="9"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Label className="text-base font-semibold">{t("power")}</Label>

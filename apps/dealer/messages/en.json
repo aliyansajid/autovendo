@@ -402,7 +402,9 @@
         "drive": "Drive",
         "power": "Power",
         "capacity": "Engine Capacity",
-        "cylinder": "Cylinders"
+        "cylinder": "Cylinders",
+        "doors": "Doors",
+        "seats": "Seats"
       },
       "appearance": {
         "title": "Color",
@@ -417,6 +419,10 @@
         "emissions": "CO2 Emissions",
         "efficiency": "Energy Efficiency",
         "euroNorm": "Euro Norm",
+        "evRange": "EV Range",
+        "batteryOwnership": "Battery Ownership",
+        "chargingStandardAC": "Charging Standard AC",
+        "chargingStandardDC": "Charging Standard DC",
         "reset": "Reset"
       },
       "more": {
