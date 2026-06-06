@@ -138,7 +138,7 @@ export const createVehicleFormSchema = (t: TFn) =>
       .string({ error: t("vehicleTypeRequired") })
       .refine((val) => VALID_VEHICLE_TYPES.includes(val), t("invalidType")),
     status: z
-      .enum(["DRAFT", "PUBLISHED", "PAUSED", "SOLD", "ARCHIVED", "BANNED"])
+      .enum(["DRAFT", "PUBLISHED", "PAUSED", "SOLD", "ARCHIVED"])
       .default("PUBLISHED"),
 
     // ── Identity ─────────────────────────────────────────────────────────────

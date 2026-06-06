@@ -4,7 +4,7 @@ import { getDealerVehicleById } from "@/lib/api/dealer-vehicles";
 import { VehicleForm } from "../_components/vehicle-form";
 import { mapVehicleToForm } from "@repo/ui/lib/helpers/vehicle";
 import { notFound } from "next/navigation";
-import { Link } from "@/i18n/routing";
+import { Link, redirect } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@repo/ui/src/components/button";
@@ -12,15 +12,22 @@ import { Button } from "@repo/ui/src/components/button";
 export default async function EditVehiclePage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
 }) {
   const t = await getTranslations("EditVehiclePage");
-  const { id } = await params;
+  const { id, locale } = await params;
   const [dealerProfile, vehicle, subscriptionStatus] = await Promise.all([
     getDealerProfileFromApi(),
     getDealerVehicleById(id),
     getSubscriptionStatusFromApi(),
   ]);
+
+  const isBlocked = ["no_subscription", "expired", "past_due"].includes(
+    subscriptionStatus.type,
+  );
+  if (isBlocked) {
+    redirect({ href: "/dashboard/vehicles", locale });
+  }
 
   if (!vehicle) {
     notFound();

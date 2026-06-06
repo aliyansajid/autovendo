@@ -16,7 +16,9 @@ export default async function AddNewVehiclePage(props: {
     getSubscriptionStatusFromApi(),
   ]);
 
-  const isBlocked = subscriptionStatus.type !== "active";
+  const isBlocked =
+    subscriptionStatus.type !== "active" &&
+    subscriptionStatus.type !== "trialing";
 
   if (isBlocked) {
     redirect({ href: "/dashboard/vehicles", locale: locale });
