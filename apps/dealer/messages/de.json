@@ -1,6 +1,7 @@
 {
   "Header": {
     "nav": {
+      "cars": "Fahrzeuge",
       "advancedSearch": "Erweiterte Suche",
       "dealers": "Händler suchen",
       "sell": "Verkaufen",

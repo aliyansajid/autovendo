@@ -1,6 +1,7 @@
 {
   "Header": {
     "nav": {
+      "cars": "Veicoli",
       "advancedSearch": "Ricerca avanzata",
       "dealers": "Trova concessionari",
       "sell": "Vendi",

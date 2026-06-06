@@ -52,6 +52,7 @@ const languages = [
 ];
 
 const navLinks = [
+  { href: "/cars", labelKey: "nav.cars" },
   { href: "/advanced-search", labelKey: "nav.advancedSearch" },
   { href: "/dealers", labelKey: "nav.dealers" },
   { href: "/sell", labelKey: "nav.sell" },

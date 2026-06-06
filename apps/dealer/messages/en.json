@@ -1,6 +1,7 @@
 {
   "Header": {
     "nav": {
+      "cars": "Vehicles",
       "advancedSearch": "Advanced Search",
       "dealers": "Find Dealers",
       "sell": "Sell",
