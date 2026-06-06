@@ -103,6 +103,9 @@ const ARRAY_PARAM_KEYS = new Set([
   "energyLabels",
   "emissionStandards",
   "interiorColor",
+  "batteryOwnership",
+  "chargingPlugTypeStandard",
+  "chargingPlugTypeFast",
 ]);
 
 /**
