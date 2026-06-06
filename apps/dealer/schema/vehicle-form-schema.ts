@@ -280,7 +280,7 @@ export const createVehicleFormSchema = (t: TFn) =>
 
     // ── Identifiers ──────────────────────────────────────────────────────────
     // VIN: ISO 3779 — exactly 17 alphanumeric chars, no I/O/Q
-    vehicleIdentificationNumber: z
+    vin: z
       .string()
       .regex(/^[A-HJ-NPR-Z0-9]{17}$/, t("invalidVin"))
       .optional()
@@ -289,7 +289,7 @@ export const createVehicleFormSchema = (t: TFn) =>
     typeApproval: optionalStringField(50, t("typeApprovalTooLong")),
 
     // ── Description ──────────────────────────────────────────────────────────
-    vehicleDescription: z.string().optional(),
+    vehicleDescription: z.string().max(1000, t("descriptionTooLong")).optional(),
 
     // ── Equipment & Extras ───────────────────────────────────────────────────
     equipment: z
@@ -329,7 +329,7 @@ export const createVehicleFormSchema = (t: TFn) =>
           ),
       )
       .min(5, t("minImagesError"))
-      .max(10, t("maxImagesError")),
+      .max(25, t("maxImagesError")),
 
     // ── Contact ──────────────────────────────────────────────────────────────
     companyName: z.string().optional(),

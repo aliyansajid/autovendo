@@ -190,7 +190,7 @@ export function mapVehicleToForm(vehicle: any): any {
     energyLabel: vehicle.energyLabel?.toLowerCase() as any,
     typeApproval: vehicle.typeApproval ?? "",
     wheelbase: vehicle.wheelbase ?? undefined,
-    vehicleIdentificationNumber: vehicle.vin ?? "",
+    vin: vehicle.vin ?? "",
     emptyWeight: vehicle.emptyWeight ?? undefined,
     loadCapacity: vehicle.loadCapacity ?? undefined,
     serialNumber: vehicle.serialNumber ?? "",

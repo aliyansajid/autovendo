@@ -677,7 +677,8 @@
     "invalidImageType": "Only PNG, JPG, JPEG or WEBP images are allowed",
     "fileTooLarge": "File must be maximum 10MB",
     "minImagesError": "At least 5 images are required",
-    "maxImagesError": "Maximum 10 images are allowed",
+    "maxImagesError": "Maximum 25 images are allowed",
+    "descriptionTooLong": "Description must be 1000 characters or less",
     "invalidEmail": "Invalid email address"
   },
   "Common": {
@@ -1582,7 +1583,7 @@
     "colourUpholstery": "Colour & Upholstery",
     "identifiers": "Identification Numbers",
     "identifierKeys": {
-      "vin": "Vehicle Identification Number",
+      "vin": "VIN",
       "serialNumber": "Serial Number",
       "typeApproval": "Type Approval"
     },

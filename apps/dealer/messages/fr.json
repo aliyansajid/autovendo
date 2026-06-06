@@ -677,7 +677,8 @@
     "invalidImageType": "Seules les images PNG, JPG, JPEG ou WEBP sont autorisées",
     "fileTooLarge": "Le fichier ne doit pas dépasser 10 Mo",
     "minImagesError": "Au moins 5 images sont requises",
-    "maxImagesError": "Au maximum 10 images sont autorisées",
+    "maxImagesError": "Au maximum 25 images sont autorisées",
+    "descriptionTooLong": "La description ne doit pas dépasser 1000 caractères",
     "invalidEmail": "Adresse e-mail invalide"
   },
   "Common": {
@@ -1585,7 +1586,7 @@
     "colourUpholstery": "Couleur et sellerie",
     "identifiers": "Numéros d'identification",
     "identifierKeys": {
-      "vin": "Numéro d'identification du véhicule",
+      "vin": "NIV (VIN)",
       "serialNumber": "Numéro de série",
       "typeApproval": "Réception par type"
     },

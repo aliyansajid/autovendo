@@ -149,7 +149,7 @@ const vehicleApiBodySchema = z
     typeApproval: z.preprocess((v) => v ?? undefined, z.string().min(1).max(50).optional()),
     equipment: z.record(z.boolean().optional()).optional().nullable(),
     extras: z.record(z.boolean().optional()).optional().nullable(),
-    images: z.array(z.string()).min(5).max(10),
+    images: z.array(z.string()).min(5).max(25),
     // ── Required numerics ───────────────────────────────────────────────────
     registrationMonth: z.coerce.number().int().min(1).max(12),
     registrationYear: z.coerce.number().int().min(1900).max(new Date().getFullYear()),

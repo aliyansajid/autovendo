@@ -206,7 +206,7 @@ export function VehicleForm({
       energyLabel: undefined,
       typeApproval: "",
       wheelbase: "" as any,
-      vehicleIdentificationNumber: "",
+      vin: "",
       emptyWeight: "" as any,
       loadCapacity: "" as any,
       serialNumber: "",

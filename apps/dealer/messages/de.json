@@ -677,7 +677,8 @@
     "invalidImageType": "Nur PNG, JPG, JPEG oder WEBP Bilder sind erlaubt",
     "fileTooLarge": "Datei darf maximal 10MB groß sein",
     "minImagesError": "Mindestens 5 Bilder sind erforderlich",
-    "maxImagesError": "Maximal 10 Bilder sind erlaubt",
+    "maxImagesError": "Maximal 25 Bilder sind erlaubt",
+    "descriptionTooLong": "Beschreibung darf maximal 1000 Zeichen lang sein",
     "invalidEmail": "Ungültige E-Mail-Adresse"
   },
   "Common": {
@@ -1592,7 +1593,7 @@
     "colourUpholstery": "Farbe und Polsterung",
     "identifiers": "Identifikationsnummern",
     "identifierKeys": {
-      "vin": "Fahrzeugidentifikationsnummer",
+      "vin": "FIN (VIN)",
       "serialNumber": "Seriennummer",
       "typeApproval": "Typengenehmigung"
     },

@@ -251,7 +251,7 @@ export function TechnicalDataSection() {
           <CustomFormField
             control={control}
             fieldType={FormFieldType.INPUT}
-            name="vehicleIdentificationNumber"
+            name="vin"
             label={t("vin")}
             placeholder={t("vinPlaceholder")}
           />

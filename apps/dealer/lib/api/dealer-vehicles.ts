@@ -79,7 +79,6 @@ export async function apiCreateVehicle(
     method: "POST",
     body: JSON.stringify({
       ...data,
-      vin: data.vehicleIdentificationNumber,
       images: imageKeys,
     }),
   });
@@ -99,7 +98,6 @@ export async function apiUpdateVehicle(
     method: "PUT",
     body: JSON.stringify({
       ...data,
-      vin: data.vehicleIdentificationNumber,
       images: imageKeys,
     }),
   });
