@@ -111,6 +111,12 @@ const numericField = (min: number, max: number) =>
     z.number().min(min).max(max).optional(),
   );
 
+const optionalStringField = (max: number, maxMsg: string) =>
+  z.preprocess(
+    (val) => (val === "" || val === undefined || val === null ? undefined : val),
+    z.string().min(1).max(max, maxMsg).optional(),
+  );
+
 const enumField = (validValues: string[], errorMsg: string) =>
   z.string().refine((val) => !val || validValues.includes(val), errorMsg);
 
@@ -131,8 +137,8 @@ export const createVehicleFormSchema = (t: TFn) =>
       .string({ error: t("makeRequired") })
       .max(50, t("makeTooLong"))
       .refine((val) => VALID_MAKES.includes(val), t("invalidMake")),
-    model: z.string().max(50, t("modelTooLong")).optional(),
-    version: z.string().max(50, t("versionTooLong")).optional(),
+    model: optionalStringField(50, t("modelTooLong")),
+    version: optionalStringField(50, t("versionTooLong")),
 
     // ── Body & drivetrain ────────────────────────────────────────────────────
     bodyType: z
@@ -259,14 +265,16 @@ export const createVehicleFormSchema = (t: TFn) =>
 
     // ── Identifiers ──────────────────────────────────────────────────────────
     // VIN: ISO 3779 — exactly 17 alphanumeric chars, no I/O/Q
-    vehicleIdentificationNumber: z
-      .string({ error: t("vinRequired") })
-      .regex(/^[A-HJ-NPR-Z0-9]{17}$/, t("invalidVin")),
-    serialNumber: z.string().max(100, t("serialNumberTooLong")).optional(),
-    typeApproval: z.string().max(50, t("typeApprovalTooLong")).optional(),
+    vin: z
+      .string()
+      .regex(/^[A-HJ-NPR-Z0-9]{17}$/, t("invalidVin"))
+      .optional()
+      .or(z.literal("")),
+    serialNumber: optionalStringField(100, t("serialNumberTooLong")),
+    typeApproval: optionalStringField(50, t("typeApprovalTooLong")),
 
     // ── Description ──────────────────────────────────────────────────────────
-    vehicleDescription: z.string().optional(),
+    vehicleDescription: z.string().max(1000, t("descriptionTooLong")).optional(),
 
     // ── Equipment & Extras ───────────────────────────────────────────────────
     equipment: z
@@ -306,8 +314,7 @@ export const createVehicleFormSchema = (t: TFn) =>
           ),
       )
       .min(5, t("minImagesError"))
-      .max(10, t("maxImagesError"))
-      .optional(),
+      .max(25, t("maxImagesError")),
 
     // ── Contact ──────────────────────────────────────────────────────────────
     companyName: z.string().optional(),

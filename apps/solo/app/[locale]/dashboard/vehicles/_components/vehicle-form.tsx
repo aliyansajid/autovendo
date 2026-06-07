@@ -48,7 +48,7 @@ const STEP_FIELDS: Record<number, any[]> = {
     "bodyType",
     "fuelType",
     "color",
-    "vehicleIdentificationNumber",
+    "vehicleCondition",
   ],
   2: ["images"],
   3: ["equipment", "extras"],
@@ -101,7 +101,7 @@ export function VehicleForm({
   const form = useForm<z.infer<ReturnType<typeof createVehicleFormSchema>>>({
     resolver: zodResolver(schema) as any,
     defaultValues: {
-      vehicleType: "car",
+      vehicleType: "CAR",
       model: undefined,
       version: "",
       kilometer: "" as any,
@@ -131,7 +131,7 @@ export function VehicleForm({
       energyLabel: undefined,
       typeApproval: "",
       wheelbase: "" as any,
-      vehicleIdentificationNumber: "",
+      vin: "",
       emptyWeight: "" as any,
       loadCapacity: "" as any,
       serialNumber: "",
@@ -204,10 +204,8 @@ export function VehicleForm({
   const watchBodyType = useWatch({ control, name: "bodyType" });
   const watchColor = useWatch({ control, name: "color" });
   const watchImages = useWatch({ control, name: "images" });
-  const watchVIN = useWatch({ control, name: "vehicleIdentificationNumber" });
-
-  const isStep1Complete = !!watchMake && !!watchPrice && !!watchKilometer && !!watchMonth && !!watchYear && !!watchBodyType && !!watchColor && !!watchVIN && watchVIN.length === 17;
-  const isStep2Complete = watchImages && watchImages.length >= 5 && watchImages.length <= 10;
+  const isStep1Complete = !!watchMake && !!watchPrice && !!watchKilometer && !!watchMonth && !!watchYear && !!watchBodyType && !!watchColor;
+  const isStep2Complete = watchImages && watchImages.length >= 5 && watchImages.length <= 25;
   const isStep5Complete = !!useWatch({ control, name: "planId" });
 
   const isNextDisabled =
