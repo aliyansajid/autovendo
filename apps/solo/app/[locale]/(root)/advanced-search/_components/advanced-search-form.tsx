@@ -67,7 +67,7 @@ export const AdvancedSearchForm = () => {
     { id: "TRUCK", labelKey: "vehicleTypes.truck" },
   ].filter(({ id }) => VehicleTypeEnum.some((e) => e.value === id));
 
-  const [vehicleType, setVehicleType] = useState(VehicleTypeEnum[0].value);
+  const [vehicleType, setVehicleType] = useState<string>(VehicleTypeEnum[0].value);
   const [total, setTotal] = useState<number | null>(null);
   const [facets, setFacets] = useState<VehicleFacets | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);

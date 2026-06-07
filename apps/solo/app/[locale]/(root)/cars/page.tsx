@@ -112,7 +112,7 @@ export default async function CarsPage(props: {
               </CardHeader>
               <CardContent className="flex items-center gap-3">
                 <ListingControls
-                  initialSearch={query.q}
+                  initialSearch={query.search}
                   initialSort={query.sort}
                 />
               </CardContent>
