@@ -19,8 +19,8 @@ import {
   powerOptions,
   getRegistrationYears,
   KILOMETER_OPTIONS,
-  COLOR_OPTIONS,
-  EQUIPMENT_LABELS,
+  ColorEnum,
+  EquipmentEnum,
 } from "@repo/vehicle-constants";
 import { carMakes } from "@repo/vehicle-constants";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
@@ -122,7 +122,7 @@ export const FiltersSidebar = ({
 
       Object.entries(values).forEach(([key, value]) => {
         // Handle equipment (individual checkbox keys)
-        if (key in EQUIPMENT_LABELS) {
+        if (EquipmentEnum.some((e) => e.value === key)) {
           if (value === true) equipment.push(key);
           return;
         }
@@ -453,11 +453,8 @@ export const FiltersSidebar = ({
                 label={t("metallic")}
               />
               <div className="flex flex-wrap gap-1">
-                {COLOR_OPTIONS.map((color) => {
+                {ColorEnum.map((color) => {
                   const isSelected = watchColor.includes(color.value);
-                  const colorLabel = tVehicle(
-                    `colors.${color.value.toUpperCase()}`,
-                  );
                   return (
                     <div
                       key={color.value}
@@ -466,7 +463,7 @@ export const FiltersSidebar = ({
                           ? "border-primary scale-110 shadow-md"
                           : "border-border hover:border-muted-foreground/30"
                       }`}
-                      title={colorLabel}
+                      title={tVehicle(`colors.${color.value}`)}
                       onClick={() => handleColorToggle(color.value)}
                       style={{
                         background:
@@ -476,10 +473,10 @@ export const FiltersSidebar = ({
                       {isSelected && (
                         <Check
                           className={`h-5 w-5 ${
-                            color.value === "white" ||
-                            color.value === "yellow" ||
-                            color.value === "beige" ||
-                            color.value === "silver"
+                            color.value === "WHITE" ||
+                            color.value === "YELLOW" ||
+                            color.value === "BEIGE" ||
+                            color.value === "SILVER"
                               ? "text-black"
                               : "text-white"
                           }`}
@@ -496,17 +493,13 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>{t("equipment")}</FieldLabel>
               <div className="space-y-3">
-                {Object.keys(EQUIPMENT_LABELS)
-                  .slice(0, 10)
-                  .map((value) => (
+                {EquipmentEnum.slice(0, 10).map(({ value }) => (
                     <CustomFormField
                       key={value}
                       control={form.control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={value}
-                      label={tVehicle(
-                        `equipment.${value.toUpperCase().replace(/-/g, "_")}`,
-                      )}
+                      label={tVehicle(`equipment.${value}`)}
                     />
                   ))}
               </div>
