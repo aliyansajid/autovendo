@@ -3,10 +3,10 @@
 import { Button } from "@repo/ui/src/components/button";
 import { Spinner } from "@repo/ui/src/components/spinner";
 import { useTransition } from "react";
+import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+import { cancelSubscription, restoreSubscription } from "@/lib/api/auth-client";
 
 interface SubscriptionActionsProps {
   subscriptionId: string;
@@ -18,23 +18,30 @@ export const SubscriptionActions = ({
   isCanceling,
 }: SubscriptionActionsProps) => {
   const t = useTranslations("BillingPage");
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const handleGoToStripe = async () => {
+  const handleAction = () => {
     startTransition(async () => {
-      try {
-        const res = await fetch(`${API_BASE}/api/dealer/billing/portal`, {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ returnUrl: window.location.href }),
+      if (isCanceling) {
+        const { error } = await restoreSubscription({ subscriptionId });
+        if (error) {
+          toast.error(error.message || t("reactivateError"));
+          return;
+        }
+        toast.success(t("reactivateSuccess"));
+      } else {
+        const { error } = await cancelSubscription({
+          subscriptionId,
+          returnUrl: window.location.href,
         });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.url) throw new Error();
-        window.location.href = data.url;
-      } catch {
-        toast.error(t("billingPortalError"));
+        if (error) {
+          toast.error(error.message || t("cancelError"));
+          return;
+        }
+        toast.success(t("cancelSuccess"));
       }
+      router.refresh();
     });
   };
 
@@ -42,7 +49,7 @@ export const SubscriptionActions = ({
     <Button
       variant={isCanceling ? "outline" : "destructive"}
       disabled={isPending}
-      onClick={handleGoToStripe}
+      onClick={handleAction}
     >
       {isPending ? (
         <Spinner />

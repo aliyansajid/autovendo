@@ -15,9 +15,9 @@ import {
   ArrowRight,
   TrendingUp,
   AlertCircle,
-  CreditCard,
 } from "lucide-react";
-import { getSubscriptionStatusFromApi, getDashboardSummaryFromApi, getPlansFromApi } from "@/lib/api/vehicles";
+import { getSubscriptionStatusFromApi, getDashboardSummaryFromApi, getPlansFromApi, getActiveSubscriptionsFromApi } from "@/lib/api/vehicles";
+import { SubscriptionCard } from "./subscription/_components/subscription-card";
 import { getTranslations } from "next-intl/server";
 import {
   formatPrice,
@@ -35,10 +35,11 @@ export default async function DashboardPage(props: {
   const { locale } = await props.params;
   const t = await getTranslations("DashboardPage");
 
-  const [subscriptionStatus, summary, plans] = await Promise.all([
+  const [subscriptionStatus, summary, plans, subscriptions] = await Promise.all([
     getSubscriptionStatusFromApi(),
     getDashboardSummaryFromApi(),
     getPlansFromApi(),
+    getActiveSubscriptionsFromApi(),
   ]);
 
   const currentPlan = plans.find(
@@ -270,16 +271,6 @@ export default async function DashboardPage(props: {
                 className="w-full justify-start"
                 asChild
               >
-                <Link href="/dashboard/subscription">
-                  <CreditCard />
-                  {t("billingSettings")}
-                </Link>
-              </Button>
-              <Button
-                variant="secondary"
-                className="w-full justify-start"
-                asChild
-              >
                 <Link href="/dashboard/vehicles">
                   <Car />
                   {t("manageInventory")}
@@ -287,6 +278,13 @@ export default async function DashboardPage(props: {
               </Button>
             </CardContent>
           </Card>
+
+          <SubscriptionCard
+            subscriptions={subscriptions}
+            currentCount={subscriptionStatus.currentCount}
+            maxVehicles={subscriptionStatus.maxVehicles}
+            hasSubscription={subscriptions.length > 0}
+          />
 
           {/* Need Help? */}
           <Card className="bg-muted/50 border-dashed">
