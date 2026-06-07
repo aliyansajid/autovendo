@@ -15,7 +15,7 @@ router.post("/", async (c) => {
     event = stripeClient.webhooks.constructEvent(
       body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET_SELLER!,
+      process.env.STRIPE_WEBHOOK_SECRET!,
     );
   } catch {
     return c.json({ error: "Invalid signature" }, 400);
