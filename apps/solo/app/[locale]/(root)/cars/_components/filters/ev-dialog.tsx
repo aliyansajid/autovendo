@@ -20,7 +20,8 @@ import {
 import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
+import { formatNumber } from "@repo/ui/lib/helpers/format";
 
 const formSchema = z.object({
   batteryCapacityFrom: z.string().optional(),
@@ -34,8 +35,6 @@ export function EvDialog() {
   const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.ev");
   const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const tSidebar = useTranslations("AdvancedSearch.FiltersSidebar");
-  const locale = useLocale();
-
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -53,7 +52,7 @@ export function EvDialog() {
   const batteryCapacityOptions = Array.from({ length: 15 }, (_, i) => {
     const val = (i + 1) * 10;
     const value = val.toString();
-    return { value, label: `${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(val)} kWh` };
+    return { value, label: `${formatNumber(val)} kWh` };
   });
 
   const form = useForm<z.infer<typeof formSchema>>({

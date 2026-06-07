@@ -19,7 +19,9 @@ import {
 import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
+import { carFuelTypeEnum } from "@repo/vehicle-constants";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 
 const formSchema = z.object({
   fuel: z.array(z.string()),
@@ -33,15 +35,10 @@ export function FuelTypeDialog({
   const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.fuel");
   const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const tVehicle = useTranslations("Vehicle.fuelTypes");
-  const locale = useLocale();
-  
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-
-  function formatCount(n: number) {
-    return new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(n);
-  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -75,26 +72,12 @@ export function FuelTypeDialog({
     setOpen(false);
   };
 
-  const fuelOptions = [
-    "PETROL",
-    "DIESEL",
-    "ELECTRIC",
-    "HYBRID",
-    "PHEV_PETROL",
-    "PHEV_DIESEL",
-    "MHEV_PETROL",
-    "MHEV_DIESEL",
-    "HEV_PETROL",
-    "HEV_DIESEL",
-    "GAS",
-    "HYDROGEN",
-    "OTHER",
-  ].map((value) => {
+  const fuelOptions = carFuelTypeEnum.map(({ value }) => {
     const count = counts?.[value];
     const label = tVehicle(value);
     return {
       label: count !== undefined ? `${label} (${formatCount(count)})` : label,
-      value: value,
+      value,
     };
   });
 

@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import type { Metadata } from "next";
 import { buildAlternates } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
@@ -330,8 +328,8 @@ export default async function ListingPage({
       : [];
 
   const description =
-    item.vehicleDescription && item.vehicleDescription.trim().length > 0
-      ? item.vehicleDescription
+    item.description && item.description.trim().length > 0
+      ? item.description
       : null;
 
   const sellerUser = (item.seller as any)?.user;
@@ -588,9 +586,17 @@ export default async function ListingPage({
 
             {description && (
               <ListingSection title={t("description")}>
-                <p className="whitespace-pre-line text-sm text-muted-foreground leading-relaxed">
-                  {description}
-                </p>
+                <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  {(() => {
+                    const norm = description.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+                    const parts = norm.split(/\n\n+/.test(norm) ? /\n\n+/ : /\n/)
+                      .map((p: string) => p.trim())
+                      .filter(Boolean);
+                    return parts.map((para: string, i: number) => (
+                      <p key={i} className="whitespace-pre-line">{para}</p>
+                    ));
+                  })()}
+                </div>
               </ListingSection>
             )}
 

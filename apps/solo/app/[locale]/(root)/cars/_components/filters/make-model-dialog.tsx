@@ -27,6 +27,7 @@ import Image from "next/image";
 import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 
 const formSchema = z.object({
   search: z.string().optional(),
@@ -61,6 +62,7 @@ interface MakeModelDialogProps {
   onOpenChange?: (open: boolean) => void;
   value?: MakeModelValue;
   onChange?: (value: MakeModelValue) => void;
+  defaultExcludeMode?: boolean;
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -71,6 +73,7 @@ export function MakeModelDialog({
   onOpenChange,
   value,
   onChange,
+  defaultExcludeMode = false,
 }: MakeModelDialogProps) {
   const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.makeModel");
   const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
@@ -82,17 +85,13 @@ export function MakeModelDialog({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  function formatCount(n: number) {
-    return new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(n);
-  }
-
   // Uncontrolled (URL) mode state
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const [urlIncludes, setUrlIncludes] = useState<string[]>([]);
   const [urlModels, setUrlModels] = useState<string[]>([]);
 
   // Shared UI state
-  const [isExcludeMode, setIsExcludeMode] = useState(false);
+  const [isExcludeMode, setIsExcludeMode] = useState(defaultExcludeMode);
   const [currentMake, setCurrentMake] = useState<{
     value: string;
     label: string;
@@ -223,10 +222,17 @@ export function MakeModelDialog({
     }
     if (!next) {
       setCurrentMake(null);
-      setIsExcludeMode(false);
+      setIsExcludeMode(defaultExcludeMode);
       form.reset();
     }
   };
+
+  // Sync exclude mode whenever the dialog opens (handles dynamic defaultExcludeMode)
+  useEffect(() => {
+    if (isOpen) {
+      setIsExcludeMode(defaultExcludeMode);
+    }
+  }, [isOpen, defaultExcludeMode]);
 
   const dialogContent = (
     <DialogContent>

@@ -1,8 +1,5 @@
-export const dynamic = "force-dynamic";
-
 import type { Metadata } from "next";
 import { buildMetadata, PAGE_META } from "@/lib/seo";
-import { Suspense } from "react";
 import { FiltersSidebar } from "./_components/filters-sidebar";
 import { ListingListCard } from "./_components/listing-list-card";
 import {
@@ -20,10 +17,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
+import { getSellerVehiclesWithFacetsFromApi } from "@/lib/api/vehicles";
 import { createVehicleSearchSchema } from "@/schema/vehicle-search-schema";
 import { parseSearchParams } from "@repo/ui/lib/helpers/vehicle";
-
-import { getSellerVehiclesWithFacetsFromApi } from "@/lib/api/vehicles";
 import { ListingControls } from "./_components/listing-controls";
 import { formatCount } from "@repo/ui/lib/helpers/format";
 import { getTranslations } from "next-intl/server";
@@ -55,6 +51,7 @@ export default async function CarsPage(props: {
   });
   const schema = createVehicleSearchSchema(t_schema);
 
+  // Get data from server action (cached)
   const { vehicles, total, totalPages, facets } =
     await getSellerVehiclesWithFacetsFromApi(searchParams);
 
@@ -62,7 +59,7 @@ export default async function CarsPage(props: {
   const parsed = parseSearchParams(searchParams);
   const query = schema.parse(parsed);
 
-  // Helper to build pagination URLs
+  // Helper to build pagination URLs with locale prefix
   function buildUrl(
     params: Record<string, string | string[] | number | undefined>,
   ): string {
@@ -80,7 +77,7 @@ export default async function CarsPage(props: {
       }
     }
     const queryString = sp.toString();
-    return queryString ? `/cars?${queryString}` : "/cars";
+    return queryString ? `/${locale}/cars?${queryString}` : `/${locale}/cars`;
   }
 
   return (
@@ -99,17 +96,11 @@ export default async function CarsPage(props: {
       <div className="w-full max-w-285 mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <aside className="hidden lg:block lg:col-span-1">
-            <Suspense
-              fallback={
-                <div className="animate-pulse h-96 bg-muted rounded-lg" />
-              }
-            >
-              <FiltersSidebar
-                showActions={false}
-                resultCount={total}
-                facets={facets}
-              />
-            </Suspense>
+            <FiltersSidebar
+              showActions={false}
+              resultCount={total}
+              facets={facets}
+            />
           </aside>
 
           <div className="lg:col-span-3 flex flex-col gap-6">
@@ -120,16 +111,10 @@ export default async function CarsPage(props: {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex items-center gap-3">
-                <Suspense
-                  fallback={
-                    <div className="animate-pulse h-10 bg-muted rounded-lg w-full" />
-                  }
-                >
-                  <ListingControls
-                    initialSearch={query.search}
-                    initialSort={query.sort}
-                  />
-                </Suspense>
+                <ListingControls
+                  initialSearch={query.q}
+                  initialSort={query.sort}
+                />
               </CardContent>
             </Card>
 
