@@ -9,7 +9,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cdn.autosolo.ch",
+        hostname: "cdn.autovendo.ch",
       },
     ],
   },
