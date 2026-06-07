@@ -1211,7 +1211,7 @@
     "colourUpholstery": "Colore e selleria",
     "identifiers": "Numeri di identificazione",
     "identifierKeys": {
-      "vin": "Numero di identificazione del veicolo",
+      "vin": "VIN",
       "serialNumber": "Numero di serie",
       "typeApproval": "Approvazione del tipo"
     },
