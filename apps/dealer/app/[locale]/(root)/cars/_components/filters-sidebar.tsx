@@ -15,8 +15,8 @@ import {
 } from "@repo/ui/components/custom-form-field";
 import { SelectItem } from "@repo/ui/components/select";
 import {
-  PRICING_OPTIONS,
-  POWER_OPTIONS,
+  prices,
+  powerOptions,
   getRegistrationYears,
   KILOMETER_OPTIONS,
   COLOR_OPTIONS,
@@ -274,7 +274,7 @@ export const FiltersSidebar = ({
                   placeholder={t("from")}
                 >
                   <SelectItem value="any">{t("any")}</SelectItem>
-                  {PRICING_OPTIONS.map((p) => (
+                  {prices.map((p) => (
                     <SelectItem key={p.value} value={p.value}>
                       {p.label}
                     </SelectItem>
@@ -287,7 +287,7 @@ export const FiltersSidebar = ({
                   placeholder={t("to")}
                 >
                   <SelectItem value="any">{t("any")}</SelectItem>
-                  {PRICING_OPTIONS.map((p) => (
+                  {prices.map((p) => (
                     <SelectItem key={p.value} value={p.value}>
                       {p.label}
                     </SelectItem>
@@ -391,7 +391,7 @@ export const FiltersSidebar = ({
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(
                   watchPower,
-                  POWER_OPTIONS.map((o) => ({
+                  powerOptions.map((o) => ({
                     value: o.value,
                     label: t("from") + " " + o.label.replace("ab ", ""),
                   })),
