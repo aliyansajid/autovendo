@@ -128,3 +128,27 @@ export async function getSellerProfileFromApi(): Promise<SellerProfile | null> {
   if (!res.ok) return null;
   return res.json();
 }
+
+// ─── Auth (server-side session) ───────────────────────────────────────────────
+
+export async function getSessionFromApi(): Promise<{
+  user?: { name: string; email: string; image?: string | null };
+} | null> {
+  const res = await serverFetch("/api/auth/get-session");
+  if (!res.ok) return null;
+  return res.json();
+}
+
+// ─── Sitemap ──────────────────────────────────────────────────────────────────
+
+export async function getVehiclesForSitemapFromApi(): Promise<
+  { id: string; updatedAt: string }[]
+> {
+  const res = await fetch(
+    `${API_BASE}/api/sitemap?sellerOnly=true`,
+    { cache: "no-store" },
+  );
+  if (!res.ok) return [];
+  const { vehicles } = await res.json();
+  return vehicles ?? [];
+}
