@@ -364,6 +364,7 @@
       "makeModel": {
         "title": "Marca & Modello",
         "addMake": "Aggiungi marca",
+        "excludeMake": "Escludi marca",
         "includeVehicles": "Includi veicoli",
         "excludeVehicles": "Escludi veicoli",
         "noSelections": "Nessun veicolo selezionato."
@@ -387,7 +388,9 @@
         "drive": "Trazione",
         "power": "Potenza",
         "capacity": "Cilindrata",
-        "cylinder": "Cilindri"
+        "cylinder": "Cilindri",
+        "doors": "Porte",
+        "seats": "Sedili"
       },
       "equipment": {
         "title": "Equipaggiamento"
@@ -406,7 +409,11 @@
         "title": "Energia & Ambiente",
         "consumption": "Consumo",
         "emissions": "Emissioni di CO2",
+        "evRange": "Autonomia",
         "efficiency": "Efficienza energetica",
+        "batteryOwnership": "Proprietà batteria",
+        "chargingStandardAC": "Standard di ricarica AC",
+        "chargingStandardDC": "Standard di ricarica DC",
         "euroNorm": "Norme Euro",
         "reset": "Ripristina"
       },

@@ -364,6 +364,7 @@
       "makeModel": {
         "title": "Make & Model",
         "addMake": "Add Make",
+        "excludeMake": "Exclude Make",
         "includeVehicles": "Include Vehicles",
         "excludeVehicles": "Exclude Vehicles",
         "noSelections": "No vehicles selected."
@@ -393,7 +394,9 @@
         "drive": "Drive",
         "power": "Power",
         "capacity": "Engine Capacity",
-        "cylinder": "Cylinders"
+        "cylinder": "Cylinders",
+        "doors": "Doors",
+        "seats": "Seats"
       },
       "appearance": {
         "title": "Color",
@@ -406,7 +409,11 @@
         "title": "Energy & Environment",
         "consumption": "Consumption",
         "emissions": "CO2 Emissions",
+        "evRange": "EV Range",
         "efficiency": "Energy Efficiency",
+        "batteryOwnership": "Battery Ownership",
+        "chargingStandardAC": "Charging Standard AC",
+        "chargingStandardDC": "Charging Standard DC",
         "euroNorm": "Euro Norm",
         "reset": "Reset"
       },

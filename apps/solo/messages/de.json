@@ -364,6 +364,7 @@
       "makeModel": {
         "title": "Marke & Modell",
         "addMake": "Marke hinzufügen",
+        "excludeMake": "Marke ausschliessen",
         "includeVehicles": "Fahrzeuge einschliessen",
         "excludeVehicles": "Fahrzeuge ausschliessen",
         "noSelections": "Keine Fahrzeuge ausgewählt."
@@ -393,7 +394,9 @@
         "drive": "Antrieb",
         "power": "Leistung",
         "capacity": "Hubraum",
-        "cylinder": "Zylinder"
+        "cylinder": "Zylinder",
+        "doors": "Türen",
+        "seats": "Sitzplätze"
       },
       "appearance": {
         "title": "Farbe",
@@ -406,7 +409,11 @@
         "title": "Energie & Umwelt",
         "consumption": "Verbrauch",
         "emissions": "CO2-Emissionen",
+        "evRange": "Reichweite",
         "efficiency": "Energieeffizienz",
+        "batteryOwnership": "Batteriemodell",
+        "chargingStandardAC": "Ladestandard AC",
+        "chargingStandardDC": "Ladestandard DC",
         "euroNorm": "Euronorm",
         "reset": "Zurücksetzen"
       },

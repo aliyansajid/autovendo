@@ -2,7 +2,7 @@
 
 import { useFormContext } from "react-hook-form";
 import { useState } from "react";
-import { PlusCircle, X } from "lucide-react";
+import { PlusCircle, MinusCircle, X } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import {
   AccordionContent,
@@ -20,6 +20,7 @@ export function MakeModelSection() {
   const t = useTranslations("AdvancedSearch.sections.makeModel");
   const { watch, setValue } = useFormContext();
   const [open, setOpen] = useState(false);
+  const [openExclude, setOpenExclude] = useState(false);
 
   const selectedMakes: string[] = watch("make") ?? [];
   const excludedMakes: string[] = watch("excludeMake") ?? [];
@@ -56,16 +57,28 @@ export function MakeModelSection() {
           {t("title")}
         </AccordionTrigger>
         <AccordionContent className="pt-6 px-1">
-          <Button
-            type="button"
-            size="lg"
-            variant="outline"
-            className="w-full"
-            onClick={() => setOpen(true)}
-          >
-            <PlusCircle />
-            {t("addMake")}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              size="lg"
+              variant="outline"
+              className="flex-1"
+              onClick={() => setOpen(true)}
+            >
+              <PlusCircle />
+              {t("addMake")}
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              variant="outline"
+              className="flex-1 text-destructive border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => setOpenExclude(true)}
+            >
+              <MinusCircle />
+              {t("excludeMake")}
+            </Button>
+          </div>
 
           <div className="mt-4 space-y-4">
             {selectedMakes.length > 0 && (
@@ -128,6 +141,18 @@ export function MakeModelSection() {
           models: selectedModels,
         }}
         onChange={handleChange}
+      />
+
+      <MakeModelDialog
+        open={openExclude}
+        onOpenChange={setOpenExclude}
+        value={{
+          includes: selectedMakes,
+          excludes: excludedMakes,
+          models: selectedModels,
+        }}
+        onChange={handleChange}
+        defaultExcludeMode
       />
     </>
   );

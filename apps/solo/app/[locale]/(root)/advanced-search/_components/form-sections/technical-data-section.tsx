@@ -2,6 +2,7 @@
 
 import { useFormContext, useWatch } from "react-hook-form";
 import { useEffect, useRef } from "react";
+import { Slider } from "@repo/ui/components/slider";
 import { Label } from "@repo/ui/src/components/label";
 import {
   AccordionContent,
@@ -12,14 +13,11 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import {
-  TransmissionTypeEnum,
-  DriveTypeEnum,
-  carFuelTypeEnum,
-  utilityFuelTypeEnum,
-  truckFuelTypeEnum,
-  camperFuelTypeEnum,
-} from "@repo/vehicle-constants";
+import { TransmissionTypeEnum, DriveTypeEnum } from "@repo/vehicle-constants";
+import { carFuelTypeEnum } from "@repo/vehicle-constants";
+import { utilityFuelTypeEnum } from "@repo/vehicle-constants";
+import { truckFuelTypeEnum } from "@repo/vehicle-constants";
+import { camperFuelTypeEnum } from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@repo/ui/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";
@@ -35,9 +33,8 @@ export function TechnicalDataSection({
   const tBasic = useTranslations("AdvancedSearch.sections.basic");
   const tVehicle = useTranslations("Vehicle");
   const locale = useLocale();
-  const { control, watch, setValue, getValues } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
   const powerType = watch("powerType") ?? "ps";
-  const powerValue = watch("power"); // undefined = slider not yet moved
 
   const powerFrom = useWatch({ control, name: "power-from" });
   const powerTo = useWatch({ control, name: "power-to" });
@@ -45,133 +42,66 @@ export function TechnicalDataSection({
   const capacityTo = useWatch({ control, name: "capacity-to" });
   const cylinderFrom = useWatch({ control, name: "cylinder-from" });
   const cylinderTo = useWatch({ control, name: "cylinder-to" });
+  const doorsFrom = useWatch({ control, name: "doors-from" });
+  const doorsTo = useWatch({ control, name: "doors-to" });
+  const seatsFrom = useWatch({ control, name: "seats-from" });
+  const seatsTo = useWatch({ control, name: "seats-to" });
 
-  // Compute dynamic slider limits from DB facets, rounded to nearest step
-  const maxPs = 1500;
-  const maxKw = 1000;
+  const maxPs = facets?.hpMax ?? 4000;
+  const maxKw = facets?.kwMax ?? 3000;
   const currentMax = powerType === "kw" ? maxKw : maxPs;
   const currentStep = powerType === "kw" ? 5 : 10;
   const currentUnit = powerType === "kw" ? "kW" : "PS";
 
-  // Reset slider and filter inputs when the user switches between PS and kW
+  const cubicCapacityMax = facets?.cubicCapacityMax ?? 30000;
+  const cylindersMax = facets?.cylindersMax ?? 16;
+  const doorsMax = 20;
+  const seatsMax = 150;
+
+  // Reset power inputs when switching between PS and kW
   const prevPowerTypeRef = useRef(powerType);
   useEffect(() => {
     if (prevPowerTypeRef.current !== powerType) {
       prevPowerTypeRef.current = powerType;
-      setValue("power", undefined as any);
       setValue("power-from", "");
       setValue("power-to", "");
     }
   }, [powerType, setValue]);
 
-  // Sync slider position → input fields; treat min/max positions as "no filter"
-  useEffect(() => {
-    if (powerValue === undefined) {
-      if (getValues("power-from") !== "" || getValues("power-to") !== "") {
-        setValue("power-from", "");
-        setValue("power-to", "");
-      }
-      return;
-    }
-    const [from, to] = powerValue as [number, number];
-    const nextFrom = from === 0 ? "" : from.toString();
-    const nextTo = to >= currentMax ? "" : to.toString();
-    if (getValues("power-from") !== nextFrom) setValue("power-from", nextFrom);
-    if (getValues("power-to") !== nextTo) setValue("power-to", nextTo);
-  }, [powerValue, currentMax, setValue, getValues]);
+  const parseNum = (val: unknown, fallback: number) => {
+    if (val === undefined || val === null || val === "") return fallback;
+    const cleaned = String(val).replace(/[^0-9.-]/g, "");
+    const num = Number(cleaned);
+    return Number.isFinite(num) ? num : fallback;
+  };
 
-  const cubicCapacityMax = 8000;
-  const cylindersMax = 16;
-  const capacityValue = watch("capacity");
-  const cylinderValue = watch("cylinder");
-
-  useEffect(() => {
-    if (capacityValue === undefined) {
-      if (
-        getValues("capacity-from") !== "" ||
-        getValues("capacity-to") !== ""
-      ) {
-        setValue("capacity-from", "");
-        setValue("capacity-to", "");
-      }
-      return;
-    }
-    const [from, to] = capacityValue as [number, number];
-    const nextFrom = from <= 1 ? "" : from.toString();
-    const nextTo = to >= cubicCapacityMax ? "" : to.toString();
-    if (getValues("capacity-from") !== nextFrom)
-      setValue("capacity-from", nextFrom);
-    if (getValues("capacity-to") !== nextTo) setValue("capacity-to", nextTo);
-  }, [capacityValue, cubicCapacityMax, setValue, getValues]);
-
-  useEffect(() => {
-    if (cylinderValue === undefined) {
-      if (
-        getValues("cylinder-from") !== "" ||
-        getValues("cylinder-to") !== ""
-      ) {
-        setValue("cylinder-from", "");
-        setValue("cylinder-to", "");
-      }
-      return;
-    }
-    const [from, to] = cylinderValue as [number, number];
-    const nextFrom = from <= 1 ? "" : from.toString();
-    const nextTo = to >= cylindersMax ? "" : to.toString();
-    if (getValues("cylinder-from") !== nextFrom)
-      setValue("cylinder-from", nextFrom);
-    if (getValues("cylinder-to") !== nextTo) setValue("cylinder-to", nextTo);
-  }, [cylinderValue, cylindersMax, setValue, getValues]);
-
-  // Two-way sync: inputs -> sliders
-  useEffect(() => {
-    const parseNumber = (val: unknown, fallback: number) => {
-      if (val === undefined || val === null || val === "") return fallback;
-      const cleaned = String(val).replace(/[^0-9.-]/g, "");
-      const num = Number(cleaned);
-      return Number.isFinite(num) ? num : fallback;
-    };
-    const from = parseNumber(powerFrom, 0);
-    const to = parseNumber(powerTo, currentMax);
-    const [curFrom, curTo] = getValues("power") ?? [0, currentMax];
-    if (from === curFrom && to === curTo) return;
-    setValue("power", [from, to], { shouldDirty: true });
-  }, [powerFrom, powerTo, getValues, setValue, currentMax]);
-
-  useEffect(() => {
-    const parseNumber = (val: unknown, fallback: number) => {
-      if (val === undefined || val === null || val === "") return fallback;
-      const cleaned = String(val).replace(/[^0-9.-]/g, "");
-      const num = Number(cleaned);
-      return Number.isFinite(num) ? num : fallback;
-    };
-    const from = parseNumber(capacityFrom, 1);
-    const to = parseNumber(capacityTo, cubicCapacityMax);
-    const [curFrom, curTo] = getValues("capacity") ?? [1, cubicCapacityMax];
-    if (from === curFrom && to === curTo) return;
-    setValue("capacity", [from, to], { shouldDirty: true });
-  }, [capacityFrom, capacityTo, getValues, setValue, cubicCapacityMax]);
-
-  useEffect(() => {
-    const parseNumber = (val: unknown, fallback: number) => {
-      if (val === undefined || val === null || val === "") return fallback;
-      const cleaned = String(val).replace(/[^0-9.-]/g, "");
-      const num = Number(cleaned);
-      return Number.isFinite(num) ? num : fallback;
-    };
-    const from = parseNumber(cylinderFrom, 1);
-    const to = parseNumber(cylinderTo, cylindersMax);
-    const [curFrom, curTo] = getValues("cylinder") ?? [1, cylindersMax];
-    if (from === curFrom && to === curTo) return;
-    setValue("cylinder", [from, to], { shouldDirty: true });
-  }, [cylinderFrom, cylinderTo, getValues, setValue, cylindersMax]);
+  const powerRange: [number, number] = [
+    parseNum(powerFrom, 0),
+    parseNum(powerTo, currentMax),
+  ];
+  const capacityRange: [number, number] = [
+    parseNum(capacityFrom, 1),
+    parseNum(capacityTo, cubicCapacityMax),
+  ];
+  const cylinderRange: [number, number] = [
+    parseNum(cylinderFrom, 1),
+    parseNum(cylinderTo, cylindersMax),
+  ];
+  const doorsRange: [number, number] = [
+    parseNum(doorsFrom, 2),
+    parseNum(doorsTo, doorsMax),
+  ];
+  const seatsRange: [number, number] = [
+    parseNum(seatsFrom, 2),
+    parseNum(seatsTo, seatsMax),
+  ];
 
   const currentFuelEnum =
-    vehicleType === "utility"
+    vehicleType === "UTILITY"
       ? utilityFuelTypeEnum
-      : vehicleType === "truck"
+      : vehicleType === "TRUCK"
         ? truckFuelTypeEnum
-        : vehicleType === "camper"
+        : vehicleType === "CAMPER"
           ? camperFuelTypeEnum
           : carFuelTypeEnum;
 
@@ -197,7 +127,7 @@ export function TechnicalDataSection({
               </span>
             </div>
             <div className="space-y-3">
-              {currentFuelEnum.map((type: { value: string }) => {
+              {currentFuelEnum.map((type: { value: string; label: string }) => {
                 const count = facets?.fuelType?.[type.value];
                 return (
                   <div
@@ -208,7 +138,9 @@ export function TechnicalDataSection({
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`fuel-${type.value}`}
-                      label={tVehicle(`fuelTypes.${type.value}`)}
+                      label={tVehicle(
+                        `fuelTypes.${type.value}`,
+                      )}
                     />
                     <span className="text-sm text-muted-foreground">
                       {formatCount(count ?? 0)}
@@ -221,7 +153,9 @@ export function TechnicalDataSection({
 
           <div className="space-y-4">
             <div className="flex flex-col">
-              <Label className="text-base font-semibold">{t("transmission")}</Label>
+              <Label className="text-base font-semibold">
+                {t("transmission")}
+              </Label>
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() =>
@@ -245,7 +179,9 @@ export function TechnicalDataSection({
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`transmission-${type.value}`}
-                      label={tVehicle(`transmissionTypes.${type.value}`)}
+                      label={tVehicle(
+                        `transmissionTypes.${type.value}`,
+                      )}
                     />
                     <span className="text-sm text-muted-foreground">
                       {formatCount(count ?? 0)}
@@ -282,7 +218,9 @@ export function TechnicalDataSection({
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`drive-${type.value}`}
-                      label={tVehicle(`driveTypes.${type.value}`)}
+                      label={tVehicle(
+                        `driveTypes.${type.value}`,
+                      )}
                     />
                     <span className="text-sm text-muted-foreground">
                       {formatCount(count ?? 0)}
@@ -296,13 +234,92 @@ export function TechnicalDataSection({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
+            <div className="flex flex-col">
+              <Label className="text-base font-semibold">{t("doors")}</Label>
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => {
+                  setValue("doors-from", "");
+                  setValue("doors-to", "");
+                }}
+              >
+                {tBasic("reset")}
+              </span>
+            </div>
+            <Slider
+              min={2}
+              max={doorsMax}
+              step={1}
+              value={doorsRange}
+              onValueChange={([from = 0, to = 0]) => {
+                setValue("doors-from", from <= 2 ? "" : String(from));
+                setValue("doors-to", to >= doorsMax ? "" : String(to));
+              }}
+              className="py-2"
+            />
+            <div className="flex gap-2">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="doors-from"
+                placeholder="2"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="doors-to"
+                placeholder={`${doorsMax}+`}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex flex-col">
+              <Label className="text-base font-semibold">{t("seats")}</Label>
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => {
+                  setValue("seats-from", "");
+                  setValue("seats-to", "");
+                }}
+              >
+                {tBasic("reset")}
+              </span>
+            </div>
+            <Slider
+              min={2}
+              max={seatsMax}
+              step={1}
+              value={seatsRange}
+              onValueChange={([from = 0, to = 0]) => {
+                setValue("seats-from", from <= 2 ? "" : String(from));
+                setValue("seats-to", to >= seatsMax ? "" : String(to));
+              }}
+              className="py-2"
+            />
+            <div className="flex gap-2">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="seats-from"
+                placeholder="2"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="seats-to"
+                placeholder={`${seatsMax}+`}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Label className="text-base font-semibold">{t("power")}</Label>
                 <span
                   className="text-xs text-muted-foreground cursor-pointer hover:underline"
                   onClick={() => {
-                    setValue("power", undefined as any);
                     setValue("power-from", "");
                     setValue("power-to", "");
                   }}
@@ -322,31 +339,33 @@ export function TechnicalDataSection({
               />
             </div>
 
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.SLIDER}
-              name="power"
+            <Slider
               min={0}
               max={currentMax}
               step={currentStep}
-            >
-              <div className="flex gap-2">
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="power-from"
-                  inputGroupText={currentUnit}
-                  placeholder="0"
-                />
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="power-to"
-                  inputGroupText={currentUnit}
-                  placeholder={`${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(currentMax)}${powerValue?.[1] && powerValue[1] >= currentMax ? "+" : ""}`}
-                />
-              </div>
-            </CustomFormField>
+              value={powerRange}
+              onValueChange={([from = 0, to = 0]) => {
+                setValue("power-from", from === 0 ? "" : String(from));
+                setValue("power-to", to >= currentMax ? "" : String(to));
+              }}
+              className="py-2"
+            />
+            <div className="flex gap-2">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="power-from"
+                inputGroupText={currentUnit}
+                placeholder="0"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="power-to"
+                inputGroupText={currentUnit}
+                placeholder={`${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(currentMax)}+`}
+              />
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -355,7 +374,6 @@ export function TechnicalDataSection({
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
-                  setValue("capacity", undefined as any);
                   setValue("capacity-from", "");
                   setValue("capacity-to", "");
                 }}
@@ -363,31 +381,33 @@ export function TechnicalDataSection({
                 {tBasic("reset")}
               </span>
             </div>
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.SLIDER}
-              name="capacity"
+            <Slider
               min={1}
               max={cubicCapacityMax}
               step={100}
-            >
-              <div className="flex gap-2">
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="capacity-from"
-                  inputGroupText="cm³"
-                  placeholder="1"
-                />
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="capacity-to"
-                  inputGroupText="cm³"
-                  placeholder={`${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(cubicCapacityMax)}${capacityValue?.[1] && capacityValue[1] >= cubicCapacityMax ? "+" : ""}`}
-                />
-              </div>
-            </CustomFormField>
+              value={capacityRange}
+              onValueChange={([from = 0, to = 0]) => {
+                setValue("capacity-from", from <= 1 ? "" : String(from));
+                setValue("capacity-to", to >= cubicCapacityMax ? "" : String(to));
+              }}
+              className="py-2"
+            />
+            <div className="flex gap-2">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="capacity-from"
+                inputGroupText="cm³"
+                placeholder="1"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="capacity-to"
+                inputGroupText="cm³"
+                placeholder={`${new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(cubicCapacityMax)}+`}
+              />
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -396,7 +416,6 @@ export function TechnicalDataSection({
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
-                  setValue("cylinder", undefined as any);
                   setValue("cylinder-from", "");
                   setValue("cylinder-to", "");
                 }}
@@ -404,29 +423,31 @@ export function TechnicalDataSection({
                 {tBasic("reset")}
               </span>
             </div>
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.SLIDER}
-              name="cylinder"
+            <Slider
               min={1}
               max={cylindersMax}
               step={1}
-            >
-              <div className="flex gap-2">
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="cylinder-from"
-                  placeholder="1"
-                />
-                <CustomFormField
-                  control={control}
-                  fieldType={FormFieldType.INPUT_GROUP}
-                  name="cylinder-to"
-                  placeholder={`${cylindersMax}${cylinderValue?.[1] && cylinderValue[1] >= cylindersMax ? "+" : ""}`}
-                />
-              </div>
-            </CustomFormField>
+              value={cylinderRange}
+              onValueChange={([from = 0, to = 0]) => {
+                setValue("cylinder-from", from <= 1 ? "" : String(from));
+                setValue("cylinder-to", to >= cylindersMax ? "" : String(to));
+              }}
+              className="py-2"
+            />
+            <div className="flex gap-2">
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="cylinder-from"
+                placeholder="1"
+              />
+              <CustomFormField
+                control={control}
+                fieldType={FormFieldType.INPUT_GROUP}
+                name="cylinder-to"
+                placeholder={`${cylindersMax}+`}
+              />
+            </div>
           </div>
         </div>
       </AccordionContent>

@@ -1,7 +1,67 @@
 /**
  * Build /cars search params from advanced search form values and vehicle type.
  * Used for submit navigation and for fetching count/facets.
+ *
+ * All enum key lists are derived from @repo/vehicle-constants — the single
+ * source of truth. Adding/removing a value there automatically propagates here.
  */
+import {
+  VehicleConditionEnum,
+  TransmissionTypeEnum,
+  DriveTypeEnum,
+  ColorEnum,
+  EnergyLabelEnum,
+  BatteryOwnershipEnum,
+  ChargingPlugTypeStandardEnum,
+  ChargingPlugTypeFastEnum,
+} from "@repo/vehicle-constants";
+import {
+  carBodyTypeEnum,
+  utilityBodyTypeEnum,
+  truckBodyTypeEnum,
+  camperBodyTypeEnum,
+  carFuelTypeEnum,
+  utilityFuelTypeEnum,
+  truckFuelTypeEnum,
+  camperFuelTypeEnum,
+} from "@repo/vehicle-constants";
+
+// ─── Derived key lists (single source of truth) ───────────────────────────────
+
+const CONDITION_KEYS = VehicleConditionEnum.map((v) => v.value);
+
+const BODY_TYPE_KEYS = Array.from(
+  new Set([
+    ...carBodyTypeEnum.map((v) => v.value),
+    ...utilityBodyTypeEnum.map((v) => v.value),
+    ...truckBodyTypeEnum.map((v) => v.value),
+    ...camperBodyTypeEnum.map((v) => v.value),
+  ]),
+);
+
+const FUEL_KEYS = Array.from(
+  new Set([
+    ...carFuelTypeEnum.map((v) => v.value),
+    ...utilityFuelTypeEnum.map((v) => v.value),
+    ...truckFuelTypeEnum.map((v) => v.value),
+    ...camperFuelTypeEnum.map((v) => v.value),
+  ]),
+);
+
+const TRANSMISSION_KEYS = TransmissionTypeEnum.map((v) => v.value);
+
+const COLOR_KEYS = ColorEnum.map((v) => v.value);
+
+const DRIVE_TYPE_KEYS = DriveTypeEnum.map((v) => v.value);
+
+const ENERGY_LABEL_KEYS = EnergyLabelEnum.map((v) => v.value);
+
+const BATTERY_OWNERSHIP_KEYS = BatteryOwnershipEnum.map((v) => v.value);
+const CHARGING_STANDARD_AC_KEYS = ChargingPlugTypeStandardEnum.map((v) => v.value);
+const CHARGING_STANDARD_DC_KEYS = ChargingPlugTypeFastEnum.map((v) => v.value);
+
+// ─── Builder ──────────────────────────────────────────────────────────────────
+
 export function buildSearchParams(
   formValues: Record<string, unknown>,
   vehicleType: string,
@@ -46,6 +106,7 @@ export function buildSearchParams(
   if (formValues["price-to"] != null && formValues["price-to"] !== "") {
     params.priceTo = String(formValues["price-to"]);
   }
+
   // Power: emit kwFrom/kwTo if powerType=kw, else powerFrom/powerTo (hp)
   const powerType = formValues["powerType"] ?? "ps";
   if (powerType === "kw") {
@@ -64,54 +125,42 @@ export function buildSearchParams(
     }
   }
 
-  // Condition (condition-new, condition-demonstration, ...)
+  // Condition — form fields: condition-NEW, condition-USED, etc.
   const condition: string[] = [];
-  for (const key of ["new", "demonstration", "pre-registered", "used", "oldtimer"]) {
+  for (const key of CONDITION_KEYS) {
     if (formValues[`condition-${key}`] === true) condition.push(key);
   }
   if (condition.length > 0) params.condition = condition;
 
-  // Body type (bodyType-bus, ...)
+  // Body type — form fields: bodyType-SUV, bodyType-SMALL_CAR, etc.
   const bodyType: string[] = [];
-  const bodyKeys = [
-    "bus", "cabriolet", "coupe", "small-car", "estate", "minivan", "saloon", "pickup", "suv",
-    "box", "platform", "tipper", "van", "flatbed", "other", // utility/truck/camper
-  ];
-  for (const key of bodyKeys) {
+  for (const key of BODY_TYPE_KEYS) {
     if (formValues[`bodyType-${key}`] === true) bodyType.push(key);
   }
   if (bodyType.length > 0) params.bodyType = bodyType;
 
-  // Fuel (fuel-petrol, ...)
+  // Fuel — form fields: fuel-PETROL, fuel-CNG_PETROL, etc.
   const fuel: string[] = [];
-  const fuelKeys = [
-    "petrol", "ethanol-petrol", "diesel", "electric", "cng-petrol", "lpg-petrol",
-    "mhev-diesel", "mhev-petrol", "phev-diesel", "phev-petrol", "hev-diesel", "hev-petrol", "hydrogen",
-  ];
-  for (const key of fuelKeys) {
+  for (const key of FUEL_KEYS) {
     if (formValues[`fuel-${key}`] === true) fuel.push(key);
   }
   if (fuel.length > 0) params.fuel = fuel;
 
-  // Transmission (transmission-automatic, ...)
+  // Transmission — form fields: transmission-AUTOMATIC, etc.
   const transmission: string[] = [];
-  for (const key of ["automatic", "automatic-stepless", "semi-automatic", "manual"]) {
+  for (const key of TRANSMISSION_KEYS) {
     if (formValues[`transmission-${key}`] === true) transmission.push(key);
   }
   if (transmission.length > 0) params.transmission = transmission;
 
-  // Exterior color (color-black, ...)
+  // Exterior color — form fields: color-BLUE, color-BLACK, etc.
   const color: string[] = [];
-  const colorKeys = [
-    "anthracite", "beige", "black", "blue", "bordeaux", "brown", "gold", "gray", "green",
-    "multicoloured", "orange", "pink", "red", "silver", "turquoise", "violet", "white", "yellow", "other",
-  ];
-  for (const key of colorKeys) {
+  for (const key of COLOR_KEYS) {
     if (formValues[`color-${key}`] === true) color.push(key);
   }
   if (color.length > 0) params.color = color;
 
-  // Equipment (equipment-abs, ...)
+  // Equipment — form fields: equipment-<VALUE> (dynamic)
   const equipment: string[] = [];
   for (const [key, value] of Object.entries(formValues)) {
     if (key.startsWith("equipment-") && value === true) {
@@ -120,13 +169,22 @@ export function buildSearchParams(
   }
   if (equipment.length > 0) params.equipment = equipment;
 
+  // Extras — form fields: extra-<VALUE> (dynamic)
+  const extras: string[] = [];
+  for (const [key, value] of Object.entries(formValues)) {
+    if (key.startsWith("extra-") && value === true) {
+      extras.push(key.replace("extra-", ""));
+    }
+  }
+  if (extras.length > 0) params.extras = extras;
+
   // Metallic
   if (formValues.metallic === true) params.metallic = "true";
   if (formValues.metallic === false) params.metallic = "false";
 
-  // Drive type (drive-all, drive-front, drive-rear)
+  // Drive type — form fields: drive-ALL, drive-FRONT, drive-REAR
   const driveType: string[] = [];
-  for (const key of ["all", "front", "rear"]) {
+  for (const key of DRIVE_TYPE_KEYS) {
     if (formValues[`drive-${key}`] === true) driveType.push(key);
   }
   if (driveType.length > 0) params.driveType = driveType;
@@ -163,14 +221,14 @@ export function buildSearchParams(
     params.co2To = String(formValues["emissions-to"]);
   }
 
-  // Energy efficiency label (energy-a, energy-b, ...)
+  // Energy efficiency label — form fields: energy-A, energy-B, etc.
   const energyLabels: string[] = [];
-  for (const key of ["a", "b", "c", "d", "e", "f", "g"]) {
+  for (const key of ENERGY_LABEL_KEYS) {
     if (formValues[`energy-${key}`] === true) energyLabels.push(key);
   }
   if (energyLabels.length > 0) params.energyLabels = energyLabels;
 
-  // Emission standard / Euronorm (eu-euro-1, eu-euro-2, ...)
+  // Emission standard / Euronorm — form fields: eu-EURO_1, eu-EURO_2, etc. (dynamic)
   const emissionStandards: string[] = [];
   for (const [key, value] of Object.entries(formValues)) {
     if (key.startsWith("eu-") && value === true) {
@@ -185,9 +243,9 @@ export function buildSearchParams(
   // Has warranty
   if (formValues["condition-warranty"] === true) params.hasWarranty = "true";
 
-  // Interior color (int-black, ...)
+  // Interior color — form fields: int-BLUE, int-BLACK, etc.
   const interiorColor: string[] = [];
-  for (const key of colorKeys) {
+  for (const key of COLOR_KEYS) {
     if (formValues[`int-${key}`] === true) interiorColor.push(key);
   }
   if (interiorColor.length > 0) params.interiorColor = interiorColor;
@@ -197,6 +255,51 @@ export function buildSearchParams(
   if (typeof daysListed === "string" && daysListed !== "any") {
     const days = parseInt(daysListed.split(" ")[0] ?? "", 10);
     if (!isNaN(days)) params.daysListed = String(days);
+  }
+
+  // EV range
+  if (formValues["range-from"] != null && formValues["range-from"] !== "") {
+    params.rangeFrom = String(formValues["range-from"]);
+  }
+  if (formValues["range-to"] != null && formValues["range-to"] !== "") {
+    params.rangeTo = String(formValues["range-to"]);
+  }
+
+  // Battery ownership — form fields: batteryOwnership-BATTERY_INCLUDED, etc.
+  const batteryOwnership: string[] = [];
+  for (const key of BATTERY_OWNERSHIP_KEYS) {
+    if (formValues[`batteryOwnership-${key}`] === true) batteryOwnership.push(key);
+  }
+  if (batteryOwnership.length > 0) params.batteryOwnership = batteryOwnership;
+
+  // Charging standard AC — form fields: chargingStandardAC-TYPE_1, etc.
+  const chargingPlugTypeStandard: string[] = [];
+  for (const key of CHARGING_STANDARD_AC_KEYS) {
+    if (formValues[`chargingStandardAC-${key}`] === true) chargingPlugTypeStandard.push(key);
+  }
+  if (chargingPlugTypeStandard.length > 0) params.chargingPlugTypeStandard = chargingPlugTypeStandard;
+
+  // Charging standard DC — form fields: chargingStandardDC-CCS, etc.
+  const chargingPlugTypeFast: string[] = [];
+  for (const key of CHARGING_STANDARD_DC_KEYS) {
+    if (formValues[`chargingStandardDC-${key}`] === true) chargingPlugTypeFast.push(key);
+  }
+  if (chargingPlugTypeFast.length > 0) params.chargingPlugTypeFast = chargingPlugTypeFast;
+
+  // Doors
+  if (formValues["doors-from"] != null && formValues["doors-from"] !== "") {
+    params.doorsFrom = String(formValues["doors-from"]);
+  }
+  if (formValues["doors-to"] != null && formValues["doors-to"] !== "") {
+    params.doorsTo = String(formValues["doors-to"]);
+  }
+
+  // Seats
+  if (formValues["seats-from"] != null && formValues["seats-from"] !== "") {
+    params.seatsFrom = String(formValues["seats-from"]);
+  }
+  if (formValues["seats-to"] != null && formValues["seats-to"] !== "") {
+    params.seatsTo = String(formValues["seats-to"]);
   }
 
   return params;
