@@ -18,7 +18,9 @@ import {
 } from "@repo/ui/src/components/custom-form-field";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
+import { carBodyTypeEnum } from "@repo/vehicle-constants";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 
 const formSchema = z.object({
   bodyType: z.array(z.string()),
@@ -32,15 +34,10 @@ export function VehicleTypeDialog({
   const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.vehicleType");
   const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const tVehicle = useTranslations("Vehicle");
-  const locale = useLocale();
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-
-  function formatCount(n: number) {
-    return new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(n);
-  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,14 +70,12 @@ export function VehicleTypeDialog({
     setOpen(false);
   };
 
-  const bodyTypeOptions = [
-    "BUS", "CABRIOLET", "COUPE", "SMALL_CAR", "ESTATE", "MINIVAN", "SALOON", "PICKUP", "SUV",
-  ].map((value) => {
+  const bodyTypeOptions = carBodyTypeEnum.map(({ value }) => {
     const count = counts?.[value];
     const label = tVehicle(`types.${value}`);
     return {
       label: count !== undefined ? `${label} (${formatCount(count)})` : label,
-      value: value,
+      value,
     };
   });
 

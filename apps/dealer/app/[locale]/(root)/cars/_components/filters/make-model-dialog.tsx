@@ -27,6 +27,7 @@ import Image from "next/image";
 import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 
 const formSchema = z.object({
   search: z.string().optional(),
@@ -84,9 +85,6 @@ export function MakeModelDialog({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  function formatCount(n: number) {
-    return new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(n);
-  }
 
   // Uncontrolled (URL) mode state
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Car, Truck, Caravan, X } from "lucide-react";
+import { Car, Truck, Caravan, X, type LucideIcon } from "lucide-react";
+import { VehicleTypeEnum } from "@repo/vehicle-constants";
 import { Button } from "@repo/ui/components/button";
 import { Accordion } from "@repo/ui/components/accordion";
 import { Separator } from "@repo/ui/components/separator";
@@ -53,7 +54,20 @@ export const AdvancedSearchForm = () => {
     defaultValues: { make: [], powerType: "ps", daysListed: "any" },
   });
 
-  const [vehicleType, setVehicleType] = useState("CAR");
+  const VEHICLE_TYPE_ICONS: Record<string, LucideIcon> = {
+    CAR: Car,
+    CAMPER: Caravan,
+    UTILITY: Truck,
+    TRUCK: Truck,
+  };
+  const VEHICLE_TYPE_TABS = [
+    { id: "CAR", labelKey: "vehicleTypes.car" },
+    { id: "CAMPER", labelKey: "vehicleTypes.camper" },
+    { id: "UTILITY", labelKey: "vehicleTypes.utility" },
+    { id: "TRUCK", labelKey: "vehicleTypes.truck" },
+  ].filter(({ id }) => VehicleTypeEnum.some((e) => e.value === id));
+
+  const [vehicleType, setVehicleType] = useState(VehicleTypeEnum[0].value);
   const [total, setTotal] = useState<number | null>(null);
   const [facets, setFacets] = useState<VehicleFacets | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -136,26 +150,24 @@ export const AdvancedSearchForm = () => {
           </div>
 
           <div className="flex overflow-x-auto gap-8 mb-8 pt-8 scrollbar-hide border-b">
-            {[
-              { id: "CAR", label: t("vehicleTypes.car"), icon: Car },
-              { id: "CAMPER", label: t("vehicleTypes.camper"), icon: Caravan },
-              { id: "UTILITY", label: t("vehicleTypes.utility"), icon: Truck },
-              { id: "TRUCK", label: t("vehicleTypes.truck"), icon: Truck },
-            ].map((type) => (
-              <button
-                key={type.id}
-                type="button"
-                onClick={() => setVehicleType(type.id)}
-                className={`flex items-center gap-3 pb-4 min-w-max transition-all ${
-                  vehicleType === type.id
-                    ? "text-foreground border-b-2 border-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <type.icon className="w-6 h-6" />
-                <span className="text-base font-medium">{type.label}</span>
-              </button>
-            ))}
+            {VEHICLE_TYPE_TABS.map(({ id, labelKey }) => {
+              const Icon = VEHICLE_TYPE_ICONS[id] ?? Car;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setVehicleType(id)}
+                  className={`flex items-center gap-3 pb-4 min-w-max transition-all ${
+                    vehicleType === id
+                      ? "text-foreground border-b-2 border-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Icon className="w-6 h-6" />
+                  <span className="text-base font-medium">{t(labelKey as Parameters<typeof t>[0])}</span>
+                </button>
+              );
+            })}
           </div>
 
           <Accordion

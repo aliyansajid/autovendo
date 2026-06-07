@@ -20,6 +20,7 @@ import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { VehicleConditionEnum } from "@repo/vehicle-constants";
 
 const formSchema = z.object({
   condition: z.array(z.string()),
@@ -66,13 +67,10 @@ export function ConditionDialog({ resultCount }: { resultCount?: number }) {
     setOpen(false);
   };
 
-  const conditionOptions = [
-    { value: "NEW", label: tVehicle("NEW") },
-    { value: "DEMONSTRATION", label: tVehicle("DEMONSTRATION") },
-    { value: "PRE_REGISTERED", label: tVehicle("PRE_REGISTERED") },
-    { value: "USED", label: tVehicle("USED") },
-    { value: "OLDTIMER", label: tVehicle("OLDTIMER") },
-  ];
+  const conditionOptions = VehicleConditionEnum.map(({ value }) => ({
+    value,
+    label: tVehicle(value),
+  }));
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

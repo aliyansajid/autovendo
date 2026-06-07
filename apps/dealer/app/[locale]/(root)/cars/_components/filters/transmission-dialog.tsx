@@ -19,7 +19,9 @@ import {
 import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
+import { TransmissionTypeEnum } from "@repo/vehicle-constants";
+import { formatCount } from "@repo/ui/lib/helpers/format";
 
 const formSchema = z.object({
   transmission: z.array(z.string()),
@@ -33,15 +35,10 @@ export function TransmissionDialog({
   const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.transmission");
   const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const tVehicle = useTranslations("Vehicle.transmissionTypes");
-  const locale = useLocale();
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-
-  function formatCount(n: number) {
-    return new Intl.NumberFormat(locale === "de" ? "de-CH" : locale).format(n);
-  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,14 +71,12 @@ export function TransmissionDialog({
     setOpen(false);
   };
 
-  const transmissionOptions = [
-    "MANUAL", "AUTOMATIC", "SEMI_AUTOMATIC"
-  ].map((value) => {
+  const transmissionOptions = TransmissionTypeEnum.map(({ value }) => {
     const count = counts?.[value];
     const label = tVehicle(value);
     return {
       label: count !== undefined ? `${label} (${formatCount(count)})` : label,
-      value: value,
+      value,
     };
   });
 

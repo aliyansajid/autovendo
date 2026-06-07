@@ -130,14 +130,25 @@ router.post("/presign-profile", async (c) => {
 // ─── DELETE /cleanup — delete orphaned S3 keys ───────────────────────────────
 
 router.delete("/cleanup", async (c) => {
+  const user = c.get("user")!;
+
+  const dealer = await prisma.dealer.findUnique({
+    where: { userId: user.id },
+    select: { id: true },
+  });
+  if (!dealer) return c.json({ error: "Dealer profile not found" }, 404);
+
   const body = await c.req.json().catch(() => null);
   if (!Array.isArray(body?.keys) || body.keys.length === 0) {
     return c.json({ ok: true });
   }
 
-  await Promise.allSettled(
-    (body.keys as string[]).map((key) => storage.deleteFile(key)),
+  // Only allow deleting keys that belong to this dealer (prefix = dealerId/)
+  const ownedKeys = (body.keys as string[]).filter(
+    (key) => typeof key === "string" && key.startsWith(`${dealer.id}/`),
   );
+
+  await Promise.allSettled(ownedKeys.map((key) => storage.deleteFile(key)));
 
   return c.json({ ok: true });
 });
