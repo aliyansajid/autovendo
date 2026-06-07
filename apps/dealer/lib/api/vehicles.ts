@@ -189,6 +189,31 @@ export async function getActiveSubscriptionsFromApi(): Promise<any[]> {
   }
 }
 
+export async function submitContactForm(data: {
+  name: string;
+  email: string;
+  phone: string;
+  subject?: string;
+  message?: string;
+}): Promise<{ ok: boolean; message?: string; error?: string }> {
+  const res = await fetch(`${API_BASE}/api/contact`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  const body = await res.json().catch(() => ({}));
+  return { ok: res.ok, ...body };
+}
+
+export async function getSitemapData(): Promise<{
+  vehicles: { id: string; updatedAt: string }[];
+  dealers: { id: string; updatedAt: string }[];
+}> {
+  const res = await fetch(`${API_BASE}/api/sitemap`, { cache: "no-store" });
+  if (!res.ok) return { vehicles: [], dealers: [] };
+  return res.json();
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function buildQueryString(params: Record<string, string | string[] | undefined>): string {

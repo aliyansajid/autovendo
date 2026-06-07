@@ -18,8 +18,7 @@ import { Spinner } from "@repo/ui/src/components/spinner";
 import { toast } from "sonner";
 import { createContactFormSchema } from "@/schema/contact-schema";
 import { useTranslations } from "next-intl";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+import { submitContactForm } from "@/lib/api/vehicles";
 
 export default function ContactPage() {
   const t = useTranslations("ContactPage");
@@ -44,20 +43,15 @@ export default function ContactPage() {
 
   function onSubmit(data: z.infer<typeof contactFormSchema>) {
     startTransition(async () => {
-      const res = await fetch(`${API_BASE}/api/contact`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          subject: data.subject || undefined,
-          message: data.message || undefined,
-        }),
+      const result = await submitContactForm({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        subject: data.subject || undefined,
+        message: data.message || undefined,
       });
-      const result = await res.json().catch(() => ({}));
 
-      res.ok
+      result.ok
         ? toast.success(result.message ?? t("successDefault"))
         : toast.error(result.error ?? t("errorDefault"));
       form.reset();

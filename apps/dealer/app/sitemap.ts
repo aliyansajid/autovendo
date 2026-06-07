@@ -14,13 +14,10 @@ const STATIC_PATHS = [
   { path: "/how-it-works", priority: 0.6, changeFrequency: "monthly" as const },
 ];
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+import { getSitemapData } from "@/lib/api/vehicles";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const res = await fetch(`${API_BASE}/api/sitemap`, { cache: "no-store" });
-  const { vehicles, dealers } = res.ok
-    ? await res.json()
-    : { vehicles: [], dealers: [] };
+  const { vehicles, dealers } = await getSitemapData();
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.flatMap(
     ({ path, priority, changeFrequency }) =>

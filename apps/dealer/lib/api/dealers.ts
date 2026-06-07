@@ -160,6 +160,22 @@ export async function sendDealerContactEmailFromApi(
   }
 }
 
+export async function presignProfileUpload(data: {
+  type: "branding" | "profiles";
+  filename: string;
+  contentType: string;
+}): Promise<{ success: boolean; uploadUrl?: string; publicUrl?: string; error?: string }> {
+  const res = await fetch(`${API_BASE}/api/dealer/storage/presign-profile`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) return { success: false, error: (body as any).error };
+  return body;
+}
+
 export async function getDealerGoogleReviewsFromApi(
   dealerId: string,
 ): Promise<GooglePlaceData | null> {
