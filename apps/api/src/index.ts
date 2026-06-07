@@ -19,7 +19,6 @@ import seller from "./routes/seller";
 import sellerBilling from "./routes/seller-billing";
 import sellerListings from "./routes/seller-listings";
 import sellerVehicles from "./routes/seller-vehicles";
-import sellerWebhook from "./routes/seller-webhook";
 import adminDealers from "./routes/admin-dealers";
 import adminPlans from "./routes/admin-plans";
 import adminSubscriptions from "./routes/admin-subscriptions";
@@ -123,9 +122,6 @@ app.route("/api/seller/listings", sellerListings);
 
 // Seller vehicles — public listing + authenticated dashboard
 app.route("/api/seller/vehicles", sellerVehicles);
-
-// Seller Stripe webhook
-app.route("/api/seller/webhook", sellerWebhook);
 
 // Admin — dealer management
 app.route("/api/admin/dealers", adminDealers);
