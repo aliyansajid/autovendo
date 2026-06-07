@@ -40,6 +40,7 @@ import {
   cacheSet,
   cacheDelete,
   cacheDeletePattern,
+  stableStringify,
 } from "../lib/cache";
 import { storage } from "../lib/storage";
 import { StorageService } from "@repo/storage";
@@ -716,7 +717,7 @@ function mapBodyToVehicleData(body: Record<string, any>, isCreate: boolean) {
 router.get("/", async (c) => {
   const params = parseParams(c);
   const includeFacets = c.req.query("facets") === "true";
-  const cacheKey = `api:seller:vehicles:${includeFacets ? "facets" : "list"}:${JSON.stringify(params)}`;
+  const cacheKey = `api:seller:vehicles:${includeFacets ? "facets" : "list"}:${stableStringify(params)}`;
 
   const cached = await cacheGet<any>(cacheKey);
   if (cached) return c.json(cached);
@@ -900,7 +901,7 @@ router.get("/", async (c) => {
 
 router.get("/facets", async (c) => {
   const params = parseParams(c);
-  const cacheKey = `api:seller:vehicles:count-facets:${JSON.stringify(params)}`;
+  const cacheKey = `api:seller:vehicles:count-facets:${stableStringify(params)}`;
 
   const cached = await cacheGet<any>(cacheKey);
   if (cached) return c.json(cached);

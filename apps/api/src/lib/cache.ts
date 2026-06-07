@@ -1,5 +1,18 @@
 import { getRedis } from "./redis";
 
+export function stableStringify(obj: unknown): string {
+  if (obj === null || typeof obj !== "object" || Array.isArray(obj)) {
+    return JSON.stringify(obj);
+  }
+  const sorted = Object.keys(obj as Record<string, unknown>)
+    .sort()
+    .reduce<Record<string, unknown>>((acc, key) => {
+      acc[key] = stableStringify((obj as Record<string, unknown>)[key]);
+      return acc;
+    }, {});
+  return JSON.stringify(sorted);
+}
+
 export async function cacheGet<T>(key: string): Promise<T | null> {
   const redis = getRedis();
   if (!redis) return null;

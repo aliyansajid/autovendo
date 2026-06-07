@@ -13,7 +13,7 @@ import type {
   EnergyLabel,
   EmissionStandard,
 } from "@repo/db";
-import { cacheGet, cacheSet } from "../lib/cache";
+import { cacheGet, cacheSet, stableStringify } from "../lib/cache";
 
 const vehicle = new Hono();
 
@@ -510,7 +510,7 @@ vehicle.get("/", async (c) => {
   try {
   const params = parseParams(c);
   const includeFacets = c.req.query("facets") === "true";
-  const cacheKey = `api:vehicles:${includeFacets ? "facets" : "list"}:${JSON.stringify(params)}`;
+  const cacheKey = `api:vehicles:${includeFacets ? "facets" : "list"}:${stableStringify(params)}`;
 
   const cached = await cacheGet<any>(cacheKey);
   if (cached) return c.json(cached);
@@ -699,7 +699,7 @@ vehicle.get("/", async (c) => {
 vehicle.get("/facets", async (c) => {
   try {
   const params = parseParams(c);
-  const cacheKey = `api:vehicles:count-facets:${JSON.stringify(params)}`;
+  const cacheKey = `api:vehicles:count-facets:${stableStringify(params)}`;
 
   const cached = await cacheGet<any>(cacheKey);
   if (cached) return c.json(cached);
