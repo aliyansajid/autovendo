@@ -9,7 +9,7 @@ import { Separator } from "@repo/ui/components/separator";
 import { z } from "zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
 import { createAdvancedSearchFormSchema } from "@/schema/advanced-search-schema";
 import { MakeModelSection } from "./form-sections/make-model-section";
 import { BasicDataSection } from "./form-sections/basic-data-section";
@@ -22,7 +22,6 @@ import { MoreFiltersSection } from "./form-sections/more-filters-section";
 import { buildSearchParams } from "../_lib/build-search-params";
 import { getSellerVehicleFacetsFromApi } from "@/lib/api/vehicles";
 import type { VehicleFacets } from "@/types/vehicle";
-import { formatCount } from "@repo/ui/lib/helpers/format";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 
@@ -47,7 +46,6 @@ export const AdvancedSearchForm = () => {
   const schema = useMemo(() => createAdvancedSearchFormSchema(t_schema), [t_schema]);
   const router = useRouter();
   const searchParams = useSearchParams();
-  
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema) as any,
@@ -67,7 +65,7 @@ export const AdvancedSearchForm = () => {
     { id: "TRUCK", labelKey: "vehicleTypes.truck" },
   ].filter(({ id }) => VehicleTypeEnum.some((e) => e.value === id));
 
-  const [vehicleType, setVehicleType] = useState(VehicleTypeEnum[0].value);
+  const [vehicleType, setVehicleType] = useState<string>(VehicleTypeEnum[0].value);
   const [total, setTotal] = useState<number | null>(null);
   const [facets, setFacets] = useState<VehicleFacets | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -88,11 +86,10 @@ export const AdvancedSearchForm = () => {
       ),
     };
 
-    getSellerVehicleFacetsFromApi(params)
-      .then((result) => {
-        setTotal(result?.total ?? null);
-        setFacets(result?.facets ?? null);
-      });
+    getSellerVehicleFacetsFromApi(params).then((result) => {
+      setTotal(result?.total ?? null);
+      setFacets(result?.facets ?? null);
+    });
 
     const subscription = form.watch((values) => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -100,11 +97,10 @@ export const AdvancedSearchForm = () => {
         const params = {
           ...buildSearchParams(values as Record<string, unknown>, vehicleType),
         };
-        getSellerVehicleFacetsFromApi(params)
-          .then((result) => {
-            setTotal(result?.total ?? null);
-            setFacets(result?.facets ?? null);
-          });
+        getSellerVehicleFacetsFromApi(params).then((result) => {
+          setTotal(result?.total ?? null);
+          setFacets(result?.facets ?? null);
+        });
       }, 300);
     });
 
