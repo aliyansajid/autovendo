@@ -4,7 +4,7 @@ import { routing } from "./i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://api.autovendo.ch";
+const API_BASE = process.env.NEXT_PUBLIC_APP_URL ?? "https://autosolo.ch";
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
