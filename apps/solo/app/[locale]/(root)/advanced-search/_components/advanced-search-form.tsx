@@ -86,17 +86,12 @@ export const AdvancedSearchForm = () => {
         form.getValues() as Record<string, unknown>,
         vehicleType,
       ),
-      
     };
 
     getSellerVehicleFacetsFromApi(params)
-      .then(({ total: t, facets: f }) => {
-        setTotal(t);
-        setFacets(f);
-      })
-      .catch(() => {
-        setTotal(null);
-        setFacets(null);
+      .then((result) => {
+        setTotal(result?.total ?? null);
+        setFacets(result?.facets ?? null);
       });
 
     const subscription = form.watch((values) => {
@@ -104,16 +99,11 @@ export const AdvancedSearchForm = () => {
       debounceRef.current = setTimeout(() => {
         const params = {
           ...buildSearchParams(values as Record<string, unknown>, vehicleType),
-          
         };
         getSellerVehicleFacetsFromApi(params)
-          .then(({ total: t, facets: f }) => {
-            setTotal(t);
-            setFacets(f);
-          })
-          .catch(() => {
-            setTotal(null);
-            setFacets(null);
+          .then((result) => {
+            setTotal(result?.total ?? null);
+            setFacets(result?.facets ?? null);
           });
       }, 300);
     });

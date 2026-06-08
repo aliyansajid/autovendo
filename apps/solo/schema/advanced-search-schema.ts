@@ -65,7 +65,7 @@ export const createAdvancedSearchFormSchema = (t: TFn) =>
       power: createOptionalNonNegativeNumberArray(t),
       "power-from": nonNegativeField(t),
       "power-to": nonNegativeField(t),
-      powerType: optionalStr,
+      powerType: z.enum(["ps", "kw"]).optional(),
 
       // Cubic capacity: ≥ 0
       capacity: createOptionalNonNegativeNumberArray(t),
