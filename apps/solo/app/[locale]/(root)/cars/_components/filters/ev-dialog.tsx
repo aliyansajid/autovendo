@@ -35,6 +35,7 @@ export function EvDialog() {
   const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.ev");
   const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
   const tSidebar = useTranslations("AdvancedSearch.FiltersSidebar");
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();

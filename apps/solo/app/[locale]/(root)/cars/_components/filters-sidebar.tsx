@@ -21,10 +21,6 @@ import {
   KILOMETER_OPTIONS,
   ColorEnum,
   EquipmentEnum,
-  carBodyTypeEnum,
-  carFuelTypeEnum,
-  VehicleConditionEnum,
-  TransmissionTypeEnum,
 } from "@repo/vehicle-constants";
 import { carMakes } from "@repo/vehicle-constants";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
@@ -177,7 +173,7 @@ export const FiltersSidebar = ({
       clearTimeout(timer);
       timer = setTimeout(() => {
         updateUrl(values);
-      }, 500);
+      }, 300);
     });
     return () => {
       subscription.unsubscribe();
@@ -245,13 +241,13 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>{t("condition")}</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(
-                  watchCondition,
-                  VehicleConditionEnum.map(({ value }) => ({
-                    value,
-                    label: tVehicle(`conditions.${value}`),
-                  })),
-                )}
+                {renderSelectedText(watchCondition, [
+                  { value: "NEW", label: tVehicle("conditions.NEW") },
+                  { value: "DEMONSTRATION", label: tVehicle("conditions.DEMONSTRATION") },
+                  { value: "PRE_REGISTERED", label: tVehicle("conditions.PRE_REGISTERED") },
+                  { value: "USED", label: tVehicle("conditions.USED") },
+                  { value: "OLDTIMER", label: tVehicle("conditions.OLDTIMER") },
+                ])}
                 <ConditionDialog resultCount={resultCount} />
               </div>
             </div>
@@ -373,9 +369,17 @@ export const FiltersSidebar = ({
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(
                   watchFuel,
-                  carFuelTypeEnum.map(({ value }) => ({
-                    value,
-                    label: tVehicle(`fuelTypes.${value}`),
+                  [
+                    "PETROL",
+                    "DIESEL",
+                    "ELECTRIC",
+                    "HYBRID",
+                    "GAS",
+                    "HYDROGEN",
+                    "OTHER",
+                  ].map((v) => ({
+                    value: v,
+                    label: tVehicle(`fuelTypes.${v}`),
                   })),
                 )}
                 <FuelTypeDialog counts={facets?.fuelType} />
@@ -401,9 +405,12 @@ export const FiltersSidebar = ({
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(
                   watchBodyType,
-                  carBodyTypeEnum.map(({ value }) => ({
-                    value,
-                    label: tVehicle(`types.${value}`),
+                  [
+                    "BUS", "CABRIOLET", "COUPE", "SMALL_CAR",
+                    "ESTATE", "MINIVAN", "SALOON", "PICKUP", "SUV",
+                  ].map((v) => ({
+                    value: v,
+                    label: tVehicle(`types.${v}`),
                   })),
                 )}
                 <VehicleTypeDialog counts={facets?.bodyType} />
@@ -426,9 +433,9 @@ export const FiltersSidebar = ({
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(
                   watchTransmission,
-                  TransmissionTypeEnum.map(({ value }) => ({
-                    value,
-                    label: tVehicle(`transmissionTypes.${value}`),
+                  ["MANUAL", "AUTOMATIC", "SEMI_AUTOMATIC"].map((v) => ({
+                    value: v,
+                    label: tVehicle(`transmissionTypes.${v}`),
                   })),
                 )}
                 <TransmissionDialog counts={facets?.transmissionType} />

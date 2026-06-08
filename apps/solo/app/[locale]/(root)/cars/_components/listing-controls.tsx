@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { usePathname, useRouter } from "@/i18n/routing";
+import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import {
@@ -52,7 +52,7 @@ export function ListingControls({
       const next = new URLSearchParams(nextBase.toString());
       if (search.trim()) next.set("q", search.trim());
       else next.delete("q");
-      // Reset to page 1 on search, but don't add page=1 to URL
+      // Only reset to page 1 if search actually changed from the URL value
       if (search.trim() !== (sp.get("q") ?? "").trim()) {
         next.delete("page");
       }

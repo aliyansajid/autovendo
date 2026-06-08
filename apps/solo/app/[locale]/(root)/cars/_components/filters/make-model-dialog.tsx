@@ -85,6 +85,7 @@ export function MakeModelDialog({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
+
   // Uncontrolled (URL) mode state
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const [urlIncludes, setUrlIncludes] = useState<string[]>([]);
@@ -245,10 +246,11 @@ export function MakeModelDialog({
                 id="exclude-toggle"
                 checked={isExcludeMode}
                 onCheckedChange={setIsExcludeMode}
+                disabled={defaultExcludeMode}
               />
               <Label
                 htmlFor="exclude-toggle"
-                className={`text-sm font-medium cursor-pointer ${isExcludeMode ? "text-destructive" : "text-muted-foreground"}`}
+                className={`text-sm font-medium ${defaultExcludeMode ? "cursor-default" : "cursor-pointer"} ${isExcludeMode ? "text-destructive" : "text-muted-foreground"}`}
               >
                 {t("excludeCars")}
               </Label>
