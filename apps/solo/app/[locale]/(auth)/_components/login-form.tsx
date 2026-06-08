@@ -22,6 +22,7 @@ import { signIn } from "@/lib/api/auth-client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { createLoginSchema } from "@/schema/auth-schema";
 import { useTranslations, useLocale } from "next-intl";
 
@@ -29,6 +30,7 @@ export const LoginForm = () => {
   const t = useTranslations("LoginForm");
   const tSchema = useTranslations("AuthSchema");
   const locale = useLocale();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || `/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
@@ -57,6 +59,8 @@ export const LoginForm = () => {
         toast.error(error.message || t("errorDefault"));
         return;
       }
+
+      router.push(callbackUrl);
     });
   }
 
