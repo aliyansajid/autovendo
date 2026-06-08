@@ -64,7 +64,7 @@ export const SearchForm = () => {
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     const params = new URLSearchParams();
-    if (data.query?.trim()) params.set("search", data.query.trim());
+    if (data.query?.trim()) params.set("q", data.query.trim());
     if (data.make) params.set("make", data.make);
     if (data.model) params.set("model", data.model);
     if (data.price) params.set("priceFrom", data.price);

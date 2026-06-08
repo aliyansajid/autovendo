@@ -13,7 +13,7 @@ export const createVehicleSearchSchema = (t: TFn) =>
     sort: z.enum(SORT_OPTIONS).default("relevance"),
 
     // Text search
-    search: z.string().trim().default(""),
+    q: z.string().trim().default(""),
 
     // Filters (multi-select)
     make: z.array(z.string().trim()).optional(),
