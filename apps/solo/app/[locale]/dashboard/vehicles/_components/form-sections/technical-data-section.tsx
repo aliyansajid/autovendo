@@ -173,7 +173,10 @@ export function TechnicalDataSection() {
             </>
           )}
 
-          {(showCombustionOrMild || showFullHybrid || showPluginHybrid || showHydrogen) && (
+          {(showCombustionOrMild ||
+            showFullHybrid ||
+            showPluginHybrid ||
+            showHydrogen) && (
             <CustomFormField
               control={control}
               fieldType={FormFieldType.SELECT}
@@ -337,9 +340,7 @@ export function TechnicalDataSection() {
                     >
                       {BatteryOwnershipEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {t_vehicle(
-                            `batteryOwnership.${e.value}`,
-                          )}
+                          {t_vehicle(`batteryOwnership.${e.value}`)}
                         </SelectItem>
                       ))}
                     </CustomFormField>
@@ -367,9 +368,7 @@ export function TechnicalDataSection() {
                     >
                       {ChargingPlugTypeStandardEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {t_vehicle(
-                            `chargingStandardAC.${e.value}`,
-                          )}
+                          {t_vehicle(`chargingStandardAC.${e.value}`)}
                         </SelectItem>
                       ))}
                     </CustomFormField>
@@ -383,9 +382,7 @@ export function TechnicalDataSection() {
                     >
                       {ChargingPlugTypeFastEnum.map((e) => (
                         <SelectItem key={e.value} value={e.value}>
-                          {t_vehicle(
-                            `chargingStandardDC.${e.value}`,
-                          )}
+                          {t_vehicle(`chargingStandardDC.${e.value}`)}
                         </SelectItem>
                       ))}
                     </CustomFormField>

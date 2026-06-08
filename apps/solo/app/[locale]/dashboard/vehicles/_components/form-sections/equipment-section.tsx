@@ -11,13 +11,11 @@ import {
   AccordionTrigger,
 } from "@repo/ui/components/accordion";
 import { Label } from "@repo/ui/components/label";
-import {
-  EquipmentEnum,
-  carExtrasEnum,
-  utilityExtrasEnum,
-  truckExtrasEnum,
-  camperExtrasEnum,
-} from "@repo/vehicle-constants";
+import { EquipmentEnum } from "@repo/vehicle-constants";
+import { carExtrasEnum } from "@repo/vehicle-constants";
+import { utilityExtrasEnum } from "@repo/vehicle-constants";
+import { truckExtrasEnum } from "@repo/vehicle-constants";
+import { camperExtrasEnum } from "@repo/vehicle-constants";
 
 export function EquipmentSection() {
   const t = useTranslations("VehicleFormSections");

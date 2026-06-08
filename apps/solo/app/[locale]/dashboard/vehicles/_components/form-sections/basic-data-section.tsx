@@ -23,18 +23,26 @@ import {
   VehicleConditionEnum,
   WarrantyEnum,
   VehicleTypeEnum,
+} from "@repo/vehicle-constants";
+import {
   carMakes,
   carModels,
   carBodyTypeEnum,
   carFuelTypeEnum,
+} from "@repo/vehicle-constants";
+import {
   utilityMakes,
   utilityModels,
   utilityBodyTypeEnum,
   utilityFuelTypeEnum,
+} from "@repo/vehicle-constants";
+import {
   truckMakes,
   truckModels,
   truckBodyTypeEnum,
   truckFuelTypeEnum,
+} from "@repo/vehicle-constants";
+import {
   camperMakes,
   camperBodyTypeEnum,
   camperFuelTypeEnum,
@@ -161,12 +169,15 @@ export function BasicDataSection() {
                   );
                   uniqueItems.forEach((make) => seen.add(make.value));
                   if (uniqueItems.length === 0) return null;
-                  
-                  const groupKey = group.label === "Top-Marken" ? "topBrands" : "allBrands";
-                  
+
+                  const groupKey =
+                    group.label === "Top-Marken" ? "topBrands" : "allBrands";
+
                   return (
                     <SelectGroup key={group.label}>
-                      <SelectLabel>{t_vehicle(`brandGroups.${groupKey}`)}</SelectLabel>
+                      <SelectLabel>
+                        {t_vehicle(`brandGroups.${groupKey}`)}
+                      </SelectLabel>
                       {uniqueItems.map((make) => (
                         <SelectItem key={make.value} value={make.value}>
                           {make.label}
@@ -271,7 +282,7 @@ export function BasicDataSection() {
             placeholder={t("bodyTypePlaceholder")}
           >
             {activeBodyTypeEnum.map(
-              (type: { value: string }) => (
+              (type: { value: string; label: string }) => (
                 <SelectItem key={type.value} value={type.value}>
                   {t_vehicle(`types.${type.value}`)}
                 </SelectItem>
@@ -287,7 +298,7 @@ export function BasicDataSection() {
             placeholder={t("fuelTypePlaceholder")}
           >
             {activeFuelTypeEnum.map(
-              (type: { value: string }) => (
+              (type: { value: string; label: string }) => (
                 <SelectItem key={type.value} value={type.value}>
                   {t_vehicle(`fuelTypes.${type.value}`)}
                 </SelectItem>
