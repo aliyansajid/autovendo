@@ -10,12 +10,10 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import {
-  carExtrasEnum,
-  utilityExtrasEnum,
-  truckExtrasEnum,
-  camperExtrasEnum,
-} from "@repo/vehicle-constants";
+import { carExtrasEnum } from "@repo/vehicle-constants";
+import { utilityExtrasEnum } from "@repo/vehicle-constants";
+import { truckExtrasEnum } from "@repo/vehicle-constants";
+import { camperExtrasEnum } from "@repo/vehicle-constants";
 import { useTranslations } from "next-intl";
 
 export function ExtrasSection({ vehicleType }: { vehicleType: string }) {

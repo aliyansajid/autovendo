@@ -14,7 +14,7 @@ import { EquipmentEnum } from "@repo/vehicle-constants";
 import { useTranslations } from "next-intl";
 
 export function EquipmentSection() {
-  const t = useTranslations("AdvancedSearch.sections.tech");
+  const t = useTranslations("AdvancedSearch.sections.tech"); // Just for the title if needed, or define a new one
   const tTitle = useTranslations("AdvancedSearch.sections");
   const tEquip = useTranslations("Vehicle.equipment");
   const { control } = useFormContext();

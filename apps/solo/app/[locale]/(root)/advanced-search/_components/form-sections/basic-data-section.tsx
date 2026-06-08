@@ -13,13 +13,11 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Separator } from "@repo/ui/src/components/separator";
-import {
-  VehicleConditionEnum,
-  carBodyTypeEnum,
-  utilityBodyTypeEnum,
-  truckBodyTypeEnum,
-  camperBodyTypeEnum,
-} from "@repo/vehicle-constants";
+import { VehicleConditionEnum } from "@repo/vehicle-constants";
+import { carBodyTypeEnum } from "@repo/vehicle-constants";
+import { utilityBodyTypeEnum } from "@repo/vehicle-constants";
+import { truckBodyTypeEnum } from "@repo/vehicle-constants";
+import { camperBodyTypeEnum } from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@repo/ui/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";
@@ -36,7 +34,7 @@ export function BasicDataSection({
   const t = useTranslations("AdvancedSearch.sections.basic");
   const tVehicle = useTranslations("Vehicle");
   const locale = useLocale();
-  const { control, setValue } = useFormContext();
+  const { control, watch, setValue, getValues } = useFormContext();
 
   const yearMin = facets?.yearMin ?? 1900;
   const yearMax = CURRENT_YEAR;

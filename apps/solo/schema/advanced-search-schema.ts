@@ -4,22 +4,9 @@ type TFn = (key: string) => string;
 
 const CURRENT_YEAR = new Date().getFullYear();
 
+// Slider array state (internal — no strict range needed)
 const createOptionalNonNegativeNumberArray = (t: TFn) =>
   z.array(z.number().nonnegative(t("negativeError"))).optional();
-
-const nonNegativeField = (t: TFn) =>
-  z.preprocess(
-    (val) => {
-      if (val === "" || val === undefined || val === null) return undefined;
-      if (typeof val === "string") {
-        const cleaned = val.replace(/[^0-9.-]/g, "");
-        if (cleaned === "") return undefined;
-        return Number(cleaned);
-      }
-      return Number(val);
-    },
-    z.number({ error: t("invalidNumber") }).nonnegative(t("negativeError")).optional(),
-  );
 
 // Used only for year — real UX value to show feedback
 const rangeField = (t: TFn, min: number, max: number) =>
@@ -34,6 +21,21 @@ const rangeField = (t: TFn, min: number, max: number) =>
       return Number(val);
     },
     z.number({ error: t("invalidNumber") }).min(min).max(max).optional(),
+  );
+
+// For price, km, power, capacity, cylinders, consumption, emissions — just nonnegative
+const nonNegativeField = (t: TFn) =>
+  z.preprocess(
+    (val) => {
+      if (val === "" || val === undefined || val === null) return undefined;
+      if (typeof val === "string") {
+        const cleaned = val.replace(/[^0-9.-]/g, "");
+        if (cleaned === "") return undefined;
+        return Number(cleaned);
+      }
+      return Number(val);
+    },
+    z.number({ error: t("invalidNumber") }).nonnegative(t("negativeError")).optional(),
   );
 
 const optionalStr = z.string().optional();
