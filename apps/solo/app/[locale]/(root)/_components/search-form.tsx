@@ -20,12 +20,15 @@ import {
   SelectItem,
 } from "@repo/ui/src/components/select";
 import { Button } from "@repo/ui/src/components/button";
-import { carMakes, carModels } from "@repo/vehicle-constants";
-import { getRegistrationYears } from "@repo/vehicle-constants";
+import {
+  carMakes,
+  carModels,
+  getRegistrationYears,
+  prices,
+} from "@repo/vehicle-constants";
 import { Field, FieldGroup } from "@repo/ui/src/components/field";
 import { Search, Settings2 } from "lucide-react";
 import { Link, useRouter } from "@/i18n/routing";
-import { prices } from "@repo/vehicle-constants";
 import { useTranslations } from "next-intl";
 
 const createFormSchema = (t: any) =>

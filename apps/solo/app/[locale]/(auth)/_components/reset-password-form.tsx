@@ -15,17 +15,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPassword } from "@/lib/api/auth-client";
 import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
-import { useLocale } from "next-intl";
-import { useRouter } from "@/i18n/routing";
+import {
+  useLocale,
+  useTranslations,
+} from "next-intl";
+import { useRouter, Link } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { Spinner } from "@repo/ui/components/spinner";
 import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
-import { Link } from "@/i18n/routing";
 import { createResetPasswordSchema } from "@/schema/auth-schema";
-import { useTranslations } from "next-intl";
 
 export const ResetPasswordForm = () => {
   const t = useTranslations("ResetPasswordForm");

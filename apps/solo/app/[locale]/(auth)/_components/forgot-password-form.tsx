@@ -21,13 +21,15 @@ import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
 import { Link } from "@/i18n/routing";
-import { useLocale } from "next-intl";
+import {
+  useLocale,
+  useTranslations,
+} from "next-intl";
 import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
 import { createForgotPasswordSchema } from "@/schema/auth-schema";
-import { useTranslations } from "next-intl";
 
 export const ForgotPasswordForm = () => {
   const t = useTranslations("ForgotPasswordForm");

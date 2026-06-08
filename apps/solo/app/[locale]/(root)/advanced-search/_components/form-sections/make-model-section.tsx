@@ -10,11 +10,11 @@ import {
   AccordionTrigger,
 } from "@repo/ui/components/accordion";
 import { Badge } from "@repo/ui/components/badge";
+import { useTranslations } from "next-intl";
 import {
   MakeModelDialog,
   type MakeModelValue,
 } from "@/app/[locale]/(root)/cars/_components/filters/make-model-dialog";
-import { useTranslations } from "next-intl";
 
 export function MakeModelSection() {
   const t = useTranslations("AdvancedSearch.sections.makeModel");

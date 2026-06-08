@@ -13,11 +13,14 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
-import { TransmissionTypeEnum, DriveTypeEnum } from "@repo/vehicle-constants";
-import { carFuelTypeEnum } from "@repo/vehicle-constants";
-import { utilityFuelTypeEnum } from "@repo/vehicle-constants";
-import { truckFuelTypeEnum } from "@repo/vehicle-constants";
-import { camperFuelTypeEnum } from "@repo/vehicle-constants";
+import {
+  TransmissionTypeEnum,
+  DriveTypeEnum,
+  carFuelTypeEnum,
+  utilityFuelTypeEnum,
+  truckFuelTypeEnum,
+  camperFuelTypeEnum,
+} from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@repo/ui/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";
@@ -138,9 +141,7 @@ export function TechnicalDataSection({
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`fuel-${type.value}`}
-                      label={tVehicle(
-                        `fuelTypes.${type.value}`,
-                      )}
+                      label={tVehicle(`fuelTypes.${type.value}`)}
                     />
                     <span className="text-sm text-muted-foreground">
                       {formatCount(count ?? 0)}
@@ -179,9 +180,7 @@ export function TechnicalDataSection({
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`transmission-${type.value}`}
-                      label={tVehicle(
-                        `transmissionTypes.${type.value}`,
-                      )}
+                      label={tVehicle(`transmissionTypes.${type.value}`)}
                     />
                     <span className="text-sm text-muted-foreground">
                       {formatCount(count ?? 0)}
@@ -218,9 +217,7 @@ export function TechnicalDataSection({
                       control={control}
                       fieldType={FormFieldType.CHECKBOX}
                       name={`drive-${type.value}`}
-                      label={tVehicle(
-                        `driveTypes.${type.value}`,
-                      )}
+                      label={tVehicle(`driveTypes.${type.value}`)}
                     />
                     <span className="text-sm text-muted-foreground">
                       {formatCount(count ?? 0)}
@@ -388,7 +385,10 @@ export function TechnicalDataSection({
               value={capacityRange}
               onValueChange={([from = 0, to = 0]) => {
                 setValue("capacity-from", from <= 1 ? "" : String(from));
-                setValue("capacity-to", to >= cubicCapacityMax ? "" : String(to));
+                setValue(
+                  "capacity-to",
+                  to >= cubicCapacityMax ? "" : String(to),
+                );
               }}
               className="py-2"
             />

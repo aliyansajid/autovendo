@@ -13,11 +13,13 @@ import {
   FormFieldType,
 } from "@repo/ui/src/components/custom-form-field";
 import { Separator } from "@repo/ui/src/components/separator";
-import { VehicleConditionEnum } from "@repo/vehicle-constants";
-import { carBodyTypeEnum } from "@repo/vehicle-constants";
-import { utilityBodyTypeEnum } from "@repo/vehicle-constants";
-import { truckBodyTypeEnum } from "@repo/vehicle-constants";
-import { camperBodyTypeEnum } from "@repo/vehicle-constants";
+import {
+  VehicleConditionEnum,
+  carBodyTypeEnum,
+  utilityBodyTypeEnum,
+  truckBodyTypeEnum,
+  camperBodyTypeEnum,
+} from "@repo/vehicle-constants";
 import type { VehicleFacets } from "@/types/vehicle";
 import { formatCount } from "@repo/ui/lib/helpers/format";
 import { useTranslations, useLocale } from "next-intl";

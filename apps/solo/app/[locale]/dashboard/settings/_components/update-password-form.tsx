@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { changePassword } from "@/lib/api/auth-client";
 import { toast } from "sonner";
-import { useTransition } from "react";
+import { useTransition, useMemo } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
 import {
   CustomFormField,
@@ -22,7 +22,6 @@ import {
 } from "@repo/ui/components/custom-form-field";
 import { createUpdatePasswordSchema } from "@/schema/auth-schema";
 import { useTranslations } from "next-intl";
-import { useMemo } from "react";
 
 export const UpdatePasswordForm = () => {
   const [isPending, startTransition] = useTransition();

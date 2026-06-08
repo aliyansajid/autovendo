@@ -3,10 +3,9 @@
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Link } from "@/i18n/routing";
-import { useRouter, usePathname } from "@/i18n/routing";
+import { Link, useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import {
@@ -21,8 +20,8 @@ import {
   KILOMETER_OPTIONS,
   ColorEnum,
   EquipmentEnum,
+  carMakes,
 } from "@repo/vehicle-constants";
-import { carMakes } from "@repo/vehicle-constants";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
 import { Separator } from "@repo/ui/components/separator";
 import {
@@ -42,7 +41,6 @@ import type { VehicleFacets } from "@/types/vehicle";
 import { createVehicleFiltersSchema } from "@/schema/vehicle-filters-schema";
 import { useTranslations, useLocale } from "next-intl";
 import { formatKilometers } from "@repo/ui/lib/helpers/format";
-import { useMemo } from "react";
 
 export const FiltersSidebar = ({
   onClose,

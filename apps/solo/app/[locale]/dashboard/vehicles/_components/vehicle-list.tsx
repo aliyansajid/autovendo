@@ -17,9 +17,10 @@ import {
   FileText,
   Pencil,
   CheckCircle2,
+  Search,
 } from "lucide-react";
 import Image from "next/image";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import {
   apiDeleteVehicle,
@@ -27,9 +28,7 @@ import {
   apiPublishOrPay,
 } from "@/lib/api/seller-vehicles";
 import { toast } from "sonner";
-import { useRouter } from "@/i18n/routing";
 import { useState, useMemo, useTransition } from "react";
-import { Search } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,

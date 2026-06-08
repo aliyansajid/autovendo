@@ -14,8 +14,6 @@ import {
   BatteryOwnershipEnum,
   ChargingPlugTypeStandardEnum,
   ChargingPlugTypeFastEnum,
-} from "@repo/vehicle-constants";
-import {
   carBodyTypeEnum,
   utilityBodyTypeEnum,
   truckBodyTypeEnum,
