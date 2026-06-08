@@ -80,7 +80,7 @@ export const Header = () => {
               alt="AutoSolo Logo"
               width={48}
               height={40}
-              className="h-8 w-auto"
+              className="h-6 w-auto"
             />
           </Link>
 
