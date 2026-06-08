@@ -75,10 +75,16 @@ export async function signIn(params: {
   rememberMe: boolean;
   callbackURL?: string;
 }) {
-  return authFetch("/api/auth/sign-in/email", {
+  const result = await authFetch("/api/auth/sign-in/email", {
     method: "POST",
     body: JSON.stringify(params),
   });
+
+  if (!result.error && result.data?.redirect && result.data?.url) {
+    window.location.href = result.data.url;
+  }
+
+  return result;
 }
 
 export async function signUp(params: {
