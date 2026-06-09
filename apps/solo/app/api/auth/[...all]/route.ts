@@ -22,6 +22,8 @@ async function handler(request: NextRequest) {
   });
 
   const responseHeaders = new Headers(response.headers);
+  responseHeaders.delete("content-encoding");
+  responseHeaders.delete("content-length");
 
   // Rewrite Set-Cookie domain from .autovendo.ch to autosolo.ch
   const setCookies = response.headers.getSetCookie?.() ?? [];

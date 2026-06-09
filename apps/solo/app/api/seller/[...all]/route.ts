@@ -21,9 +21,15 @@ async function handler(request: NextRequest) {
     body,
   });
 
+  const responseHeaders = new Headers(response.headers);
+  // Node fetch decompresses the body automatically, so remove encoding headers
+  // to prevent the browser from trying to decompress it again
+  responseHeaders.delete("content-encoding");
+  responseHeaders.delete("content-length");
+
   return new NextResponse(response.body, {
     status: response.status,
-    headers: response.headers,
+    headers: responseHeaders,
   });
 }
 
