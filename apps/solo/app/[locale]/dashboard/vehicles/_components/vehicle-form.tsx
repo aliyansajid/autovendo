@@ -303,6 +303,7 @@ export function VehicleForm({
         }
         router.push("/dashboard/vehicles");
       } catch (error) {
+        console.error("[VehicleForm] submit error:", error);
         toast.error(t("errorGeneric"));
       } finally {
         setIsSubmitting(false);
