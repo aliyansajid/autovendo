@@ -682,7 +682,9 @@
     "modelTooLong": "Modell darf maximal 50 Zeichen enthalten",
     "versionTooLong": "Version darf maximal 50 Zeichen enthalten",
     "serialNumberTooLong": "Seriennummer darf maximal 100 Zeichen enthalten",
-    "typeApprovalTooLong": "Typgenehmigung darf maximal 50 Zeichen enthalten"
+    "typeApprovalTooLong": "Typgenehmigung darf maximal 50 Zeichen enthalten",
+    "descriptionTooLong": "Beschreibung darf maximal 1000 Zeichen enthalten",
+    "planRequired": "Bitte wählen Sie ein Inserat-Paket"
   },
   "Common": {
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",

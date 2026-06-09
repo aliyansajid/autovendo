@@ -678,7 +678,9 @@
     "modelTooLong": "Il modello non può superare 50 caratteri",
     "versionTooLong": "La versione non può superare 50 caratteri",
     "serialNumberTooLong": "Il numero di serie non può superare 100 caratteri",
-    "typeApprovalTooLong": "L'omologazione non può superare 50 caratteri"
+    "typeApprovalTooLong": "L'omologazione non può superare 50 caratteri",
+    "descriptionTooLong": "La descrizione non può superare 1000 caratteri",
+    "planRequired": "Seleziona un piano di inserzione"
   },
   "Common": {
     "errorDefault": "Si è verificato un errore. Riprova.",

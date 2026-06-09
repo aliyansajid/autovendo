@@ -681,7 +681,9 @@
     "modelTooLong": "Model cannot exceed 50 characters",
     "versionTooLong": "Version cannot exceed 50 characters",
     "serialNumberTooLong": "Serial number cannot exceed 100 characters",
-    "typeApprovalTooLong": "Type approval cannot exceed 50 characters"
+    "typeApprovalTooLong": "Type approval cannot exceed 50 characters",
+    "descriptionTooLong": "Description cannot exceed 1000 characters",
+    "planRequired": "Please select a listing plan"
   },
   "Common": {
     "errorDefault": "An error occurred. Please try again.",

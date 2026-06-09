@@ -678,7 +678,9 @@
     "modelTooLong": "Le modèle ne peut pas dépasser 50 caractères",
     "versionTooLong": "La version ne peut pas dépasser 50 caractères",
     "serialNumberTooLong": "Le numéro de série ne peut pas dépasser 100 caractères",
-    "typeApprovalTooLong": "La réception par type ne peut pas dépasser 50 caractères"
+    "typeApprovalTooLong": "La réception par type ne peut pas dépasser 50 caractères",
+    "descriptionTooLong": "La description ne peut pas dépasser 1000 caractères",
+    "planRequired": "Veuillez sélectionner un forfait d'annonce"
   },
   "Common": {
     "errorDefault": "Une erreur est survenue. Veuillez réessayer.",
