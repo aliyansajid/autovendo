@@ -27,8 +27,6 @@ import {
 } from "lucide-react";
 import { SimilarListings } from "../_components/similar-listings";
 import { ListingHeader } from "../_components/listing-header";
-import { SellerSection } from "../_components/seller-section";
-import { ReviewSection } from "../_components/review-section";
 import { Card, CardContent } from "@repo/ui/components/card";
 import { Link } from "@/i18n/routing";
 import { StickyActionBar } from "../_components/sticky-action-bar";
@@ -608,17 +606,6 @@ export default async function ListingPage({
                   })()}
                 </div>
               </ListingSection>
-            )}
-
-            <SellerSection seller={seller} />
-
-            {seller.rating != null && (
-              <ReviewSection
-                rating={seller.rating}
-                count={seller.reviewCount ?? 0}
-                reviews={[]}
-                sellerId={seller.id}
-              />
             )}
 
             <Separator className="my-12" />
