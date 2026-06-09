@@ -25,7 +25,10 @@ async function serverFetch(path: string, init?: RequestInit) {
 
 export async function getDealerVehiclesList() {
   const res = await serverFetch("/api/dealer/vehicles");
-  if (!res.ok) throw new Error("Failed to fetch vehicles");
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(`Failed to fetch vehicles: ${res.status} ${JSON.stringify(body)}`);
+  }
   const json = await res.json();
   return json.data as DealerVehicleListItem[];
 }
