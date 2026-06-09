@@ -508,7 +508,7 @@ export default async function ListingPage({
                   <Store className="text-muted-foreground" strokeWidth={1.5} />
                 }
                 label={t("sellerType")}
-                value={t("privateSeller")}
+                value={t("seller")}
               />
             </CardContent>
           </Card>
