@@ -15,7 +15,7 @@ export async function serverFetch(path: string, init?: RequestInit) {
 }
 
 export function clientFetch(path: string, init?: RequestInit) {
-  return fetch(`${API_BASE}${path}`, {
+  return fetch(path, {
     ...init,
     credentials: "include",
     headers: {

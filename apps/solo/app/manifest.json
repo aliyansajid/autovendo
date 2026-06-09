@@ -1,6 +1,6 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "AutoSolo",
+  "short_name": "AutoSolo",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
