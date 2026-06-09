@@ -110,7 +110,7 @@ router.post("/", async (c) => {
       name: data.name,
       email: data.email,
       password: data.password,
-      role: "user",
+      role: "dealer",
     },
   });
 
