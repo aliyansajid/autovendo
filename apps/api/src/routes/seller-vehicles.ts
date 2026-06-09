@@ -623,6 +623,8 @@ function mapBodyToVehicleData(body: Record<string, any>, isCreate: boolean) {
     v != null && v !== "" ? Number(v) : isCreate ? undefined : null;
   const s = (v: any) =>
     v != null && v !== "" ? String(v) : isCreate ? undefined : null;
+  const e = (v: any) =>
+    v != null && v !== "" ? v : isCreate ? undefined : null;
 
   return {
     vehicleType: body.vehicleType as VehicleType,
@@ -630,21 +632,14 @@ function mapBodyToVehicleData(body: Record<string, any>, isCreate: boolean) {
     model: s(body.model),
     version: s(body.version),
     bodyType: body.bodyType as BodyType,
-    fuelType: (body.fuelType as FuelType) ?? (isCreate ? undefined : null),
+    fuelType: e(body.fuelType) as FuelType | undefined | null,
     color: body.color as Color,
-    interiorColor:
-      (body.interiorColor as Color) ?? (isCreate ? undefined : null),
+    interiorColor: e(body.interiorColor) as Color | undefined | null,
     metallic: body.metallic ?? false,
-    vehicleCondition:
-      (body.vehicleCondition as VehicleCondition) ??
-      (isCreate ? undefined : null),
-    gearTransmission:
-      (body.gearTransmission as GearTransmission) ??
-      (isCreate ? undefined : null),
-    transmissionType:
-      (body.transmissionType as TransmissionType) ??
-      (isCreate ? undefined : null),
-    driveType: (body.driveType as DriveType) ?? (isCreate ? undefined : null),
+    vehicleCondition: e(body.vehicleCondition) as VehicleCondition | undefined | null,
+    gearTransmission: e(body.gearTransmission) as GearTransmission | undefined | null,
+    transmissionType: e(body.transmissionType) as TransmissionType | undefined | null,
+    driveType: e(body.driveType) as DriveType | undefined | null,
     registrationMonth: Number(body.registrationMonth),
     registrationYear: Number(body.registrationYear),
     kilometer: Number(body.kilometer),
@@ -658,7 +653,7 @@ function mapBodyToVehicleData(body: Record<string, any>, isCreate: boolean) {
         ? undefined
         : null,
     inspectionPassed: body.inspectionPassed ?? false,
-    warranty: (body.warranty as Warranty) ?? (isCreate ? undefined : null),
+    warranty: e(body.warranty) as Warranty | undefined | null,
     warrantyStartDate: body.warrantyStartDate
       ? new Date(body.warrantyStartDate)
       : isCreate
@@ -685,24 +680,15 @@ function mapBodyToVehicleData(body: Record<string, any>, isCreate: boolean) {
     consumptionCity: n(body.consumptionCity),
     consumptionCountry: n(body.consumptionCountry),
     consumptionTotal: n(body.consumptionTotal),
-    emissionStandard:
-      (body.emissionStandard as EmissionStandard) ??
-      (isCreate ? undefined : null),
-    energyLabel:
-      (body.energyLabel as EnergyLabel) ?? (isCreate ? undefined : null),
+    emissionStandard: e(body.emissionStandard) as EmissionStandard | undefined | null,
+    energyLabel: e(body.energyLabel) as EnergyLabel | undefined | null,
     range: n(body.range),
     batteryCapacity: n(body.batteryCapacity),
     powerConsumption: n(body.powerConsumption),
     chargingPower: n(body.chargingPower),
-    batteryOwnership:
-      (body.batteryOwnership as BatteryOwnership) ??
-      (isCreate ? undefined : null),
-    chargingPlugTypeStandard:
-      (body.chargingPlugTypeStandard as ChargingPlugTypeStandard) ??
-      (isCreate ? undefined : null),
-    chargingPlugTypeFast:
-      (body.chargingPlugTypeFast as ChargingPlugTypeFast) ??
-      (isCreate ? undefined : null),
+    batteryOwnership: e(body.batteryOwnership) as BatteryOwnership | undefined | null,
+    chargingPlugTypeStandard: e(body.chargingPlugTypeStandard) as ChargingPlugTypeStandard | undefined | null,
+    chargingPlugTypeFast: e(body.chargingPlugTypeFast) as ChargingPlugTypeFast | undefined | null,
     combustionEnginePowerHp: n(body.combustionEnginePowerHp),
     electricMotorPowerHp: n(body.electricMotorPowerHp),
     vehicleDescription: s(body.vehicleDescription),
