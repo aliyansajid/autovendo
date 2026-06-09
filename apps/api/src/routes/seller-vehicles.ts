@@ -1331,14 +1331,25 @@ router.post("/my", async (c) => {
   const listingId = body.listingId as string | undefined;
 
   try {
-    const vehicle = await prisma.vehicle.create({
-      data: {
-        ...(listingId ? { id: listingId } : {}),
-        sellerId: seller.id,
-        status: "DRAFT",
-        ...mapBodyToVehicleData(body, true),
-      },
-    });
+    const sellerUpdate: Record<string, string> = {};
+    if (body.phoneNumber != null) sellerUpdate.phoneNumber = String(body.phoneNumber);
+    if (body.address != null) sellerUpdate.streetAddress = String(body.address);
+    if (body.zipCode != null) sellerUpdate.zipCode = String(body.zipCode);
+    if (body.city != null) sellerUpdate.city = String(body.city);
+
+    const [vehicle] = await Promise.all([
+      prisma.vehicle.create({
+        data: {
+          ...(listingId ? { id: listingId } : {}),
+          sellerId: seller.id,
+          status: "DRAFT",
+          ...mapBodyToVehicleData(body, true),
+        },
+      }),
+      Object.keys(sellerUpdate).length > 0
+        ? prisma.seller.update({ where: { id: seller.id }, data: sellerUpdate })
+        : Promise.resolve(),
+    ]);
 
     await Promise.all([cacheDeletePattern("api:seller:vehicles:*")]);
 
@@ -1420,13 +1431,24 @@ router.put("/my/:id", async (c) => {
   }
 
   try {
-    await prisma.vehicle.update({
-      where: { id: vehicleId, sellerId: seller.id },
-      data: {
-        status: body.status ?? undefined,
-        ...mapBodyToVehicleData(body, false),
-      },
-    });
+    const sellerUpdate: Record<string, string> = {};
+    if (body.phoneNumber != null) sellerUpdate.phoneNumber = String(body.phoneNumber);
+    if (body.address != null) sellerUpdate.streetAddress = String(body.address);
+    if (body.zipCode != null) sellerUpdate.zipCode = String(body.zipCode);
+    if (body.city != null) sellerUpdate.city = String(body.city);
+
+    await Promise.all([
+      prisma.vehicle.update({
+        where: { id: vehicleId, sellerId: seller.id },
+        data: {
+          status: body.status ?? undefined,
+          ...mapBodyToVehicleData(body, false),
+        },
+      }),
+      Object.keys(sellerUpdate).length > 0
+        ? prisma.seller.update({ where: { id: seller.id }, data: sellerUpdate })
+        : Promise.resolve(),
+    ]);
 
     await Promise.all([
       cacheDeletePattern("api:seller:vehicles:*"),

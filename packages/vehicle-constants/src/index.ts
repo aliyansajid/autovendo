@@ -406,3 +406,5 @@ export const VALID_EXTRAS_KEYS_BY_TYPE: Record<string, string[]> = {
   TRUCK: VALID_TRUCK_EXTRAS_KEYS,
   CAMPER: VALID_CAMPER_EXTRAS_KEYS,
 };
+
+export { swissCities } from "./swiss-cities";

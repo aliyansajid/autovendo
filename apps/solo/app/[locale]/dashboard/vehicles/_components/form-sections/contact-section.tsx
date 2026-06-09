@@ -11,6 +11,8 @@ import {
   CardDescription,
   CardContent,
 } from "@repo/ui/components/card";
+import { SelectItem } from "@repo/ui/components/select";
+import { swissCities } from "@repo/vehicle-constants";
 
 export function ContactSection() {
   const t = useTranslations("VehicleFormSections");
@@ -72,12 +74,17 @@ export function ContactSection() {
 
             <CustomFormField
               control={control}
-              fieldType={FormFieldType.INPUT}
+              fieldType={FormFieldType.SELECT}
               name="city"
               label={t("city")}
               placeholder={t("city")}
-              disabled={false}
-            />
+            >
+              {swissCities.map((city) => (
+                <SelectItem key={city.value} value={city.label}>
+                  {city.label}
+                </SelectItem>
+              ))}
+            </CustomFormField>
           </div>
         </CardContent>
       </Card>
