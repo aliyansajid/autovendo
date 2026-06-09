@@ -27,34 +27,6 @@ async function generateAppleClientSecret() {
     .sign(key);
 }
 
-async function handleListingPayment(event: Stripe.Event) {
-  if (event.type !== "checkout.session.completed") return;
-
-  const session = event.data.object as Stripe.Checkout.Session;
-  if (session.mode !== "payment") return;
-  if (!session.metadata?.vehicleId) return;
-
-  const { vehicleId, planId } = session.metadata;
-  const paidAt = new Date();
-  const expiresAt =
-    planId === "standard"
-      ? new Date(paidAt.getTime() + 30 * 24 * 60 * 60 * 1000)
-      : null;
-
-  await prisma.vehicle.updateMany({
-    where: {
-      id: vehicleId,
-      stripeSessionId: null,
-    },
-    data: {
-      status: "PUBLISHED",
-      listingPlan: planId,
-      listingPaidAt: paidAt,
-      listingExpiresAt: expiresAt,
-      stripeSessionId: session.id,
-    },
-  });
-}
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-04-22.dahlia",
@@ -291,7 +263,6 @@ export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
         stripeClient,
         stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
         createCustomerOnSignUp: true,
-        onEvent: handleListingPayment,
         subscription: {
           enabled: true,
           plans: async () => {

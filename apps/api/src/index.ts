@@ -18,6 +18,7 @@ import sitemapData from "./routes/sitemap";
 import seller from "./routes/seller";
 import sellerBilling from "./routes/seller-billing";
 import sellerListings from "./routes/seller-listings";
+import sellerStripeWebhook from "./routes/seller-stripe-webhook";
 import sellerVehicles from "./routes/seller-vehicles";
 import adminDealers from "./routes/admin-dealers";
 import adminPlans from "./routes/admin-plans";
@@ -119,6 +120,9 @@ app.route("/api/seller/billing", sellerBilling);
 
 // Seller listings — checkout sessions
 app.route("/api/seller/listings", sellerListings);
+
+// Seller listing payment webhook (separate from Better Auth subscription webhook)
+app.route("/api/seller/stripe/webhook", sellerStripeWebhook);
 
 // Seller vehicles — public listing + authenticated dashboard
 app.route("/api/seller/vehicles", sellerVehicles);
