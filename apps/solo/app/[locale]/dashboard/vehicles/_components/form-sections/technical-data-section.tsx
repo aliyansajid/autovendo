@@ -21,7 +21,7 @@ import {
 } from "@repo/vehicle-constants";
 import { Separator } from "@repo/ui/components/separator";
 
-export function TechnicalDataSection() {
+export function TechnicalDataSection({ isEdit }: { isEdit?: boolean }) {
   const t = useTranslations("VehicleFormSections");
   const t_vehicle = useTranslations("Vehicle");
   const { control } = useFormContext();
@@ -254,6 +254,7 @@ export function TechnicalDataSection() {
             name="vin"
             label={t("vin")}
             placeholder={t("vinPlaceholder")}
+            disabled={isEdit}
           />
 
           <div className="grid grid-cols-2 gap-3">

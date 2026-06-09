@@ -27,6 +27,16 @@ export function DashboardBreadcrumb() {
   // Example: /en/dashboard/vehicles -> ["dashboard", "vehicles"]
   const segments = pathname.split("/").filter(Boolean);
 
+  // Detect if the last segment is a vehicle ID (edit page) rather than a named route
+  const lastSegment = segments[segments.length - 1];
+  const secondLastSegment = segments[segments.length - 2];
+  const isVehicleEditPage =
+    secondLastSegment === "vehicles" && lastSegment !== "new";
+
+  const pageLabel = isVehicleEditPage
+    ? t("edit")
+    : t(lastSegment as any);
+
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -39,9 +49,7 @@ export function DashboardBreadcrumb() {
           <>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
-              <BreadcrumbPage>
-                {t(segments[segments.length - 1] as any)}
-              </BreadcrumbPage>
+              <BreadcrumbPage>{pageLabel}</BreadcrumbPage>
             </BreadcrumbItem>
           </>
         )}

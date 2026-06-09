@@ -1123,7 +1123,9 @@
     "settings": "Settings",
     "profile": "Profile",
     "subscription": "Subscription",
+    "billing": "Billing",
     "new": "New Listing",
+    "edit": "Edit Listing",
     "change-password": "Change Password"
   },
   "Unauthorized": {

@@ -1128,7 +1128,9 @@
     "settings": "Einstellungen",
     "profile": "Profil",
     "subscription": "Abonnement",
+    "billing": "Abrechnung",
     "new": "Neues Inserat",
+    "edit": "Inserat bearbeiten",
     "change-password": "Passwort ändern"
   },
   "Unauthorized": {

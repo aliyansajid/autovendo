@@ -192,7 +192,9 @@ export function VehicleForm({
     const fields = STEP_FIELDS[currentStep] || [];
     const isStepValid = await trigger(fields as any[]);
     if (isStepValid) {
-      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+      // Skip plan step (5) when vehicle is already paid
+      const next = isPaid && currentStep === 4 ? 6 : currentStep + 1;
+      setCurrentStep(Math.min(next, totalSteps));
       window.scrollTo(0, 0);
     }
   };
@@ -211,10 +213,12 @@ export function VehicleForm({
   const isNextDisabled =
     currentStep === 1 ? !isStep1Complete :
     currentStep === 2 ? !isStep2Complete :
-    currentStep === 5 ? !isStep5Complete : false;
+    currentStep === 5 ? (!isPaid && !isStep5Complete) : false;
 
   const handleBack = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1));
+    // Skip plan step (5) when vehicle is already paid
+    const prev = isPaid && currentStep === 6 ? 4 : currentStep - 1;
+    setCurrentStep(Math.max(prev, 1));
     window.scrollTo(0, 0);
   };
 
@@ -311,7 +315,7 @@ export function VehicleForm({
     });
   }
 
-  const steps = [
+  const allSteps = [
     { id: 1, label: "Basic Info" },
     { id: 2, label: "Photos" },
     { id: 3, label: "Equipment" },
@@ -319,6 +323,7 @@ export function VehicleForm({
     { id: 5, label: "Pricing" },
     { id: 6, label: "Summary" },
   ];
+  const steps = isPaid ? allSteps.filter((s) => s.id !== 5) : allSteps;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -350,7 +355,7 @@ export function VehicleForm({
             <div className="space-y-6">
               <BasicDataSection />
               <Separator />
-              <TechnicalDataSection />
+              <TechnicalDataSection isEdit={!!vehicleId} />
             </div>
           )}
           {currentStep === 2 && <MediaSection previewImages={previewImages} setPreviewImages={setPreviewImages} />}
