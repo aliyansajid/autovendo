@@ -149,35 +149,32 @@ export function parseSearchParams(params: {
  * Map Prisma vehicle to Form Data
  */
 export function mapVehicleToForm(vehicle: any): any {
-  const mapEnum = (val: string | null | undefined) => {
-    if (!val) return undefined;
-    return val.toLowerCase().replace(/_/g, "-");
-  };
+  const e = (val: string | null | undefined) => val ?? undefined;
 
   return {
-    vehicleType: vehicle.vehicleType.toLowerCase(),
+    vehicleType: vehicle.vehicleType,
     make: vehicle.make,
     model: vehicle.model ?? undefined,
     version: vehicle.version ?? "",
     bodyType: vehicle.bodyType,
-    fuelType: mapEnum(vehicle.fuelType),
+    fuelType: e(vehicle.fuelType),
     registrationMonth: vehicle.registrationMonth?.toString(),
     registrationYear: vehicle.registrationYear?.toString(),
     kilometer: vehicle.kilometer,
     price: vehicle.price,
     newPrice: vehicle.newPrice ?? undefined,
-    color: mapEnum(vehicle.color) as any,
-    gearTransmission: mapEnum(vehicle.gearTransmission) as any,
-    transmissionType: mapEnum(vehicle.transmissionType) as any,
-    driveType: mapEnum(vehicle.driveType) as any,
-    interiorColor: mapEnum(vehicle.interiorColor) as any,
+    color: e(vehicle.color) as any,
+    gearTransmission: e(vehicle.gearTransmission) as any,
+    transmissionType: e(vehicle.transmissionType) as any,
+    driveType: e(vehicle.driveType) as any,
+    interiorColor: e(vehicle.interiorColor) as any,
     metallic: vehicle.metallic,
-    vehicleCondition: mapEnum(vehicle.vehicleCondition) as any,
+    vehicleCondition: e(vehicle.vehicleCondition) as any,
     lastInspectionDate: vehicle.lastInspectionDate
       ? new Date(vehicle.lastInspectionDate)
       : undefined,
     inspectionPassed: vehicle.inspectionPassed,
-    warranty: mapEnum(vehicle.warranty) as any,
+    warranty: e(vehicle.warranty) as any,
     warrantyStartDate: vehicle.warrantyStartDate
       ? new Date(vehicle.warrantyStartDate)
       : undefined,
@@ -187,7 +184,7 @@ export function mapVehicleToForm(vehicle: any): any {
     seats: vehicle.seats ?? undefined,
     hp: vehicle.hp ?? undefined,
     kw: vehicle.kw ?? undefined,
-    energyLabel: vehicle.energyLabel?.toLowerCase() as any,
+    energyLabel: e(vehicle.energyLabel) as any,
     typeApproval: vehicle.typeApproval ?? "",
     wheelbase: vehicle.wheelbase ?? undefined,
     vin: vehicle.vin ?? "",
@@ -202,7 +199,7 @@ export function mapVehicleToForm(vehicle: any): any {
     co2Emission: vehicle.co2Emission ?? undefined,
     cylinders: vehicle.cylinders ?? undefined,
     numberOfGears: vehicle.numberOfGears ?? undefined,
-    emissionStandard: mapEnum(vehicle.emissionStandard) as any,
+    emissionStandard: e(vehicle.emissionStandard) as any,
     consumptionCity: vehicle.consumptionCity ?? undefined,
     consumptionCountry: vehicle.consumptionCountry ?? undefined,
     consumptionTotal: vehicle.consumptionTotal ?? undefined,
@@ -210,9 +207,9 @@ export function mapVehicleToForm(vehicle: any): any {
     batteryCapacity: vehicle.batteryCapacity ?? undefined,
     batteryRentalMonth: vehicle.batteryRentalMonth ?? undefined,
     powerConsumption: vehicle.powerConsumption ?? undefined,
-    batteryOwnership: mapEnum(vehicle.batteryOwnership) as any,
-    chargingPlugTypeStandard: mapEnum(vehicle.chargingPlugTypeStandard) as any,
-    chargingPlugTypeFast: mapEnum(vehicle.chargingPlugTypeFast) as any,
+    batteryOwnership: e(vehicle.batteryOwnership) as any,
+    chargingPlugTypeStandard: e(vehicle.chargingPlugTypeStandard) as any,
+    chargingPlugTypeFast: e(vehicle.chargingPlugTypeFast) as any,
     chargingPower: vehicle.chargingPower ?? undefined,
     combustionEnginePowerHp: vehicle.combustionEnginePowerHp ?? undefined,
     electricMotorPowerHp: vehicle.electricMotorPowerHp ?? undefined,
