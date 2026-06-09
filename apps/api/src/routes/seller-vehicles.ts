@@ -1595,13 +1595,6 @@ router.delete("/my/:id", async (c) => {
   });
   if (!existing) return c.json({ error: "Vehicle not found" }, 404);
 
-  if (existing.listingPaidAt) {
-    return c.json(
-      { error: "Paid listings cannot be deleted. Mark as sold instead." },
-      403,
-    );
-  }
-
   if (existing.images.length > 0) {
     await Promise.allSettled(
       existing.images.map((key) => storage.deleteFile(key).catch(() => {})),
