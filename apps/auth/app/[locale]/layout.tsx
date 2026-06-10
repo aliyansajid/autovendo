@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "@repo/ui/globals.css";
 import { Toaster } from "@repo/ui/src/components/sonner";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations } from "next-intl/server";
+import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,7 +38,6 @@ export default async function LocaleLayout({
   }
 
   const messages = await getMessages();
-  const t = await getTranslations("Header");
 
   return (
     <html lang={locale}>
@@ -49,7 +48,7 @@ export default async function LocaleLayout({
               <Link href="/" className="flex self-center">
                 <Image
                   src="/logo.svg"
-                  alt={t("logoAlt")}
+                  alt="AutoVendo"
                   width={200}
                   height={200}
                 />

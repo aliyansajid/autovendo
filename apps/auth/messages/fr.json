@@ -29,6 +29,8 @@
     "forgotPassword": "Mot de passe oublié ?",
     "submitting": "Connexion en cours...",
     "submit": "Se connecter",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "signup": "S'inscrire",
     "errorDefault": "Une erreur est survenue. Veuillez réessayer."
   },
   "ForgotPasswordForm": {
@@ -58,6 +60,7 @@
     "submit": "Réinitialiser le mot de passe"
   },
   "AuthSchema": {
+    "nameMinLength": "Le nom doit comporter au moins 3 caractères",
     "invalidEmail": "Adresse e-mail invalide",
     "passwordRequired": "Le mot de passe est requis",
     "passwordMinLength": "Le mot de passe doit comporter au moins 8 caractères",

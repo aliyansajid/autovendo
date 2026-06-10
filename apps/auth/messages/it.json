@@ -29,6 +29,8 @@
     "forgotPassword": "Password dimenticata?",
     "submitting": "Accesso in corso...",
     "submit": "Accedi",
+    "noAccount": "Non hai un account?",
+    "signup": "Registrati",
     "errorDefault": "Si è verificato un errore. Riprovi."
   },
   "ForgotPasswordForm": {
@@ -58,6 +60,7 @@
     "submit": "Reimposta password"
   },
   "AuthSchema": {
+    "nameMinLength": "Il nome deve contenere almeno 3 caratteri",
     "invalidEmail": "Indirizzo e-mail non valido",
     "passwordRequired": "La password è obbligatoria",
     "passwordMinLength": "La password deve contenere almeno 8 caratteri",

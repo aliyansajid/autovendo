@@ -26,13 +26,11 @@ import { createSignupSchema } from "@/schema/auth-schema";
 import { useTranslations, useLocale } from "next-intl";
 
 export const SignupForm = () => {
+  const locale = useLocale();
   const t = useTranslations("SignupForm");
   const tSchema = useTranslations("AuthSchema");
-  const locale = useLocale();
   const searchParams = useSearchParams();
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autosolo.ch";
-  const callbackUrl =
-    searchParams.get("callbackUrl") || `${appUrl}/${locale}/dashboard`;
+  const callbackUrl = searchParams.get("callbackUrl") || `/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
   const [isResending, startResendTransition] = useTransition();
   const [verifyEmail, setVerifyEmail] = useState<string | null>(null);

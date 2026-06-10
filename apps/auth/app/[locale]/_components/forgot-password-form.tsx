@@ -26,8 +26,8 @@ import { createForgotPasswordSchema } from "@/schema/auth-schema";
 import { useTranslations } from "next-intl";
 
 export const ForgotPasswordForm = () => {
-  const t = useTranslations("ForgotPasswordForm");
   const locale = useLocale();
+  const t = useTranslations("ForgotPasswordForm");
   const tSchema = useTranslations("AuthSchema");
   const [isPending, startTransition] = useTransition();
 
@@ -45,7 +45,7 @@ export const ForgotPasswordForm = () => {
 
   function onSubmit(values: z.infer<typeof forgotPasswordSchema>) {
     startTransition(async () => {
-      const { data, error } = await requestPasswordReset({
+      const { error } = await requestPasswordReset({
         email: values.email,
         redirectTo: `/${locale}/reset-password`,
       });
@@ -55,7 +55,7 @@ export const ForgotPasswordForm = () => {
         return;
       }
 
-      toast.success(data?.message ?? t("successDefault"));
+      toast.success(t("successDefault"));
     });
   }
 

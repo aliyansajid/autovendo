@@ -29,6 +29,8 @@
     "forgotPassword": "Forgot password?",
     "submitting": "Signing in...",
     "submit": "Sign in",
+    "noAccount": "Don't have an account?",
+    "signup": "Sign up",
     "errorDefault": "An error occurred. Please try again."
   },
   "ForgotPasswordForm": {
@@ -58,6 +60,7 @@
     "submit": "Reset password"
   },
   "AuthSchema": {
+    "nameMinLength": "Name must be at least 3 characters long",
     "invalidEmail": "Invalid email address",
     "passwordRequired": "Password is required",
     "passwordMinLength": "Password must be at least 8 characters long",

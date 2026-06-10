@@ -26,9 +26,9 @@ import { createLoginSchema } from "@/schema/auth-schema";
 import { useTranslations, useLocale } from "next-intl";
 
 export const LoginForm = () => {
+  const locale = useLocale();
   const t = useTranslations("LoginForm");
   const tSchema = useTranslations("AuthSchema");
-  const locale = useLocale();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || `/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
@@ -117,6 +117,13 @@ export const LoginForm = () => {
                 )}
               </Button>
             </Field>
+
+            <div className="text-center text-sm">
+              {t("noAccount")}&nbsp;
+              <Link href="/signup" className="underline underline-offset-4">
+                {t("signup")}
+              </Link>
+            </div>
           </FieldGroup>
         </form>
       </CardContent>
