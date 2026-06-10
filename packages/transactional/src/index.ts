@@ -43,14 +43,14 @@ export async function sendEmail({
       text: html.replace(/<[^>]*>?/gm, ""), // fallback plain text
     });
 
-    console.log("✅ Email sent:", info.messageId);
+    console.log("Email sent:", info.messageId);
 
     return {
       success: true,
       messageId: info.messageId,
     };
   } catch (error: unknown) {
-    console.error("❌ Error sending email:", error);
+    console.error("Error sending email:", error);
 
     return {
       success: false,
@@ -63,6 +63,12 @@ export default sendEmail;
 
 // Email templates
 export { AccountBannedEmail } from "../emails/account-banned";
-export { AccountUnbannedEmail } from "../emails/account-unbanned";
 export { AccountDeletedEmail } from "../emails/account-deleted";
+export { AccountUnbannedEmail } from "../emails/account-unbanned";
+export { ConfirmEmailChangeEmail } from "../emails/confirm-email-change";
+export { ContactMessage } from "../emails/contact-message";
+export { DealerWelcomeEmail } from "../emails/dealer-welcome";
 export { ListingContactEmail } from "../emails/listing-contact";
+export { ResetPasswordEmail } from "../emails/reset-password";
+export { SellerWelcomeEmail } from "../emails/seller-welcome";
+export { VerifyEmail } from "../emails/verify-email";

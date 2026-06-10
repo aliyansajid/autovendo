@@ -1,345 +1,229 @@
-import { betterAuth, type BetterAuthPlugin } from "better-auth";
-import { createAuthMiddleware } from "better-auth/api";
-import { prismaAdapter } from "@better-auth/prisma-adapter";
+import { betterAuth } from "better-auth/minimal";
+import React from "react";
+import { importPKCS8, SignJWT } from "jose";
+import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "@repo/db";
+import { stripe } from "@better-auth/stripe";
+import Stripe from "stripe";
 import { admin } from "better-auth/plugins";
 import { ac, admin as adminRole, dealer, user } from "./permissions";
-import { stripe } from "@better-auth/stripe";
-import { i18n } from "@better-auth/i18n";
-import Stripe from "stripe";
-import { importPKCS8, SignJWT } from "jose";
 import { Redis } from "ioredis";
 import { redisStorage } from "@better-auth/redis-storage";
+import {
+  sendEmail,
+  VerifyEmail,
+  ResetPasswordEmail,
+  ConfirmEmailChangeEmail,
+} from "@repo/transactional";
+import { i18n } from "@better-auth/i18n";
 
-const redis = new Redis(process.env.REDIS_AUTH_URL ?? "redis://localhost:6379");
-
-async function generateAppleClientSecret() {
-  const privateKey = process.env.APPLE_PRIVATE_KEY!.replace(/\\n/g, "\n");
+async function generateAppleClientSecret(
+  clientId: string,
+  teamId: string,
+  keyId: string,
+  privateKey: string,
+) {
   const key = await importPKCS8(privateKey, "ES256");
   const now = Math.floor(Date.now() / 1000);
   return new SignJWT({})
-    .setProtectedHeader({ alg: "ES256", kid: process.env.APPLE_KEY_ID! })
-    .setIssuer(process.env.APPLE_TEAM_ID!)
-    .setSubject(process.env.APPLE_CLIENT_ID!)
+    .setProtectedHeader({ alg: "ES256", kid: keyId })
+    .setIssuer(teamId)
+    .setSubject(clientId)
     .setAudience("https://appleid.apple.com")
     .setIssuedAt(now)
     .setExpirationTime(now + 180 * 24 * 60 * 60)
     .sign(key);
 }
 
-
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-04-22.dahlia",
 });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch";
-const appName = process.env.APP_NAME ?? "AutoVendo";
+const redis = new Redis(
+  process.env.REDIS_AUTH_URL ?? "redis://autovendo-redis:6379",
+);
 
-function getBranding(request?: Request | null) {
-  const origin = request?.headers.get("origin") ?? "";
-  const isSolo = origin.includes("autosolo.ch");
-  return {
-    appName: isSolo ? "AutoSolo" : appName,
-    appUrl: isSolo ? "https://autosolo.ch" : appUrl,
-  };
-}
+export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL ?? "https://api.autovendo.ch",
 
-export async function createAuth(additionalPlugins: BetterAuthPlugin[] = []) {
-  const hasAppleCredentials =
-    !!process.env.APPLE_PRIVATE_KEY &&
-    !!process.env.APPLE_KEY_ID &&
-    !!process.env.APPLE_TEAM_ID &&
-    !!process.env.APPLE_CLIENT_ID;
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
 
-  const appleClientSecret = hasAppleCredentials
-    ? await generateAppleClientSecret()
-    : null;
+  secondaryStorage: redisStorage({
+    client: redis,
+    keyPrefix: "better-auth:",
+  }),
 
-  return betterAuth({
-    baseURL: process.env.BETTER_AUTH_URL ?? "https://api.autovendo.ch",
+  experimental: {
+    joins: true,
+  },
 
-    database: prismaAdapter(prisma, {
-      provider: "postgresql",
-    }),
-
-    secondaryStorage: redisStorage({
-      client: redis,
-      keyPrefix: "better-auth:",
-    }),
-
-    experimental: {
-      joins: true,
-    },
-
-    advanced: {
-      crossSubDomainCookies: {
-        enabled: true,
-        domain: ".autovendo.ch",
-      },
-    },
-
-    session: {
-      cookieCache: {
-        enabled: true,
-        maxAge: 5 * 60,
-      },
-    },
-
-    socialProviders: {
-      google: {
-        clientId: [
-          process.env.GOOGLE_WEB_CLIENT_ID!,
-          process.env.GOOGLE_IOS_CLIENT_ID!,
-          process.env.GOOGLE_ANDROID_CLIENT_ID!,
-        ],
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      },
-      ...(hasAppleCredentials && appleClientSecret
-        ? {
-            apple: {
-              clientId: process.env.APPLE_CLIENT_ID!,
-              clientSecret: appleClientSecret,
-              appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER!,
-              mapProfileToUser: (profile: { email?: string; sub: string }) => ({
-                email:
-                  profile.email ?? `${profile.sub}@apple.placeholder.local`,
-              }),
-            },
-          }
-        : {}),
-    },
-
-    emailAndPassword: {
+  advanced: {
+    crossSubDomainCookies: {
       enabled: true,
-      requireEmailVerification: true,
-      revokeSessionsOnPasswordReset: true,
-      customSyntheticUser: ({ coreFields, additionalFields, id }) => ({
-        ...coreFields,
-        role: "user",
-        banned: false,
-        banReason: null,
-        banExpires: null,
-        ...additionalFields,
-        id,
+      domain: "autovendo.ch",
+    },
+  },
+
+  session: {
+    storeSessionInDatabase: true,
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
+  },
+
+  rateLimit: {
+    storage: "secondary-storage",
+  },
+
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: true,
+    revokeSessionsOnPasswordReset: true,
+    customSyntheticUser: ({ coreFields, additionalFields, id }) => ({
+      ...coreFields,
+      role: "user",
+      banned: false,
+      banReason: null,
+      banExpires: null,
+      ...additionalFields,
+      id,
+    }),
+    sendResetPassword: async ({ user, url }, request) => {
+      void sendEmail({
+        to: user.email,
+        subject: "Reset your password",
+        template: React.createElement(ResetPasswordEmail, {
+          userEmail: user.email,
+          resetPasswordUrl: url,
+        }),
+      });
+    },
+  },
+
+  emailVerification: {
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      void sendEmail({
+        to: user.email,
+        subject: "Verify your email address",
+        template: React.createElement(VerifyEmail, {
+          userEmail: user.email,
+          verificationUrl: url,
+        }),
+      });
+    },
+  },
+
+  user: {
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+        void sendEmail({
+          to: user.email,
+          subject: "Approve your email change",
+          template: React.createElement(ConfirmEmailChangeEmail, {
+            currentEmail: user.email,
+            newEmail,
+            confirmUrl: url,
+          }),
+        });
+      },
+    },
+  },
+
+  socialProviders: {
+    apple: {
+      clientId: process.env.APPLE_CLIENT_ID as string,
+      clientSecret: await generateAppleClientSecret(
+        process.env.APPLE_CLIENT_ID!,
+        process.env.APPLE_TEAM_ID!,
+        process.env.APPLE_KEY_ID!,
+        process.env.APPLE_PRIVATE_KEY!,
+      ),
+      appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER as string,
+      mapProfileToUser: (profile) => ({
+        email: profile.email ?? `${profile.sub}@apple.placeholder.local`,
       }),
-      sendResetPassword: async ({ user, url }) => {
-        const { appName: name, appUrl: url_ } = getBranding();
-        const { sendEmail } = await import("@repo/transactional");
-        const { ResetPasswordEmail } =
-          await import("@repo/transactional/emails/reset-password");
-        void sendEmail({
-          to: user.email,
-          subject: `Reset your ${name} password`,
-          template: ResetPasswordEmail({
-            userEmail: user.email,
-            resetPasswordUrl: url,
-            appName: name,
-            appUrl: url_,
-          }),
-        });
-      },
     },
-
-    emailVerification: {
-      sendOnSignUp: true,
-      sendOnSignIn: true,
-      autoSignInAfterVerification: true,
-      sendVerificationEmail: async ({ user, url }) => {
-        const { appName: name, appUrl: url_ } = getBranding();
-        const { sendEmail } = await import("@repo/transactional");
-        const { VerifyEmail } =
-          await import("@repo/transactional/emails/verify-email");
-        void sendEmail({
-          to: user.email,
-          subject: `Verify your ${name} email address`,
-          template: VerifyEmail({
-            userEmail: user.email,
-            verificationUrl: url,
-            appName: name,
-            appUrl: url_,
-          }),
-        });
-      },
+    google: {
+      clientId: [
+        process.env.GOOGLE_WEB_CLIENT_ID as string,
+        process.env.GOOGLE_IOS_CLIENT_ID as string,
+        process.env.GOOGLE_ANDROID_CLIENT_ID as string,
+      ],
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
+  },
 
-    user: {
-      changeEmail: {
+  trustedOrigins: [
+    "https://autovendo.ch",
+    "https://www.autovendo.ch",
+    "https://api.autovendo.ch",
+    "https://admin.autovendo.ch",
+    "https://appleid.apple.com",
+  ],
+
+  plugins: [
+    i18n({
+      defaultLocale: "de",
+      detection: ["cookie", "header"],
+      localeCookie: "NEXT_LOCALE",
+      translations: {
+        de: {
+          USER_NOT_FOUND: "Benutzer nicht gefunden",
+          INVALID_EMAIL_OR_PASSWORD: "Ungültige E-Mail-Adresse oder Passwort",
+          INVALID_PASSWORD: "Ungültiges Passwort",
+          EMAIL_NOT_VERIFIED: "E-Mail-Adresse nicht verifiziert",
+          SESSION_EXPIRED: "Sitzung abgelaufen",
+          CREDENTIAL_ACCOUNT_NOT_FOUND: "Konto nicht gefunden",
+        },
+        fr: {
+          USER_NOT_FOUND: "Utilisateur non trouvé",
+          INVALID_EMAIL_OR_PASSWORD: "Email ou mot de passe invalide",
+          INVALID_PASSWORD: "Mot de passe invalide",
+          EMAIL_NOT_VERIFIED: "Email non vérifié",
+          SESSION_EXPIRED: "Session expirée",
+          CREDENTIAL_ACCOUNT_NOT_FOUND: "Compte non trouvé",
+        },
+        it: {
+          USER_NOT_FOUND: "Utente non trovato",
+          INVALID_EMAIL_OR_PASSWORD: "Email o password non validi",
+          INVALID_PASSWORD: "Password non valida",
+          EMAIL_NOT_VERIFIED: "Email non verificata",
+          SESSION_EXPIRED: "Sessione scaduta",
+          CREDENTIAL_ACCOUNT_NOT_FOUND: "Account non trovato",
+        },
+      },
+    }),
+    admin({
+      ac,
+      roles: { admin: adminRole, dealer, user },
+      defaultRole: "user",
+    }),
+    stripe({
+      stripeClient,
+      stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+      createCustomerOnSignUp: true,
+      subscription: {
         enabled: true,
-        sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
-          const { appName: name, appUrl: url_ } = getBranding();
-          const { sendEmail } = await import("@repo/transactional");
-          const { ConfirmEmailChangeEmail } =
-            await import("@repo/transactional/emails/confirm-email-change");
-          void sendEmail({
-            to: user.email,
-            subject: `Approve your ${name} email change`,
-            template: ConfirmEmailChangeEmail({
-              currentEmail: user.email,
-              newEmail: newEmail,
-              confirmUrl: url,
-              appName: name,
-              appUrl: url_,
-            }),
-          });
+        plans: async () => {
+          const plans = await prisma.plan.findMany();
+          return plans.map((plan: (typeof plans)[number]) => ({
+            name: plan.name,
+            priceId: plan.priceId,
+            limits: plan.limits as Record<string, any>,
+            freeTrial:
+              plan.hasTrial && plan.trialDays
+                ? { days: plan.trialDays }
+                : undefined,
+          }));
         },
       },
-    },
-
-    trustedOrigins: [
-      "https://api.autovendo.ch",
-      "https://autovendo.ch",
-      "https://www.autovendo.ch",
-      "https://autosolo.ch",
-      "https://www.autosolo.ch",
-      "https://admin.autovendo.ch",
-      "https://appleid.apple.com",
-      "autovendo://",
-      "autovendo://*",
-      "exp://",
-      "exp://**",
-    ],
-
-    plugins: [
-      admin({
-        ac,
-        roles: { admin: adminRole, dealer, user },
-        defaultRole: "user",
-      }),
-      i18n({
-        detection: ["cookie", "header"],
-        localeCookie: "NEXT_LOCALE",
-        translations: {
-          de: {
-            INVALID_EMAIL_OR_PASSWORD: "E-Mail oder Passwort ungültig",
-            INVALID_PASSWORD: "Ungültiges Passwort",
-            CREDENTIAL_ACCOUNT_NOT_FOUND: "Kein Passwort-Konto gefunden",
-            USER_NOT_FOUND: "Benutzer nicht gefunden",
-            EMAIL_NOT_VERIFIED: "E-Mail nicht verifiziert",
-            TOO_MANY_REQUESTS:
-              "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
-            INVALID_TOKEN: "Ungültiger oder abgelaufener Token",
-            SESSION_EXPIRED:
-              "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
-            BANNED_USER:
-              "Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Support.",
-            UNKNOWN_ERROR:
-              "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
-          },
-          fr: {
-            INVALID_EMAIL_OR_PASSWORD: "E-mail ou mot de passe invalide",
-            INVALID_PASSWORD: "Mot de passe invalide",
-            CREDENTIAL_ACCOUNT_NOT_FOUND:
-              "Aucun compte avec mot de passe trouvé",
-            USER_NOT_FOUND: "Utilisateur non trouvé",
-            EMAIL_NOT_VERIFIED: "E-mail non vérifié",
-            TOO_MANY_REQUESTS:
-              "Trop de requêtes. Veuillez réessayer plus tard.",
-            INVALID_TOKEN: "Jeton invalide ou expiré",
-            SESSION_EXPIRED: "Session expirée. Veuillez vous reconnecter.",
-            BANNED_USER:
-              "Votre compte a été banni. Veuillez contacter le support.",
-            UNKNOWN_ERROR:
-              "Une erreur inconnue s'est produite. Veuillez réessayer.",
-          },
-          it: {
-            INVALID_EMAIL_OR_PASSWORD: "E-mail o password non validi",
-            INVALID_PASSWORD: "Password non valida",
-            CREDENTIAL_ACCOUNT_NOT_FOUND: "Nessun account con password trovato",
-            USER_NOT_FOUND: "Utente non trovato",
-            EMAIL_NOT_VERIFIED: "E-mail non verificata",
-            TOO_MANY_REQUESTS:
-              "Troppe richieste. Per favore riprova più tardi.",
-            INVALID_TOKEN: "Token non valido o scaduto",
-            SESSION_EXPIRED:
-              "Sessione scaduta. Per favore effettua di nuovo il login.",
-            BANNED_USER:
-              "Il tuo account è stato bandito. Si prega di contattare il supporto.",
-            UNKNOWN_ERROR:
-              "Si è verificato un errore sconosciuto. Per favore riprova.",
-          },
-        },
-      }),
-      stripe({
-        stripeClient,
-        stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-        createCustomerOnSignUp: true,
-        subscription: {
-          enabled: true,
-          plans: async () => {
-            const plans = await prisma.plan.findMany();
-            return plans.map((plan: (typeof plans)[number]) => ({
-              name: plan.name,
-              priceId: plan.priceId,
-              limits: plan.limits as Record<string, any>,
-              freeTrial:
-                plan.hasTrial && plan.trialDays
-                  ? { days: plan.trialDays }
-                  : undefined,
-            }));
-          },
-        },
-      }),
-      ...additionalPlugins,
-    ],
-
-    hooks: {
-      after: createAuthMiddleware(async (ctx) => {
-        if (ctx.path !== "/sign-up/email") return;
-
-        const body = ctx.body as { email?: string; name?: string } | undefined;
-        if (!body?.email) return;
-
-        const user = await prisma.user.findUnique({
-          where: { email: body.email },
-        });
-        if (!user) return;
-
-        const cookieHeader = ctx.headers?.get("cookie") ?? "";
-        const localeCookie = cookieHeader
-          .split(";")
-          .map((c) => c.trim())
-          .find((c) => c.startsWith("NEXT_LOCALE="));
-        const locale = localeCookie?.split("=")[1] ?? "de";
-
-        // Create seller profile (non-critical)
-        try {
-          await prisma.seller.upsert({
-            where: { userId: user.id },
-            update: {},
-            create: {
-              userId: user.id,
-              phoneNumber: "",
-              streetAddress: "",
-              zipCode: "",
-              city: "",
-              country: "ch",
-            },
-          });
-        } catch {}
-
-        // Send welcome email (fire-and-forget)
-        void (async () => {
-          try {
-            const { sendEmail } = await import("@repo/transactional");
-            const { SellerWelcomeEmail } = await import(
-              "@repo/transactional/emails/seller-welcome"
-            );
-            const soloUrl =
-              process.env.NEXT_PUBLIC_SOLO_URL ?? "https://autosolo.ch";
-            await sendEmail({
-              to: user.email,
-              subject: `Welcome to AutoSolo – your account is ready`,
-              template: SellerWelcomeEmail({
-                sellerName: user.name,
-                dashboardUrl: `${soloUrl}/${locale}/dashboard`,
-              }),
-            });
-          } catch {}
-        })();
-      }),
-    },
-  });
-}
-
-export const auth = await createAuth();
-export { stripeClient };
+    }),
+  ],
+});
