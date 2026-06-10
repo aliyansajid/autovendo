@@ -1,6 +1,5 @@
 import { betterAuth } from "better-auth/minimal";
 import React from "react";
-import { importPKCS8, SignJWT } from "jose";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "@repo/db";
 import { stripe } from "@better-auth/stripe";
@@ -16,24 +15,6 @@ import {
   ConfirmEmailChangeEmail,
 } from "@repo/transactional";
 import { i18n } from "@better-auth/i18n";
-
-async function generateAppleClientSecret(
-  clientId: string,
-  teamId: string,
-  keyId: string,
-  privateKey: string,
-) {
-  const key = await importPKCS8(privateKey, "ES256");
-  const now = Math.floor(Date.now() / 1000);
-  return new SignJWT({})
-    .setProtectedHeader({ alg: "ES256", kid: keyId })
-    .setIssuer(teamId)
-    .setSubject(clientId)
-    .setAudience("https://appleid.apple.com")
-    .setIssuedAt(now)
-    .setExpirationTime(now + 180 * 24 * 60 * 60)
-    .sign(key);
-}
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-04-22.dahlia",
@@ -136,29 +117,29 @@ export const auth = betterAuth({
     },
   },
 
-  socialProviders: {
-    apple: {
-      clientId: process.env.APPLE_CLIENT_ID as string,
-      clientSecret: await generateAppleClientSecret(
-        process.env.APPLE_CLIENT_ID!,
-        process.env.APPLE_TEAM_ID!,
-        process.env.APPLE_KEY_ID!,
-        process.env.APPLE_PRIVATE_KEY!,
-      ),
-      appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER as string,
-      mapProfileToUser: (profile) => ({
-        email: profile.email ?? `${profile.sub}@apple.placeholder.local`,
-      }),
-    },
-    google: {
-      clientId: [
-        process.env.GOOGLE_WEB_CLIENT_ID as string,
-        process.env.GOOGLE_IOS_CLIENT_ID as string,
-        process.env.GOOGLE_ANDROID_CLIENT_ID as string,
-      ],
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    },
-  },
+  // socialProviders: {
+  //   apple: {
+  //     clientId: process.env.APPLE_CLIENT_ID as string,
+  //     clientSecret: await generateAppleClientSecret(
+  //       process.env.APPLE_CLIENT_ID!,
+  //       process.env.APPLE_TEAM_ID!,
+  //       process.env.APPLE_KEY_ID!,
+  //       process.env.APPLE_PRIVATE_KEY!,
+  //     ),
+  //     appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER as string,
+  //     mapProfileToUser: (profile) => ({
+  //       email: profile.email ?? `${profile.sub}@apple.placeholder.local`,
+  //     }),
+  //   },
+  //   google: {
+  //     clientId: [
+  //       process.env.GOOGLE_WEB_CLIENT_ID as string,
+  //       process.env.GOOGLE_IOS_CLIENT_ID as string,
+  //       process.env.GOOGLE_ANDROID_CLIENT_ID as string,
+  //     ],
+  //     clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+  //   },
+  // },
 
   trustedOrigins: [
     "https://autovendo.ch",
