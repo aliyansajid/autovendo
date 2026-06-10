@@ -1,0 +1,68 @@
+{
+  "SignupForm": {
+    "title": "Créer un compte",
+    "description": "Entrez vos coordonnées ci-dessous pour créer votre compte",
+    "name": "Nom complet",
+    "namePlaceholder": "Jean Dupont",
+    "email": "E-mail",
+    "emailPlaceholder": "m@exemple.ch",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "submitting": "Création du compte...",
+    "submit": "Créer un compte",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "login": "Se connecter",
+    "errorDefault": "Une erreur est survenue. Veuillez réessayer.",
+    "verifyTitle": "Vérifiez votre e-mail",
+    "verifyDescription": "Nous avons envoyé un lien de vérification à {email}. Cliquez dessus pour activer votre compte.",
+    "resend": "Renvoyer l'e-mail de vérification",
+    "resendSuccess": "E-mail de vérification renvoyé.",
+    "resendError": "Échec du renvoi. Veuillez réessayer."
+  },
+  "LoginForm": {
+    "title": "Bon retour",
+    "description": "Saisissez votre adresse e-mail ci-dessous pour vous connecter à votre compte",
+    "email": "E-mail",
+    "emailPlaceholder": "m@exemple.ch",
+    "password": "Mot de passe",
+    "rememberMe": "Rester connecté",
+    "forgotPassword": "Mot de passe oublié ?",
+    "submitting": "Connexion en cours...",
+    "submit": "Se connecter",
+    "errorDefault": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "ForgotPasswordForm": {
+    "title": "Mot de passe oublié",
+    "description": "Saisissez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe",
+    "email": "E-mail",
+    "emailPlaceholder": "m@exemple.ch",
+    "submitting": "Envoi en cours...",
+    "submit": "Envoyer le lien de réinitialisation",
+    "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+    "backToLogin": "Se connecter",
+    "errorDefault": "Le lien n'a pas pu être envoyé. Veuillez réessayer.",
+    "successDefault": "Lien envoyé avec succès."
+  },
+  "ResetPasswordForm": {
+    "invalidTokenToast": "Jeton de réinitialisation invalide ou manquant",
+    "errorDefault": "Le mot de passe n'a pas pu être réinitialisé. Veuillez réessayer.",
+    "successReset": "Mot de passe réinitialisé avec succès.",
+    "invalidLinkTitle": "Lien invalide",
+    "invalidLinkDescription": "Le lien de réinitialisation du mot de passe est invalide ou a expiré. Veuillez en demander un nouveau.",
+    "requestNewLink": "Demander un nouveau lien",
+    "title": "Définir un nouveau mot de passe",
+    "description": "Veuillez saisir votre nouveau mot de passe ci-dessous.",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "submitting": "Réinitialisation en cours...",
+    "submit": "Réinitialiser le mot de passe"
+  },
+  "AuthSchema": {
+    "invalidEmail": "Adresse e-mail invalide",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordMinLength": "Le mot de passe doit comporter au moins 8 caractères",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "currentPasswordRequired": "Le mot de passe actuel est requis",
+    "newPasswordMinLength": "Le nouveau mot de passe doit comporter au moins 8 caractères"
+  }
+}

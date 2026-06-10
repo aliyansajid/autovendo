@@ -1,0 +1,68 @@
+{
+  "SignupForm": {
+    "title": "Create an account",
+    "description": "Enter your details below to create your account",
+    "name": "Full Name",
+    "namePlaceholder": "John Doe",
+    "email": "Email",
+    "emailPlaceholder": "m@example.com",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submitting": "Creating account...",
+    "submit": "Create account",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Sign in",
+    "errorDefault": "An error occurred. Please try again.",
+    "verifyTitle": "Check your email",
+    "verifyDescription": "We sent a verification link to {email}. Click it to activate your account.",
+    "resend": "Resend verification email",
+    "resendSuccess": "Verification email resent.",
+    "resendError": "Failed to resend. Please try again."
+  },
+  "LoginForm": {
+    "title": "Welcome back",
+    "description": "Enter your email address below to log in to your account",
+    "email": "Email",
+    "emailPlaceholder": "m@example.com",
+    "password": "Password",
+    "rememberMe": "Stay signed in",
+    "forgotPassword": "Forgot password?",
+    "submitting": "Signing in...",
+    "submit": "Sign in",
+    "errorDefault": "An error occurred. Please try again."
+  },
+  "ForgotPasswordForm": {
+    "title": "Forgot password",
+    "description": "Enter your email address and we will send you a link to reset your password",
+    "email": "Email",
+    "emailPlaceholder": "m@example.com",
+    "submitting": "Sending...",
+    "submit": "Send reset link",
+    "rememberPassword": "Remember your password?",
+    "backToLogin": "Sign in",
+    "errorDefault": "Link could not be sent. Please try again.",
+    "successDefault": "Link sent successfully."
+  },
+  "ResetPasswordForm": {
+    "invalidTokenToast": "Invalid or missing reset token",
+    "errorDefault": "Password could not be reset. Please try again.",
+    "successReset": "Password reset successfully.",
+    "invalidLinkTitle": "Invalid link",
+    "invalidLinkDescription": "The password reset link is invalid or has expired. Please request a new one.",
+    "requestNewLink": "Request new link",
+    "title": "Set new password",
+    "description": "Please enter your new password below.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "submitting": "Resetting...",
+    "submit": "Reset password"
+  },
+  "AuthSchema": {
+    "invalidEmail": "Invalid email address",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters long",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "currentPasswordRequired": "Current password is required",
+    "newPasswordMinLength": "New password must be at least 8 characters long"
+  }
+}

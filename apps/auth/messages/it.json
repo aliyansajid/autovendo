@@ -1,0 +1,68 @@
+{
+  "SignupForm": {
+    "title": "Crea un account",
+    "description": "Inserisci i tuoi dati qui sotto per creare il tuo account",
+    "name": "Nome completo",
+    "namePlaceholder": "Mario Rossi",
+    "email": "E-mail",
+    "emailPlaceholder": "m@esempio.ch",
+    "password": "Password",
+    "confirmPassword": "Conferma Password",
+    "submitting": "Creazione account...",
+    "submit": "Crea account",
+    "alreadyHaveAccount": "Hai già un account?",
+    "login": "Accedi",
+    "errorDefault": "Si è verificato un errore. Riprovi.",
+    "verifyTitle": "Controlla la tua email",
+    "verifyDescription": "Abbiamo inviato un link di verifica a {email}. Cliccalo per attivare il tuo account.",
+    "resend": "Invia di nuovo l'email di verifica",
+    "resendSuccess": "Email di verifica inviata di nuovo.",
+    "resendError": "Reinvio fallito. Riprovi."
+  },
+  "LoginForm": {
+    "title": "Bentornato",
+    "description": "Inserisca il suo indirizzo e-mail qui sotto per accedere al suo account",
+    "email": "E-mail",
+    "emailPlaceholder": "m@esempio.ch",
+    "password": "Password",
+    "rememberMe": "Rimani connesso",
+    "forgotPassword": "Password dimenticata?",
+    "submitting": "Accesso in corso...",
+    "submit": "Accedi",
+    "errorDefault": "Si è verificato un errore. Riprovi."
+  },
+  "ForgotPasswordForm": {
+    "title": "Password dimenticata",
+    "description": "Inserisca il suo indirizzo e-mail e le invieremo un link per reimpostare la password",
+    "email": "E-mail",
+    "emailPlaceholder": "m@esempio.ch",
+    "submitting": "Invio in corso...",
+    "submit": "Invia link di reimpostazione",
+    "rememberPassword": "Ricorda la password?",
+    "backToLogin": "Accedi",
+    "errorDefault": "Il link non ha potuto essere inviato. Riprovi.",
+    "successDefault": "Link inviato con successo."
+  },
+  "ResetPasswordForm": {
+    "invalidTokenToast": "Token di reimpostazione non valido o mancante",
+    "errorDefault": "La password non ha potuto essere reimpostata. Riprovi.",
+    "successReset": "Password reimpostata con successo.",
+    "invalidLinkTitle": "Link non valido",
+    "invalidLinkDescription": "Il link per la reimpostazione della password non è valido o è scaduto. Ne richieda uno nuovo.",
+    "requestNewLink": "Richiedi un nuovo link",
+    "title": "Imposta una nuova password",
+    "description": "Inserisca la sua nuova password qui sotto.",
+    "newPassword": "Nuova password",
+    "confirmPassword": "Conferma password",
+    "submitting": "Reimpostazione in corso...",
+    "submit": "Reimposta password"
+  },
+  "AuthSchema": {
+    "invalidEmail": "Indirizzo e-mail non valido",
+    "passwordRequired": "La password è obbligatoria",
+    "passwordMinLength": "La password deve contenere almeno 8 caratteri",
+    "passwordsDoNotMatch": "Le password non corrispondono",
+    "currentPasswordRequired": "La password attuale è obbligatoria",
+    "newPasswordMinLength": "La nuova password deve contenere almeno 8 caratteri"
+  }
+}
