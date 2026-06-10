@@ -1,0 +1,1360 @@
+{
+  "Header": {
+    "nav": {
+      "cars": "Vehicles",
+      "advancedSearch": "Advanced Search",
+      "dealers": "Find Dealers",
+      "sell": "Sell",
+      "mobileMenuTitle": "Menu"
+    },
+    "auth": {
+      "login": "Login",
+      "logout": "Logout",
+      "dashboard": "Dashboard"
+    },
+    "languages": {
+      "label": "Language",
+      "de": "Deutsch",
+      "en": "English",
+      "fr": "Français",
+      "it": "Italiano"
+    },
+    "logoAlt": "AutoVendo Logo"
+  },
+  "Footer": {
+    "description": "Discover your perfect vehicle in our premium selection. We offer thousands of certified used and new cars from top European brands at unbeatable prices and with transparent history.",
+    "socialMediaDisclaimer": "Autovendo.ch consciously avoids social media. We focus on direct contact, personal accessibility, and real conversations – from person to person, not through likes or algorithms.",
+    "newsletter": {
+      "title": "Stay in the Fast Lane",
+      "description": "Subscribe to our newsletter for the latest offers, vehicle news, and exclusive promotions.",
+      "placeholder": "Your email address",
+      "button": "Subscribe"
+    },
+    "sections": {
+      "discover": "Discover",
+      "support": "Support",
+      "legal": "Legal",
+      "contact": "Contact"
+    },
+    "address": "Bielstrasse 78,\n2555 Brügg / BE, Switzerland",
+    "links": {
+      "about": "About Us",
+      "rules": "Insertion Rules",
+      "pricing": "Pricing",
+      "contact": "Contact",
+      "howItWorks": "How it works",
+      "faq": "FAQ",
+      "safety": "Safety Instructions",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "privacySettings": "Privacy Settings",
+      "imprint": "Imprint"
+    },
+    "whatsappAriaLabel": "Contact us on WhatsApp",
+    "copyright": "All rights reserved."
+  },
+  "About": {
+    "title": "About Autovendo.ch",
+    "subtitle": "Fair. Transparent. Uncomplicated. Human.",
+    "description": "Autovendo.ch is the sales platform for all car dealers in Switzerland. We developed Autovendo with one clear goal: to make the sale of vehicles simple, efficient, and fair — without unnecessary administrative burden.",
+    "features": {
+      "efficiency": {
+        "title": "Efficiency & Structure",
+        "description": "Simple handling, clear processes, and targeted visibility for your vehicles."
+      },
+      "humanity": {
+        "title": "Humanity",
+        "description": "Personal contact, genuine interest, and respectful interaction at all times."
+      },
+      "reliability": {
+        "title": "Reliability",
+        "description": "Accessible, uncomplicated, and always there for you with a solution-oriented approach."
+      },
+      "transparency": {
+        "title": "Transparency",
+        "description": "Clear, competitive prices without hidden fees or forced packages."
+      }
+    }
+  },
+  "SearchForm": {
+    "title": "Find used and new vehicles",
+    "tabs": {
+      "buy": "Buy",
+      "sell": "Sell"
+    },
+    "fields": {
+      "query": {
+        "label": "Search",
+        "placeholder": "Search..."
+      },
+      "make": "Make",
+      "model": "Model",
+      "price": "Price",
+      "registrationFrom": "First registration from"
+    },
+    "makeGroups": {
+      "topMakes": "Top Makes",
+      "allMakes": "All Makes"
+    },
+    "button": "Search",
+    "advancedSearch": "Advanced Search",
+    "validation": {
+      "queryMinLength": "Search for at least 3 characters"
+    }
+  },
+  "Vehicle": {
+    "conditions": {
+      "NEW": "New",
+      "DEMONSTRATION": "Demonstration",
+      "PRE_REGISTERED": "Pre-registered",
+      "USED": "Used",
+      "OLDTIMER": "Oldtimer",
+      "CLASSIC": "Classic",
+      "PRE_OWNED": "Pre-owned"
+    },
+    "statuses": {
+      "DRAFT": "Draft",
+      "PUBLISHED": "Published",
+      "PAUSED": "Paused",
+      "SOLD": "Sold",
+      "ARCHIVED": "Archived",
+      "BANNED": "Banned"
+    },
+    "fuelTypes": {
+      "PETROL": "Petrol",
+      "DIESEL": "Diesel",
+      "ELECTRIC": "Electric",
+      "ETHANOL_PETROL": "Ethanol/Petrol",
+      "CNG_PETROL": "CNG/Petrol",
+      "LPG_PETROL": "LPG/Petrol",
+      "MHEV_DIESEL": "MHEV Diesel",
+      "MHEV_PETROL": "MHEV Petrol",
+      "PHEV_DIESEL": "PHEV Diesel",
+      "PHEV_PETROL": "PHEV Petrol",
+      "HEV_DIESEL": "HEV Diesel",
+      "HEV_PETROL": "HEV Petrol",
+      "HYDROGEN": "Hydrogen",
+      "HYBRID": "Hybrid",
+      "GAS": "Gas",
+      "OTHER": "Other"
+    },
+    "transmissionTypes": {
+      "MANUAL": "Manual",
+      "AUTOMATIC": "Automatic",
+      "AUTOMATIC_STEPLESS": "Stepless",
+      "SEMI_AUTOMATIC": "Semi-automatic"
+    },
+    "driveTypes": {
+      "FRONT": "Front-wheel drive",
+      "REAR": "Rear-wheel drive",
+      "ALL": "All-wheel drive",
+      "FRONT_WHEEL": "Front-wheel drive",
+      "REAR_WHEEL": "Rear-wheel drive",
+      "ALL_WHEEL": "All-wheel drive"
+    },
+    "types": {
+      "BUS": "Bus",
+      "CAR": "Passenger Car",
+      "UTILITY": "Utility Vehicle",
+      "TRUCK": "Truck",
+      "CAMPER": "Camper",
+      "CABRIOLET": "Convertible",
+      "COUPE": "Coupé",
+      "SMALL_CAR": "City Car",
+      "ESTATE": "Station Wagon",
+      "MINIVAN": "Minivan",
+      "SALOON": "Sedan",
+      "PICKUP": "Pick-up",
+      "SUV": "SUV / Off-road",
+      "BRIDGE": "Bridge",
+      "BRIDGE_DOUBLE_CAB": "Bridge with double cab",
+      "CHASSIS_CAB": "Chassis cab",
+      "BOX": "Box",
+      "BOX_GLAZED": "Box glazed",
+      "BOX_DOUBLE_CAB": "Box double cab",
+      "TIPPER": "Tipper",
+      "PLATFORM": "Platform",
+      "SEMI_TRAILER": "Semi-trailer",
+      "CAB_OVER": "Double cab",
+      "COACH": "Coach",
+      "TOURIST_BUS": "Tourist bus",
+      "ALCOVE": "Alcove",
+      "TRAILER": "Trailer",
+      "INTEGRATED": "Integrated motorhome",
+      "CAB": "Cab",
+      "OTHER": "Other",
+      "SEMI_INTEGRATED": "Semi-integrated",
+      "MOTORHOME": "Motorhome",
+      "CARAVAN": "Caravan"
+    },
+    "colors": {
+      "ANTHRACITE": "Anthracite",
+      "BEIGE": "Beige",
+      "BLACK": "Black",
+      "BLUE": "Blue",
+      "BORDEAUX": "Bordeaux",
+      "BROWN": "Brown",
+      "GOLD": "Gold",
+      "GRAY": "Gray",
+      "GREEN": "Green",
+      "MULTICOLOURED": "Multicoloured",
+      "ORANGE": "Orange",
+      "PINK": "Pink",
+      "RED": "Red",
+      "SILVER": "Silver",
+      "TURQUOISE": "Turquoise",
+      "VIOLET": "Violet",
+      "WHITE": "White",
+      "YELLOW": "Yellow",
+      "OTHER": "Other"
+    },
+    "equipment": {
+      "360_CAMERA": "360° Camera",
+      "ABS": "ABS",
+      "ADAPTIVE_HEADLIGHTS": "Adaptive Headlights",
+      "ADAPTIVE_CRUISE_CONTROL": "Adaptive Cruise Control",
+      "ALARM_SYSTEM": "Alarm System",
+      "ALLOY_WHEELS": "Alloy Wheels",
+      "ANDROID_AUTO": "Android Auto",
+      "TOW_HITCH": "Tow Hitch",
+      "TOW_HITCH_REMOVABLE": "Tow Hitch Removable",
+      "TOW_HITCH_SWIVELING": "Tow Hitch Swiveling",
+      "TOW_HITCH_FIXED": "Tow Hitch Fixed",
+      "APPLE_CARPLAY": "Apple CarPlay",
+      "HEATED_SEATS": "Heated Seats",
+      "VENTILATED_SEATS": "Ventilated Seats",
+      "BLUETOOTH": "Bluetooth Interface",
+      "BRAKE_ASSIST": "Brake Assist",
+      "CHROME_ELEMENTS": "Chrome Elements",
+      "DAB_RADIO": "DAB Radio",
+      "ANTI_THEFT": "Anti-theft System",
+      "DIFFERENTIAL_LOCK": "Differential Lock",
+      "ELECTRIC_WINDOWS": "Electric Windows",
+      "ELECTRIC_TAILGATE": "Electric Tailgate",
+      "ELECTRIC_SEAT_ADJUSTMENT": "Electric Seat Adjustment",
+      "GULL_WING_DOORS": "Gull-wing Doors",
+      "HANDS_FREE": "Hands-free System",
+      "FLOOR": "Floor",
+      "ROOF_RACK": "Roof Rack",
+      "HARDTOP": "Hardtop",
+      "HEAD_UP_DISPLAY": "Head-up Display",
+      "CUSTOM_EXHAUST": "Custom Exhaust System",
+      "ISOFIX": "Isofix",
+      "AIR_CONDITIONING": "Air Conditioning",
+      "AUTOMATIC_CLIMATE_CONTROL": "Automatic Climate Control",
+      "TRUNK": "Trunk",
+      "SPEAKERS": "Speakers",
+      "AIR_SUSPENSION": "Air Suspension",
+      "NAVIGATION_SYSTEM": "Navigation System",
+      "NAVIGATION": "Navigation",
+      "PORTABLE_NAVIGATION": "Portable Navigation System",
+      "PANORAMIC_ROOF": "Panoramic Roof",
+      "PARKING_ASSIST": "Parking Assist",
+      "PARKING_SENSORS_REAR": "Parking Sensors Rear",
+      "PARKING_SENSORS_FRONT": "Parking Sensors Front",
+      "BACKREST_PROTECTION": "Backrest Protection",
+      "BACKUP_CAMERA": "Backup Camera",
+      "HEADLIGHTS": "Headlights",
+      "LASER_HEADLIGHTS": "Laser Headlights",
+      "LED_HEADLIGHTS": "LED Headlights",
+      "XENON_HEADLIGHTS": "Xenon Headlights",
+      "SUNROOF": "Sunroof",
+      "SLIDING_DOOR": "Sliding Door",
+      "KEYLESS_ENTRY_START": "Keyless Entry/Start",
+      "FAST_CHARGING": "Fast Charging",
+      "SEAT_COVERS": "Seat Covers",
+      "ALCANTARA": "Alcantara",
+      "FABRIC_SEATS": "Fabric Seats",
+      "LEATHER": "Leather",
+      "PARTIAL_LEATHER_SEATS": "Partial Leather Seats",
+      "SPECIAL_PAINT": "Special Paint",
+      "SPORT_SEATS": "Sportsitze",
+      "LANE_KEEP_ASSIST": "Lane Keep Assist",
+      "ESP": "Stability Control (ESP)",
+      "AUXILIARY_HEATING": "Auxiliary Heating",
+      "START_STOP_SYSTEM": "Start-stop System",
+      "CRUISE_CONTROL": "Cruise Control",
+      "BLIND_SPOT_ASSIST": "Blind Spot Assist",
+      "REINFORCED_SUSPENSION": "Reinforced Suspension",
+      "ADDITIONAL_INSTRUMENTS": "Additional Instruments"
+    },
+    "warranty": {
+      "FROM_DELIVERY": "From Delivery",
+      "FROM_FIRST_REGISTRATION": "From First Registration",
+      "FROM_DATE": "From Date"
+    },
+    "emissions": {
+      "EURO_1": "Euro 1",
+      "EURO_2": "Euro 2",
+      "EURO_3": "Euro 3",
+      "EURO_4": "Euro 4",
+      "EURO_5": "Euro 5",
+      "EURO_5_PLUS": "Euro 5+",
+      "EURO_6": "Euro 6",
+      "EURO_6A": "Euro 6a",
+      "EURO_6B": "Euro 6b",
+      "EURO_6C": "Euro 6c",
+      "EURO_6D": "Euro 6d",
+      "EURO_6D_ISC": "Euro 6d ISC",
+      "EURO_6D_ISC_FCM": "Euro 6d ISC FCM",
+      "EURO_6D_TEMP": "Euro 6d-temp",
+      "EURO_6D_TEMP_EVAP": "Euro 6d-temp EVAP",
+      "EURO_6D_TEMP_EVAP_ISC": "Euro 6d-temp EVAP ISC",
+      "EURO_6D_TEMP_ISC": "Euro 6d-temp ISC",
+      "EURO_6E": "Euro 6e"
+    },
+    "extras": {
+      "8_TYRES": "8-tyres",
+      "ACCESSIBLE_FOR_DISABLED": "Accessible for disabled",
+      "DIRECT_IMPORT": "Direct/Parallel Import",
+      "RACE_CAR": "Race Car",
+      "TUNING": "Tuning",
+      "ACCIDENT_VEHICLE": "Accident Vehicle",
+      "CAR_TRANSPORTER": "Car Transporter",
+      "TARPAULIN": "Tarpaulin",
+      "TAIL_LIFT": "Tail Lift",
+      "CRANE": "Crane",
+      "REFRIGERATOR": "Refrigerator",
+      "FURNITURE_TRANSPORTER": "Furniture Transporter",
+      "SCHOOL_BUS": "School Bus",
+      "WINCH": "Winch"
+    },
+    "brandGroups": {
+      "topBrands": "Top Brands",
+      "allBrands": "All Brands"
+    },
+    "batteryOwnership": {
+      "BATTERY_INCLUDED": "Battery included in the purchase price",
+      "BATTERY_RENT_REQUIRED": "Battery requires an additional rent"
+    },
+    "chargingStandardAC": {
+      "TYPE_1": "Type 1",
+      "TYPE_2": "Type 2"
+    },
+    "chargingStandardDC": {
+      "CCS": "CCS",
+      "CSS_2": "CSS-2",
+      "CHADEMO": "CHAdeMO",
+      "SUPERCHARGER": "Supercharger"
+    },
+    "priceRating": {
+      "excellent": "Excellent price",
+      "veryGood": "Very good price",
+      "good": "Good price",
+      "fair": "Fair price",
+      "overpriced": "Overpriced"
+    }
+  },
+  "FeaturedListings": {
+    "title": "Latest Vehicles",
+    "emptyState": "No vehicles currently listed.",
+    "showMore": "Show more",
+    "showLess": "Show less"
+  },
+  "FeaturedGarage": {
+    "title": "Featured Garages",
+    "emptyState": "No garages currently listed.",
+    "button": "To the Garage"
+  },
+  "ListingCard": {
+    "saveToFavorites": "Save to favorites"
+  },
+  "AdvancedSearch": {
+    "title": "Filter",
+    "close": "Close",
+    "showVehicles": "{count, plural, =0 {Show no vehicles} one {Show # vehicle} other {Show # vehicles}}",
+    "showVehiclesSimple": "Show Vehicles",
+    "vehicleTypes": {
+      "car": "Passenger Car",
+      "camper": "Camper",
+      "utility": "Utility Vehicle",
+      "truck": "Truck"
+    },
+    "sections": {
+      "makeModel": {
+        "title": "Make & Model",
+        "addMake": "Add Make",
+        "excludeMake": "Exclude Make",
+        "includeVehicles": "Include Vehicles",
+        "excludeVehicles": "Exclude Vehicles",
+        "noSelections": "No vehicles selected."
+      },
+      "basic": {
+        "title": "Basic Data",
+        "year": "Year",
+        "kilometer": "Mileage",
+        "price": "Price",
+        "condition": "Condition",
+        "inspectionAndWarranty": "Inspection & Warranty",
+        "bodyType": "Body Type",
+        "reset": "Reset",
+        "inspectionPassed": "Inspection Passed",
+        "hasWarranty": "With Warranty"
+      },
+      "equipment": {
+        "title": "Equipment"
+      },
+      "extras": {
+        "title": "Extras"
+      },
+      "tech": {
+        "title": "Technical Data",
+        "fuel": "Fuel",
+        "transmission": "Transmission",
+        "drive": "Drive",
+        "power": "Power",
+        "capacity": "Engine Capacity",
+        "cylinder": "Cylinders",
+        "doors": "Doors",
+        "seats": "Seats"
+      },
+      "appearance": {
+        "title": "Color",
+        "exteriorColor": "Exterior Color",
+        "interiorColor": "Interior Color",
+        "reset": "Reset",
+        "metallic": "Metallic"
+      },
+      "energy": {
+        "title": "Energy & Environment",
+        "consumption": "Consumption",
+        "emissions": "CO2 Emissions",
+        "efficiency": "Energy Efficiency",
+        "euroNorm": "Euro Norm",
+        "evRange": "EV Range",
+        "batteryOwnership": "Battery Ownership",
+        "chargingStandardAC": "Charging Standard AC",
+        "chargingStandardDC": "Charging Standard DC",
+        "reset": "Reset"
+      },
+      "more": {
+        "title": "More Filters",
+        "daysListed": "Time on market",
+        "reset": "Reset",
+        "options": {
+          "any": "Any",
+          "1-day": "1 day",
+          "2-days": "2 days",
+          "3-days": "3 days",
+          "5-days": "5 days",
+          "7-days": "7 days",
+          "14-days": "14 days",
+          "28-days": "28 days"
+        }
+      }
+    },
+    "CarsPage": {
+      "title": "Find Vehicles",
+      "subtitle": "Discover our wide range of vehicles",
+      "offers": "Offers",
+      "noVehicles": "No vehicles found.",
+      "sort": {
+        "relevance": "Default sorting",
+        "price-asc": "Price (lowest first)",
+        "price-desc": "Price (highest first)",
+        "kilometer-asc": "Mileage (lowest first)",
+        "kilometer-desc": "Mileage (highest first)",
+        "registration-asc": "Registration (oldest first)",
+        "registration-desc": "Registration (newest first)",
+        "created-asc": "Listings (oldest first)",
+        "created-desc": "Listings (newest first)"
+      }
+    },
+    "FiltersSidebar": {
+      "title": "More Filters",
+      "moreFilters": "More Filter",
+      "any": "Any",
+      "selected": "{count} selected",
+      "condition": "Vehicle Condition",
+      "makeModel": "Make, Model",
+      "price": "Price",
+      "from": "from",
+      "to": "to",
+      "registration": "First Registration",
+      "mileage": "Mileage",
+      "fuel": "Fuel Type",
+      "power": "Power",
+      "vehicleType": "Vehicle Type",
+      "evs": "E-Cars",
+      "evOptions": {
+        "only_ev": "Only E-Cars",
+        "no_ev": "No E-Cars"
+      },
+      "transmission": "Transmission",
+      "exteriorColor": "Exterior Color",
+      "metallic": "Metallic",
+      "equipment": "Equipment",
+      "more": "More...",
+      "dialogs": {
+        "change": "change",
+        "apply": "Apply",
+        "cancel": "Cancel",
+        "condition": {
+          "title": "Conditions",
+          "description": "Select the desired vehicle condition."
+        },
+        "fuel": {
+          "title": "Fuel Type",
+          "description": "Select the desired fuel types."
+        },
+        "vehicleType": {
+          "title": "Vehicle Type",
+          "description": "Select the desired vehicle types."
+        },
+        "transmission": {
+          "title": "Transmission Type",
+          "description": "Select the desired transmission types."
+        },
+        "power": {
+          "title": "Power",
+          "description": "Select the desired power level."
+        },
+        "ev": {
+          "title": "Electric Vehicle",
+          "description": "Filter by battery capacity, range and charging time.",
+          "batteryCapacity": "Battery Capacity",
+          "range": "Range",
+          "chargeTime": "Charging Time (up to)",
+          "fastChargeTime": "Fast Charging Time (up to)",
+          "minutes": "Minutes",
+          "fromLabel": "from"
+        },
+        "makeModel": {
+          "title": "Make & Model",
+          "description": "Select the desired makes and models.",
+          "excludeCars": "Exclude vehicles",
+          "modelsFor": "Select models for {make}.",
+          "excludeSelect": "Select vehicles to exclude.",
+          "includeSelect": "Select vehicles to include.",
+          "searchPlaceholder": "Search",
+          "backToMakes": "Back to makes",
+          "noModelsFound": "No models found.",
+          "popularMakes": "Most searched makes",
+          "allMakes": "All makes",
+          "titleWithModels": "{make} – Models"
+        }
+      }
+    }
+  },
+  "ImageGallery": {
+    "openFullscreen": "Open fullscreen",
+    "previousImage": "Previous image",
+    "nextImage": "Next image"
+  },
+  "ListingControls": {
+    "searchPlaceholder": "Search…",
+    "searchAriaLabel": "Search vehicles",
+    "sortAriaLabel": "Sort",
+    "sortPlaceholder": "Sort by",
+    "sortOptions": {
+      "relevance": "Relevance",
+      "price-asc": "Price (Lowest first)",
+      "price-desc": "Price (Highest first)",
+      "kilometer-asc": "Mileage (Lowest first)",
+      "kilometer-desc": "Mileage (Highest first)",
+      "registration-asc": "Registration (Oldest first)",
+      "registration-desc": "Registration (Newest first)",
+      "created-asc": "Listings (Oldest first)",
+      "created-desc": "Listings (Newest first)"
+    }
+  },
+  "GarageRichFilters": {
+    "reset": "Reset",
+    "makesModels": "{count} Make/Models",
+    "makeModelPlaceholder": "Make & Model",
+    "year": "Year",
+    "mileage": "Mileage",
+    "price": "Price",
+    "selected": "{count} selected",
+    "bodyType": "Body Type",
+    "fuel": "Fuel",
+    "transmission": "Transmission",
+    "drive": "Drive",
+    "resetFilters": "Reset Filters",
+    "moreFilters": "More Filters"
+  },
+  "SellPage": {
+    "hero": {
+      "title": "The partner for professional car dealers",
+      "subtitle": "Autovendo — List your inventory on the largest Swiss marketplace.",
+      "ctaList": "List now",
+      "ctaPricing": "View dealer solutions"
+    },
+    "reach": {
+      "title": "Reach more buyers",
+      "titleHighlight": "efficiently",
+      "titleSuffix": "and effectively",
+      "cardTitle": "Professional dealer advertising",
+      "cardSubtitle": "MAXIMUM VISIBILITY • HIGH-QUALITY LEADS",
+      "cardDescription": "Present your inventory to millions of potential buyers every month. Autovendo offers professional tools tailored specifically to the needs of modern Swiss car dealerships.",
+      "badge": "Over 500 dealers in Switzerland trust us",
+      "ctaFirst": "Create your first listing",
+      "ctaHow": "How it works"
+    },
+    "advantages": {
+      "title": "Your benefits with",
+      "titleHighlight": "Autovendo for dealers",
+      "performanceTitle": "Performance & Growth",
+      "efficiencyTitle": "Efficiency & Tools",
+      "features": {
+        "leads": "High-quality leads: Direct enquiries from serious buyers ready to purchase.",
+        "reach": "Maximum reach: Your vehicles are prominently featured on our high-traffic portal.",
+        "regional": "Regional targeting: Effectively reach local buyers in your specific region.",
+        "brand": "Brand authority: Dedicated dealer pages help build trust with potential customers.",
+        "sync": "Inventory synchronisation: Automatically import your inventory from common DMS systems.",
+        "smart": "Smart listing: Save time with automatic technical data and energy information.",
+        "tracking": "Performance tracking: Monitor your listing statistics and optimise your strategy.",
+        "leads2": "Lead management: Manage all customer enquiries in one central dashboard."
+      }
+    },
+    "services": {
+      "title": "We support your",
+      "titleHighlight": "daily business",
+      "sync": {
+        "title": "Inventory synchronisation",
+        "description": "Seamless integration into your existing dealer management system."
+      },
+      "autoFill": {
+        "title": "Auto-fill data",
+        "description": "Our system assists you in entering technical and equipment details."
+      },
+      "compliance": {
+        "title": "Compliance",
+        "description": "We ensure all listings meet the legal requirements for energy labels and CO2."
+      },
+      "leads": {
+        "title": "Verified leads",
+        "description": "Receive high-quality leads directly from interested Swiss buyers."
+      }
+    },
+    "photos": {
+      "title": "Professional presentation",
+      "titleHighlight": "boosts",
+      "titleSuffix": "your success",
+      "tip1Title": "Consistent setting",
+      "tip1Description": "Use your showroom or a neutral location to build a professional dealer brand.",
+      "tip2Title": "Full walkthrough",
+      "tip2Description": "Show every angle, including interior details and model highlights.",
+      "tip3Title": "Interior & extras",
+      "tip3Description": "Document premium equipment and the condition of the cabin precisely.",
+      "expertTip": "Expert tip: Consistent, high-quality photos build long-term trust in your dealer brand."
+    },
+    "cta": {
+      "title": "Ready to increase your",
+      "titleHighlight": "sales volume",
+      "titleSuffix": "?",
+      "subtitle": "List your inventory on Autovendo",
+      "subtitleBadge": "PROFESSIONAL • SCALABLE • EFFECTIVE",
+      "description": "Join the professional network of Swiss car dealers. Our packages are designed to help dealerships of every size succeed in the digital market.",
+      "ctaStart": "Get started now",
+      "ctaContact": "Contact sales team"
+    }
+  },
+  "FaqPage": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find quick answers to the most important questions about Autovendo.ch.",
+    "noQuestion": "Didn't find your question?",
+    "supportText": "Our support team is happy to help. Contact us at any time!",
+    "contactButton": "Contact us",
+    "categories": [
+      {
+        "category": "General",
+        "items": [
+          {
+            "question": "What is Autovendo.ch?",
+            "answer": "Autovendo.ch is a specialized online sales platform for all car dealers in Switzerland. Dealers can easily list their vehicles and reach potential buyers directly."
+          },
+          {
+            "question": "Who can use Autovendo.ch?",
+            "answer": "Autovendo.ch is aimed exclusively at commercial car dealers and garages. Private sellers are not permitted on this platform."
+          },
+          {
+            "question": "In which regions is Autovendo.ch available?",
+            "answer": "Autovendo.ch is focused on the Swiss market. Listed vehicles must be located in Switzerland or the Principality of Liechtenstein."
+          },
+          {
+            "question": "Is Autovendo.ch also suitable for small dealers?",
+            "answer": "Yes. Autovendo.ch is deliberately designed so that all dealers – regardless of size or location – receive the same fair opportunities."
+          },
+          {
+            "question": "How does Autovendo.ch differ from other platforms?",
+            "answer": "We focus on fair prices, simple processes and personal support instead of complicated packages, anonymous hotlines or long-term commitments."
+          }
+        ]
+      },
+      {
+        "category": "Listings & Vehicles",
+        "items": [
+          {
+            "question": "Which vehicles may be listed?",
+            "answer": "Only roadworthy, correctly described vehicles that comply with applicable legal regulations may be listed."
+          },
+          {
+            "question": "Can several vehicles be listed at the same time?",
+            "answer": "Yes. Dealers can publish several vehicles at the same time – depending on the chosen package."
+          },
+          {
+            "question": "How long does a listing stay online?",
+            "answer": "The duration depends on the booked package. Details can be found in the respective package description."
+          },
+          {
+            "question": "Can I edit my listing afterwards?",
+            "answer": "Yes. Listings can be updated, adjusted or deactivated at any time."
+          },
+          {
+            "question": "Are listings checked?",
+            "answer": "Yes. For quality assurance, we reserve the right to check listings randomly or ask questions if anything is unclear."
+          }
+        ]
+      },
+      {
+        "category": "Costs & Packages",
+        "items": [
+          {
+            "question": "How much does it cost to use Autovendo.ch?",
+            "answer": "Autovendo.ch offers clear, transparent and competitive prices – with no hidden fees."
+          },
+          {
+            "question": "Are there long-term contract commitments?",
+            "answer": "No. Our packages are flexible and can be adjusted or terminated as needed."
+          },
+          {
+            "question": "Are there additional fees per vehicle sold?",
+            "answer": "No. Autovendo.ch does not charge sales commissions."
+          },
+          {
+            "question": "Are price changes possible?",
+            "answer": "Yes. Dealers can change their package at any time if their needs change."
+          },
+          {
+            "question": "Will I receive an invoice?",
+            "answer": "Yes. All payments are correctly documented and transparently billed."
+          }
+        ]
+      },
+      {
+        "category": "Support & Security",
+        "items": [
+          {
+            "question": "How can I reach Autovendo.ch support?",
+            "answer": "You can reach us directly and personally by phone or email – without waiting loops or anonymous ticket systems."
+          },
+          {
+            "question": "How does Autovendo.ch protect against fraud?",
+            "answer": "We rely on technical protective measures, clear insertion rules and actively inform about safe buying and selling practices."
+          },
+          {
+            "question": "What should I do if I discover a suspicious listing?",
+            "answer": "Please report the listing to us immediately. We will investigate the case quickly and carefully."
+          },
+          {
+            "question": "Is my data safe?",
+            "answer": "Yes. Protecting your data is our top priority. All data is processed in accordance with applicable data protection regulations."
+          },
+          {
+            "question": "Are there additional security features for dealers?",
+            "answer": "Yes. For dealers, we recommend, among other things, providing a mobile number for additional account security."
+          }
+        ]
+      }
+    ]
+  },
+  "ContactPage": {
+    "title": "Contact",
+    "subtitle": "We are here for you. Get in touch with us – we look forward to hearing from you.",
+    "contactInfo": "Contact information",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "phoneContent": "+41 (0)79 322 35 20",
+    "addressLabel": "Address",
+    "addressContent": "Bielstrasse 78,\n2555 Brügg / BE, Switzerland",
+    "hoursLabel": "Opening hours",
+    "hours": {
+      "weekdays": "Monday – Friday: 09:00 – 19:00",
+      "saturday": "Saturday: 09:00 – 12:00",
+      "sunday": "Sunday: Closed"
+    },
+    "quickReplyTitle": "Quick response",
+    "quickReplyText": "We usually respond to all enquiries within 24 hours. For urgent matters, please call us directly.",
+    "formTitle": "Send us a message",
+    "nameLabel": "Name",
+    "namePlaceholder": "John Doe",
+    "emailFormLabel": "Email",
+    "emailPlaceholder": "m@example.com",
+    "phoneFormLabel": "Phone",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "What is it about?",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Write us your message...",
+    "submitting": "Sending...",
+    "submit": "Send message",
+    "successDefault": "Message sent successfully.",
+    "errorDefault": "An error occurred. Please try again."
+  },
+  "PricingPage": {
+    "getStarted": "Get started",
+    "planDescription": {
+      "starter": "Ideal for small dealers starting their digital journey.",
+      "professional": "Perfect for growing dealerships with medium inventory.",
+      "business": "Designed for large dealerships needing high visibility.",
+      "ultimate": "Our most powerful plan for industry leaders."
+    },
+    "title": "More visibility. More service. Lower costs.",
+    "subtitle": "Why pay 30–40% more – when you get more personal support and full transparency with autovendo.ch?",
+    "noOverpriced": "No more overpriced platforms.",
+    "introText1": "autovendo.ch gives dealers control, fairness and genuine personal support – at significantly better rates. The car trade is demanding enough. Your listing platform should support you – not eat into your margin.",
+    "introText2": "autovendo.ch offers fair prices, direct contacts and full transparency. No hidden costs. No corporate thinking. Just a real partnership.",
+    "comparisonTitle": "Fair prices – Direct comparison",
+    "tableHeaders": {
+      "package": "Package",
+      "vehicles": "Vehicles simultaneously",
+      "price": "autovendo.ch",
+      "savings": "Savings vs. market leader*",
+      "monthlySavings": "Monthly savings"
+    },
+    "tableRows": {
+      "ca": "approx.",
+      "planBronze": "Bronze",
+      "planSilver": "Silver",
+      "planGold": "Gold",
+      "planDiamond": "Diamond",
+      "bronzeVehicles": "Up to 5 vehicles",
+      "silverVehicles": "Up to 10 vehicles",
+      "goldVehicles": "Up to 15 vehicles",
+      "diamondVehicles": "Up to 25 vehicles",
+      "bronzeSavings": "approx. 30% cheaper",
+      "silverSavings": "approx. 30% cheaper",
+      "goldSavings": "approx. 35% cheaper",
+      "diamondSavings": "approx. 40% cheaper"
+    },
+    "largerDealers": {
+      "title": "More than 25 vehicles",
+      "subtitle": "For larger dealers with 25+ vehicles",
+      "tagline": "Individual solutions. Individual prices.",
+      "description1": "Do you run a larger dealership with more than 25 vehicles in stock? We will create a tailored offer for you – guaranteed to be cheaper than standard platform prices.",
+      "description2": "We analyse your current inventory and needs, and present you with a transparent, fair solution with real savings potential.",
+      "personalTitle": "Personal. Direct. On-site.",
+      "personalDesc1": "We are happy to visit you in person and bring a detailed price overview. We will explain everything in detail – openly, honestly and without obligation.",
+      "personalDesc2": "One call is enough.",
+      "personalDesc3": "Or send us an email and arrange an appointment. We are just a phone call away.",
+      "callButton": "Schedule a call",
+      "emailButton": "Write an email"
+    },
+    "whyPay": {
+      "title": "Why pay more?",
+      "reach": "Same reach.",
+      "contact": "Personal contact person.",
+      "response": "Faster response times.",
+      "flexible": "Flexible solutions for dealers.",
+      "noCorp": "No corporate structures.",
+      "fair": "Fair pricing."
+    },
+    "weAre": {
+      "title": "We are:",
+      "efficient": "More efficient",
+      "dealerOriented": "Dealer-oriented",
+      "personal": "Personal",
+      "transparent": "Transparent",
+      "swiss": "Directly Swiss"
+    },
+    "partnershipText": "With autovendo.ch, you are not investing in advertising. You are investing in a partnership.\nYour margin belongs to you – not the platform.",
+    "choosePlan": "Choose your package",
+    "popular": "Popular",
+    "month": "month",
+    "vehiclesIncluded": "vehicles included",
+    "trialDaysLabel": "{days}-day free trial",
+    "example": {
+      "label": "Example calculation:",
+      "text": "A dealer with 25 vehicles saves with autovendo.ch",
+      "highlight": "over CHF 3,000 per year.",
+      "suffix": "That is direct margin. Without risk.",
+      "switchText": "Switch to autovendo.ch now and save several thousand francs per year – with personal service and fair conditions.",
+      "contactButton": "Get in touch"
+    },
+    "tiers": [
+      {
+        "name": "Bronze",
+        "price": "180.–",
+        "period": "/ month",
+        "description": "Ideal for smaller inventories.",
+        "features": [
+          {
+            "name": "Up to 5 vehicles",
+            "included": true
+          },
+          {
+            "name": "Full visibility",
+            "included": true
+          },
+          {
+            "name": "Personal support",
+            "included": true
+          },
+          {
+            "name": "No hidden costs",
+            "included": true
+          },
+          {
+            "name": "Flexible duration",
+            "included": true
+          }
+        ],
+        "buttonText": "Choose plan",
+        "popular": false
+      },
+      {
+        "name": "Silver",
+        "price": "280.–",
+        "period": "/ month",
+        "description": "Perfect for growing dealers.",
+        "features": [
+          {
+            "name": "Up to 10 vehicles",
+            "included": true
+          },
+          {
+            "name": "Full visibility",
+            "included": true
+          },
+          {
+            "name": "Personal support",
+            "included": true
+          },
+          {
+            "name": "No hidden costs",
+            "included": true
+          },
+          {
+            "name": "Flexible duration",
+            "included": true
+          }
+        ],
+        "buttonText": "Choose plan",
+        "popular": false
+      },
+      {
+        "name": "Gold",
+        "price": "325.–",
+        "period": "/ month",
+        "description": "For established dealers.",
+        "features": [
+          {
+            "name": "Up to 15 vehicles",
+            "included": true
+          },
+          {
+            "name": "Full visibility",
+            "included": true
+          },
+          {
+            "name": "Personal support",
+            "included": true
+          },
+          {
+            "name": "No hidden costs",
+            "included": true
+          },
+          {
+            "name": "Flexible duration",
+            "included": true
+          }
+        ],
+        "buttonText": "Choose plan",
+        "popular": true
+      },
+      {
+        "name": "Diamond",
+        "price": "408.–",
+        "period": "/ month",
+        "description": "For dealers with higher volume.",
+        "features": [
+          {
+            "name": "Up to 25 vehicles",
+            "included": true
+          },
+          {
+            "name": "Full visibility",
+            "included": true
+          },
+          {
+            "name": "Personal support",
+            "included": true
+          },
+          {
+            "name": "No hidden costs",
+            "included": true
+          },
+          {
+            "name": "Flexible duration",
+            "included": true
+          }
+        ],
+        "buttonText": "Choose plan",
+        "popular": false
+      }
+    ]
+  },
+  "ContactSchema": {
+    "nameMin": "Name must be at least 3 characters long",
+    "nameMax": "Name may be at most 50 characters long",
+    "invalidEmail": "Invalid email address",
+    "phoneRequired": "Phone number is required",
+    "invalidPhone": "Invalid Swiss phone number",
+    "subjectMax": "Subject may be at most 100 characters long",
+    "messageMax": "Message may be at most 500 characters long"
+  },
+  "DealersPage": {
+    "title": "Discover our dealers",
+    "subtitle": "From exclusive sports cars to reliable family vehicles – find the right car with our verified dealers."
+  },
+  "DealersList": {
+    "title": "Our dealers",
+    "subtitle": "Find the right dealer near you.",
+    "searchPlaceholder": "Search dealers...",
+    "notFoundTitle": "No dealer found",
+    "notFoundDescription": "No dealer matches \"{query}\".",
+    "resetSearch": "Reset search",
+    "emptyTitle": "No dealers registered yet",
+    "emptyDescription": "Would you like to offer your vehicles as a dealer?",
+    "becomeDealer": "Become a dealer"
+  },
+  "DealerDetail": {
+    "phoneButton": "Phone",
+    "emailButton": "Email",
+    "tabAbout": "About us",
+    "tabCars": "Vehicles",
+    "tabRatings": "Reviews",
+    "aboutTitle": "About {name}",
+    "noDescription": "This dealer has not yet added a description.",
+    "currentOffers": "Current offers",
+    "ratingsTitle": "Reviews",
+    "googleRatings": "Google reviews",
+    "reviewsCount": "{count} reviews",
+    "openingHours": "Opening hours",
+    "noOpeningHours": "No opening hours provided. Please contact the dealer directly.",
+    "contactTitle": "Contact",
+    "sendMessage": "Send message",
+    "nameLabel": "Name",
+    "namePlaceholder": "John Smith",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "messageLabel": "Message",
+    "messagePlaceholder": "I am interested in...",
+    "submitting": "Sending",
+    "vehiclesCount": "{count} vehicles",
+    "sortBy": "Sort by:",
+    "sortNewest": "Newest first",
+    "sortPriceAsc": "Price: ascending",
+    "sortPriceDesc": "Price: descending",
+    "sortMileage": "Mileage",
+    "noVehicles": "This dealer has not yet listed any vehicles.",
+    "ratingsOverview": "Ratings overview",
+    "customerReviews": "Customer reviews",
+    "noReviews": "No reviews yet.",
+    "moreOnGoogle": "More on Google",
+    "noRatings": "No reviews available",
+    "noRatingsDescription": "This dealer has not yet linked any Google reviews.",
+    "successToast": "Message sent! The dealer will get back to you.",
+    "errorToast": "Message could not be sent.",
+    "unexpectedError": "An unexpected error occurred."
+  },
+  "DealerContactSchema": {
+    "nameMinLength": "Name is required",
+    "nameMaxLength": "Name can be a maximum of 50 characters",
+    "phoneRequired": "Phone number is required",
+    "invalidPhoneFormat": "Invalid Swiss phone number",
+    "invalidEmail": "Invalid email address",
+    "messageMaxLength": "Message can be a maximum of 1000 characters"
+  },
+  "GarageFilters": {
+    "reset": "Reset",
+    "yearLabel": "Year",
+    "mileageLabel": "Mileage",
+    "priceLabel": "Price",
+    "bodyTypeLabel": "Body type",
+    "fuelLabel": "Fuel",
+    "transmissionLabel": "Transmission",
+    "driveLabel": "Drive",
+    "selectedCount": "{count} selected",
+    "makeModelLabel": "Make & Model",
+    "makeModelSelected": "{count} makes/models",
+    "resetAll": "Reset filters",
+    "moreFilters": "More filters"
+  },
+  "AboutPage": {
+    "heroTitle": "About Autovendo.ch",
+    "heroSubtitle": "Fair. Transparent. Simple. Human.",
+    "heroPlatform": "Autovendo.ch is the sales platform for all car dealers in Switzerland.",
+    "missionTitle": "Our Mission",
+    "missionText1": "We developed Autovendo with a clear goal: to make vehicle sales simple, efficient and fair – without unnecessary administrative overhead, hidden costs or complicated processes.",
+    "missionText2": "Especially in today's world, we know:",
+    "missionText3": "Listing vehicles must be effective, not expensive. Time is limited, costs are rising – which makes a platform that thinks ahead, listens and supports all the more important.",
+    "humanTitle": "More Than Technology – It's About People",
+    "humanText1": "At Autovendo.ch, it's not just about technology, numbers or algorithms.",
+    "humanText2": "It's about you, your vehicles and your customers.",
+    "humanText3": "We listen, understand the challenges of daily dealer life and are personally available to you at all times. Friendly, respectful and solution-oriented.",
+    "reachableTitle": "Personally Reachable – Without Detours",
+    "reachableText1": "At Autovendo.ch, you speak directly with us.",
+    "reachableText2": "No anonymous support team. No bureaucratic maze.",
+    "reachableText3": "You can simply pick up the phone or write to us – we listen, advise honestly and help quickly. Just as you would expect from a reliable partner.",
+    "pricingTitle": "Fair, Competitive and Transparent",
+    "pricingText1": "We believe: Good visibility and efficient listings don't have to be expensive.",
+    "pricingIntro": "Our prices are:",
+    "pricingFeature1": "clear and transparent",
+    "pricingFeature2": "competitive",
+    "pricingFeature3": "easy to calculate",
+    "pricingText2": "No hidden fees, no forced packages. You invest where it counts: in selling your vehicles.",
+    "whyTitle": "Why Autovendo.ch?",
+    "whyText": "Because we understand what car dealers really need today.",
+    "whyConnect": "Autovendo.ch combines:",
+    "efficiencyTitle": "Efficiency & Structure",
+    "efficiencyDesc": "simple handling, clear processes, targeted visibility",
+    "humanityTitle": "Humanity",
+    "humanityDesc": "personal contact, genuine interest, respectful interaction",
+    "reliabilityTitle": "Reliability",
+    "reliabilityDesc": "reachable, uncomplicated, solution-oriented",
+    "whyAllDealers": "All car dealers are welcome here – regardless of size, location or experience. Everyone is treated fairly and gets the same chance to present their vehicles optimally.",
+    "closingTitle": "In Short",
+    "closingText1": "Autovendo.ch makes selling simple, fair and human.",
+    "closingText2": "We move with the times, listen and develop the platform together with dealers."
+  },
+  "DealerProfileForm": {
+    "personalTitle": "Personal Information",
+    "personalDesc": "Your basic account details.",
+    "nameLabel": "Name",
+    "namePlaceholder": "John Doe",
+    "emailLabel": "Email",
+    "emailPlaceholder": "john@example.com",
+    "profileImageLabel": "Profile Photo",
+    "profileImageAlt": "Profile photo preview",
+    "companyTitle": "Company Information",
+    "companyDesc": "Your company and contact details.",
+    "companyNameLabel": "Company Name",
+    "companyNamePlaceholder": "ACME Ltd.",
+    "uidLabel": "UID Number",
+    "websiteLabel": "Website",
+    "logoLabel": "Company Logo",
+    "logoAlt": "Company logo preview",
+    "coverLabel": "Cover Image",
+    "coverAlt": "Cover image preview",
+    "businessEmailLabel": "Business Email",
+    "phoneLabel": "Phone Number",
+    "contactPersonLabel": "Contact Person",
+    "addressTitle": "Address",
+    "addressDesc": "Where your business is located.",
+    "streetLabel": "Street and House Number",
+    "streetPlaceholder": "Main Street 123",
+    "zipLabel": "ZIP Code",
+    "cityLabel": "City",
+    "cityPlaceholder": "Select city",
+    "descriptionTitle": "Description",
+    "descriptionDesc": "Tell us about your business.",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Tell us about your business...",
+    "openingHoursTitle": "Opening Hours",
+    "openingHoursDesc": "When you are available.",
+    "isOpen": "Open",
+    "isClosed": "Closed",
+    "noOpeningHours": "No opening hours defined.",
+    "saving": "Saving...",
+    "save": "Save Profile",
+    "days": {
+      "MONDAY": "Monday",
+      "TUESDAY": "Tuesday",
+      "WEDNESDAY": "Wednesday",
+      "THURSDAY": "Thursday",
+      "FRIDAY": "Friday",
+      "SATURDAY": "Saturday",
+      "SUNDAY": "Sunday"
+    },
+    "uploadFailed": "File upload failed.",
+    "userUpdateError": "Could not update user information.",
+    "emailChangeError": "Could not initiate email change.",
+    "emailConfirmation": "A confirmation email has been sent to your new email address.",
+    "missingUser": "User information is missing.",
+    "profileUpdateSuccess": "Profile updated successfully.",
+    "profileUpdateError": "Could not update company profile.",
+    "unexpectedError": "An error occurred. Please try again."
+  },
+  "Unauthorized": {
+    "title": "Access Denied",
+    "description": "Please log in to your account to access the dashboard.",
+    "login": "Login",
+    "goHome": "Go to Home"
+  },
+  "ListingHeader": {
+    "back": "Back",
+    "start": "Home",
+    "vehicles": "Vehicles",
+    "share": "Share",
+    "shareSuccess": "Link copied to clipboard."
+  },
+  "SellerSection": {
+    "title": "Seller",
+    "reviewCount": "({count} reviews)",
+    "allVehicles": "All vehicles from this dealer",
+    "openingHours": "Opening Hours",
+    "noOpeningHours": "No opening hours available.",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "ReviewSection": {
+    "title": "Reviews",
+    "reviewCount": "({count} reviews)",
+    "noReviews": "No reviews yet.",
+    "showAll": "Show all reviews"
+  },
+  "SimilarListings": {
+    "title": "You Might Also Like",
+    "showAll": "Show all"
+  },
+  "StickyActionBar": {
+    "contact": "Contact",
+    "phone": "Phone"
+  },
+  "VehicleDetail": {
+    "transmission": "Transmission",
+    "firstRegistration": "First Registration",
+    "sellerType": "Seller",
+    "dealer": "Dealer",
+    "privateSeller": "Private Seller",
+    "basicData": "Basic Data",
+    "vehicleHistory": "Vehicle History",
+    "inspectionWarranty": "Inspection & Warranty",
+    "technicalData": "Technical Data",
+    "energyConsumption": "Energy Consumption",
+    "energyEfficiency": "Energy Efficiency Class",
+    "electricData": "Electric Data",
+    "colourUpholstery": "Colour & Upholstery",
+    "identifiers": "Identification Numbers",
+    "identifierKeys": {
+      "vin": "VIN",
+      "serialNumber": "Serial Number",
+      "typeApproval": "Type Approval"
+    },
+    "equipment": "Equipment",
+    "extras": "Extras",
+    "description": "Vehicle Description",
+    "newPrice": "New Price:",
+    "verifiedDealer": "Verified Dealer",
+    "reviewCount": "({count} reviews)",
+    "phone": "Phone",
+    "contact": "Contact",
+    "allVehicles": "All vehicles from this dealer",
+    "yes": "Yes",
+    "no": "No",
+    "months": "Months",
+    "metallic": "Metallic",
+    "uni": "Uni",
+    "basicDataKeys": {
+      "bodyType": "Body Type",
+      "version": "Version",
+      "vehicleType": "Vehicle Type",
+      "condition": "Condition",
+      "driveType": "Drive Type",
+      "seats": "Seats",
+      "doors": "Doors",
+      "offerNumber": "Offer Number"
+    },
+    "vehicleHistoryKeys": {
+      "kilometer": "Mileage",
+      "firstRegistration": "First Registration"
+    },
+    "inspectionWarrantyKeys": {
+      "lastInspection": "Last Inspection (MFK)",
+      "inspectionPassed": "Inspection Passed",
+      "warrantyType": "Warranty Type",
+      "warrantyFrom": "Warranty From",
+      "warrantyDuration": "Warranty Duration",
+      "warrantyMaxKm": "Warranty Max km"
+    },
+    "technicalDataKeys": {
+      "power": "Power",
+      "transmission": "Transmission",
+      "cubicCapacity": "Cubic Capacity",
+      "gears": "Gears",
+      "cylinders": "Cylinders",
+      "emptyWeight": "Empty Weight",
+      "loadCapacity": "Load Capacity",
+      "wheelbase": "Wheelbase",
+      "length": "Length",
+      "width": "Width",
+      "height": "Height",
+      "towingCapacityBraked": "Towing Capacity (Braked)"
+    },
+    "energyConsumptionKeys": {
+      "emissionStandard": "Emission Standard",
+      "fuelType": "Fuel Type",
+      "co2Emission": "CO2 Emissions",
+      "consumptionCity": "Fuel Consumption (City)",
+      "consumptionCountry": "Fuel Consumption (Country)",
+      "consumptionTotal": "Fuel Consumption (Total)"
+    },
+    "electricDataKeys": {
+      "range": "Electric Range",
+      "batteryCapacity": "Battery Capacity",
+      "batteryRental": "Battery Rental",
+      "powerConsumption": "Power Consumption",
+      "batteryOwnership": "Battery Ownership",
+      "chargingStandard": "Charging Standard AC",
+      "chargingFast": "Charging Standard DC",
+      "chargingPower": "Charging Power",
+      "combustionEngine": "Combustion Engine Power",
+      "electricMotor": "Electric Motor Power"
+    },
+    "colourUpholsteryKeys": {
+      "exteriorColor": "Exterior Color",
+      "interiorColor": "Interior Color",
+      "paint": "Paint"
+    }
+  },
+  "ListingListCard": {
+    "contact": "Contact",
+    "allVehicles": "All vehicles from this dealer",
+    "wellMaintained": "Well-maintained condition"
+  },
+  "HowItWorksPage": {
+    "title": "How it Works",
+    "subtitle": "Your path to successful car sales on Autovendo.",
+    "steps": {
+      "step1": {
+        "title": "Download & Sign Contract",
+        "description": "Download the official Autovendo dealer contract, sign it, and send it back to us."
+      },
+      "step2": {
+        "title": "Account Creation",
+        "description": "We will verify your details and create your professional dealer account for you."
+      },
+      "step3": {
+        "title": "Profile Setup",
+        "description": "Log in and complete your dealer profile with your logo, cover image, and description."
+      },
+      "step4": {
+        "title": "Choose Package",
+        "description": "Select the pricing package that best fits your inventory size."
+      },
+      "step5": {
+        "title": "Start Selling",
+        "description": "Start listing your vehicles and reach thousands of potential buyers in Switzerland."
+      }
+    },
+    "cta": {
+      "download": "Download Contract",
+      "contact": "Contact Support",
+      "readyTitle": "Ready to grow your dealership?",
+      "readySubtitle": "Join the Swiss platform designed specifically for professional car dealers."
+    }
+  },
+  "NotFound": {
+    "title": "404 - Page Not Found",
+    "description": "The page you are looking for has either been moved, deleted, or never existed.",
+    "button": "Back to Home",
+    "metaTitle": "404 - Page Not Found | AutoVendo",
+    "metaDescription": "Sorry, the requested page could not be found on AutoVendo."
+  }
+}
