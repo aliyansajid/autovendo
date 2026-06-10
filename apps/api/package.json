@@ -3,13 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "node --env-file=.env --env-file=.env.local -r ts-node/register/esm --watch src/main.ts",
+    "dev": "node --env-file=.env.local --import tsx --watch src/main.ts",
     "build": "nest build",
     "start": "node dist/main.js",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@nestjs/core": "^11.1.26",
+    "@nestjs/platform-express": "^11.1.26",
     "@repo/auth": "*",
     "@repo/typescript-config": "*",
     "@thallesp/nestjs-better-auth": "^2.6.1"

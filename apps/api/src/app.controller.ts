@@ -3,8 +3,8 @@ import {
   AllowAnonymous,
   OptionalAuth,
   Session,
-  UserSession,
 } from "@thallesp/nestjs-better-auth";
+import type { UserSession } from "@thallesp/nestjs-better-auth";
 import { auth } from "@repo/auth";
 
 @Controller()
