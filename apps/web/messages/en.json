@@ -108,9 +108,7 @@
       "DEMONSTRATION": "Demonstration",
       "PRE_REGISTERED": "Pre-registered",
       "USED": "Used",
-      "OLDTIMER": "Oldtimer",
-      "CLASSIC": "Classic",
-      "PRE_OWNED": "Pre-owned"
+      "OLDTIMER": "Oldtimer"
     },
     "statuses": {
       "DRAFT": "Draft",
@@ -133,10 +131,7 @@
       "PHEV_PETROL": "PHEV Petrol",
       "HEV_DIESEL": "HEV Diesel",
       "HEV_PETROL": "HEV Petrol",
-      "HYDROGEN": "Hydrogen",
-      "HYBRID": "Hybrid",
-      "GAS": "Gas",
-      "OTHER": "Other"
+      "HYDROGEN": "Hydrogen"
     },
     "transmissionTypes": {
       "MANUAL": "Manual",
@@ -174,7 +169,6 @@
       "SEMI_TRAILER": "Semi-trailer",
       "CAB_OVER": "Double cab",
       "COACH": "Coach",
-      "TOURIST_BUS": "Tourist bus",
       "ALCOVE": "Alcove",
       "TRAILER": "Trailer",
       "INTEGRATED": "Integrated motorhome",
@@ -316,10 +310,6 @@
       "SCHOOL_BUS": "School Bus",
       "WINCH": "Winch"
     },
-    "brandGroups": {
-      "topBrands": "Top Brands",
-      "allBrands": "All Brands"
-    },
     "batteryOwnership": {
       "BATTERY_INCLUDED": "Battery included in the purchase price",
       "BATTERY_RENT_REQUIRED": "Battery requires an additional rent"
@@ -353,9 +343,7 @@
     "emptyState": "No garages currently listed.",
     "button": "To the Garage"
   },
-  "ListingCard": {
-    "saveToFavorites": "Save to favorites"
-  },
+  "ListingCard": {},
   "AdvancedSearch": {
     "title": "Filter",
     "close": "Close",
@@ -447,18 +435,7 @@
       "title": "Find Vehicles",
       "subtitle": "Discover our wide range of vehicles",
       "offers": "Offers",
-      "noVehicles": "No vehicles found.",
-      "sort": {
-        "relevance": "Default sorting",
-        "price-asc": "Price (lowest first)",
-        "price-desc": "Price (highest first)",
-        "kilometer-asc": "Mileage (lowest first)",
-        "kilometer-desc": "Mileage (highest first)",
-        "registration-asc": "Registration (oldest first)",
-        "registration-desc": "Registration (newest first)",
-        "created-asc": "Listings (oldest first)",
-        "created-desc": "Listings (newest first)"
-      }
+      "noVehicles": "No vehicles found."
     },
     "FiltersSidebar": {
       "title": "More Filters",
@@ -1077,10 +1054,6 @@
     "submitting": "Sending",
     "vehiclesCount": "{count} vehicles",
     "sortBy": "Sort by:",
-    "sortNewest": "Newest first",
-    "sortPriceAsc": "Price: ascending",
-    "sortPriceDesc": "Price: descending",
-    "sortMileage": "Mileage",
     "noVehicles": "This dealer has not yet listed any vehicles.",
     "ratingsOverview": "Ratings overview",
     "customerReviews": "Customer reviews",
@@ -1099,21 +1072,6 @@
     "invalidPhoneFormat": "Invalid Swiss phone number",
     "invalidEmail": "Invalid email address",
     "messageMaxLength": "Message can be a maximum of 500 characters"
-  },
-  "GarageFilters": {
-    "reset": "Reset",
-    "yearLabel": "Year",
-    "mileageLabel": "Mileage",
-    "priceLabel": "Price",
-    "bodyTypeLabel": "Body type",
-    "fuelLabel": "Fuel",
-    "transmissionLabel": "Transmission",
-    "driveLabel": "Drive",
-    "selectedCount": "{count} selected",
-    "makeModelLabel": "Make & Model",
-    "makeModelSelected": "{count} makes/models",
-    "resetAll": "Reset filters",
-    "moreFilters": "More filters"
   },
   "AboutPage": {
     "heroTitle": "About Autovendo.ch",
@@ -1240,8 +1198,7 @@
       "condition": "Condition",
       "driveType": "Drive Type",
       "seats": "Seats",
-      "doors": "Doors",
-      "offerNumber": "Offer Number"
+      "doors": "Doors"
     },
     "vehicleHistoryKeys": {
       "kilometer": "Mileage",

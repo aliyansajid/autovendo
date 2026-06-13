@@ -178,8 +178,32 @@ function buildSortOrder(sort: string | undefined): VehicleOrderBy {
   }
 }
 
+const ACTIVE_OWNER_FILTER = {
+  OR: [
+    {
+      dealerId: { not: null },
+      dealer: {
+        user: {
+          OR: [{ banned: null }, { banned: false }, { banExpires: { lte: new Date() } }],
+        },
+      },
+    },
+    {
+      sellerId: { not: null },
+      seller: {
+        user: {
+          OR: [{ banned: null }, { banned: false }, { banExpires: { lte: new Date() } }],
+        },
+      },
+    },
+  ],
+} as const;
+
 function buildWhereClause(query: VehiclesQueryDto): Parameters<typeof prisma.vehicle.findMany>[0]["where"] {
-  const where: Parameters<typeof prisma.vehicle.findMany>[0]["where"] = { status: "PUBLISHED" };
+  const where: Parameters<typeof prisma.vehicle.findMany>[0]["where"] = {
+    status: "PUBLISHED",
+    AND: [ACTIVE_OWNER_FILTER],
+  };
 
   if (query.make) where!.make = { equals: query.make, mode: "insensitive" };
   if (query.model) where!.model = { equals: query.model, mode: "insensitive" };
@@ -252,7 +276,40 @@ export class VehiclesService {
 
   async findFeatured() {
     const vehicles = await prisma.vehicle.findMany({
-      where: { status: "PUBLISHED" },
+      where: { status: "PUBLISHED", AND: [ACTIVE_OWNER_FILTER] },
+      select: VEHICLE_LIST_SELECT,
+      orderBy: { createdAt: "desc" },
+      take: 6,
+    });
+
+    return { data: vehicles };
+  }
+
+  async findSimilar(id: string) {
+    const vehicle = await prisma.vehicle.findUnique({
+      where: { id },
+      select: { make: true, bodyType: true, fuelType: true, price: true, vehicleType: true },
+    });
+
+    if (!vehicle) return { data: [] };
+
+    const priceFilter = vehicle.price
+      ? { gte: Math.round(vehicle.price * 0.5), lte: Math.round(vehicle.price * 1.5) }
+      : undefined;
+
+    const vehicles = await prisma.vehicle.findMany({
+      where: {
+        id: { not: id },
+        status: "PUBLISHED",
+        AND: [ACTIVE_OWNER_FILTER],
+        vehicleType: vehicle.vehicleType,
+        OR: [
+          { make: vehicle.make },
+          { bodyType: vehicle.bodyType },
+          ...(vehicle.fuelType ? [{ fuelType: vehicle.fuelType }] : []),
+        ],
+        ...(priceFilter ? { price: priceFilter } : {}),
+      },
       select: VEHICLE_LIST_SELECT,
       orderBy: { createdAt: "desc" },
       take: 6,
@@ -262,8 +319,8 @@ export class VehiclesService {
   }
 
   async findOne(id: string) {
-    const vehicle = await prisma.vehicle.findUnique({
-      where: { id },
+    const vehicle = await prisma.vehicle.findFirst({
+      where: { id, status: "PUBLISHED", AND: [ACTIVE_OWNER_FILTER] },
       select: VEHICLE_DETAIL_SELECT,
     });
 

@@ -51,10 +51,12 @@ export async function getVehicleFacetsFromApi(
 }
 
 export async function getSimilarVehiclesFromApi(
-  _vehicleId: string,
+  vehicleId: string,
 ): Promise<{ vehicles: VehicleListItem[] }> {
-  // TODO: implement similar vehicles endpoint in API
-  return { vehicles: [] };
+  const res = await fetch(`${API}/vehicles/${vehicleId}/similar`, { cache: "no-store" });
+  if (!res.ok) return { vehicles: [] };
+  const json = await res.json();
+  return { vehicles: json.data ?? [] };
 }
 
 export async function getFeaturedVehiclesFromApi(): Promise<VehicleListItem[]> {
@@ -64,7 +66,7 @@ export async function getFeaturedVehiclesFromApi(): Promise<VehicleListItem[]> {
   return json.data ?? [];
 }
 
-export async function getVehicleFromApi(id: string): Promise<any | null> {
+export async function getVehicleFromApi(id: string): Promise<Record<string, unknown> | null> {
   const res = await fetch(`${API}/vehicles/${id}`, { cache: "no-store" });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("Failed to fetch vehicle");
@@ -91,7 +93,7 @@ export async function getSitemapData(): Promise<{
   }
 }
 
-export async function getPlansFromApi(): Promise<any[]> {
+export async function getPlansFromApi(): Promise<unknown[]> {
   try {
     const res = await fetch(`${API}/plans`, { cache: "no-store" });
     if (!res.ok) return [];

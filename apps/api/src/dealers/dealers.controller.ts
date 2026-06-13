@@ -1,6 +1,6 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Controller, Get, Post, Param, Query, Body } from "@nestjs/common";
 import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
-import { DealersService, DealersQueryDto, DealerVehiclesQueryDto } from "./dealers.service.js";
+import { DealersService, DealersQueryDto, DealerVehiclesQueryDto, DealerContactDto } from "./dealers.service.js";
 
 @Controller("dealers")
 @AllowAnonymous()
@@ -28,5 +28,13 @@ export class DealersController {
     @Query() query: DealerVehiclesQueryDto,
   ) {
     return this.dealersService.findDealerVehicles(id, query);
+  }
+
+  @Post(":id/contact")
+  sendContactEmail(
+    @Param("id") id: string,
+    @Body() body: DealerContactDto,
+  ) {
+    return this.dealersService.sendContactEmail(id, body);
   }
 }

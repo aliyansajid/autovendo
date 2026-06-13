@@ -34,7 +34,7 @@ export function BasicDataSection({
   const t = useTranslations("AdvancedSearch.sections.basic");
   const tVehicle = useTranslations("Vehicle");
   const locale = useLocale();
-  const { control, watch, setValue, getValues } = useFormContext();
+  const { control, setValue } = useFormContext();
 
   const yearMin = facets?.yearMin ?? 1900;
   const yearMax = CURRENT_YEAR;
@@ -335,29 +335,25 @@ export function BasicDataSection({
               </span>
             </div>
             <div className="space-y-3">
-              {VehicleConditionEnum.map(
-                (item: { value: string }) => {
-                  const count = facets?.vehicleCondition?.[item.value];
-                  return (
-                    <div
-                      key={item.value}
-                      className="flex items-center justify-between"
-                    >
-                      <CustomFormField
-                        control={control}
-                        fieldType={FormFieldType.CHECKBOX}
-                        name={`condition-${item.value}`}
-                        label={tVehicle(
-                          `conditions.${item.value}`,
-                        )}
-                      />
-                      <span className="text-sm text-muted-foreground">
-                        {formatCount(count ?? 0)}
-                      </span>
-                    </div>
-                  );
-                },
-              )}
+              {VehicleConditionEnum.map((item: { value: string }) => {
+                const count = facets?.vehicleCondition?.[item.value];
+                return (
+                  <div
+                    key={item.value}
+                    className="flex items-center justify-between"
+                  >
+                    <CustomFormField
+                      control={control}
+                      fieldType={FormFieldType.CHECKBOX}
+                      name={`condition-${item.value}`}
+                      label={tVehicle(`conditions.${item.value}`)}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {formatCount(count ?? 0)}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -488,9 +484,7 @@ export function BasicDataSection({
                     control={control}
                     fieldType={FormFieldType.CHECKBOX}
                     name={`bodyType-${type.value}`}
-                    label={tVehicle(
-                      `types.${type.value}`,
-                    )}
+                    label={tVehicle(`types.${type.value}`)}
                   />
                   <span className="text-sm text-muted-foreground">
                     {formatCount(count ?? 0)}

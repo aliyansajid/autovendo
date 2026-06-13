@@ -182,59 +182,6 @@ function CheckboxListFilter({
   );
 }
 
-interface GridFilterProps {
-  title: string;
-  items: { label: string; value: string; icon?: any }[];
-  selectedValues?: string[];
-  onChange?: (selected: string[]) => void;
-}
-
-function GridFilter({
-  title,
-  items,
-  selectedValues = [],
-  onChange,
-}: GridFilterProps) {
-  const t = useTranslations("GarageRichFilters");
-  const toggle = (value: string) => {
-    const newSelected = selectedValues.includes(value)
-      ? selectedValues.filter((v) => v !== value)
-      : [...selectedValues, value];
-    onChange?.(newSelected);
-  };
-
-  return (
-    <div className="space-y-4">
-      <PopoverHeader>
-        <PopoverTitle className="text-base font-semibold">{title}</PopoverTitle>
-        <PopoverDescription
-          className="text-xs cursor-pointer hover:underline"
-          onClick={() => onChange?.([])}
-        >
-          Zurücksetzen
-        </PopoverDescription>
-      </PopoverHeader>
-
-      <div className="grid grid-cols-2 gap-3">
-        {items.map((item) => (
-          <div key={item.value} className="flex items-center space-x-2">
-            <Checkbox
-              id={`grid-${title}-${item.value}`}
-              checked={selectedValues.includes(item.value)}
-              onCheckedChange={() => toggle(item.value)}
-            />
-            {item.icon && (
-              <item.icon className="w-4 h-4 text-muted-foreground" />
-            )}
-            <FieldLabel htmlFor={`grid-${title}-${item.value}`}>
-              {item.label}
-            </FieldLabel>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 import { useEffect, useMemo } from "react";
 import type { VehicleSearchParams } from "@/schema/vehicle-search-schema";
@@ -267,7 +214,7 @@ export default function GarageRichFilters({
   const getLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
     const formattedKey = `${namespace}.${key}`;
-    // @ts-ignore
+    // @ts-expect-error – dynamic key validated at runtime via .has()
     return tVehicle.has(formattedKey) ? tVehicle(formattedKey) : key;
   };
 
@@ -384,19 +331,19 @@ export default function GarageRichFilters({
 
     // Multi-selects
     if (selectedBodyTypes.length > 0) {
-      filters.bodyType = selectedBodyTypes as any;
+      filters.bodyType = selectedBodyTypes as never;
     } else {
       delete filters.bodyType;
     }
 
     if (selectedFuels.length > 0) {
-      filters.fuel = selectedFuels as any;
+      filters.fuel = selectedFuels as never;
     } else {
       delete filters.fuel;
     }
 
     if (selectedTransmissions.length > 0) {
-      filters.transmission = selectedTransmissions as any;
+      filters.transmission = selectedTransmissions as never;
     } else {
       delete filters.transmission;
     }
@@ -409,6 +356,7 @@ export default function GarageRichFilters({
 
     return filters;
   }, [
+    DEFAULTS,
     initialFilters,
     selectedMakes,
     excludedMakes,
@@ -457,7 +405,7 @@ export default function GarageRichFilters({
   ) => {
     if (!current) return label;
     const [cMin, cMax] = current;
-    const [dMin, dMax] = def;
+    const [, dMax] = def;
 
     const minStr = formatNumber(cMin);
     const maxStr = formatNumber(cMax);

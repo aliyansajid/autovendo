@@ -107,12 +107,7 @@ export default async function DealerPage({
       {
         "@type": "ListItem",
         position: 2,
-        name:
-          locale === "fr"
-            ? "Concessionnaires"
-            : locale === "it"
-              ? "Concessionari"
-              : "Händler",
+        name: ({ de: "Händler", en: "Dealers", fr: "Concessionnaires", it: "Concessionari" })[locale] ?? "Händler",
         item: `https://autovendo.ch/${locale}/dealers`,
       },
       {

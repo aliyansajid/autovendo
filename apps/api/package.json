@@ -12,6 +12,7 @@
     "@nestjs/core": "^11.1.26",
     "@nestjs/platform-express": "^11.1.26",
     "@repo/auth": "*",
+    "@repo/transactional": "*",
     "@repo/typescript-config": "*",
     "@thallesp/nestjs-better-auth": "^2.6.1"
   },

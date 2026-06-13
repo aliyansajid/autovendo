@@ -9,11 +9,13 @@ import { formatPrice } from "@repo/ui/lib/helpers/format";
 interface StickyActionBarProps {
   price: number;
   sellerPhone: string;
+  sellerEmail?: string;
 }
 
 export const StickyActionBar = ({
   price,
   sellerPhone,
+  sellerEmail,
 }: StickyActionBarProps) => {
   const t = useTranslations("StickyActionBar");
   return (
@@ -21,12 +23,14 @@ export const StickyActionBar = ({
       <div className="flex items-center gap-3 max-w-285 mx-auto">
         <p className="flex-1 font-bold text-xl">{formatPrice(price)}</p>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="w-full flex-1" asChild>
-            <Link href={`mailto:${sellerPhone}`}>
-              <Mail />
-              {t("contact")}
-            </Link>
-          </Button>
+          {sellerEmail && (
+            <Button variant="outline" className="w-full flex-1" asChild>
+              <Link href={`mailto:${sellerEmail}`}>
+                <Mail />
+                {t("contact")}
+              </Link>
+            </Button>
+          )}
           <Button className="w-full flex-1" asChild>
             <Link href={`tel:${sellerPhone}`}>
               <Phone />

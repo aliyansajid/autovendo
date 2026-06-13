@@ -160,7 +160,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
-                  setValue("consumption", undefined as any);
+                  setValue("consumption", undefined as never);
                   setValue("consumption-from", "");
                   setValue("consumption-to", "");
                 }}
@@ -201,7 +201,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
-                  setValue("emissions", undefined as any);
+                  setValue("emissions", undefined as never);
                   setValue("emissions-from", "");
                   setValue("emissions-to", "");
                 }}
@@ -242,7 +242,7 @@ export function EnergySection({ facets }: { facets?: VehicleFacets | null }) {
               <span
                 className="text-xs text-muted-foreground cursor-pointer hover:underline"
                 onClick={() => {
-                  setValue("range", undefined as any);
+                  setValue("range", undefined as never);
                   setValue("range-from", "");
                   setValue("range-to", "");
                 }}

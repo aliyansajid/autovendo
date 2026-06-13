@@ -7,7 +7,7 @@ import { Button } from "@repo/ui/components/button";
 import { Accordion } from "@repo/ui/components/accordion";
 import { Separator } from "@repo/ui/components/separator";
 import { useForm, FormProvider } from "react-hook-form";
-import { Link, useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
 import { MakeModelSection } from "./form-sections/make-model-section";
 import { BasicDataSection } from "./form-sections/basic-data-section";
 import { TechnicalDataSection } from "./form-sections/technical-data-section";

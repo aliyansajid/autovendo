@@ -34,7 +34,6 @@ import { Link } from "@/i18n/routing";
 import { StickyActionBar } from "../_components/sticky-action-bar";
 import { EnergyLabel } from "../_components/energy-label";
 import {
-  DAY_LABELS,
   DAY_ORDER,
   formatNumber,
   formatPrice,
@@ -157,13 +156,13 @@ export default async function ListingPage({
       .toUpperCase()
       .replace(/[-]/g, "_");
     const formattedKey = `${namespace}.${normalizedKey}`;
-    // @ts-ignore
+    // @ts-expect-error – dynamic key validated at runtime via .has()
     return tVehicle.has(formattedKey) ? tVehicle(formattedKey) : key;
   };
 
   const title = formatVehicleName([item.make, item.model, item.version]);
   const price = item.price;
-  const images = item.images.map((img: any) => getImageUrl(img));
+  const images = item.images.map((img: string) => getImageUrl(img));
 
   // unstable_cache serializes Date objects to strings — must re-wrap
   const toDate = (v: Date | string | null | undefined): Date | null =>
@@ -322,14 +321,14 @@ export default async function ListingPage({
 
   const equipmentList = item.equipment
     ? Object.entries(item.equipment as Record<string, unknown>)
-        .filter(([_, v]) => v === true)
+        .filter(([, v]) => v === true)
         .map(([k]) => getLabel("equipment", k) || k)
     : [];
 
   const extrasList =
     item.extras != null && typeof item.extras === "object"
       ? Object.entries(item.extras as Record<string, unknown>)
-          .filter(([_, v]) => v === true)
+          .filter(([, v]) => v === true)
           .map(([k]) => getLabel("extras", k) || k)
       : [];
 
@@ -379,7 +378,7 @@ export default async function ListingPage({
 
   const { vehicles: similarItems } = await getSimilarVehiclesFromApi(item.id);
 
-  const similarListings: ListingProps[] = similarItems.map((sim: any) => ({
+  const similarListings: ListingProps[] = similarItems.map((sim) => ({
     id: sim.id,
     title: `${sim.make} ${sim.model || ""}`.trim(),
     price: formatPrice(sim.price),
@@ -454,8 +453,7 @@ export default async function ListingPage({
       {
         "@type": "ListItem",
         position: 2,
-        name:
-          locale === "fr" ? "Voitures" : locale === "it" ? "Auto" : "Fahrzeuge",
+        name: ({ de: "Fahrzeuge", en: "Vehicles", fr: "Voitures", it: "Auto" })[locale] ?? "Fahrzeuge",
         item: `https://autovendo.ch/${locale}/cars`,
       },
       {
@@ -761,7 +759,7 @@ export default async function ListingPage({
         </div>
       </div>
 
-      <StickyActionBar price={price} sellerPhone={seller?.phone ?? ""} />
+      <StickyActionBar price={price} sellerPhone={seller?.phone ?? ""} sellerEmail={seller?.businessEmail} />
     </div>
   );
 }

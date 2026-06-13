@@ -108,9 +108,7 @@
       "DEMONSTRATION": "Vorführfahrzeug",
       "PRE_REGISTERED": "Neuimmatrikuliert",
       "USED": "Occasion",
-      "OLDTIMER": "Oldtimer",
-      "CLASSIC": "Oldtimer",
-      "PRE_OWNED": "Occasion"
+      "OLDTIMER": "Oldtimer"
     },
     "statuses": {
       "DRAFT": "Entwurf",
@@ -133,10 +131,7 @@
       "PHEV_PETROL": "PHEV Petrol",
       "HEV_DIESEL": "HEV Diesel",
       "HEV_PETROL": "HEV Petrol",
-      "HYDROGEN": "Wasserstoff",
-      "HYBRID": "Hybrid",
-      "GAS": "Gas",
-      "OTHER": "Andere"
+      "HYDROGEN": "Wasserstoff"
     },
     "transmissionTypes": {
       "MANUAL": "Schaltgetriebe",
@@ -174,7 +169,6 @@
       "SEMI_TRAILER": "Sattel-Auflieger",
       "CAB_OVER": "Doppelkabine",
       "COACH": "Reisebus",
-      "TOURIST_BUS": "Reisebus",
       "ALCOVE": "Alkoven",
       "TRAILER": "Anhänger",
       "INTEGRATED": "Integriertes Wohnmobil",
@@ -316,10 +310,6 @@
       "SCHOOL_BUS": "Schulbus",
       "WINCH": "Seilwinde"
     },
-    "brandGroups": {
-      "topBrands": "Top-Marken",
-      "allBrands": "Alle Marken"
-    },
     "batteryOwnership": {
       "BATTERY_INCLUDED": "Batterie im Kaufpreis enthalten",
       "BATTERY_RENT_REQUIRED": "Batteriemiete zusätzlich erforderlich"
@@ -353,9 +343,7 @@
     "emptyState": "Derzeit keine Garagen eingetragen.",
     "button": "Zur Garage"
   },
-  "ListingCard": {
-    "saveToFavorites": "Zu Favoriten hinzufügen"
-  },
+  "ListingCard": {},
   "AdvancedSearch": {
     "title": "Filter",
     "close": "Schliessen",
@@ -447,18 +435,7 @@
       "title": "Fahrzeuge finden",
       "subtitle": "Entdecken Sie unser breites Angebot an Fahrzeugen",
       "offers": "Angebote",
-      "noVehicles": "Keine Fahrzeuge gefunden.",
-      "sort": {
-        "relevance": "Standard-Sortierung",
-        "price-asc": "Preis (niedrigster zuerst)",
-        "price-desc": "Preis (höchster zuerst)",
-        "kilometer-asc": "Kilometerstand (niedrigster zuerst)",
-        "kilometer-desc": "Kilometerstand (höchster zuerst)",
-        "registration-asc": "Erstzulassung (älteste zuerst)",
-        "registration-desc": "Erstzulassung (jüngste zuerst)",
-        "created-asc": "Inserate (älteste zuerst)",
-        "created-desc": "Inserate (neueste zuerst)"
-      }
+      "noVehicles": "Keine Fahrzeuge gefunden."
     },
     "FiltersSidebar": {
       "title": "Weitere Filter",
@@ -1083,10 +1060,6 @@
     "submitting": "Wird gesendet",
     "vehiclesCount": "{count} Fahrzeuge",
     "sortBy": "Sortieren nach:",
-    "sortNewest": "Neueste zuerst",
-    "sortPriceAsc": "Preis: aufsteigend",
-    "sortPriceDesc": "Preis: absteigend",
-    "sortMileage": "Kilometerstand",
     "noVehicles": "Dieser Händler hat noch keine Fahrzeuge inseriert.",
     "ratingsOverview": "Bewertungsübersicht",
     "customerReviews": "Kundenbewertungen",
@@ -1105,21 +1078,6 @@
     "invalidPhoneFormat": "Ungültige Schweizer Telefonnummer",
     "invalidEmail": "Ungültige E-Mail-Adresse",
     "messageMaxLength": "Nachricht darf maximal 500 Zeichen lang sein"
-  },
-  "GarageFilters": {
-    "reset": "Zurücksetzen",
-    "yearLabel": "Jahr",
-    "mileageLabel": "Kilometerstand",
-    "priceLabel": "Preis",
-    "bodyTypeLabel": "Karosserieform",
-    "fuelLabel": "Treibstoff",
-    "transmissionLabel": "Getriebe",
-    "driveLabel": "Antrieb",
-    "selectedCount": "{count} ausgewählt",
-    "makeModelLabel": "Marke & Modell",
-    "makeModelSelected": "{count} Marken/Modelle",
-    "resetAll": "Filter zurücksetzen",
-    "moreFilters": "Mehr Filter"
   },
   "AboutPage": {
     "heroTitle": "Über Autovendo.ch",
@@ -1246,8 +1204,7 @@
       "condition": "Zustand",
       "driveType": "Antrieb",
       "seats": "Sitze",
-      "doors": "Türen",
-      "offerNumber": "Angebotsnummer"
+      "doors": "Türen"
     },
     "vehicleHistoryKeys": {
       "kilometer": "Kilometerstand",

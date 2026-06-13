@@ -19,6 +19,10 @@ import {
   KILOMETER_OPTIONS,
   ColorEnum,
   EquipmentEnum,
+  VehicleConditionEnum,
+  carFuelTypeEnum,
+  carBodyTypeEnum,
+  TransmissionTypeEnum,
 } from "@repo/vehicle-constants";
 import { carMakes } from "@repo/vehicle-constants";
 import { FieldGroup, FieldLabel } from "@repo/ui/components/field";
@@ -37,7 +41,7 @@ import { PowerDialog } from "./filters/power-dialog";
 import { EvDialog } from "./filters/ev-dialog";
 import { MakeModelDialog } from "./filters/make-model-dialog";
 import type { VehicleFacets } from "@/types/vehicle";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { formatKilometers } from "@repo/ui/lib/helpers/format";
 
 export const FiltersSidebar = ({
@@ -53,7 +57,6 @@ export const FiltersSidebar = ({
 }) => {
   const t = useTranslations("AdvancedSearch.FiltersSidebar");
   const tVehicle = useTranslations("Vehicle");
-  const locale = useLocale();
 
   // Use variables to avoid lint warnings if passed but unused
   void onClose;
@@ -260,13 +263,13 @@ export const FiltersSidebar = ({
             <div className="space-y-3">
               <FieldLabel>{t("condition")}</FieldLabel>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                {renderSelectedText(watchCondition, [
-                  { value: "NEW", label: tVehicle("conditions.NEW") },
-                  { value: "DEMONSTRATION", label: tVehicle("conditions.DEMONSTRATION") },
-                  { value: "PRE_REGISTERED", label: tVehicle("conditions.PRE_REGISTERED") },
-                  { value: "USED", label: tVehicle("conditions.USED") },
-                  { value: "OLDTIMER", label: tVehicle("conditions.OLDTIMER") },
-                ])}
+                {renderSelectedText(
+                  watchCondition,
+                  VehicleConditionEnum.map((c) => ({
+                    value: c.value,
+                    label: tVehicle(`conditions.${c.value}`),
+                  })),
+                )}
                 <ConditionDialog resultCount={resultCount} />
               </div>
             </div>
@@ -388,17 +391,9 @@ export const FiltersSidebar = ({
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(
                   watchFuel,
-                  [
-                    "PETROL",
-                    "DIESEL",
-                    "ELECTRIC",
-                    "HYBRID",
-                    "GAS",
-                    "HYDROGEN",
-                    "OTHER",
-                  ].map((v) => ({
-                    value: v,
-                    label: tVehicle(`fuelTypes.${v}`),
+                  carFuelTypeEnum.map((f) => ({
+                    value: f.value,
+                    label: tVehicle(`fuelTypes.${f.value}`),
                   })),
                 )}
                 <FuelTypeDialog counts={facets?.fuelType} />
@@ -424,12 +419,9 @@ export const FiltersSidebar = ({
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(
                   watchBodyType,
-                  [
-                    "BUS", "CABRIOLET", "COUPE", "SMALL_CAR",
-                    "ESTATE", "MINIVAN", "SALOON", "PICKUP", "SUV",
-                  ].map((v) => ({
-                    value: v,
-                    label: tVehicle(`types.${v}`),
+                  carBodyTypeEnum.map((b) => ({
+                    value: b.value,
+                    label: tVehicle(`types.${b.value}`),
                   })),
                 )}
                 <VehicleTypeDialog counts={facets?.bodyType} />
@@ -452,9 +444,9 @@ export const FiltersSidebar = ({
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 {renderSelectedText(
                   watchTransmission,
-                  ["MANUAL", "AUTOMATIC", "SEMI_AUTOMATIC"].map((v) => ({
-                    value: v,
-                    label: tVehicle(`transmissionTypes.${v}`),
+                  TransmissionTypeEnum.map((tr) => ({
+                    value: tr.value,
+                    label: tVehicle(`transmissionTypes.${tr.value}`),
                   })),
                 )}
                 <TransmissionDialog counts={facets?.transmissionType} />

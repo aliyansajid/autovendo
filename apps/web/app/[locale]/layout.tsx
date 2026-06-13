@@ -6,7 +6,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Script from "next/script";
-import { OG_LOCALE } from "@/lib/seo";
+import { BASE_URL, OG_LOCALE, PAGE_META } from "@/lib/seo";
 import { routing } from "@/i18n/routing";
 
 const geistSans = localFont({
@@ -26,13 +26,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   return {
-    metadataBase: new URL("https://autovendo.ch"),
+    metadataBase: new URL(BASE_URL),
     title: {
-      default: "Gebrauchtwagen & Occasionen kaufen Schweiz | AutoVendo",
+      default: (PAGE_META.home[locale as keyof typeof PAGE_META.home] ?? PAGE_META.home.de).title,
       template: "%s",
     },
-    description:
-      "Tausende Gebrauchtwagen und Occasionen von verifizierten Schweizer Händlern. Günstiger als AutoScout24 – faire Preise, keine versteckten Kosten.",
+    description: (PAGE_META.home[locale as keyof typeof PAGE_META.home] ?? PAGE_META.home.de).description,
     keywords: [
       "gebrauchtwagen schweiz",
       "occasion auto schweiz",
@@ -55,7 +54,7 @@ export async function generateMetadata({
           alt: "AutoVendo – Gebrauchtwagen & Occasionen Schweiz",
         },
       ],
-      locale: OG_LOCALE[locale] ?? "de_CH",
+      locale: OG_LOCALE[locale as keyof typeof OG_LOCALE] ?? "de_CH",
       type: "website",
     },
     twitter: {

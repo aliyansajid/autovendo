@@ -51,9 +51,11 @@ export default function ContactPage() {
         message: data.message || undefined,
       });
 
-      result.ok
-        ? toast.success(result.message ?? t("successDefault"))
-        : toast.error(result.error ?? t("errorDefault"));
+      if (result.ok) {
+        toast.success(result.message ?? t("successDefault"));
+      } else {
+        toast.error(result.error ?? t("errorDefault"));
+      }
       form.reset();
     });
   }

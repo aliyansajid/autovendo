@@ -31,7 +31,6 @@ import {
   Globe,
   BadgeCheck,
   Send,
-  Loader2,
   Clock,
   ExternalLink,
 } from "lucide-react";
@@ -57,11 +56,13 @@ import { Field, FieldGroup } from "@repo/ui/components/field";
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@repo/ui/components/pagination";
+import { SORT_OPTIONS } from "@repo/vehicle-constants";
 import { formatCount } from "@repo/ui/lib/helpers/format";
 import type {
   DealerDetail,
@@ -104,11 +105,11 @@ function filtersToParams(
   );
 
   for (const key of ARRAY_KEYS) {
-    const val = (filters as any)[key] as string[] | undefined;
+    const val = (filters as Record<string, unknown>)[key] as string[] | undefined;
     if (Array.isArray(val) && val.length > 0) val.forEach((v) => params.append(key, v));
   }
   for (const key of NUM_KEYS) {
-    const val = (filters as any)[key] as number | undefined;
+    const val = (filters as Record<string, unknown>)[key] as number | undefined;
     if (val != null) params.set(key, String(val));
   }
   if (filters.metallic != null) params.set("metallic", String(filters.metallic));
@@ -145,6 +146,7 @@ export const DealerDetailContent = ({
   const t = useTranslations("DealerDetail");
   const tForm = useTranslations("DealerProfileForm");
   const tSchema = useTranslations("DealerContactSchema");
+  const tControls = useTranslations("ListingControls");
   const searchParams = useSearchParams();
   const router = useRouter();
   const activeTab = searchParams.get("tab") || "about";
@@ -588,10 +590,11 @@ export const DealerDetailContent = ({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="created-desc">{t("sortNewest")}</SelectItem>
-                    <SelectItem value="price-asc">{t("sortPriceAsc")}</SelectItem>
-                    <SelectItem value="price-desc">{t("sortPriceDesc")}</SelectItem>
-                    <SelectItem value="kilometer-asc">{t("sortMileage")}</SelectItem>
+                    {SORT_OPTIONS.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {tControls(`sortOptions.${option}`)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -620,25 +623,39 @@ export const DealerDetailContent = ({
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious
-                      href={currentPage > 1 ? buildUrl(currentPage - 1) : "#"}
+                      href={currentPage > 1 ? buildUrl(currentPage - 1) : undefined}
                       className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
                     />
                   </PaginationItem>
 
-                  {Array.from({ length: totalPages }).map((_, i) => (
-                    <PaginationItem key={i}>
-                      <PaginationLink
-                        href={buildUrl(i + 1)}
-                        isActive={currentPage === i + 1}
-                      >
-                        {i + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
+                    if (totalPages > 7) {
+                      if (p === 1 || p === totalPages || (p >= currentPage - 1 && p <= currentPage + 1)) {
+                        return (
+                          <PaginationItem key={p}>
+                            <PaginationLink href={buildUrl(p)} isActive={currentPage === p}>
+                              {p}
+                            </PaginationLink>
+                          </PaginationItem>
+                        );
+                      }
+                      if (p === currentPage - 2 || p === currentPage + 2) {
+                        return <PaginationItem key={p}><PaginationEllipsis /></PaginationItem>;
+                      }
+                      return null;
+                    }
+                    return (
+                      <PaginationItem key={p}>
+                        <PaginationLink href={buildUrl(p)} isActive={currentPage === p}>
+                          {p}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
 
                   <PaginationItem>
                     <PaginationNext
-                      href={currentPage < totalPages ? buildUrl(currentPage + 1) : "#"}
+                      href={currentPage < totalPages ? buildUrl(currentPage + 1) : undefined}
                       className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
                     />
                   </PaginationItem>

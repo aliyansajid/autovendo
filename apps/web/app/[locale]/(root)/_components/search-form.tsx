@@ -28,7 +28,7 @@ import { Link, useRouter } from "@/i18n/routing";
 import { prices } from "@repo/vehicle-constants";
 import { useTranslations } from "next-intl";
 
-const createFormSchema = (t: any) =>
+const createFormSchema = () =>
   z.object({
     query: z.string().optional(),
     make: z.string().optional(),
@@ -40,7 +40,7 @@ const createFormSchema = (t: any) =>
 export const SearchForm = () => {
   const t = useTranslations("SearchForm");
   const router = useRouter();
-  const formSchema = createFormSchema(t);
+  const formSchema = createFormSchema();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

@@ -17,6 +17,11 @@ export class VehiclesController {
     return this.vehiclesService.findFeatured();
   }
 
+  @Get(":id/similar")
+  findSimilar(@Param("id") id: string) {
+    return this.vehiclesService.findSimilar(id);
+  }
+
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.vehiclesService.findOne(id);

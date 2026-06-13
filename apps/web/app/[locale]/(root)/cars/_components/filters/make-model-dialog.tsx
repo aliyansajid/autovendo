@@ -26,7 +26,7 @@ import { carMakes, popularCarMakes, carModels } from "@repo/vehicle-constants";
 import Image from "next/image";
 import { useRouter, usePathname } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { formatCount } from "@repo/ui/lib/helpers/format";
 
 const formSchema = z.object({
@@ -77,8 +77,6 @@ export function MakeModelDialog({
 }: MakeModelDialogProps) {
   const t = useTranslations("AdvancedSearch.FiltersSidebar.dialogs.makeModel");
   const tCommon = useTranslations("AdvancedSearch.FiltersSidebar.dialogs");
-  const locale = useLocale();
-
   const isControlled = onChange !== undefined;
 
   const router = useRouter();

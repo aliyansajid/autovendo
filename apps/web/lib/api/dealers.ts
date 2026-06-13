@@ -6,7 +6,7 @@ import type {
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "https://api.autovendo.ch";
 
-function buildQs(params: Record<string, any>): string {
+function buildQs(params: Record<string, string | number | undefined | null>): string {
   const qs = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null) continue;
@@ -131,7 +131,7 @@ export async function sendDealerContactEmailFromApi(
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      return { success: false, error: (body as any).error || "errorDefault" };
+      return { success: false, error: (body as { error?: string }).error || "errorDefault" };
     }
     return res.json();
   } catch {

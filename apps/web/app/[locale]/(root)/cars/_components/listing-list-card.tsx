@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@repo/ui/components/card";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
@@ -37,11 +37,10 @@ export function ListingListCard({
   const t = useTranslations();
   const tCard = useTranslations("ListingListCard");
   const tVehicle = useTranslations("Vehicle");
-  const locale = useLocale();
 
   const getVehicleLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
-    const formattedKey = `${namespace}.${key.toUpperCase().replace(/-/g, "_")}` as any;
+    const formattedKey = `${namespace}.${key.toUpperCase().replace(/-/g, "_")}` as Parameters<typeof tVehicle>[0];
     const translated = tVehicle(formattedKey);
     return translated !== formattedKey ? translated : key;
   };
@@ -139,7 +138,7 @@ export function ListingListCard({
                           : "text-green-600"
                     }`}
                   >
-                    {t(`Vehicle.priceRating.${item.priceRating.label}` as any)}
+                    {t(`Vehicle.priceRating.${item.priceRating.label}` as Parameters<typeof tVehicle>[0])}
                   </span>
                 </div>
               )}
@@ -175,7 +174,7 @@ export function ListingListCard({
                       .replace(/([a-z])([A-Z])/g, "$1_$2")
                       .toUpperCase()
                       .replace(/[-]/g, "_");
-                    const translationKey = `equipment.${normalizedEq}` as any;
+                    const translationKey = `equipment.${normalizedEq}` as Parameters<typeof tVehicle>[0];
                     const translated = tVehicle(translationKey);
                     // If next-intl returns the key itself, it means translation was not found
                     return translated !== translationKey
