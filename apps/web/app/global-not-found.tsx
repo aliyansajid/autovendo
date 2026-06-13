@@ -2,16 +2,22 @@ import "@repo/ui/globals.css";
 import Link from "next/link";
 import { MoveLeft, CarFront, AlertCircle } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
+import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "404 - Page Not Found | AutoVendo",
-  description: "The page you are looking for does not exist on AutoVendo.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations({ locale: "de", namespace: "NotFound" });
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
-export default function RootNotFound() {
+export default async function RootNotFound() {
+  const t = await getTranslations({ locale: "de", namespace: "NotFound" });
+
   return (
-    <html lang="en">
+    <html lang="de">
       <body className="antialiased selection:bg-primary/20 selection:text-primary min-h-screen">
         <div className="relative flex flex-col items-center justify-center min-h-screen px-4 py-20 text-center overflow-hidden bg-background">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10" />
@@ -33,10 +39,10 @@ export default function RootNotFound() {
 
                 <div className="space-y-2">
                   <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                    Page Not Found
+                    {t("title")}
                   </h2>
                   <p className="text-muted-foreground text-lg max-w-xs mx-auto leading-relaxed">
-                    The requested resource could not be found at this address.
+                    {t("description")}
                   </p>
                 </div>
               </div>
@@ -47,7 +53,7 @@ export default function RootNotFound() {
               >
                 <Link href={"/"}>
                   <MoveLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-                  Back to Safety
+                  {t("button")}
                 </Link>
               </Button>
             </div>

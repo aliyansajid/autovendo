@@ -8,16 +8,10 @@
       "mobileMenuTitle": "Menu"
     },
     "auth": {
-      "login": "Login",
-      "logout": "Logout",
-      "dashboard": "Dashboard"
+      "login": "Login"
     },
     "languages": {
-      "label": "Language",
-      "de": "Deutsch",
-      "en": "English",
-      "fr": "Français",
-      "it": "Italiano"
+      "label": "Language"
     },
     "logoAlt": "AutoVendo Logo"
   },
@@ -109,14 +103,6 @@
       "PRE_REGISTERED": "Pre-registered",
       "USED": "Used",
       "OLDTIMER": "Oldtimer"
-    },
-    "statuses": {
-      "DRAFT": "Draft",
-      "PUBLISHED": "Published",
-      "PAUSED": "Paused",
-      "SOLD": "Sold",
-      "ARCHIVED": "Archived",
-      "BANNED": "Banned"
     },
     "fuelTypes": {
       "PETROL": "Petrol",
@@ -881,129 +867,7 @@
       "suffix": "That is direct margin. Without risk.",
       "switchText": "Switch to autovendo.ch now and save several thousand francs per year – with personal service and fair conditions.",
       "contactButton": "Get in touch"
-    },
-    "tiers": [
-      {
-        "name": "Bronze",
-        "price": "180.–",
-        "period": "/ month",
-        "description": "Ideal for smaller inventories.",
-        "features": [
-          {
-            "name": "Up to 5 vehicles",
-            "included": true
-          },
-          {
-            "name": "Full visibility",
-            "included": true
-          },
-          {
-            "name": "Personal support",
-            "included": true
-          },
-          {
-            "name": "No hidden costs",
-            "included": true
-          },
-          {
-            "name": "Flexible duration",
-            "included": true
-          }
-        ],
-        "buttonText": "Choose plan",
-        "popular": false
-      },
-      {
-        "name": "Silver",
-        "price": "280.–",
-        "period": "/ month",
-        "description": "Perfect for growing dealers.",
-        "features": [
-          {
-            "name": "Up to 10 vehicles",
-            "included": true
-          },
-          {
-            "name": "Full visibility",
-            "included": true
-          },
-          {
-            "name": "Personal support",
-            "included": true
-          },
-          {
-            "name": "No hidden costs",
-            "included": true
-          },
-          {
-            "name": "Flexible duration",
-            "included": true
-          }
-        ],
-        "buttonText": "Choose plan",
-        "popular": false
-      },
-      {
-        "name": "Gold",
-        "price": "325.–",
-        "period": "/ month",
-        "description": "For established dealers.",
-        "features": [
-          {
-            "name": "Up to 15 vehicles",
-            "included": true
-          },
-          {
-            "name": "Full visibility",
-            "included": true
-          },
-          {
-            "name": "Personal support",
-            "included": true
-          },
-          {
-            "name": "No hidden costs",
-            "included": true
-          },
-          {
-            "name": "Flexible duration",
-            "included": true
-          }
-        ],
-        "buttonText": "Choose plan",
-        "popular": true
-      },
-      {
-        "name": "Diamond",
-        "price": "408.–",
-        "period": "/ month",
-        "description": "For dealers with higher volume.",
-        "features": [
-          {
-            "name": "Up to 25 vehicles",
-            "included": true
-          },
-          {
-            "name": "Full visibility",
-            "included": true
-          },
-          {
-            "name": "Personal support",
-            "included": true
-          },
-          {
-            "name": "No hidden costs",
-            "included": true
-          },
-          {
-            "name": "Flexible duration",
-            "included": true
-          }
-        ],
-        "buttonText": "Choose plan",
-        "popular": false
-      }
-    ]
+    }
   },
   "ContactSchema": {
     "nameMin": "Name must be at least 3 characters long",

@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { Separator } from "@repo/ui/src/components/separator";
 import { Button } from "@repo/ui/src/components/button";
 import { Link } from "@/i18n/routing";
 import { ArrowRight } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Privatsphäre | AutoVendo",
+  robots: { index: false, follow: false },
+};
 
 export default function PrivatsphaereEinstellungenPage() {
   return (

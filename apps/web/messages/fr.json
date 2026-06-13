@@ -8,16 +8,10 @@
       "mobileMenuTitle": "Menu"
     },
     "auth": {
-      "login": "Connexion",
-      "logout": "Déconnexion",
-      "dashboard": "Tableau de bord"
+      "login": "Connexion"
     },
     "languages": {
-      "label": "Langue",
-      "de": "Deutsch",
-      "en": "English",
-      "fr": "Français",
-      "it": "Italiano"
+      "label": "Langue"
     },
     "logoAlt": "Logo AutoVendo"
   },
@@ -109,14 +103,6 @@
       "PRE_REGISTERED": "Nouvellement immatriculé",
       "USED": "Occasion",
       "OLDTIMER": "Ancien"
-    },
-    "statuses": {
-      "DRAFT": "Brouillon",
-      "PUBLISHED": "Publié",
-      "PAUSED": "En pause",
-      "SOLD": "Vendu",
-      "ARCHIVED": "Archivé",
-      "BANNED": "Bloqué"
     },
     "fuelTypes": {
       "PETROL": "Essence",
@@ -881,129 +867,7 @@
       "suffix": "C'est de la marge directe. Sans risque.",
       "switchText": "Passez maintenant à autovendo.ch et économisez plusieurs milliers de francs par an – avec un service personnalisé et des conditions équitables.",
       "contactButton": "Prendre contact sans engagement"
-    },
-    "tiers": [
-      {
-        "name": "Bronze",
-        "price": "180.–",
-        "period": "/ mois",
-        "description": "Idéal pour les petits stocks.",
-        "features": [
-          {
-            "name": "Jusqu'à 5 véhicules",
-            "included": true
-          },
-          {
-            "name": "Visibilité totale",
-            "included": true
-          },
-          {
-            "name": "Support personnel",
-            "included": true
-          },
-          {
-            "name": "Pas de frais cachés",
-            "included": true
-          },
-          {
-            "name": "Durée flexible",
-            "included": true
-          }
-        ],
-        "buttonText": "Choisir le forfait",
-        "popular": false
-      },
-      {
-        "name": "Silver",
-        "price": "280.–",
-        "period": "/ mois",
-        "description": "Parfait pour les concessionnaires en croissance.",
-        "features": [
-          {
-            "name": "Jusqu'à 10 véhicules",
-            "included": true
-          },
-          {
-            "name": "Visibilité totale",
-            "included": true
-          },
-          {
-            "name": "Support personnel",
-            "included": true
-          },
-          {
-            "name": "Pas de frais cachés",
-            "included": true
-          },
-          {
-            "name": "Durée flexible",
-            "included": true
-          }
-        ],
-        "buttonText": "Choisir le forfait",
-        "popular": false
-      },
-      {
-        "name": "Gold",
-        "price": "325.–",
-        "period": "/ mois",
-        "description": "Pour les concessionnaires établis.",
-        "features": [
-          {
-            "name": "Jusqu'à 15 véhicules",
-            "included": true
-          },
-          {
-            "name": "Visibilité totale",
-            "included": true
-          },
-          {
-            "name": "Support personnel",
-            "included": true
-          },
-          {
-            "name": "Pas de frais cachés",
-            "included": true
-          },
-          {
-            "name": "Durée flexible",
-            "included": true
-          }
-        ],
-        "buttonText": "Choisir le forfait",
-        "popular": true
-      },
-      {
-        "name": "Diamond",
-        "price": "408.–",
-        "period": "/ mois",
-        "description": "Pour les concessionnaires à volume plus élevé.",
-        "features": [
-          {
-            "name": "Jusqu'à 25 véhicules",
-            "included": true
-          },
-          {
-            "name": "Visibilité totale",
-            "included": true
-          },
-          {
-            "name": "Support personnel",
-            "included": true
-          },
-          {
-            "name": "Pas de frais cachés",
-            "included": true
-          },
-          {
-            "name": "Durée flexible",
-            "included": true
-          }
-        ],
-        "buttonText": "Choisir le forfait",
-        "popular": false
-      }
-    ]
+    }
   },
   "ContactSchema": {
     "nameMin": "Le nom doit comporter au moins 3 caractères",

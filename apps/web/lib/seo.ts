@@ -249,4 +249,50 @@ export const PAGE_META = {
         "Pubblica il tuo annuncio su autovendo.ch. Pacchetti da CHF 180/mese – molto più economico di AutoScout24. Più acquirenti, meno costi.",
     },
   } satisfies PageMeta,
+
+  contact: {
+    de: {
+      title: "Kontakt – AutoVendo Schweiz",
+      description:
+        "Kontaktieren Sie AutoVendo – wir helfen Ihnen bei Fragen zu Inseraten, Händlerpaketen und mehr. Schreiben Sie uns oder rufen Sie uns an.",
+    },
+    en: {
+      title: "Contact – AutoVendo Switzerland",
+      description:
+        "Get in touch with AutoVendo – we're here to help with listings, dealer packages and more. Write to us or give us a call.",
+    },
+    fr: {
+      title: "Contact – AutoVendo Suisse",
+      description:
+        "Contactez AutoVendo – nous sommes là pour vous aider avec les annonces, les forfaits et plus encore. Écrivez-nous ou appelez-nous.",
+    },
+    it: {
+      title: "Contatto – AutoVendo Svizzera",
+      description:
+        "Contattate AutoVendo – siamo qui per aiutarvi con gli annunci, i pacchetti e altro ancora. Scriveteci o chiamateci.",
+    },
+  } satisfies PageMeta,
+
+  advancedSearch: {
+    de: {
+      title: "Erweiterte Suche – Gebrauchtwagen Schweiz | AutoVendo",
+      description:
+        "Finden Sie Ihr Wunschauto mit der erweiterten Suche auf autovendo.ch. Filtern Sie nach Marke, Modell, Preis, Kilometer und mehr.",
+    },
+    en: {
+      title: "Advanced Search – Used Cars Switzerland | AutoVendo",
+      description:
+        "Find your perfect car with advanced search on autovendo.ch. Filter by make, model, price, mileage and more.",
+    },
+    fr: {
+      title: "Recherche avancée – Voitures d'occasion Suisse | AutoVendo",
+      description:
+        "Trouvez votre voiture idéale avec la recherche avancée sur autovendo.ch. Filtrez par marque, modèle, prix, kilométrage et plus.",
+    },
+    it: {
+      title: "Ricerca avanzata – Auto usate Svizzera | AutoVendo",
+      description:
+        "Trova la tua auto ideale con la ricerca avanzata su autovendo.ch. Filtra per marca, modello, prezzo, chilometri e altro.",
+    },
+  } satisfies PageMeta,
 } as const;

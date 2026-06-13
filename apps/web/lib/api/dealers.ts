@@ -1,7 +1,9 @@
 import type {
+  DealerListItem,
   DealerListResult,
   DealerDetail,
   DealerVehiclesResult,
+  GooglePlaceData,
 } from "@/types/dealer";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "https://api.autovendo.ch";
@@ -55,7 +57,7 @@ export async function getDealersFromApi(params: {
   }
 }
 
-export async function getFeaturedDealersFromApi() {
+export async function getFeaturedDealersFromApi(): Promise<DealerListItem[]> {
   try {
     const res = await fetch(`${API}/dealers/featured`, { cache: "no-store" });
     if (!res.ok) return [];
@@ -139,7 +141,7 @@ export async function sendDealerContactEmailFromApi(
   }
 }
 
-export async function getDealerGoogleReviewsFromApi(dealerId: string) {
+export async function getDealerGoogleReviewsFromApi(dealerId: string): Promise<GooglePlaceData | null> {
   try {
     const res = await fetch(`${API}/dealers/${dealerId}/reviews`, {
       cache: "no-store",

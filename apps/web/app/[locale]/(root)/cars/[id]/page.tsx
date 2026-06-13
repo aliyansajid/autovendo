@@ -337,7 +337,7 @@ export default async function ListingPage({
       ? item.description
       : null;
 
-  const openingHours = isDealer
+  const openingHours = item.dealer
     ? [...(item.dealer.openingHours || [])]
         .sort(
           (a, b) =>
@@ -357,14 +357,14 @@ export default async function ListingPage({
         })
     : [];
 
-  const seller = isDealer
+  const seller = item.dealer
     ? {
         id: item.dealer.id,
         name: item.dealer.companyName,
         address: [item.dealer.streetAddress, item.dealer.zipCode, item.dealer.city]
           .filter(Boolean)
           .join(", "),
-        phone: item.dealer.phoneNumber ?? undefined,
+        phone: item.dealer.phoneNumber ?? "",
         logo: item.dealer.logo ? getImageUrl(item.dealer.logo) : undefined,
         website: item.dealer.website ?? undefined,
         businessEmail: item.dealer.businessEmail ?? undefined,
@@ -379,7 +379,7 @@ export default async function ListingPage({
           id: item.seller.id,
           name: t("privateSeller"),
           address: [item.seller.zipCode, item.seller.city].filter(Boolean).join(" "),
-          phone: item.seller.phoneNumber ?? undefined,
+          phone: item.seller.phoneNumber ?? "",
           logo: undefined,
           website: undefined,
           businessEmail: undefined,
@@ -436,7 +436,7 @@ export default async function ListingPage({
       priceCurrency: "CHF",
       availability: "https://schema.org/InStock",
       url: `https://autovendo.ch/${locale}/cars/${item.id}`,
-      ...(isDealer
+      ...(item.dealer
         ? {
             seller: {
               "@type": "AutoDealer",

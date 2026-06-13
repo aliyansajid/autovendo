@@ -40,7 +40,101 @@ export interface VehicleListItem {
   } | null;
 }
 
-export type VehicleDetails = Record<string, unknown>;
+export interface VehicleDealerInfo {
+  id: string;
+  companyName: string;
+  streetAddress: string | null;
+  city: string;
+  zipCode: string | null;
+  phoneNumber: string | null;
+  logo: string | null;
+  website: string | null;
+  businessEmail: string | null;
+  description: string | null;
+  openingHours: {
+    day: string;
+    isOpen: boolean;
+    openTime: string | null;
+    closeTime: string | null;
+  }[];
+  googleRating: number | null;
+  googleReviewCount: number | null;
+  user?: { emailVerified?: boolean };
+}
+
+export interface VehicleSellerInfo {
+  id: string;
+  city: string;
+  zipCode: string;
+  phoneNumber: string | null;
+}
+
+export interface VehicleDetails {
+  id: string;
+  make: string;
+  model: string | null;
+  version: string | null;
+  price: number;
+  newPrice: number | null;
+  kilometer: number;
+  registrationMonth: number | null;
+  registrationYear: number | null;
+  kw: number | null;
+  hp: number | null;
+  fuelType: string | null;
+  transmissionType: string | null;
+  gearTransmission: string | null;
+  vehicleCondition: string | null;
+  vehicleType: string | null;
+  bodyType: string | null;
+  color: string | null;
+  interiorColor: string | null;
+  metallic: boolean | null;
+  driveType: string | null;
+  seats: number | null;
+  doors: number | null;
+  vin: string | null;
+  serialNumber: string | null;
+  typeApproval: string | null;
+  description: string | null;
+  images: string[];
+  equipment: Record<string, unknown> | null;
+  extras: Record<string, unknown> | null;
+  energyLabel: string | null;
+  emissionStandard: string | null;
+  co2Emission: number | null;
+  consumptionCity: number | null;
+  consumptionCountry: number | null;
+  consumptionTotal: number | null;
+  range: number | null;
+  batteryCapacity: number | null;
+  batteryRentalMonth: number | null;
+  powerConsumption: number | null;
+  batteryOwnership: string | null;
+  chargingPlugTypeStandard: string | null;
+  chargingPlugTypeFast: string | null;
+  chargingPower: number | null;
+  combustionEnginePowerHp: number | null;
+  electricMotorPowerHp: number | null;
+  cubicCapacity: number | null;
+  numberOfGears: number | null;
+  cylinders: number | null;
+  emptyWeight: number | null;
+  loadCapacity: number | null;
+  wheelbase: number | null;
+  length: number | null;
+  width: number | null;
+  height: number | null;
+  towingCapacityBraked: number | null;
+  lastInspectionDate: string | null;
+  warrantyStartDate: string | null;
+  inspectionPassed: boolean | null;
+  warranty: string | null;
+  duration: number | null;
+  maxKm: number | null;
+  dealer: VehicleDealerInfo | null;
+  seller: VehicleSellerInfo | null;
+}
 
 export interface VehicleFacets {
   make: Record<string, number>;

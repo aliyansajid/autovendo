@@ -8,16 +8,10 @@
       "mobileMenuTitle": "Menu"
     },
     "auth": {
-      "login": "Login",
-      "logout": "Logout",
-      "dashboard": "Dashboard"
+      "login": "Login"
     },
     "languages": {
-      "label": "Lingua",
-      "de": "Deutsch",
-      "en": "English",
-      "fr": "Français",
-      "it": "Italiano"
+      "label": "Lingua"
     },
     "logoAlt": "Logo AutoVendo"
   },
@@ -109,14 +103,6 @@
       "PRE_REGISTERED": "Nuova immatricolazione",
       "USED": "Usato",
       "OLDTIMER": "D'epoca"
-    },
-    "statuses": {
-      "DRAFT": "Bozza",
-      "PUBLISHED": "Pubblicato",
-      "PAUSED": "In pausa",
-      "SOLD": "Venduto",
-      "ARCHIVED": "Archiviato",
-      "BANNED": "Bloccato"
     },
     "fuelTypes": {
       "PETROL": "Benzina",
@@ -881,129 +867,7 @@
       "suffix": "È margine diretto. Senza rischi.",
       "switchText": "Passi ora ad autovendo.ch e risparmi diverse migliaia di franchi all'anno – con servizio personale e condizioni eque.",
       "contactButton": "Contattare senza impegno"
-    },
-    "tiers": [
-      {
-        "name": "Bronze",
-        "price": "180.–",
-        "period": "/ mese",
-        "description": "Ideale per inventari ridotti.",
-        "features": [
-          {
-            "name": "Fino a 5 veicoli",
-            "included": true
-          },
-          {
-            "name": "Piena visibilità",
-            "included": true
-          },
-          {
-            "name": "Supporto personale",
-            "included": true
-          },
-          {
-            "name": "Nessun costo nascosto",
-            "included": true
-          },
-          {
-            "name": "Durata flessibile",
-            "included": true
-          }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": false
-      },
-      {
-        "name": "Silver",
-        "price": "280.–",
-        "period": "/ mese",
-        "description": "Perfetto per concessionari in crescita.",
-        "features": [
-          {
-            "name": "Fino a 10 veicoli",
-            "included": true
-          },
-          {
-            "name": "Piena visibilità",
-            "included": true
-          },
-          {
-            "name": "Supporto personale",
-            "included": true
-          },
-          {
-            "name": "Nessun costo nascosto",
-            "included": true
-          },
-          {
-            "name": "Durata flessibile",
-            "included": true
-          }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": false
-      },
-      {
-        "name": "Gold",
-        "price": "325.–",
-        "period": "/ mese",
-        "description": "Per concessionari affermati.",
-        "features": [
-          {
-            "name": "Fino a 15 veicoli",
-            "included": true
-          },
-          {
-            "name": "Piena visibilità",
-            "included": true
-          },
-          {
-            "name": "Supporto personale",
-            "included": true
-          },
-          {
-            "name": "Nessun costo nascosto",
-            "included": true
-          },
-          {
-            "name": "Durata flessibile",
-            "included": true
-          }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": true
-      },
-      {
-        "name": "Diamond",
-        "price": "408.–",
-        "period": "/ mese",
-        "description": "Per concessionari con volumi elevati.",
-        "features": [
-          {
-            "name": "Fino a 25 veicoli",
-            "included": true
-          },
-          {
-            "name": "Piena visibilità",
-            "included": true
-          },
-          {
-            "name": "Supporto personale",
-            "included": true
-          },
-          {
-            "name": "Nessun costo nascosto",
-            "included": true
-          },
-          {
-            "name": "Durata flessibile",
-            "included": true
-          }
-        ],
-        "buttonText": "Scegli pacchetto",
-        "popular": false
-      }
-    ]
+    }
   },
   "ContactSchema": {
     "nameMin": "Il nome deve contenere almeno 3 caratteri",

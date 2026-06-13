@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
+
+export const metadata: Metadata = {
+  title: "Insertionsregeln | AutoVendo",
+  robots: { index: false, follow: false },
+};
 
 export default function InsertionsregelnPage() {
   return (

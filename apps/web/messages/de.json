@@ -8,16 +8,10 @@
       "mobileMenuTitle": "Menü"
     },
     "auth": {
-      "login": "Anmelden",
-      "logout": "Abmelden",
-      "dashboard": "Dashboard"
+      "login": "Anmelden"
     },
     "languages": {
-      "label": "Sprache",
-      "de": "Deutsch",
-      "en": "English",
-      "fr": "Français",
-      "it": "Italiano"
+      "label": "Sprache"
     },
     "logoAlt": "AutoVendo Logo"
   },
@@ -109,14 +103,6 @@
       "PRE_REGISTERED": "Neuimmatrikuliert",
       "USED": "Occasion",
       "OLDTIMER": "Oldtimer"
-    },
-    "statuses": {
-      "DRAFT": "Entwurf",
-      "PUBLISHED": "Veröffentlicht",
-      "PAUSED": "Pausiert",
-      "SOLD": "Verkauft",
-      "ARCHIVED": "Archiviert",
-      "BANNED": "Gesperrt"
     },
     "fuelTypes": {
       "PETROL": "Benzin",
@@ -887,129 +873,7 @@
       "suffix": "Das ist direkte Marge. Ohne Risiko.",
       "switchText": "Wechseln Sie jetzt zu autovendo.ch und sparen Sie mehrere tausend Franken pro Jahr – bei persönlichem Service und fairen Konditionen.",
       "contactButton": "Jetzt unverbindlich Kontakt aufnehmen"
-    },
-    "tiers": [
-      {
-        "name": "Bronze",
-        "price": "180.–",
-        "period": "/ Monat",
-        "description": "Ideal für kleinere Bestände.",
-        "features": [
-          {
-            "name": "Bis zu 5 Fahrzeuge",
-            "included": true
-          },
-          {
-            "name": "Volle Sichtbarkeit",
-            "included": true
-          },
-          {
-            "name": "Persönlicher Support",
-            "included": true
-          },
-          {
-            "name": "Keine versteckten Kosten",
-            "included": true
-          },
-          {
-            "name": "Laufzeit flexibel",
-            "included": true
-          }
-        ],
-        "buttonText": "Paket wählen",
-        "popular": false
-      },
-      {
-        "name": "Silver",
-        "price": "280.–",
-        "period": "/ Monat",
-        "description": "Perfekt für wachsende Händler.",
-        "features": [
-          {
-            "name": "Bis zu 10 Fahrzeuge",
-            "included": true
-          },
-          {
-            "name": "Volle Sichtbarkeit",
-            "included": true
-          },
-          {
-            "name": "Persönlicher Support",
-            "included": true
-          },
-          {
-            "name": "Keine versteckten Kosten",
-            "included": true
-          },
-          {
-            "name": "Laufzeit flexibel",
-            "included": true
-          }
-        ],
-        "buttonText": "Paket wählen",
-        "popular": false
-      },
-      {
-        "name": "Gold",
-        "price": "325.–",
-        "period": "/ Monat",
-        "description": "Für etablierte Händler.",
-        "features": [
-          {
-            "name": "Bis zu 15 Fahrzeuge",
-            "included": true
-          },
-          {
-            "name": "Volle Sichtbarkeit",
-            "included": true
-          },
-          {
-            "name": "Persönlicher Support",
-            "included": true
-          },
-          {
-            "name": "Keine versteckten Kosten",
-            "included": true
-          },
-          {
-            "name": "Laufzeit flexibel",
-            "included": true
-          }
-        ],
-        "buttonText": "Paket wählen",
-        "popular": true
-      },
-      {
-        "name": "Diamond",
-        "price": "408.–",
-        "period": "/ Monat",
-        "description": "Für Händler mit höherem Volumen.",
-        "features": [
-          {
-            "name": "Bis zu 25 Fahrzeuge",
-            "included": true
-          },
-          {
-            "name": "Volle Sichtbarkeit",
-            "included": true
-          },
-          {
-            "name": "Persönlicher Support",
-            "included": true
-          },
-          {
-            "name": "Keine versteckten Kosten",
-            "included": true
-          },
-          {
-            "name": "Laufzeit flexibel",
-            "included": true
-          }
-        ],
-        "buttonText": "Paket wählen",
-        "popular": false
-      }
-    ]
+    }
   },
   "ContactSchema": {
     "nameMin": "Name muss mindestens 3 Zeichen lang sein",

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
 import {
@@ -7,6 +8,11 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
+
+export const metadata: Metadata = {
+  title: "Sicherheitshinweise | AutoVendo",
+  robots: { index: false, follow: false },
+};
 
 export default function SicherheitshinweisePage() {
   return (

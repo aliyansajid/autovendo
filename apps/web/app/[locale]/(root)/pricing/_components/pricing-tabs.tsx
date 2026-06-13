@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Badge } from "@repo/ui/src/components/badge";
 import { Button } from "@repo/ui/src/components/button";
 import {
@@ -50,7 +51,7 @@ export function PricingTabs({ plans, locale, authUrl }: Props) {
       <h2 className="text-2xl font-bold text-center">{t("choosePlan")}</h2>
 
       <Tabs defaultValue="dealer" className="space-y-10">
-        <TabsList className="mx-auto flex w-fit">
+        <TabsList className="mx-auto">
           <TabsTrigger value="dealer">{t("tabs.dealers")}</TabsTrigger>
           <TabsTrigger value="private">{t("tabs.private")}</TabsTrigger>
         </TabsList>
@@ -109,7 +110,7 @@ export function PricingTabs({ plans, locale, authUrl }: Props) {
                     variant={plan.popular ? "default" : "outline"}
                     asChild
                   >
-                    <a href={loginUrl}>{t("getStarted")}</a>
+                    <Link href={loginUrl}>{t("getStarted")}</Link>
                   </Button>
                 </CardFooter>
               </Card>
@@ -165,9 +166,9 @@ export function PricingTabs({ plans, locale, authUrl }: Props) {
                     variant={plan.popular ? "default" : "outline"}
                     asChild
                   >
-                    <a href={loginUrl}>
+                    <Link href={loginUrl}>
                       {t(`privateSeller.${plan.key}.button`)}
-                    </a>
+                    </Link>
                   </Button>
                 </CardFooter>
               </Card>

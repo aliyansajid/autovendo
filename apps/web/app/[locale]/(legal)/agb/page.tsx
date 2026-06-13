@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { Separator } from "@repo/ui/src/components/separator";
 import { Link } from "@/i18n/routing";
+
+export const metadata: Metadata = {
+  title: "AGB – Allgemeine Geschäftsbedingungen | AutoVendo",
+  robots: { index: false, follow: false },
+};
 
 export default function AGBPage() {
   return (

@@ -1,4 +1,4 @@
-import type { PaginatedVehicles, VehicleListItem } from "@/types/vehicle";
+import type { PaginatedVehicles, VehicleDetails, VehicleFacets, VehicleListItem } from "@/types/vehicle";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "https://api.autovendo.ch";
 
@@ -41,7 +41,7 @@ export const getVehiclesWithFacetsFromApi = getVehiclesFromApi;
 
 export async function getVehicleFacetsFromApi(
   params: Record<string, string | string[] | undefined>,
-) {
+): Promise<{ total: number; facets: VehicleFacets | undefined } | null> {
   try {
     const result = await getVehiclesFromApi({ ...params, pageSize: "1" });
     return { total: result.total, facets: result.facets };
@@ -66,8 +66,7 @@ export async function getFeaturedVehiclesFromApi(): Promise<VehicleListItem[]> {
   return json.data ?? [];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getVehicleFromApi(id: string): Promise<Record<string, any> | null> {
+export async function getVehicleFromApi(id: string): Promise<VehicleDetails | null> {
   const res = await fetch(`${API}/vehicles/${id}`, { cache: "no-store" });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("Failed to fetch vehicle");

@@ -87,7 +87,7 @@ export const Header = () => {
 
         <div className="hidden md:flex items-center gap-3">
           <Button asChild className="bg-white text-primary hover:bg-white/90">
-            <a href={loginUrl}>{t("auth.login")}</a>
+            <Link href={loginUrl}>{t("auth.login")}</Link>
           </Button>
 
           <Select value={locale} onValueChange={handleLanguageChange}>
@@ -148,7 +148,7 @@ export const Header = () => {
 
                 <SheetClose asChild>
                   <Button asChild className="w-full">
-                    <a href={loginUrl}>{t("auth.login")}</a>
+                    <Link href={loginUrl}>{t("auth.login")}</Link>
                   </Button>
                 </SheetClose>
               </div>
