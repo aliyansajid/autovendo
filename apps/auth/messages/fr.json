@@ -67,5 +67,12 @@
     "passwordRequired": "Le mot de passe est requis",
     "passwordMinLength": "Le mot de passe doit comporter au moins 8 caractères",
     "passwordsDoNotMatch": "Les mots de passe ne correspondent pas"
+  },
+  "NotFound": {
+    "title": "404 - Page non trouvée",
+    "description": "La page que vous recherchez a été déplacée, supprimée ou n'a jamais existé.",
+    "button": "Retour à l'accueil",
+    "metaTitle": "404 - Page non trouvée | AutoVendo",
+    "metaDescription": "Désolé, la page demandée n'a pas pu être trouvée sur AutoVendo."
   }
 }
