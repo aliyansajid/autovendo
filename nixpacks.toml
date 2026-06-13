@@ -1,8 +1,0 @@
-[phases.install]
-cmds = ["npm ci"]
-
-[phases.build]
-cmds = ["npx turbo run build --filter=$APP_NAME"]
-
-[start]
-cmd = "node_modules/.bin/next start $APP_DIR -p $PORT"

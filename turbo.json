@@ -43,6 +43,10 @@
       "dependsOn": ["^db:generate"],
       "persistent": true
     },
+    "start": {
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
     "db:generate": {
       "cache": false
     },
