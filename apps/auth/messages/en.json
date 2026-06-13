@@ -57,15 +57,15 @@
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
     "submitting": "Resetting...",
-    "submit": "Reset password"
+    "submit": "Reset password",
+    "rememberPassword": "Remember your password?",
+    "backToLogin": "Sign in"
   },
   "AuthSchema": {
     "nameMinLength": "Name must be at least 3 characters long",
     "invalidEmail": "Invalid email address",
     "passwordRequired": "Password is required",
     "passwordMinLength": "Password must be at least 8 characters long",
-    "passwordsDoNotMatch": "Passwords do not match",
-    "currentPasswordRequired": "Current password is required",
-    "newPasswordMinLength": "New password must be at least 8 characters long"
+    "passwordsDoNotMatch": "Passwords do not match"
   }
 }

@@ -36,7 +36,5 @@ export const requestPasswordReset = (params: {
   redirectTo?: string;
 }) => authFetch("/forget-password", params);
 
-export const resetPassword = (params: {
-  newPassword: string;
-  token: string;
-}) => authFetch("/reset-password", params);
+export const resetPassword = (params: { newPassword: string; token: string }) =>
+  authFetch("/reset-password", params);

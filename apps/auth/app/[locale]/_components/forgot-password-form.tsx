@@ -17,13 +17,12 @@ import { toast } from "sonner";
 import { useTransition, useMemo } from "react";
 import { Spinner } from "@repo/ui/components/spinner";
 import { Link } from "@/i18n/routing";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
 import { createForgotPasswordSchema } from "@/schema/auth-schema";
-import { useTranslations } from "next-intl";
 
 export const ForgotPasswordForm = () => {
   const locale = useLocale();
@@ -47,7 +46,7 @@ export const ForgotPasswordForm = () => {
     startTransition(async () => {
       const { error } = await requestPasswordReset({
         email: values.email,
-        redirectTo: `/${locale}/reset-password`,
+        redirectTo: `${process.env.NEXT_PUBLIC_AUTH_URL}/${locale}/reset-password`,
       });
 
       if (error) {
@@ -91,7 +90,9 @@ export const ForgotPasswordForm = () => {
               </Button>
               <FieldDescription className="text-center">
                 {t("rememberPassword")}&nbsp;
-                <Link href="/login">{t("backToLogin")}</Link>
+                <Link href="/login" className="underline underline-offset-4">
+                  {t("backToLogin")}
+                </Link>
               </FieldDescription>
             </Field>
           </FieldGroup>

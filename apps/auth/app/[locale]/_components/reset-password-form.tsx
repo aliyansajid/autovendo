@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardContent,
 } from "@repo/ui/components/card";
-import { FieldGroup, Field } from "@repo/ui/components/field";
+import { FieldGroup, Field, FieldDescription } from "@repo/ui/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -122,6 +122,12 @@ export const ResetPasswordForm = () => {
                   t("submit")
                 )}
               </Button>
+              <FieldDescription className="text-center">
+                {t("rememberPassword")}&nbsp;
+                <Link href="/login" className="underline underline-offset-4">
+                  {t("backToLogin")}
+                </Link>
+              </FieldDescription>
             </Field>
           </FieldGroup>
         </form>

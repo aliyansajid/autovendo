@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardContent,
 } from "@repo/ui/components/card";
-import { FieldGroup, Field } from "@repo/ui/components/field";
+import { FieldGroup, Field, FieldDescription } from "@repo/ui/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +30,9 @@ export const LoginForm = () => {
   const t = useTranslations("LoginForm");
   const tSchema = useTranslations("AuthSchema");
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || `/${locale}/dashboard`;
+  const callbackUrl =
+    searchParams.get("callbackUrl") ||
+    `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
 
   const loginSchema = useMemo(() => createLoginSchema(tSchema), [tSchema]);
@@ -116,14 +118,14 @@ export const LoginForm = () => {
                   t("submit")
                 )}
               </Button>
-            </Field>
 
-            <div className="text-center text-sm">
-              {t("noAccount")}&nbsp;
-              <Link href="/signup" className="underline underline-offset-4">
-                {t("signup")}
-              </Link>
-            </div>
+              <FieldDescription className="text-center">
+                {t("noAccount")}&nbsp;
+                <Link href="/signup" className="underline underline-offset-4">
+                  {t("signup")}
+                </Link>
+              </FieldDescription>
+            </Field>
           </FieldGroup>
         </form>
       </CardContent>

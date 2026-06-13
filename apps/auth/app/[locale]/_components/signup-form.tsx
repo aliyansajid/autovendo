@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardContent,
 } from "@repo/ui/components/card";
-import { FieldGroup, Field } from "@repo/ui/components/field";
+import { FieldGroup, Field, FieldDescription } from "@repo/ui/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +30,9 @@ export const SignupForm = () => {
   const t = useTranslations("SignupForm");
   const tSchema = useTranslations("AuthSchema");
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || `/${locale}/dashboard`;
+  const callbackUrl =
+    searchParams.get("callbackUrl") ||
+    `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
   const [isResending, startResendTransition] = useTransition();
   const [verifyEmail, setVerifyEmail] = useState<string | null>(null);
@@ -102,13 +104,14 @@ export const SignupForm = () => {
               >
                 {isResending ? <Spinner /> : t("resend")}
               </Button>
+
+              <FieldDescription className="text-center">
+                {t("alreadyHaveAccount")}&nbsp;
+                <Link href="/login" className="underline underline-offset-4">
+                  {t("login")}
+                </Link>
+              </FieldDescription>
             </Field>
-            <div className="text-center text-sm">
-              {t("alreadyHaveAccount")}&nbsp;
-              <Link href="/login" className="underline underline-offset-4">
-                {t("login")}
-              </Link>
-            </div>
           </FieldGroup>
         </CardContent>
       </Card>
@@ -174,14 +177,14 @@ export const SignupForm = () => {
                   t("submit")
                 )}
               </Button>
-            </Field>
 
-            <div className="text-center text-sm">
-              {t("alreadyHaveAccount")}&nbsp;
-              <Link href="/login" className="underline underline-offset-4">
-                {t("login")}
-              </Link>
-            </div>
+              <FieldDescription className="text-center">
+                {t("alreadyHaveAccount")}&nbsp;
+                <Link href="/login" className="underline underline-offset-4">
+                  {t("login")}
+                </Link>
+              </FieldDescription>
+            </Field>
           </FieldGroup>
         </form>
       </CardContent>

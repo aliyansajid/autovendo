@@ -57,15 +57,15 @@
     "newPassword": "Nuova password",
     "confirmPassword": "Conferma password",
     "submitting": "Reimpostazione in corso...",
-    "submit": "Reimposta password"
+    "submit": "Reimposta password",
+    "rememberPassword": "Ricorda la password?",
+    "backToLogin": "Accedi"
   },
   "AuthSchema": {
     "nameMinLength": "Il nome deve contenere almeno 3 caratteri",
     "invalidEmail": "Indirizzo e-mail non valido",
     "passwordRequired": "La password è obbligatoria",
     "passwordMinLength": "La password deve contenere almeno 8 caratteri",
-    "passwordsDoNotMatch": "Le password non corrispondono",
-    "currentPasswordRequired": "La password attuale è obbligatoria",
-    "newPasswordMinLength": "La nuova password deve contenere almeno 8 caratteri"
+    "passwordsDoNotMatch": "Le password non corrispondono"
   }
 }

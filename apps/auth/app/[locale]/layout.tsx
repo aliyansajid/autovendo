@@ -6,8 +6,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
-import { routing } from "@/i18n/routing";
+import { Link, routing } from "@/i18n/routing";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -33,7 +32,7 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as any)) {
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound();
   }
 
@@ -41,7 +40,9 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <NextIntlClientProvider messages={messages} locale={locale}>
           <div className="bg-muted flex flex-col items-center justify-center min-h-svh p-6 md:p-10">
             <div className="flex flex-col w-full max-w-sm gap-6">
