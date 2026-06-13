@@ -14,7 +14,6 @@ const nextConfig = {
   },
   experimental: {
     inlineCss: true,
-    authInterrupts: true,
     globalNotFound: true,
   },
 };

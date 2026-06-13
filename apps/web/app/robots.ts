@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { BASE_URL } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,7 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/dashboard/", "/api/"],
       },
       // Block AI training crawlers — content not licensed for model training
       { userAgent: "GPTBot", disallow: "/" },
@@ -22,6 +22,6 @@ export default function robots(): MetadataRoute.Robots {
       // Allow Google-Extended so AutoVendo appears in Google AI Overviews
       { userAgent: "Google-Extended", allow: "/" },
     ],
-    sitemap: "https://autovendo.ch/sitemap.xml",
+    sitemap: `${BASE_URL}/sitemap.xml`,
   };
 }

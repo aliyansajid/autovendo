@@ -388,9 +388,13 @@ export default async function ListingPage({
       formatKilometers(sim.kilometer),
       sim.fuelType ? getLabel("fuelTypes", sim.fuelType) : undefined,
     ].filter((d): d is string => d != null && d !== ""),
-    garageName: sim.dealer.companyName,
-    garageId: sim.dealer.id,
-    garageLocation: `${sim.dealer.city}, CH`,
+    garageName: sim.dealer?.companyName ?? t("privateSeller"),
+    garageId: sim.dealer?.id ?? sim.seller?.id ?? "",
+    garageLocation: sim.dealer?.city
+      ? `${sim.dealer.city}, CH`
+      : sim.seller?.city
+        ? `${sim.seller.city}, CH`
+        : "CH",
     badge: sim.vehicleCondition
       ? getLabel("conditions", sim.vehicleCondition)
       : undefined,

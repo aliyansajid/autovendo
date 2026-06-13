@@ -1,20 +1,18 @@
 import type { MetadataRoute } from "next";
-
-const BASE_URL = "https://autovendo.ch";
-const LOCALES = ["de", "en", "fr", "it"];
+import { BASE_URL, LOCALES } from "@/lib/seo";
+import { getSitemapData } from "@/lib/api/vehicles";
 
 const STATIC_PATHS = [
   { path: "", priority: 1.0, changeFrequency: "daily" as const },
   { path: "/cars", priority: 0.9, changeFrequency: "hourly" as const },
   { path: "/dealers", priority: 0.8, changeFrequency: "daily" as const },
+  { path: "/sell", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "/pricing", priority: 0.7, changeFrequency: "monthly" as const },
+  { path: "/how-it-works", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/about", priority: 0.5, changeFrequency: "monthly" as const },
   { path: "/contact", priority: 0.5, changeFrequency: "monthly" as const },
   { path: "/faq", priority: 0.5, changeFrequency: "monthly" as const },
-  { path: "/pricing", priority: 0.7, changeFrequency: "monthly" as const },
-  { path: "/how-it-works", priority: 0.6, changeFrequency: "monthly" as const },
 ];
-
-import { getSitemapData } from "@/lib/api/vehicles";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { vehicles, dealers } = await getSitemapData();

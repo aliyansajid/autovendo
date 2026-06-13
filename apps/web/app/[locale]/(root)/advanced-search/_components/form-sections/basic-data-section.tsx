@@ -402,6 +402,47 @@ export function BasicDataSection({
               </div>
             </div>
           </div>
+
+          <div className="space-y-4">
+            <div className="flex flex-col">
+              <Label className="text-base font-semibold">
+                {t("sellerType")}
+              </Label>
+              <span
+                className="text-xs text-muted-foreground cursor-pointer hover:underline"
+                onClick={() => {
+                  setValue("sellerType-DEALER", false);
+                  setValue("sellerType-SELLER", false);
+                }}
+              >
+                {t("reset")}
+              </span>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <CustomFormField
+                  control={control}
+                  fieldType={FormFieldType.CHECKBOX}
+                  name="sellerType-DEALER"
+                  label={t("dealer")}
+                />
+                <span className="text-sm text-muted-foreground">
+                  {formatCount(facets?.sellerType?.["DEALER"] ?? 0)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <CustomFormField
+                  control={control}
+                  fieldType={FormFieldType.CHECKBOX}
+                  name="sellerType-SELLER"
+                  label={t("privateSeller")}
+                />
+                <span className="text-sm text-muted-foreground">
+                  {formatCount(facets?.sellerType?.["SELLER"] ?? 0)}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <Separator />

@@ -6,6 +6,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import Script from "next/script";
+import { OG_LOCALE } from "@/lib/seo";
+import { routing } from "@/i18n/routing";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
@@ -16,13 +18,6 @@ const geistMono = localFont({
   src: "../fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
 });
-
-const OG_LOCALE: Record<string, string> = {
-  de: "de_CH",
-  en: "en_US",
-  fr: "fr_CH",
-  it: "it_CH",
-};
 
 export async function generateMetadata({
   params,
@@ -92,7 +87,7 @@ export default async function RootLayout({
 }) {
   const { locale } = await params;
 
-  if (!["de", "en", "fr", "it"].includes(locale)) {
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound();
   }
 

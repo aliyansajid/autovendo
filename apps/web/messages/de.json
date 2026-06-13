@@ -147,10 +147,7 @@
     "driveTypes": {
       "FRONT": "Frontantrieb",
       "REAR": "Heckantrieb",
-      "ALL": "Allrad",
-      "FRONT_WHEEL": "Frontantrieb",
-      "REAR_WHEEL": "Heckantrieb",
-      "ALL_WHEEL": "Allrad"
+      "ALL": "Allrad"
     },
     "types": {
       "BUS": "Bus",
@@ -389,7 +386,10 @@
         "bodyType": "Aufbauart",
         "reset": "Zurücksetzen",
         "inspectionPassed": "Ab MFK",
-        "hasWarranty": "Mit Garantie"
+        "hasWarranty": "Mit Garantie",
+        "sellerType": "Anbieter",
+        "dealer": "Händler",
+        "privateSeller": "Privatperson"
       },
       "equipment": {
         "title": "Ausstattung"
@@ -465,6 +465,9 @@
       "moreFilters": "Mehr Filter",
       "any": "Beliebig",
       "selected": "{count} ausgewählt",
+      "sellerType": "Anbieter",
+      "dealer": "Händler",
+      "privateSeller": "Privatperson",
       "condition": "Fahrzeugzustand",
       "makeModel": "Marke, Modell",
       "price": "Preis",
@@ -864,6 +867,37 @@
       "swiss": "Schweizerisch direkt"
     },
     "partnershipText": "Mit autovendo.ch investieren Sie nicht in Werbung. Sie investieren in eine Partnerschaft.\nIhre Marge gehört Ihnen – nicht der Plattform.",
+    "tabs": {
+      "dealers": "Für Händler",
+      "private": "Privatverkäufer"
+    },
+    "privateSeller": {
+      "standard": {
+        "title": "Standard",
+        "badge": "",
+        "description": "Perfekt für einen schnellen Verkauf.",
+        "period": "30 Tage",
+        "features": [
+          "Inserat in Minuten aufgeben",
+          "Echte Privatkäufer erreichen",
+          "Volle Kontrolle über Preis & Kommunikation"
+        ],
+        "button": "Jetzt inserieren"
+      },
+      "bestValue": {
+        "title": "Bestes Angebot",
+        "badge": "Bestes Angebot",
+        "description": "Kein Druck, keine Eile.",
+        "period": "Bis zum Verkauf",
+        "features": [
+          "Kein Zeitlimit",
+          "Keine Verlängerungen",
+          "Kein Druck, den Preis zu senken",
+          "Maximale Sichtbarkeit"
+        ],
+        "button": "Ohne Druck verkaufen"
+      }
+    },
     "choosePlan": "Wählen Sie Ihr passendes Paket",
     "popular": "Beliebt",
     "month": "Monat",
@@ -1070,7 +1104,7 @@
     "phoneRequired": "Telefon ist erforderlich",
     "invalidPhoneFormat": "Ungültige Schweizer Telefonnummer",
     "invalidEmail": "Ungültige E-Mail-Adresse",
-    "messageMaxLength": "Nachricht darf maximal 1000 Zeichen lang sein"
+    "messageMaxLength": "Nachricht darf maximal 500 Zeichen lang sein"
   },
   "GarageFilters": {
     "reset": "Zurücksetzen",
@@ -1125,45 +1159,7 @@
     "closingText2": "Wir gehen mit der Zeit, hören zu und entwickeln die Plattform gemeinsam mit den Händlern weiter."
   },
   "DealerProfileForm": {
-    "personalTitle": "Persönliche Informationen",
-    "personalDesc": "Ihre grundlegenden Kontodaten.",
-    "nameLabel": "Name",
-    "namePlaceholder": "Max Mustermann",
-    "emailLabel": "E-Mail",
-    "emailPlaceholder": "max@beispiel.ch",
-    "profileImageLabel": "Profilbild",
-    "profileImageAlt": "Profilbild Vorschau",
-    "companyTitle": "Unternehmensinformationen",
-    "companyDesc": "Ihre Firmen- und Kontaktdaten.",
-    "companyNameLabel": "Firmenname",
-    "companyNamePlaceholder": "ACME GmbH",
-    "uidLabel": "UID-Nummer",
-    "websiteLabel": "Webseite",
-    "logoLabel": "Firmenlogo",
-    "logoAlt": "Firmenlogo Vorschau",
-    "coverLabel": "Titelbild",
-    "coverAlt": "Titelbild Vorschau",
-    "businessEmailLabel": "Geschäftliche E-Mail",
-    "phoneLabel": "Telefonnummer",
-    "contactPersonLabel": "Kontaktperson",
-    "addressTitle": "Adresse",
-    "addressDesc": "Wo sich Ihr Unternehmen befindet.",
-    "streetLabel": "Strasse und Hausnummer",
-    "streetPlaceholder": "Bahnhofstrasse 123",
-    "zipLabel": "PLZ",
-    "cityLabel": "Stadt",
-    "cityPlaceholder": "Stadt auswählen",
-    "descriptionTitle": "Beschreibung",
-    "descriptionDesc": "Erzählen Sie uns von Ihrem Unternehmen.",
-    "descriptionLabel": "Beschreibung",
-    "descriptionPlaceholder": "Erzählen Sie uns von Ihrem Unternehmen...",
-    "openingHoursTitle": "Öffnungszeiten",
-    "openingHoursDesc": "Wann Sie erreichbar sind.",
-    "isOpen": "Geöffnet",
     "isClosed": "Geschlossen",
-    "noOpeningHours": "Keine Öffnungszeiten definiert.",
-    "saving": "Speichert...",
-    "save": "Profil speichern",
     "days": {
       "MONDAY": "Montag",
       "TUESDAY": "Dienstag",
@@ -1172,21 +1168,7 @@
       "FRIDAY": "Freitag",
       "SATURDAY": "Samstag",
       "SUNDAY": "Sonntag"
-    },
-    "uploadFailed": "Datei-Upload fehlgeschlagen.",
-    "userUpdateError": "Benutzerinformationen konnten nicht aktualisiert werden.",
-    "emailChangeError": "E-Mail-Änderung konnte nicht initiiert werden.",
-    "emailConfirmation": "Eine Bestätigungs-E-Mail wurde an Ihre neue E-Mail-Adresse gesendet.",
-    "missingUser": "Benutzerinformationen fehlen.",
-    "profileUpdateSuccess": "Profil erfolgreich aktualisiert.",
-    "profileUpdateError": "Unternehmensprofil konnte nicht aktualisiert werden.",
-    "unexpectedError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
-  },
-  "Unauthorized": {
-    "title": "Zugriff verweigert",
-    "description": "Bitte melden Sie sich an, um auf das Dashboard zuzugreifen.",
-    "login": "Anmelden",
-    "goHome": "Zur Startseite"
+    }
   },
   "ListingHeader": {
     "back": "Zurück",

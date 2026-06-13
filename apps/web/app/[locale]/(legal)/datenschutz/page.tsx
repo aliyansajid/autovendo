@@ -1,5 +1,5 @@
 import { Separator } from "@repo/ui/src/components/separator";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 export default function PrivacyPage() {
   return (
@@ -266,7 +266,7 @@ export default function PrivacyPage() {
               Bei Fragen zum Datenschutz oder zur Bearbeitung deiner
               personenbezogenen Daten&nbsp;
               <Link
-                href="contact"
+                href="/contact"
                 className="text-primary underline-offset-4 hover:underline"
               >
                 kontaktiere uns

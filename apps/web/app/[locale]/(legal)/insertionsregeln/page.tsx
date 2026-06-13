@@ -1,13 +1,13 @@
 import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 export default function InsertionsregelnPage() {
   return (
     <>
       <div className="bg-linear-to-r from-primary to-primary/80">
-        <div className="w-full max-w-285 mx-auto px-4 py-12">
+        <div className="w-full max-w-285 mx-auto py-12 px-4">
           <div className="text-center text-white space-y-4">
             <h1 className="text-2xl md:text-4xl font-bold">Insertionsregeln</h1>
             <p className="text-base md:text-lg max-w-3xl mx-auto">
@@ -17,7 +17,7 @@ export default function InsertionsregelnPage() {
         </div>
       </div>
 
-      <div className="w-full max-w-285 mx-auto px-4 py-12">
+      <div className="w-full max-w-285 mx-auto py-12 px-4">
         <div className="max-w-4xl mx-auto space-y-12">
           <section className="space-y-4 text-muted-foreground text-lg">
             <p>
@@ -107,7 +107,7 @@ export default function InsertionsregelnPage() {
             <h2 className="text-xl md:text-2xl font-bold">
               3. Pflichtangaben im Inserat
             </h2>
-            <div className="space-y-2 text-muted-foreground text-lg">
+            <div className="space-y-4 text-muted-foreground text-lg">
               <p className="font-semibold text-foreground">
                 Jedes Inserat muss mindestens folgende Informationen korrekt
                 enthalten:
@@ -268,7 +268,7 @@ export default function InsertionsregelnPage() {
               Informationen benötigen, stehen wir Ihnen gerne zur Verfügung.
             </p>
             <Button asChild>
-              <Link href="contact">
+              <Link href="/contact">
                 Kontaktieren Sie uns
                 <ArrowRight />
               </Link>

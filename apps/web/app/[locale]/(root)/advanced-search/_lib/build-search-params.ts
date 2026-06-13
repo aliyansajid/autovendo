@@ -178,6 +178,12 @@ export function buildSearchParams(
   }
   if (extras.length > 0) params.extras = extras;
 
+  // Seller type — form fields: sellerType-DEALER, sellerType-SELLER
+  const sellerType: string[] = [];
+  if (formValues["sellerType-DEALER"] === true) sellerType.push("DEALER");
+  if (formValues["sellerType-SELLER"] === true) sellerType.push("SELLER");
+  if (sellerType.length > 0) params.sellerType = sellerType;
+
   // Metallic
   if (formValues.metallic === true) params.metallic = "true";
   if (formValues.metallic === false) params.metallic = "false";

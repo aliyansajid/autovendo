@@ -147,10 +147,7 @@
     "driveTypes": {
       "FRONT": "Trazione anteriore",
       "REAR": "Trazione posteriore",
-      "ALL": "4x4",
-      "FRONT_WHEEL": "Trazione anteriore",
-      "REAR_WHEEL": "Trazione posteriore",
-      "ALL_WHEEL": "4x4"
+      "ALL": "4x4"
     },
     "types": {
       "BUS": "Bus",
@@ -389,7 +386,10 @@
         "bodyType": "Carrosseria",
         "reset": "Ripristina",
         "inspectionPassed": "Collaudato",
-        "hasWarranty": "Con garanzia"
+        "hasWarranty": "Con garanzia",
+        "sellerType": "Venditore",
+        "dealer": "Concessionario",
+        "privateSeller": "Privato"
       },
       "tech": {
         "title": "Dati tecnici",
@@ -465,6 +465,9 @@
       "moreFilters": "Altri filtri",
       "any": "Qualsiasi",
       "selected": "{count} selezionati",
+      "sellerType": "Venditore",
+      "dealer": "Concessionario",
+      "privateSeller": "Privato",
       "condition": "Stato del veicolo",
       "makeModel": "Marca, Modello",
       "price": "Prezzo",
@@ -861,6 +864,37 @@
     "month": "mese",
     "vehiclesIncluded": "veicoli inclusi",
     "trialDaysLabel": "{days} giorni di prova gratuita",
+    "tabs": {
+      "dealers": "Per concessionari",
+      "private": "Privati"
+    },
+    "privateSeller": {
+      "standard": {
+        "title": "Standard",
+        "badge": "",
+        "description": "Perfetto per una vendita rapida.",
+        "period": "30 giorni",
+        "features": [
+          "Pubblica il tuo annuncio in pochi minuti",
+          "Raggiungi veri acquirenti privati",
+          "Pieno controllo su prezzo e comunicazione"
+        ],
+        "button": "Inizia a vendere"
+      },
+      "bestValue": {
+        "title": "Migliore offerta",
+        "badge": "Migliore offerta",
+        "description": "Senza fretta, senza pressione.",
+        "period": "Fino alla vendita",
+        "features": [
+          "Nessun limite di tempo",
+          "Nessun rinnovo",
+          "Nessuna pressione ad abbassare il prezzo",
+          "Massima visibilità"
+        ],
+        "button": "Vendi senza pressione"
+      }
+    },
     "choosePlan": "Scelga il suo pacchetto",
     "popular": "Popolare",
     "example": {
@@ -1064,7 +1098,7 @@
     "phoneRequired": "Il numero di telefono è obbligatorio",
     "invalidPhoneFormat": "Numero di telefono svizzero non valido",
     "invalidEmail": "Indirizzo e-mail non valido",
-    "messageMaxLength": "Il messaggio può contenere un massimo di 1000 caratteri"
+    "messageMaxLength": "Il messaggio può contenere un massimo di 500 caratteri"
   },
   "GarageFilters": {
     "reset": "Azzera",
@@ -1119,45 +1153,7 @@
     "closingText2": "Ci adattiamo ai tempi, ascoltiamo e sviluppiamo la piattaforma insieme ai concessionari."
   },
   "DealerProfileForm": {
-    "personalTitle": "Informazioni Personali",
-    "personalDesc": "I vostri dati account di base.",
-    "nameLabel": "Nome",
-    "namePlaceholder": "Mario Rossi",
-    "emailLabel": "E-mail",
-    "emailPlaceholder": "mario@esempio.ch",
-    "profileImageLabel": "Foto Profilo",
-    "profileImageAlt": "Anteprima foto profilo",
-    "companyTitle": "Informazioni sull'Azienda",
-    "companyDesc": "I vostri dettagli aziendali e di contatto.",
-    "companyNameLabel": "Nome Azienda",
-    "companyNamePlaceholder": "ACME Srl",
-    "uidLabel": "Numero UID",
-    "websiteLabel": "Sito Web",
-    "logoLabel": "Logo Aziendale",
-    "logoAlt": "Anteprima logo aziendale",
-    "coverLabel": "Immagine di Copertina",
-    "coverAlt": "Anteprima immagine di copertina",
-    "businessEmailLabel": "E-mail Aziendale",
-    "phoneLabel": "Numero di Telefono",
-    "contactPersonLabel": "Persona di Contatto",
-    "addressTitle": "Indirizzo",
-    "addressDesc": "Dove si trova la vostra azienda.",
-    "streetLabel": "Via e Numero Civico",
-    "streetPlaceholder": "Via Principale 123",
-    "zipLabel": "CAP",
-    "cityLabel": "Città",
-    "cityPlaceholder": "Seleziona città",
-    "descriptionTitle": "Descrizione",
-    "descriptionDesc": "Parlateci della vostra azienda.",
-    "descriptionLabel": "Descrizione",
-    "descriptionPlaceholder": "Parlateci della vostra azienda...",
-    "openingHoursTitle": "Orari di Apertura",
-    "openingHoursDesc": "Quando siete disponibili.",
-    "isOpen": "Aperto",
     "isClosed": "Chiuso",
-    "noOpeningHours": "Nessun orario di apertura definito.",
-    "saving": "Salvataggio...",
-    "save": "Salva Profilo",
     "days": {
       "MONDAY": "Lunedì",
       "TUESDAY": "Martedì",
@@ -1166,21 +1162,7 @@
       "FRIDAY": "Venerdì",
       "SATURDAY": "Sabato",
       "SUNDAY": "Domenica"
-    },
-    "uploadFailed": "Caricamento file fallito.",
-    "userUpdateError": "Impossibile aggiornare le informazioni utente.",
-    "emailChangeError": "Impossibile avviare la modifica dell'e-mail.",
-    "emailConfirmation": "Un'e-mail di conferma è stata inviata al vostro nuovo indirizzo e-mail.",
-    "missingUser": "Le informazioni utente mancano.",
-    "profileUpdateSuccess": "Profilo aggiornato con successo.",
-    "profileUpdateError": "Impossibile aggiornare il profilo aziendale.",
-    "unexpectedError": "Si è verificato un errore. Riprovate."
-  },
-  "Unauthorized": {
-    "title": "Accesso Negato",
-    "description": "Accedete al vostro account per accedere alla dashboard.",
-    "login": "Accedi",
-    "goHome": "Vai alla Home"
+    }
   },
   "ListingHeader": {
     "back": "Indietro",

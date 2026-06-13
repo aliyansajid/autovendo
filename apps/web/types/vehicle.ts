@@ -48,6 +48,7 @@ export interface VehicleFacets {
   driveType: Record<string, number>;
   energyLabel: Record<string, number>;
   emissionStandard: Record<string, number>;
+  sellerType: Record<string, number>;
   metallic: number;
   inspectionPassed: number;
   hasWarranty: number;

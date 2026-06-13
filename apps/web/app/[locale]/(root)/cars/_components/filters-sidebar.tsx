@@ -79,6 +79,8 @@ export const FiltersSidebar = ({
       registrationTo: params.registrationTo || "any",
       kilometerFrom: params.kilometerFrom || "any",
       kilometerTo: params.kilometerTo || "any",
+      "sellerType-DEALER": params.sellerType?.split(",").includes("DEALER") ?? false,
+      "sellerType-SELLER": params.sellerType?.split(",").includes("SELLER") ?? false,
       condition: parseArray("condition"),
       make: parseArray("make"),
       fuel: parseArray("fuel"),
@@ -138,6 +140,15 @@ export const FiltersSidebar = ({
         params.set("equipment", equipment.join(","));
       } else {
         params.delete("equipment");
+      }
+
+      const sellerType: string[] = [];
+      if (values["sellerType-DEALER"] === true) sellerType.push("DEALER");
+      if (values["sellerType-SELLER"] === true) sellerType.push("SELLER");
+      if (sellerType.length > 0) {
+        params.set("sellerType", sellerType.join(","));
+      } else {
+        params.delete("sellerType");
       }
 
       // Reset to page 1 on filter change, but don't add page=1 to URL
@@ -223,6 +234,26 @@ export const FiltersSidebar = ({
             <Button asChild variant="outline">
               <Link href="/advanced-search">{t("moreFilters")}</Link>
             </Button>
+
+            <Separator />
+
+            <div className="space-y-3">
+              <FieldLabel>{t("sellerType")}</FieldLabel>
+              <div className="space-y-2">
+                <CustomFormField
+                  control={form.control}
+                  fieldType={FormFieldType.CHECKBOX}
+                  name="sellerType-DEALER"
+                  label={t("dealer")}
+                />
+                <CustomFormField
+                  control={form.control}
+                  fieldType={FormFieldType.CHECKBOX}
+                  name="sellerType-SELLER"
+                  label={t("privateSeller")}
+                />
+              </div>
+            </div>
 
             <Separator />
 

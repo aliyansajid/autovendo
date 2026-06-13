@@ -6,7 +6,7 @@ import {
   ShieldAlert,
   ShieldCheck,
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 export default function SicherheitshinweisePage() {
   return (
@@ -24,7 +24,7 @@ export default function SicherheitshinweisePage() {
         </div>
       </div>
 
-      <div className="w-full max-w-285 mx-auto px-4 py-12">
+      <div className="w-full max-w-285 mx-auto py-12 px-4">
         <div className="max-w-4xl mx-auto space-y-12">
           <section className="space-y-4 text-muted-foreground text-lg">
             <p>
@@ -218,7 +218,7 @@ export default function SicherheitshinweisePage() {
               Sie unsicher sind oder weitere Informationen benötigen.
             </p>
             <Button asChild>
-              <Link href="contact">
+              <Link href="/contact">
                 Kontaktieren Sie uns
                 <ArrowRight />
               </Link>

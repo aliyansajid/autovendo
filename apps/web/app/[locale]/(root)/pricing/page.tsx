@@ -14,18 +14,16 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/ui/src/components/table";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@repo/ui/src/components/card";
-import { XCircle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { formatPrice } from "@repo/ui/lib/helpers/format";
-import { getPlansFromApi } from "@/lib/api/vehicles";
+import { PricingTabs } from "./_components/pricing-tabs";
+
+const PLANS = [
+  { name: "Bronze", description: "Ideal for smaller inventories.", price: 180, limits: { vehicles: 5 }, popular: false, hasTrial: true, trialDays: 30 },
+  { name: "Silver", description: "Perfect for growing dealers.", price: 280, limits: { vehicles: 10 }, popular: false, hasTrial: true, trialDays: 30 },
+  { name: "Gold", description: "For established dealers.", price: 325, limits: { vehicles: 15 }, popular: true, hasTrial: true, trialDays: 30 },
+  { name: "Diamond", description: "For dealers with higher volume.", price: 408, limits: { vehicles: 25 }, popular: false, hasTrial: true, trialDays: 30 },
+] as const;
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -40,7 +38,7 @@ export default async function PricingPage(props: {
   const { locale } = await props.params;
   const t = await getTranslations("PricingPage");
 
-  const plans = await getPlansFromApi();
+  const plans = PLANS;
 
   const pricingSchema = {
     "@context": "https://schema.org",
@@ -325,71 +323,11 @@ export default async function PricingPage(props: {
 
         <Separator className="max-w-4xl mx-auto" />
 
-        <section className="space-y-12">
-          <h2 className="text-2xl font-bold text-center">{t("choosePlan")}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {plans.map((plan) => (
-              <Card
-                key={plan.name}
-                className={`${plan.popular ? "border-primary" : ""}`}
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl font-bold">
-                      {t.has(`plans.${plan.name.toLowerCase()}`)
-                        ? t(`plans.${plan.name.toLowerCase()}`)
-                        : plan.name}
-                    </CardTitle>
-                    {plan.popular && <Badge>{t("popular")}</Badge>}
-                  </div>
-                  <CardDescription>
-                    {t.has(`planDescription.${plan.name.toLowerCase()}`)
-                      ? t(`planDescription.${plan.name.toLowerCase()}`)
-                      : plan.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex-1 space-y-6">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold text-primary">
-                      {formatPrice(plan.price)}
-                    </span>
-                    <span className="text-muted-foreground">
-                      / {t("month")}
-                    </span>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-2">
-                      <CheckCircle2 className="size-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-foreground">
-                        {(plan.limits as any)?.vehicles} {t("vehiclesIncluded")}
-                      </span>
-                    </div>
-
-                    {plan.hasTrial && plan.trialDays && (
-                      <div className="flex items-start gap-2 text-green-600 font-medium">
-                        <CheckCircle2 className="size-5 shrink-0 mt-0.5" />
-                        <span>
-                          {t("trialDaysLabel", { days: plan.trialDays })}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    className="w-full"
-                    variant={plan.popular ? "default" : "outline"}
-                    asChild
-                  >
-                    <Link href="https://auth.autovendo.ch">
-                      {t("getStarted")}
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </section>
+        <PricingTabs
+          plans={plans}
+          locale={locale}
+          authUrl={process.env.NEXT_PUBLIC_AUTH_URL ?? ""}
+        />
 
         <Separator className="max-w-4xl mx-auto" />
 

@@ -147,10 +147,7 @@
     "driveTypes": {
       "FRONT": "Traction avant",
       "REAR": "Propulsion",
-      "ALL": "4x4",
-      "FRONT_WHEEL": "Traction avant",
-      "REAR_WHEEL": "Propulsion",
-      "ALL_WHEEL": "4x4"
+      "ALL": "4x4"
     },
     "types": {
       "BUS": "Bus",
@@ -389,7 +386,10 @@
         "bodyType": "Carrosserie",
         "reset": "Réinitialiser",
         "inspectionPassed": "Expertisé",
-        "hasWarranty": "Avec garantie"
+        "hasWarranty": "Avec garantie",
+        "sellerType": "Vendeur",
+        "dealer": "Concessionnaire",
+        "privateSeller": "Particulier"
       },
       "tech": {
         "title": "Données techniques",
@@ -465,6 +465,9 @@
       "moreFilters": "Plus de filtres",
       "any": "Indifférent",
       "selected": "{count} sélectionnés",
+      "sellerType": "Vendeur",
+      "dealer": "Concessionnaire",
+      "privateSeller": "Particulier",
       "condition": "État du véhicule",
       "makeModel": "Marque, Modèle",
       "price": "Prix",
@@ -861,6 +864,37 @@
     "month": "mois",
     "vehiclesIncluded": "véhicules inclus",
     "trialDaysLabel": "{days} jours d'essai gratuit",
+    "tabs": {
+      "dealers": "Pour les concessionnaires",
+      "private": "Particuliers"
+    },
+    "privateSeller": {
+      "standard": {
+        "title": "Standard",
+        "badge": "",
+        "description": "Idéal pour une vente rapide.",
+        "period": "30 jours",
+        "features": [
+          "Publiez votre annonce en minutes",
+          "Atteignez de vrais acheteurs particuliers",
+          "Contrôle total sur le prix et la communication"
+        ],
+        "button": "Commencer à vendre"
+      },
+      "bestValue": {
+        "title": "Meilleure offre",
+        "badge": "Meilleure offre",
+        "description": "Sans pression, sans précipitation.",
+        "period": "Jusqu'à la vente",
+        "features": [
+          "Sans limite de temps",
+          "Sans renouvellement",
+          "Sans pression de baisser le prix",
+          "Visibilité maximale"
+        ],
+        "button": "Vendre sans pression"
+      }
+    },
     "choosePlan": "Choisissez votre forfait",
     "popular": "Populaire",
     "example": {
@@ -1064,7 +1098,7 @@
     "phoneRequired": "Le numéro de téléphone est requis",
     "invalidPhoneFormat": "Numéro de téléphone suisse invalide",
     "invalidEmail": "Adresse e-mail invalide",
-    "messageMaxLength": "Le message peut comporter au maximum 1000 caractères"
+    "messageMaxLength": "Le message peut comporter au maximum 500 caractères"
   },
   "GarageFilters": {
     "reset": "Réinitialiser",
@@ -1119,45 +1153,7 @@
     "closingText2": "Nous évoluons avec le temps, écoutons et développons la plateforme en collaboration avec les concessionnaires."
   },
   "DealerProfileForm": {
-    "personalTitle": "Informations Personnelles",
-    "personalDesc": "Vos informations de compte de base.",
-    "nameLabel": "Nom",
-    "namePlaceholder": "Jean Dupont",
-    "emailLabel": "E-mail",
-    "emailPlaceholder": "jean@exemple.ch",
-    "profileImageLabel": "Photo de Profil",
-    "profileImageAlt": "Aperçu de la photo de profil",
-    "companyTitle": "Informations sur l'Entreprise",
-    "companyDesc": "Vos coordonnées d'entreprise.",
-    "companyNameLabel": "Nom de l'Entreprise",
-    "companyNamePlaceholder": "ACME Sàrl",
-    "uidLabel": "Numéro UID",
-    "websiteLabel": "Site Web",
-    "logoLabel": "Logo de l'Entreprise",
-    "logoAlt": "Aperçu du logo de l'entreprise",
-    "coverLabel": "Image de Couverture",
-    "coverAlt": "Aperçu de l'image de couverture",
-    "businessEmailLabel": "E-mail Professionnel",
-    "phoneLabel": "Numéro de Téléphone",
-    "contactPersonLabel": "Personne de Contact",
-    "addressTitle": "Adresse",
-    "addressDesc": "L'emplacement de votre entreprise.",
-    "streetLabel": "Rue et Numéro",
-    "streetPlaceholder": "Rue Principale 123",
-    "zipLabel": "Code Postal",
-    "cityLabel": "Ville",
-    "cityPlaceholder": "Sélectionner une ville",
-    "descriptionTitle": "Description",
-    "descriptionDesc": "Parlez-nous de votre entreprise.",
-    "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Parlez-nous de votre entreprise...",
-    "openingHoursTitle": "Heures d'Ouverture",
-    "openingHoursDesc": "Vos heures de disponibilité.",
-    "isOpen": "Ouvert",
     "isClosed": "Fermé",
-    "noOpeningHours": "Aucune heure d'ouverture définie.",
-    "saving": "Enregistrement...",
-    "save": "Enregistrer le Profil",
     "days": {
       "MONDAY": "Lundi",
       "TUESDAY": "Mardi",
@@ -1166,21 +1162,7 @@
       "FRIDAY": "Vendredi",
       "SATURDAY": "Samedi",
       "SUNDAY": "Dimanche"
-    },
-    "uploadFailed": "Échec du téléchargement du fichier.",
-    "userUpdateError": "Impossible de mettre à jour les informations utilisateur.",
-    "emailChangeError": "Impossible d'initier le changement d'e-mail.",
-    "emailConfirmation": "Un e-mail de confirmation a été envoyé à votre nouvelle adresse e-mail.",
-    "missingUser": "Les informations utilisateur sont manquantes.",
-    "profileUpdateSuccess": "Profil mis à jour avec succès.",
-    "profileUpdateError": "Impossible de mettre à jour le profil de l'entreprise.",
-    "unexpectedError": "Une erreur s'est produite. Veuillez réessayer."
-  },
-  "Unauthorized": {
-    "title": "Accès Refusé",
-    "description": "Veuillez vous connecter à votre compte pour accéder au tableau de bord.",
-    "login": "Connexion",
-    "goHome": "Aller à l'Accueil"
+    }
   },
   "ListingHeader": {
     "back": "Retour",

@@ -1,8 +1,7 @@
 import { Separator } from "@repo/ui/src/components/separator";
 import { Button } from "@repo/ui/src/components/button";
-import Link from "next/link";
-import { ArrowRight, CheckCircle2, Info } from "lucide-react";
-import { Badge } from "@repo/ui/src/components/badge";
+import { Link } from "@/i18n/routing";
+import { ArrowRight } from "lucide-react";
 
 export default function PrivatsphaereEinstellungenPage() {
   return (
@@ -29,139 +28,121 @@ export default function PrivatsphaereEinstellungenPage() {
                 sicheren Betrieb der Plattform zu gewährleisten, Inhalte zu
                 optimieren und das Nutzungserlebnis zu verbessern.
               </p>
-              <p className="font-semibold text-foreground">
+              <p>
                 Du entscheidest selbst, welche Datenverarbeitung du zulässt.
+                Nachfolgend erklären wir, welche Cookie-Kategorien wir einsetzen
+                und was sie bewirken.
               </p>
             </div>
           </section>
 
           <Separator />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <section className="space-y-4 bg-muted/50 p-6 rounded-xl border">
-              <div className="flex items-start justify-between">
-                <h2 className="text-xl font-bold flex items-center gap-2">
-                  <CheckCircle2 className="text-primary size-5" />
-                  Notwendige Cookies
-                </h2>
-                <Badge className="bg-primary/10 text-primary font-semibold">
-                  immer aktiv
-                </Badge>
-              </div>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  Diese Cookies sind erforderlich, damit die Website korrekt
-                  funktioniert.
+          <section className="space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold">
+              1. Notwendige Cookies
+            </h2>
+            <div className="space-y-4 text-muted-foreground text-lg">
+              <p>
+                Diese Cookies sind erforderlich, damit die Website korrekt
+                funktioniert. Sie können nicht deaktiviert werden.
+              </p>
+              <div className="space-y-2">
+                <p className="font-semibold text-foreground">
+                  Sie ermöglichen grundlegende Funktionen wie:
                 </p>
-                <div className="space-y-2">
-                  <p className="font-semibold text-foreground">
-                    Sie ermöglichen grundlegende Funktionen wie:
-                  </p>
-                  <ul className="list-disc pl-6 space-y-1">
-                    <li>Seitennavigation</li>
-                    <li>Zugriff auf geschützte Bereiche</li>
-                    <li>Sicherheit und Betrugsprävention</li>
-                  </ul>
-                </div>
-                <p className="font-medium">
-                  Ohne diese Cookies kann Autovendo.ch nicht ordnungsgemäss
-                  betrieben werden.
-                </p>
-              </div>
-            </section>
-
-            <section className="space-y-4 p-6 rounded-xl border">
-              <div className="flex items-start justify-between">
-                <h2 className="text-xl font-bold">Funktionale Cookies</h2>
-              </div>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  Diese Cookies ermöglichen erweiterte Funktionen und
-                  Personalisierungen, z. B.:
-                </p>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>Speicherung deiner Einstellungen</li>
-                  <li>Verbesserung der Benutzerfreundlichkeit</li>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Seitennavigation</li>
+                  <li>Zugriff auf geschützte Bereiche</li>
+                  <li>Sicherheit und Betrugsprävention</li>
                 </ul>
-                <p className="flex items-center gap-2 text-sm">
-                  <Info className="size-4" />
-                  Sie sind optional und können deaktiviert werden.
-                </p>
               </div>
-            </section>
-
-            <section className="space-y-4 p-6 rounded-xl border">
-              <div className="flex items-start justify-between">
-                <h2 className="text-xl font-bold">Analyse & Statistik</h2>
-              </div>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  Diese Cookies helfen uns zu verstehen, wie Besucher unsere
-                  Website nutzen.
-                </p>
-                <p>
-                  Die gewonnenen Informationen dienen ausschliesslich dazu,
-                  Autovendo.ch weiter zu verbessern.
-                </p>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>Erhebung anonymisierter Nutzungsdaten</li>
-                  <li>Keine direkte Identifikation von Personen</li>
-                </ul>
-                <p className="flex items-center gap-2 text-sm">
-                  <Info className="size-4" />
-                  Diese Cookies werden nur mit deiner Zustimmung gesetzt.
-                </p>
-              </div>
-            </section>
-
-            <section className="space-y-4 p-6 rounded-xl border">
-              <div className="flex items-start justify-between">
-                <h2 className="text-xl font-bold">
-                  Marketing & externe Inhalte
-                </h2>
-                <Badge variant="secondary" className="font-semibold">
-                  optional
-                </Badge>
-              </div>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  Falls verwendet, ermöglichen diese Cookies die Anzeige
-                  externer Inhalte oder Marketing-Massnahmen.
-                </p>
-                <p className="flex items-center gap-2 text-sm">
-                  <Info className="size-4" />
-                  Auch diese Cookies werden nur nach ausdrücklicher Zustimmung
-                  aktiviert.
-                </p>
-              </div>
-            </section>
-          </div>
+              <p className="font-semibold text-foreground">
+                Ohne diese Cookies kann Autovendo.ch nicht ordnungsgemäss
+                betrieben werden.
+              </p>
+            </div>
+          </section>
 
           <Separator />
 
-          <section className="space-y-6 text-center">
-            <h2 className="text-xl md:text-2xl font-bold">Deine Wahl</h2>
-            <div className="space-y-2 text-muted-foreground text-lg mb-8">
+          <section className="space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold">
+              2. Funktionale Cookies
+            </h2>
+            <div className="space-y-4 text-muted-foreground text-lg">
+              <p>
+                Diese Cookies ermöglichen erweiterte Funktionen und
+                Personalisierungen.
+              </p>
+              <ul className="list-disc pl-6 space-y-2">
+                <li>Speicherung deiner Einstellungen</li>
+                <li>Verbesserung der Benutzerfreundlichkeit</li>
+              </ul>
+              <p>
+                Sie sind optional und können in den Einstellungen deines
+                Browsers deaktiviert werden.
+              </p>
+            </div>
+          </section>
+
+          <Separator />
+
+          <section className="space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold">
+              3. Analyse & Statistik
+            </h2>
+            <div className="space-y-4 text-muted-foreground text-lg">
+              <p>
+                Diese Cookies helfen uns zu verstehen, wie Besucher unsere
+                Website nutzen, und dienen ausschliesslich dazu, Autovendo.ch
+                weiter zu verbessern.
+              </p>
+              <ul className="list-disc pl-6 space-y-2">
+                <li>Erhebung anonymisierter Nutzungsdaten</li>
+                <li>Keine direkte Identifikation von Personen</li>
+              </ul>
+              <p>
+                Diese Cookies werden nur mit deiner ausdrücklichen Zustimmung
+                gesetzt.
+              </p>
+            </div>
+          </section>
+
+          <Separator />
+
+          <section className="space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold">
+              4. Marketing & externe Inhalte
+            </h2>
+            <div className="space-y-4 text-muted-foreground text-lg">
+              <p>
+                Falls verwendet, ermöglichen diese Cookies die Anzeige externer
+                Inhalte oder Marketing-Massnahmen.
+              </p>
+              <p>
+                Auch diese Cookies werden nur nach ausdrücklicher Zustimmung
+                aktiviert.
+              </p>
+            </div>
+          </section>
+
+          <Separator />
+
+          <section className="space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold">
+              5. Cookie-Einstellungen verwalten
+            </h2>
+            <div className="space-y-4 text-muted-foreground text-lg">
               <p>
                 Du kannst deine Einwilligung jederzeit anpassen oder widerrufen.
+                Änderungen werden sofort wirksam.
               </p>
-              <p>Änderungen werden sofort wirksam.</p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto">
-                Alle akzeptieren
-              </Button>
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                Nur notwendige Cookies zulassen
-              </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                className="w-full sm:w-auto"
-              >
-                Einstellungen individuell anpassen
-              </Button>
+              <p>
+                Die meisten Browser ermöglichen es dir, Cookies direkt in den
+                Browser-Einstellungen zu verwalten, einzuschränken oder
+                vollständig zu deaktivieren.
+              </p>
             </div>
           </section>
 
@@ -174,7 +155,7 @@ export default function PrivatsphaereEinstellungenPage() {
               findest du in unserer Datenschutzerklärung.
             </p>
             <Button asChild>
-              <Link href="datenschutz">
+              <Link href="/datenschutz">
                 Zur Datenschutzerklärung
                 <ArrowRight />
               </Link>

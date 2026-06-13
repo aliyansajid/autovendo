@@ -147,10 +147,7 @@
     "driveTypes": {
       "FRONT": "Front-wheel drive",
       "REAR": "Rear-wheel drive",
-      "ALL": "All-wheel drive",
-      "FRONT_WHEEL": "Front-wheel drive",
-      "REAR_WHEEL": "Rear-wheel drive",
-      "ALL_WHEEL": "All-wheel drive"
+      "ALL": "All-wheel drive"
     },
     "types": {
       "BUS": "Bus",
@@ -268,7 +265,7 @@
       "LEATHER": "Leather",
       "PARTIAL_LEATHER_SEATS": "Partial Leather Seats",
       "SPECIAL_PAINT": "Special Paint",
-      "SPORT_SEATS": "Sportsitze",
+      "SPORT_SEATS": "Sport Seats",
       "LANE_KEEP_ASSIST": "Lane Keep Assist",
       "ESP": "Stability Control (ESP)",
       "AUXILIARY_HEATING": "Auxiliary Heating",
@@ -389,7 +386,10 @@
         "bodyType": "Body Type",
         "reset": "Reset",
         "inspectionPassed": "Inspection Passed",
-        "hasWarranty": "With Warranty"
+        "hasWarranty": "With Warranty",
+        "sellerType": "Seller",
+        "dealer": "Dealer",
+        "privateSeller": "Private Seller"
       },
       "equipment": {
         "title": "Equipment"
@@ -465,6 +465,9 @@
       "moreFilters": "More Filter",
       "any": "Any",
       "selected": "{count} selected",
+      "sellerType": "Seller",
+      "dealer": "Dealer",
+      "privateSeller": "Private Seller",
       "condition": "Vehicle Condition",
       "makeModel": "Make, Model",
       "price": "Price",
@@ -858,6 +861,37 @@
       "swiss": "Directly Swiss"
     },
     "partnershipText": "With autovendo.ch, you are not investing in advertising. You are investing in a partnership.\nYour margin belongs to you – not the platform.",
+    "tabs": {
+      "dealers": "For Dealers",
+      "private": "Private Sellers"
+    },
+    "privateSeller": {
+      "standard": {
+        "title": "Standard",
+        "badge": "",
+        "description": "Perfect for a quick sale.",
+        "period": "30 days",
+        "features": [
+          "List your car in minutes",
+          "Reach real private buyers",
+          "Full control over price & communication"
+        ],
+        "button": "Start Selling"
+      },
+      "bestValue": {
+        "title": "Best Value",
+        "badge": "Best Value",
+        "description": "No rush, no pressure.",
+        "period": "Until sold",
+        "features": [
+          "No time limit",
+          "No renewals",
+          "No pressure to lower your price",
+          "Maximum visibility"
+        ],
+        "button": "Sell Without Pressure"
+      }
+    },
     "choosePlan": "Choose your package",
     "popular": "Popular",
     "month": "month",
@@ -1064,7 +1098,7 @@
     "phoneRequired": "Phone number is required",
     "invalidPhoneFormat": "Invalid Swiss phone number",
     "invalidEmail": "Invalid email address",
-    "messageMaxLength": "Message can be a maximum of 1000 characters"
+    "messageMaxLength": "Message can be a maximum of 500 characters"
   },
   "GarageFilters": {
     "reset": "Reset",
@@ -1119,45 +1153,7 @@
     "closingText2": "We move with the times, listen and develop the platform together with dealers."
   },
   "DealerProfileForm": {
-    "personalTitle": "Personal Information",
-    "personalDesc": "Your basic account details.",
-    "nameLabel": "Name",
-    "namePlaceholder": "John Doe",
-    "emailLabel": "Email",
-    "emailPlaceholder": "john@example.com",
-    "profileImageLabel": "Profile Photo",
-    "profileImageAlt": "Profile photo preview",
-    "companyTitle": "Company Information",
-    "companyDesc": "Your company and contact details.",
-    "companyNameLabel": "Company Name",
-    "companyNamePlaceholder": "ACME Ltd.",
-    "uidLabel": "UID Number",
-    "websiteLabel": "Website",
-    "logoLabel": "Company Logo",
-    "logoAlt": "Company logo preview",
-    "coverLabel": "Cover Image",
-    "coverAlt": "Cover image preview",
-    "businessEmailLabel": "Business Email",
-    "phoneLabel": "Phone Number",
-    "contactPersonLabel": "Contact Person",
-    "addressTitle": "Address",
-    "addressDesc": "Where your business is located.",
-    "streetLabel": "Street and House Number",
-    "streetPlaceholder": "Main Street 123",
-    "zipLabel": "ZIP Code",
-    "cityLabel": "City",
-    "cityPlaceholder": "Select city",
-    "descriptionTitle": "Description",
-    "descriptionDesc": "Tell us about your business.",
-    "descriptionLabel": "Description",
-    "descriptionPlaceholder": "Tell us about your business...",
-    "openingHoursTitle": "Opening Hours",
-    "openingHoursDesc": "When you are available.",
-    "isOpen": "Open",
     "isClosed": "Closed",
-    "noOpeningHours": "No opening hours defined.",
-    "saving": "Saving...",
-    "save": "Save Profile",
     "days": {
       "MONDAY": "Monday",
       "TUESDAY": "Tuesday",
@@ -1166,21 +1162,7 @@
       "FRIDAY": "Friday",
       "SATURDAY": "Saturday",
       "SUNDAY": "Sunday"
-    },
-    "uploadFailed": "File upload failed.",
-    "userUpdateError": "Could not update user information.",
-    "emailChangeError": "Could not initiate email change.",
-    "emailConfirmation": "A confirmation email has been sent to your new email address.",
-    "missingUser": "User information is missing.",
-    "profileUpdateSuccess": "Profile updated successfully.",
-    "profileUpdateError": "Could not update company profile.",
-    "unexpectedError": "An error occurred. Please try again."
-  },
-  "Unauthorized": {
-    "title": "Access Denied",
-    "description": "Please log in to your account to access the dashboard.",
-    "login": "Login",
-    "goHome": "Go to Home"
+    }
   },
   "ListingHeader": {
     "back": "Back",

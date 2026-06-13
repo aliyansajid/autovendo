@@ -1,5 +1,5 @@
 import { Separator } from "@repo/ui/src/components/separator";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 export default function AGBPage() {
   return (
@@ -287,7 +287,7 @@ export default function AGBPage() {
               Bei Fragen zu diesen AGB oder zur Plattform kannst du uns
               jederzeit&nbsp;
               <Link
-                href="contact"
+                href="/contact"
                 className="text-primary underline-offset-4 hover:underline"
               >
                 kontaktieren

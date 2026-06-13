@@ -1,7 +1,7 @@
 import { Button } from "@repo/ui/src/components/button";
 import { Separator } from "@repo/ui/src/components/separator";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 
 export default function ImpressumPage() {
   return (
@@ -31,6 +31,10 @@ export default function ImpressumPage() {
                 <p>Bielstrasse 78</p>
                 <p>2555 Brügg / BE</p>
                 <p>Switzerland</p>
+              </div>
+              <div>
+                <p>VID: CHE-309.005.896</p>
+                <p>CH-ID: CH-036-1107751-6</p>
               </div>
             </div>
           </section>
@@ -82,12 +86,10 @@ export default function ImpressumPage() {
 
             <section className="space-y-4">
               <h2 className="text-xl md:text-2xl font-bold">
-              Vertretungsberechtigte Person
+                Vertretungsberechtigte Person
               </h2>
               <div className="text-muted-foreground text-lg">
-                <p>
-                Charles McCorvick
-                </p>
+                <p>Charles McCorvick</p>
                 <p>Geschäftsführer</p>
               </div>
             </section>
@@ -167,7 +169,7 @@ export default function ImpressumPage() {
               Haben Sie noch weitere Fragen? Wir sind gerne für Sie da.
             </p>
             <Button asChild>
-              <Link href="contact">
+              <Link href="/contact">
                 Kontaktieren Sie uns
                 <ArrowRight />
               </Link>

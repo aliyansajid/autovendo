@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
-const BASE_URL = "https://autovendo.ch";
-const LOCALES = ["de", "en", "fr", "it"] as const;
+export const BASE_URL = "https://autovendo.ch";
+export const LOCALES = ["de", "en", "fr", "it"] as const;
 type Locale = (typeof LOCALES)[number];
 
-const OG_LOCALE: Record<Locale, string> = {
+export const OG_LOCALE: Record<Locale, string> = {
   de: "de_CH",
   en: "en_US",
   fr: "fr_CH",
