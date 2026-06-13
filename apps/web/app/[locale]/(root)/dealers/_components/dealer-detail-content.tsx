@@ -313,7 +313,7 @@ export const DealerDetailContent = ({
                 </Button>
 
                 <Button variant="outline" className="flex-1" asChild>
-                  <Link href={`mailto:${dealer.email}`}>
+                  <Link href={`mailto:${dealer.businessEmail}`}>
                     <Mail />
                     {t("emailButton")}
                   </Link>
@@ -467,11 +467,11 @@ export const DealerDetailContent = ({
                     </Link>
 
                     <Link
-                      href={`mailto:${dealer.email}`}
+                      href={`mailto:${dealer.businessEmail}`}
                       className="flex items-center gap-2 text-sm text-primary underline-offset-4 hover:underline"
                     >
                       <Mail className="size-4 text-muted-foreground shrink-0" />
-                      {dealer.email}
+                      {dealer.businessEmail}
                     </Link>
 
                     <Link

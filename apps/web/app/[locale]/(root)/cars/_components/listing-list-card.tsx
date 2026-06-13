@@ -195,47 +195,68 @@ export function ListingListCard({
           <Separator />
 
           <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 ">
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/dealers/${item.dealer.id}`}
-                  className="text-sm font-bold truncate hover:underline relative z-20"
-                >
-                  {item.dealer.companyName}
-                </Link>
+            {item.dealer ? (
+              <>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/dealers/${item.dealer.id}`}
+                      className="text-sm font-bold truncate hover:underline relative z-20"
+                    >
+                      {item.dealer.companyName}
+                    </Link>
 
-                {item.dealer.googleRating != null && (
-                  <>
-                    <div className="flex items-center text-rating">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-3 h-3 fill-current ${i < Math.round(item.dealer.googleRating!) ? "text-rating" : "text-muted-foreground opacity-30"}`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {item.dealer.googleRating.toFixed(1)}
-                      {item.dealer.googleReviewCount != null && ` (${item.dealer.googleReviewCount})`}
-                    </span>
-                  </>
+                    {item.dealer.googleRating != null && (
+                      <>
+                        <div className="flex items-center text-rating">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-3 h-3 fill-current ${i < Math.round(item.dealer!.googleRating!) ? "text-rating" : "text-muted-foreground opacity-30"}`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {item.dealer.googleRating.toFixed(1)}
+                          {item.dealer.googleReviewCount != null && ` (${item.dealer.googleReviewCount})`}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <span className="text-xs text-muted-foreground truncate">
+                    {item.dealer.zipCode} {item.dealer.city}
+                  </span>
+                </div>
+
+                <Button asChild className="relative z-20">
+                  <Link href={`tel:${item.dealer.phoneNumber}`}>
+                    <Phone />
+                    {tCard("contact")}
+                  </Link>
+                </Button>
+              </>
+            ) : item.seller ? (
+              <>
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-bold">{tCard("privateSeller")}</span>
+                  <span className="text-xs text-muted-foreground truncate">
+                    {item.seller.zipCode} {item.seller.city}
+                  </span>
+                </div>
+
+                {item.seller.phoneNumber && (
+                  <Button asChild className="relative z-20">
+                    <Link href={`tel:${item.seller.phoneNumber}`}>
+                      <Phone />
+                      {tCard("contact")}
+                    </Link>
+                  </Button>
                 )}
-              </div>
-
-              <span className="text-xs text-muted-foreground truncate">
-                {item.dealer.zipCode} {item.dealer.city}
-              </span>
-            </div>
-
-            <Button asChild className="relative z-20">
-              <Link href={`tel:${item.dealer.phoneNumber}`}>
-                <Phone />
-                {tCard("contact")}
-              </Link>
-            </Button>
+              </>
+            ) : null}
           </div>
 
-          {showDealerLink && (
+          {showDealerLink && item.dealer && (
             <Link
               href={`/dealers/${item.dealer.id}`}
               className="mt-4 text-sm text-primary font-medium underline-offset-4 hover:underline relative z-20"

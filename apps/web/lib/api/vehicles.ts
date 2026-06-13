@@ -66,7 +66,8 @@ export async function getFeaturedVehiclesFromApi(): Promise<VehicleListItem[]> {
   return json.data ?? [];
 }
 
-export async function getVehicleFromApi(id: string): Promise<Record<string, unknown> | null> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function getVehicleFromApi(id: string): Promise<Record<string, any> | null> {
   const res = await fetch(`${API}/vehicles/${id}`, { cache: "no-store" });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("Failed to fetch vehicle");

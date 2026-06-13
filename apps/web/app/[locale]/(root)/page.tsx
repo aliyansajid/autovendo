@@ -29,7 +29,7 @@ export default async function HomePage(props: {
 }) {
   const { locale } = await props.params;
 
-  const [vehiclesResult, dealersResult, tVehicle] = await Promise.all([
+  const [vehiclesResult, dealersResult, tVehicle, tCard] = await Promise.all([
     getVehiclesFromApi({ pageSize: "12", sort: "created-desc" }).catch(() => ({
       vehicles: [],
       total: 0,
@@ -39,6 +39,7 @@ export default async function HomePage(props: {
     })),
     getDealersFromApi({ pageSize: 8 }),
     getTranslations("Vehicle"),
+    getTranslations("ListingListCard"),
   ]);
 
   function vehicleToListingProps(item: VehicleListItem): ListingProps {
@@ -57,9 +58,12 @@ export default async function HomePage(props: {
           ? tVehicle(`fuelTypes.${item.fuelType.toUpperCase()}`)
           : "",
       ].filter(Boolean),
-      garageName: item.dealer.companyName,
-      garageId: item.dealer.id,
-      garageLocation: [item.dealer.zipCode, item.dealer.city]
+      garageName: item.dealer?.companyName ?? tCard("privateSeller"),
+      garageId: item.dealer?.id ?? item.seller?.id ?? "",
+      garageLocation: [
+        item.dealer?.zipCode ?? item.seller?.zipCode,
+        item.dealer?.city ?? item.seller?.city,
+      ]
         .filter(Boolean)
         .join(" "),
     };

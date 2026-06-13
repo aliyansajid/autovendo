@@ -4,15 +4,13 @@ import { JsonLd } from "@/components/json-ld";
 import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import {
   getDealerByIdFromApi,
-  getDealerVehiclesFromApi,
   getDealerGoogleReviewsFromApi,
 } from "@/lib/api/dealers";
-import { getVehicleFacetsFromApi } from "@/lib/api/vehicles";
+import { getVehiclesWithFacetsFromApi } from "@/lib/api/vehicles";
 import { notFound } from "next/navigation";
 import { DealerDetailContent } from "../_components/dealer-detail-content";
 import { parseSearchParams } from "@repo/ui/lib/helpers/vehicle";
 import { createVehicleSearchSchema } from "@/schema/vehicle-search-schema";
-import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
   params,
@@ -59,23 +57,26 @@ export default async function DealerPage({
   const [{ id, locale }, sp] = await Promise.all([params, searchParams]);
 
   const parsedFilters = parseSearchParams(sp);
-  const t_schema = await getTranslations("VehicleSearchSchema");
-  const schema = createVehicleSearchSchema(t_schema);
-  const filters = schema.parse(parsedFilters);
+  const filters = createVehicleSearchSchema().parse(parsedFilters);
   const dealer = await getDealerByIdFromApi(id);
 
   if (!dealer) {
     notFound();
   }
 
-  const page = filters.page ?? 1;
-  const sort = (sp.sort as string | undefined) ?? "relevance";
-
-  const [initialVehicles, googleData, facetsResult] = await Promise.all([
-    getDealerVehiclesFromApi(dealer.id, page, 12, filters, sort),
+  const [vehiclesData, googleData] = await Promise.all([
+    getVehiclesWithFacetsFromApi({ ...sp, dealerId: dealer.id, pageSize: "12" }),
     getDealerGoogleReviewsFromApi(dealer.id),
-    getVehicleFacetsFromApi({ ...sp, dealerId: dealer.id }),
   ]);
+
+  const initialVehicles = {
+    vehicles: vehiclesData.vehicles,
+    totalCount: vehiclesData.total,
+    totalPages: vehiclesData.totalPages,
+    currentPage: vehiclesData.page,
+    hasMore: vehiclesData.page < vehiclesData.totalPages,
+  };
+  const facetsResult = { facets: vehiclesData.facets };
 
   const dealerSchema = {
     "@context": "https://schema.org",

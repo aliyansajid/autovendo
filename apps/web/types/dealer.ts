@@ -28,7 +28,7 @@ export interface DealerOpeningHour {
 export interface DealerDetail {
   id: string;
   companyName: string;
-  email: string;
+  businessEmail: string;
   phoneNumber: string;
   isVerified: boolean;
   description: string | null;

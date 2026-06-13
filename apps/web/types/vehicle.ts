@@ -31,7 +31,13 @@ export interface VehicleListItem {
     phoneNumber: string | null;
     googleRating: number | null;
     googleReviewCount: number | null;
-  };
+  } | null;
+  seller: {
+    id: string;
+    city: string;
+    zipCode: string;
+    phoneNumber: string | null;
+  } | null;
 }
 
 export type VehicleDetails = Record<string, unknown>;

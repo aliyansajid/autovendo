@@ -156,8 +156,8 @@ export default async function ListingPage({
       .toUpperCase()
       .replace(/[-]/g, "_");
     const formattedKey = `${namespace}.${normalizedKey}`;
-    // @ts-expect-error – dynamic key validated at runtime via .has()
-    return tVehicle.has(formattedKey) ? tVehicle(formattedKey) : key;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return tVehicle.has(formattedKey as any) ? tVehicle(formattedKey as any) : key;
   };
 
   const title = formatVehicleName([item.make, item.model, item.version]);
@@ -374,7 +374,22 @@ export default async function ListingPage({
         rating: item.dealer.googleRating ?? null,
         reviewCount: item.dealer.googleReviewCount ?? null,
       }
-    : null;
+    : item.seller
+      ? {
+          id: item.seller.id,
+          name: t("privateSeller"),
+          address: [item.seller.zipCode, item.seller.city].filter(Boolean).join(" "),
+          phone: item.seller.phoneNumber ?? undefined,
+          logo: undefined,
+          website: undefined,
+          businessEmail: undefined,
+          description: undefined,
+          openingHours: undefined,
+          isVerified: false,
+          rating: null,
+          reviewCount: null,
+        }
+      : null;
 
   const { vehicles: similarItems } = await getSimilarVehiclesFromApi(item.id);
 
@@ -670,7 +685,7 @@ export default async function ListingPage({
             </CardContent>
           </Card>
 
-          {isDealer && seller && (
+          {seller && (
             <Card>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
@@ -749,9 +764,11 @@ export default async function ListingPage({
                       </Link>
                     </Button>
                   )}
-                  <Button variant="link" className="w-full" asChild>
-                    <Link href={`/dealers/${seller.id}`}>{t("allVehicles")}</Link>
-                  </Button>
+                  {isDealer && (
+                    <Button variant="link" className="w-full" asChild>
+                      <Link href={`/dealers/${seller.id}`}>{t("allVehicles")}</Link>
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

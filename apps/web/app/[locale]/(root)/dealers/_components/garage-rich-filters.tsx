@@ -214,8 +214,8 @@ export default function GarageRichFilters({
   const getLabel = (namespace: string, key: string | null | undefined) => {
     if (!key) return undefined;
     const formattedKey = `${namespace}.${key}`;
-    // @ts-expect-error – dynamic key validated at runtime via .has()
-    return tVehicle.has(formattedKey) ? tVehicle(formattedKey) : key;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return tVehicle.has(formattedKey as any) ? tVehicle(formattedKey as any) : key;
   };
 
   const [isMakeModalOpen, setIsMakeModalOpen] = useState(false);
