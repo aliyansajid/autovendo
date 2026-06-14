@@ -11,6 +11,12 @@ import { sendEmail, ContactMessage } from "./transactional";
 
 @Controller()
 export class AppController {
+  @Get("/")
+  @AllowAnonymous()
+  root() {
+    return "OK";
+  }
+
   @Get("/api/session")
   @OptionalAuth()
   getSession(@Session() session: UserSession<typeof auth>) {
