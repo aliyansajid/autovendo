@@ -29,24 +29,6 @@ export function ContactSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <CustomFormField
               control={control}
-              fieldType={FormFieldType.INPUT}
-              name="companyName"
-              label={t("company")}
-              placeholder={t("companyPlaceholder")}
-              disabled={false}
-            />
-
-            <CustomFormField
-              control={control}
-              fieldType={FormFieldType.INPUT_GROUP}
-              name="businessEmail"
-              label={t("businessEmail")}
-              placeholder={t("businessEmailPlaceholder")}
-              disabled={false}
-            />
-
-            <CustomFormField
-              control={control}
               fieldType={FormFieldType.INPUT_GROUP}
               name="phoneNumber"
               label={t("businessPhone")}

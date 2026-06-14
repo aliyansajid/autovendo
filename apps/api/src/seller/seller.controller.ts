@@ -70,6 +70,14 @@ export class SellerController {
     return this.sellerService.deleteVehicle(session, id);
   }
 
+  @Post("listing/checkout")
+  createListingCheckout(
+    @Session() session: UserSession,
+    @Body() body: { vehicleId: string; planId: string; locale: string },
+  ) {
+    return this.sellerService.createListingCheckout(session, body);
+  }
+
   @Get("billing")
   getBilling(@Session() session: UserSession) {
     return this.sellerService.getBilling(session);

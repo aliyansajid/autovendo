@@ -1112,7 +1112,32 @@
         "buttonText": "Paket wählen",
         "popular": false
       }
-    ]
+    ],
+    "selectPlanTitle": "Inserat-Paket wählen",
+    "selectPlanSubtitle": "Wählen Sie ein Paket, um Ihr Fahrzeug zu veröffentlichen.",
+    "selectPlan": "Paket wählen",
+    "selected": "Ausgewählt",
+    "standard": {
+      "name": "Standard",
+      "description": "Perfekt für einen schnellen Verkauf.",
+      "duration": "30 Tage",
+      "features": [
+        "Fahrzeug in Minuten inserieren",
+        "Echte Privatkäufer erreichen",
+        "Volle Kontrolle über Preis & Kommunikation"
+      ]
+    },
+    "bestValue": {
+      "name": "Best Value",
+      "description": "Kein Stress, kein Druck.",
+      "duration": "Bis zum Verkauf",
+      "features": [
+        "Keine Zeitbeschränkung",
+        "Keine Verlängerungen nötig",
+        "Kein Druck, den Preis zu senken",
+        "Maximale Sichtbarkeit"
+      ]
+    }
   },
   "SubscribeButton": {
     "loginRequired": "Bitte melden Sie sich an, um ein Paket zu wählen",
@@ -1500,6 +1525,7 @@
     "settings": "Einstellungen",
     "profile": "Profil",
     "subscription": "Abonnement",
+    "billing": "Abrechnung",
     "new": "Neues Inserat",
     "change-password": "Passwort ändern"
   },

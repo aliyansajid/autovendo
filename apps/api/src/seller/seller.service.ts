@@ -344,6 +344,70 @@ export class SellerService {
     };
   }
 
+  async createListingCheckout(
+    session: UserSession,
+    body: { vehicleId: string; planId: string; locale: string },
+  ) {
+    const stripe = await getStripe();
+    if (!stripe) throw new BadRequestException("Stripe is not configured");
+
+    const seller = await this.getSellerByUserId(session.user.id);
+    const vehicle = await this.prisma.vehicle.findUnique({
+      where: { id: body.vehicleId },
+      select: { id: true, sellerId: true },
+    });
+    if (!vehicle) throw new NotFoundException("Vehicle not found");
+    if (vehicle.sellerId !== seller.id)
+      throw new ForbiddenException("Vehicle does not belong to you");
+
+    const PLAN_PRICES: Record<string, number> = {
+      standard: 1900,   // CHF 19.00 in cents
+      best_value: 4900, // CHF 49.00 in cents
+    };
+    const amount = PLAN_PRICES[body.planId];
+    if (!amount) throw new BadRequestException("Invalid plan");
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { stripeCustomerId: true, email: true },
+    });
+
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SELLER_URL ?? "https://seller.autovendo.ch";
+
+    const checkoutSession = await stripe.checkout.sessions.create({
+      mode: "payment",
+      payment_method_types: ["card"],
+      customer: user?.stripeCustomerId ?? undefined,
+      customer_email: !user?.stripeCustomerId ? user?.email : undefined,
+      line_items: [
+        {
+          price_data: {
+            currency: "chf",
+            unit_amount: amount,
+            product_data: {
+              name:
+                body.planId === "best_value"
+                  ? "AutoVendo Best Value Listing"
+                  : "AutoVendo Standard Listing",
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: { vehicleId: body.vehicleId, planId: body.planId },
+      success_url: `${baseUrl}/${body.locale}/dashboard/vehicles?listing=success`,
+      cancel_url: `${baseUrl}/${body.locale}/dashboard/vehicles/${body.vehicleId}`,
+    });
+
+    await this.prisma.vehicle.update({
+      where: { id: body.vehicleId },
+      data: { listingPlan: body.planId },
+    });
+
+    return { data: { url: checkoutSession.url } };
+  }
+
   async createBillingPortalSession(session: UserSession) {
     const stripe = await getStripe();
 

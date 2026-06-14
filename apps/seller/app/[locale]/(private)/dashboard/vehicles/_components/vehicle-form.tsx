@@ -299,9 +299,11 @@ export function VehicleForm({
           const result = await apiCreateVehicle(listingId, submitData, finalImageKeys) as any;
           if (result && typeof result === "object" && "error" in result) throw new Error(result.error as string);
 
+          const createdVehicleId = result?.data?.id ?? result?.id;
+          if (!createdVehicleId) throw new Error("Failed to get vehicle ID after creation");
           if (!data.planId) throw new Error("No plan selected");
           setUploadStatus("Redirecting to payment...");
-          const checkoutUrl = await apiCreateListingCheckout(listingId, data.planId, locale);
+          const checkoutUrl = await apiCreateListingCheckout(createdVehicleId, data.planId, locale);
           window.location.href = checkoutUrl;
           return;
         }

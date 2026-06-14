@@ -108,13 +108,16 @@ export async function apiUpdateVehicleStatus(id: string, status: string) {
   return res.json();
 }
 
-// Image upload stubs — implement when storage is configured
 export async function apiGetPresignedUrls(
   _listingId: string,
-  _files: { name: string; type: string }[],
+  files: { name: string; type: string }[],
 ): Promise<{ url: string; key: string }[]> {
-  // TODO: implement when POST /upload is wired to real storage
-  return [];
+  const res = await clientFetch("/upload/presign", {
+    method: "POST",
+    body: JSON.stringify({ files }),
+  });
+  if (!res.ok) throw new Error("Failed to get upload URLs");
+  return res.json();
 }
 
 export async function apiCleanupImages(_keys: string[]): Promise<void> {

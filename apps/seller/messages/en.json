@@ -1106,7 +1106,32 @@
         "buttonText": "Choose plan",
         "popular": false
       }
-    ]
+    ],
+    "selectPlanTitle": "Choose Your Listing Plan",
+    "selectPlanSubtitle": "Pick a plan to publish your vehicle.",
+    "selectPlan": "Select Plan",
+    "selected": "Selected",
+    "standard": {
+      "name": "Standard",
+      "description": "Perfect for a quick sale.",
+      "duration": "30 days",
+      "features": [
+        "List your car in minutes",
+        "Reach real private buyers",
+        "Full control over price & communication"
+      ]
+    },
+    "bestValue": {
+      "name": "Best Value",
+      "description": "No rush, no pressure.",
+      "duration": "Until sold",
+      "features": [
+        "No time limit",
+        "No renewals",
+        "No pressure to lower your price",
+        "Maximum visibility"
+      ]
+    }
   },
   "SubscribeButton": {
     "loginRequired": "Please log in to choose a package",
@@ -1490,6 +1515,7 @@
     "settings": "Settings",
     "profile": "Profile",
     "subscription": "Subscription",
+    "billing": "Billing",
     "new": "New Listing",
     "change-password": "Change Password"
   },

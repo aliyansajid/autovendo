@@ -43,7 +43,8 @@ export async function getBillingDataFromApi(): Promise<BillingData> {
   try {
     const res = await serverFetch("/seller/billing");
     if (!res.ok) return { paymentMethod: null, invoices: [] };
-    return res.json();
+    const json = await res.json();
+    return { paymentMethod: json.paymentMethod ?? null, invoices: json.invoices ?? [] };
   } catch {
     return { paymentMethod: null, invoices: [] };
   }

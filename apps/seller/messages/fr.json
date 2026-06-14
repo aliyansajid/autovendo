@@ -1106,7 +1106,32 @@
         "buttonText": "Choisir le forfait",
         "popular": false
       }
-    ]
+    ],
+    "selectPlanTitle": "Choisissez votre offre",
+    "selectPlanSubtitle": "Sélectionnez une offre pour publier votre véhicule.",
+    "selectPlan": "Choisir",
+    "selected": "Sélectionné",
+    "standard": {
+      "name": "Standard",
+      "description": "Parfait pour une vente rapide.",
+      "duration": "30 jours",
+      "features": [
+        "Publiez votre voiture en quelques minutes",
+        "Touchez de vrais acheteurs privés",
+        "Contrôle total sur le prix & la communication"
+      ]
+    },
+    "bestValue": {
+      "name": "Best Value",
+      "description": "Sans pression, sans stress.",
+      "duration": "Jusqu'à la vente",
+      "features": [
+        "Sans limite de temps",
+        "Sans renouvellement",
+        "Sans pression pour baisser le prix",
+        "Visibilité maximale"
+      ]
+    }
   },
   "SubscribeButton": {
     "loginRequired": "Veuillez vous connecter pour choisir un forfait",
@@ -1493,6 +1518,7 @@
     "settings": "Paramètres",
     "profile": "Profil",
     "subscription": "Abonnement",
+    "billing": "Facturation",
     "new": "Nouvelle Annonce",
     "change-password": "Changer le Mot de Passe"
   },

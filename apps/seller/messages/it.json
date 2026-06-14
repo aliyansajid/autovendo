@@ -1106,7 +1106,32 @@
         "buttonText": "Scegli pacchetto",
         "popular": false
       }
-    ]
+    ],
+    "selectPlanTitle": "Scegli il tuo piano",
+    "selectPlanSubtitle": "Seleziona un piano per pubblicare il tuo veicolo.",
+    "selectPlan": "Scegli",
+    "selected": "Selezionato",
+    "standard": {
+      "name": "Standard",
+      "description": "Perfetto per una vendita rapida.",
+      "duration": "30 giorni",
+      "features": [
+        "Pubblica la tua auto in pochi minuti",
+        "Raggiungi acquirenti privati reali",
+        "Pieno controllo su prezzo e comunicazione"
+      ]
+    },
+    "bestValue": {
+      "name": "Best Value",
+      "description": "Senza fretta, senza pressione.",
+      "duration": "Fino alla vendita",
+      "features": [
+        "Nessun limite di tempo",
+        "Nessun rinnovo",
+        "Nessuna pressione per abbassare il prezzo",
+        "Massima visibilità"
+      ]
+    }
   },
   "SubscribeButton": {
     "loginRequired": "Effettui il login per scegliere un pacchetto",
@@ -1494,6 +1519,7 @@
     "settings": "Impostazioni",
     "profile": "Profilo",
     "subscription": "Abbonamento",
+    "billing": "Fatturazione",
     "new": "Nuovo Annuncio",
     "change-password": "Cambia Password"
   },

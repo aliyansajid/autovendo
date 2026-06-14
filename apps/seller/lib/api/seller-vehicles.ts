@@ -102,18 +102,20 @@ export async function apiBillingPortal(
   }
 }
 
-// Image upload stubs — implement when storage is configured
 export async function apiPrepareListing(_existingVehicleId?: string): Promise<{ listingId: string }> {
-  // TODO: implement when listing preparation is needed
   return { listingId: "" };
 }
 
 export async function apiGetPresignedUrls(
   _listingId: string,
-  _files: { name: string; type: string }[],
+  files: { name: string; type: string }[],
 ): Promise<{ url: string; key: string }[]> {
-  // TODO: implement when POST /upload is wired to real storage
-  return [];
+  const res = await clientFetch("/upload/presign", {
+    method: "POST",
+    body: JSON.stringify({ files }),
+  });
+  if (!res.ok) throw new Error("Failed to get upload URLs");
+  return res.json();
 }
 
 export async function apiPublishOrPay(
@@ -125,10 +127,18 @@ export async function apiPublishOrPay(
 }
 
 export async function apiCreateListingCheckout(
-  _vehicleId: string,
-  _planId: string,
-  _locale: string,
+  vehicleId: string,
+  planId: string,
+  locale: string,
 ): Promise<string> {
-  // TODO: implement checkout
-  return "";
+  const res = await clientFetch("/seller/listing/checkout", {
+    method: "POST",
+    body: JSON.stringify({ vehicleId, planId, locale }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as { error?: string }).error || "Failed to create checkout");
+  }
+  const json = await res.json();
+  return json.url ?? json.checkoutUrl ?? "";
 }
