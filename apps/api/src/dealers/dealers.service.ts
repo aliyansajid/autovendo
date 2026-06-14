@@ -234,7 +234,7 @@ export class DealersService {
       throw new NotFoundException(`Dealer with id "${id}" not found`);
     }
 
-    const and: Parameters<typeof prisma.vehicle.findMany>[0]["where"][] = [];
+    const and: NonNullable<Parameters<typeof prisma.vehicle.findMany>[0]>["where"][] = [];
 
     const makes = parseArray(query.make);
     if (makes.length === 1) and.push({ make: { equals: makes[0], mode: "insensitive" } });
