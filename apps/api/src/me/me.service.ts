@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
-import { prisma } from "@repo/db";
+import { PrismaService } from "../this.prisma.service.js";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
 import { auth } from "@repo/auth";
 
@@ -10,6 +10,7 @@ export class ChangePasswordDto {
 
 @Injectable()
 export class MeService {
+  constructor(private prisma: PrismaService) {}
   getMe(session: UserSession) {
     const { id, name, email, role, emailVerified } = session.user as {
       id: string;
@@ -32,7 +33,7 @@ export class MeService {
     }
 
     // Use better-auth to change password via account update
-    const account = await prisma.account.findFirst({
+    const account = await this.prisma.account.findFirst({
       where: {
         userId: session.user.id,
         providerId: "credential",

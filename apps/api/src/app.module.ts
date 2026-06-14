@@ -8,9 +8,10 @@ import { MeModule } from "./me/me.module";
 import { DealerModule } from "./dealer/dealer.module";
 import { SellerModule } from "./seller/seller.module";
 import { UploadModule } from "./upload/upload.module";
+import { PrismaModule } from "./prisma.module.js";
 
 @Module({
-  imports: [AuthModule.forRoot({ auth }), VehiclesModule, DealersModule, MeModule, DealerModule, SellerModule, UploadModule],
+  imports: [PrismaModule, AuthModule.forRoot({ auth }), VehiclesModule, DealersModule, MeModule, DealerModule, SellerModule, UploadModule],
   controllers: [AppController],
 })
 export class AppModule {}

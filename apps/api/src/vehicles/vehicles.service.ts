@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { prisma } from "@repo/db";
+import { PrismaService } from "../this.prisma.service.js";
+import { Prisma } from "../generated/prisma/client.js";
 
 export class VehiclesQueryDto {
   page?: string;
@@ -272,7 +273,7 @@ function parseFloat10(val: string | undefined): number | undefined {
   return isNaN(n) ? undefined : n;
 }
 
-type WhereClause = NonNullable<Parameters<typeof prisma.vehicle.findMany>[0]>["where"];
+type WhereClause = Prisma.VehicleFindManyArgs["where"];
 
 function buildWhereClause(query: VehiclesQueryDto): WhereClause {
   const and: NonNullable<WhereClause>[] = [ACTIVE_OWNER_FILTER];
@@ -595,6 +596,7 @@ function buildWhereClause(query: VehiclesQueryDto): WhereClause {
 
 @Injectable()
 export class VehiclesService {
+  constructor(private prisma: PrismaService) {}
   async findMany(query: VehiclesQueryDto) {
     const page = Math.max(1, parseInt(query.page ?? "1", 10));
     const pageSize = Math.min(100, Math.max(1, parseInt(query.pageSize ?? "24", 10)));
@@ -604,14 +606,14 @@ export class VehiclesService {
     const orderBy = buildSortOrder(query.sort);
 
     const [vehicles, total, facets] = await Promise.all([
-      prisma.vehicle.findMany({
+      this.prisma.vehicle.findMany({
         where,
         select: VEHICLE_LIST_SELECT,
         orderBy: orderBy as never,
         skip,
         take: pageSize,
       }),
-      prisma.vehicle.count({ where }),
+      this.prisma.vehicle.count({ where }),
       this.computeFacets(where),
     ]);
 
@@ -626,7 +628,7 @@ export class VehiclesService {
   }
 
   async findFeatured() {
-    const vehicles = await prisma.vehicle.findMany({
+    const vehicles = await this.prisma.vehicle.findMany({
       where: { status: "PUBLISHED", AND: [ACTIVE_OWNER_FILTER] },
       select: VEHICLE_LIST_SELECT,
       orderBy: { createdAt: "desc" },
@@ -637,7 +639,7 @@ export class VehiclesService {
   }
 
   async findSimilar(id: string) {
-    const vehicle = await prisma.vehicle.findUnique({
+    const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
       select: { make: true, bodyType: true, fuelType: true, price: true, vehicleType: true },
     });
@@ -648,7 +650,7 @@ export class VehiclesService {
       ? { gte: Math.round(vehicle.price * 0.5), lte: Math.round(vehicle.price * 1.5) }
       : undefined;
 
-    const vehicles = await prisma.vehicle.findMany({
+    const vehicles = await this.prisma.vehicle.findMany({
       where: {
         id: { not: id },
         status: "PUBLISHED",
@@ -670,7 +672,7 @@ export class VehiclesService {
   }
 
   async findOne(id: string) {
-    const vehicle = await prisma.vehicle.findFirst({
+    const vehicle = await this.prisma.vehicle.findFirst({
       where: { id, status: "PUBLISHED", AND: [ACTIVE_OWNER_FILTER] },
       select: VEHICLE_DETAIL_SELECT,
     });
@@ -702,18 +704,18 @@ export class VehiclesService {
       dealerCount,
       sellerCount,
     ] = await Promise.all([
-      prisma.vehicle.groupBy({ by: ["make"], where, _count: true, orderBy: { _count: { make: "desc" } } }),
-      prisma.vehicle.groupBy({ by: ["fuelType"], where, _count: true, orderBy: { _count: { fuelType: "desc" } } }),
-      prisma.vehicle.groupBy({ by: ["transmissionType"], where, _count: true, orderBy: { _count: { transmissionType: "desc" } } }),
-      prisma.vehicle.groupBy({ by: ["vehicleCondition"], where, _count: true, orderBy: { _count: { vehicleCondition: "desc" } } }),
-      prisma.vehicle.groupBy({ by: ["vehicleType"], where, _count: true, orderBy: { _count: { vehicleType: "desc" } } }),
-      prisma.vehicle.groupBy({ by: ["bodyType"], where, _count: true, orderBy: { _count: { bodyType: "desc" } } }),
-      prisma.vehicle.groupBy({ by: ["color"], where, _count: true, orderBy: { _count: { color: "desc" } } }),
-      prisma.vehicle.groupBy({ by: ["interiorColor"], where, _count: true, orderBy: { _count: { interiorColor: "desc" } } }),
-      prisma.vehicle.groupBy({ by: ["driveType"], where, _count: true, orderBy: { _count: { driveType: "desc" } } }),
-      prisma.vehicle.groupBy({ by: ["energyLabel"], where, _count: true, orderBy: { _count: { energyLabel: "desc" } } }),
-      prisma.vehicle.groupBy({ by: ["emissionStandard"], where, _count: true, orderBy: { _count: { emissionStandard: "desc" } } }),
-      prisma.vehicle.aggregate({
+      this.prisma.vehicle.groupBy({ by: ["make"], where, _count: true, orderBy: { _count: { make: "desc" } } }),
+      this.prisma.vehicle.groupBy({ by: ["fuelType"], where, _count: true, orderBy: { _count: { fuelType: "desc" } } }),
+      this.prisma.vehicle.groupBy({ by: ["transmissionType"], where, _count: true, orderBy: { _count: { transmissionType: "desc" } } }),
+      this.prisma.vehicle.groupBy({ by: ["vehicleCondition"], where, _count: true, orderBy: { _count: { vehicleCondition: "desc" } } }),
+      this.prisma.vehicle.groupBy({ by: ["vehicleType"], where, _count: true, orderBy: { _count: { vehicleType: "desc" } } }),
+      this.prisma.vehicle.groupBy({ by: ["bodyType"], where, _count: true, orderBy: { _count: { bodyType: "desc" } } }),
+      this.prisma.vehicle.groupBy({ by: ["color"], where, _count: true, orderBy: { _count: { color: "desc" } } }),
+      this.prisma.vehicle.groupBy({ by: ["interiorColor"], where, _count: true, orderBy: { _count: { interiorColor: "desc" } } }),
+      this.prisma.vehicle.groupBy({ by: ["driveType"], where, _count: true, orderBy: { _count: { driveType: "desc" } } }),
+      this.prisma.vehicle.groupBy({ by: ["energyLabel"], where, _count: true, orderBy: { _count: { energyLabel: "desc" } } }),
+      this.prisma.vehicle.groupBy({ by: ["emissionStandard"], where, _count: true, orderBy: { _count: { emissionStandard: "desc" } } }),
+      this.prisma.vehicle.aggregate({
         where,
         _max: {
           price: true,
@@ -730,11 +732,11 @@ export class VehiclesService {
           registrationYear: true,
         },
       }),
-      prisma.vehicle.count({ where: { ...where, metallic: true } }),
-      prisma.vehicle.count({ where: { ...where, inspectionPassed: true } }),
-      prisma.vehicle.count({ where: { ...where, warranty: { not: null } } }),
-      prisma.vehicle.count({ where: { ...where, dealerId: { not: null } } }),
-      prisma.vehicle.count({ where: { ...where, sellerId: { not: null } } }),
+      this.prisma.vehicle.count({ where: { ...where, metallic: true } }),
+      this.prisma.vehicle.count({ where: { ...where, inspectionPassed: true } }),
+      this.prisma.vehicle.count({ where: { ...where, warranty: { not: null } } }),
+      this.prisma.vehicle.count({ where: { ...where, dealerId: { not: null } } }),
+      this.prisma.vehicle.count({ where: { ...where, sellerId: { not: null } } }),
     ]);
 
     return {

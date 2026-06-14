@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { prisma } from "@repo/db";
+import { PrismaService } from "../this.prisma.service.js";
+import { Prisma } from "../generated/prisma/client.js";
 import React from "react";
 import { sendEmail, ListingContactEmail } from "@repo/transactional";
 
@@ -152,12 +153,13 @@ const ACTIVE_DEALER_FILTER = {
 
 @Injectable()
 export class DealersService {
+  constructor(private prisma: PrismaService) {}
   async findMany(query: DealersQueryDto) {
     const page = Math.max(1, parseInt(query.page ?? "1", 10));
     const pageSize = Math.min(100, Math.max(1, parseInt(query.pageSize ?? "12", 10)));
     const skip = (page - 1) * pageSize;
 
-    const where: NonNullable<Parameters<typeof prisma.dealer.findMany>[0]>["where"] = {
+    const where: Prisma.DealerWhereInput = {
       ...ACTIVE_DEALER_FILTER,
     };
 
@@ -170,14 +172,14 @@ export class DealersService {
     }
 
     const [dealers, total] = await Promise.all([
-      prisma.dealer.findMany({
+      this.prisma.dealer.findMany({
         where,
         select: DEALER_LIST_SELECT,
         orderBy: { companyName: "asc" },
         skip,
         take: pageSize,
       }),
-      prisma.dealer.count({ where }),
+      this.prisma.dealer.count({ where }),
     ]);
 
     return {
@@ -190,7 +192,7 @@ export class DealersService {
   }
 
   async findFeatured() {
-    const dealers = await prisma.dealer.findMany({
+    const dealers = await this.prisma.dealer.findMany({
       where: {
         logo: { not: null },
         ...ACTIVE_DEALER_FILTER,
@@ -204,7 +206,7 @@ export class DealersService {
   }
 
   async findOne(id: string) {
-    const raw = await prisma.dealer.findFirst({
+    const raw = await this.prisma.dealer.findFirst({
       where: { id, ...ACTIVE_DEALER_FILTER },
       select: {
         ...DEALER_DETAIL_SELECT,
@@ -225,7 +227,7 @@ export class DealersService {
     const pageSize = Math.min(100, Math.max(1, parseInt(query.pageSize ?? "12", 10)));
     const skip = (page - 1) * pageSize;
 
-    const dealerExists = await prisma.dealer.findFirst({
+    const dealerExists = await this.prisma.dealer.findFirst({
       where: { id, ...ACTIVE_DEALER_FILTER },
       select: { id: true },
     });
@@ -234,7 +236,7 @@ export class DealersService {
       throw new NotFoundException(`Dealer with id "${id}" not found`);
     }
 
-    const and: NonNullable<Parameters<typeof prisma.vehicle.findMany>[0]>["where"][] = [];
+    const and: Prisma.VehicleWhereInput[] = [];
 
     const makes = parseArray(query.make);
     if (makes.length === 1) and.push({ make: { equals: makes[0], mode: "insensitive" } });
@@ -295,14 +297,14 @@ export class DealersService {
     const orderBy = buildDealerVehicleOrderBy(query.sort);
 
     const [vehicles, total] = await Promise.all([
-      prisma.vehicle.findMany({
+      this.prisma.vehicle.findMany({
         where,
         select: DEALER_VEHICLE_LIST_SELECT,
         orderBy,
         skip,
         take: pageSize,
       }),
-      prisma.vehicle.count({ where }),
+      this.prisma.vehicle.count({ where }),
     ]);
 
     return {
@@ -315,7 +317,7 @@ export class DealersService {
   }
 
   async sendContactEmail(id: string, body: DealerContactDto) {
-    const dealer = await prisma.dealer.findFirst({
+    const dealer = await this.prisma.dealer.findFirst({
       where: { id, ...ACTIVE_DEALER_FILTER },
       select: { companyName: true, businessEmail: true },
     });

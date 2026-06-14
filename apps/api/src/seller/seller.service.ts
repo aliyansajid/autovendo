@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   BadRequestException,
 } from "@nestjs/common";
-import { prisma } from "@repo/db";
+import { PrismaService } from "../this.prisma.service.js";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
 
 export class UpdateSellerProfileDto {
@@ -84,8 +84,9 @@ async function getStripe() {
 
 @Injectable()
 export class SellerService {
+  constructor(private prisma: PrismaService) {}
   private async getSellerByUserId(userId: string) {
-    const seller = await prisma.seller.findUnique({
+    const seller = await this.prisma.seller.findUnique({
       where: { userId },
       select: { id: true },
     });
@@ -96,7 +97,7 @@ export class SellerService {
   }
 
   async getProfile(session: UserSession) {
-    const user = await prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: session.user.id },
       select: {
         id: true,
@@ -150,7 +151,7 @@ export class SellerService {
     if (phoneNumber !== undefined) sellerUpdateData.phoneNumber = phoneNumber;
     if (city !== undefined) sellerUpdateData.city = city;
 
-    await prisma.$transaction(async (tx: any) => {
+    await this.prisma.$transaction(async (tx: any) => {
       if (Object.keys(userUpdateData).length > 0) {
         await tx.user.update({
           where: { id: session.user.id },
@@ -190,14 +191,14 @@ export class SellerService {
     const where = { sellerId: seller.id };
 
     const [vehicles, total] = await Promise.all([
-      prisma.vehicle.findMany({
+      this.prisma.vehicle.findMany({
         where,
         select: SELLER_VEHICLE_LIST_SELECT,
         orderBy,
         skip,
         take: pageSize,
       }),
-      prisma.vehicle.count({ where }),
+      this.prisma.vehicle.count({ where }),
     ]);
 
     return {
@@ -212,7 +213,7 @@ export class SellerService {
   async createVehicle(session: UserSession, body: CreateSellerVehicleDto) {
     const seller = await this.getSellerByUserId(session.user.id);
 
-    const vehicle = await prisma.vehicle.create({
+    const vehicle = await this.prisma.vehicle.create({
       data: {
         ...(body as any),
         sellerId: seller.id,
@@ -226,7 +227,7 @@ export class SellerService {
   async getVehicle(session: UserSession, id: string) {
     const seller = await this.getSellerByUserId(session.user.id);
 
-    const vehicle = await prisma.vehicle.findUnique({
+    const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
     });
 
@@ -248,7 +249,7 @@ export class SellerService {
   ) {
     const seller = await this.getSellerByUserId(session.user.id);
 
-    const vehicle = await prisma.vehicle.findUnique({
+    const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
       select: { id: true, sellerId: true },
     });
@@ -261,7 +262,7 @@ export class SellerService {
       throw new ForbiddenException("This vehicle does not belong to you");
     }
 
-    const updated = await prisma.vehicle.update({
+    const updated = await this.prisma.vehicle.update({
       where: { id },
       data: body as never,
     });
@@ -272,7 +273,7 @@ export class SellerService {
   async deleteVehicle(session: UserSession, id: string) {
     const seller = await this.getSellerByUserId(session.user.id);
 
-    const vehicle = await prisma.vehicle.findUnique({
+    const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
       select: { id: true, sellerId: true },
     });
@@ -285,7 +286,7 @@ export class SellerService {
       throw new ForbiddenException("This vehicle does not belong to you");
     }
 
-    await prisma.vehicle.delete({ where: { id } });
+    await this.prisma.vehicle.delete({ where: { id } });
 
     return { data: { success: true } };
   }
@@ -293,7 +294,7 @@ export class SellerService {
   async getBilling(session: UserSession): Promise<any> {
     const stripe = await getStripe();
 
-    const user = await prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: session.user.id },
       select: { stripeCustomerId: true },
     });
@@ -350,7 +351,7 @@ export class SellerService {
       throw new BadRequestException("Stripe is not configured");
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: session.user.id },
       select: { stripeCustomerId: true },
     });
