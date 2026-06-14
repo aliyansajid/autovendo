@@ -247,7 +247,7 @@ export class DealerService {
 
     const vehicle = await prisma.vehicle.create({
       data: {
-        ...(body as object),
+        ...(body as any),
         dealerId: dealer.id,
         sellerId: undefined,
       },

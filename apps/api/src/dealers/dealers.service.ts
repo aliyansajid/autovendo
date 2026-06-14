@@ -148,7 +148,7 @@ const ACTIVE_DEALER_FILTER = {
   user: {
     OR: [{ banned: null }, { banned: false }, { banExpires: { lte: new Date() } }],
   },
-} as const;
+};
 
 @Injectable()
 export class DealersService {
@@ -157,7 +157,7 @@ export class DealersService {
     const pageSize = Math.min(100, Math.max(1, parseInt(query.pageSize ?? "12", 10)));
     const skip = (page - 1) * pageSize;
 
-    const where: Parameters<typeof prisma.dealer.findMany>[0]["where"] = {
+    const where: NonNullable<Parameters<typeof prisma.dealer.findMany>[0]>["where"] = {
       ...ACTIVE_DEALER_FILTER,
     };
 

@@ -251,7 +251,7 @@ const ACTIVE_OWNER_FILTER = {
       },
     },
   ],
-} as const;
+};
 
 // Normalizes a query param that may be a comma-joined string, repeated params, or undefined.
 function parseArray(val: string | string[] | undefined): string[] {
@@ -272,7 +272,7 @@ function parseFloat10(val: string | undefined): number | undefined {
   return isNaN(n) ? undefined : n;
 }
 
-type WhereClause = Parameters<typeof prisma.vehicle.findMany>[0]["where"];
+type WhereClause = NonNullable<Parameters<typeof prisma.vehicle.findMany>[0]>["where"];
 
 function buildWhereClause(query: VehiclesQueryDto): WhereClause {
   const and: NonNullable<WhereClause>[] = [ACTIVE_OWNER_FILTER];
