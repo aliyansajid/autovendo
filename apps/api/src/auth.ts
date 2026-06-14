@@ -14,7 +14,7 @@ import {
   VerifyEmail,
   ResetPasswordEmail,
   ConfirmEmailChangeEmail,
-} from "@repo/transactional";
+} from "./transactional";
 import { i18n } from "@better-auth/i18n";
 
 const pgAdapter = new PrismaPg({

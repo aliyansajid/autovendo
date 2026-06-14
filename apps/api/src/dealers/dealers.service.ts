@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma.service.js";
 import { Prisma } from "../generated/prisma/client.js";
 import React from "react";
-import { sendEmail, ListingContactEmail } from "@repo/transactional";
+import { sendEmail, ListingContactEmail } from "../transactional";
 
 export class DealersQueryDto {
   page?: string;

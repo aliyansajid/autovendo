@@ -7,7 +7,7 @@ import {
 import type { UserSession } from "@thallesp/nestjs-better-auth";
 import { auth } from "./auth";
 import React from "react";
-import { sendEmail, ContactMessage } from "@repo/transactional";
+import { sendEmail, ContactMessage } from "./transactional";
 
 @Controller()
 export class AppController {
