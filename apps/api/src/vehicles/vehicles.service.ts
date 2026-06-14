@@ -173,6 +173,7 @@ const VEHICLE_DETAIL_SELECT = {
     select: {
       id: true,
       companyName: true,
+      streetAddress: true,
       city: true,
       zipCode: true,
       phoneNumber: true,
@@ -181,6 +182,7 @@ const VEHICLE_DETAIL_SELECT = {
       logo: true,
       googleRating: true,
       googleReviewCount: true,
+      user: { select: { emailVerified: true } },
       openingHours: {
         select: {
           id: true,
