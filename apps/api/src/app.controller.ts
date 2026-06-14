@@ -18,12 +18,6 @@ export class AppController {
     return { user: session.user, session: session.session };
   }
 
-  @Get("/health")
-  @AllowAnonymous()
-  health() {
-    return { status: "ok" };
-  }
-
   @Post("/contact")
   @AllowAnonymous()
   @HttpCode(200)
