@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { PrismaService } from "../this.prisma.service.js";
+import { PrismaService } from "../prisma.service.js";
 import { Prisma } from "../generated/prisma/client.js";
 
 export class VehiclesQueryDto {

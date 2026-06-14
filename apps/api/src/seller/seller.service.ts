@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   BadRequestException,
 } from "@nestjs/common";
-import { PrismaService } from "../this.prisma.service.js";
+import { PrismaService } from "../prisma.service.js";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
 
 export class UpdateSellerProfileDto {
