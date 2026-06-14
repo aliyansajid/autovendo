@@ -247,7 +247,7 @@ export class DealerService {
 
     const vehicle = await prisma.vehicle.create({
       data: {
-        ...(body as never),
+        ...(body as object),
         dealerId: dealer.id,
         sellerId: undefined,
       },
@@ -405,7 +405,7 @@ export class DealerService {
               expYear: defaultPaymentMethod.card?.exp_year ?? 0,
             }
           : null,
-        invoices: invoices.data.map((inv) => ({
+        invoices: invoices.data.map((inv: any) => ({
           id: inv.id,
           number: inv.number,
           date: inv.created,

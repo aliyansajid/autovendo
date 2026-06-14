@@ -150,7 +150,7 @@ export class SellerService {
     if (phoneNumber !== undefined) sellerUpdateData.phoneNumber = phoneNumber;
     if (city !== undefined) sellerUpdateData.city = city;
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       if (Object.keys(userUpdateData).length > 0) {
         await tx.user.update({
           where: { id: session.user.id },
@@ -214,7 +214,7 @@ export class SellerService {
 
     const vehicle = await prisma.vehicle.create({
       data: {
-        ...(body as never),
+        ...(body as object),
         sellerId: seller.id,
         dealerId: undefined,
       },
