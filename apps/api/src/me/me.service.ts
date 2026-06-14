@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../prisma.service.js";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
-import { auth } from "@repo/auth";
+import { auth } from "../auth";
 
 export class ChangePasswordDto {
   currentPassword?: string;

@@ -1,7 +1,8 @@
 import { betterAuth } from "better-auth/minimal";
 import React from "react";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from "@repo/db";
+import { PrismaClient } from "./generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { stripe } from "@better-auth/stripe";
 import Stripe from "stripe";
 import { admin } from "better-auth/plugins";
@@ -15,6 +16,11 @@ import {
   ConfirmEmailChangeEmail,
 } from "@repo/transactional";
 import { i18n } from "@better-auth/i18n";
+
+const pgAdapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
+const prisma = new PrismaClient({ adapter: pgAdapter });
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-04-22.dahlia",
@@ -72,7 +78,7 @@ export const auth = betterAuth({
       ...additionalFields,
       id,
     }),
-    sendResetPassword: async ({ user, url }, request) => {
+    sendResetPassword: async ({ user, url }) => {
       void sendEmail({
         to: user.email,
         subject: "Reset your password",
@@ -116,30 +122,6 @@ export const auth = betterAuth({
       },
     },
   },
-
-  // socialProviders: {
-  //   apple: {
-  //     clientId: process.env.APPLE_CLIENT_ID as string,
-  //     clientSecret: await generateAppleClientSecret(
-  //       process.env.APPLE_CLIENT_ID!,
-  //       process.env.APPLE_TEAM_ID!,
-  //       process.env.APPLE_KEY_ID!,
-  //       process.env.APPLE_PRIVATE_KEY!,
-  //     ),
-  //     appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER as string,
-  //     mapProfileToUser: (profile) => ({
-  //       email: profile.email ?? `${profile.sub}@apple.placeholder.local`,
-  //     }),
-  //   },
-  //   google: {
-  //     clientId: [
-  //       process.env.GOOGLE_WEB_CLIENT_ID as string,
-  //       process.env.GOOGLE_IOS_CLIENT_ID as string,
-  //       process.env.GOOGLE_ANDROID_CLIENT_ID as string,
-  //     ],
-  //     clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-  //   },
-  // },
 
   trustedOrigins: [
     "https://autovendo.ch",
@@ -197,7 +179,7 @@ export const auth = betterAuth({
           return plans.map((plan: (typeof plans)[number]) => ({
             name: plan.name,
             priceId: plan.priceId,
-            limits: plan.limits as Record<string, any>,
+            limits: plan.limits as Record<string, unknown>,
             freeTrial:
               plan.hasTrial && plan.trialDays
                 ? { days: plan.trialDays }

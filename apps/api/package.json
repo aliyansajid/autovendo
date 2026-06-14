@@ -9,17 +9,26 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@better-auth/i18n": "^1.6.13",
+    "@better-auth/redis-storage": "^1.6.13",
+    "@better-auth/stripe": "^1.6.11",
     "@nestjs/core": "^11.1.26",
     "@nestjs/platform-express": "^11.1.26",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@repo/transactional": "*",
     "@repo/typescript-config": "*",
     "@thallesp/nestjs-better-auth": "^2.6.1",
-    "pg": "^8.21.0"
+    "better-auth": "^1.5.4",
+    "ioredis": "^5.11.0",
+    "pg": "^8.21.0",
+    "react": "^19.2.0",
+    "stripe": "^22.1.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.23",
     "@types/node": "^22.15.3",
+    "@types/react": "^19.2.3",
     "prisma": "^7.8.0",
     "typescript": "5.9.2"
   }

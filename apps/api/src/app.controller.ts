@@ -5,7 +5,7 @@ import {
   Session,
 } from "@thallesp/nestjs-better-auth";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
-import { auth } from "@repo/auth";
+import { auth } from "./auth";
 import React from "react";
 import { sendEmail, ContactMessage } from "@repo/transactional";
 
