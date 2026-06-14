@@ -5,7 +5,7 @@
     "rootDir": "src",
     "module": "CommonJS",
     "moduleResolution": "node",
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strictPropertyInitialization": false
