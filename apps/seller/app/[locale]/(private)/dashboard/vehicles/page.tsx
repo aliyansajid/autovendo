@@ -29,7 +29,7 @@ export default async function VehiclesPage(props: {
         </Button>
       </div>
 
-      <VehicleList vehicles={vehicles as any} />
+      <VehicleList vehicles={vehicles as Parameters<typeof VehicleList>[0]["vehicles"]} />
     </div>
   );
 }

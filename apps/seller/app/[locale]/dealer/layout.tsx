@@ -1,3 +1,4 @@
+import { getCurrentUserFromApi } from "@/lib/api/vehicles";
 import {
   SidebarInset,
   SidebarProvider,
@@ -6,7 +7,6 @@ import {
 import { Separator } from "@repo/ui/components/separator";
 import { DashboardSidebar } from "./_components/dashboard-sidebar";
 import { DashboardBreadcrumb } from "./_components/dashboard-breadcrumb";
-import { getSessionFromApi } from "@/lib/api/vehicles";
 import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
@@ -14,26 +14,15 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let session: {
-    user?: {
-      name: string;
-      email: string;
-      image?: string | null;
-      role?: string;
-    };
-  } | null = null;
+  const currentUser = await getCurrentUserFromApi();
 
-  try {
-    session = await getSessionFromApi();
-  } catch { /* no-op */ }
-
-  if (session?.user?.role !== "user") {
+  if ((currentUser?.user as { role?: string })?.role !== "dealer") {
     redirect(process.env.NEXT_PUBLIC_AUTH_URL ?? "https://auth.autovendo.ch");
   }
 
   return (
     <SidebarProvider>
-      <DashboardSidebar user={session?.user ?? null} />
+      <DashboardSidebar user={currentUser?.user ?? null} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />

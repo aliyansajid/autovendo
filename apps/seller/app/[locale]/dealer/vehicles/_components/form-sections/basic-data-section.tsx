@@ -23,18 +23,26 @@ import {
   VehicleConditionEnum,
   WarrantyEnum,
   VehicleTypeEnum,
+} from "@repo/vehicle-constants";
+import {
   carMakes,
   carModels,
   carBodyTypeEnum,
   carFuelTypeEnum,
+} from "@repo/vehicle-constants";
+import {
   utilityMakes,
   utilityModels,
   utilityBodyTypeEnum,
   utilityFuelTypeEnum,
+} from "@repo/vehicle-constants";
+import {
   truckMakes,
   truckModels,
   truckBodyTypeEnum,
   truckFuelTypeEnum,
+} from "@repo/vehicle-constants";
+import {
   camperMakes,
   camperBodyTypeEnum,
   camperFuelTypeEnum,

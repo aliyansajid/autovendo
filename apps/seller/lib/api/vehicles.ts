@@ -3,7 +3,7 @@
  * Server-side helpers forward the session cookie from the incoming request.
  */
 
-import type { PaginatedVehicles, VehicleListItem, VehicleFacets } from "@/types/vehicle";
+import type { PaginatedVehicles, VehicleListItem, VehicleFacets, VehicleDetails } from "@/types/vehicle";
 
 export type SubscriptionStatus = {
   type: "active" | "trialing" | "no_subscription" | "quota_exhausted" | "expired" | "past_due";
@@ -55,7 +55,7 @@ export type CurrentUser = {
     role?: string;
     [key: string]: unknown;
   };
-  session: unknown;
+  session?: unknown;
 };
 
 export type SellerProfile = {
@@ -77,7 +77,7 @@ export type DashboardSummary = {
   publishedCount: number;
   draftCount: number;
   soldCount: number;
-  recentVehicles: any[];
+  recentVehicles: VehicleListItem[];
 };
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -119,13 +119,14 @@ export async function getVehicleFacetsFromApi(
 ): Promise<{ total: number; facets: VehicleFacets } | null> {
   try {
     const result = await getVehiclesFromApi({ ...rawParams, pageSize: "1" });
+    if (!result.facets) return null;
     return { total: result.total, facets: result.facets };
   } catch {
     return null;
   }
 }
 
-export async function getVehicleFromApi(id: string): Promise<any | null> {
+export async function getVehicleFromApi(id: string): Promise<unknown | null> {
   const res = await fetch(`${API_BASE}/vehicles/${id}`, { cache: "no-store" });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("Failed to fetch vehicle");
@@ -146,7 +147,7 @@ export async function getDashboardSummaryFromApi(): Promise<DashboardSummary> {
     const res = await serverFetch("/dealer/vehicles?pageSize=100");
     if (!res.ok) return { totalCount: 0, publishedCount: 0, draftCount: 0, soldCount: 0, recentVehicles: [] };
     const json = await res.json();
-    const vehicles: any[] = json.data ?? [];
+    const vehicles: VehicleListItem[] = json.data ?? [];
     return {
       totalCount: json.total ?? vehicles.length,
       publishedCount: vehicles.filter((v) => v.status === "PUBLISHED").length,
@@ -214,7 +215,19 @@ export async function getCurrentUserFromApi(): Promise<CurrentUser | null> {
   }
 }
 
-export async function getActiveSubscriptionsFromApi(): Promise<any[]> {
+export type SubscriptionData = {
+  id: string;
+  plan: string;
+  status: string;
+  periodEnd: string | null;
+  cancelAtPeriodEnd: boolean;
+  cancelAt?: string | null;
+  trialEnd?: string | null;
+  billingInterval?: string | null;
+  stripeSubscriptionId?: string | null;
+};
+
+export async function getActiveSubscriptionsFromApi(): Promise<SubscriptionData[]> {
   try {
     const res = await serverFetch("/dealer/subscription");
     if (!res.ok) return [];
@@ -263,7 +276,7 @@ export async function getSellerProfileFromApi(): Promise<SellerProfile | null> {
   }
 }
 
-export async function getMyVehiclesFromApi(): Promise<any[]> {
+export async function getMyVehiclesFromApi(): Promise<unknown[]> {
   try {
     const res = await serverFetch("/seller/vehicles");
     if (!res.ok) return [];
@@ -274,7 +287,7 @@ export async function getMyVehiclesFromApi(): Promise<any[]> {
   }
 }
 
-export async function getMyVehicleByIdFromApi(id: string): Promise<any | null> {
+export async function getMyVehicleByIdFromApi(id: string): Promise<VehicleDetails | null> {
   try {
     const res = await serverFetch(`/seller/vehicles/${id}`);
     if (res.status === 404) return null;
@@ -315,7 +328,7 @@ export async function getSellerDashboardSummaryFromApi(): Promise<DashboardSumma
     const res = await serverFetch("/seller/vehicles?pageSize=100");
     if (!res.ok) return { totalCount: 0, publishedCount: 0, draftCount: 0, soldCount: 0, recentVehicles: [] };
     const json = await res.json();
-    const vehicles: any[] = json.data ?? [];
+    const vehicles: VehicleListItem[] = json.data ?? [];
     return {
       totalCount: json.total ?? vehicles.length,
       publishedCount: vehicles.filter((v) => v.status === "PUBLISHED").length,

@@ -106,8 +106,8 @@ export const SellerProfileForm = ({ initialData }: SellerProfileFormProps) => {
 
         toast.success(t("profileUpdateSuccess"));
         form.reset(values);
-      } catch (error: any) {
-        toast.error(error?.message || t("unexpectedError"));
+      } catch (error: unknown) {
+        toast.error((error as Error)?.message || t("unexpectedError"));
       }
     });
   }

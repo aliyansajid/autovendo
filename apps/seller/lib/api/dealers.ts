@@ -24,7 +24,7 @@ async function serverFetch(path: string, init?: RequestInit) {
 }
 
 // buildQueryString — serializes params including arrays
-function buildQueryString(params: Record<string, any>): string {
+function buildQueryString(params: Record<string, unknown>): string {
   const qs = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null) continue;
@@ -50,7 +50,7 @@ export async function getDealerProfileFromApi(): Promise<DealerProfile | null> {
 }
 
 export async function updateDealerProfileFromApi(
-  values: any,
+  values: Record<string, unknown>,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const res = await fetch(`${API_BASE}/dealer/profile`, {
@@ -61,7 +61,7 @@ export async function updateDealerProfileFromApi(
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      return { success: false, error: (data as any).error || "errorDefault" };
+      return { success: false, error: (data as { error?: string }).error || "errorDefault" };
     }
     return res.json();
   } catch {
@@ -108,11 +108,11 @@ export async function getDealerVehiclesFromApi(
   dealerId: string,
   page?: number,
   pageSize?: number,
-  filters?: Record<string, any>,
+  filters?: Record<string, unknown>,
   sortBy?: string,
 ): Promise<DealerVehiclesResult> {
   try {
-    const params: Record<string, any> = {
+    const params: Record<string, unknown> = {
       page,
       pageSize,
       sortBy,
@@ -152,7 +152,7 @@ export async function sendDealerContactEmailFromApi(
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      return { success: false, error: (body as any).error || "errorDefault" };
+      return { success: false, error: (body as { error?: string }).error || "errorDefault" };
     }
     return res.json();
   } catch {
@@ -172,7 +172,7 @@ export async function presignProfileUpload(data: {
     body: JSON.stringify(data),
   });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) return { success: false, error: (body as any).error };
+  if (!res.ok) return { success: false, error: (body as { error?: string }).error };
   return body;
 }
 

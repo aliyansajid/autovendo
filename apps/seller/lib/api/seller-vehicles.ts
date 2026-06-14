@@ -17,7 +17,7 @@ function clientFetch(path: string, init?: RequestInit) {
 
 export async function apiCreateVehicle(
   _listingId: string,
-  data: Record<string, any>,
+  data: Record<string, unknown>,
   imageKeys: string[],
 ) {
   const res = await clientFetch("/seller/vehicles", {
@@ -26,14 +26,14 @@ export async function apiCreateVehicle(
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as any).error || "Failed to create vehicle");
+    throw new Error((err as { error?: string }).error || "Failed to create vehicle");
   }
   return res.json();
 }
 
 export async function apiUpdateVehicle(
   id: string,
-  data: Record<string, any>,
+  data: Record<string, unknown>,
   imageKeys: string[],
 ) {
   const res = await clientFetch(`/seller/vehicles/${id}`, {
@@ -42,7 +42,7 @@ export async function apiUpdateVehicle(
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as any).error || "Failed to update vehicle");
+    throw new Error((err as { error?: string }).error || "Failed to update vehicle");
   }
   return res.json();
 }
@@ -51,7 +51,7 @@ export async function apiDeleteVehicle(id: string) {
   const res = await clientFetch(`/seller/vehicles/${id}`, { method: "DELETE" });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as any).error || "Failed to delete vehicle");
+    throw new Error((err as { error?: string }).error || "Failed to delete vehicle");
   }
 }
 
@@ -62,7 +62,7 @@ export async function apiUpdateVehicleStatus(id: string, status: "DRAFT" | "SOLD
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as any).error || "Failed to update status");
+    throw new Error((err as { error?: string }).error || "Failed to update status");
   }
   return res.json();
 }
@@ -79,7 +79,7 @@ export async function apiUpdateSellerProfile(
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      return { success: false, error: (data as any).error || "errorDefault" };
+      return { success: false, error: (data as { error?: string }).error || "errorDefault" };
     }
     return { success: true };
   } catch {

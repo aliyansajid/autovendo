@@ -5,10 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { Button } from "@repo/ui/src/components/button";
 import { getSellerProfileFromApi } from "@/lib/api/vehicles";
 
-export default async function AddNewVehiclePage(props: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await props.params;
+export default async function AddNewVehiclePage() {
   const t = await getTranslations("NewVehiclePage");
 
   const sellerProfile = await getSellerProfileFromApi();

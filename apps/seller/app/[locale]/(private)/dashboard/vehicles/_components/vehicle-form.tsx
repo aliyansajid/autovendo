@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { z } from "zod";
@@ -51,10 +52,9 @@ const STEP_FIELDS: Record<number, any[]> = {
     "vehicleCondition",
   ],
   2: ["images"],
-  3: ["equipment", "extras"],
-  4: ["companyName", "phoneNumber", "address", "zipCode", "city"],
-  5: ["planId"],
-  6: [],
+  3: ["companyName", "phoneNumber", "address", "zipCode", "city"],
+  4: ["planId"],
+  5: [],
 };
 
 export function VehicleForm({
@@ -75,9 +75,9 @@ export function VehicleForm({
   const params = useParams();
   const locale = (params.locale as string) || "de";
 
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 6;
+  const totalSteps = 5;
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -192,8 +192,8 @@ export function VehicleForm({
     const fields = STEP_FIELDS[currentStep] || [];
     const isStepValid = await trigger(fields as any[]);
     if (isStepValid) {
-      // Skip plan step (5) when vehicle is already paid
-      const next = isPaid && currentStep === 4 ? 6 : currentStep + 1;
+      // Skip plan step (4) when vehicle is already paid
+      const next = isPaid && currentStep === 3 ? 5 : currentStep + 1;
       setCurrentStep(Math.min(next, totalSteps));
       window.scrollTo(0, 0);
     }
@@ -208,16 +208,16 @@ export function VehicleForm({
   const watchImages = useWatch({ control, name: "images" });
   const isStep1Complete = !!watchMake && !!watchPrice && !!watchKilometer && !!watchMonth && !!watchYear && !!watchBodyType && !!watchColor;
   const isStep2Complete = watchImages && watchImages.length >= 5 && watchImages.length <= 25;
-  const isStep5Complete = !!useWatch({ control, name: "planId" });
+  const isStep4Complete = !!useWatch({ control, name: "planId" });
 
   const isNextDisabled =
     currentStep === 1 ? !isStep1Complete :
     currentStep === 2 ? !isStep2Complete :
-    currentStep === 5 ? (!isPaid && !isStep5Complete) : false;
+    currentStep === 4 ? (!isPaid && !isStep4Complete) : false;
 
   const handleBack = () => {
-    // Skip plan step (5) when vehicle is already paid
-    const prev = isPaid && currentStep === 6 ? 4 : currentStep - 1;
+    // Skip plan step (4) when vehicle is already paid
+    const prev = isPaid && currentStep === 5 ? 3 : currentStep - 1;
     setCurrentStep(Math.max(prev, 1));
     window.scrollTo(0, 0);
   };
@@ -270,7 +270,7 @@ export function VehicleForm({
             const prep = presignedData[idx];
             if (!prep) throw new Error("Upload preparation failed");
             const { url, key } = prep;
-            await uploadWithRetry(url, file, (p) => { /* progress logic */ }, signal);
+            await uploadWithRetry(url, file, (_p) => { /* progress logic */ }, signal);
             return key;
           }));
           finalImageKeys = [...existingKeys, ...uploadedKeys];
@@ -278,7 +278,7 @@ export function VehicleForm({
 
         setUploadStatus(t("uploadStatusSaving"));
         setUploadProgress(95);
-        const { images: _, ...submitData } = data;
+        const { images: _images, ...submitData } = data;
 
         if (vehicleId) {
           if (isPaid) {
@@ -318,12 +318,11 @@ export function VehicleForm({
   const allSteps = [
     { id: 1, label: "Basic Info" },
     { id: 2, label: "Photos" },
-    { id: 3, label: "Equipment" },
-    { id: 4, label: "Contact" },
-    { id: 5, label: "Pricing" },
-    { id: 6, label: "Summary" },
+    { id: 3, label: "Contact" },
+    { id: 4, label: "Plan" },
+    { id: 5, label: "Summary" },
   ];
-  const steps = isPaid ? allSteps.filter((s) => s.id !== 5) : allSteps;
+  const steps = isPaid ? allSteps.filter((s) => s.id !== 4) : allSteps;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -355,14 +354,15 @@ export function VehicleForm({
             <div className="space-y-6">
               <BasicDataSection />
               <Separator />
+              <EquipmentSection />
+              <Separator />
               <TechnicalDataSection isEdit={!!vehicleId} />
             </div>
           )}
           {currentStep === 2 && <MediaSection previewImages={previewImages} setPreviewImages={setPreviewImages} />}
-          {currentStep === 3 && <EquipmentSection />}
-          {currentStep === 4 && <ContactSection />}
-          {currentStep === 5 && <PricingSection />}
-          {currentStep === 6 && (
+          {currentStep === 3 && <ContactSection />}
+          {currentStep === 4 && <PricingSection />}
+          {currentStep === 5 && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Review & Publish</CardTitle>

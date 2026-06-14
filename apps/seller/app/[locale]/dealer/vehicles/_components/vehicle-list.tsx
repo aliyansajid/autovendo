@@ -17,18 +17,20 @@ import {
   FileText,
   Pencil,
   CheckCircle2,
-  Search,
 } from "lucide-react";
 import Image from "next/image";
-import { Link, useRouter } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import { getImageUrl } from "@repo/ui/lib/helpers/image";
+import { type SubscriptionStatus } from "@/lib/api/vehicles";
+import { apiCleanupImages } from "@/lib/api/dealer-vehicles";
 import {
   apiDeleteVehicle,
   apiUpdateVehicleStatus,
-  apiPublishOrPay,
-} from "@/lib/api/seller-vehicles";
+} from "@/lib/api/dealer-vehicles";
 import { toast } from "sonner";
+import { useRouter } from "@/i18n/routing";
 import { useState, useMemo, useTransition } from "react";
+import { Search } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,10 +75,8 @@ interface Vehicle {
   bodyType: string;
   color: string;
   images: string[];
-  createdAt: Date;
+  createdAt: string;
   status: string;
-  listingPaidAt: Date | null;
-  listingPlan: string | null;
 }
 
 const statusVariantMap: Record<
@@ -95,12 +95,18 @@ const statusVariantMap: Record<
  * Vehicle List Component (Client-side)
  *
  * Features:
- * - Tabular view of all seller vehicles
+ * - Tabular view of all dealer vehicles
  * - Real-time filtering by brand, model, and version
  * - Direct actions for editing and deleting vehicles
  * - Formatted display using Swiss (de-CH) technical standards
  */
-export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
+export function VehicleList({
+  vehicles,
+  subscriptionStatus,
+}: {
+  vehicles: Vehicle[];
+  subscriptionStatus?: SubscriptionStatus;
+}) {
   const t = useTranslations("VehicleList");
   const params = useParams();
   const locale = (params.locale as string) || "de";
@@ -212,7 +218,12 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <VehicleActions vehicle={vehicle} t={t} router={router} locale={locale} />
+                  <VehicleActions
+                    vehicle={vehicle}
+                    t={t}
+                    router={router}
+                    subscriptionStatus={subscriptionStatus}
+                  />
                 </TableCell>
               </TableRow>
             ))}
@@ -227,16 +238,16 @@ function VehicleActions({
   vehicle,
   t,
   router,
-  locale,
+  subscriptionStatus,
 }: {
   vehicle: Vehicle;
   t: ReturnType<typeof import("next-intl").useTranslations>;
   router: ReturnType<typeof import("@/i18n/routing").useRouter>;
-  locale: string;
+  subscriptionStatus?: SubscriptionStatus;
 }) {
   const [isPending, startTransition] = useTransition();
 
-  const handleStatusUpdate = (newStatus: "DRAFT" | "SOLD") => {
+  const handleStatusUpdate = (newStatus: string) => {
     startTransition(async () => {
       try {
         await apiUpdateVehicleStatus(vehicle.id, newStatus);
@@ -248,22 +259,12 @@ function VehicleActions({
     });
   };
 
-  const handlePublish = () => {
-    startTransition(async () => {
-      try {
-        const result = await apiPublishOrPay(vehicle.id, locale);
-        if ("checkoutUrl" in result) {
-          window.location.href = result.checkoutUrl;
-        } else {
-          toast.success(t("statusUpdateSuccess"));
-          router.refresh();
-        }
-      } catch {
-        toast.error(t("statusUpdateError"));
-      }
-    });
-  };
+  // Only active and trialing subscriptions can add/edit/publish
+  const isSubRestricted =
+    subscriptionStatus?.type !== "active" &&
+    subscriptionStatus?.type !== "trialing";
 
+  // Restricted by car state (Sold, Archived, etc.)
   const isStateRestricted = ["SOLD", "ARCHIVED", "BANNED", "PAUSED"].includes(
     vehicle.status,
   );
@@ -279,9 +280,9 @@ function VehicleActions({
         <DropdownMenuContent align="end">
           <DropdownMenuItem
             asChild
-            disabled={isStateRestricted || isPending}
+            disabled={isStateRestricted || isSubRestricted || isPending}
           >
-            <Link href={`/dashboard/vehicles/${vehicle.id}`}>
+            <Link href={`/dealer/dashboard/vehicles/${vehicle.id}`}>
               <Pencil />
               {t("edit")}
             </Link>
@@ -289,11 +290,11 @@ function VehicleActions({
 
           {vehicle.status === "DRAFT" && (
             <DropdownMenuItem
-              onSelect={() => handlePublish()}
-              disabled={isStateRestricted || isPending}
+              onSelect={() => handleStatusUpdate("PUBLISHED")}
+              disabled={isStateRestricted || isSubRestricted || isPending}
             >
               <Send />
-              {vehicle.listingPaidAt ? t("publish") : t("payAndPublish")}
+              {t("publish")}
             </DropdownMenuItem>
           )}
 
@@ -343,7 +344,9 @@ function VehicleActions({
                   variant="destructive"
                   onClick={async () => {
                     try {
+                      const imageKeys = vehicle.images ?? [];
                       await apiDeleteVehicle(vehicle.id);
+                      if (imageKeys.length) await apiCleanupImages(imageKeys);
                       toast.success(t("deleteSuccess"));
                       router.refresh();
                     } catch {

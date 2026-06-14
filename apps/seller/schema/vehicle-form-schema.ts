@@ -342,6 +342,7 @@ export const createVehicleFormSchema = (t: TFn) =>
     address: z.string().optional(),
     zipCode: z.string().optional(),
     city: z.string().optional(),
+    planId: z.enum(["standard", "best_value"]).optional(),
   });
 
 export type VehicleFormValues = z.infer<

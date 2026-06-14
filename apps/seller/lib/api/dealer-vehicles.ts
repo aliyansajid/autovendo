@@ -64,26 +64,26 @@ function clientFetch(path: string, init?: RequestInit) {
   });
 }
 
-export async function apiCreateVehicle(data: Record<string, any>, imageKeys: string[]) {
+export async function apiCreateVehicle(data: Record<string, unknown>, imageKeys: string[]) {
   const res = await clientFetch("/dealer/vehicles", {
     method: "POST",
     body: JSON.stringify({ ...data, images: imageKeys }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as any).error || "Failed to create vehicle");
+    throw new Error((err as { error?: string }).error || "Failed to create vehicle");
   }
   return res.json();
 }
 
-export async function apiUpdateVehicle(id: string, data: Record<string, any>, imageKeys: string[]) {
+export async function apiUpdateVehicle(id: string, data: Record<string, unknown>, imageKeys: string[]) {
   const res = await clientFetch(`/dealer/vehicles/${id}`, {
     method: "PUT",
     body: JSON.stringify({ ...data, images: imageKeys }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as any).error || "Failed to update vehicle");
+    throw new Error((err as { error?: string }).error || "Failed to update vehicle");
   }
   return res.json();
 }
@@ -92,7 +92,7 @@ export async function apiDeleteVehicle(id: string) {
   const res = await clientFetch(`/dealer/vehicles/${id}`, { method: "DELETE" });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as any).error || "Failed to delete vehicle");
+    throw new Error((err as { error?: string }).error || "Failed to delete vehicle");
   }
 }
 
@@ -103,7 +103,7 @@ export async function apiUpdateVehicleStatus(id: string, status: string) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as any).error || "Failed to update status");
+    throw new Error((err as { error?: string }).error || "Failed to update status");
   }
   return res.json();
 }

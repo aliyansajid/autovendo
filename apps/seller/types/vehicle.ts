@@ -20,6 +20,7 @@ export interface VehicleListItem {
   bodyType: string;
   color: string;
   createdAt: Date;
+  status: string;
   images: string[];
   equipment: Record<string, unknown> | null;
   priceRating?: PriceRating;
@@ -34,7 +35,11 @@ export interface VehicleListItem {
   };
 }
 
-export type VehicleDetails = Record<string, unknown>;
+export type VehicleDetails = {
+  listingPaidAt?: string | null;
+  listingPlan?: string | null;
+  [key: string]: unknown;
+};
 
 export interface VehicleFacets {
   make: Record<string, number>;
