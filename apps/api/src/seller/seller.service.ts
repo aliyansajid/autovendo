@@ -290,7 +290,7 @@ export class SellerService {
     return { data: { success: true } };
   }
 
-  async getBilling(session: UserSession) {
+  async getBilling(session: UserSession): Promise<any> {
     const stripe = await getStripe();
 
     const user = await prisma.user.findUnique({

@@ -323,7 +323,7 @@ export class DealerService {
     return { data: { success: true } };
   }
 
-  async getSubscription(session: UserSession) {
+  async getSubscription(session: UserSession): Promise<any> {
     const stripe = await getStripe();
 
     const user = await prisma.user.findUnique({
