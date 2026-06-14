@@ -2,6 +2,7 @@
   "name": "@repo/transactional",
   "version": "1.0.0",
   "private": true,
+  "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
     "./emails/*": "./emails/*.tsx"
