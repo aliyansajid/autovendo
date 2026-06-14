@@ -68,6 +68,15 @@ export async function getFeaturedDealersFromApi(): Promise<DealerListItem[]> {
   }
 }
 
+function formatTime(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  const h = String(d.getUTCHours()).padStart(2, "0");
+  const m = String(d.getUTCMinutes()).padStart(2, "0");
+  return `${h}:${m}`;
+}
+
 export async function getDealerByIdFromApi(
   id: string,
 ): Promise<DealerDetail | null> {
@@ -76,7 +85,22 @@ export async function getDealerByIdFromApi(
     if (res.status === 404) return null;
     if (!res.ok) return null;
     const json = await res.json();
-    return json.data ?? null;
+    const data = json.data;
+    if (!data) return null;
+    return {
+      ...data,
+      openingHours: (data.openingHours ?? []).map(
+        (h: { day: string; isOpen: boolean; openTime?: string | null; closeTime?: string | null }) => {
+          const open = formatTime(h.openTime);
+          const close = formatTime(h.closeTime);
+          return {
+            day: h.day,
+            isOpen: h.isOpen,
+            hours: h.isOpen && open && close ? `${open} - ${close}` : null,
+          };
+        },
+      ),
+    };
   } catch {
     return null;
   }
