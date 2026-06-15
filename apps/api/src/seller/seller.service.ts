@@ -30,6 +30,12 @@ export class UpdateSellerVehicleDto {
   [key: string]: unknown;
 }
 
+function sanitizeVehicleData(body: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.entries(body).map(([k, v]) => [k, v === "" ? undefined : v]),
+  );
+}
+
 const SELLER_VEHICLE_LIST_SELECT = {
   id: true,
   make: true,
@@ -215,10 +221,10 @@ export class SellerService {
 
     const vehicle = await this.prisma.vehicle.create({
       data: {
-        ...(body as any),
+        ...sanitizeVehicleData(body as Record<string, unknown>),
         sellerId: seller.id,
         dealerId: undefined,
-      },
+      } as any,
     });
 
     return { data: vehicle };
@@ -264,7 +270,7 @@ export class SellerService {
 
     const updated = await this.prisma.vehicle.update({
       where: { id },
-      data: body as never,
+      data: sanitizeVehicleData(body as Record<string, unknown>) as never,
     });
 
     return { data: updated };
