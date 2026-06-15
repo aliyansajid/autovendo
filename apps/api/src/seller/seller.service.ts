@@ -74,6 +74,8 @@ const SELLER_VEHICLE_LIST_SELECT = {
   createdAt: true,
   updatedAt: true,
   images: true,
+  listingPaidAt: true,
+  listingPlan: true,
 } as const;
 
 type SellerVehicleSortOrder =
