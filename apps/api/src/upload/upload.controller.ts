@@ -1,9 +1,10 @@
-import { Controller, Post, Body } from "@nestjs/common";
+import { Controller, Post, UseInterceptors, UploadedFiles } from "@nestjs/common";
+import { FilesInterceptor } from "@nestjs/platform-express";
 import { Session } from "@thallesp/nestjs-better-auth";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomUUID } from "crypto";
+import { memoryStorage } from "multer";
 
 const s3 = new S3Client({
   region: "auto",
@@ -20,23 +21,28 @@ const PUBLIC_DOMAIN = process.env.R2_PUBLIC_DOMAIN!;
 
 @Controller("upload")
 export class UploadController {
-  @Post("presign")
-  async presign(
+  @Post()
+  @UseInterceptors(
+    FilesInterceptor("files", 25, { storage: memoryStorage() }),
+  )
+  async upload(
     @Session() session: UserSession,
-    @Body() body: { files: { name: string; type: string }[] },
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
     void session;
     const results = await Promise.all(
-      body.files.map(async (file) => {
-        const ext = file.name.split(".").pop() ?? "jpg";
+      (files ?? []).map(async (file) => {
+        const ext = file.originalname.split(".").pop() ?? "jpg";
         const key = `vehicles/${randomUUID()}.${ext}`;
-        const command = new PutObjectCommand({
-          Bucket: BUCKET,
-          Key: key,
-          ContentType: file.type,
-        });
-        const url = await getSignedUrl(s3, command, { expiresIn: 300 });
-        return { url, key, publicUrl: `${PUBLIC_DOMAIN}/${key}` };
+        await s3.send(
+          new PutObjectCommand({
+            Bucket: BUCKET,
+            Key: key,
+            Body: file.buffer,
+            ContentType: file.mimetype,
+          }),
+        );
+        return { key, publicUrl: `${PUBLIC_DOMAIN}/${key}` };
       }),
     );
     return results;

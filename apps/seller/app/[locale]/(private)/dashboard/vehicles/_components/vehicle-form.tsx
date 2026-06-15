@@ -8,7 +8,7 @@ import { cn } from "@repo/ui/lib/utils";
 import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
 import {
   apiPrepareListing,
-  apiGetPresignedUrls,
+  apiUploadImages,
   apiCreateVehicle,
   apiUpdateVehicle,
   apiCreateListingCheckout,
@@ -257,22 +257,16 @@ export function VehicleForm({
         setUploadStatus(t("uploadStatusPreparing"));
         setUploadProgress(10);
         const { listingId } = await apiPrepareListing(vehicleId);
+        void listingId;
         const images = data.images || [];
         const newFiles = images.filter((img: any) => img instanceof File);
         const existingKeys = images.filter((img: any) => typeof img === "string");
         let finalImageKeys = [...existingKeys];
 
         if (newFiles.length > 0) {
-          setUploadStatus(t("uploadStatusGettingUrls"));
-          const presignedData = await apiGetPresignedUrls(listingId, newFiles.map((f: File) => ({ name: f.name, type: f.type })));
           setUploadStatus(t("uploadStatusUploading"));
-          const uploadedKeys = await Promise.all(newFiles.map(async (file: File, idx: number) => {
-            const prep = presignedData[idx];
-            if (!prep) throw new Error("Upload preparation failed");
-            const { url, key } = prep;
-            await uploadWithRetry(url, file, (_p) => { /* progress logic */ }, signal);
-            return key;
-          }));
+          setUploadProgress(50);
+          const uploadedKeys = await apiUploadImages(newFiles);
           finalImageKeys = [...existingKeys, ...uploadedKeys];
         }
 

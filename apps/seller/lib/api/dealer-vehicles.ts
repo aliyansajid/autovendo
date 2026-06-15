@@ -110,14 +110,22 @@ export async function apiUpdateVehicleStatus(id: string, status: string) {
 
 export async function apiGetPresignedUrls(
   _listingId: string,
-  files: { name: string; type: string }[],
+  _files: { name: string; type: string }[],
 ): Promise<{ url: string; key: string }[]> {
-  const res = await clientFetch("/upload/presign", {
+  return [];
+}
+
+export async function apiUploadImages(files: File[]): Promise<string[]> {
+  const formData = new FormData();
+  files.forEach((f) => formData.append("files", f));
+  const res = await fetch(`${API_BASE}/upload`, {
     method: "POST",
-    body: JSON.stringify({ files }),
+    credentials: "include",
+    body: formData,
   });
-  if (!res.ok) throw new Error("Failed to get upload URLs");
-  return res.json();
+  if (!res.ok) throw new Error("Failed to upload images");
+  const data: { key: string }[] = await res.json();
+  return data.map((d) => d.key);
 }
 
 export async function apiCleanupImages(_keys: string[]): Promise<void> {

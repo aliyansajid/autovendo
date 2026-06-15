@@ -59,7 +59,7 @@ import {
 } from "@repo/ui/components/card";
 import { EquipmentSection } from "./form-sections/equipment-section";
 import { prepareVehicleListingFromApi, type SubscriptionStatus } from "@/lib/api/vehicles";
-import { apiGetPresignedUrls, apiCleanupImages } from "@/lib/api/dealer-vehicles";
+import { apiUploadImages, apiCleanupImages } from "@/lib/api/dealer-vehicles";
 import { apiCreateVehicle, apiUpdateVehicle } from "@/lib/api/dealer-vehicles";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
@@ -502,62 +502,11 @@ export function VehicleForm({
         let finalImageKeys = [...existingKeys];
 
         if (newFiles.length > 0) {
-          setUploadStatus(t("uploadStatusGettingUrls"));
-          const presignedData = await apiGetPresignedUrls(
-            listingId,
-            newFiles.map((f) => ({ name: f.name, type: f.type })),
-          );
-
-          if (presignedData.length !== newFiles.length) {
-            throw new Error(t("errorUploadPrep"));
-          }
-
-          // Phase 2: Upload Files in parallel (concurrency limit 3)
           setUploadStatus(t("uploadStatusUploading"));
-          const newlyUploadedKeys: string[] = [];
-          const progresses = new Array(newFiles.length).fill(0);
-          const CONCURRENCY_LIMIT = 3;
-
-          // Helper for limited parallel processing
-          const uploadInChunks = async () => {
-            const results: string[] = [];
-            for (let i = 0; i < newFiles.length; i += CONCURRENCY_LIMIT) {
-              const chunk = newFiles.slice(i, i + CONCURRENCY_LIMIT);
-              const chunkPromises = chunk.map(async (file, chunkIndex) => {
-                const globalIndex = i + chunkIndex;
-                const { url, key } = presignedData[globalIndex]!;
-
-                const success = await uploadWithRetry(
-                  url,
-                  file,
-                  (filePercent) => {
-                    progresses[globalIndex] = filePercent;
-                    const totalUploadProgress =
-                      progresses.reduce((a, b) => a + b, 0) / newFiles.length;
-                    setUploadProgress(10 + totalUploadProgress * 0.8);
-                  },
-                  signal,
-                );
-
-                if (!success) {
-                  throw new Error(
-                    t("errorUploadFailed", { filename: file.name }),
-                  );
-                }
-                return key;
-              });
-
-              const chunkResults = await Promise.all(chunkPromises);
-              results.push(...chunkResults);
-            }
-            return results;
-          };
-
-          const uploadedKeys = await uploadInChunks();
-          newlyUploadedKeys.push(...uploadedKeys);
-          finalImageKeys = [...existingKeys, ...newlyUploadedKeys];
+          setUploadProgress(50);
+          const uploadedKeys = await apiUploadImages(newFiles);
+          finalImageKeys = [...existingKeys, ...uploadedKeys];
         } else {
-          // No new files, skip to 90%
           setUploadProgress(90);
         }
 
