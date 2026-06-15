@@ -679,7 +679,13 @@
     "minImagesError": "At least 5 images are required",
     "maxImagesError": "Maximum 25 images are allowed",
     "descriptionTooLong": "Description must be 1000 characters or less",
-    "invalidEmail": "Invalid email address"
+    "invalidEmail": "Invalid email address",
+    "makeTooLong": "Make must be 100 characters or less",
+    "modelTooLong": "Model must be 100 characters or less",
+    "versionTooLong": "Version must be 100 characters or less",
+    "invalidVin": "Invalid VIN format",
+    "serialNumberTooLong": "Serial number must be 100 characters or less",
+    "typeApprovalTooLong": "Type approval must be 100 characters or less"
   },
   "Common": {
     "errorDefault": "An error occurred. Please try again.",

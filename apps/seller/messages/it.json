@@ -679,7 +679,13 @@
     "minImagesError": "Sono richieste almeno 5 immagini",
     "maxImagesError": "Sono consentite al massimo 25 immagini",
     "descriptionTooLong": "La descrizione non può superare i 1000 caratteri",
-    "invalidEmail": "Indirizzo e-mail non valido"
+    "invalidEmail": "Indirizzo e-mail non valido",
+    "makeTooLong": "La marca non può superare i 100 caratteri",
+    "modelTooLong": "Il modello non può superare i 100 caratteri",
+    "versionTooLong": "La versione non può superare i 100 caratteri",
+    "invalidVin": "Formato VIN non valido",
+    "serialNumberTooLong": "Il numero di serie non può superare i 100 caratteri",
+    "typeApprovalTooLong": "L'omologazione non può superare i 100 caratteri"
   },
   "Common": {
     "errorDefault": "Si è verificato un errore. Riprova.",

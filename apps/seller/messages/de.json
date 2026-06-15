@@ -679,7 +679,13 @@
     "minImagesError": "Mindestens 5 Bilder sind erforderlich",
     "maxImagesError": "Maximal 25 Bilder sind erlaubt",
     "descriptionTooLong": "Beschreibung darf maximal 1000 Zeichen lang sein",
-    "invalidEmail": "Ungültige E-Mail-Adresse"
+    "invalidEmail": "Ungültige E-Mail-Adresse",
+    "makeTooLong": "Marke darf maximal 100 Zeichen lang sein",
+    "modelTooLong": "Modell darf maximal 100 Zeichen lang sein",
+    "versionTooLong": "Version darf maximal 100 Zeichen lang sein",
+    "invalidVin": "Ungültiges FIN-Format",
+    "serialNumberTooLong": "Seriennummer darf maximal 100 Zeichen lang sein",
+    "typeApprovalTooLong": "Typgenehmigung darf maximal 100 Zeichen lang sein"
   },
   "Common": {
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
