@@ -439,10 +439,58 @@ export class SellerService {
 
     await this.prisma.vehicle.update({
       where: { id: body.vehicleId },
-      data: { listingPlan: body.planId },
+      data: { listingPlan: body.planId, stripeSessionId: checkoutSession.id },
     });
 
     return { data: { url: checkoutSession.url } };
+  }
+
+  async handleListingWebhook(rawBody: Buffer, signature: string) {
+    const stripe = await getStripe();
+    if (!stripe) throw new BadRequestException("Stripe not configured");
+
+    const secret = process.env.STRIPE_LISTING_WEBHOOK_SECRET;
+    if (!secret) throw new BadRequestException("Webhook secret not configured");
+
+    let event: any;
+    try {
+      event = stripe.webhooks.constructEvent(rawBody, signature, secret);
+    } catch (err: any) {
+      throw new BadRequestException(`Webhook signature error: ${err.message}`);
+    }
+
+    if (event.type === "checkout.session.completed") {
+      const stripeSession = event.data.object;
+      const vehicleId = stripeSession.metadata?.vehicleId;
+      const planId = stripeSession.metadata?.planId;
+
+      if (!vehicleId) return { received: true };
+
+      const vehicle = await this.prisma.vehicle.findUnique({
+        where: { id: vehicleId },
+        select: { stripeSessionId: true },
+      });
+
+      // Idempotency: skip if already processed
+      if (vehicle?.stripeSessionId === stripeSession.id) return { received: true };
+
+      const now = new Date();
+      const expiresAt = new Date(now);
+      expiresAt.setDate(expiresAt.getDate() + (planId === "best_value" ? 90 : 30));
+
+      await this.prisma.vehicle.update({
+        where: { id: vehicleId },
+        data: {
+          status: "PUBLISHED",
+          listingPlan: planId,
+          listingPaidAt: now,
+          listingExpiresAt: expiresAt,
+          stripeSessionId: stripeSession.id,
+        },
+      });
+    }
+
+    return { received: true };
   }
 
   async createBillingPortalSession(session: UserSession) {
