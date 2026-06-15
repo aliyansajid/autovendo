@@ -30,9 +30,28 @@ export class UpdateSellerVehicleDto {
   [key: string]: unknown;
 }
 
+const VEHICLE_FIELDS = new Set([
+  "vehicleType","status","make","model","version","bodyType","fuelType",
+  "registrationMonth","registrationYear","kilometer","price","newPrice",
+  "color","gearTransmission","transmissionType","driveType","interiorColor",
+  "metallic","vehicleCondition","lastInspectionDate","inspectionPassed",
+  "warranty","warrantyStartDate","duration","maxKm","doors","seats","hp","kw",
+  "energyLabel","typeApproval","wheelbase","vin","emptyWeight","loadCapacity",
+  "serialNumber","height","width","length","towingCapacityBraked","cubicCapacity",
+  "co2Emission","cylinders","numberOfGears","emissionStandard","consumptionCity",
+  "consumptionCountry","consumptionTotal","range","batteryCapacity",
+  "batteryRentalMonth","powerConsumption","batteryOwnership",
+  "chargingPlugTypeStandard","chargingPlugTypeFast","chargingPower",
+  "combustionEnginePowerHp","electricMotorPowerHp","vehicleDescription",
+  "equipment","extras","images","listingPlan","listingPaidAt",
+  "listingExpiresAt","stripeSessionId",
+]);
+
 function sanitizeVehicleData(body: Record<string, unknown>) {
   return Object.fromEntries(
-    Object.entries(body).map(([k, v]) => [k, v === "" ? undefined : v]),
+    Object.entries(body)
+      .filter(([k]) => VEHICLE_FIELDS.has(k))
+      .map(([k, v]) => [k, v === "" ? undefined : v]),
   );
 }
 
@@ -218,14 +237,26 @@ export class SellerService {
 
   async createVehicle(session: UserSession, body: CreateSellerVehicleDto) {
     const seller = await this.getSellerByUserId(session.user.id);
+    const raw = body as Record<string, unknown>;
 
-    const vehicle = await this.prisma.vehicle.create({
-      data: {
-        ...sanitizeVehicleData(body as Record<string, unknown>),
-        sellerId: seller.id,
-        dealerId: undefined,
-      } as any,
-    });
+    const sellerUpdate: Record<string, unknown> = {};
+    if (raw.phoneNumber) sellerUpdate.phoneNumber = raw.phoneNumber;
+    if (raw.address) sellerUpdate.streetAddress = raw.address;
+    if (raw.zipCode) sellerUpdate.zipCode = raw.zipCode;
+    if (raw.city) sellerUpdate.city = raw.city;
+
+    const [vehicle] = await this.prisma.$transaction([
+      this.prisma.vehicle.create({
+        data: {
+          ...sanitizeVehicleData(raw),
+          sellerId: seller.id,
+          dealerId: undefined,
+        } as any,
+      }),
+      ...(Object.keys(sellerUpdate).length
+        ? [this.prisma.seller.update({ where: { id: seller.id }, data: sellerUpdate })]
+        : []),
+    ]);
 
     return { data: vehicle };
   }
