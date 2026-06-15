@@ -4,7 +4,7 @@ import { Session } from "@thallesp/nestjs-better-auth";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
-import { memoryStorage } from "multer";
+import multer from "multer";
 
 const s3 = new S3Client({
   region: "auto",
@@ -23,7 +23,7 @@ const PUBLIC_DOMAIN = process.env.R2_PUBLIC_DOMAIN!;
 export class UploadController {
   @Post()
   @UseInterceptors(
-    FilesInterceptor("files", 25, { storage: memoryStorage() }),
+    FilesInterceptor("files", 25, { storage: multer.memoryStorage() }),
   )
   async upload(
     @Session() session: UserSession,
