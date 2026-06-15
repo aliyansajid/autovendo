@@ -1610,6 +1610,7 @@
     "status_BANNED": "Banned",
     "edit": "Edit",
     "publish": "Publish",
+    "payAndPublish": "Pay & Publish",
     "statusDraft": "Set as Draft",
     "statusSold": "Mark as Sold",
     "statusUpdateSuccess": "Status updated successfully!",

@@ -25,7 +25,7 @@ import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import {
   apiDeleteVehicle,
   apiUpdateVehicleStatus,
-  apiPublishOrPay,
+  apiCreateListingCheckout,
 } from "@/lib/api/seller-vehicles";
 import { toast } from "sonner";
 import { useState, useMemo, useTransition } from "react";
@@ -251,13 +251,9 @@ function VehicleActions({
   const handlePublish = () => {
     startTransition(async () => {
       try {
-        const result = await apiPublishOrPay(vehicle.id, locale);
-        if ("checkoutUrl" in result) {
-          window.location.href = result.checkoutUrl;
-        } else {
-          toast.success(t("statusUpdateSuccess"));
-          router.refresh();
-        }
+        const plan = (vehicle.listingPlan as "standard" | "best_value") || "standard";
+        const checkoutUrl = await apiCreateListingCheckout(vehicle.id, plan, locale);
+        window.location.href = checkoutUrl;
       } catch {
         toast.error(t("statusUpdateError"));
       }

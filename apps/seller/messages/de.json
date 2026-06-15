@@ -1620,6 +1620,7 @@
     "status_BANNED": "Gesperrt",
     "edit": "Bearbeiten",
     "publish": "Veröffentlichen",
+    "payAndPublish": "Bezahlen & Veröffentlichen",
     "statusDraft": "Als Entwurf speichern",
     "statusSold": "Als verkauft markieren",
     "statusUpdateSuccess": "Status erfolgreich aktualisiert!",

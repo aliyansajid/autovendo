@@ -1613,6 +1613,7 @@
     "status_BANNED": "Banni",
     "edit": "Modifier",
     "publish": "Publier",
+    "payAndPublish": "Payer & Publier",
     "statusDraft": "Mettre en brouillon",
     "statusSold": "Marquer comme vendu",
     "statusUpdateSuccess": "Statut mis à jour avec succès !",
