@@ -6,6 +6,8 @@
 
 import type { BillingData } from "@/lib/api/vehicles";
 
+export type SellerBillingData = BillingData & { hasStripeCustomer: boolean };
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 // ─── Server-side helper ───────────────────────────────────────────────────────
@@ -39,14 +41,19 @@ function clientFetch(path: string, init?: RequestInit) {
 
 // ─── Exports ──────────────────────────────────────────────────────────────────
 
-export async function getBillingDataFromApi(): Promise<BillingData> {
+export async function getBillingDataFromApi(): Promise<SellerBillingData> {
   try {
     const res = await serverFetch("/seller/billing");
-    if (!res.ok) return { paymentMethod: null, invoices: [] };
+    if (!res.ok) return { hasStripeCustomer: false, paymentMethod: null, invoices: [] };
     const json = await res.json();
-    return { paymentMethod: json.paymentMethod ?? null, invoices: json.invoices ?? [] };
+    const d = json.data ?? json;
+    return {
+      hasStripeCustomer: d.hasStripeCustomer ?? false,
+      paymentMethod: d.paymentMethod ?? null,
+      invoices: d.invoices ?? [],
+    };
   } catch {
-    return { paymentMethod: null, invoices: [] };
+    return { hasStripeCustomer: false, paymentMethod: null, invoices: [] };
   }
 }
 

@@ -82,7 +82,9 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <Image src="/logo.svg" alt={t("logoAlt")} fill priority />
+                <div className="relative w-8 h-8">
+                  <Image src="/logo.svg" alt={t("logoAlt")} fill priority />
+                </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

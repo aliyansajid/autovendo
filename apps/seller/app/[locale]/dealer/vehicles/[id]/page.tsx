@@ -26,7 +26,7 @@ export default async function EditVehiclePage({
     subscriptionStatus.type,
   );
   if (isBlocked) {
-    redirect({ href: "/dealer/dashboard/vehicles", locale });
+    redirect({ href: "/dealer/vehicles", locale });
   }
 
   if (!vehicle) {
@@ -39,7 +39,7 @@ export default async function EditVehiclePage({
     <div className="space-y-8">
       <div className="flex flex-col gap-4 items-start">
         <Button variant={"link"} asChild>
-          <Link href="/dealer/dashboard/vehicles">
+          <Link href="/dealer/vehicles">
             <ArrowLeft />
             {t("back")}
           </Link>

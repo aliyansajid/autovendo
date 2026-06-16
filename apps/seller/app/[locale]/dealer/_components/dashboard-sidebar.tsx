@@ -43,18 +43,18 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
   const navItems = [
     {
       title: t("overview"),
-      url: "/dealer/dashboard",
+      url: "/dealer",
       icon: LayoutDashboard,
     },
     {
       title: t("vehicles"),
-      url: "/dealer/dashboard/vehicles",
+      url: "/dealer/vehicles",
       icon: Car,
       isActive: true,
     },
     {
       title: t("billing"),
-      url: "/dealer/dashboard/subscription",
+      url: "/dealer/subscription",
       icon: CreditCard,
     },
     {
@@ -65,11 +65,11 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
       items: [
         {
           title: t("profile"),
-          url: "/dealer/dashboard/settings/profile",
+          url: "/dealer/settings/profile",
         },
         {
           title: t("changePassword"),
-          url: "/dealer/dashboard/settings/change-password",
+          url: "/dealer/settings/change-password",
         },
       ],
     },
@@ -82,7 +82,9 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <Image src="/logo.svg" alt={t("logoAlt")} fill priority />
+                <div className="relative w-8 h-8">
+                  <Image src="/logo.svg" alt={t("logoAlt")} fill priority />
+                </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

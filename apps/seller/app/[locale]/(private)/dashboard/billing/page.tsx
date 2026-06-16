@@ -35,18 +35,20 @@ export default async function BillingPage(props: {
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      {/* Billing Portal */}
-      <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <p className="font-semibold">{t("billingPortalTitle")}</p>
-          <p className="text-sm text-muted-foreground">
-            {t("billingPortalDesc")}
-          </p>
+      {/* Billing Portal — only shown when a Stripe customer exists */}
+      {billingData.hasStripeCustomer && (
+        <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <p className="font-semibold">{t("billingPortalTitle")}</p>
+            <p className="text-sm text-muted-foreground">
+              {t("billingPortalDesc")}
+            </p>
+          </div>
+          <div className="shrink-0">
+            <BillingPortalButton />
+          </div>
         </div>
-        <div className="shrink-0">
-          <BillingPortalButton />
-        </div>
-      </div>
+      )}
 
       {/* Payment Method */}
       <div className="rounded-lg border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">

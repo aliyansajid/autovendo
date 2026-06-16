@@ -59,7 +59,7 @@ export default async function DashboardPage(props: {
           <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <Button asChild>
-          <Link href="/dealer/dashboard/vehicles/new">
+          <Link href="/dealer/vehicles/new">
             <Plus />
             {t("newListing")}
           </Link>
@@ -74,7 +74,7 @@ export default async function DashboardPage(props: {
             <p className="font-semibold">{t("paymentFailedTitle")}</p>
             <p className="text-sm opacity-90">{t("paymentFailedDesc")}</p>
             <Button size="sm" variant="destructive" asChild className="mt-2">
-              <Link href="/dealer/dashboard/subscription">{t("fixPayment")}</Link>
+              <Link href="/dealer/subscription">{t("fixPayment")}</Link>
             </Button>
           </div>
         </div>
@@ -181,7 +181,7 @@ export default async function DashboardPage(props: {
                 <CardTitle className="text-lg">{t("recentListings")}</CardTitle>
                 <Button variant="ghost" size="sm" asChild>
                   <Link
-                    href="/dealer/dashboard/vehicles"
+                    href="/dealer/vehicles"
                     className="flex items-center"
                   >
                     {t("viewAll")}
@@ -239,7 +239,7 @@ export default async function DashboardPage(props: {
                     {t("noRecentVehicles")}
                   </p>
                   <Button variant="outline" size="sm" asChild className="mt-4">
-                    <Link href="/dealer/dashboard/vehicles/new">
+                    <Link href="/dealer/vehicles/new">
                       {t("addFirstVehicle")}
                     </Link>
                   </Button>
@@ -261,7 +261,7 @@ export default async function DashboardPage(props: {
                 className="w-full justify-start"
                 asChild
               >
-                <Link href="/dealer/dashboard/vehicles/new">
+                <Link href="/dealer/vehicles/new">
                   <Plus />
                   {t("newListing")}
                 </Link>
@@ -271,7 +271,7 @@ export default async function DashboardPage(props: {
                 className="w-full justify-start"
                 asChild
               >
-                <Link href="/dealer/dashboard/vehicles">
+                <Link href="/dealer/vehicles">
                   <Car />
                   {t("manageInventory")}
                 </Link>

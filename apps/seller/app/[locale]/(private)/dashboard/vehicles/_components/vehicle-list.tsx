@@ -251,9 +251,15 @@ function VehicleActions({
   const handlePublish = () => {
     startTransition(async () => {
       try {
-        const plan = (vehicle.listingPlan as "standard" | "best_value") || "standard";
-        const checkoutUrl = await apiCreateListingCheckout(vehicle.id, plan, locale);
-        window.location.href = checkoutUrl;
+        if (vehicle.listingPaidAt) {
+          await apiUpdateVehicleStatus(vehicle.id, "PUBLISHED");
+          toast.success(t("statusUpdateSuccess"));
+          router.refresh();
+        } else {
+          const plan = (vehicle.listingPlan as "standard" | "best_value") || "standard";
+          const checkoutUrl = await apiCreateListingCheckout(vehicle.id, plan, locale);
+          window.location.href = checkoutUrl;
+        }
       } catch {
         toast.error(t("statusUpdateError"));
       }

@@ -8,12 +8,10 @@ import { PrismaService } from "../prisma.service.js";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
 
 export class UpdateSellerProfileDto {
-  firstName?: string;
-  lastName?: string;
   phoneNumber?: string;
+  streetAddress?: string;
+  zipCode?: string;
   city?: string;
-  description?: string;
-  avatar?: string;
 }
 
 export class SellerVehiclesQueryDto {
@@ -130,8 +128,6 @@ export class SellerService {
         id: true,
         name: true,
         email: true,
-        role: true,
-        emailVerified: true,
         image: true,
         seller: {
           select: {
@@ -140,9 +136,6 @@ export class SellerService {
             streetAddress: true,
             zipCode: true,
             city: true,
-            country: true,
-            createdAt: true,
-            updatedAt: true,
           },
         },
       },
@@ -152,54 +145,43 @@ export class SellerService {
       throw new NotFoundException("User not found");
     }
 
-    return { data: user };
+    return {
+      data: {
+        id: user.seller?.id ?? null,
+        phoneNumber: user.seller?.phoneNumber ?? null,
+        streetAddress: user.seller?.streetAddress ?? null,
+        zipCode: user.seller?.zipCode ?? null,
+        city: user.seller?.city ?? null,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        },
+      },
+    };
   }
 
   async updateProfile(session: UserSession, body: UpdateSellerProfileDto) {
-    const {
-      firstName,
-      lastName,
-      phoneNumber,
-      city,
-      description: _description,
-      avatar,
-    } = body;
-
-    // Update the User record (name, image)
-    const nameParts: string[] = [];
-    if (firstName) nameParts.push(firstName);
-    if (lastName) nameParts.push(lastName);
-
-    const userUpdateData: Record<string, unknown> = {};
-    if (nameParts.length > 0) userUpdateData.name = nameParts.join(" ");
-    if (avatar !== undefined) userUpdateData.image = avatar;
-
     const sellerUpdateData: Record<string, unknown> = {};
-    if (phoneNumber !== undefined) sellerUpdateData.phoneNumber = phoneNumber;
-    if (city !== undefined) sellerUpdateData.city = city;
+    if (body.phoneNumber !== undefined) sellerUpdateData.phoneNumber = body.phoneNumber;
+    if (body.streetAddress !== undefined) sellerUpdateData.streetAddress = body.streetAddress;
+    if (body.zipCode !== undefined) sellerUpdateData.zipCode = body.zipCode;
+    if (body.city !== undefined) sellerUpdateData.city = body.city;
 
-    await this.prisma.$transaction(async (tx: any) => {
-      if (Object.keys(userUpdateData).length > 0) {
-        await tx.user.update({
-          where: { id: session.user.id },
-          data: userUpdateData,
-        });
-      }
-
-      if (Object.keys(sellerUpdateData).length > 0) {
-        await tx.seller.upsert({
-          where: { userId: session.user.id },
-          create: {
-            userId: session.user.id,
-            phoneNumber: (sellerUpdateData.phoneNumber as string) ?? "",
-            streetAddress: "",
-            zipCode: "",
-            city: (sellerUpdateData.city as string) ?? "",
-          },
-          update: sellerUpdateData,
-        });
-      }
-    });
+    if (Object.keys(sellerUpdateData).length > 0) {
+      await this.prisma.seller.upsert({
+        where: { userId: session.user.id },
+        create: {
+          userId: session.user.id,
+          phoneNumber: (sellerUpdateData.phoneNumber as string) ?? "",
+          streetAddress: (sellerUpdateData.streetAddress as string) ?? "",
+          zipCode: (sellerUpdateData.zipCode as string) ?? "",
+          city: (sellerUpdateData.city as string) ?? "",
+        },
+        update: sellerUpdateData,
+      });
+    }
 
     return this.getProfile(session);
   }
@@ -341,6 +323,7 @@ export class SellerService {
     if (!stripe || !user?.stripeCustomerId) {
       return {
         data: {
+          hasStripeCustomer: false,
           paymentMethod: null,
           invoices: [],
         },
@@ -362,6 +345,7 @@ export class SellerService {
 
     return {
       data: {
+        hasStripeCustomer: true,
         paymentMethod: defaultPaymentMethod
           ? {
               brand: defaultPaymentMethod.card?.brand ?? "",

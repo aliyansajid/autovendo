@@ -55,7 +55,7 @@ export async function apiDeleteVehicle(id: string) {
   }
 }
 
-export async function apiUpdateVehicleStatus(id: string, status: "DRAFT" | "SOLD") {
+export async function apiUpdateVehicleStatus(id: string, status: "DRAFT" | "SOLD" | "PUBLISHED") {
   const res = await clientFetch(`/seller/vehicles/${id}`, {
     method: "PUT",
     body: JSON.stringify({ status }),

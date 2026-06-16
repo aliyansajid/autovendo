@@ -142,7 +142,7 @@ export function SubscriptionCard({
                 {t("quotaUsed", { current: currentCount, max: maxVehicles })}
               </span>
             </div>
-            <Progress value={(currentCount / maxVehicles) * 100} className="h-2" />
+            <Progress value={maxVehicles > 0 ? (currentCount / maxVehicles) * 100 : 0} className="h-2" />
           </div>
         )}
       </CardContent>
