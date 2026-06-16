@@ -59,6 +59,8 @@ export const LoginForm = () => {
         toast.error(error.message || t("errorDefault"));
         return;
       }
+
+      window.location.href = callbackUrl;
     });
   }
 
