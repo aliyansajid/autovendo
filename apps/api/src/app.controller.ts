@@ -8,13 +8,34 @@ import type { UserSession } from "@thallesp/nestjs-better-auth";
 import { auth } from "./auth";
 import React from "react";
 import { sendEmail, ContactMessage } from "./transactional";
+import { PrismaService } from "./prisma.service";
 
 @Controller()
 export class AppController {
+  constructor(private readonly prisma: PrismaService) {}
+
   @Get("/")
   @AllowAnonymous()
   root() {
     return "OK";
+  }
+
+  @Get("/plans")
+  @AllowAnonymous()
+  async getPlans() {
+    const plans = await this.prisma.plan.findMany({
+      select: {
+        name: true,
+        description: true,
+        price: true,
+        limits: true,
+        popular: true,
+        hasTrial: true,
+        trialDays: true,
+      },
+      orderBy: { price: "asc" },
+    });
+    return plans;
   }
 
   @Get("/api/session")
