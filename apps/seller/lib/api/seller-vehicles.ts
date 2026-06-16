@@ -148,5 +148,5 @@ export async function apiCreateListingCheckout(
     throw new Error((err as { error?: string }).error || "Failed to create checkout");
   }
   const json = await res.json();
-  return json.url ?? json.checkoutUrl ?? "";
+  return json.data?.url ?? json.url ?? json.checkoutUrl ?? "";
 }
