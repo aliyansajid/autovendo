@@ -2,13 +2,20 @@ import nodemailer from "nodemailer";
 import { render } from "@react-email/components";
 import React from "react";
 
+const port = Number(process.env.EMAIL_PORT) || 587;
+const secure = process.env.EMAIL_SECURE === "true" || port === 465;
+
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: Number(process.env.EMAIL_PORT) || 587,
-  secure: process.env.EMAIL_SECURE === "true",
+  port,
+  secure,
+  requireTLS: !secure,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false,
   },
 });
 
