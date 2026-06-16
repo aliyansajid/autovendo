@@ -270,7 +270,24 @@ export async function getSellerProfileFromApi(): Promise<SellerProfile | null> {
     const res = await serverFetch("/seller/profile");
     if (!res.ok) return null;
     const json = await res.json();
-    return json.data ?? null;
+    const data = json.data;
+    if (!data) return null;
+    // New shape: { id: sellerId, phoneNumber, ..., user: { id, name, email, image } }
+    if ("user" in data) return data as SellerProfile;
+    // Old shape: { id: userId, name, email, image, seller: { phoneNumber, ... } }
+    return {
+      id: data.seller?.id ?? null,
+      phoneNumber: data.seller?.phoneNumber ?? null,
+      streetAddress: data.seller?.streetAddress ?? null,
+      zipCode: data.seller?.zipCode ?? null,
+      city: data.seller?.city ?? null,
+      user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        image: data.image ?? null,
+      },
+    };
   } catch {
     return null;
   }
