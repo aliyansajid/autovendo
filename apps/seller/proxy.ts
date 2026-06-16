@@ -29,11 +29,11 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // Strip locale prefix to get the bare path (e.g. /de/dealer/dashboard → /dealer/dashboard)
-  const locale = pathname.split("/")[1] ?? "de";
+  const locale = pathname.split("/")[1] || "de";
   const pathWithoutLocale = pathname.slice(locale.length + 1) || "/";
 
   if (role === "dealer" && !pathWithoutLocale.startsWith("/dealer")) {
-    return NextResponse.redirect(new URL(`/${locale}/dealer/dashboard`, request.url));
+    return NextResponse.redirect(new URL(`/${locale}/dealer`, request.url));
   }
 
   if (role === "user" && pathWithoutLocale.startsWith("/dealer")) {
