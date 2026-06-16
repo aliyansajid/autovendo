@@ -29,7 +29,7 @@ export function ContactSection() {
               <CardDescription>{t("contactInfoDesc")}</CardDescription>
             </div>
             <Button variant="outline" size="sm" asChild>
-              <Link href="/dealer/dashboard/settings/profile">
+              <Link href="/dealer/settings/profile">
                 {t("editProfile")}
                 <ExternalLink />
               </Link>

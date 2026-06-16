@@ -343,7 +343,7 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         if (values.email !== initialData?.user?.email) {
           const { error } = await changeEmail({
             newEmail: values.email,
-            callbackURL: `/${locale}/dealer/dashboard/settings/profile`,
+            callbackURL: `/${locale}/dealer/settings/profile`,
           });
 
           if (error) {

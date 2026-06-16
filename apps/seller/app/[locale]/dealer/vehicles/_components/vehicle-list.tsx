@@ -282,7 +282,7 @@ function VehicleActions({
             asChild
             disabled={isStateRestricted || isSubRestricted || isPending}
           >
-            <Link href={`/dealer/dashboard/vehicles/${vehicle.id}`}>
+            <Link href={`/dealer/vehicles/${vehicle.id}`}>
               <Pencil />
               {t("edit")}
             </Link>

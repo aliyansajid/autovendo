@@ -42,8 +42,8 @@ export const SubscribeButton = ({
 
         const { data, error } = await upgradeSubscription({
           plan: planName.toLowerCase(),
-          successUrl: toAbsolute(successUrl, "/dealer/dashboard/subscription?success=true"),
-          cancelUrl: toAbsolute(cancelUrl, "/dealer/dashboard/subscription"),
+          successUrl: toAbsolute(successUrl, "/dealer/subscription?success=true"),
+          cancelUrl: toAbsolute(cancelUrl, "/dealer/subscription"),
           ...(activeSubscription?.stripeSubscriptionId && {
             subscriptionId: activeSubscription.stripeSubscriptionId,
           }),

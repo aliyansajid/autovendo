@@ -301,8 +301,8 @@ export default async function SubscriptionPage(props: {
                   <SubscribeButton
                     planName={plan.name}
                     variant={plan.popular ? "default" : "outline"}
-                    successUrl={`/${locale}/dealer/dashboard/subscription`}
-                    cancelUrl={`/${locale}/dealer/dashboard/subscription`}
+                    successUrl={`/${locale}/dealer/subscription`}
+                    cancelUrl={`/${locale}/dealer/subscription`}
                   />
                 )}
               </CardFooter>

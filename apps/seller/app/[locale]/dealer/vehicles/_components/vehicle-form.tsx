@@ -529,7 +529,7 @@ export function VehicleForm({
         }
 
         setUploadProgress(100);
-        router.push("/dealer/dashboard/vehicles");
+        router.push("/dealer/vehicles");
       } catch (error) {
         if (process.env.NODE_ENV !== "production") {
           console.error("Submission failed:", error);
@@ -588,7 +588,7 @@ export function VehicleForm({
           <AlertDescription>{t("noSubscriptionDesc")}</AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>
-              <Link href="/dealer/dashboard/subscription" locale={locale}>
+              <Link href="/dealer/subscription" locale={locale}>
                 {t("subscribeNow")}
               </Link>
             </Button>
@@ -609,7 +609,7 @@ export function VehicleForm({
           </AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>
-              <Link href="/dealer/dashboard/subscription" locale={locale}>
+              <Link href="/dealer/subscription" locale={locale}>
                 {t("upgradePlan")}
               </Link>
             </Button>

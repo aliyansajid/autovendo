@@ -32,7 +32,7 @@ export function DashboardBreadcrumb() {
       <BreadcrumbList>
         <BreadcrumbItem className="hidden md:block">
           <BreadcrumbLink asChild>
-            <Link href="/dealer/dashboard">{t("dashboard")}</Link>
+            <Link href="/dealer">{t("dashboard")}</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         {segments.length > 1 && (

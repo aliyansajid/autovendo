@@ -11,9 +11,13 @@ import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
+
   let session: {
     user?: {
       name: string;
@@ -26,6 +30,10 @@ export default async function DashboardLayout({
   try {
     session = await getSessionFromApi();
   } catch { /* no-op */ }
+
+  if (session?.user?.role === "dealer") {
+    redirect(`/${locale}/dealer`);
+  }
 
   if (session?.user?.role !== "user") {
     redirect(process.env.NEXT_PUBLIC_AUTH_URL ?? "https://auth.autovendo.ch");

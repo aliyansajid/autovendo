@@ -56,7 +56,7 @@ export default async function VehiclesPage(props: {
           <AlertDescription>{t("pastDueDescription")}</AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>
-              <Link href="/dealer/dashboard/subscription" locale={locale}>
+              <Link href="/dealer/subscription" locale={locale}>
                 {t("upgradePlan")}
               </Link>
             </Button>
@@ -77,7 +77,7 @@ export default async function VehiclesPage(props: {
           </AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>
-              <Link href="/dealer/dashboard/subscription" locale={locale}>
+              <Link href="/dealer/subscription" locale={locale}>
                 {t("subscribeNow")}
               </Link>
             </Button>
@@ -99,7 +99,7 @@ export default async function VehiclesPage(props: {
           </AlertDescription>
           <AlertAction>
             <Button size="xs" variant="outline" asChild>
-              <Link href="/dealer/dashboard/subscription" locale={locale}>
+              <Link href="/dealer/subscription" locale={locale}>
                 {t("upgradePlan")}
               </Link>
             </Button>
@@ -120,7 +120,7 @@ export default async function VehiclesPage(props: {
           </Button>
         ) : (
           <Button asChild>
-            <Link href="/dealer/dashboard/vehicles/new" locale={locale}>
+            <Link href="/dealer/vehicles/new" locale={locale}>
               <Plus />
               {t("newListing")}
             </Link>
