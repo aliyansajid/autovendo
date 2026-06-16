@@ -43,7 +43,8 @@ export async function getDealerProfileFromApi(): Promise<DealerProfile | null> {
   try {
     const res = await serverFetch("/dealer/profile");
     if (!res.ok) return null;
-    return res.json();
+    const json = await res.json();
+    return json.data ?? null;
   } catch {
     return null;
   }
@@ -63,7 +64,7 @@ export async function updateDealerProfileFromApi(
       const data = await res.json().catch(() => ({}));
       return { success: false, error: (data as { error?: string }).error || "errorDefault" };
     }
-    return res.json();
+    return { success: true };
   } catch {
     return { success: false, error: "errorDefault" };
   }
