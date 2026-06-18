@@ -165,14 +165,19 @@ export async function getSubscriptionStatusFromApi(): Promise<SubscriptionStatus
     const res = await serverFetch("/dealer/subscription");
     if (!res.ok) throw new Error("Failed to fetch subscription");
     const json = await res.json();
-    const sub = json.data?.subscriptions?.[0];
-    const plan = json.data?.plans?.[0];
+    const ACTIVE_STATUSES = ["active", "trialing", "past_due", "unpaid", "incomplete"];
+    const sub =
+      json.data?.subscriptions?.find((s: any) => ACTIVE_STATUSES.includes(s.status)) ??
+      json.data?.subscriptions?.[0];
+    const plan = sub?.plan
+      ? json.data?.plans?.find((p: any) => p.name.toLowerCase() === sub.plan.toLowerCase())
+      : null;
     return {
       type: sub?.status ?? "no_subscription",
       plan: plan?.name ?? "none",
-      maxVehicles: plan?.limits?.vehicles ?? 0,
+      maxVehicles: (plan?.limits as any)?.vehicles ?? 0,
       currentCount: json.data?.vehicleCount ?? 0,
-      remainingQuota: Math.max(0, (plan?.limits?.vehicles ?? 0) - (json.data?.vehicleCount ?? 0)),
+      remainingQuota: Math.max(0, ((plan?.limits as any)?.vehicles ?? 0) - (json.data?.vehicleCount ?? 0)),
     };
   } catch {
     return { type: "no_subscription", plan: "none", maxVehicles: 0, currentCount: 0, remainingQuota: 0 };
