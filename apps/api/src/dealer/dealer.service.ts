@@ -131,6 +131,21 @@ function buildDealerVehicleOrderBy(
   }
 }
 
+function sanitizeVehicleData(data: Record<string, unknown>): Record<string, unknown> {
+  const enumFields = [
+    "fuelType", "gearTransmission", "transmissionType", "driveType",
+    "interiorColor", "vehicleCondition", "bodyType", "color",
+    "vehicleType", "status", "warranty", "energyLabel",
+  ];
+  const result: Record<string, unknown> = { ...data };
+  for (const field of enumFields) {
+    if (result[field] === "" || result[field] === null) {
+      result[field] = undefined;
+    }
+  }
+  return result;
+}
+
 async function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) return null;
   const { default: Stripe } = await import("stripe");
@@ -248,10 +263,10 @@ export class DealerService {
 
     const vehicle = await this.prisma.vehicle.create({
       data: {
-        ...(body as any),
+        ...sanitizeVehicleData(body as Record<string, unknown>),
         dealerId: dealer.id,
         sellerId: undefined,
-      },
+      } as any,
     });
 
     return { data: vehicle };
@@ -297,7 +312,7 @@ export class DealerService {
 
     const updated = await this.prisma.vehicle.update({
       where: { id },
-      data: body as never,
+      data: sanitizeVehicleData(body as Record<string, unknown>) as never,
     });
 
     return { data: updated };
