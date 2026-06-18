@@ -58,7 +58,7 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import { EquipmentSection } from "./form-sections/equipment-section";
-import { prepareVehicleListingFromApi, type SubscriptionStatus } from "@/lib/api/vehicles";
+import { type SubscriptionStatus } from "@/lib/api/vehicles";
 import { apiUploadImages, apiCleanupImages } from "@/lib/api/dealer-vehicles";
 import { apiCreateVehicle, apiUpdateVehicle } from "@/lib/api/dealer-vehicles";
 import { toast } from "sonner";
@@ -489,10 +489,7 @@ export function VehicleForm({
         setUploadStatus(t("uploadStatusPreparing"));
         setUploadProgress(10);
 
-        // Phase 1: Prepare
-        const { listingId } = await prepareVehicleListingFromApi(vehicleId);
-
-        // Phase 2: Separate new files and existing keys
+        // Separate new files and existing keys
         const images = data.images || [];
         const newFiles = images.filter((img) => img instanceof File) as File[];
         const existingKeys = images.filter(
