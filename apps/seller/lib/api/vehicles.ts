@@ -167,8 +167,10 @@ export async function getSubscriptionStatusFromApi(): Promise<SubscriptionStatus
     const json = await res.json();
     const ACTIVE_STATUSES = ["active", "trialing", "past_due", "unpaid", "incomplete"];
     const sub =
-      json.data?.subscriptions?.find((s: any) => ACTIVE_STATUSES.includes(s.status)) ??
-      json.data?.subscriptions?.[0];
+      json.data?.subscriptions?.find((s: any) =>
+        ACTIVE_STATUSES.includes(s.status) &&
+        !(s.status === "incomplete" && !s.stripeSubscriptionId),
+      ) ?? null;
     const plan = sub?.plan
       ? json.data?.plans?.find((p: any) => p.name.toLowerCase() === sub.plan.toLowerCase())
       : null;
@@ -237,7 +239,9 @@ export async function getActiveSubscriptionsFromApi(): Promise<SubscriptionData[
     const res = await serverFetch("/dealer/subscription");
     if (!res.ok) return [];
     const json = await res.json();
-    return json.data?.subscriptions ?? [];
+    return (json.data?.subscriptions ?? []).filter(
+      (s: any) => !(s.status === "incomplete" && !s.stripeSubscriptionId),
+    );
   } catch {
     return [];
   }
