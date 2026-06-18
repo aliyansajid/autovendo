@@ -346,7 +346,7 @@ export function VehicleForm({
   // Determine whether submission should be blocked based on subscription state.
   // For new listings: block unless subscription is active.
   const isSubmitBlocked = subscriptionStatus
-    ? subscriptionStatus.type !== "active"
+    ? !["active", "trialing"].includes(subscriptionStatus.type)
     : false;
 
   const handleNext = async () => {

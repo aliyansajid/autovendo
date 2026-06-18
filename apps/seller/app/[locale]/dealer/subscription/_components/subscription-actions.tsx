@@ -30,8 +30,9 @@ export const SubscriptionActions = ({
           return;
         }
         toast.success(t("reactivateSuccess"));
+        router.refresh();
       } else {
-        const { error } = await cancelSubscription({
+        const { data, error } = await cancelSubscription({
           subscriptionId,
           returnUrl: window.location.href,
         });
@@ -39,9 +40,13 @@ export const SubscriptionActions = ({
           toast.error((error as { message?: string }).message || t("cancelError"));
           return;
         }
+        if ((data as any)?.url) {
+          window.location.href = (data as any).url;
+          return;
+        }
         toast.success(t("cancelSuccess"));
+        router.refresh();
       }
-      router.refresh();
     });
   };
 

@@ -148,6 +148,7 @@ export async function upgradeSubscription(params: {
   plan: string;
   successUrl: string;
   cancelUrl: string;
+  returnUrl?: string;
   subscriptionId?: string;
 }) {
   return authFetch("/api/auth/subscription/upgrade", {
@@ -162,7 +163,7 @@ export async function cancelSubscription(params: {
 }) {
   return authFetch("/api/auth/subscription/cancel", {
     method: "POST",
-    body: JSON.stringify(params),
+    body: JSON.stringify({ ...params, disableRedirect: true }),
   });
 }
 
