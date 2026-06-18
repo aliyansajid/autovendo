@@ -131,16 +131,41 @@ function buildDealerVehicleOrderBy(
   }
 }
 
+const VEHICLE_FIELDS = new Set([
+  "vehicleType", "status", "make", "model", "version", "bodyType", "fuelType",
+  "registrationMonth", "registrationYear", "kilometer", "price", "newPrice",
+  "color", "gearTransmission", "transmissionType", "driveType", "interiorColor",
+  "metallic", "vehicleCondition", "lastInspectionDate", "inspectionPassed",
+  "warranty", "warrantyStartDate", "duration", "maxKm", "doors", "seats",
+  "hp", "kw", "energyLabel", "typeApproval", "wheelbase", "vin", "emptyWeight",
+  "loadCapacity", "serialNumber", "height", "width", "length",
+  "towingCapacityBraked", "cubicCapacity", "co2Emission", "cylinders",
+  "numberOfGears", "emissionStandard", "consumptionCity", "consumptionCountry",
+  "consumptionTotal", "range", "batteryCapacity", "batteryRentalMonth",
+  "powerConsumption", "batteryOwnership", "chargingPlugTypeStandard",
+  "chargingPlugTypeFast", "chargingPower", "combustionEnginePowerHp",
+  "electricMotorPowerHp", "vehicleDescription", "equipment", "extras", "images",
+]);
+
+const ENUM_FIELDS = new Set([
+  "fuelType", "gearTransmission", "transmissionType", "driveType",
+  "interiorColor", "vehicleCondition", "bodyType", "color",
+  "vehicleType", "status", "warranty", "energyLabel", "emissionStandard",
+  "batteryOwnership", "chargingPlugTypeStandard", "chargingPlugTypeFast",
+]);
+
+const OPTIONAL_STRING_FIELDS = new Set([
+  "vin", "vehicleDescription", "version", "typeApproval", "serialNumber",
+]);
+
 function sanitizeVehicleData(data: Record<string, unknown>): Record<string, unknown> {
-  const enumFields = [
-    "fuelType", "gearTransmission", "transmissionType", "driveType",
-    "interiorColor", "vehicleCondition", "bodyType", "color",
-    "vehicleType", "status", "warranty", "energyLabel",
-  ];
-  const result: Record<string, unknown> = { ...data };
-  for (const field of enumFields) {
-    if (result[field] === "" || result[field] === null) {
-      result[field] = undefined;
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (!VEHICLE_FIELDS.has(key)) continue;
+    if ((ENUM_FIELDS.has(key) || OPTIONAL_STRING_FIELDS.has(key)) && (value === "" || value === null)) {
+      result[key] = undefined;
+    } else {
+      result[key] = value;
     }
   }
   return result;
