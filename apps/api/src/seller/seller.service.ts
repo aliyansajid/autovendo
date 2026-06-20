@@ -292,18 +292,19 @@ export class SellerService {
 
     const sanitized = sanitizeVehicleData(raw);
 
-    // Cancel Stripe subscription when seller marks vehicle as sold
+    // Update DB first so the webhook sees the correct status if it fires before we return
+    const updated = await this.prisma.vehicle.update({
+      where: { id },
+      data: sanitized as never,
+    });
+
+    // Cancel Stripe subscription immediately when seller marks vehicle as sold
     if (sanitized.status === "SOLD" && vehicle.stripeSubscriptionId) {
       try {
         const stripe = await getStripe();
         if (stripe) await stripe.subscriptions.cancel(vehicle.stripeSubscriptionId);
       } catch { /* subscription may already be cancelled */ }
     }
-
-    const updated = await this.prisma.vehicle.update({
-      where: { id },
-      data: sanitized as never,
-    });
 
     return { data: updated };
   }
@@ -537,10 +538,15 @@ export class SellerService {
         select: { id: true, status: true },
       });
 
-      if (vehicle && !["SOLD", "ARCHIVED", "BANNED"].includes(vehicle.status)) {
+      if (vehicle) {
+        const alreadyTerminal = ["SOLD", "ARCHIVED", "BANNED"].includes(vehicle.status);
         await this.prisma.vehicle.update({
           where: { id: vehicle.id },
-          data: { status: "DRAFT", stripeSubscriptionId: null },
+          data: {
+            // Only move to DRAFT if not already in a terminal state
+            ...(alreadyTerminal ? {} : { status: "DRAFT" }),
+            stripeSubscriptionId: null,
+          },
         });
       }
     }
