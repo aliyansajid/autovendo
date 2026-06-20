@@ -4,15 +4,13 @@ import {
   ForbiddenException,
   BadRequestException,
 } from "@nestjs/common";
-import { PrismaService } from "../prisma.service.js";
+import { PrismaService } from "../prisma.service";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
-
-export class UpdateSellerProfileDto {
-  phoneNumber?: string;
-  streetAddress?: string;
-  zipCode?: string;
-  city?: string;
-}
+import type { SellerProfileInput } from "../validation/profile.validation";
+import type {
+  VehicleCreateInput,
+  VehicleUpdateInput,
+} from "../validation/vehicle.validation";
 
 export class SellerVehiclesQueryDto {
   page?: string;
@@ -20,16 +18,14 @@ export class SellerVehiclesQueryDto {
   sort?: string;
 }
 
-export class CreateSellerVehicleDto {
-  [key: string]: unknown;
-}
-
-export class UpdateSellerVehicleDto {
-  [key: string]: unknown;
-}
-
+// Fields a seller is allowed to write directly.
+// NOTE: `status` and all payment/listing fields (listingPlan, listingPaidAt,
+// listingExpiresAt, stripeSessionId, stripeSubscriptionId) are deliberately
+// EXCLUDED — they are managed server-side only (status via validated
+// transitions, payment fields exclusively by the Stripe webhook). This is the
+// core defense against publishing a listing without paying.
 const VEHICLE_FIELDS = new Set([
-  "vehicleType","status","make","model","version","bodyType","fuelType",
+  "vehicleType","make","model","version","bodyType","fuelType",
   "registrationMonth","registrationYear","kilometer","price","newPrice",
   "color","gearTransmission","transmissionType","driveType","interiorColor",
   "metallic","vehicleCondition","lastInspectionDate","inspectionPassed",
@@ -41,8 +37,7 @@ const VEHICLE_FIELDS = new Set([
   "batteryRentalMonth","powerConsumption","batteryOwnership",
   "chargingPlugTypeStandard","chargingPlugTypeFast","chargingPower",
   "combustionEnginePowerHp","electricMotorPowerHp","vehicleDescription",
-  "equipment","extras","images","listingPlan","listingPaidAt",
-  "listingExpiresAt","stripeSessionId",
+  "equipment","extras","images",
 ]);
 
 function sanitizeVehicleData(body: Record<string, unknown>) {
@@ -51,6 +46,55 @@ function sanitizeVehicleData(body: Record<string, unknown>) {
       .filter(([k]) => VEHICLE_FIELDS.has(k))
       .map(([k, v]) => [k, v === "" ? undefined : v]),
   );
+}
+
+// Statuses a seller may set directly. PUBLISHED is gated on a valid paid listing
+// (see resolveSellerStatus); the webhook is the only other way to reach it.
+const SELLER_SETTABLE_STATUS = new Set(["DRAFT", "PUBLISHED", "SOLD"]);
+
+/**
+ * Validates a seller-requested status transition and returns the status to
+ * persist. Throws if the transition is not allowed.
+ *
+ * A seller can only PUBLISH a listing that has actually been paid for:
+ *  - any plan: `listingPaidAt` must be set (only the webhook sets it),
+ *  - "standard" (CHF 19/mo): the Stripe subscription must still be active
+ *    (the webhook nulls `stripeSubscriptionId` when it is cancelled),
+ *  - "best_value" (CHF 49 until sold): a sold listing is consumed and cannot
+ *    be re-published without a new purchase.
+ */
+function resolveSellerStatus(
+  vehicle: {
+    status: string;
+    listingPaidAt: Date | null;
+    listingPlan: string | null;
+    stripeSubscriptionId: string | null;
+  },
+  next: string,
+): string {
+  if (!SELLER_SETTABLE_STATUS.has(next)) {
+    throw new ForbiddenException(`Status "${next}" cannot be set`);
+  }
+
+  if (next === "PUBLISHED") {
+    if (!vehicle.listingPaidAt) {
+      throw new ForbiddenException(
+        "This listing must be paid for before it can be published",
+      );
+    }
+    if (vehicle.listingPlan === "standard" && !vehicle.stripeSubscriptionId) {
+      throw new ForbiddenException(
+        "The subscription for this listing is no longer active; please renew to publish",
+      );
+    }
+    if (vehicle.listingPlan === "best_value" && vehicle.status === "SOLD") {
+      throw new ForbiddenException(
+        "This one-time listing has already been sold; purchase a new listing to republish",
+      );
+    }
+  }
+
+  return next;
 }
 
 const SELLER_VEHICLE_LIST_SELECT = {
@@ -162,7 +206,8 @@ export class SellerService {
     };
   }
 
-  async updateProfile(session: UserSession, body: UpdateSellerProfileDto) {
+  async updateProfile(session: UserSession, body: SellerProfileInput) {
+    // Body is already validated by ZodValidationPipe at the controller boundary.
     const sellerUpdateData: Record<string, unknown> = {};
     if (body.phoneNumber !== undefined) sellerUpdateData.phoneNumber = body.phoneNumber;
     if (body.streetAddress !== undefined) sellerUpdateData.streetAddress = body.streetAddress;
@@ -219,9 +264,12 @@ export class SellerService {
     };
   }
 
-  async createVehicle(session: UserSession, body: CreateSellerVehicleDto) {
+  async createVehicle(session: UserSession, body: VehicleCreateInput) {
     const seller = await this.getSellerByUserId(session.user.id);
     const raw = body as Record<string, unknown>;
+
+    // Body validated by ZodValidationPipe; allowlist strips non-vehicle fields.
+    const data = sanitizeVehicleData(raw);
 
     const sellerUpdate: Record<string, unknown> = {};
     if (raw.phoneNumber) sellerUpdate.phoneNumber = raw.phoneNumber;
@@ -232,7 +280,11 @@ export class SellerService {
     const [vehicle] = await this.prisma.$transaction([
       this.prisma.vehicle.create({
         data: {
-          ...sanitizeVehicleData(raw),
+          ...data,
+          // Always created as a draft. Publishing happens only after payment is
+          // confirmed by the Stripe webhook — a client-supplied status/paid
+          // field is ignored entirely (it is not in the writable allowlist).
+          status: "DRAFT",
           sellerId: seller.id,
           dealerId: undefined,
         } as any,
@@ -266,13 +318,13 @@ export class SellerService {
   async updateVehicle(
     session: UserSession,
     id: string,
-    body: UpdateSellerVehicleDto,
+    body: VehicleUpdateInput,
   ) {
     const seller = await this.getSellerByUserId(session.user.id);
 
     const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
-      select: { id: true, sellerId: true, listingPaidAt: true, stripeSubscriptionId: true, status: true },
+      select: { id: true, sellerId: true, listingPaidAt: true, listingPlan: true, stripeSubscriptionId: true, status: true },
     });
 
     if (!vehicle) {
@@ -290,7 +342,14 @@ export class SellerService {
       throw new ForbiddenException("VIN cannot be changed after the listing has been published");
     }
 
+    // Body validated by ZodValidationPipe; allowlist strips non-vehicle fields.
     const sanitized = sanitizeVehicleData(raw);
+
+    // Status is never taken from the data allowlist — it goes through an explicit,
+    // validated transition so a listing can't be published without payment.
+    if (raw.status !== undefined && raw.status !== vehicle.status) {
+      sanitized.status = resolveSellerStatus(vehicle, String(raw.status));
+    }
 
     // Update DB first so the webhook sees the correct status if it fires before we return
     const updated = await this.prisma.vehicle.update({

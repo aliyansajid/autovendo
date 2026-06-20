@@ -38,8 +38,13 @@ import {
   camperFuelTypeEnum,
   camperExtrasEnum,
 } from "@repo/vehicle-constants";
+import { swissCities } from "@repo/vehicle-constants";
 
 type TFn = (key: string) => string;
+
+const SWISS_CITY_VALUES = new Set(swissCities.map((c) => c.value));
+const SWISS_ZIP_REGEX = /^\d{4}$/;
+const SWISS_PHONE_REGEX = /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/;
 
 const VALID_VEHICLE_TYPES = VehicleTypeEnum.map((v) => v.value) as string[];
 const VALID_GEAR_TRANSMISSIONS = GearTransmissionEnum.map(
@@ -332,16 +337,28 @@ export const createVehicleFormSchema = (t: TFn) =>
       .max(25, t("maxImagesError")),
 
     // ── Contact ──────────────────────────────────────────────────────────────
-    companyName: z.string().optional(),
+    // companyName is optional (private sellers have none); the rest are required
+    // so every published listing carries usable contact + location details.
+    companyName: z.string().max(50, t("companyNameTooLong")).optional().or(z.literal("")),
     businessEmail: z
       .string()
       .email(t("invalidEmail"))
       .optional()
       .or(z.literal("")),
-    phoneNumber: z.string().optional(),
-    address: z.string().optional(),
-    zipCode: z.string().optional(),
-    city: z.string().optional(),
+    phoneNumber: z
+      .string({ error: t("phoneRequired") })
+      .min(1, t("phoneRequired"))
+      .regex(SWISS_PHONE_REGEX, t("invalidPhoneFormat")),
+    address: z
+      .string({ error: t("addressRequired") })
+      .min(5, t("addressMinLength"))
+      .max(100, t("addressMaxLength")),
+    zipCode: z
+      .string({ error: t("zipRequired") })
+      .regex(SWISS_ZIP_REGEX, t("invalidZipCode")),
+    city: z
+      .string({ error: t("cityRequired") })
+      .refine((val) => SWISS_CITY_VALUES.has(val), t("invalidCity")),
     planId: z.enum(["standard", "best_value"]).optional(),
   });
 

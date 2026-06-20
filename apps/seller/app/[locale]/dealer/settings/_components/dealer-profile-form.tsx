@@ -22,7 +22,7 @@ import { updateUser, changeEmail } from "@/lib/api/auth-client";
 import { useTransition, useEffect, useState } from "react";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
-import { updateDealerProfileFromApi, presignProfileUpload } from "@/lib/api/dealers";
+import { updateDealerProfileFromApi, uploadDealerProfileImage } from "@/lib/api/dealers";
 import { Spinner } from "@repo/ui/components/spinner";
 import { DealerProfile } from "@/types/dealer";
 import { swissCities } from "@repo/vehicle-constants";
@@ -269,18 +269,9 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   const coverPreviewUrl = useObjectUrl(coverValue as File | string | undefined);
 
   const uploadFile = async (file: File, type: "branding" | "profiles") => {
-    const data = await presignProfileUpload({ type, filename: file.name, contentType: file.type });
-    if (!data.success || !data.uploadUrl) throw new Error(data.error ?? t("uploadFailed"));
-
-    const uploadRes = await fetch(data.uploadUrl, {
-      method: "PUT",
-      body: file,
-      headers: { "Content-Type": file.type },
-    });
-
-    if (!uploadRes.ok) throw new Error(t("uploadFailed"));
-
-    return data.publicUrl as string;
+    const data = await uploadDealerProfileImage(file, type);
+    if (!data.success || !data.publicUrl) throw new Error(data.error ?? t("uploadFailed"));
+    return data.publicUrl;
   };
 
   function onSubmit(values: FormValues) {

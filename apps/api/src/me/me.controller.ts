@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body } from "@nestjs/common";
 import { Session } from "@thallesp/nestjs-better-auth";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
-import { MeService } from "./me.service.js";
+import { MeService } from "./me.service";
 
 export class ChangePasswordDto {
   currentPassword?: string;

@@ -62,7 +62,7 @@ export function ContactSection() {
               placeholder={t("city")}
             >
               {swissCities.map((city) => (
-                <SelectItem key={city.value} value={city.label}>
+                <SelectItem key={city.value} value={city.value}>
                   {city.label}
                 </SelectItem>
               ))}

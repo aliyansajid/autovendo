@@ -1,6 +1,14 @@
 import { z } from "zod";
+import { swissCities } from "@repo/vehicle-constants";
 
 type TFn = (key: string) => string;
+
+// Canonical city identifiers (e.g. "AARAU"). Used to validate the city select
+// against real Swiss municipalities instead of a free-text length check.
+const SWISS_CITY_VALUES = new Set(swissCities.map((c) => c.value));
+
+// Swiss postal codes (PLZ) are always exactly 4 digits (1000–9999).
+const SWISS_ZIP_REGEX = /^\d{4}$/;
 
 const ACCEPTED_IMAGE_TYPES = [
   "image/png",
@@ -46,9 +54,10 @@ export const createSellerProfileSchema = (t: TFn) =>
       .max(100, t("addressMaxLength")),
     zipCode: z
       .string()
-      .min(4, t("zipCodeMinLength"))
-      .max(10, t("zipCodeMaxLength")),
-    city: z.string().min(2, t("cityMinLength")).max(50, t("cityMaxLength")),
+      .regex(SWISS_ZIP_REGEX, t("invalidZipCode")),
+    city: z
+      .string()
+      .refine((val) => SWISS_CITY_VALUES.has(val), t("invalidCity")),
   });
 
 export const createDealerProfileSchema = (t: TFn) =>
@@ -73,9 +82,10 @@ export const createDealerProfileSchema = (t: TFn) =>
       .max(100, t("addressMaxLength")),
     zipCode: z
       .string()
-      .min(4, t("zipCodeMinLength"))
-      .max(10, t("zipCodeMaxLength")),
-    city: z.string().min(2, t("cityMinLength")).max(50, t("cityMaxLength")),
+      .regex(SWISS_ZIP_REGEX, t("invalidZipCode")),
+    city: z
+      .string()
+      .refine((val) => SWISS_CITY_VALUES.has(val), t("invalidCity")),
     country: z.literal("Switzerland"),
     uidNumber: z
       .string()

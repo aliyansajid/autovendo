@@ -642,7 +642,9 @@
     "contactPersonMinLength": "La persona di contatto deve contenere almeno 3 caratteri",
     "contactPersonMaxLength": "La persona di contatto deve contenere al massimo 50 caratteri",
     "phoneRequired": "Il numero di telefono è obbligatorio",
-    "invalidPhoneFormat": "Formato del numero di telefono svizzero non valido"
+    "invalidPhoneFormat": "Formato del numero di telefono svizzero non valido",
+    "invalidZipCode": "Inserisci un codice postale valido di 4 cifre",
+    "invalidCity": "Seleziona una città valida"
   },
   "VehicleSchema": {
     "negativeError": "Il valore non può essere negativo",
@@ -685,7 +687,17 @@
     "versionTooLong": "La versione non può superare i 100 caratteri",
     "invalidVin": "Formato VIN non valido",
     "serialNumberTooLong": "Il numero di serie non può superare i 100 caratteri",
-    "typeApprovalTooLong": "L'omologazione non può superare i 100 caratteri"
+    "typeApprovalTooLong": "L'omologazione non può superare i 100 caratteri",
+    "phoneRequired": "Il numero di telefono è obbligatorio",
+    "invalidPhoneFormat": "Formato telefono non valido",
+    "addressRequired": "L'indirizzo è obbligatorio",
+    "addressMinLength": "L'indirizzo deve contenere almeno 5 caratteri",
+    "addressMaxLength": "L'indirizzo può contenere al massimo 100 caratteri",
+    "zipRequired": "Il codice postale è obbligatorio",
+    "invalidZipCode": "Inserisci un codice postale valido di 4 cifre",
+    "cityRequired": "La città è obbligatoria",
+    "invalidCity": "Seleziona una città valida",
+    "companyNameTooLong": "Il nome dell'azienda può contenere al massimo 50 caratteri"
   },
   "Common": {
     "errorDefault": "Si è verificato un errore. Riprova.",

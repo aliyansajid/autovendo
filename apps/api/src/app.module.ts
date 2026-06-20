@@ -1,4 +1,6 @@
 import { Module } from "@nestjs/common";
+import { APP_GUARD } from "@nestjs/core";
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { AuthModule } from "@thallesp/nestjs-better-auth";
 import { auth } from "./auth";
 import { AppController } from "./app.controller";
@@ -8,10 +10,24 @@ import { MeModule } from "./me/me.module";
 import { DealerModule } from "./dealer/dealer.module";
 import { SellerModule } from "./seller/seller.module";
 import { UploadModule } from "./upload/upload.module";
-import { PrismaModule } from "./prisma.module.js";
+import { PrismaModule } from "./prisma.module";
 
 @Module({
-  imports: [PrismaModule, AuthModule.forRoot({ auth, bodyParser: { rawBody: true } }), VehiclesModule, DealersModule, MeModule, DealerModule, SellerModule, UploadModule],
+  imports: [
+    // Global IP-based rate limit: 300 requests / minute. Tighter per-route limits
+    // are applied with @Throttle (e.g. contact forms); the Stripe webhook opts
+    // out with @SkipThrottle.
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 300 }]),
+    PrismaModule,
+    AuthModule.forRoot({ auth, bodyParser: { rawBody: true } }),
+    VehiclesModule,
+    DealersModule,
+    MeModule,
+    DealerModule,
+    SellerModule,
+    UploadModule,
+  ],
   controllers: [AppController],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

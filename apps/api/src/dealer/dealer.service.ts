@@ -4,39 +4,19 @@ import {
   ForbiddenException,
   BadRequestException,
 } from "@nestjs/common";
-import { PrismaService } from "../prisma.service.js";
+import { PrismaService } from "../prisma.service";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
-
-export class UpdateDealerProfileDto {
-  companyName?: string;
-  streetAddress?: string;
-  zipCode?: string;
-  city?: string;
-  phoneNumber?: string;
-  website?: string;
-  businessEmail?: string;
-  description?: string;
-  logo?: string;
-  openingHours?: Array<{
-    day: string;
-    isOpen: boolean;
-    openTime?: string | null;
-    closeTime?: string | null;
-  }>;
-}
+import type { DealerProfileInput } from "../validation/profile.validation";
+import type {
+  VehicleCreateInput,
+  VehicleUpdateInput,
+} from "../validation/vehicle.validation";
+import { uploadImage } from "../storage/r2";
 
 export class DealerVehiclesQueryDto {
   page?: string;
   pageSize?: string;
   sort?: string;
-}
-
-export class CreateVehicleDto {
-  [key: string]: unknown;
-}
-
-export class UpdateVehicleDto {
-  [key: string]: unknown;
 }
 
 export class CreateCheckoutSessionDto {
@@ -131,8 +111,11 @@ function buildDealerVehicleOrderBy(
   }
 }
 
+// `status` is intentionally excluded — it is set via a validated transition that
+// enforces the dealer's subscription and listing quota (see resolveDealerStatus
+// / getEntitlement). Everything else is plain listing data.
 const VEHICLE_FIELDS = new Set([
-  "vehicleType", "status", "make", "model", "version", "bodyType", "fuelType",
+  "vehicleType", "make", "model", "version", "bodyType", "fuelType",
   "registrationMonth", "registrationYear", "kilometer", "price", "newPrice",
   "color", "gearTransmission", "transmissionType", "driveType", "interiorColor",
   "metallic", "vehicleCondition", "lastInspectionDate", "inspectionPassed",
@@ -171,6 +154,16 @@ function sanitizeVehicleData(data: Record<string, unknown>): Record<string, unkn
   return result;
 }
 
+// Statuses a dealer may set. ARCHIVED/BANNED are reserved for admins/moderation.
+const DEALER_SETTABLE_STATUS = new Set(["DRAFT", "PUBLISHED", "SOLD", "PAUSED"]);
+
+function resolveDealerStatus(next: string): string {
+  if (!DEALER_SETTABLE_STATUS.has(next)) {
+    throw new ForbiddenException(`Status "${next}" cannot be set`);
+  }
+  return next;
+}
+
 async function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) return null;
   const { default: Stripe } = await import("stripe");
@@ -191,6 +184,62 @@ export class DealerService {
     return dealer;
   }
 
+  /**
+   * Resolves the dealer's current entitlement from their active subscription.
+   * `limit` is the number of PUBLISHED listings their plan allows.
+   */
+  private async getEntitlement(
+    userId: string,
+  ): Promise<{ active: boolean; limit: number }> {
+    const sub = await this.prisma.subscription.findFirst({
+      where: {
+        referenceId: userId,
+        status: { in: ["active", "trialing"] },
+      },
+      orderBy: { periodEnd: "desc" },
+    });
+
+    if (!sub) return { active: false, limit: 0 };
+
+    const plans = await this.prisma.plan.findMany();
+    const plan = plans.find(
+      (p) => p.name.toLowerCase() === sub.plan.toLowerCase(),
+    );
+    const limit = Number((plan?.limits as { vehicles?: number })?.vehicles ?? 0);
+
+    return { active: true, limit };
+  }
+
+  /**
+   * Throws unless the dealer has an active subscription with quota left to
+   * publish one more listing. `excludeVehicleId` skips the vehicle being updated
+   * so re-publishing it doesn't count against itself.
+   */
+  private async assertCanPublish(
+    userId: string,
+    dealerId: string,
+    excludeVehicleId?: string,
+  ) {
+    const { active, limit } = await this.getEntitlement(userId);
+    if (!active) {
+      throw new ForbiddenException(
+        "An active subscription is required to publish listings",
+      );
+    }
+    const publishedCount = await this.prisma.vehicle.count({
+      where: {
+        dealerId,
+        status: "PUBLISHED",
+        ...(excludeVehicleId ? { id: { not: excludeVehicleId } } : {}),
+      },
+    });
+    if (publishedCount >= limit) {
+      throw new ForbiddenException(
+        "You have reached the listing quota for your plan. Upgrade your plan to publish more vehicles.",
+      );
+    }
+  }
+
   async getProfile(session: UserSession) {
     const dealer = await this.prisma.dealer.findUnique({
       where: { userId: session.user.id },
@@ -204,10 +253,12 @@ export class DealerService {
     return { data: dealer };
   }
 
-  async updateProfile(session: UserSession, body: UpdateDealerProfileDto) {
+  async updateProfile(session: UserSession, body: DealerProfileInput) {
     const dealer = await this.getDealerByUserId(session.user.id);
 
     const { openingHours, ...profileFields } = body;
+    // Body is already validated by ZodValidationPipe at the controller boundary
+    // (which also strips `image`, saved separately via Better Auth).
 
     const updated = await this.prisma.dealer.update({
       where: { id: dealer.id },
@@ -250,6 +301,30 @@ export class DealerService {
     return { data: updated };
   }
 
+  /**
+   * Uploads a dealer branding/profile image through the API to R2, scoped to the
+   * dealer's own key prefix. `type` is "branding" (logo/cover) or "profiles"
+   * (avatar). Returns the public CDN URL to store on the profile.
+   */
+  async uploadProfileImage(
+    session: UserSession,
+    type: string,
+    file?: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException("No file uploaded");
+    }
+    if (type !== "branding" && type !== "profiles") {
+      throw new BadRequestException("Invalid image type");
+    }
+    const dealer = await this.getDealerByUserId(session.user.id);
+    const { publicUrl } = await uploadImage(
+      file,
+      `dealers/${dealer.id}/${type}`,
+    );
+    return { data: { publicUrl } };
+  }
+
   async listVehicles(session: UserSession, query: DealerVehiclesQueryDto) {
     const dealer = await this.getDealerByUserId(session.user.id);
 
@@ -283,12 +358,29 @@ export class DealerService {
     };
   }
 
-  async createVehicle(session: UserSession, body: CreateVehicleDto) {
+  async createVehicle(session: UserSession, body: VehicleCreateInput) {
     const dealer = await this.getDealerByUserId(session.user.id);
+    const raw = body as Record<string, unknown>;
+
+    // Body validated by ZodValidationPipe; allowlist strips non-vehicle fields.
+    const validated = sanitizeVehicleData(raw);
+
+    // Status comes through a validated transition, never the data allowlist.
+    // Default to DRAFT so an omitted/forged status can never auto-publish.
+    const status = resolveDealerStatus(
+      raw.status !== undefined ? String(raw.status) : "DRAFT",
+    );
+
+    // Publishing requires an active subscription with remaining quota — enforced
+    // here so a direct API call can't exceed the plan limit.
+    if (status === "PUBLISHED") {
+      await this.assertCanPublish(session.user.id, dealer.id);
+    }
 
     const vehicle = await this.prisma.vehicle.create({
       data: {
-        ...sanitizeVehicleData(body as Record<string, unknown>),
+        ...validated,
+        status,
         dealerId: dealer.id,
         sellerId: undefined,
       } as any,
@@ -318,13 +410,13 @@ export class DealerService {
   async updateVehicle(
     session: UserSession,
     id: string,
-    body: UpdateVehicleDto,
+    body: VehicleUpdateInput,
   ) {
     const dealer = await this.getDealerByUserId(session.user.id);
 
     const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
-      select: { id: true, dealerId: true },
+      select: { id: true, dealerId: true, status: true },
     });
 
     if (!vehicle) {
@@ -335,9 +427,22 @@ export class DealerService {
       throw new ForbiddenException("This vehicle does not belong to you");
     }
 
+    const raw = body as Record<string, unknown>;
+    // Body validated by ZodValidationPipe; allowlist strips non-vehicle fields.
+    const data = sanitizeVehicleData(raw);
+
+    // Validate any status change; enforce subscription + quota when (re)publishing.
+    if (raw.status !== undefined && raw.status !== vehicle.status) {
+      const next = resolveDealerStatus(String(raw.status));
+      if (next === "PUBLISHED") {
+        await this.assertCanPublish(session.user.id, dealer.id, id);
+      }
+      data.status = next;
+    }
+
     const updated = await this.prisma.vehicle.update({
       where: { id },
-      data: sanitizeVehicleData(body as Record<string, unknown>) as never,
+      data: data as never,
     });
 
     return { data: updated };
@@ -383,8 +488,9 @@ export class DealerService {
       });
 
       const dealer = await this.getDealerByUserId(session.user.id);
+      // Quota is consumed by PUBLISHED (visible) listings — matches enforcement.
       const vehicleCount = await this.prisma.vehicle.count({
-        where: { dealerId: dealer.id },
+        where: { dealerId: dealer.id, status: "PUBLISHED" },
       });
 
       return {

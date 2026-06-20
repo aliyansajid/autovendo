@@ -340,7 +340,7 @@ model Vehicle {
   sellerId    String?
   seller      Seller?       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   vehicleType VehicleType
-  status      VehicleStatus @default(PUBLISHED)
+  status      VehicleStatus @default(DRAFT)
 
   // Basic Data
   make              String

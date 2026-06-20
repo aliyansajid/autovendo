@@ -642,7 +642,9 @@
     "contactPersonMinLength": "La personne de contact doit comporter au moins 3 caractères",
     "contactPersonMaxLength": "La personne de contact doit comporter au maximum 50 caractères",
     "phoneRequired": "Le numéro de téléphone est requis",
-    "invalidPhoneFormat": "Format de numéro de téléphone suisse invalide"
+    "invalidPhoneFormat": "Format de numéro de téléphone suisse invalide",
+    "invalidZipCode": "Veuillez saisir un code postal valide à 4 chiffres",
+    "invalidCity": "Veuillez sélectionner une ville valide"
   },
   "VehicleSchema": {
     "negativeError": "La valeur ne peut pas être négative",
@@ -685,7 +687,17 @@
     "versionTooLong": "La version ne doit pas dépasser 100 caractères",
     "invalidVin": "Format NIV invalide",
     "serialNumberTooLong": "Le numéro de série ne doit pas dépasser 100 caractères",
-    "typeApprovalTooLong": "La réception par type ne doit pas dépasser 100 caractères"
+    "typeApprovalTooLong": "La réception par type ne doit pas dépasser 100 caractères",
+    "phoneRequired": "Le numéro de téléphone est requis",
+    "invalidPhoneFormat": "Format de téléphone invalide",
+    "addressRequired": "L'adresse est requise",
+    "addressMinLength": "L'adresse doit comporter au moins 5 caractères",
+    "addressMaxLength": "L'adresse doit comporter au maximum 100 caractères",
+    "zipRequired": "Le code postal est requis",
+    "invalidZipCode": "Veuillez saisir un code postal valide à 4 chiffres",
+    "cityRequired": "La ville est requise",
+    "invalidCity": "Veuillez sélectionner une ville valide",
+    "companyNameTooLong": "Le nom de l'entreprise doit comporter au maximum 50 caractères"
   },
   "Common": {
     "errorDefault": "Une erreur est survenue. Veuillez réessayer.",

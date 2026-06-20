@@ -10,13 +10,18 @@ import {
 } from "@nestjs/common";
 import { Session } from "@thallesp/nestjs-better-auth";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
+import { SellerService, SellerVehiclesQueryDto } from "./seller.service";
+import { ZodValidationPipe } from "../validation/zod-validation.pipe";
 import {
-  SellerService,
-  UpdateSellerProfileDto,
-  SellerVehiclesQueryDto,
-  CreateSellerVehicleDto,
-  UpdateSellerVehicleDto,
-} from "./seller.service";
+  createVehicleSchema,
+  updateVehicleSchema,
+  type VehicleCreateInput,
+  type VehicleUpdateInput,
+} from "../validation/vehicle.validation";
+import {
+  sellerProfileSchema,
+  type SellerProfileInput,
+} from "../validation/profile.validation";
 
 @Controller("seller")
 export class SellerController {
@@ -30,7 +35,7 @@ export class SellerController {
   @Put("profile")
   updateProfile(
     @Session() session: UserSession,
-    @Body() body: UpdateSellerProfileDto,
+    @Body(new ZodValidationPipe(sellerProfileSchema)) body: SellerProfileInput,
   ) {
     return this.sellerService.updateProfile(session, body);
   }
@@ -46,7 +51,7 @@ export class SellerController {
   @Post("vehicles")
   createVehicle(
     @Session() session: UserSession,
-    @Body() body: CreateSellerVehicleDto,
+    @Body(new ZodValidationPipe(createVehicleSchema)) body: VehicleCreateInput,
   ) {
     return this.sellerService.createVehicle(session, body);
   }
@@ -60,7 +65,7 @@ export class SellerController {
   updateVehicle(
     @Session() session: UserSession,
     @Param("id") id: string,
-    @Body() body: UpdateSellerVehicleDto,
+    @Body(new ZodValidationPipe(updateVehicleSchema)) body: VehicleUpdateInput,
   ) {
     return this.sellerService.updateVehicle(session, id, body);
   }

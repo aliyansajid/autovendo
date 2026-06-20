@@ -7,17 +7,30 @@ import {
   Param,
   Query,
   Body,
+  UseInterceptors,
+  UploadedFile,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import multer from "multer";
 import { Session } from "@thallesp/nestjs-better-auth";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
+import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES } from "../storage/r2";
 import {
   DealerService,
-  UpdateDealerProfileDto,
   DealerVehiclesQueryDto,
-  CreateVehicleDto,
-  UpdateVehicleDto,
   CreateCheckoutSessionDto,
 } from "./dealer.service";
+import { ZodValidationPipe } from "../validation/zod-validation.pipe";
+import {
+  createVehicleSchema,
+  updateVehicleSchema,
+  type VehicleCreateInput,
+  type VehicleUpdateInput,
+} from "../validation/vehicle.validation";
+import {
+  dealerProfileSchema,
+  type DealerProfileInput,
+} from "../validation/profile.validation";
 
 @Controller("dealer")
 export class DealerController {
@@ -31,9 +44,27 @@ export class DealerController {
   @Put("profile")
   updateProfile(
     @Session() session: UserSession,
-    @Body() body: UpdateDealerProfileDto,
+    @Body(new ZodValidationPipe(dealerProfileSchema)) body: DealerProfileInput,
   ) {
     return this.dealerService.updateProfile(session, body);
+  }
+
+  @Post("profile/image")
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: MAX_IMAGE_BYTES, files: 1 },
+      fileFilter: (_req, file, cb) => {
+        cb(null, file.mimetype in ALLOWED_IMAGE_TYPES);
+      },
+    }),
+  )
+  uploadProfileImage(
+    @Session() session: UserSession,
+    @UploadedFile() file: Express.Multer.File,
+    @Body("type") type: string,
+  ) {
+    return this.dealerService.uploadProfileImage(session, type, file);
   }
 
   @Get("vehicles")
@@ -47,7 +78,7 @@ export class DealerController {
   @Post("vehicles")
   createVehicle(
     @Session() session: UserSession,
-    @Body() body: CreateVehicleDto,
+    @Body(new ZodValidationPipe(createVehicleSchema)) body: VehicleCreateInput,
   ) {
     return this.dealerService.createVehicle(session, body);
   }
@@ -61,7 +92,7 @@ export class DealerController {
   updateVehicle(
     @Session() session: UserSession,
     @Param("id") id: string,
-    @Body() body: UpdateVehicleDto,
+    @Body(new ZodValidationPipe(updateVehicleSchema)) body: VehicleUpdateInput,
   ) {
     return this.dealerService.updateVehicle(session, id, body);
   }

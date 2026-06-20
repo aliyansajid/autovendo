@@ -642,7 +642,9 @@
     "contactPersonMinLength": "Contact person must be at least 3 characters long",
     "contactPersonMaxLength": "Contact person must be maximum 50 characters long",
     "phoneRequired": "Phone number is required",
-    "invalidPhoneFormat": "Invalid Swiss phone number format"
+    "invalidPhoneFormat": "Invalid Swiss phone number format",
+    "invalidZipCode": "Please enter a valid 4-digit postal code",
+    "invalidCity": "Please select a valid city"
   },
   "VehicleSchema": {
     "negativeError": "Value cannot be negative",
@@ -685,7 +687,17 @@
     "versionTooLong": "Version must be 100 characters or less",
     "invalidVin": "Invalid VIN format",
     "serialNumberTooLong": "Serial number must be 100 characters or less",
-    "typeApprovalTooLong": "Type approval must be 100 characters or less"
+    "typeApprovalTooLong": "Type approval must be 100 characters or less",
+    "phoneRequired": "Phone number is required",
+    "invalidPhoneFormat": "Invalid phone format",
+    "addressRequired": "Address is required",
+    "addressMinLength": "Address must be at least 5 characters",
+    "addressMaxLength": "Address must be at most 100 characters",
+    "zipRequired": "Postal code is required",
+    "invalidZipCode": "Please enter a valid 4-digit postal code",
+    "cityRequired": "City is required",
+    "invalidCity": "Please select a valid city",
+    "companyNameTooLong": "Company name must be at most 50 characters"
   },
   "Common": {
     "errorDefault": "An error occurred. Please try again.",

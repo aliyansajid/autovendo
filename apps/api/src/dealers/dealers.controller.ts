@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Param, Query, Body } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
-import { DealersService, DealersQueryDto, DealerVehiclesQueryDto, DealerContactDto } from "./dealers.service.js";
+import { DealersService, DealersQueryDto, DealerVehiclesQueryDto, DealerContactDto } from "./dealers.service";
 
 @Controller("dealers")
 @AllowAnonymous()
@@ -31,6 +32,7 @@ export class DealersController {
   }
 
   @Post(":id/contact")
+  @Throttle({ default: { ttl: 60_000, limit: 5 } })
   sendContactEmail(
     @Param("id") id: string,
     @Body() body: DealerContactDto,

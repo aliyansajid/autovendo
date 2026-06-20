@@ -161,20 +161,26 @@ export async function sendDealerContactEmailFromApi(
   }
 }
 
-export async function presignProfileUpload(data: {
-  type: "branding" | "profiles";
-  filename: string;
-  contentType: string;
-}): Promise<{ success: boolean; uploadUrl?: string; publicUrl?: string; error?: string }> {
-  const res = await fetch(`${API_BASE}/dealer/storage/presign-profile`, {
+// Uploads a dealer branding/profile image through the API (which stores it in R2)
+// and returns the public CDN URL. type: "branding" (logo/cover) or "profiles" (avatar).
+export async function uploadDealerProfileImage(
+  file: File,
+  type: "branding" | "profiles",
+): Promise<{ success: boolean; publicUrl?: string; error?: string }> {
+  const form = new FormData();
+  form.append("file", file);
+  form.append("type", type);
+  const res = await fetch(`${API_BASE}/dealer/profile/image`, {
     method: "POST",
     credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: form,
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) return { success: false, error: (body as { error?: string }).error };
-  return body;
+  const publicUrl =
+    (body as { publicUrl?: string }).publicUrl ??
+    (body as { data?: { publicUrl?: string } }).data?.publicUrl;
+  return { success: true, publicUrl };
 }
 
 export async function getDealerGoogleReviewsFromApi(

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { PrismaService } from "../prisma.service.js";
-import { Prisma } from "../generated/prisma/client.js";
+import { PrismaService } from "../prisma.service";
+import { Prisma } from "../generated/prisma/client";
 import React from "react";
 import { sendEmail, ListingContactEmail } from "../transactional";
 

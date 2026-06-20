@@ -464,11 +464,6 @@ export function VehicleForm({
         setUploadProgress(100);
         router.push("/dealer/vehicles");
       } catch (error) {
-        // eslint-disable-next-line turbo/no-undeclared-env-vars
-        if (process.env.NODE_ENV !== "production") {
-          console.error("Submission failed:", error);
-        }
-
         // Show specific message for validation errors, generic for system errors
         const isValidationError =
           error instanceof Error &&

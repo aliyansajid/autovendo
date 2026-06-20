@@ -642,7 +642,9 @@
     "contactPersonMinLength": "Kontaktperson muss mindestens 3 Zeichen lang sein",
     "contactPersonMaxLength": "Kontaktperson darf maximal 50 Zeichen lang sein",
     "phoneRequired": "Telefonnummer ist erforderlich",
-    "invalidPhoneFormat": "Ungültiges Schweizer Telefonnummer-Format"
+    "invalidPhoneFormat": "Ungültiges Schweizer Telefonnummer-Format",
+    "invalidZipCode": "Bitte eine gültige 4-stellige Postleitzahl eingeben",
+    "invalidCity": "Bitte eine gültige Stadt auswählen"
   },
   "VehicleSchema": {
     "negativeError": "Wert darf nicht negativ sein",
@@ -685,7 +687,17 @@
     "versionTooLong": "Version darf maximal 100 Zeichen lang sein",
     "invalidVin": "Ungültiges FIN-Format",
     "serialNumberTooLong": "Seriennummer darf maximal 100 Zeichen lang sein",
-    "typeApprovalTooLong": "Typgenehmigung darf maximal 100 Zeichen lang sein"
+    "typeApprovalTooLong": "Typgenehmigung darf maximal 100 Zeichen lang sein",
+    "phoneRequired": "Telefonnummer ist erforderlich",
+    "invalidPhoneFormat": "Ungültiges Telefonformat",
+    "addressRequired": "Adresse ist erforderlich",
+    "addressMinLength": "Adresse muss mindestens 5 Zeichen lang sein",
+    "addressMaxLength": "Adresse darf höchstens 100 Zeichen lang sein",
+    "zipRequired": "Postleitzahl ist erforderlich",
+    "invalidZipCode": "Bitte eine gültige 4-stellige Postleitzahl eingeben",
+    "cityRequired": "Stadt ist erforderlich",
+    "invalidCity": "Bitte eine gültige Stadt auswählen",
+    "companyNameTooLong": "Firmenname darf höchstens 50 Zeichen lang sein"
   },
   "Common": {
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",

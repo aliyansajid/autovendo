@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, HttpCode } from "@nestjs/common";
+import { Throttle } from "@nestjs/throttler";
 import {
   AllowAnonymous,
   OptionalAuth,
@@ -47,6 +48,7 @@ export class AppController {
 
   @Post("/contact")
   @AllowAnonymous()
+  @Throttle({ default: { ttl: 60_000, limit: 5 } })
   @HttpCode(200)
   async contact(
     @Body()

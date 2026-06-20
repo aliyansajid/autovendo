@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from "@nestjs/common";
 import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
-import { VehiclesService, VehiclesQueryDto } from "./vehicles.service.js";
+import { VehiclesService, VehiclesQueryDto } from "./vehicles.service";
 
 @Controller("vehicles")
 @AllowAnonymous()
