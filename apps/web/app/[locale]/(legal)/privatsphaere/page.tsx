@@ -35,7 +35,7 @@ export default function PrivatsphaereEinstellungenPage() {
                 optimieren und das Nutzungserlebnis zu verbessern.
               </p>
               <p>
-                Du entscheidest selbst, welche Datenverarbeitung du zulässt.
+                Sie entscheiden selbst, welche Datenverarbeitung Sie zulassen.
                 Nachfolgend erklären wir, welche Cookie-Kategorien wir einsetzen
                 und was sie bewirken.
               </p>
@@ -141,11 +141,11 @@ export default function PrivatsphaereEinstellungenPage() {
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Du kannst deine Einwilligung jederzeit anpassen oder widerrufen.
+                Sie können Ihre Einwilligung jederzeit anpassen oder widerrufen.
                 Änderungen werden sofort wirksam.
               </p>
               <p>
-                Die meisten Browser ermöglichen es dir, Cookies direkt in den
+                Die meisten Browser ermöglichen es Ihnen, Cookies direkt in den
                 Browser-Einstellungen zu verwalten, einzuschränken oder
                 vollständig zu deaktivieren.
               </p>

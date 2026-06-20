@@ -36,7 +36,7 @@ export default function InsertionsregelnPage() {
               gewährleisten.
             </p>
             <p className="font-semibold text-foreground">
-              Mit dem Erfassen und Veröffentlichen eines Inserats akzeptierst du
+              Mit dem Erfassen und Veröffentlichen eines Inserats akzeptieren Sie
               diese Regeln verbindlich.
             </p>
           </section>

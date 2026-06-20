@@ -40,7 +40,7 @@ export default function AGBPage() {
                 Autohändler und Garagen.
               </p>
               <p>
-                Mit der Nutzung der Plattform erklärst du dich mit diesen AGB
+                Mit der Nutzung der Plattform erklären Sie sich mit diesen AGB
                 einverstanden.
               </p>
             </div>
@@ -290,7 +290,7 @@ export default function AGBPage() {
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">12. Kontakt</h2>
             <p className="text-muted-foreground text-lg">
-              Bei Fragen zu diesen AGB oder zur Plattform kannst du uns
+              Bei Fragen zu diesen AGB oder zur Plattform können Sie uns
               jederzeit&nbsp;
               <Link
                 href="/contact"

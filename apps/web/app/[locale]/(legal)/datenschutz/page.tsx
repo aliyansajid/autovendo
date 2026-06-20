@@ -28,8 +28,8 @@ export default function PrivacyPage() {
           <section className="space-y-4">
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Der Schutz deiner persönlichen Daten ist uns wichtig. In dieser
-                Datenschutzerklärung informieren wir dich darüber, welche
+                Der Schutz Ihrer persönlichen Daten ist uns wichtig. In dieser
+                Datenschutzerklärung informieren wir Sie darüber, welche
                 personenbezogenen Daten bei der Nutzung von Autovendo.ch
                 erhoben, bearbeitet und gespeichert werden.
               </p>
@@ -64,8 +64,8 @@ export default function PrivacyPage() {
             </h2>
             <div className="space-y-4 text-muted-foreground text-lg">
               <p>
-                Wir bearbeiten personenbezogene Daten, die du uns selbst zur
-                Verfügung stellst oder die technisch notwendig sind, um die
+                Wir bearbeiten personenbezogene Daten, die Sie uns selbst zur
+                Verfügung stellen oder die technisch notwendig sind, um die
                 Plattform bereitzustellen.
               </p>
               <div className="space-y-2">
@@ -185,7 +185,7 @@ export default function PrivacyPage() {
                 </ul>
               </div>
               <p>
-                Du kannst Cookies in den Einstellungen deines Browsers jederzeit
+                Sie können Cookies in den Einstellungen Ihres Browsers jederzeit
                 einschränken oder deaktivieren.
               </p>
             </div>
@@ -227,20 +227,20 @@ export default function PrivacyPage() {
             <div className="space-y-4 text-muted-foreground text-lg">
               <div className="space-y-2">
                 <p className="font-semibold text-foreground">
-                  Du hast jederzeit das Recht:
+                  Sie haben jederzeit das Recht:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Auskunft über deine gespeicherten Daten zu erhalten</li>
+                  <li>Auskunft über Ihre gespeicherten Daten zu erhalten</li>
                   <li>unrichtige Daten berichtigen zu lassen</li>
                   <li>
-                    die Löschung deiner Daten zu verlangen, sofern keine
+                    die Löschung Ihrer Daten zu verlangen, sofern keine
                     gesetzliche Pflicht entgegensteht
                   </li>
                   <li>der Datenbearbeitung zu widersprechen</li>
                 </ul>
               </div>
               <p>
-                Anfragen kannst du jederzeit über die im Impressum angegebenen
+                Anfragen können Sie jederzeit über die im Impressum angegebenen
                 Kontaktdaten stellen.
               </p>
             </div>
@@ -269,13 +269,13 @@ export default function PrivacyPage() {
           <section className="space-y-4">
             <h2 className="text-xl md:text-2xl font-bold">10. Kontakt</h2>
             <p className="text-muted-foreground text-lg">
-              Bei Fragen zum Datenschutz oder zur Bearbeitung deiner
+              Bei Fragen zum Datenschutz oder zur Bearbeitung Ihrer
               personenbezogenen Daten&nbsp;
               <Link
                 href="/contact"
                 className="text-primary underline-offset-4 hover:underline"
               >
-                kontaktiere uns
+                kontaktieren Sie uns
               </Link>
               &nbsp;bitte direkt.
             </p>
