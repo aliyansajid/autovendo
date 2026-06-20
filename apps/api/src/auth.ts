@@ -16,6 +16,20 @@ import {
   ConfirmEmailChangeEmail,
 } from "./transactional";
 import { i18n } from "@better-auth/i18n";
+import { importPKCS8, SignJWT } from "jose";
+
+async function generateAppleClientSecret() {
+  const key = await importPKCS8(process.env.APPLE_PRIVATE_KEY!, "ES256");
+  const now = Math.floor(Date.now() / 1000);
+  return new SignJWT({})
+    .setProtectedHeader({ alg: "ES256", kid: process.env.APPLE_KEY_ID! })
+    .setIssuer(process.env.APPLE_TEAM_ID!)
+    .setSubject(process.env.APPLE_CLIENT_ID!)
+    .setAudience("https://appleid.apple.com")
+    .setIssuedAt(now)
+    .setExpirationTime(now + 180 * 24 * 60 * 60)
+    .sign(key);
+}
 
 const pgAdapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -121,6 +135,22 @@ export const auth = betterAuth({
         });
       },
     },
+  },
+
+  socialProviders: {
+    google: {
+      clientId: [
+        process.env.GOOGLE_WEB_CLIENT_ID as string,
+        process.env.GOOGLE_IOS_CLIENT_ID as string,
+        process.env.GOOGLE_ANDROID_CLIENT_ID as string,
+      ],
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+    apple: async () => ({
+      clientId: process.env.APPLE_CLIENT_ID as string,
+      clientSecret: await generateAppleClientSecret(),
+      appBundleIdentifier: process.env.APPLE_APP_BUNDLE_IDENTIFIER as string,
+    }),
   },
 
   trustedOrigins: [
