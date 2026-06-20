@@ -21,7 +21,7 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { createResetPasswordSchema } from "@/schema/auth-schema";
 import { useTranslations } from "next-intl";
 
@@ -30,6 +30,7 @@ export const ResetPasswordForm = () => {
   const tSchema = useTranslations("AuthSchema");
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const resetPasswordSchema = useMemo(
@@ -63,6 +64,7 @@ export const ResetPasswordForm = () => {
       }
 
       toast.success(t("successReset"));
+      router.push("/login");
     });
   }
 

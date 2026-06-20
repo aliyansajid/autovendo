@@ -13,6 +13,8 @@
     "alreadyHaveAccount": "Hai già un account?",
     "login": "Accedi",
     "errorDefault": "Si è verificato un errore. Riprovi.",
+    "appleButton": "Continua con Apple",
+    "googleButton": "Continua con Google",
     "verifyTitle": "Controlla la tua email",
     "verifyDescription": "Abbiamo inviato un link di verifica a {email}. Cliccalo per attivare il tuo account.",
     "resend": "Invia di nuovo l'email di verifica",
@@ -31,7 +33,9 @@
     "submit": "Accedi",
     "noAccount": "Non hai un account?",
     "signup": "Registrati",
-    "errorDefault": "Si è verificato un errore. Riprovi."
+    "errorDefault": "Si è verificato un errore. Riprovi.",
+    "appleButton": "Continua con Apple",
+    "googleButton": "Continua con Google"
   },
   "ForgotPasswordForm": {
     "title": "Password dimenticata",

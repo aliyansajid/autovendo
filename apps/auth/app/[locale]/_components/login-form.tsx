@@ -8,7 +8,12 @@ import {
   CardDescription,
   CardContent,
 } from "@repo/ui/components/card";
-import { FieldGroup, Field, FieldDescription } from "@repo/ui/components/field";
+import {
+  FieldGroup,
+  Field,
+  FieldDescription,
+  FieldSeparator,
+} from "@repo/ui/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,9 +23,9 @@ import {
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
 import { Spinner } from "@repo/ui/components/spinner";
-import { signIn } from "@/lib/auth-client";
+import { signIn, signInSocial } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { useTransition, useMemo } from "react";
+import { useTransition, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createLoginSchema } from "@/schema/auth-schema";
 import { useTranslations, useLocale } from "next-intl";
@@ -34,6 +39,7 @@ export const LoginForm = () => {
     searchParams.get("callbackUrl") ||
     `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
+  const [socialPending, setSocialPending] = useState<"google" | "apple" | null>(null);
 
   const loginSchema = useMemo(() => createLoginSchema(tSchema), [tSchema]);
 
@@ -45,6 +51,17 @@ export const LoginForm = () => {
       rememberme: false,
     },
   });
+
+  async function handleSocialSignIn(provider: "google" | "apple") {
+    setSocialPending(provider);
+    const { url, error } = await signInSocial({ provider, callbackURL: callbackUrl });
+    if (error || !url) {
+      toast.error(t("errorDefault"));
+      setSocialPending(null);
+      return;
+    }
+    window.location.href = url;
+  }
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
     startTransition(async () => {
@@ -73,6 +90,65 @@ export const LoginForm = () => {
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
+            <Field>
+              <Button
+                variant="outline"
+                type="button"
+                className="w-full"
+                disabled={!!socialPending || isPending}
+                onClick={() => handleSocialSignIn("apple")}
+              >
+                {socialPending === "apple" ? (
+                  <Spinner />
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                      d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"
+                      fill="currentColor"
+                    />
+                  </svg>
+                )}
+                {t("appleButton")}
+              </Button>
+              <Button
+                variant="outline"
+                type="button"
+                className="w-full"
+                disabled={!!socialPending || isPending}
+                onClick={() => handleSocialSignIn("google")}
+              >
+                {socialPending === "google" ? (
+                  <Spinner />
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="-3 0 262 262"
+                    preserveAspectRatio="xMidYMid"
+                  >
+                    <path
+                      d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                      fill="#4285F4"
+                    />
+                    <path
+                      d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
+                      fill="#34A853"
+                    />
+                    <path
+                      d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
+                      fill="#FBBC05"
+                    />
+                    <path
+                      d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                      fill="#EB4335"
+                    />
+                  </svg>
+                )}
+                {t("googleButton")}
+              </Button>
+            </Field>
+            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+              Or continue with
+            </FieldSeparator>
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}

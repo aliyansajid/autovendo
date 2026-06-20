@@ -13,6 +13,8 @@
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "login": "Se connecter",
     "errorDefault": "Une erreur est survenue. Veuillez réessayer.",
+    "appleButton": "Continuer avec Apple",
+    "googleButton": "Continuer avec Google",
     "verifyTitle": "Vérifiez votre e-mail",
     "verifyDescription": "Nous avons envoyé un lien de vérification à {email}. Cliquez dessus pour activer votre compte.",
     "resend": "Renvoyer l'e-mail de vérification",
@@ -31,7 +33,9 @@
     "submit": "Se connecter",
     "noAccount": "Vous n'avez pas de compte ?",
     "signup": "S'inscrire",
-    "errorDefault": "Une erreur est survenue. Veuillez réessayer."
+    "errorDefault": "Une erreur est survenue. Veuillez réessayer.",
+    "appleButton": "Continuer avec Apple",
+    "googleButton": "Continuer avec Google"
   },
   "ForgotPasswordForm": {
     "title": "Mot de passe oublié",

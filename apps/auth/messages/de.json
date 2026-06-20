@@ -13,6 +13,8 @@
     "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
     "login": "Anmelden",
     "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "appleButton": "Weiter mit Apple",
+    "googleButton": "Weiter mit Google",
     "verifyTitle": "Überprüfen Sie Ihre E-Mail",
     "verifyDescription": "Wir haben einen Bestätigungslink an {email} gesendet. Klicken Sie darauf, um Ihr Konto zu aktivieren.",
     "resend": "Bestätigungs-E-Mail erneut senden",
@@ -31,7 +33,9 @@
     "submit": "Anmelden",
     "noAccount": "Noch kein Konto?",
     "signup": "Registrieren",
-    "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    "errorDefault": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "appleButton": "Weiter mit Apple",
+    "googleButton": "Weiter mit Google"
   },
   "ForgotPasswordForm": {
     "title": "Passwort vergessen",

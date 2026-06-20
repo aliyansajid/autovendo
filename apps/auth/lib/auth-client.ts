@@ -38,3 +38,18 @@ export const requestPasswordReset = (params: {
 
 export const resetPassword = (params: { newPassword: string; token: string }) =>
   authFetch("/reset-password", params);
+
+export const signInSocial = async (params: {
+  provider: "google" | "apple";
+  callbackURL: string;
+}) => {
+  const res = await fetch(`${API}/api/auth/sign-in/social`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(params),
+  });
+  const json = await res.json();
+  if (!res.ok) return { url: null, error: json as { message?: string } };
+  return { url: json.url as string, error: null };
+};

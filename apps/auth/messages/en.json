@@ -13,6 +13,8 @@
     "alreadyHaveAccount": "Already have an account?",
     "login": "Sign in",
     "errorDefault": "An error occurred. Please try again.",
+    "appleButton": "Continue with Apple",
+    "googleButton": "Continue with Google",
     "verifyTitle": "Check your email",
     "verifyDescription": "We sent a verification link to {email}. Click it to activate your account.",
     "resend": "Resend verification email",
@@ -31,7 +33,9 @@
     "submit": "Sign in",
     "noAccount": "Don't have an account?",
     "signup": "Sign up",
-    "errorDefault": "An error occurred. Please try again."
+    "errorDefault": "An error occurred. Please try again.",
+    "appleButton": "Continue with Apple",
+    "googleButton": "Continue with Google"
   },
   "ForgotPasswordForm": {
     "title": "Forgot password",
