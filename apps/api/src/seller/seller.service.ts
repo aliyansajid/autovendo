@@ -272,7 +272,7 @@ export class SellerService {
 
     const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
-      select: { id: true, sellerId: true },
+      select: { id: true, sellerId: true, listingPaidAt: true, stripeSubscriptionId: true, status: true },
     });
 
     if (!vehicle) {
@@ -283,9 +283,26 @@ export class SellerService {
       throw new ForbiddenException("This vehicle does not belong to you");
     }
 
+    const raw = body as Record<string, unknown>;
+
+    // VIN is locked once the listing has been paid — prevents swapping vehicles under one plan
+    if (vehicle.listingPaidAt && "vin" in raw && raw.vin !== undefined) {
+      throw new ForbiddenException("VIN cannot be changed after the listing has been published");
+    }
+
+    const sanitized = sanitizeVehicleData(raw);
+
+    // Cancel Stripe subscription when seller marks vehicle as sold
+    if (sanitized.status === "SOLD" && vehicle.stripeSubscriptionId) {
+      try {
+        const stripe = await getStripe();
+        if (stripe) await stripe.subscriptions.cancel(vehicle.stripeSubscriptionId);
+      } catch { /* subscription may already be cancelled */ }
+    }
+
     const updated = await this.prisma.vehicle.update({
       where: { id },
-      data: sanitizeVehicleData(body as Record<string, unknown>) as never,
+      data: sanitized as never,
     });
 
     return { data: updated };
@@ -296,7 +313,7 @@ export class SellerService {
 
     const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
-      select: { id: true, sellerId: true },
+      select: { id: true, sellerId: true, stripeSubscriptionId: true },
     });
 
     if (!vehicle) {
@@ -305,6 +322,14 @@ export class SellerService {
 
     if (vehicle.sellerId !== seller.id) {
       throw new ForbiddenException("This vehicle does not belong to you");
+    }
+
+    // Cancel active subscription so seller is not charged after deletion
+    if (vehicle.stripeSubscriptionId) {
+      try {
+        const stripe = await getStripe();
+        if (stripe) await stripe.subscriptions.cancel(vehicle.stripeSubscriptionId);
+      } catch { /* subscription may already be cancelled */ }
     }
 
     await this.prisma.vehicle.delete({ where: { id } });
@@ -383,12 +408,9 @@ export class SellerService {
     if (vehicle.sellerId !== seller.id)
       throw new ForbiddenException("Vehicle does not belong to you");
 
-    const PLAN_PRICES: Record<string, number> = {
-      standard: 1900,   // CHF 19.00 in cents
-      best_value: 4900, // CHF 49.00 in cents
-    };
-    const amount = PLAN_PRICES[body.planId];
-    if (!amount) throw new BadRequestException("Invalid plan");
+    if (!["standard", "best_value"].includes(body.planId)) {
+      throw new BadRequestException("Invalid plan");
+    }
 
     const user = await this.prisma.user.findUnique({
       where: { id: session.user.id },
@@ -398,30 +420,45 @@ export class SellerService {
     const baseUrl =
       process.env.NEXT_PUBLIC_SELLER_URL ?? "https://seller.autovendo.ch";
 
-    const checkoutSession = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
+    const commonParams = {
       customer: user?.stripeCustomerId ?? undefined,
       customer_email: !user?.stripeCustomerId ? user?.email : undefined,
-      line_items: [
-        {
-          price_data: {
-            currency: "chf",
-            unit_amount: amount,
-            product_data: {
-              name:
-                body.planId === "best_value"
-                  ? "AutoVendo Best Value Listing"
-                  : "AutoVendo Standard Listing",
-            },
-          },
-          quantity: 1,
-        },
-      ],
       metadata: { vehicleId: body.vehicleId, planId: body.planId },
       success_url: `${baseUrl}/${body.locale}/dashboard/vehicles?listing=success`,
       cancel_url: `${baseUrl}/${body.locale}/dashboard/vehicles/${body.vehicleId}`,
-    });
+    };
+
+    let checkoutSession: Awaited<ReturnType<typeof stripe.checkout.sessions.create>>;
+
+    if (body.planId === "standard") {
+      // Recurring monthly subscription — CHF 19/month
+      const standardPriceId = process.env.STRIPE_LISTING_STANDARD_PRICE_ID;
+      if (!standardPriceId) throw new BadRequestException("Standard price not configured");
+
+      checkoutSession = await stripe.checkout.sessions.create({
+        ...commonParams,
+        mode: "subscription",
+        payment_method_types: ["card"],
+        line_items: [{ price: standardPriceId, quantity: 1 }],
+      });
+    } else {
+      // One-time payment — CHF 49, listed until sold
+      checkoutSession = await stripe.checkout.sessions.create({
+        ...commonParams,
+        mode: "payment",
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            price_data: {
+              currency: "chf",
+              unit_amount: 4900,
+              product_data: { name: "AutoVendo Best Value Listing" },
+            },
+            quantity: 1,
+          },
+        ],
+      });
+    }
 
     await this.prisma.vehicle.update({
       where: { id: body.vehicleId },
@@ -458,22 +495,54 @@ export class SellerService {
       });
 
       // Idempotency: skip if already processed
-      if (vehicle?.stripeSessionId === stripeSession.id) return { received: true };
+      if (vehicle?.stripeSessionId === stripeSession.id && vehicle?.stripeSessionId) {
+        return { received: true };
+      }
 
       const now = new Date();
-      const expiresAt = new Date(now);
-      expiresAt.setDate(expiresAt.getDate() + (planId === "best_value" ? 90 : 30));
 
-      await this.prisma.vehicle.update({
-        where: { id: vehicleId },
-        data: {
-          status: "PUBLISHED",
-          listingPlan: planId,
-          listingPaidAt: now,
-          listingExpiresAt: expiresAt,
-          stripeSessionId: stripeSession.id,
-        },
+      if (planId === "standard") {
+        // Subscription — no expiry, store subscription ID
+        await this.prisma.vehicle.update({
+          where: { id: vehicleId },
+          data: {
+            status: "PUBLISHED",
+            listingPlan: planId,
+            listingPaidAt: now,
+            listingExpiresAt: null,
+            stripeSessionId: stripeSession.id,
+            stripeSubscriptionId: stripeSession.subscription as string ?? null,
+          },
+        });
+      } else {
+        // Best Value one-time payment — no expiry, listed until sold
+        await this.prisma.vehicle.update({
+          where: { id: vehicleId },
+          data: {
+            status: "PUBLISHED",
+            listingPlan: planId,
+            listingPaidAt: now,
+            listingExpiresAt: null,
+            stripeSessionId: stripeSession.id,
+          },
+        });
+      }
+    }
+
+    // Standard plan subscription cancelled — unpublish the vehicle
+    if (event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object;
+      const vehicle = await this.prisma.vehicle.findUnique({
+        where: { stripeSubscriptionId: subscription.id },
+        select: { id: true, status: true },
       });
+
+      if (vehicle && !["SOLD", "ARCHIVED", "BANNED"].includes(vehicle.status)) {
+        await this.prisma.vehicle.update({
+          where: { id: vehicle.id },
+          data: { status: "DRAFT", stripeSubscriptionId: null },
+        });
+      }
     }
 
     return { received: true };

@@ -419,10 +419,11 @@ model Vehicle {
   images String[]
 
   // Solo listing payment
-  listingPlan      String?
-  listingPaidAt    DateTime?
-  listingExpiresAt DateTime?
-  stripeSessionId  String?   @unique
+  listingPlan             String?
+  listingPaidAt           DateTime?
+  listingExpiresAt        DateTime?
+  stripeSessionId         String?   @unique
+  stripeSubscriptionId    String?   @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
