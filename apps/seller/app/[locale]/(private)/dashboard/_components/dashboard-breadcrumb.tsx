@@ -12,30 +12,29 @@ import {
 
 import { useTranslations } from "next-intl";
 
-/**
- * Dynamic Dashboard Breadcrumb Component
- * 
- * Automatically generates breadcrumb trails based on the current URL path.
- * - Root is always localized "Dashboard"
- * - Segments are translated using the "DashboardBreadcrumb" translation namespace
- */
 export function DashboardBreadcrumb() {
   const t = useTranslations("DashboardBreadcrumb");
   const pathname = usePathname();
-  
-  // Split the path into segments and remove empty strings
-  // Example: /en/dashboard/vehicles -> ["dashboard", "vehicles"]
-  const segments = pathname.split("/").filter(Boolean);
 
-  // Detect if the last segment is a vehicle ID (edit page) rather than a named route
-  const lastSegment = segments[segments.length - 1];
-  const secondLastSegment = segments[segments.length - 2];
+  // Drop the locale prefix (first segment) so we always start at "dashboard"
+  const segments = pathname.split("/").filter(Boolean);
+  const dashboardIndex = segments.indexOf("dashboard");
+  const relativeSegments = dashboardIndex >= 0 ? segments.slice(dashboardIndex) : segments;
+  // e.g. /en/dashboard/settings/profile -> ["dashboard", "settings", "profile"]
+
+  const lastSegment = relativeSegments[relativeSegments.length - 1];
+  const secondLastSegment = relativeSegments[relativeSegments.length - 2];
   const isVehicleEditPage =
     secondLastSegment === "vehicles" && lastSegment !== "new";
 
-  const pageLabel = isVehicleEditPage
-    ? t("edit")
-    : t(lastSegment as Parameters<typeof t>[0]);
+  // Build intermediate crumbs (everything between "dashboard" and the last segment)
+  // For /dashboard/settings/profile we want: Dashboard > Settings > Profile
+  const middleSegments = relativeSegments.slice(1, -1); // excludes "dashboard" and last
+
+  const labelFor = (seg: string) =>
+    t(seg as Parameters<typeof t>[0]);
+
+  const lastLabel = isVehicleEditPage ? t("edit") : labelFor(lastSegment ?? "");
 
   return (
     <Breadcrumb>
@@ -45,11 +44,23 @@ export function DashboardBreadcrumb() {
             <Link href="/dashboard">{t("dashboard")}</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        {segments.length > 1 && (
+
+        {middleSegments.map((seg) => (
+          <span key={seg} className="hidden md:contents">
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href={`/dashboard/${seg}`}>{labelFor(seg)}</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </span>
+        ))}
+
+        {relativeSegments.length > 1 && (
           <>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
-              <BreadcrumbPage>{pageLabel}</BreadcrumbPage>
+              <BreadcrumbPage>{lastLabel}</BreadcrumbPage>
             </BreadcrumbItem>
           </>
         )}

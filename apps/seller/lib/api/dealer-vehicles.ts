@@ -108,13 +108,6 @@ export async function apiUpdateVehicleStatus(id: string, status: string) {
   return res.json();
 }
 
-export async function apiGetPresignedUrls(
-  _listingId: string,
-  _files: { name: string; type: string }[],
-): Promise<{ url: string; key: string }[]> {
-  return [];
-}
-
 export async function apiUploadImages(files: File[]): Promise<string[]> {
   const formData = new FormData();
   files.forEach((f) => formData.append("files", f));
@@ -128,6 +121,49 @@ export async function apiUploadImages(files: File[]): Promise<string[]> {
   return data.map((d) => d.key);
 }
 
+export function apiUploadImagesWithProgress(
+  files: File[],
+  onProgress: (pct: number) => void,
+  signal?: AbortSignal,
+): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    files.forEach((f) => formData.append("files", f));
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${API_BASE}/upload`);
+    xhr.withCredentials = true;
+
+    if (signal) {
+      signal.addEventListener("abort", () => {
+        xhr.abort();
+        reject(new Error("Upload aborted"));
+      });
+    }
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress((e.loaded / e.total) * 100);
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data: { key: string }[] = JSON.parse(xhr.responseText);
+          resolve(data.map((d) => d.key));
+        } catch {
+          reject(new Error("Failed to parse upload response"));
+        }
+      } else {
+        reject(new Error("Failed to upload images"));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error("Failed to upload images"));
+    xhr.send(formData);
+  });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function apiCleanupImages(_keys: string[]): Promise<void> {
-  // TODO: implement when storage cleanup endpoint is added
+  // No-op: storage cleanup is handled server-side on vehicle delete/update
 }

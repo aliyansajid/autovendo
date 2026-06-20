@@ -1547,7 +1547,8 @@
     "subscription": "Subscription",
     "billing": "Billing",
     "new": "New Listing",
-    "change-password": "Change Password"
+    "change-password": "Change Password",
+    "edit": "Edit"
   },
   "Unauthorized": {
     "title": "Access Denied",
@@ -1625,7 +1626,9 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "deleteSuccess": "Listing deleted successfully!",
-    "deleteError": "Error deleting listing."
+    "deleteError": "Error deleting listing.",
+    "noSearchResults": "No results found",
+    "noSearchResultsHint": "Try different search terms."
   },
   "VehicleDetail": {
     "transmission": "Transmission",
@@ -1761,11 +1764,13 @@
     "uploadStatusGettingUrls": "Getting upload permissions...",
     "uploadStatusUploading": "Uploading images...",
     "uploadStatusSaving": "Saving data...",
+    "uploadStatusRedirecting": "Redirecting to payment...",
     "uploadDoNotClose": "Please do not close this window until the process is complete.",
     "errorUploadPrep": "Error preparing upload",
     "errorUploadFailed": "Upload failed for {filename}",
     "errorLimitReached": "Limit reached: Your current subscription does not allow more vehicles.",
     "errorGeneric": "Something went wrong. Please check your internet connection and try again.",
+    "errorNoPlan": "Please select a listing plan.",
     "publicationStatusTitle": "Publication Status",
     "statusLabel": "Status",
     "statusPlaceholder": "Select status",

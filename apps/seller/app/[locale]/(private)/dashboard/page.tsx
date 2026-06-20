@@ -237,8 +237,8 @@ export default async function DashboardPage(props: {
               <p className="text-xs text-muted-foreground leading-relaxed">
                 {t("helpDesc")}
               </p>
-              <Button variant="link" size="sm" className="text-primary">
-                {t("contactSupport")}
+              <Button variant="link" size="sm" className="text-primary" asChild>
+                <a href="mailto:support@autovendo.ch">{t("contactSupport")}</a>
               </Button>
             </CardContent>
           </Card>

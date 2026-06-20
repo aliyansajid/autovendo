@@ -1550,7 +1550,8 @@
     "subscription": "Abonnement",
     "billing": "Facturation",
     "new": "Nouvelle Annonce",
-    "change-password": "Changer le Mot de Passe"
+    "change-password": "Changer le Mot de Passe",
+    "edit": "Modifier"
   },
   "Unauthorized": {
     "title": "Accès Refusé",
@@ -1628,7 +1629,9 @@
     "cancel": "Annuler",
     "delete": "Supprimer",
     "deleteSuccess": "Annonce supprimée avec succès !",
-    "deleteError": "Erreur lors de la suppression de l'annonce."
+    "deleteError": "Erreur lors de la suppression de l'annonce.",
+    "noSearchResults": "Aucun résultat trouvé",
+    "noSearchResultsHint": "Essayez d'autres termes de recherche."
   },
   "VehicleDetail": {
     "transmission": "Transmission",
@@ -1764,11 +1767,13 @@
     "uploadStatusGettingUrls": "Obtention des autorisations d'upload...",
     "uploadStatusUploading": "Téléchargement des images...",
     "uploadStatusSaving": "Enregistrement des données...",
+    "uploadStatusRedirecting": "Redirection vers le paiement...",
     "uploadDoNotClose": "Veuillez ne pas fermer cette fenêtre tant que le processus n'est pas terminé.",
     "errorUploadPrep": "Erreur lors de la préparation du téléchargement",
     "errorUploadFailed": "Échec du téléchargement pour {filename}",
     "errorLimitReached": "Limite atteinte : votre abonnement actuel ne permet pas d'ajouter plus de véhicules.",
     "errorGeneric": "Une erreur s'est produite. Veuillez vérifier votre connexion Internet et réessayer.",
+    "errorNoPlan": "Veuillez sélectionner un forfait d'annonce.",
     "publicationStatusTitle": "État de la publication",
     "statusLabel": "Statut",
     "statusPlaceholder": "Choisir le statut",

@@ -1557,7 +1557,8 @@
     "subscription": "Abonnement",
     "billing": "Abrechnung",
     "new": "Neues Inserat",
-    "change-password": "Passwort ändern"
+    "change-password": "Passwort ändern",
+    "edit": "Bearbeiten"
   },
   "Unauthorized": {
     "title": "Zugriff verweigert",
@@ -1635,7 +1636,9 @@
     "cancel": "Abbrechen",
     "delete": "Löschen",
     "deleteSuccess": "Inserat erfolgreich gelöscht!",
-    "deleteError": "Fehler beim Löschen des Inserats."
+    "deleteError": "Fehler beim Löschen des Inserats.",
+    "noSearchResults": "Keine Ergebnisse gefunden",
+    "noSearchResultsHint": "Versuchen Sie es mit anderen Suchbegriffen."
   },
   "VehicleDetail": {
     "transmission": "Getriebe",
@@ -1771,11 +1774,13 @@
     "uploadStatusGettingUrls": "Upload-Berechtigungen abrufen...",
     "uploadStatusUploading": "Bilder hochladen...",
     "uploadStatusSaving": "Daten speichern...",
+    "uploadStatusRedirecting": "Weiterleitung zur Zahlung...",
     "uploadDoNotClose": "Bitte schließe dieses Fenster nicht, bis der Vorgang abgeschlossen ist.",
     "errorUploadPrep": "Fehler bei der Upload-Vorbereitung",
     "errorUploadFailed": "Upload fehlgeschlagen für {filename}",
     "errorLimitReached": "Limit erreicht: Ihr aktuelles Abo erlaubt keine weiteren Fahrzeuge.",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+    "errorNoPlan": "Bitte wählen Sie ein Inserat-Paket aus.",
     "publicationStatusTitle": "Veröffentlichungsstatus",
     "statusLabel": "Status",
     "statusPlaceholder": "Status wählen",

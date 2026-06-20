@@ -148,6 +148,15 @@ export function VehicleList({
         </InputGroupAddon>
       </InputGroup>
 
+      {filteredVehicles.length === 0 ? (
+        <div className="text-center py-16 border-2 border-dashed rounded-lg bg-muted/20">
+          <Search className="size-8 mx-auto text-muted-foreground/30 mb-3" />
+          <p className="text-sm font-medium">{t("noSearchResults")}</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {t("noSearchResultsHint")}
+          </p>
+        </div>
+      ) : (
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -230,6 +239,7 @@ export function VehicleList({
           </TableBody>
         </Table>
       </div>
+      )}
     </div>
   );
 }
@@ -246,6 +256,7 @@ function VehicleActions({
   subscriptionStatus?: SubscriptionStatus;
 }) {
   const [isPending, startTransition] = useTransition();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleStatusUpdate = (newStatus: string) => {
     startTransition(async () => {
@@ -342,7 +353,10 @@ function VehicleActions({
                 <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                 <AlertDialogAction
                   variant="destructive"
+                  disabled={isDeleting}
                   onClick={async () => {
+                    if (isDeleting) return;
+                    setIsDeleting(true);
                     try {
                       const imageKeys = vehicle.images ?? [];
                       await apiDeleteVehicle(vehicle.id);
@@ -351,6 +365,7 @@ function VehicleActions({
                       router.refresh();
                     } catch {
                       toast.error(t("deleteError"));
+                      setIsDeleting(false);
                     }
                   }}
                 >

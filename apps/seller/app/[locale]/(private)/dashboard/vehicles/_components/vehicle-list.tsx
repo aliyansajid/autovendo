@@ -142,6 +142,15 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
         </InputGroupAddon>
       </InputGroup>
 
+      {filteredVehicles.length === 0 ? (
+        <div className="text-center py-16 border-2 border-dashed rounded-lg bg-muted/20">
+          <Search className="size-8 mx-auto text-muted-foreground/30 mb-3" />
+          <p className="text-sm font-medium">{t("noSearchResults")}</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {t("noSearchResultsHint")}
+          </p>
+        </div>
+      ) : (
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -219,6 +228,7 @@ export function VehicleList({ vehicles }: { vehicles: Vehicle[] }) {
           </TableBody>
         </Table>
       </div>
+      )}
     </div>
   );
 }
@@ -235,6 +245,7 @@ function VehicleActions({
   locale: string;
 }) {
   const [isPending, startTransition] = useTransition();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleStatusUpdate = (newStatus: "DRAFT" | "SOLD") => {
     startTransition(async () => {
@@ -343,13 +354,17 @@ function VehicleActions({
                 <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                 <AlertDialogAction
                   variant="destructive"
+                  disabled={isDeleting}
                   onClick={async () => {
+                    if (isDeleting) return;
+                    setIsDeleting(true);
                     try {
                       await apiDeleteVehicle(vehicle.id);
                       toast.success(t("deleteSuccess"));
                       router.refresh();
                     } catch {
                       toast.error(t("deleteError"));
+                      setIsDeleting(false);
                     }
                   }}
                 >

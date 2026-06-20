@@ -7,8 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@repo/ui/lib/utils";
 import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
 import {
-  apiPrepareListing,
-  apiUploadImages,
+  apiUploadImagesWithProgress,
   apiCreateVehicle,
   apiUpdateVehicle,
   apiCreateListingCheckout,
@@ -75,7 +74,7 @@ export function VehicleForm({
   const params = useParams();
   const locale = (params.locale as string) || "de";
 
-  const [, startTransition] = useTransition();
+  const [, startTransition] = useTransition(); // used only to defer the async work off the main thread
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 5;
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -225,28 +224,6 @@ export function VehicleForm({
 
 
 
-  const uploadWithRetry = async (url: string, file: File, onProgress?: (p: number) => void, signal?: AbortSignal, retries = 3) => {
-    for (let i = 0; i < retries; i++) {
-      if (signal?.aborted) throw new Error("Upload aborted");
-      try {
-        return await new Promise((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
-          xhr.open("PUT", url);
-          xhr.setRequestHeader("Content-Type", file.type);
-          if (signal) signal.addEventListener("abort", () => { xhr.abort(); reject(new Error("Upload aborted")); });
-          if (xhr.upload && onProgress) xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress((e.loaded / e.total) * 100); };
-          xhr.onload = () => { if (xhr.status >= 200 && xhr.status < 300) resolve(true); else reject(new Error("Failed")); };
-          xhr.onerror = () => reject(new Error("Failed"));
-          xhr.send(file);
-        });
-      } catch (e) {
-        if (i === retries - 1) throw e;
-        await new Promise(r => setTimeout(r, 1000 * 2**i));
-      }
-    }
-    return false;
-  };
-
   async function onSubmit(data: any) {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -255,9 +232,7 @@ export function VehicleForm({
       const signal = abortControllerRef.current.signal;
       try {
         setUploadStatus(t("uploadStatusPreparing"));
-        setUploadProgress(10);
-        const { listingId } = await apiPrepareListing(vehicleId);
-        void listingId;
+        setUploadProgress(0);
         const images = data.images || [];
         const newFiles = images.filter((img: any) => img instanceof File);
         const existingKeys = images.filter((img: any) => typeof img === "string");
@@ -265,13 +240,18 @@ export function VehicleForm({
 
         if (newFiles.length > 0) {
           setUploadStatus(t("uploadStatusUploading"));
-          setUploadProgress(50);
-          const uploadedKeys = await apiUploadImages(newFiles);
+          setUploadProgress(10);
+          const uploadedKeys = await apiUploadImagesWithProgress(
+            newFiles,
+            (pct) => setUploadProgress(10 + pct * 0.75), // maps 0–100% upload → 10–85% bar
+            signal,
+          );
           finalImageKeys = [...existingKeys, ...uploadedKeys];
         }
 
         setUploadStatus(t("uploadStatusSaving"));
-        setUploadProgress(95);
+        setUploadProgress(85);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { images: _images, ...submitData } = data;
 
         if (vehicleId) {
@@ -282,22 +262,26 @@ export function VehicleForm({
           } else {
             // Not paid — save as draft, then redirect to Stripe
             await apiUpdateVehicle(vehicleId, { ...submitData, status: "DRAFT" }, finalImageKeys);
-            const planId = data.planId || listingPlan || "standard";
-            if (!planId) throw new Error("No plan selected");
-            setUploadStatus("Redirecting to payment...");
+            const planId = data.planId || listingPlan;
+            if (!planId) throw new Error(t("errorNoPlan"));
+            setUploadStatus(t("uploadStatusRedirecting"));
+            setUploadProgress(95);
             const checkoutUrl = await apiCreateListingCheckout(vehicleId, planId as "standard" | "best_value", locale);
+            setUploadProgress(100);
             window.location.href = checkoutUrl;
             return;
           }
         } else {
-          const result = await apiCreateVehicle(listingId, submitData, finalImageKeys) as any;
+          const result = await apiCreateVehicle(submitData, finalImageKeys) as any;
           if (result && typeof result === "object" && "error" in result) throw new Error(result.error as string);
 
           const createdVehicleId = result?.data?.id ?? result?.id;
-          if (!createdVehicleId) throw new Error("Failed to get vehicle ID after creation");
-          if (!data.planId) throw new Error("No plan selected");
-          setUploadStatus("Redirecting to payment...");
+          if (!createdVehicleId) throw new Error(t("errorGeneric"));
+          if (!data.planId) throw new Error(t("errorNoPlan"));
+          setUploadStatus(t("uploadStatusRedirecting"));
+          setUploadProgress(95);
           const checkoutUrl = await apiCreateListingCheckout(createdVehicleId, data.planId, locale);
+          setUploadProgress(100);
           window.location.href = checkoutUrl;
           return;
         }

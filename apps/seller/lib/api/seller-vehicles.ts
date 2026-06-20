@@ -16,7 +16,6 @@ function clientFetch(path: string, init?: RequestInit) {
 // ─── Vehicle CRUD ─────────────────────────────────────────────────────────────
 
 export async function apiCreateVehicle(
-  _listingId: string,
   data: Record<string, unknown>,
   imageKeys: string[],
 ) {
@@ -87,32 +86,6 @@ export async function apiUpdateSellerProfile(
   }
 }
 
-// ─── Billing Portal ───────────────────────────────────────────────────────────
-
-export async function apiBillingPortal(
-  _returnUrl: string,
-): Promise<{ url: string } | null> {
-  try {
-    const res = await clientFetch("/seller/billing/portal", { method: "POST" });
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.data ?? null;
-  } catch {
-    return null;
-  }
-}
-
-export async function apiPrepareListing(_existingVehicleId?: string): Promise<{ listingId: string }> {
-  return { listingId: "" };
-}
-
-export async function apiGetPresignedUrls(
-  _listingId: string,
-  _files: { name: string; type: string }[],
-): Promise<{ url: string; key: string }[]> {
-  return [];
-}
-
 export async function apiUploadImages(files: File[]): Promise<string[]> {
   const formData = new FormData();
   files.forEach((f) => formData.append("files", f));
@@ -126,12 +99,46 @@ export async function apiUploadImages(files: File[]): Promise<string[]> {
   return data.map((d) => d.key);
 }
 
-export async function apiPublishOrPay(
-  _vehicleId: string,
-  _locale: string,
-): Promise<{ published: true } | { checkoutUrl: string }> {
-  // TODO: implement publish/pay flow
-  return { published: true };
+export function apiUploadImagesWithProgress(
+  files: File[],
+  onProgress: (pct: number) => void,
+  signal?: AbortSignal,
+): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    files.forEach((f) => formData.append("files", f));
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${API_BASE}/upload`);
+    xhr.withCredentials = true;
+
+    if (signal) {
+      signal.addEventListener("abort", () => {
+        xhr.abort();
+        reject(new Error("Upload aborted"));
+      });
+    }
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress((e.loaded / e.total) * 100);
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data: { key: string }[] = JSON.parse(xhr.responseText);
+          resolve(data.map((d) => d.key));
+        } catch {
+          reject(new Error("Failed to parse upload response"));
+        }
+      } else {
+        reject(new Error("Failed to upload images"));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error("Failed to upload images"));
+    xhr.send(formData);
+  });
 }
 
 export async function apiCreateListingCheckout(

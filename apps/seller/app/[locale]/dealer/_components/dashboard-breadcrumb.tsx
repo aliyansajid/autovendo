@@ -12,20 +12,26 @@ import {
 
 import { useTranslations } from "next-intl";
 
-/**
- * Dynamic Dashboard Breadcrumb Component
- * 
- * Automatically generates breadcrumb trails based on the current URL path.
- * - Root is always localized "Dashboard"
- * - Segments are translated using the "DashboardBreadcrumb" translation namespace
- */
 export function DashboardBreadcrumb() {
   const t = useTranslations("DashboardBreadcrumb");
   const pathname = usePathname();
-  
-  // Split the path into segments and remove empty strings
-  // Example: /en/dashboard/vehicles -> ["dashboard", "vehicles"]
+
   const segments = pathname.split("/").filter(Boolean);
+  const dealerIndex = segments.indexOf("dealer");
+  const relativeSegments = dealerIndex >= 0 ? segments.slice(dealerIndex) : segments;
+  // e.g. /en/dealer/settings/profile -> ["dealer", "settings", "profile"]
+
+  const lastSegment = relativeSegments[relativeSegments.length - 1];
+  const secondLastSegment = relativeSegments[relativeSegments.length - 2];
+  const isVehicleEditPage =
+    secondLastSegment === "vehicles" && lastSegment !== "new";
+
+  const middleSegments = relativeSegments.slice(1, -1);
+
+  const labelFor = (seg: string) =>
+    t(seg as Parameters<typeof t>[0]);
+
+  const lastLabel = isVehicleEditPage ? t("edit") : labelFor(lastSegment ?? "");
 
   return (
     <Breadcrumb>
@@ -35,13 +41,23 @@ export function DashboardBreadcrumb() {
             <Link href="/dealer">{t("dashboard")}</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-        {segments.length > 1 && (
+
+        {middleSegments.map((seg) => (
+          <span key={seg} className="hidden md:contents">
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href={`/dealer/${seg}`}>{labelFor(seg)}</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </span>
+        ))}
+
+        {relativeSegments.length > 1 && (
           <>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
-              <BreadcrumbPage>
-                {t(segments[segments.length - 1] as Parameters<typeof t>[0])}
-              </BreadcrumbPage>
+              <BreadcrumbPage>{lastLabel}</BreadcrumbPage>
             </BreadcrumbItem>
           </>
         )}

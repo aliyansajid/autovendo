@@ -59,7 +59,7 @@ import {
 } from "@repo/ui/components/card";
 import { EquipmentSection } from "./form-sections/equipment-section";
 import { type SubscriptionStatus } from "@/lib/api/vehicles";
-import { apiUploadImages, apiCleanupImages } from "@/lib/api/dealer-vehicles";
+import { apiUploadImagesWithProgress, apiCleanupImages } from "@/lib/api/dealer-vehicles";
 import { apiCreateVehicle, apiUpdateVehicle } from "@/lib/api/dealer-vehicles";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
@@ -409,72 +409,6 @@ export function VehicleForm({
     vehicleData.models as any;
   const activeBodyTypeEnum = vehicleData.bodyTypes;
 
-  const uploadWithRetry = async (
-    url: string,
-    file: File,
-    onProgress?: (progress: number) => void,
-    signal?: AbortSignal,
-    retries = 3,
-  ): Promise<boolean> => {
-    for (let i = 0; i < retries; i++) {
-      if (signal?.aborted) throw new Error("Upload aborted");
-
-      try {
-        return await new Promise((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
-          xhr.open("PUT", url);
-          xhr.setRequestHeader("Content-Type", file.type);
-
-          if (signal) {
-            signal.addEventListener("abort", () => {
-              xhr.abort();
-              reject(new Error("Upload aborted"));
-            });
-          }
-
-          if (xhr.upload && onProgress) {
-            xhr.upload.onprogress = (event) => {
-              if (event.lengthComputable) {
-                const percentComplete = (event.loaded / event.total) * 100;
-                onProgress(percentComplete);
-              }
-            };
-          }
-
-          xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              resolve(true);
-            } else {
-              reject(new Error(`Upload failed with status ${xhr.status}`));
-            }
-          };
-
-          xhr.onerror = () => reject(new Error("XHR request failed"));
-          xhr.send(file);
-        });
-      } catch (error) {
-        if (error instanceof Error && error.message === "Upload aborted") {
-          throw error;
-        }
-
-        const delay = Math.min(1000 * 2 ** i + Math.random() * 500, 8000); // Exponential backoff with jitter
-
-        if (process.env.NODE_ENV !== "production") {
-          console.error(
-            `[Upload] Attempt ${i + 1} failed for ${file.name} (Retrying in ${delay}ms):`,
-            error,
-          );
-        }
-
-        if (i === retries - 1) throw error;
-        // Wait before retry
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
-    }
-
-    return false;
-  };
-
   function onSubmit(data: z.infer<ReturnType<typeof createVehicleFormSchema>>) {
     if (isSubmitting) return;
 
@@ -487,7 +421,7 @@ export function VehicleForm({
 
       try {
         setUploadStatus(t("uploadStatusPreparing"));
-        setUploadProgress(10);
+        setUploadProgress(0);
 
         // Separate new files and existing keys
         const images = data.images || [];
@@ -500,17 +434,19 @@ export function VehicleForm({
 
         if (newFiles.length > 0) {
           setUploadStatus(t("uploadStatusUploading"));
-          setUploadProgress(50);
-          const uploadedKeys = await apiUploadImages(newFiles);
+          setUploadProgress(10);
+          const uploadedKeys = await apiUploadImagesWithProgress(
+            newFiles,
+            (pct) => setUploadProgress(10 + pct * 0.75), // maps 0–100% upload → 10–85% bar
+            signal,
+          );
           finalImageKeys = [...existingKeys, ...uploadedKeys];
-        } else {
-          setUploadProgress(90);
         }
 
-        // Phase 3: Create or Update Vehicle in DB via API
         setUploadStatus(t("uploadStatusSaving"));
-        setUploadProgress(95);
+        setUploadProgress(85);
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { images: _images, ...submitData } = data;
         if (vehicleId) {
           const removedKeys =
@@ -528,6 +464,7 @@ export function VehicleForm({
         setUploadProgress(100);
         router.push("/dealer/vehicles");
       } catch (error) {
+        // eslint-disable-next-line turbo/no-undeclared-env-vars
         if (process.env.NODE_ENV !== "production") {
           console.error("Submission failed:", error);
         }
@@ -881,7 +818,6 @@ export function VehicleForm({
                   variant="outline"
                   disabled={
                     isSubmitting ||
-                    isSubmitBlocked ||
                     (!!vehicleId && !isDirty && initialData?.status === "DRAFT")
                   }
                   onClick={() => form.setValue("status", "DRAFT")}

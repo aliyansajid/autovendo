@@ -135,6 +135,7 @@ export async function getVehicleFromApi(id: string): Promise<unknown | null> {
 }
 
 export async function getSimilarVehiclesFromApi(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _vehicleId: string,
 ): Promise<{ vehicles: VehicleListItem[] }> {
   return { vehicles: [] };
@@ -144,7 +145,7 @@ export async function getSimilarVehiclesFromApi(
 
 export async function getDashboardSummaryFromApi(): Promise<DashboardSummary> {
   try {
-    const res = await serverFetch("/dealer/vehicles?pageSize=100");
+    const res = await serverFetch("/dealer/vehicles?pageSize=9999");
     if (!res.ok) return { totalCount: 0, publishedCount: 0, draftCount: 0, soldCount: 0, recentVehicles: [] };
     const json = await res.json();
     const vehicles: VehicleListItem[] = json.data ?? [];
@@ -167,19 +168,20 @@ export async function getSubscriptionStatusFromApi(): Promise<SubscriptionStatus
     const json = await res.json();
     const ACTIVE_STATUSES = ["active", "trialing", "past_due", "unpaid", "incomplete"];
     const sub =
-      json.data?.subscriptions?.find((s: any) =>
+      json.data?.subscriptions?.find((s: { status: string; stripeSubscriptionId?: string }) =>
         ACTIVE_STATUSES.includes(s.status) &&
         !(s.status === "incomplete" && !s.stripeSubscriptionId),
       ) ?? null;
     const plan = sub?.plan
-      ? json.data?.plans?.find((p: any) => p.name.toLowerCase() === sub.plan.toLowerCase())
+      ? json.data?.plans?.find((p: { name: string }) => p.name.toLowerCase() === sub.plan.toLowerCase())
       : null;
+    const planLimits = plan?.limits as { vehicles?: number } | undefined;
     return {
       type: sub?.status ?? "no_subscription",
       plan: plan?.name ?? "none",
-      maxVehicles: (plan?.limits as any)?.vehicles ?? 0,
+      maxVehicles: planLimits?.vehicles ?? 0,
       currentCount: json.data?.vehicleCount ?? 0,
-      remainingQuota: Math.max(0, ((plan?.limits as any)?.vehicles ?? 0) - (json.data?.vehicleCount ?? 0)),
+      remainingQuota: Math.max(0, (planLimits?.vehicles ?? 0) - (json.data?.vehicleCount ?? 0)),
     };
   } catch {
     return { type: "no_subscription", plan: "none", maxVehicles: 0, currentCount: 0, remainingQuota: 0 };
@@ -198,6 +200,7 @@ export async function getBillingDataFromApi(): Promise<BillingData> {
 }
 
 export async function prepareVehicleListingFromApi(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _existingVehicleId?: string,
 ): Promise<{ listingId: string; country: string; dealerId: string }> {
   // No longer needed — vehicle creation goes directly to POST /dealer/vehicles
@@ -240,7 +243,8 @@ export async function getActiveSubscriptionsFromApi(): Promise<SubscriptionData[
     if (!res.ok) return [];
     const json = await res.json();
     return (json.data?.subscriptions ?? []).filter(
-      (s: any) => !(s.status === "incomplete" && !s.stripeSubscriptionId),
+      (s: { status: string; stripeSubscriptionId?: string }) =>
+        !(s.status === "incomplete" && !s.stripeSubscriptionId),
     );
   } catch {
     return [];
@@ -314,15 +318,11 @@ export async function getMyVehiclesFromApi(): Promise<unknown[]> {
 }
 
 export async function getMyVehicleByIdFromApi(id: string): Promise<VehicleDetails | null> {
-  try {
-    const res = await serverFetch(`/seller/vehicles/${id}`);
-    if (res.status === 404) return null;
-    if (!res.ok) return null;
-    const json = await res.json();
-    return json.data ?? null;
-  } catch {
-    return null;
-  }
+  const res = await serverFetch(`/seller/vehicles/${id}`);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`Failed to fetch vehicle (status ${res.status})`);
+  const json = await res.json();
+  return json.data ?? null;
 }
 
 export async function getSessionFromApi(): Promise<{
@@ -338,20 +338,11 @@ export async function getSessionFromApi(): Promise<{
   }
 }
 
-export async function getSellerBillingFromApi(): Promise<BillingData> {
-  try {
-    const res = await serverFetch("/seller/billing");
-    if (!res.ok) return { paymentMethod: null, invoices: [] };
-    const json = await res.json();
-    return json.data ?? { paymentMethod: null, invoices: [] };
-  } catch {
-    return { paymentMethod: null, invoices: [] };
-  }
-}
-
 export async function getSellerDashboardSummaryFromApi(): Promise<DashboardSummary> {
   try {
-    const res = await serverFetch("/seller/vehicles?pageSize=100");
+    // Fetch all vehicles so counts are accurate regardless of how many the seller has.
+    // pageSize=9999 is a practical upper bound; the API will cap it at its own maximum.
+    const res = await serverFetch("/seller/vehicles?pageSize=9999");
     if (!res.ok) return { totalCount: 0, publishedCount: 0, draftCount: 0, soldCount: 0, recentVehicles: [] };
     const json = await res.json();
     const vehicles: VehicleListItem[] = json.data ?? [];

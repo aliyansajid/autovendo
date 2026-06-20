@@ -20,7 +20,8 @@ export default async function EditVehiclePage({
     getMyVehicleByIdFromApi(id),
   ]);
 
-  if (!vehicle) {
+  // getMyVehicleByIdFromApi returns null only on 404; other errors throw and propagate
+  if (vehicle === null) {
     notFound();
   }
 

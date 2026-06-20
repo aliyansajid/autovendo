@@ -1551,7 +1551,8 @@
     "subscription": "Abbonamento",
     "billing": "Fatturazione",
     "new": "Nuovo Annuncio",
-    "change-password": "Cambia Password"
+    "change-password": "Cambia Password",
+    "edit": "Modifica"
   },
   "Unauthorized": {
     "title": "Accesso Negato",
@@ -1629,7 +1630,9 @@
     "cancel": "Annulla",
     "delete": "Elimina",
     "deleteSuccess": "Annuncio eliminato con successo!",
-    "deleteError": "Errore durante l'eliminazione dell'annuncio."
+    "deleteError": "Errore durante l'eliminazione dell'annuncio.",
+    "noSearchResults": "Nessun risultato trovato",
+    "noSearchResultsHint": "Prova con altri termini di ricerca."
   },
   "VehicleDetail": {
     "transmission": "Trasmissione",
@@ -1765,11 +1768,13 @@
     "uploadStatusGettingUrls": "Ottenimento delle autorizzazioni di caricamento...",
     "uploadStatusUploading": "Caricamento delle immagini...",
     "uploadStatusSaving": "Salvataggio dei dati...",
+    "uploadStatusRedirecting": "Reindirizzamento al pagamento...",
     "uploadDoNotClose": "Si prega di non chiudere questa finestra fino al completamento del processo.",
     "errorUploadPrep": "Errore nella preparazione del caricamento",
     "errorUploadFailed": "Caricamento non riuscito per {filename}",
     "errorLimitReached": "Limite raggiunto: il tuo abbonamento attuale non consente l'inserimento di altri veicoli.",
     "errorGeneric": "Qualcosa è andato storto. Controlla la tua connessione Internet e riprova.",
+    "errorNoPlan": "Seleziona un pacchetto per l'annuncio.",
     "publicationStatusTitle": "Stato della pubblicazione",
     "statusLabel": "Stato",
     "statusPlaceholder": "Scegli lo stato",

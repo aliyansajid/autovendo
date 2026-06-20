@@ -20,7 +20,7 @@ import {
 import { useTranslations, useLocale } from "next-intl";
 import { updateUser, changeEmail } from "@/lib/api/auth-client";
 import { useTransition, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import { updateDealerProfileFromApi, presignProfileUpload } from "@/lib/api/dealers";
 import { Spinner } from "@repo/ui/components/spinner";

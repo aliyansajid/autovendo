@@ -40,8 +40,9 @@ export const SubscriptionActions = ({
           toast.error((error as { message?: string }).message || t("cancelError"));
           return;
         }
-        if ((data as any)?.url) {
-          window.location.href = (data as any).url;
+        const redirectData = data as { url?: string } | null | undefined;
+        if (redirectData?.url) {
+          window.location.href = redirectData.url;
           return;
         }
         toast.success(t("cancelSuccess"));
