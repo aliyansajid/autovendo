@@ -116,6 +116,25 @@ export async function fetchSellerProfile(): Promise<SellerProfile> {
   return json.data;
 }
 
+export async function updateSellerProfile(body: {
+  phoneNumber?: string;
+  streetAddress?: string;
+  zipCode?: string;
+  city?: string;
+}): Promise<SellerProfile> {
+  const json = await authedRequest<{ data: SellerProfile }>("/seller/profile", {
+    method: "PUT",
+    ...jsonBody(body),
+  });
+  return json.data;
+}
+
+// Change account password (works for both seller and dealer). Better Auth
+// requires email/password account; OAuth-only users have no password to change.
+export function changePassword(body: { currentPassword: string; newPassword: string }): Promise<unknown> {
+  return authedRequest("/me/password", { method: "POST", ...jsonBody(body) });
+}
+
 export function fetchSellerVehicles(
   query: { page?: number; pageSize?: number; sort?: string } = {},
 ): Promise<OwnedVehiclesResponse> {
@@ -125,6 +144,22 @@ export function fetchSellerVehicles(
   if (query.sort) qs.set("sort", query.sort);
   const q = qs.toString();
   return authedRequest<OwnedVehiclesResponse>(`/seller/vehicles${q ? `?${q}` : ""}`);
+}
+
+// The full owned vehicle (all columns) used to prefill the edit form.
+export type VehicleRecord = Record<string, unknown>;
+
+export async function getSellerVehicle(id: string): Promise<VehicleRecord> {
+  const json = await authedRequest<{ data: VehicleRecord }>(`/seller/vehicles/${id}`);
+  return json.data;
+}
+
+export async function createSellerVehicle(body: Record<string, unknown>): Promise<{ id: string }> {
+  const json = await authedRequest<{ data: { id: string } }>("/seller/vehicles", {
+    method: "POST",
+    ...jsonBody(body),
+  });
+  return json.data;
 }
 
 export async function updateSellerVehicle(
@@ -218,6 +253,28 @@ export async function fetchDealerProfile(): Promise<DealerProfile> {
   return json.data;
 }
 
+export type DealerProfileUpdate = {
+  companyName?: string;
+  description?: string | null;
+  website?: string | null;
+  streetAddress?: string;
+  zipCode?: string;
+  city?: string;
+  uidNumber?: string;
+  contactPerson?: string;
+  phoneNumber?: string;
+  businessEmail?: string;
+  openingHours?: { day: string; isOpen: boolean; openTime: string | null; closeTime: string | null }[];
+};
+
+export async function updateDealerProfile(body: DealerProfileUpdate): Promise<DealerProfile> {
+  const json = await authedRequest<{ data: DealerProfile }>("/dealer/profile", {
+    method: "PUT",
+    ...jsonBody(body),
+  });
+  return json.data;
+}
+
 export function fetchDealerVehicles(
   query: { page?: number; pageSize?: number; sort?: string } = {},
 ): Promise<OwnedVehiclesResponse> {
@@ -227,6 +284,19 @@ export function fetchDealerVehicles(
   if (query.sort) qs.set("sort", query.sort);
   const q = qs.toString();
   return authedRequest<OwnedVehiclesResponse>(`/dealer/vehicles${q ? `?${q}` : ""}`);
+}
+
+export async function getDealerVehicle(id: string): Promise<VehicleRecord> {
+  const json = await authedRequest<{ data: VehicleRecord }>(`/dealer/vehicles/${id}`);
+  return json.data;
+}
+
+export async function createDealerVehicle(body: Record<string, unknown>): Promise<{ id: string }> {
+  const json = await authedRequest<{ data: { id: string } }>("/dealer/vehicles", {
+    method: "POST",
+    ...jsonBody(body),
+  });
+  return json.data;
 }
 
 export async function updateDealerVehicle(

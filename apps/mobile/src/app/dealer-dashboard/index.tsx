@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Pressable, Alert, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import {
@@ -52,9 +52,11 @@ export default function DealerDashboard() {
     }
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load]),
+  );
 
   const activeSub = sub?.subscriptions.find((s) => ACTIVE.includes(s.status)) ?? null;
   const activePlan = activeSub ? sub?.plans.find((p) => p.name.toLowerCase() === activeSub.plan.toLowerCase()) : null;
@@ -106,6 +108,7 @@ export default function DealerDashboard() {
   const openMenu = useCallback(
     (v: OwnedVehicle) => {
       const buttons: { text: string; style?: "cancel" | "destructive"; onPress?: () => void }[] = [];
+      buttons.push({ text: "Bearbeiten", onPress: () => router.push(`/dealer-dashboard/${v.id}`) });
       if (v.status !== "PUBLISHED") buttons.push({ text: "Veröffentlichen", onPress: () => setStatus(v, "PUBLISHED") });
       if (v.status === "PUBLISHED") {
         buttons.push({ text: "Pausieren", onPress: () => setStatus(v, "PAUSED") });
@@ -216,7 +219,7 @@ export default function DealerDashboard() {
           ItemSeparatorComponent={() => <View style={{ height: Spacing[3] }} />}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={C.mutedForeground} />}
           renderItem={({ item }) => (
-            <OwnedVehicleCard vehicle={item} onPress={() => openMenu(item)} onMenu={() => openMenu(item)} />
+            <OwnedVehicleCard vehicle={item} onPress={() => router.push(`/dealer-dashboard/${item.id}`)} onMenu={() => openMenu(item)} />
           )}
           ListEmptyComponent={
             <EmptyState

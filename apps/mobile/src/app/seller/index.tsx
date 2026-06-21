@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Pressable, Alert, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import {
@@ -41,9 +41,12 @@ export default function SellerDashboard() {
     }
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  // Reload whenever the dashboard regains focus (e.g. returning from the form).
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load]),
+  );
 
   const publish = useCallback(
     async (v: OwnedVehicle) => {
@@ -69,6 +72,7 @@ export default function SellerDashboard() {
     (v: OwnedVehicle) => {
       const buttons: { text: string; style?: "cancel" | "destructive"; onPress?: () => void }[] = [];
 
+      buttons.push({ text: "Bearbeiten", onPress: () => router.push(`/seller/${v.id}`) });
       if (v.status === "DRAFT") {
         buttons.push({ text: "Veröffentlichen", onPress: () => publish(v) });
       }
@@ -142,7 +146,7 @@ export default function SellerDashboard() {
           ItemSeparatorComponent={() => <View style={{ height: Spacing[3] }} />}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={C.mutedForeground} />}
           renderItem={({ item }) => (
-            <OwnedVehicleCard vehicle={item} onPress={() => openMenu(item)} onMenu={() => openMenu(item)} />
+            <OwnedVehicleCard vehicle={item} onPress={() => router.push(`/seller/${item.id}`)} onMenu={() => openMenu(item)} />
           )}
           ListFooterComponent={
             items.length > 0 ? (

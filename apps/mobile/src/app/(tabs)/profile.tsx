@@ -1,12 +1,13 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { useTabBarHeight } from "@/hooks/use-tab-bar-height";
 import { useFavorites } from "@/lib/favorites";
 import { authClient, useSession } from "@/lib/auth-client";
+import { fetchMe, isDealer } from "@/lib/account";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { openUrl } from "@/lib/contact";
 
@@ -31,9 +32,23 @@ export default function ProfileScreen() {
   const { ids } = useFavorites();
   const { data: session } = useSession();
   const user = session?.user;
+  const [dealer, setDealer] = useState(false);
 
-  const onSell = () => {
-    if (user) router.push("/sell");
+  // Resolve role (for the "Meine Inserate" target) whenever signed in.
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+      if (session) fetchMe().then((m) => mounted && setDealer(isDealer(m))).catch(() => {});
+      return () => {
+        mounted = false;
+      };
+    }, [session]),
+  );
+
+  const vehiclesRoute = dealer ? "/dealer-dashboard" : "/seller";
+
+  const onCreate = () => {
+    if (user) router.push("/listing/new");
     else router.push("/(auth)/login");
   };
 
@@ -51,9 +66,17 @@ export default function ProfileScreen() {
       value: ids.length > 0 ? String(ids.length) : undefined,
       onPress: () => router.push("/favorites"),
     },
-    user
-      ? { icon: "tag.fill", label: "Verkaufen", onPress: onSell }
-      : { icon: "person.crop.circle", label: "Anmelden / Registrieren", onPress: () => router.push("/(auth)/login") },
+    ...(user
+      ? []
+      : [{ icon: "person.crop.circle" as IconName, label: "Anmelden / Registrieren", onPress: () => router.push("/(auth)/login") }]),
+  ];
+
+  // Seller/dealer management — shown inline in the regular menu when signed in.
+  const sellerRows: Row[] = [
+    { icon: "car.fill", label: "Meine Inserate", onPress: () => router.push(vehiclesRoute) },
+    { icon: "creditcard", label: dealer ? "Abo & Abrechnung" : "Abrechnung", onPress: () => router.push("/account/billing") },
+    { icon: "person.text.rectangle", label: "Profil bearbeiten", onPress: () => router.push("/account/profile") },
+    { icon: "lock", label: "Passwort ändern", onPress: () => router.push("/account/password") },
   ];
 
   const infoRows: Row[] = [
@@ -88,18 +111,19 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {/* Sell CTA */}
-        <Pressable style={[styles.sellCard, { backgroundColor: C.primary }]} onPress={onSell}>
+        {/* Create-listing CTA */}
+        <Pressable style={[styles.sellCard, { backgroundColor: C.primary }]} onPress={onCreate}>
           <View style={styles.sellText}>
-            <Text style={[styles.sellTitle, { color: C.primaryForeground }]}>Fahrzeug verkaufen</Text>
-            <Text style={[styles.sellSub, { color: C.primaryForeground }]}>Als Privatperson oder Händler inserieren</Text>
+            <Text style={[styles.sellTitle, { color: C.primaryForeground }]}>Neues Inserat</Text>
+            <Text style={[styles.sellSub, { color: C.primaryForeground }]}>Fahrzeug in wenigen Minuten inserieren</Text>
           </View>
           <View style={styles.sellIcon}>
-            <Icon name="arrow.right" size={20} color={C.primaryForeground} />
+            <Icon name="plus" size={20} color={C.primaryForeground} />
           </View>
         </Pressable>
 
         <Group title="Konto" rows={accountRows} />
+        {user && <Group title="Verkäufer" rows={sellerRows} />}
         <Group title="Information" rows={infoRows} />
         <Group title="Rechtliches" rows={legalRows} />
 

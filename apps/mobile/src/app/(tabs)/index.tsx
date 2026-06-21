@@ -38,7 +38,7 @@ const HEADER_MUTED = "rgba(255,255,255,0.6)";
 
 const ACTIONS: { key: string; label: string; icon: IconName; go: () => void }[] = [
   { key: "buy", label: "Kaufen", icon: "car.fill", go: () => openSearch() },
-  { key: "sell", label: "Verkaufen", icon: "tag.fill", go: () => router.push("/sell") },
+  { key: "sell", label: "Verkaufen", icon: "tag.fill", go: () => router.push("/listing/new") },
   { key: "dealers", label: "Händler", icon: "building.2.fill", go: () => router.push("/(tabs)/dealers") },
 ];
 
