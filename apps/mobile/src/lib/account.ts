@@ -129,11 +129,6 @@ export async function updateSellerProfile(body: {
   return json.data;
 }
 
-// Change account password (works for both seller and dealer). Better Auth
-// requires email/password account; OAuth-only users have no password to change.
-export function changePassword(body: { currentPassword: string; newPassword: string }): Promise<unknown> {
-  return authedRequest("/me/password", { method: "POST", ...jsonBody(body) });
-}
 
 export function fetchSellerVehicles(
   query: { page?: number; pageSize?: number; sort?: string } = {},
