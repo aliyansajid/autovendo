@@ -3,6 +3,7 @@ import { Image } from "expo-image";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import type { DealerListItem } from "@/lib/api";
+import { imageUrl } from "@/lib/image";
 import { Icon } from "./icon";
 
 export function DealerCard({
@@ -24,12 +25,12 @@ export function DealerCard({
       ]}
     >
       <View style={[styles.cover, { backgroundColor: C.secondary }]}>
-        {dealer.coverImage ? (
-          <Image source={{ uri: dealer.coverImage }} style={styles.coverImg} contentFit="cover" transition={150} />
+        {imageUrl(dealer.coverImage) ? (
+          <Image source={{ uri: imageUrl(dealer.coverImage)! }} style={styles.coverImg} contentFit="cover" transition={150} />
         ) : null}
         <View style={[styles.logo, { backgroundColor: C.card, borderColor: C.border }]}>
-          {dealer.logo ? (
-            <Image source={{ uri: dealer.logo }} style={styles.logoImg} contentFit="contain" />
+          {imageUrl(dealer.logo) ? (
+            <Image source={{ uri: imageUrl(dealer.logo)! }} style={styles.logoImg} contentFit="contain" />
           ) : (
             <Icon name="building.2.fill" size={20} color={C.mutedForeground} />
           )}

@@ -48,6 +48,7 @@ import { ErrorState } from "@/components/ui/states";
 import { VehicleCard } from "@/components/ui/vehicle-card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { callPhone, openWhatsApp, sendEmail } from "@/lib/contact";
+import { imageUrl, imageUrls } from "@/lib/image";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 const SIMILAR_W = Math.min(280, SCREEN_W * 0.7);
@@ -115,7 +116,7 @@ export default function VehicleDetailScreen() {
   const dealer = vehicle.dealer;
   const seller = vehicle.seller;
   const phone = dealer?.phoneNumber ?? seller?.phoneNumber ?? null;
-  const images = vehicle.images ?? [];
+  const images = imageUrls(vehicle.images);
   const equipment = equipmentList(vehicle.equipment);
   const extras = equipmentList(vehicle.extras);
   const fav = isFavorite(vehicle.id);
@@ -327,8 +328,8 @@ export default function VehicleDetailScreen() {
               onPress={() => router.push(`/dealer/${dealer.id}`)}
             >
               <View style={[styles.sellerLogo, { backgroundColor: C.secondary }]}>
-                {dealer.logo ? (
-                  <Image source={{ uri: dealer.logo }} style={styles.sellerLogoImg} contentFit="contain" />
+                {imageUrl(dealer.logo) ? (
+                  <Image source={{ uri: imageUrl(dealer.logo)! }} style={styles.sellerLogoImg} contentFit="contain" />
                 ) : (
                   <Icon name="building.2.fill" size={22} color={C.mutedForeground} />
                 )}

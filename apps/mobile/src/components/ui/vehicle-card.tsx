@@ -5,6 +5,7 @@ import { useTheme } from "@/hooks/use-theme";
 import type { VehicleListItem } from "@/lib/api";
 import { formatPrice, formatRegistration, formatKm, vehicleMetaLine } from "@/lib/format";
 import { labelMake, labelModel, labelFuel, labelCondition } from "@/lib/labels";
+import { imageUrl } from "@/lib/image";
 import { Icon } from "./icon";
 
 const BLUR_HASH = "L6Pj0^jE.AyE_3t7t7R**0o#DgR4";
@@ -23,7 +24,7 @@ export function VehicleCard({
   onToggleFavorite?: () => void;
 }) {
   const C = useTheme();
-  const image = vehicle.images?.[0];
+  const image = imageUrl(vehicle.images?.[0]);
   const title = `${labelMake(vehicle.make)} ${labelModel(vehicle.model)}`.trim();
   const city = vehicle.dealer?.city ?? vehicle.seller?.city ?? null;
   const isDealer = !!vehicle.dealer;

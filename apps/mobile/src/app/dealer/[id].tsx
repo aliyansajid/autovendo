@@ -18,6 +18,7 @@ import { ErrorState } from "@/components/ui/states";
 import { VehicleCard } from "@/components/ui/vehicle-card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { callPhone, openWhatsApp, sendEmail, openUrl, openMaps } from "@/lib/contact";
+import { imageUrl } from "@/lib/image";
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -110,8 +111,8 @@ export default function DealerDetailScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: Spacing[10] }}>
         {/* Cover */}
         <View style={styles.cover}>
-          {dealer.coverImage ? (
-            <Image source={{ uri: dealer.coverImage }} style={styles.coverImg} contentFit="cover" transition={150} />
+          {imageUrl(dealer.coverImage) ? (
+            <Image source={{ uri: imageUrl(dealer.coverImage)! }} style={styles.coverImg} contentFit="cover" transition={150} />
           ) : (
             <View style={[styles.coverImg, { backgroundColor: C.secondary }]} />
           )}
@@ -123,8 +124,8 @@ export default function DealerDetailScreen() {
           {/* Identity */}
           <View style={styles.identity}>
             <View style={[styles.logo, { backgroundColor: C.card, borderColor: C.border }]}>
-              {dealer.logo ? (
-                <Image source={{ uri: dealer.logo }} style={styles.logoImg} contentFit="contain" />
+              {imageUrl(dealer.logo) ? (
+                <Image source={{ uri: imageUrl(dealer.logo)! }} style={styles.logoImg} contentFit="contain" />
               ) : (
                 <Icon name="building.2.fill" size={28} color={C.mutedForeground} />
               )}

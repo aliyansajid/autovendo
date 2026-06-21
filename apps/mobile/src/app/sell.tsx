@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { Icon, type IconName } from "@/components/ui/icon";
+import { fetchMe, isDealer } from "@/lib/account";
+import { openUrl } from "@/lib/contact";
 
 type Option = {
   key: "seller" | "dealer";
@@ -32,13 +35,37 @@ const OPTIONS: Option[] = [
 
 export default function SellScreen() {
   const C = useTheme();
+  const [checking, setChecking] = useState(false);
 
-  const choose = (key: Option["key"]) => {
-    // Dashboards are built in the next step; avoid dead-ending the user.
-    Alert.alert(
-      key === "seller" ? "Privatverkauf" : "Händler-Konto",
-      "Dieser Bereich wird in Kürze verfügbar sein.",
-    );
+  const choose = async (key: Option["key"]) => {
+    if (key === "seller") {
+      // Private selling is available to any signed-in user.
+      router.push("/seller");
+      return;
+    }
+    // Dealer area requires an existing dealer account (company/UID onboarding
+    // happens on the web). Route dealers in; send others to web onboarding.
+    if (checking) return;
+    setChecking(true);
+    try {
+      const me = await fetchMe();
+      if (isDealer(me)) {
+        router.push("/dealer-dashboard");
+      } else {
+        Alert.alert(
+          "Händler-Konto erforderlich",
+          "Händler-Konten werden auf autovendo.ch eingerichtet. Möchten Sie die Registrierung öffnen?",
+          [
+            { text: "Abbrechen", style: "cancel" },
+            { text: "Öffnen", onPress: () => openUrl("https://seller.autovendo.ch") },
+          ],
+        );
+      }
+    } catch {
+      Alert.alert("Fehler", "Konto konnte nicht geprüft werden.");
+    } finally {
+      setChecking(false);
+    }
   };
 
   return (
