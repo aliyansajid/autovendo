@@ -361,6 +361,7 @@ export type DealerSubscriptionRecord = {
   status: string;
   periodEnd: string | null;
   cancelAtPeriodEnd: boolean | null;
+  stripeSubscriptionId: string | null;
 };
 
 export type DealerSubscriptionInfo = {
@@ -376,20 +377,65 @@ export async function fetchDealerSubscription(): Promise<DealerSubscriptionInfo>
   return json.data;
 }
 
-export async function createDealerCheckout(planId: string): Promise<string | null> {
-  const json = await authedRequest<{ data: { url: string | null } }>(
-    "/dealer/subscription",
-    { method: "POST", ...jsonBody({ planId }) },
+// ─── Dealer subscription actions (Better Auth Stripe plugin) ──────────────────
+// The same `/api/auth/subscription/*` endpoints the web app uses, so web and
+// mobile share one billing system. Stripe URLs open in an in-app browser.
+
+const APP_URL = process.env.EXPO_PUBLIC_APP_URL ?? "https://autovendo.ch";
+const SUB_RETURN = `${APP_URL}/dealer/subscription`;
+
+// Start a new subscription or switch plans. Pass the current subscriptionId when
+// one is already active so Stripe modifies it in place instead of creating a
+// duplicate (double billing). Returns a Stripe checkout URL to open, or null.
+export async function upgradeDealerSubscription(params: {
+  plan: string;
+  subscriptionId?: string | null;
+}): Promise<string | null> {
+  const json = await authedRequest<{ url?: string | null }>(
+    "/api/auth/subscription/upgrade",
+    {
+      method: "POST",
+      ...jsonBody({
+        plan: params.plan.toLowerCase(),
+        successUrl: SUB_RETURN,
+        cancelUrl: SUB_RETURN,
+        returnUrl: SUB_RETURN,
+        ...(params.subscriptionId
+          ? { subscriptionId: params.subscriptionId }
+          : {}),
+      }),
+    },
   );
-  return json.data.url;
+  return json.url ?? null;
 }
 
 export async function createDealerBillingPortal(): Promise<string | null> {
-  const json = await authedRequest<{ data: { url: string | null } }>(
-    "/dealer/subscription/portal",
-    { method: "POST" },
+  const json = await authedRequest<{ url?: string | null }>(
+    "/api/auth/subscription/billing-portal",
+    { method: "POST", ...jsonBody({ returnUrl: SUB_RETURN }) },
   );
-  return json.data.url;
+  return json.url ?? null;
+}
+
+// Cancel — Better Auth returns a billing-portal URL to confirm the cancellation.
+export async function cancelDealerSubscription(
+  subscriptionId: string,
+): Promise<string | null> {
+  const json = await authedRequest<{ url?: string | null }>(
+    "/api/auth/subscription/cancel",
+    { method: "POST", ...jsonBody({ subscriptionId, returnUrl: SUB_RETURN }) },
+  );
+  return json.url ?? null;
+}
+
+// Restore a subscription pending cancellation (or a scheduled plan change).
+export async function restoreDealerSubscription(
+  subscriptionId: string,
+): Promise<void> {
+  await authedRequest("/api/auth/subscription/restore", {
+    method: "POST",
+    ...jsonBody({ subscriptionId }),
+  });
 }
 
 // ─── Upload ─────────────────────────────────────────────────────────────────--

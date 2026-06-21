@@ -1,4 +1,4 @@
-import { getSubscriptionStatusFromApi, getBillingDataFromApi, getPlansFromApi, getActiveSubscriptionsFromApi } from "@/lib/api/vehicles";
+import { getDealerSubscriptionPageData } from "@/lib/api/vehicles";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@repo/ui/components/badge";
 import { Button } from "@repo/ui/components/button";
@@ -54,13 +54,12 @@ export default async function SubscriptionPage(props: {
   // Extract locale from params (Next.js 15 Promise-based approach)
   const { locale } = await props.params;
 
-  const [subscriptions, subscriptionStatus, billingData, plans] =
-    await Promise.all([
-      getActiveSubscriptionsFromApi(),
-      getSubscriptionStatusFromApi(),
-      getBillingDataFromApi(),
-      getPlansFromApi(),
-    ]);
+  const {
+    subscriptions,
+    status: subscriptionStatus,
+    billing: billingData,
+    plans,
+  } = await getDealerSubscriptionPageData();
 
   const activeSubscription = subscriptions.find((s) =>
     ["active", "trialing", "past_due", "unpaid", "incomplete"].includes(
@@ -300,6 +299,9 @@ export default async function SubscriptionPage(props: {
                 ) : (
                   <SubscribeButton
                     planName={plan.name}
+                    currentSubscriptionId={
+                      activeSubscription?.stripeSubscriptionId ?? null
+                    }
                     variant={plan.popular ? "default" : "outline"}
                     successUrl={`/${locale}/dealer/subscription`}
                     cancelUrl={`/${locale}/dealer/subscription`}

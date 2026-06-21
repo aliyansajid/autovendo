@@ -9,7 +9,7 @@ import {
   fetchDealerSubscription,
   updateDealerVehicle,
   deleteDealerVehicle,
-  createDealerCheckout,
+  upgradeDealerSubscription,
   createDealerBillingPortal,
   type OwnedVehicle,
   type DealerSubscriptionInfo,
@@ -65,19 +65,28 @@ export default function DealerDashboard() {
 
   const subscribe = useCallback(() => {
     if (!sub) return;
-    const buttons = sub.plans.map((p) => ({
-      text: `${p.name} – ${formatPrice(p.price)}`,
-      onPress: async () => {
-        try {
-          const url = await createDealerCheckout(p.id);
-          await openCheckout(url);
-          load(true);
-        } catch {
-          Alert.alert("Fehler", "Abo konnte nicht gestartet werden.");
-        }
-      },
-    }));
-    Alert.alert("Abo wählen", "Wählen Sie einen Tarif", [...buttons, { text: "Abbrechen", style: "cancel" as const }]);
+    const buttons = sub.plans
+      .filter((p) => p.name.toLowerCase() !== activeSub?.plan.toLowerCase())
+      .map((p) => ({
+        text: `${p.name} – ${formatPrice(p.price)}`,
+        onPress: async () => {
+          try {
+            const url = await upgradeDealerSubscription({
+              plan: p.name,
+              subscriptionId: activeSub?.stripeSubscriptionId,
+            });
+            await openCheckout(url);
+            load(true);
+          } catch {
+            Alert.alert("Fehler", "Abo konnte nicht gestartet werden.");
+          }
+        },
+      }));
+    Alert.alert(
+      activeSub ? "Tarif wechseln" : "Abo wählen",
+      "Wählen Sie einen Tarif",
+      [...buttons, { text: "Abbrechen", style: "cancel" as const }],
+    );
   }, [sub, load]);
 
   const manageBilling = useCallback(async () => {

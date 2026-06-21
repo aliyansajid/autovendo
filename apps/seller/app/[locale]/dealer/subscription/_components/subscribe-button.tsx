@@ -5,10 +5,14 @@ import { Spinner } from "@repo/ui/src/components/spinner";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { upgradeSubscription, listSubscriptions } from "@/lib/api/auth-client";
+import { upgradeSubscription } from "@/lib/api/auth-client";
 
 interface SubscribeButtonProps {
   planName: string;
+  // The user's current active subscription id (from the page's loaded data).
+  // Better Auth requires this when a subscription already exists so switching
+  // plans modifies it instead of creating a duplicate (double billing).
+  currentSubscriptionId?: string | null;
   variant?: "default" | "outline";
   label?: string;
   successUrl?: string;
@@ -18,6 +22,7 @@ interface SubscribeButtonProps {
 
 export const SubscribeButton = ({
   planName,
+  currentSubscriptionId,
   variant = "default",
   label,
   successUrl,
@@ -30,11 +35,6 @@ export const SubscribeButton = ({
   const handleSubscribe = () => {
     startTransition(async () => {
       try {
-        const { data: subscriptions } = await listSubscriptions();
-        const activeSubscription = (subscriptions as { status: string; stripeSubscriptionId?: string }[])?.find(
-          (sub) => sub.status === "active" || sub.status === "trialing",
-        );
-
         const toAbsolute = (url: string | undefined, fallback: string) => {
           if (!url) return `${window.location.origin}${fallback}`;
           return url.startsWith("http") ? url : `${window.location.origin}${url}`;
@@ -45,8 +45,8 @@ export const SubscribeButton = ({
           successUrl: toAbsolute(successUrl, "/dealer/subscription?success=true"),
           cancelUrl: toAbsolute(cancelUrl, "/dealer/subscription"),
           returnUrl: toAbsolute(cancelUrl, "/dealer/subscription"),
-          ...(activeSubscription?.stripeSubscriptionId && {
-            subscriptionId: activeSubscription.stripeSubscriptionId,
+          ...(currentSubscriptionId && {
+            subscriptionId: currentSubscriptionId,
           }),
         });
 

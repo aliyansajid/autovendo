@@ -20,10 +20,6 @@ export class DealerVehiclesQueryDto {
   sort?: string;
 }
 
-export class CreateCheckoutSessionDto {
-  planId?: string;
-}
-
 const DEALER_PROFILE_SELECT = {
   id: true,
   userId: true,
@@ -629,83 +625,4 @@ export class DealerService {
     };
   }
 
-  async createCheckoutSession(
-    session: UserSession,
-    body: CreateCheckoutSessionDto,
-  ) {
-    const stripe = await getStripe();
-
-    if (!stripe) {
-      throw new BadRequestException("Stripe is not configured");
-    }
-
-    const { planId } = body;
-    if (!planId) {
-      throw new BadRequestException("planId is required");
-    }
-
-    const plan = await this.prisma.plan.findUnique({
-      where: { id: planId },
-    });
-
-    if (!plan) {
-      throw new NotFoundException(`Plan with id "${planId}" not found`);
-    }
-
-    const user = await this.prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { stripeCustomerId: true, email: true },
-    });
-
-    const checkoutSession = await stripe.checkout.sessions.create({
-      mode: "subscription",
-      payment_method_types: ["card"],
-      customer: user?.stripeCustomerId ?? undefined,
-      customer_email: !user?.stripeCustomerId ? user?.email : undefined,
-      line_items: [
-        {
-          price: plan.priceId,
-          quantity: 1,
-        },
-      ],
-      metadata: {
-        userId: session.user.id,
-        planId: plan.id,
-      },
-      success_url:
-        process.env.STRIPE_SUCCESS_URL ??
-        `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/subscription?success=1`,
-      cancel_url:
-        process.env.STRIPE_CANCEL_URL ??
-        `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/subscription?canceled=1`,
-    });
-
-    return { data: { url: checkoutSession.url } };
-  }
-
-  async createBillingPortalSession(session: UserSession) {
-    const stripe = await getStripe();
-
-    if (!stripe) {
-      throw new BadRequestException("Stripe is not configured");
-    }
-
-    const user = await this.prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { stripeCustomerId: true },
-    });
-
-    if (!user?.stripeCustomerId) {
-      throw new BadRequestException("No Stripe customer found for this user");
-    }
-
-    const portalSession = await stripe.billingPortal.sessions.create({
-      customer: user.stripeCustomerId,
-      return_url:
-        process.env.STRIPE_PORTAL_RETURN_URL ??
-        `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/subscription`,
-    });
-
-    return { data: { url: portalSession.url } };
-  }
 }

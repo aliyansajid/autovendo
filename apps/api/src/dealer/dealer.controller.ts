@@ -19,7 +19,6 @@ import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES } from "../storage/r2";
 import {
   DealerService,
   DealerVehiclesQueryDto,
-  CreateCheckoutSessionDto,
 } from "./dealer.service";
 import { ZodValidationPipe } from "../validation/zod-validation.pipe";
 import {
@@ -121,18 +120,5 @@ export class DealerController {
   @Get("subscription")
   getSubscription(@Session() session: UserSession) {
     return this.dealerService.getSubscription(session);
-  }
-
-  @Post("subscription")
-  createCheckoutSession(
-    @Session() session: UserSession,
-    @Body() body: CreateCheckoutSessionDto,
-  ) {
-    return this.dealerService.createCheckoutSession(session, body);
-  }
-
-  @Post("subscription/portal")
-  createBillingPortalSession(@Session() session: UserSession) {
-    return this.dealerService.createBillingPortalSession(session);
   }
 }

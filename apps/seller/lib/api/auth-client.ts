@@ -140,10 +140,6 @@ export async function changeEmail(params: {
 
 // ─── Subscription actions ─────────────────────────────────────────────────────
 
-export async function listSubscriptions() {
-  return authFetch("/api/auth/subscription/list", { method: "GET" });
-}
-
 export async function upgradeSubscription(params: {
   plan: string;
   successUrl: string;

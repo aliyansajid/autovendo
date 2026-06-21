@@ -10,7 +10,8 @@ import { openUrl } from "@/lib/contact";
 import {
   fetchMe, isDealer,
   fetchSellerBilling, createSellerBillingPortal,
-  fetchDealerSubscription, createDealerCheckout, createDealerBillingPortal,
+  fetchDealerSubscription, upgradeDealerSubscription, createDealerBillingPortal,
+  cancelDealerSubscription, restoreDealerSubscription,
   type BillingInfo, type DealerSubscriptionInfo, type Invoice,
 } from "@/lib/account";
 import { Icon } from "@/components/ui/icon";
@@ -49,6 +50,12 @@ export default function BillingScreen() {
     load();
   }, [load]);
 
+  const paymentMethod = dealer ? sub?.paymentMethod : seller?.paymentMethod;
+  const invoices: Invoice[] = (dealer ? sub?.invoices : seller?.invoices) ?? [];
+  const activeSub = sub?.subscriptions.find((s) => ACTIVE.includes(s.status)) ?? null;
+  const activePlan = activeSub ? sub?.plans.find((p) => p.name.toLowerCase() === activeSub.plan.toLowerCase()) : null;
+  const limit = Number(activePlan?.limits?.vehicles ?? 0);
+
   const portal = async () => {
     try {
       const url = dealer ? await createDealerBillingPortal() : await createSellerBillingPortal();
@@ -59,28 +66,65 @@ export default function BillingScreen() {
     }
   };
 
+  // Subscribe to a plan, or switch plans when one is already active. Passing the
+  // current subscriptionId makes Stripe modify the existing sub (no duplicate).
   const subscribe = () => {
     if (!sub) return;
-    const buttons = sub.plans.map((p) => ({
-      text: `${p.name} – ${formatPrice(p.price)}`,
-      onPress: async () => {
-        try {
-          const url = await createDealerCheckout(p.id);
-          await openCheckout(url);
-          load();
-        } catch {
-          Alert.alert("Fehler", "Abo konnte nicht gestartet werden.");
-        }
-      },
-    }));
-    Alert.alert("Abo wählen", "Wählen Sie einen Tarif", [...buttons, { text: "Abbrechen", style: "cancel" as const }]);
+    const buttons = sub.plans
+      .filter((p) => p.name.toLowerCase() !== activeSub?.plan.toLowerCase())
+      .map((p) => ({
+        text: `${p.name} – ${formatPrice(p.price)}`,
+        onPress: async () => {
+          try {
+            const url = await upgradeDealerSubscription({
+              plan: p.name,
+              subscriptionId: activeSub?.stripeSubscriptionId,
+            });
+            await openCheckout(url);
+            load();
+          } catch {
+            Alert.alert("Fehler", "Abo konnte nicht gestartet werden.");
+          }
+        },
+      }));
+    Alert.alert(
+      activeSub ? "Tarif wechseln" : "Abo wählen",
+      "Wählen Sie einen Tarif",
+      [...buttons, { text: "Abbrechen", style: "cancel" as const }],
+    );
   };
 
-  const paymentMethod = dealer ? sub?.paymentMethod : seller?.paymentMethod;
-  const invoices: Invoice[] = (dealer ? sub?.invoices : seller?.invoices) ?? [];
-  const activeSub = sub?.subscriptions.find((s) => ACTIVE.includes(s.status)) ?? null;
-  const activePlan = activeSub ? sub?.plans.find((p) => p.name.toLowerCase() === activeSub.plan.toLowerCase()) : null;
-  const limit = Number(activePlan?.limits?.vehicles ?? 0);
+  const cancel = () => {
+    const id = activeSub?.stripeSubscriptionId;
+    if (!id) return;
+    Alert.alert("Abo kündigen", "Ihr Abo bleibt bis zum Ende der laufenden Periode aktiv.", [
+      { text: "Zurück", style: "cancel" as const },
+      {
+        text: "Kündigen",
+        style: "destructive" as const,
+        onPress: async () => {
+          try {
+            const url = await cancelDealerSubscription(id);
+            if (url) await openCheckout(url);
+            load();
+          } catch {
+            Alert.alert("Fehler", "Kündigung fehlgeschlagen.");
+          }
+        },
+      },
+    ]);
+  };
+
+  const restore = async () => {
+    const id = activeSub?.stripeSubscriptionId;
+    if (!id) return;
+    try {
+      await restoreDealerSubscription(id);
+      load();
+    } catch {
+      Alert.alert("Fehler", "Reaktivierung fehlgeschlagen.");
+    }
+  };
 
   return (
     <View style={styles.root}>
@@ -109,7 +153,9 @@ export default function BillingScreen() {
                   <View style={styles.subTop}>
                     <View>
                       <Text style={[styles.cardTitle, { color: C.foreground }]}>{activePlan?.name ?? activeSub.plan}</Text>
-                      <Text style={[styles.activeText, { color: C.primary }]}>Aktiv</Text>
+                      <Text style={[styles.activeText, { color: activeSub.cancelAtPeriodEnd ? C.destructive : C.primary }]}>
+                        {activeSub.cancelAtPeriodEnd ? "Wird gekündigt" : "Aktiv"}
+                      </Text>
                     </View>
                     <Pressable onPress={portal} hitSlop={6}>
                       <Text style={[styles.manage, { color: C.primary }]}>Verwalten</Text>
@@ -118,6 +164,20 @@ export default function BillingScreen() {
                   <View style={styles.quotaRow}>
                     <Text style={[styles.muted, { color: C.mutedForeground }]}>Veröffentlichte Inserate</Text>
                     <Text style={[styles.quotaVal, { color: C.foreground }]}>{sub?.vehicleCount ?? 0} / {limit || "∞"}</Text>
+                  </View>
+                  <View style={styles.actions}>
+                    <Pressable onPress={subscribe} hitSlop={6}>
+                      <Text style={[styles.action, { color: C.primary }]}>Tarif wechseln</Text>
+                    </Pressable>
+                    {activeSub.cancelAtPeriodEnd ? (
+                      <Pressable onPress={restore} hitSlop={6}>
+                        <Text style={[styles.action, { color: C.primary }]}>Reaktivieren</Text>
+                      </Pressable>
+                    ) : (
+                      <Pressable onPress={cancel} hitSlop={6}>
+                        <Text style={[styles.action, { color: C.destructive }]}>Kündigen</Text>
+                      </Pressable>
+                    )}
                   </View>
                 </>
               ) : (
@@ -211,6 +271,15 @@ function createStyles(C: ReturnType<typeof useTheme>) {
     manage: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm },
     quotaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: Spacing[4] },
     quotaVal: { fontFamily: FontFamily.sansBold, fontSize: FontSize.sm },
+    actions: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginTop: Spacing[4],
+      paddingTop: Spacing[3],
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: C.border,
+    },
+    action: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.sm },
     muted: { fontFamily: FontFamily.sans, fontSize: FontSize.sm },
     pmRow: { flexDirection: "row", alignItems: "center", gap: Spacing[3] },
     pmBrand: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.base },

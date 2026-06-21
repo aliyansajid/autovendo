@@ -306,6 +306,80 @@ export async function getActiveSubscriptionsFromApi(): Promise<
   }
 }
 
+export type DealerSubscriptionPageData = {
+  subscriptions: SubscriptionData[];
+  status: SubscriptionStatus;
+  billing: BillingData;
+  plans: Plan[];
+};
+
+// One request for the whole subscription page. `/dealer/subscription` already
+// returns subscriptions, plans, vehicleCount, paymentMethod and invoices in a
+// single payload, so we fetch once and derive every slice the page needs —
+// instead of calling the endpoint three times plus a separate /plans request.
+export async function getDealerSubscriptionPageData(): Promise<DealerSubscriptionPageData> {
+  const empty: DealerSubscriptionPageData = {
+    subscriptions: [],
+    status: {
+      type: "no_subscription",
+      plan: "none",
+      maxVehicles: 0,
+      currentCount: 0,
+      remainingQuota: 0,
+    },
+    billing: { paymentMethod: null, invoices: [] },
+    plans: [],
+  };
+
+  try {
+    const res = await serverFetch("/dealer/subscription");
+    if (!res.ok) return empty;
+    const json = await res.json();
+    const data = json.data ?? {};
+
+    const plans: Plan[] = data.plans ?? [];
+    const subscriptions: SubscriptionData[] = (data.subscriptions ?? []).filter(
+      (s: { status: string; stripeSubscriptionId?: string }) =>
+        !(s.status === "incomplete" && !s.stripeSubscriptionId),
+    );
+
+    const ACTIVE_STATUSES = [
+      "active",
+      "trialing",
+      "past_due",
+      "unpaid",
+      "incomplete",
+    ];
+    const sub =
+      subscriptions.find((s) => ACTIVE_STATUSES.includes(s.status)) ?? null;
+    const plan = sub?.plan
+      ? (plans.find((p) => p.name.toLowerCase() === sub.plan.toLowerCase()) ??
+        null)
+      : null;
+    const maxVehicles =
+      (plan?.limits as { vehicles?: number } | undefined)?.vehicles ?? 0;
+    const currentCount = data.vehicleCount ?? 0;
+
+    return {
+      subscriptions,
+      status: {
+        type: (sub?.status as SubscriptionStatus["type"]) ?? "no_subscription",
+        plan: plan?.name ?? "none",
+        maxVehicles,
+        currentCount,
+        remainingQuota: Math.max(0, maxVehicles - currentCount),
+      },
+      billing: {
+        paymentMethod: data.paymentMethod ?? null,
+        invoices: data.invoices ?? [],
+      },
+      plans,
+    };
+  } catch {
+    return empty;
+  }
+}
+
 export async function submitContactForm(data: {
   name: string;
   email: string;
