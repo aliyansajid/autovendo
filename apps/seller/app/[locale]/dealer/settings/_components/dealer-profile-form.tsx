@@ -17,26 +17,19 @@ import {
   CustomFormField,
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
-import { useTranslations, useLocale } from "next-intl";
-import { updateUser, changeEmail } from "@/lib/api/auth-client";
-import { useTransition, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { useTransition, useEffect, useState, useMemo } from "react";
 import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
-import { updateDealerProfileFromApi, uploadDealerProfileImage } from "@/lib/api/dealers";
+import { updateDealerProfile } from "@/lib/api/dealers";
 import { Spinner } from "@repo/ui/components/spinner";
 import { DealerProfile } from "@/types/dealer";
 import { swissCities } from "@repo/vehicle-constants";
 import { SelectItem } from "@repo/ui/components/select";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-type FormValues = z.infer<ReturnType<typeof createDealerProfileSchema>>;
-
-// ---------------------------------------------------------------------------
-// useObjectUrl — creates an object URL for File inputs and revokes on cleanup
-// ---------------------------------------------------------------------------
+type DealerProfileFormValues = z.infer<
+  ReturnType<typeof createDealerProfileSchema>
+>;
 
 function useObjectUrl(value: File | string | null | undefined): string | null {
   const [url, setUrl] = useState<string | null>(
@@ -58,10 +51,6 @@ function useObjectUrl(value: File | string | null | undefined): string | null {
   return url;
 }
 
-// ---------------------------------------------------------------------------
-// OpeningHourRow — isolated component so useWatch only re-renders the row
-// ---------------------------------------------------------------------------
-
 function OpeningHourRow({
   control,
   index,
@@ -70,7 +59,7 @@ function OpeningHourRow({
   closedLabel,
   isPending,
 }: {
-  control: Control<FormValues>;
+  control: Control<DealerProfileFormValues>;
   index: number;
   dayLabel: string;
   openLabel: string;
@@ -162,14 +151,14 @@ interface DealerProfileFormProps {
 
 export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   const t = useTranslations("DealerProfileForm");
-  const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const tSchema = useTranslations("ProfileSchema");
-  const schema = createDealerProfileSchema(tSchema);
 
-  const form = useForm<FormValues>({
+  const schema = useMemo(() => createDealerProfileSchema(tSchema), [tSchema]);
+
+  const form = useForm<DealerProfileFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: initialData?.user?.name || "",
@@ -268,42 +257,31 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   const logoPreviewUrl = useObjectUrl(logoValue as File | string | undefined);
   const coverPreviewUrl = useObjectUrl(coverValue as File | string | undefined);
 
-  const uploadFile = async (file: File, type: "branding" | "profiles") => {
-    const data = await uploadDealerProfileImage(file, type);
-    if (!data.success || !data.publicUrl) throw new Error(data.error ?? t("uploadFailed"));
-    return data.publicUrl;
-  };
-
-  function onSubmit(values: FormValues) {
-    if (!initialData?.user?.id) {
-      toast.error(t("missingUser"));
-      return;
-    }
-
+  function onSubmit(values: DealerProfileFormValues) {
     startTransition(async () => {
       try {
-        let imageUrl = values.image;
-        let logoUrl = values.logo;
-        let coverImageUrl = values.coverImage;
+        const emailChanged = values.email !== initialData?.user?.email;
 
-        // 1. Upload new files if any
-        if (values.image instanceof File) {
-          imageUrl = await uploadFile(values.image, "profiles");
-        }
-        if (values.logo instanceof File) {
-          logoUrl = await uploadFile(values.logo, "branding");
-        }
-        if (values.coverImage instanceof File) {
-          coverImageUrl = await uploadFile(values.coverImage, "branding");
-        }
-
-        // 2. Update Dealer Profile via API
-        // This handles R2 cleanup by comparing with current DB state
-        const result = await updateDealerProfileFromApi({
-          ...values,
-          image: (imageUrl as string) || null,
-          logo: (logoUrl as string) || null,
-          coverImage: (coverImageUrl as string) || null,
+        // One multipart call — the API uploads any new images to R2, writes the
+        // Dealer + User rows, and proxies the email change to Better Auth.
+        const result = await updateDealerProfile({
+          name: values.name,
+          email: values.email,
+          avatar: values.image,
+          companyName: values.companyName,
+          description: values.description,
+          website: values.website,
+          logo: values.logo,
+          coverImage: values.coverImage,
+          streetAddress: values.streetAddress,
+          zipCode: values.zipCode,
+          city: values.city,
+          country: values.country,
+          uidNumber: values.uidNumber,
+          contactPerson: values.contactPerson,
+          phoneNumber: values.phoneNumber,
+          businessEmail: values.businessEmail,
+          openingHours: values.openingHours,
         });
 
         if (!result.success) {
@@ -311,49 +289,14 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           return;
         }
 
-        // 3. Update User fields via Better Auth (Client Side)
-        const userUpdates: { name?: string; image?: string } = {};
-        if (values.name !== (initialData?.user?.name || "")) {
-          userUpdates.name = values.name;
-        }
-        if (
-          (imageUrl as string | null) !== (initialData?.user?.image || null)
-        ) {
-          userUpdates.image = (imageUrl as string) || "";
-        }
-
-        if (Object.keys(userUpdates).length > 0) {
-          const { error } = await updateUser(userUpdates);
-          if (error) {
-            toast.error((error as { message?: string }).message || t("userUpdateError"));
-            return;
-          }
-        }
-
-        // 4. Handle Email Change
-        if (values.email !== initialData?.user?.email) {
-          const { error } = await changeEmail({
-            newEmail: values.email,
-            callbackURL: `/${locale}/dealer/settings/profile`,
-          });
-
-          if (error) {
-            toast.error((error as { message?: string }).message || t("emailChangeError"));
-            return;
-          }
-
+        // Email only changes after the user confirms via the link Better Auth sends.
+        if (emailChanged) {
           toast.info(t("emailConfirmation"));
         }
 
-        // 5. Final Success
         toast.success(t("profileUpdateSuccess"));
         router.refresh();
-        form.reset({
-          ...values,
-          image: imageUrl as string | undefined,
-          logo: logoUrl as string | undefined,
-          coverImage: coverImageUrl as string | undefined,
-        });
+        form.reset(values);
       } catch (error: unknown) {
         toast.error((error as Error)?.message || t("unexpectedError"));
       }

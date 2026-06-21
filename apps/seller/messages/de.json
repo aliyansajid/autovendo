@@ -1480,16 +1480,12 @@
       "SATURDAY": "Samstag",
       "SUNDAY": "Sonntag"
     },
-    "uploadFailed": "Datei-Upload fehlgeschlagen.",
-    "userUpdateError": "Benutzerinformationen konnten nicht aktualisiert werden.",
-    "emailChangeError": "E-Mail-Änderung konnte nicht initiiert werden.",
     "emailConfirmation": "Eine Bestätigungs-E-Mail wurde an Ihre neue E-Mail-Adresse gesendet.",
-    "missingUser": "Benutzerinformationen fehlen.",
     "profileUpdateSuccess": "Profil erfolgreich aktualisiert.",
     "profileUpdateError": "Unternehmensprofil konnte nicht aktualisiert werden.",
     "unexpectedError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
   },
-  "ProfileForm": {
+  "SellerProfileForm": {
     "personalTitle": "Persönliche Informationen",
     "personalDesc": "Ihre grundlegenden Kontodaten.",
     "nameLabel": "Name",
@@ -1507,8 +1503,6 @@
     "saving": "Speichert...",
     "save": "Speichern",
     "profileUpdateError": "Profil konnte nicht aktualisiert werden.",
-    "userUpdateError": "Benutzerinformationen konnten nicht aktualisiert werden.",
-    "emailChangeError": "E-Mail-Änderung konnte nicht initiiert werden.",
     "emailConfirmation": "Eine Bestätigungs-E-Mail wurde an Ihre neue E-Mail-Adresse gesendet.",
     "profileUpdateSuccess": "Profil erfolgreich aktualisiert.",
     "unexpectedError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."

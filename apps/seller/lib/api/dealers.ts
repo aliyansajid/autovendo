@@ -6,7 +6,7 @@ import type {
   GooglePlaceData,
 } from "@/types/dealer";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.autovendo.ch";
 
 // serverFetch — for server-side authenticated calls (forwards cookie)
 async function serverFetch(path: string, init?: RequestInit) {
@@ -50,19 +50,68 @@ export async function getDealerProfileFromApi(): Promise<DealerProfile | null> {
   }
 }
 
-export async function updateDealerProfileFromApi(
-  values: Record<string, unknown>,
+export type DealerProfileUpdate = {
+  // Account identity — the API writes these to the User table / Better Auth.
+  name?: string;
+  email?: string;
+  avatar?: File | string | null; // new file, or existing URL (left untouched)
+  // Dealer business fields.
+  companyName?: string;
+  description?: string | null;
+  website?: string | null;
+  logo?: File | string | null; // new file or existing URL
+  coverImage?: File | string | null;
+  streetAddress?: string;
+  zipCode?: string;
+  city?: string;
+  country?: string;
+  uidNumber?: string;
+  contactPerson?: string;
+  phoneNumber?: string;
+  businessEmail?: string;
+  openingHours?: {
+    day: string;
+    isOpen: boolean;
+    openTime?: string | null;
+    closeTime?: string | null;
+  }[];
+};
+
+// Single multipart call: the client sends the data plus any new image files and
+// the API does the whole job — uploads logo/cover/avatar to R2, writes the
+// Dealer + User rows, and proxies the email change to Better Auth. No
+// client-side upload-then-save round-trip.
+export async function updateDealerProfile(
+  body: DealerProfileUpdate,
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    const form = new FormData();
+    for (const [key, value] of Object.entries(body)) {
+      if (value == null) continue;
+      if (key === "avatar") {
+        // Only a newly picked file is sent; an unchanged URL is left as-is.
+        if (value instanceof File) form.append("avatar", value);
+      } else if (key === "logo" || key === "coverImage") {
+        form.append(key, value instanceof File ? value : String(value));
+      } else if (key === "openingHours") {
+        form.append("openingHours", JSON.stringify(value));
+      } else if (!(value instanceof File)) {
+        form.append(key, String(value));
+      }
+    }
+
+    // No Content-Type header — the browser sets the multipart boundary.
     const res = await fetch(`${API_BASE}/dealer/profile`, {
       method: "PUT",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
+      body: form,
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      return { success: false, error: (data as { error?: string }).error || "errorDefault" };
+      return {
+        success: false,
+        error: (data as { error?: string }).error || "errorDefault",
+      };
     }
     return { success: true };
   } catch {
@@ -83,18 +132,30 @@ export async function getDealersFromApi(params: {
       page: params.page,
       pageSize: params.pageSize,
     });
-    const res = await fetch(
-      `${API_BASE}/dealers${qs ? `?${qs}` : ""}`,
-      { cache: "no-store" },
-    );
-    if (!res.ok) return { dealers: [], totalCount: 0, totalPages: 0, currentPage: params.page ?? 1 };
+    const res = await fetch(`${API_BASE}/dealers${qs ? `?${qs}` : ""}`, {
+      cache: "no-store",
+    });
+    if (!res.ok)
+      return {
+        dealers: [],
+        totalCount: 0,
+        totalPages: 0,
+        currentPage: params.page ?? 1,
+      };
     return res.json();
   } catch {
-    return { dealers: [], totalCount: 0, totalPages: 0, currentPage: params.page ?? 1 };
+    return {
+      dealers: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: params.page ?? 1,
+    };
   }
 }
 
-export async function getDealerByIdFromApi(id: string): Promise<DealerDetail | null> {
+export async function getDealerByIdFromApi(
+  id: string,
+): Promise<DealerDetail | null> {
   try {
     const res = await fetch(`${API_BASE}/dealers/${id}`, { cache: "no-store" });
     if (res.status === 404) return null;
@@ -133,11 +194,23 @@ export async function getDealerVehiclesFromApi(
     const url = `${API_BASE}/dealers/${dealerId}/vehicles${qs.toString() ? `?${qs.toString()}` : ""}`;
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) {
-      return { vehicles: [], totalCount: 0, totalPages: 0, currentPage: page ?? 1, hasMore: false };
+      return {
+        vehicles: [],
+        totalCount: 0,
+        totalPages: 0,
+        currentPage: page ?? 1,
+        hasMore: false,
+      };
     }
     return res.json();
   } catch {
-    return { vehicles: [], totalCount: 0, totalPages: 0, currentPage: page ?? 1, hasMore: false };
+    return {
+      vehicles: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: page ?? 1,
+      hasMore: false,
+    };
   }
 }
 
@@ -153,34 +226,15 @@ export async function sendDealerContactEmailFromApi(
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      return { success: false, error: (body as { error?: string }).error || "errorDefault" };
+      return {
+        success: false,
+        error: (body as { error?: string }).error || "errorDefault",
+      };
     }
     return res.json();
   } catch {
     return { success: false, error: "errorDefault" };
   }
-}
-
-// Uploads a dealer branding/profile image through the API (which stores it in R2)
-// and returns the public CDN URL. type: "branding" (logo/cover) or "profiles" (avatar).
-export async function uploadDealerProfileImage(
-  file: File,
-  type: "branding" | "profiles",
-): Promise<{ success: boolean; publicUrl?: string; error?: string }> {
-  const form = new FormData();
-  form.append("file", file);
-  form.append("type", type);
-  const res = await fetch(`${API_BASE}/dealer/profile/image`, {
-    method: "POST",
-    credentials: "include",
-    body: form,
-  });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) return { success: false, error: (body as { error?: string }).error };
-  const publicUrl =
-    (body as { publicUrl?: string }).publicUrl ??
-    (body as { data?: { publicUrl?: string } }).data?.publicUrl;
-  return { success: true, publicUrl };
 }
 
 export async function getDealerGoogleReviewsFromApi(

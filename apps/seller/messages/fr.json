@@ -1473,16 +1473,12 @@
       "SATURDAY": "Samedi",
       "SUNDAY": "Dimanche"
     },
-    "uploadFailed": "Échec du téléchargement du fichier.",
-    "userUpdateError": "Impossible de mettre à jour les informations utilisateur.",
-    "emailChangeError": "Impossible d'initier le changement d'e-mail.",
     "emailConfirmation": "Un e-mail de confirmation a été envoyé à votre nouvelle adresse e-mail.",
-    "missingUser": "Les informations utilisateur sont manquantes.",
     "profileUpdateSuccess": "Profil mis à jour avec succès.",
     "profileUpdateError": "Impossible de mettre à jour le profil de l'entreprise.",
     "unexpectedError": "Une erreur s'est produite. Veuillez réessayer."
   },
-  "ProfileForm": {
+  "SellerProfileForm": {
     "personalTitle": "Informations Personnelles",
     "personalDesc": "Vos informations de compte de base.",
     "nameLabel": "Nom",
@@ -1500,8 +1496,6 @@
     "saving": "Enregistrement...",
     "save": "Enregistrer",
     "profileUpdateError": "Impossible de mettre à jour le profil.",
-    "userUpdateError": "Impossible de mettre à jour les informations utilisateur.",
-    "emailChangeError": "Impossible d'initier le changement d'e-mail.",
     "emailConfirmation": "Un e-mail de confirmation a été envoyé à votre nouvelle adresse e-mail.",
     "profileUpdateSuccess": "Profil mis à jour avec succès.",
     "unexpectedError": "Une erreur s'est produite. Veuillez réessayer."

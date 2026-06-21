@@ -1,114 +1,104 @@
 import { Skeleton } from "@repo/ui/components/skeleton";
 import { Card, CardHeader, CardContent } from "@repo/ui/components/card";
 
+function FieldSkeleton() {
+  return (
+    <div className="space-y-2">
+      <Skeleton className="h-4 w-28" />
+      <Skeleton className="h-10 w-full" />
+    </div>
+  );
+}
+
 export default function Loading() {
   return (
     <div className="space-y-6">
-      {/* Header Skeleton */}
+      {/* Header */}
       <div className="space-y-1">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-64" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Personal info skeleton */}
+        {/* Personal info */}
         <Card>
           <CardHeader>
             <Skeleton className="h-6 w-40 mb-2" />
-            <Skeleton className="h-4 w-64" />
+            <Skeleton className="h-4 w-56" />
           </CardHeader>
           <CardContent className="space-y-4">
+            {[1, 2].map((i) => (
+              <FieldSkeleton key={i} />
+            ))}
             <div className="space-y-2">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-32 w-32" />
             </div>
           </CardContent>
         </Card>
 
-        {/* Company info skeleton */}
+        {/* Company info */}
         <Card>
           <CardHeader>
             <Skeleton className="h-6 w-40 mb-2" />
-            <Skeleton className="h-4 w-64" />
+            <Skeleton className="h-4 w-56" />
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-10 w-full" />
+              {[1, 2].map((i) => (
+                <FieldSkeleton key={i} />
+              ))}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FieldSkeleton />
               <div className="space-y-2">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-28" />
                 <Skeleton className="h-32 w-32" />
               </div>
             </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[1, 2].map((i) => (
+                <FieldSkeleton key={i} />
+              ))}
+            </div>
+            <FieldSkeleton />
           </CardContent>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Address skeleton */}
+        {/* Address */}
         <Card>
           <CardHeader>
-            <Skeleton className="h-6 w-32 mb-2" />
+            <Skeleton className="h-6 w-28 mb-2" />
             <Skeleton className="h-4 w-56" />
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-10 w-full" />
-            </div>
+            <FieldSkeleton />
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-16" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-16" />
-                <Skeleton className="h-10 w-full" />
-              </div>
+              {[1, 2].map((i) => (
+                <FieldSkeleton key={i} />
+              ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Description skeleton */}
+        {/* Description */}
         <Card>
           <CardHeader>
-            <Skeleton className="h-6 w-32 mb-2" />
+            <Skeleton className="h-6 w-28 mb-2" />
             <Skeleton className="h-4 w-56" />
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-28" />
               <Skeleton className="h-32 w-full" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Opening hours skeleton */}
+      {/* Opening hours */}
       <Card>
         <CardHeader>
           <Skeleton className="h-6 w-40 mb-2" />
@@ -116,15 +106,13 @@ export default function Loading() {
         </CardHeader>
         <CardContent className="space-y-3">
           {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-            <div key={i} className="flex items-center gap-4">
-              <Skeleton className="h-10 w-full" />
-            </div>
+            <Skeleton key={i} className="h-10 w-full" />
           ))}
         </CardContent>
       </Card>
 
       <div className="flex justify-end">
-        <Skeleton className="h-10 w-24" />
+        <Skeleton className="h-10 w-32" />
       </div>
     </div>
   );

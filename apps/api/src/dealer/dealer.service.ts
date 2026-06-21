@@ -342,20 +342,23 @@ export class DealerService {
       select: DEALER_PROFILE_SELECT,
     });
 
-    // Account identity (User table). Name & avatar are plain Prisma writes;
-    // email goes through Better Auth so its confirmation flow runs.
+    // The User table is Better Auth's — name/avatar go through auth.api.updateUser
+    // and email through auth.api.changeEmail, never a direct Prisma write. (The
+    // avatar file was uploaded to R2 above; Better Auth only stores the URL.)
+    const token = (session as { session?: { token?: string } }).session?.token ?? "";
+    const authHeaders = new Headers({ cookie: `better-auth.session_token=${token}` });
+
     const userData: { name?: string; image?: string } = {};
     if (typeof body.name === "string" && body.name.trim()) userData.name = body.name.trim();
     if (avatarUrl) userData.image = avatarUrl;
     if (Object.keys(userData).length > 0) {
-      await this.prisma.user.update({ where: { id: session.user.id }, data: userData });
+      await auth.api.updateUser({ body: userData, headers: authHeaders });
     }
 
     if (typeof body.email === "string" && body.email && body.email !== session.user.email) {
-      const token = (session as { session?: { token?: string } }).session?.token ?? "";
       await auth.api.changeEmail({
         body: { newEmail: body.email, callbackURL: process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch" },
-        headers: new Headers({ cookie: `better-auth.session_token=${token}` }),
+        headers: authHeaders,
       });
     }
 

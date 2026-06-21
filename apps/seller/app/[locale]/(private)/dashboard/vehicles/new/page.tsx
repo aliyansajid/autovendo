@@ -3,12 +3,12 @@ import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@repo/ui/src/components/button";
-import { getSellerProfileFromApi } from "@/lib/api/vehicles";
+import { getSellerProfile } from "@/lib/api/vehicles";
 
 export default async function AddNewVehiclePage() {
   const t = await getTranslations("NewVehiclePage");
 
-  const sellerProfile = await getSellerProfileFromApi();
+  const sellerProfile = await getSellerProfile();
 
   return (
     <div className="space-y-8">

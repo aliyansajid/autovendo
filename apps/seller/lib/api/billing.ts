@@ -8,7 +8,7 @@ import type { BillingData } from "@/lib/api/vehicles";
 
 export type SellerBillingData = BillingData & { hasStripeCustomer: boolean };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.autovendo.ch";
 
 // ─── Server-side helper ───────────────────────────────────────────────────────
 

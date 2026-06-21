@@ -1470,16 +1470,12 @@
       "SATURDAY": "Saturday",
       "SUNDAY": "Sunday"
     },
-    "uploadFailed": "File upload failed.",
-    "userUpdateError": "Could not update user information.",
-    "emailChangeError": "Could not initiate email change.",
     "emailConfirmation": "A confirmation email has been sent to your new email address.",
-    "missingUser": "User information is missing.",
     "profileUpdateSuccess": "Profile updated successfully.",
     "profileUpdateError": "Could not update company profile.",
     "unexpectedError": "An error occurred. Please try again."
   },
-  "ProfileForm": {
+  "SellerProfileForm": {
     "personalTitle": "Personal Information",
     "personalDesc": "Your basic account details.",
     "nameLabel": "Name",
@@ -1497,8 +1493,6 @@
     "saving": "Saving...",
     "save": "Save",
     "profileUpdateError": "Could not update profile.",
-    "userUpdateError": "Could not update user information.",
-    "emailChangeError": "Could not initiate email change.",
     "emailConfirmation": "A confirmation email has been sent to your new email address.",
     "profileUpdateSuccess": "Profile updated successfully.",
     "unexpectedError": "An error occurred. Please try again."

@@ -5,7 +5,7 @@ import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@repo/ui/src/components/button";
-import { getMyVehicleByIdFromApi, getSellerProfileFromApi } from "@/lib/api/vehicles";
+import { getMyVehicleByIdFromApi, getSellerProfile } from "@/lib/api/vehicles";
 
 export default async function EditVehiclePage({
   params,
@@ -16,7 +16,7 @@ export default async function EditVehiclePage({
   const { id } = await params;
 
   const [sellerProfile, vehicle] = await Promise.all([
-    getSellerProfileFromApi(),
+    getSellerProfile(),
     getMyVehicleByIdFromApi(id),
   ]);
 

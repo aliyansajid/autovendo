@@ -34,7 +34,7 @@ export default function ChangePasswordScreen() {
       const { error: err } = await authClient.changePassword({
         currentPassword: current,
         newPassword: next,
-        revokeOtherSessions: false,
+        revokeOtherSessions: true,
       });
       if (err) {
         setError(err.message ?? "Das Passwort konnte nicht geändert werden. Prüfen Sie Ihr aktuelles Passwort.");

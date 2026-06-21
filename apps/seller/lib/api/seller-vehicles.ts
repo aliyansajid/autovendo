@@ -3,7 +3,7 @@
  * Client-side calls rely on credentials: include (browser sends cookies).
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.autovendo.ch";
 
 function clientFetch(path: string, init?: RequestInit) {
   return fetch(`${API_BASE}${path}`, {
@@ -25,7 +25,9 @@ export async function apiCreateVehicle(
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as { error?: string }).error || "Failed to create vehicle");
+    throw new Error(
+      (err as { error?: string }).error || "Failed to create vehicle",
+    );
   }
   return res.json();
 }
@@ -41,7 +43,9 @@ export async function apiUpdateVehicle(
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as { error?: string }).error || "Failed to update vehicle");
+    throw new Error(
+      (err as { error?: string }).error || "Failed to update vehicle",
+    );
   }
   return res.json();
 }
@@ -50,27 +54,41 @@ export async function apiDeleteVehicle(id: string) {
   const res = await clientFetch(`/seller/vehicles/${id}`, { method: "DELETE" });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as { error?: string }).error || "Failed to delete vehicle");
+    throw new Error(
+      (err as { error?: string }).error || "Failed to delete vehicle",
+    );
   }
 }
 
-export async function apiUpdateVehicleStatus(id: string, status: "DRAFT" | "SOLD" | "PUBLISHED") {
+export async function apiUpdateVehicleStatus(
+  id: string,
+  status: "DRAFT" | "SOLD" | "PUBLISHED",
+) {
   const res = await clientFetch(`/seller/vehicles/${id}`, {
     method: "PUT",
     body: JSON.stringify({ status }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as { error?: string }).error || "Failed to update status");
+    throw new Error(
+      (err as { error?: string }).error || "Failed to update status",
+    );
   }
   return res.json();
 }
 
 // ─── Seller Profile ───────────────────────────────────────────────────────────
 
-export async function apiUpdateSellerProfile(
-  values: { phoneNumber?: string; streetAddress?: string; zipCode?: string; city?: string },
-): Promise<{ success: boolean; error?: string }> {
+// Single call: name/email go to the User table via Better Auth (server-side) and
+// the contact fields to the Seller table — all handled by the API in one request.
+export async function updateSellerProfile(values: {
+  name?: string;
+  email?: string;
+  phoneNumber?: string;
+  streetAddress?: string;
+  zipCode?: string;
+  city?: string;
+}): Promise<{ success: boolean; error?: string }> {
   try {
     const res = await clientFetch("/seller/profile", {
       method: "PUT",
@@ -78,7 +96,10 @@ export async function apiUpdateSellerProfile(
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      return { success: false, error: (data as { error?: string }).error || "errorDefault" };
+      return {
+        success: false,
+        error: (data as { error?: string }).error || "errorDefault",
+      };
     }
     return { success: true };
   } catch {
@@ -152,7 +173,9 @@ export async function apiCreateListingCheckout(
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error((err as { error?: string }).error || "Failed to create checkout");
+    throw new Error(
+      (err as { error?: string }).error || "Failed to create checkout",
+    );
   }
   const json = await res.json();
   return json.data?.url ?? json.url ?? json.checkoutUrl ?? "";

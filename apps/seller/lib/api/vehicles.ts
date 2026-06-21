@@ -3,10 +3,21 @@
  * Server-side helpers forward the session cookie from the incoming request.
  */
 
-import type { PaginatedVehicles, VehicleListItem, VehicleFacets, VehicleDetails } from "@/types/vehicle";
+import type {
+  PaginatedVehicles,
+  VehicleListItem,
+  VehicleFacets,
+  VehicleDetails,
+} from "@/types/vehicle";
 
 export type SubscriptionStatus = {
-  type: "active" | "trialing" | "no_subscription" | "quota_exhausted" | "expired" | "past_due";
+  type:
+    | "active"
+    | "trialing"
+    | "no_subscription"
+    | "quota_exhausted"
+    | "expired"
+    | "past_due";
   plan: string;
   maxVehicles: number;
   currentCount: number;
@@ -80,7 +91,7 @@ export type DashboardSummary = {
   recentVehicles: VehicleListItem[];
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.autovendo.ch";
 
 async function serverFetch(path: string, init?: RequestInit) {
   const { headers } = await import("next/headers");
@@ -105,7 +116,14 @@ export async function getVehiclesFromApi(
   const res = await fetch(`${API_BASE}/vehicles?${qs}`, { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to fetch vehicles");
   const json = await res.json();
-  return { vehicles: json.data, total: json.total, page: json.page, pageSize: json.pageSize, totalPages: json.totalPages, facets: json.facets };
+  return {
+    vehicles: json.data,
+    total: json.total,
+    page: json.page,
+    pageSize: json.pageSize,
+    totalPages: json.totalPages,
+    facets: json.facets,
+  };
 }
 
 export async function getVehiclesWithFacetsFromApi(
@@ -146,7 +164,14 @@ export async function getSimilarVehiclesFromApi(
 export async function getDashboardSummaryFromApi(): Promise<DashboardSummary> {
   try {
     const res = await serverFetch("/dealer/vehicles?pageSize=9999");
-    if (!res.ok) return { totalCount: 0, publishedCount: 0, draftCount: 0, soldCount: 0, recentVehicles: [] };
+    if (!res.ok)
+      return {
+        totalCount: 0,
+        publishedCount: 0,
+        draftCount: 0,
+        soldCount: 0,
+        recentVehicles: [],
+      };
     const json = await res.json();
     const vehicles: VehicleListItem[] = json.data ?? [];
     return {
@@ -157,7 +182,13 @@ export async function getDashboardSummaryFromApi(): Promise<DashboardSummary> {
       recentVehicles: vehicles.slice(0, 5),
     };
   } catch {
-    return { totalCount: 0, publishedCount: 0, draftCount: 0, soldCount: 0, recentVehicles: [] };
+    return {
+      totalCount: 0,
+      publishedCount: 0,
+      draftCount: 0,
+      soldCount: 0,
+      recentVehicles: [],
+    };
   }
 }
 
@@ -166,14 +197,24 @@ export async function getSubscriptionStatusFromApi(): Promise<SubscriptionStatus
     const res = await serverFetch("/dealer/subscription");
     if (!res.ok) throw new Error("Failed to fetch subscription");
     const json = await res.json();
-    const ACTIVE_STATUSES = ["active", "trialing", "past_due", "unpaid", "incomplete"];
+    const ACTIVE_STATUSES = [
+      "active",
+      "trialing",
+      "past_due",
+      "unpaid",
+      "incomplete",
+    ];
     const sub =
-      json.data?.subscriptions?.find((s: { status: string; stripeSubscriptionId?: string }) =>
-        ACTIVE_STATUSES.includes(s.status) &&
-        !(s.status === "incomplete" && !s.stripeSubscriptionId),
+      json.data?.subscriptions?.find(
+        (s: { status: string; stripeSubscriptionId?: string }) =>
+          ACTIVE_STATUSES.includes(s.status) &&
+          !(s.status === "incomplete" && !s.stripeSubscriptionId),
       ) ?? null;
     const plan = sub?.plan
-      ? json.data?.plans?.find((p: { name: string }) => p.name.toLowerCase() === sub.plan.toLowerCase())
+      ? json.data?.plans?.find(
+          (p: { name: string }) =>
+            p.name.toLowerCase() === sub.plan.toLowerCase(),
+        )
       : null;
     const planLimits = plan?.limits as { vehicles?: number } | undefined;
     return {
@@ -181,10 +222,19 @@ export async function getSubscriptionStatusFromApi(): Promise<SubscriptionStatus
       plan: plan?.name ?? "none",
       maxVehicles: planLimits?.vehicles ?? 0,
       currentCount: json.data?.vehicleCount ?? 0,
-      remainingQuota: Math.max(0, (planLimits?.vehicles ?? 0) - (json.data?.vehicleCount ?? 0)),
+      remainingQuota: Math.max(
+        0,
+        (planLimits?.vehicles ?? 0) - (json.data?.vehicleCount ?? 0),
+      ),
     };
   } catch {
-    return { type: "no_subscription", plan: "none", maxVehicles: 0, currentCount: 0, remainingQuota: 0 };
+    return {
+      type: "no_subscription",
+      plan: "none",
+      maxVehicles: 0,
+      currentCount: 0,
+      remainingQuota: 0,
+    };
   }
 }
 
@@ -193,7 +243,10 @@ export async function getBillingDataFromApi(): Promise<BillingData> {
     const res = await serverFetch("/dealer/subscription");
     if (!res.ok) return { paymentMethod: null, invoices: [] };
     const json = await res.json();
-    return { paymentMethod: json.data?.paymentMethod ?? null, invoices: json.data?.invoices ?? [] };
+    return {
+      paymentMethod: json.data?.paymentMethod ?? null,
+      invoices: json.data?.invoices ?? [],
+    };
   } catch {
     return { paymentMethod: null, invoices: [] };
   }
@@ -237,7 +290,9 @@ export type SubscriptionData = {
   stripeSubscriptionId?: string | null;
 };
 
-export async function getActiveSubscriptionsFromApi(): Promise<SubscriptionData[]> {
+export async function getActiveSubscriptionsFromApi(): Promise<
+  SubscriptionData[]
+> {
   try {
     const res = await serverFetch("/dealer/subscription");
     if (!res.ok) return [];
@@ -278,7 +333,7 @@ export async function getSitemapData(): Promise<{
 
 // ─── Seller dashboard (authenticated) ────────────────────────────────────────
 
-export async function getSellerProfileFromApi(): Promise<SellerProfile | null> {
+export async function getSellerProfile(): Promise<SellerProfile | null> {
   try {
     const res = await serverFetch("/seller/profile");
     if (!res.ok) return null;
@@ -317,10 +372,13 @@ export async function getMyVehiclesFromApi(): Promise<unknown[]> {
   }
 }
 
-export async function getMyVehicleByIdFromApi(id: string): Promise<VehicleDetails | null> {
+export async function getMyVehicleByIdFromApi(
+  id: string,
+): Promise<VehicleDetails | null> {
   const res = await serverFetch(`/seller/vehicles/${id}`);
   if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`Failed to fetch vehicle (status ${res.status})`);
+  if (!res.ok)
+    throw new Error(`Failed to fetch vehicle (status ${res.status})`);
   const json = await res.json();
   return json.data ?? null;
 }
@@ -343,7 +401,14 @@ export async function getSellerDashboardSummaryFromApi(): Promise<DashboardSumma
     // Fetch all vehicles so counts are accurate regardless of how many the seller has.
     // pageSize=9999 is a practical upper bound; the API will cap it at its own maximum.
     const res = await serverFetch("/seller/vehicles?pageSize=9999");
-    if (!res.ok) return { totalCount: 0, publishedCount: 0, draftCount: 0, soldCount: 0, recentVehicles: [] };
+    if (!res.ok)
+      return {
+        totalCount: 0,
+        publishedCount: 0,
+        draftCount: 0,
+        soldCount: 0,
+        recentVehicles: [],
+      };
     const json = await res.json();
     const vehicles: VehicleListItem[] = json.data ?? [];
     return {
@@ -354,13 +419,21 @@ export async function getSellerDashboardSummaryFromApi(): Promise<DashboardSumma
       recentVehicles: vehicles.slice(0, 5),
     };
   } catch {
-    return { totalCount: 0, publishedCount: 0, draftCount: 0, soldCount: 0, recentVehicles: [] };
+    return {
+      totalCount: 0,
+      publishedCount: 0,
+      draftCount: 0,
+      soldCount: 0,
+      recentVehicles: [],
+    };
   }
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function buildQueryString(params: Record<string, string | string[] | undefined>): string {
+function buildQueryString(
+  params: Record<string, string | string[] | undefined>,
+): string {
   const qs = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined) continue;

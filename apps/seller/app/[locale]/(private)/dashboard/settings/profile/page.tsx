@@ -1,13 +1,11 @@
-export const dynamic = "force-dynamic";
-
-import { SellerProfileForm } from "@/app/[locale]/(private)/dashboard/settings/_components/seller-profile-form";
 import { getTranslations } from "next-intl/server";
-import { getSellerProfileFromApi } from "@/lib/api/vehicles";
+import { SellerProfileForm } from "../_components/seller-profile-form";
+import { getSellerProfile } from "@/lib/api/vehicles";
 
 export default async function ProfilePage() {
   const t = await getTranslations("ProfilePage");
 
-  const sellerProfile = await getSellerProfileFromApi();
+  const sellerProfile = await getSellerProfile();
 
   return (
     <div className="space-y-6">

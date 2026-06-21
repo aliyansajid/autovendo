@@ -1,6 +1,6 @@
 import { getDealerProfileFromApi } from "@/lib/api/dealers";
-import { DealerProfileForm } from "@/app/[locale]/dealer/settings/_components/dealer-profile-form";
 import { getTranslations } from "next-intl/server";
+import { DealerProfileForm } from "../_components/dealer-profile-form";
 
 export default async function ProfilePage() {
   const t = await getTranslations("ProfilePage");

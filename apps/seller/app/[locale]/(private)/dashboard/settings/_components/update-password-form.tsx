@@ -24,9 +24,9 @@ import { createUpdatePasswordSchema } from "@/schema/auth-schema";
 import { useTranslations } from "next-intl";
 
 export const UpdatePasswordForm = () => {
-  const [isPending, startTransition] = useTransition();
   const t = useTranslations("UpdatePasswordForm");
   const t_schema = useTranslations("AuthSchema");
+  const [isPending, startTransition] = useTransition();
 
   const schema = useMemo(
     () => createUpdatePasswordSchema(t_schema),

@@ -1474,16 +1474,12 @@
       "SATURDAY": "Sabato",
       "SUNDAY": "Domenica"
     },
-    "uploadFailed": "Caricamento file fallito.",
-    "userUpdateError": "Impossibile aggiornare le informazioni utente.",
-    "emailChangeError": "Impossibile avviare la modifica dell'e-mail.",
     "emailConfirmation": "Un'e-mail di conferma è stata inviata al vostro nuovo indirizzo e-mail.",
-    "missingUser": "Le informazioni utente mancano.",
     "profileUpdateSuccess": "Profilo aggiornato con successo.",
     "profileUpdateError": "Impossibile aggiornare il profilo aziendale.",
     "unexpectedError": "Si è verificato un errore. Riprovate."
   },
-  "ProfileForm": {
+  "SellerProfileForm": {
     "personalTitle": "Informazioni Personali",
     "personalDesc": "I vostri dati account di base.",
     "nameLabel": "Nome",
@@ -1501,8 +1497,6 @@
     "saving": "Salvataggio...",
     "save": "Salva",
     "profileUpdateError": "Impossibile aggiornare il profilo.",
-    "userUpdateError": "Impossibile aggiornare le informazioni utente.",
-    "emailChangeError": "Impossibile avviare la modifica dell'e-mail.",
     "emailConfirmation": "Un'e-mail di conferma è stata inviata al vostro nuovo indirizzo e-mail.",
     "profileUpdateSuccess": "Profilo aggiornato con successo.",
     "unexpectedError": "Si è verificato un errore. Riprovate."

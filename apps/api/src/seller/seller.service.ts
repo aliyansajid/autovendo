@@ -239,15 +239,18 @@ export class SellerService {
       });
     }
 
-    // Account name (User table). Email goes through Better Auth's confirm flow.
+    // The User table is Better Auth's — name goes through auth.api.updateUser and
+    // email through auth.api.changeEmail, never a direct Prisma write.
+    const token = (session as { session?: { token?: string } }).session?.token ?? "";
+    const authHeaders = new Headers({ cookie: `better-auth.session_token=${token}` });
+
     if (typeof body.name === "string" && body.name.trim()) {
-      await this.prisma.user.update({ where: { id: session.user.id }, data: { name: body.name.trim() } });
+      await auth.api.updateUser({ body: { name: body.name.trim() }, headers: authHeaders });
     }
     if (typeof body.email === "string" && body.email && body.email !== session.user.email) {
-      const token = (session as { session?: { token?: string } }).session?.token ?? "";
       await auth.api.changeEmail({
         body: { newEmail: body.email, callbackURL: process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch" },
-        headers: new Headers({ cookie: `better-auth.session_token=${token}` }),
+        headers: authHeaders,
       });
     }
 
