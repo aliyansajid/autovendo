@@ -153,7 +153,6 @@ export async function getVehicleFromApi(id: string): Promise<unknown | null> {
 }
 
 export async function getSimilarVehiclesFromApi(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _vehicleId: string,
 ): Promise<{ vehicles: VehicleListItem[] }> {
   return { vehicles: [] };
@@ -253,7 +252,6 @@ export async function getBillingDataFromApi(): Promise<BillingData> {
 }
 
 export async function prepareVehicleListingFromApi(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _existingVehicleId?: string,
 ): Promise<{ listingId: string; country: string; dealerId: string }> {
   // No longer needed — vehicle creation goes directly to POST /dealer/vehicles

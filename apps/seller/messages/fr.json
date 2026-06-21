@@ -1739,6 +1739,7 @@
     "step2": "Photos",
     "step3": "Coordonnées",
     "step4": "Aperçu",
+    "stepPlan": "Forfait",
     "noSubscriptionTitle": "Aucun abonnement actif",
     "noSubscriptionDesc": "Vous n'avez pas d'abonnement actif. Veuillez choisir un plan pour publier des véhicules.",
     "quotaExhaustedTitle": "Quota d'annonces épuisé",

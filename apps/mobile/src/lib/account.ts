@@ -36,7 +36,14 @@ async function authedRequest<T>(path: string, init?: RequestInit): Promise<T> {
   } catch {
     throw new ApiError(0, "network_error");
   }
-  if (!res.ok) throw new ApiError(res.status, `request_failed_${res.status}`);
+  if (!res.ok) {
+    // Surface the API's error message (NestJS sends `message`/`error`) so callers
+    // can show it, instead of a generic code. `message` may be a string or array.
+    const body = await res.json().catch(() => null);
+    const raw = body?.message ?? body?.error;
+    const message = Array.isArray(raw) ? raw[0] : raw;
+    throw new ApiError(res.status, message || `request_failed_${res.status}`);
+  }
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
 }

@@ -158,7 +158,8 @@ export function VehicleForm({
       extras: {},
       ...(initialData || {}),
       companyName: initialData?.companyName || sellerProfile?.user?.name || "",
-      businessEmail: initialData?.businessEmail || sellerProfile?.user?.email || "",
+      businessEmail:
+        initialData?.businessEmail || sellerProfile?.user?.email || "",
       phoneNumber: initialData?.phoneNumber || sellerProfile?.phoneNumber || "",
       address: initialData?.address || sellerProfile?.streetAddress || "",
       zipCode: initialData?.zipCode || sellerProfile?.zipCode || "",
@@ -172,7 +173,12 @@ export function VehicleForm({
   const watchMake = useWatch({ control, name: "make" });
 
   useEffect(() => {
-    if (vehicleId && watchMake && initialData?.make && watchMake !== initialData.make) {
+    if (
+      vehicleId &&
+      watchMake &&
+      initialData?.make &&
+      watchMake !== initialData.make
+    ) {
       form.setValue("model", "" as any, { shouldDirty: true });
     }
   }, [watchMake, vehicleId, initialData?.make, form]);
@@ -181,7 +187,11 @@ export function VehicleForm({
   const prevFuelTypeRef = useRef<string | undefined>(initialData?.fuelType);
 
   useEffect(() => {
-    if (fuelType && prevFuelTypeRef.current && fuelType !== prevFuelTypeRef.current) {
+    if (
+      fuelType &&
+      prevFuelTypeRef.current &&
+      fuelType !== prevFuelTypeRef.current
+    ) {
       // Logic to clear irrelevant fields
     }
     prevFuelTypeRef.current = fuelType;
@@ -205,14 +215,26 @@ export function VehicleForm({
   const watchBodyType = useWatch({ control, name: "bodyType" });
   const watchColor = useWatch({ control, name: "color" });
   const watchImages = useWatch({ control, name: "images" });
-  const isStep1Complete = !!watchMake && !!watchPrice && !!watchKilometer && !!watchMonth && !!watchYear && !!watchBodyType && !!watchColor;
-  const isStep2Complete = watchImages && watchImages.length >= 5 && watchImages.length <= 25;
+  const isStep1Complete =
+    !!watchMake &&
+    !!watchPrice &&
+    !!watchKilometer &&
+    !!watchMonth &&
+    !!watchYear &&
+    !!watchBodyType &&
+    !!watchColor;
+  const isStep2Complete =
+    watchImages && watchImages.length >= 5 && watchImages.length <= 25;
   const isStep4Complete = !!useWatch({ control, name: "planId" });
 
   const isNextDisabled =
-    currentStep === 1 ? !isStep1Complete :
-    currentStep === 2 ? !isStep2Complete :
-    currentStep === 4 ? (!isPaid && !isStep4Complete) : false;
+    currentStep === 1
+      ? !isStep1Complete
+      : currentStep === 2
+        ? !isStep2Complete
+        : currentStep === 4
+          ? !isPaid && !isStep4Complete
+          : false;
 
   const handleBack = () => {
     // Skip plan step (4) when vehicle is already paid
@@ -220,9 +242,6 @@ export function VehicleForm({
     setCurrentStep(Math.max(prev, 1));
     window.scrollTo(0, 0);
   };
-
-
-
 
   async function onSubmit(data: any) {
     if (isSubmitting) return;
@@ -235,7 +254,9 @@ export function VehicleForm({
         setUploadProgress(0);
         const images = data.images || [];
         const newFiles = images.filter((img: any) => img instanceof File);
-        const existingKeys = images.filter((img: any) => typeof img === "string");
+        const existingKeys = images.filter(
+          (img: any) => typeof img === "string",
+        );
         let finalImageKeys = [...existingKeys];
 
         if (newFiles.length > 0) {
@@ -251,7 +272,6 @@ export function VehicleForm({
 
         setUploadStatus(t("uploadStatusSaving"));
         setUploadProgress(85);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { images: _images, ...submitData } = data;
 
         if (vehicleId) {
@@ -261,33 +281,63 @@ export function VehicleForm({
             toast.success(t("successUpdate"));
           } else {
             // Not paid — save as draft, then redirect to Stripe
-            await apiUpdateVehicle(vehicleId, { ...submitData, status: "DRAFT" }, finalImageKeys);
+            await apiUpdateVehicle(
+              vehicleId,
+              { ...submitData, status: "DRAFT" },
+              finalImageKeys,
+            );
             const planId = data.planId || listingPlan;
             if (!planId) throw new Error(t("errorNoPlan"));
             setUploadStatus(t("uploadStatusRedirecting"));
             setUploadProgress(95);
-            const checkoutUrl = await apiCreateListingCheckout(vehicleId, planId as "standard" | "best_value", locale);
+            const checkoutUrl = await apiCreateListingCheckout(
+              vehicleId,
+              planId as "standard" | "best_value",
+              locale,
+            );
             setUploadProgress(100);
             window.location.href = checkoutUrl;
             return;
           }
         } else {
-          const result = await apiCreateVehicle(submitData, finalImageKeys) as any;
-          if (result && typeof result === "object" && "error" in result) throw new Error(result.error as string);
+          const result = (await apiCreateVehicle(
+            submitData,
+            finalImageKeys,
+          )) as any;
+          if (result && typeof result === "object" && "error" in result)
+            throw new Error(result.error as string);
 
           const createdVehicleId = result?.data?.id ?? result?.id;
           if (!createdVehicleId) throw new Error(t("errorGeneric"));
           if (!data.planId) throw new Error(t("errorNoPlan"));
           setUploadStatus(t("uploadStatusRedirecting"));
           setUploadProgress(95);
-          const checkoutUrl = await apiCreateListingCheckout(createdVehicleId, data.planId, locale);
+          const checkoutUrl = await apiCreateListingCheckout(
+            createdVehicleId,
+            data.planId,
+            locale,
+          );
           setUploadProgress(100);
           window.location.href = checkoutUrl;
           return;
         }
         router.push("/dashboard/vehicles");
-      } catch {
-        toast.error(t("errorGeneric"));
+      } catch (error) {
+        // User cancelled the upload — no error toast.
+        if (
+          signal.aborted ||
+          (error instanceof Error && error.name === "AbortError")
+        ) {
+          return;
+        }
+        // Surface the real message (e.g. "select a plan") instead of a generic one.
+        toast.error(
+          error instanceof Error && error.message
+            ? error.message
+            : t("errorGeneric"),
+        );
+        setUploadStatus("");
+        setUploadProgress(0);
       } finally {
         setIsSubmitting(false);
       }
@@ -295,11 +345,11 @@ export function VehicleForm({
   }
 
   const allSteps = [
-    { id: 1, label: "Basic Info" },
-    { id: 2, label: "Photos" },
-    { id: 3, label: "Contact" },
-    { id: 4, label: "Plan" },
-    { id: 5, label: "Summary" },
+    { id: 1, label: t("step1") },
+    { id: 2, label: t("step2") },
+    { id: 3, label: t("step3") },
+    { id: 4, label: t("stepPlan") },
+    { id: 5, label: t("step4") },
   ];
   const steps = isPaid ? allSteps.filter((s) => s.id !== 4) : allSteps;
 
@@ -309,19 +359,35 @@ export function VehicleForm({
         {steps.map((step, index) => (
           <div key={step.id} className="contents">
             <div className="flex flex-col items-center gap-2 z-10 w-32">
-              <div className={cn(
-                "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 font-semibold bg-background",
-                currentStep >= step.id ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground",
-                currentStep === step.id && "ring-4 ring-primary/20"
-              )}>
+              <div
+                className={cn(
+                  "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 font-semibold bg-background",
+                  currentStep >= step.id
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border text-muted-foreground",
+                  currentStep === step.id && "ring-4 ring-primary/20",
+                )}
+              >
                 {currentStep > step.id ? <Check /> : step.id}
               </div>
-              <span className={cn("text-xs font-medium", currentStep >= step.id ? "text-primary" : "text-muted-foreground")}>
+              <span
+                className={cn(
+                  "text-xs font-medium",
+                  currentStep >= step.id
+                    ? "text-primary"
+                    : "text-muted-foreground",
+                )}
+              >
                 {step.label}
               </span>
             </div>
             {index < steps.length - 1 && (
-              <Separator className={cn("flex-1 mt-5 -translate-y-1/2", currentStep > step.id ? "bg-primary" : "")} />
+              <Separator
+                className={cn(
+                  "flex-1 mt-5 -translate-y-1/2",
+                  currentStep > step.id ? "bg-primary" : "",
+                )}
+              />
             )}
           </div>
         ))}
@@ -338,20 +404,33 @@ export function VehicleForm({
               <TechnicalDataSection isEdit={!!vehicleId} />
             </div>
           )}
-          {currentStep === 2 && <MediaSection previewImages={previewImages} setPreviewImages={setPreviewImages} />}
+          {currentStep === 2 && (
+            <MediaSection
+              previewImages={previewImages}
+              setPreviewImages={setPreviewImages}
+            />
+          )}
           {currentStep === 3 && <ContactSection />}
           {currentStep === 4 && <PricingSection />}
           {currentStep === 5 && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Review & Publish</CardTitle>
-                <Button variant="ghost" type="button" onClick={() => setCurrentStep(1)}>Edit</Button>
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => setCurrentStep(1)}
+                >
+                  Edit
+                </Button>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Vehicle</p>
-                    <p className="font-bold">{form.getValues("make")} {form.getValues("model")}</p>
+                    <p className="font-bold">
+                      {form.getValues("make")} {form.getValues("model")}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Price</p>
@@ -363,7 +442,9 @@ export function VehicleForm({
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Plan</p>
-                    <p className="font-bold capitalize">{form.getValues("planId")?.replace("_", " ")}</p>
+                    <p className="font-bold capitalize">
+                      {form.getValues("planId")?.replace("_", " ")}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -371,16 +452,32 @@ export function VehicleForm({
           )}
 
           <div className="flex justify-between pt-8 border-t">
-            <Button type="button" variant="outline" onClick={handleBack} disabled={currentStep === 1} className={cn(currentStep === 1 && "invisible")}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleBack}
+              disabled={currentStep === 1}
+              className={cn(currentStep === 1 && "invisible")}
+            >
               <ArrowLeft /> Back
             </Button>
             {currentStep < totalSteps ? (
-              <Button type="button" disabled={isNextDisabled} onClick={handleNext}>
+              <Button
+                type="button"
+                disabled={isNextDisabled}
+                onClick={handleNext}
+              >
                 Next <ArrowRight />
               </Button>
             ) : (
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? <Spinner /> : <><Send className="mr-2" /> Publish</>}
+                {isSubmitting ? (
+                  <Spinner />
+                ) : (
+                  <>
+                    <Send className="mr-2" /> Publish
+                  </>
+                )}
               </Button>
             )}
           </div>
@@ -394,7 +491,10 @@ export function VehicleForm({
               <Spinner className="mx-auto" />
               <p className="font-bold">{uploadStatus}</p>
               <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
-                <div className="bg-primary h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                <div
+                  className="bg-primary h-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
               </div>
             </CardContent>
           </Card>

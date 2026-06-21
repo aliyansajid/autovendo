@@ -19,6 +19,7 @@ import {
   carFuelTypeEnum, utilityFuelTypeEnum, truckFuelTypeEnum, camperFuelTypeEnum,
   carExtrasEnum, utilityExtrasEnum, truckExtrasEnum, camperExtrasEnum,
   ColorEnum, VehicleConditionEnum, TransmissionTypeEnum, DriveTypeEnum, EquipmentEnum,
+  EmissionStandardEnum,
   swissCities,
 } from "@repo/vehicle-constants";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
@@ -78,6 +79,34 @@ const MONTH_OPTS: SelectOption[] = Array.from({ length: 12 }, (_, i) => ({
   value: String(i + 1),
   label: new Date(2000, i, 1).toLocaleDateString("de-CH", { month: "long" }),
 }));
+const GEAR_OPTS: SelectOption[] = [
+  { value: "AUTOMATIC", label: "Automat" },
+  { value: "MANUAL", label: "Schaltgetriebe" },
+];
+const ENERGY_OPTS: SelectOption[] = ["A", "B", "C", "D", "E", "F", "G"].map((v) => ({ value: v, label: v }));
+const EMISSION_OPTS: SelectOption[] = EmissionStandardEnum.map((e) => ({
+  value: e.value,
+  label: "Euro " + e.value.replace(/^EURO_/, "").replaceAll("_", "-").toLowerCase(),
+}));
+const WARRANTY_OPTS: SelectOption[] = [
+  { value: "FROM_DELIVERY", label: "Ab Übergabe" },
+  { value: "FROM_FIRST_REGISTRATION", label: "Ab Erstzulassung" },
+  { value: "FROM_DATE", label: "Ab Datum" },
+];
+const BATTERY_OWNERSHIP_OPTS: SelectOption[] = [
+  { value: "BATTERY_INCLUDED", label: "Batterie inklusive" },
+  { value: "BATTERY_RENT_REQUIRED", label: "Batteriemiete erforderlich" },
+];
+const PLUG_STD_OPTS: SelectOption[] = [
+  { value: "TYPE_1", label: "Typ 1" },
+  { value: "TYPE_2", label: "Typ 2" },
+];
+const PLUG_FAST_OPTS: SelectOption[] = [
+  { value: "CCS", label: "CCS" },
+  { value: "CSS_2", label: "CCS 2" },
+  { value: "CHADEMO", label: "CHAdeMO" },
+  { value: "SUPERCHARGER", label: "Supercharger" },
+];
 
 // ─── Form state ────────────────────────────────────────────────────────────────
 
@@ -90,6 +119,18 @@ type FormState = {
   price: string; newPrice: string;
   color: string; interiorColor: string; metallic: boolean;
   doors: string; seats: string; hp: string; kw: string; cubicCapacity: string;
+  gearTransmission: string; numberOfGears: string; cylinders: string;
+  energyLabel: string; emissionStandard: string;
+  consumptionCity: string; consumptionCountry: string; consumptionTotal: string;
+  wheelbase: string; emptyWeight: string; loadCapacity: string;
+  height: string; width: string; length: string; towingCapacityBraked: string;
+  typeApproval: string; serialNumber: string;
+  warranty: string; warrantyStartDate: string; duration: string; maxKm: string;
+  lastInspectionDate: string; inspectionPassed: boolean;
+  batteryCapacity: string; batteryRentalMonth: string; chargingPower: string;
+  powerConsumption: string; range: string;
+  combustionEnginePowerHp: string; electricMotorPowerHp: string;
+  batteryOwnership: string; chargingPlugTypeStandard: string; chargingPlugTypeFast: string;
   vin: string; vehicleDescription: string;
   companyName: string; businessEmail: string; phoneNumber: string; address: string; zipCode: string; city: string;
 };
@@ -103,6 +144,18 @@ const EMPTY_STATE: FormState = {
   price: "", newPrice: "",
   color: "", interiorColor: "", metallic: false,
   doors: "", seats: "", hp: "", kw: "", cubicCapacity: "",
+  gearTransmission: "", numberOfGears: "", cylinders: "",
+  energyLabel: "", emissionStandard: "",
+  consumptionCity: "", consumptionCountry: "", consumptionTotal: "",
+  wheelbase: "", emptyWeight: "", loadCapacity: "",
+  height: "", width: "", length: "", towingCapacityBraked: "",
+  typeApproval: "", serialNumber: "",
+  warranty: "", warrantyStartDate: "", duration: "", maxKm: "",
+  lastInspectionDate: "", inspectionPassed: false,
+  batteryCapacity: "", batteryRentalMonth: "", chargingPower: "",
+  powerConsumption: "", range: "",
+  combustionEnginePowerHp: "", electricMotorPowerHp: "",
+  batteryOwnership: "", chargingPlugTypeStandard: "", chargingPlugTypeFast: "",
   vin: "", vehicleDescription: "",
   companyName: "", businessEmail: "", phoneNumber: "", address: "", zipCode: "", city: "",
 };
@@ -187,6 +240,18 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
             price: str(v.price), newPrice: str(v.newPrice),
             color: str(v.color), interiorColor: str(v.interiorColor), metallic: v.metallic === true,
             doors: str(v.doors), seats: str(v.seats), hp: str(v.hp), kw: str(v.kw), cubicCapacity: str(v.cubicCapacity),
+            gearTransmission: str(v.gearTransmission), numberOfGears: str(v.numberOfGears), cylinders: str(v.cylinders),
+            energyLabel: str(v.energyLabel), emissionStandard: str(v.emissionStandard),
+            consumptionCity: str(v.consumptionCity), consumptionCountry: str(v.consumptionCountry), consumptionTotal: str(v.consumptionTotal),
+            wheelbase: str(v.wheelbase), emptyWeight: str(v.emptyWeight), loadCapacity: str(v.loadCapacity),
+            height: str(v.height), width: str(v.width), length: str(v.length), towingCapacityBraked: str(v.towingCapacityBraked),
+            typeApproval: str(v.typeApproval), serialNumber: str(v.serialNumber),
+            warranty: str(v.warranty), warrantyStartDate: str(v.warrantyStartDate).slice(0, 10), duration: str(v.duration), maxKm: str(v.maxKm),
+            lastInspectionDate: str(v.lastInspectionDate).slice(0, 10), inspectionPassed: v.inspectionPassed === true,
+            batteryCapacity: str(v.batteryCapacity), batteryRentalMonth: str(v.batteryRentalMonth), chargingPower: str(v.chargingPower),
+            powerConsumption: str(v.powerConsumption), range: str(v.range),
+            combustionEnginePowerHp: str(v.combustionEnginePowerHp), electricMotorPowerHp: str(v.electricMotorPowerHp),
+            batteryOwnership: str(v.batteryOwnership), chargingPlugTypeStandard: str(v.chargingPlugTypeStandard), chargingPlugTypeFast: str(v.chargingPlugTypeFast),
             vin: str(v.vin), vehicleDescription: str(v.vehicleDescription),
             companyName: str(v.companyName) || prefill.companyName || "",
             businessEmail: str(v.businessEmail) || prefill.businessEmail || "",
@@ -223,6 +288,7 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
     if (!f.kilometer.trim()) return "Bitte geben Sie den Kilometerstand an.";
     if (!f.price.trim()) return "Bitte geben Sie den Preis an.";
     if (images.length < 5) return "Bitte laden Sie mindestens 5 Fotos hoch.";
+    if (images.length > 25) return "Bitte laden Sie höchstens 25 Fotos hoch.";
     if (!f.phoneNumber.trim()) return "Bitte geben Sie eine Telefonnummer an.";
     if (f.address.trim().length < 5) return "Bitte geben Sie eine gültige Adresse an.";
     if (!/^\d{4}$/.test(f.zipCode.trim())) return "Bitte geben Sie eine gültige PLZ an.";
@@ -261,13 +327,26 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
         zipCode: f.zipCode.trim(),
         city: f.city,
       };
-      const optStr: (keyof FormState)[] = ["model", "version", "fuelType", "transmissionType", "driveType", "vehicleCondition", "interiorColor", "vin", "vehicleDescription", "companyName", "businessEmail"];
+      const optStr: (keyof FormState)[] = [
+        "model", "version", "fuelType", "transmissionType", "driveType", "vehicleCondition", "interiorColor",
+        "gearTransmission", "energyLabel", "emissionStandard", "typeApproval", "serialNumber",
+        "warranty", "warrantyStartDate", "lastInspectionDate",
+        "batteryOwnership", "chargingPlugTypeStandard", "chargingPlugTypeFast",
+        "vin", "vehicleDescription", "companyName", "businessEmail",
+      ];
       for (const k of optStr) if (f[k] && String(f[k]).trim()) payload[k] = f[k];
-      const optNum: (keyof FormState)[] = ["newPrice", "doors", "seats", "hp", "kw", "cubicCapacity"];
+      const optNum: (keyof FormState)[] = [
+        "newPrice", "doors", "seats", "hp", "kw", "cubicCapacity",
+        "numberOfGears", "cylinders", "consumptionCity", "consumptionCountry", "consumptionTotal",
+        "wheelbase", "emptyWeight", "loadCapacity", "height", "width", "length", "towingCapacityBraked",
+        "duration", "maxKm", "batteryCapacity", "batteryRentalMonth", "chargingPower",
+        "powerConsumption", "range", "combustionEnginePowerHp", "electricMotorPowerHp",
+      ];
       for (const k of optNum) {
         const n = numOrUndef(String(f[k]));
         if (n != null) payload[k] = n;
       }
+      if (f.inspectionPassed) payload.inspectionPassed = true;
       if (equipment.length) payload.equipment = Object.fromEntries(equipment.map((k) => [k, true]));
       if (extras.length) payload.extras = Object.fromEntries(extras.map((k) => [k, true]));
 
@@ -291,8 +370,15 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
       Alert.alert(isEdit ? "Gespeichert" : "Inserat erstellt", isEdit ? "Ihre Änderungen wurden gespeichert." : "Ihr Entwurf wurde erstellt. Veröffentlichen Sie ihn im Dashboard.", [
         { text: "OK", onPress: () => router.back() },
       ]);
-    } catch {
-      Alert.alert("Fehler", "Das Inserat konnte nicht gespeichert werden. Bitte prüfen Sie Ihre Angaben.");
+    } catch (e) {
+      // Show the API's specific message (e.g. quota/validation) when we have one.
+      const msg = e instanceof Error ? e.message : "";
+      Alert.alert(
+        "Fehler",
+        msg && msg !== "network_error" && !msg.startsWith("request_failed")
+          ? msg
+          : "Das Inserat konnte nicht gespeichert werden. Bitte prüfen Sie Ihre Angaben.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -307,7 +393,6 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
   }
 
   const isElectric = f.fuelType === "ELECTRIC" || f.fuelType.includes("HEV") || f.fuelType.includes("PHEV");
-  void isElectric;
 
   return (
     <View style={styles.root}>
@@ -340,6 +425,7 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
             <TextField label="Kilometerstand *" value={f.kilometer} onChangeText={(v) => set("kilometer", v)} keyboardType="number-pad" placeholder="z. B. 84500" />
             <SelectField label="Treibstoff" optional searchable value={f.fuelType} options={fuelOptions(f.vehicleType)} onChange={(v) => set("fuelType", v)} />
             <SelectField label="Getriebe" optional value={f.transmissionType} options={TRANSMISSION_OPTS} onChange={(v) => set("transmissionType", v)} />
+            <SelectField label="Schaltung" optional value={f.gearTransmission} options={GEAR_OPTS} onChange={(v) => set("gearTransmission", v)} />
             <SelectField label="Antrieb" optional value={f.driveType} options={DRIVE_OPTS} onChange={(v) => set("driveType", v)} />
           </FormSection>
 
@@ -375,7 +461,113 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
               </View>
             </View>
             <TextField label="Hubraum (cm³)" value={f.cubicCapacity} onChangeText={(v) => set("cubicCapacity", v)} keyboardType="number-pad" placeholder="z. B. 1968" />
+            <View style={styles.rowTwo}>
+              <View style={{ flex: 1 }}>
+                <TextField label="Zylinder" value={f.cylinders} onChangeText={(v) => set("cylinders", v)} keyboardType="number-pad" placeholder="z. B. 4" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <TextField label="Anzahl Gänge" value={f.numberOfGears} onChangeText={(v) => set("numberOfGears", v)} keyboardType="number-pad" placeholder="z. B. 6" />
+              </View>
+            </View>
             <TextField label="Fahrgestellnummer (VIN)" value={f.vin} onChangeText={(v) => set("vin", v.toUpperCase())} placeholder="17 Zeichen" autoCapitalize="characters" />
+          </FormSection>
+
+          <FormSection title="Verbrauch & Effizienz">
+            <SelectField label="Energieeffizienz" optional value={f.energyLabel} options={ENERGY_OPTS} onChange={(v) => set("energyLabel", v)} />
+            <SelectField label="Abgasnorm" optional searchable value={f.emissionStandard} options={EMISSION_OPTS} onChange={(v) => set("emissionStandard", v)} />
+            <View style={styles.rowTwo}>
+              <View style={{ flex: 1 }}>
+                <TextField label="Verbrauch Stadt" value={f.consumptionCity} onChangeText={(v) => set("consumptionCity", v)} keyboardType="decimal-pad" placeholder="l/100 km" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <TextField label="Verbrauch Land" value={f.consumptionCountry} onChangeText={(v) => set("consumptionCountry", v)} keyboardType="decimal-pad" placeholder="l/100 km" />
+              </View>
+            </View>
+            <TextField label="Verbrauch kombiniert" value={f.consumptionTotal} onChangeText={(v) => set("consumptionTotal", v)} keyboardType="decimal-pad" placeholder="l/100 km" />
+          </FormSection>
+
+          {isElectric && (
+            <FormSection title="Elektro & Laden">
+              <View style={styles.rowTwo}>
+                <View style={{ flex: 1 }}>
+                  <TextField label="Batteriekapazität (kWh)" value={f.batteryCapacity} onChangeText={(v) => set("batteryCapacity", v)} keyboardType="decimal-pad" placeholder="z. B. 77" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <TextField label="Reichweite (km)" value={f.range} onChangeText={(v) => set("range", v)} keyboardType="number-pad" placeholder="z. B. 450" />
+                </View>
+              </View>
+              <SelectField label="Batterie" optional value={f.batteryOwnership} options={BATTERY_OWNERSHIP_OPTS} onChange={(v) => set("batteryOwnership", v)} />
+              <TextField label="Batteriemiete (CHF/Monat)" value={f.batteryRentalMonth} onChangeText={(v) => set("batteryRentalMonth", v)} keyboardType="number-pad" placeholder="optional" />
+              <SelectField label="Ladeanschluss (Standard)" optional value={f.chargingPlugTypeStandard} options={PLUG_STD_OPTS} onChange={(v) => set("chargingPlugTypeStandard", v)} />
+              <SelectField label="Ladeanschluss (Schnell)" optional value={f.chargingPlugTypeFast} options={PLUG_FAST_OPTS} onChange={(v) => set("chargingPlugTypeFast", v)} />
+              <View style={styles.rowTwo}>
+                <View style={{ flex: 1 }}>
+                  <TextField label="Ladeleistung (kW)" value={f.chargingPower} onChangeText={(v) => set("chargingPower", v)} keyboardType="decimal-pad" placeholder="z. B. 11" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <TextField label="Stromverbrauch (kWh/100km)" value={f.powerConsumption} onChangeText={(v) => set("powerConsumption", v)} keyboardType="decimal-pad" placeholder="z. B. 17" />
+                </View>
+              </View>
+              <View style={styles.rowTwo}>
+                <View style={{ flex: 1 }}>
+                  <TextField label="Verbrennerleistung (PS)" value={f.combustionEnginePowerHp} onChangeText={(v) => set("combustionEnginePowerHp", v)} keyboardType="number-pad" placeholder="Hybrid" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <TextField label="E-Motorleistung (PS)" value={f.electricMotorPowerHp} onChangeText={(v) => set("electricMotorPowerHp", v)} keyboardType="number-pad" placeholder="Hybrid" />
+                </View>
+              </View>
+            </FormSection>
+          )}
+
+          <FormSection title="Masse & Gewicht">
+            <View style={styles.rowTwo}>
+              <View style={{ flex: 1 }}>
+                <TextField label="Leergewicht (kg)" value={f.emptyWeight} onChangeText={(v) => set("emptyWeight", v)} keyboardType="number-pad" placeholder="z. B. 1500" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <TextField label="Nutzlast (kg)" value={f.loadCapacity} onChangeText={(v) => set("loadCapacity", v)} keyboardType="number-pad" placeholder="optional" />
+              </View>
+            </View>
+            <View style={styles.rowTwo}>
+              <View style={{ flex: 1 }}>
+                <TextField label="Radstand (mm)" value={f.wheelbase} onChangeText={(v) => set("wheelbase", v)} keyboardType="number-pad" placeholder="optional" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <TextField label="Anhängelast gebremst (kg)" value={f.towingCapacityBraked} onChangeText={(v) => set("towingCapacityBraked", v)} keyboardType="number-pad" placeholder="optional" />
+              </View>
+            </View>
+            <View style={styles.rowTwo}>
+              <View style={{ flex: 1 }}>
+                <TextField label="Höhe (mm)" value={f.height} onChangeText={(v) => set("height", v)} keyboardType="number-pad" placeholder="optional" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <TextField label="Breite (mm)" value={f.width} onChangeText={(v) => set("width", v)} keyboardType="number-pad" placeholder="optional" />
+              </View>
+            </View>
+            <TextField label="Länge (mm)" value={f.length} onChangeText={(v) => set("length", v)} keyboardType="number-pad" placeholder="optional" />
+          </FormSection>
+
+          <FormSection title="Garantie & Prüfung">
+            <SelectField label="Garantie" optional value={f.warranty} options={WARRANTY_OPTS} onChange={(v) => set("warranty", v)} />
+            <TextField label="Garantiebeginn (JJJJ-MM-TT)" value={f.warrantyStartDate} onChangeText={(v) => set("warrantyStartDate", v)} placeholder="z. B. 2024-01-15" autoCapitalize="none" />
+            <View style={styles.rowTwo}>
+              <View style={{ flex: 1 }}>
+                <TextField label="Dauer (Monate)" value={f.duration} onChangeText={(v) => set("duration", v)} keyboardType="number-pad" placeholder="z. B. 24" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <TextField label="Max. km" value={f.maxKm} onChangeText={(v) => set("maxKm", v)} keyboardType="number-pad" placeholder="optional" />
+              </View>
+            </View>
+            <TextField label="Letzte Prüfung (JJJJ-MM-TT)" value={f.lastInspectionDate} onChangeText={(v) => set("lastInspectionDate", v)} placeholder="z. B. 2024-03-01" autoCapitalize="none" />
+            <View style={styles.toggleRow}>
+              <Text style={[styles.toggleLabel, { color: C.foreground }]}>Ab MFK / geprüft</Text>
+              <Switch value={f.inspectionPassed} onValueChange={(v) => set("inspectionPassed", v)} trackColor={{ true: C.primary, false: C.border }} />
+            </View>
+          </FormSection>
+
+          <FormSection title="Weitere Angaben">
+            <TextField label="Typengenehmigung" value={f.typeApproval} onChangeText={(v) => set("typeApproval", v)} placeholder="optional" />
+            <TextField label="Seriennummer" value={f.serialNumber} onChangeText={(v) => set("serialNumber", v)} placeholder="optional" />
           </FormSection>
 
           <FormSection title="Ausstattung">

@@ -1736,6 +1736,7 @@
     "step2": "Photos",
     "step3": "Contact Details",
     "step4": "Preview",
+    "stepPlan": "Plan",
     "noSubscriptionTitle": "No Active Subscription",
     "noSubscriptionDesc": "You have no active subscription. Please choose a plan to list vehicles.",
     "quotaExhaustedTitle": "Listing Quota Exhausted",

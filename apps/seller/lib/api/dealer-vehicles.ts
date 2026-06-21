@@ -160,8 +160,3 @@ export function apiUploadImagesWithProgress(
     xhr.send(formData);
   });
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function apiCleanupImages(_keys: string[]): Promise<void> {
-  // No-op: storage cleanup is handled server-side on vehicle delete/update
-}

@@ -22,7 +22,6 @@ import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { getImageUrl } from "@repo/ui/lib/helpers/image";
 import { type SubscriptionStatus } from "@/lib/api/vehicles";
-import { apiCleanupImages } from "@/lib/api/dealer-vehicles";
 import {
   apiDeleteVehicle,
   apiUpdateVehicleStatus,
@@ -358,9 +357,7 @@ function VehicleActions({
                     if (isDeleting) return;
                     setIsDeleting(true);
                     try {
-                      const imageKeys = vehicle.images ?? [];
                       await apiDeleteVehicle(vehicle.id);
-                      if (imageKeys.length) await apiCleanupImages(imageKeys);
                       toast.success(t("deleteSuccess"));
                       router.refresh();
                     } catch {

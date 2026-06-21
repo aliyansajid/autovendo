@@ -59,7 +59,7 @@ import {
 } from "@repo/ui/components/card";
 import { EquipmentSection } from "./form-sections/equipment-section";
 import { type SubscriptionStatus } from "@/lib/api/vehicles";
-import { apiUploadImagesWithProgress, apiCleanupImages } from "@/lib/api/dealer-vehicles";
+import { apiUploadImagesWithProgress } from "@/lib/api/dealer-vehicles";
 import { apiCreateVehicle, apiUpdateVehicle } from "@/lib/api/dealer-vehicles";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
@@ -446,15 +446,9 @@ export function VehicleForm({
         setUploadStatus(t("uploadStatusSaving"));
         setUploadProgress(85);
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { images: _images, ...submitData } = data;
         if (vehicleId) {
-          const removedKeys =
-            (initialData?.images as string[] | undefined)?.filter(
-              (k) => !finalImageKeys.includes(k),
-            ) ?? [];
           await apiUpdateVehicle(vehicleId, submitData, finalImageKeys);
-          if (removedKeys.length) await apiCleanupImages(removedKeys);
           toast.success(t("successUpdate"));
         } else {
           await apiCreateVehicle(submitData, finalImageKeys);
