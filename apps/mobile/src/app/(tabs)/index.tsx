@@ -1,204 +1,75 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   Pressable,
-  TextInput,
-  FlatList,
   Dimensions,
-  Image,
-  ImageBackground,
   RefreshControl,
-} from 'react-native';
-import { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { SymbolView } from 'expo-symbols';
-import { FontFamily, FontSize, Spacing, Radius, type ThemeColors } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-import { fetchHome, type Vehicle, type HomeData } from '@/lib/api';
-import { useSession } from '@/lib/auth-client';
-import { useTabBarHeight } from '@/hooks/use-tab-bar-height';
-import { router } from 'expo-router';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import { useTabBarHeight } from "@/hooks/use-tab-bar-height";
+import { useFavorites } from "@/lib/favorites";
+import {
+  fetchFeaturedVehicles,
+  fetchVehicles,
+  fetchFeaturedDealers,
+  type VehicleListItem,
+  type DealerListItem,
+} from "@/lib/api";
+import { Icon, type IconName } from "@/components/ui/icon";
+import { SectionHeader } from "@/components/ui/section-header";
+import { VehicleCard } from "@/components/ui/vehicle-card";
+import { DealerCard } from "@/components/ui/dealer-card";
+import { Skeleton, ErrorState } from "@/components/ui/states";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CARD_WIDTH = SCREEN_WIDTH * 0.68;
+const { width: SCREEN_W } = Dimensions.get("window");
+const FEATURED_W = Math.min(300, SCREEN_W * 0.74);
+const DEALER_W = Math.min(260, SCREEN_W * 0.66);
 
-// ─── Categories ───────────────────────────────────────────────────────────────
+const CATEGORIES: { type: string; label: string; icon: IconName }[] = [
+  { type: "CAR", label: "Autos", icon: "car.fill" },
+  { type: "CAMPER", label: "Wohnmobile", icon: "bus.fill" },
+  { type: "UTILITY", label: "Nutzfahrzeuge", icon: "truck.box.fill" },
+  { type: "TRUCK", label: "Lastwagen", icon: "truck.box" },
+];
 
-const CATEGORIES = [
-  { id: 'all', label: 'All', symbol: 'square.grid.2x2.fill' },
-  { id: 'suv', label: 'SUV', symbol: 'car.fill' },
-  { id: 'sedan', label: 'Sedan', symbol: 'car.side.fill' },
-  { id: 'electric', label: 'Electric', symbol: 'bolt.car.fill' },
-  { id: 'sports', label: 'Sports', symbol: 'flag.checkered' },
-  { id: 'luxury', label: 'Luxury', symbol: 'star.fill' },
-  { id: 'van', label: 'Van', symbol: 'bus.fill' },
-] as const;
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function formatPrice(n: number) {
-  return new Intl.NumberFormat('de-CH', {
-    style: 'currency',
-    currency: 'CHF',
-    maximumFractionDigits: 0,
-  }).format(n);
+function openSearch(params?: Record<string, string>) {
+  router.push({ pathname: "/(tabs)/search", params });
 }
-
-function formatMileage(n: number) {
-  return new Intl.NumberFormat('de-CH').format(n) + ' km';
-}
-
-function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 18) return 'Good afternoon';
-  return 'Good evening';
-}
-
-function daysAgo(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime();
-  const d = Math.floor(diff / 86_400_000);
-  if (d === 0) return 'Today';
-  if (d === 1) return '1d ago';
-  return `${d}d ago`;
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function Avatar({ name, styles }: { name: string; styles: ReturnType<typeof createStyles> }) {
-  const initials = name
-    .split(' ')
-    .slice(0, 2)
-    .map(w => w[0])
-    .join('')
-    .toUpperCase();
-  return (
-    <View style={styles.avatar}>
-      <Text style={styles.avatarText}>{initials}</Text>
-    </View>
-  );
-}
-
-function FeaturedCard({ item, styles, C }: { item: Vehicle; styles: ReturnType<typeof createStyles>; C: ThemeColors }) {
-  return (
-    <Pressable style={styles.featCard} onPress={() => router.push(`/vehicle/${item.id}` as any)}>
-      {/* Image with gradient overlay */}
-      {item.image ? (
-        <ImageBackground
-          source={{ uri: item.image }}
-          style={styles.featImage}
-          imageStyle={styles.featImageStyle}
-          resizeMode="cover">
-          <View style={styles.featImageOverlay} />
-          {item.fuel && (
-            <View style={styles.fuelBadge}>
-              <Text style={styles.fuelText}>{item.fuel}</Text>
-            </View>
-          )}
-        </ImageBackground>
-      ) : (
-        <View style={styles.featImagePlaceholder}>
-          <SymbolView name="car.side.fill" size={72} tintColor="rgba(255,255,255,0.12)" />
-          {item.fuel && (
-            <View style={styles.fuelBadge}>
-              <Text style={styles.fuelText}>{item.fuel}</Text>
-            </View>
-          )}
-        </View>
-      )}
-
-      {/* Info */}
-      <View style={styles.featInfo}>
-        <View style={styles.featInfoRow}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.featMake}>{item.make}</Text>
-            <Text style={styles.featModel} numberOfLines={1}>{item.year} {item.model}</Text>
-          </View>
-          <Text style={styles.featPrice}>{formatPrice(item.price)}</Text>
-        </View>
-        <View style={styles.featMeta}>
-          <SymbolView name="gauge.medium" size={11} tintColor={C.mutedForeground} />
-          <Text style={styles.featMetaText}>{formatMileage(item.mileage)}</Text>
-          {item.city && (
-            <>
-              <View style={styles.dot} />
-              <SymbolView name="location.fill" size={11} tintColor={C.mutedForeground} />
-              <Text style={styles.featMetaText}>{item.city}</Text>
-            </>
-          )}
-        </View>
-      </View>
-    </Pressable>
-  );
-}
-
-function ArrivalCard({ item, styles, C }: { item: Vehicle; styles: ReturnType<typeof createStyles>; C: ThemeColors }) {
-  return (
-    <Pressable style={styles.arrivalCard} onPress={() => router.push(`/vehicle/${item.id}` as any)}>
-      {/* Thumbnail */}
-      {item.image ? (
-        <Image source={{ uri: item.image }} style={styles.arrivalImg} resizeMode="cover" />
-      ) : (
-        <View style={[styles.arrivalImg, styles.arrivalImgPlaceholder]}>
-          <SymbolView name="car.side.fill" size={28} tintColor="rgba(255,255,255,0.2)" />
-        </View>
-      )}
-
-      {/* Info */}
-      <View style={styles.arrivalInfo}>
-        <Text style={styles.arrivalMake} numberOfLines={1}>{item.make} {item.model}</Text>
-        <Text style={styles.arrivalYear}>{item.year}</Text>
-        <View style={styles.arrivalMeta}>
-          <SymbolView name="gauge.medium" size={11} tintColor={C.mutedForeground} />
-          <Text style={styles.arrivalMetaText}>{formatMileage(item.mileage)}</Text>
-          {item.fuel && (
-            <>
-              <View style={styles.dot} />
-              <Text style={styles.arrivalMetaText}>{item.fuel}</Text>
-            </>
-          )}
-          <View style={styles.dot} />
-          <Text style={styles.arrivalMetaText}>{daysAgo(item.createdAt)}</Text>
-        </View>
-        <Text style={styles.arrivalPrice}>{formatPrice(item.price)}</Text>
-      </View>
-
-      <SymbolView name="chevron.right" size={14} tintColor={C.muted} />
-    </Pressable>
-  );
-}
-
-function SkeletonCard({ width, height, styles }: { width: number | string; height: number; styles: ReturnType<typeof createStyles> }) {
-  return <View style={[styles.skeleton, { width: width as any, height, borderRadius: Radius.xl }]} />;
-}
-
-// ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
   const C = useTheme();
   const styles = useMemo(() => createStyles(C), [C]);
   const tabBarHeight = useTabBarHeight();
-  const { data: sessionData } = useSession();
-  const user = sessionData?.user;
+  const { isFavorite, toggle } = useFavorites();
 
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [data, setData] = useState<HomeData | null>(null);
+  const [featured, setFeatured] = useState<VehicleListItem[]>([]);
+  const [recent, setRecent] = useState<VehicleListItem[]>([]);
+  const [dealers, setDealers] = useState<DealerListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(false);
 
-  const load = useCallback(async (category: string, isRefresh = false) => {
+  const load = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
-    setError(null);
+    setError(false);
     try {
-      const result = await fetchHome(category);
-      setData(result);
+      const [feat, rec, deal] = await Promise.all([
+        fetchFeaturedVehicles(),
+        fetchVehicles({ sort: "created-desc", pageSize: 6 }),
+        fetchFeaturedDealers(),
+      ]);
+      setFeatured(feat);
+      setRecent(rec.data);
+      setDealers(deal);
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError(true);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -206,552 +77,212 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    load(activeCategory);
-  }, [activeCategory]);
-
-  const onRefresh = () => load(activeCategory, true);
-
-  const onCategory = (id: string) => {
-    setActiveCategory(id);
-  };
-
-  const stats = data?.stats;
-  const firstName = user?.name?.split(' ')[0] ?? 'there';
+    load();
+  }, [load]);
 
   return (
     <View style={styles.root}>
       <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[styles.content, { paddingBottom: tabBarHeight }]}
+        contentContainerStyle={{ paddingBottom: tabBarHeight + Spacing[4] }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={C.mutedForeground}
-          />
-        }>
-
-        {/* ── Header ──────────────────────────────────────────────────── */}
-        <SafeAreaView edges={['top']}>
+          <RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={C.mutedForeground} />
+        }
+      >
+        {/* Header */}
+        <SafeAreaView edges={["top"]}>
           <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              {user ? (
-                <Avatar name={user.name} styles={styles} />
-              ) : (
-                <View style={[styles.avatar, styles.avatarPlaceholder]} />
-              )}
-              <View>
-                <Text style={styles.greeting}>{getGreeting()}</Text>
-                <Text style={styles.username}>{firstName}</Text>
-              </View>
-            </View>
-            <Pressable style={styles.notifBtn} hitSlop={8}>
-              <SymbolView name="bell.fill" size={20} tintColor={C.foreground} />
-              <View style={styles.notifDot} />
+            <Text style={[styles.wordmark, { color: C.foreground }]}>
+              Auto<Text style={{ color: C.primary }}>Vendo</Text>
+            </Text>
+            <Pressable
+              style={[styles.iconBtn, { backgroundColor: C.secondary }]}
+              hitSlop={6}
+              onPress={() => router.push("/(tabs)/profile")}
+            >
+              <Icon name="heart" size={19} color={C.foreground} />
             </Pressable>
           </View>
         </SafeAreaView>
 
-        {/* ── Search ──────────────────────────────────────────────────── */}
-        <View style={styles.searchRow}>
-          <View style={styles.searchWrap}>
-            <SymbolView name="magnifyingglass" size={16} tintColor={C.mutedForeground} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search make, model, year..."
-              placeholderTextColor={C.mutedForeground}
-            />
-          </View>
-          <Pressable style={styles.filterBtn}>
-            <SymbolView name="slider.horizontal.3" size={18} tintColor="#fff" />
+        {/* Search entry */}
+        <View style={styles.searchPad}>
+          <Pressable style={[styles.searchBar, { backgroundColor: C.secondary, borderColor: C.border }]} onPress={() => openSearch()}>
+            <Icon name="magnifyingglass" size={17} color={C.mutedForeground} />
+            <Text style={[styles.searchPlaceholder, { color: C.mutedForeground }]}>
+              Marke, Modell oder Stichwort
+            </Text>
           </Pressable>
         </View>
 
-        {/* ── Stats ────────────────────────────────────────────────────── */}
-        <View style={styles.statsRow}>
-          {[
-            { value: stats ? stats.totalCars.toLocaleString('de-CH') : '—', label: 'Cars' },
-            { value: stats ? stats.totalDealers.toLocaleString('de-CH') : '—', label: 'Dealers' },
-            { value: stats ? stats.newToday.toLocaleString('de-CH') : '—', label: 'New Today' },
-          ].map((s, i) => (
-            <View key={i} style={[styles.statItem, i < 2 && styles.statDivider]}>
-              <Text style={styles.statValue}>{s.value}</Text>
-              <Text style={styles.statLabel}>{s.label}</Text>
-            </View>
+        {/* Categories */}
+        <View style={styles.categories}>
+          {CATEGORIES.map((cat) => (
+            <Pressable
+              key={cat.type}
+              style={styles.category}
+              onPress={() => openSearch({ vehicleType: cat.type })}
+            >
+              <View style={[styles.categoryTile, { backgroundColor: C.secondary, borderColor: C.border }]}>
+                <Icon name={cat.icon} size={24} color={C.primary} />
+              </View>
+              <Text style={[styles.categoryLabel, { color: C.foreground }]}>{cat.label}</Text>
+            </Pressable>
           ))}
         </View>
 
-        {/* ── Categories ───────────────────────────────────────────────── */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Browse</Text>
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoriesList}>
-          {CATEGORIES.map(cat => {
-            const active = cat.id === activeCategory;
-            return (
-              <Pressable
-                key={cat.id}
-                style={[styles.catChip, active && styles.catChipActive]}
-                onPress={() => onCategory(cat.id)}>
-                <SymbolView
-                  name={cat.symbol as any}
-                  size={15}
-                  tintColor={active ? '#fff' : C.mutedForeground}
-                />
-                <Text style={[styles.catLabel, active && styles.catLabelActive]}>
-                  {cat.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
-
-        {/* ── Featured ─────────────────────────────────────────────────── */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Featured</Text>
-          <Pressable>
-            <Text style={styles.seeAll}>See all</Text>
-          </Pressable>
-        </View>
-
-        {loading ? (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.featList}>
-            {[1, 2].map(k => <SkeletonCard key={k} width={CARD_WIDTH} height={240} styles={styles} />)}
-          </ScrollView>
-        ) : error ? (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
+        {error ? (
+          <ErrorState onRetry={() => load()} />
         ) : (
-          <FlatList
-            data={data?.featured ?? []}
-            keyExtractor={i => i.id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={CARD_WIDTH + 12}
-            decelerationRate="fast"
-            contentContainerStyle={styles.featList}
-            ListEmptyComponent={
-              <View style={styles.emptyBox}>
-                <Text style={styles.emptyText}>No listings yet</Text>
-              </View>
-            }
-            renderItem={({ item }) => <FeaturedCard item={item} styles={styles} C={C} />}
-          />
-        )}
-
-        {/* ── New Arrivals ─────────────────────────────────────────────── */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>New Arrivals</Text>
-          <Pressable>
-            <Text style={styles.seeAll}>See all</Text>
-          </Pressable>
-        </View>
-
-        {loading ? (
-          <View style={styles.arrivalsList}>
-            {[1, 2, 3].map(k => <SkeletonCard key={k} width="100%" height={80} styles={styles} />)}
-          </View>
-        ) : (
-          <View style={styles.arrivalsList}>
-            {(data?.newArrivals ?? []).length === 0 ? (
-              <View style={styles.emptyBox}>
-                <Text style={styles.emptyText}>No new arrivals</Text>
-              </View>
+          <>
+            {/* Featured */}
+            <View style={styles.section}>
+              <SectionHeader title="Empfohlen" actionLabel="Alle ansehen" onAction={() => openSearch()} />
+            </View>
+            {loading ? (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
+                {[0, 1].map((k) => (
+                  <Skeleton key={k} width={FEATURED_W} height={240} radius={Radius.lg} />
+                ))}
+              </ScrollView>
             ) : (
-              (data?.newArrivals ?? []).map(item => (
-                <ArrivalCard key={item.id} item={item} styles={styles} C={C} />
-              ))
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                snapToInterval={FEATURED_W + Spacing[3]}
+                decelerationRate="fast"
+                contentContainerStyle={styles.hList}
+              >
+                {featured.map((v) => (
+                  <VehicleCard
+                    key={v.id}
+                    vehicle={v}
+                    width={FEATURED_W}
+                    favorite={isFavorite(v.id)}
+                    onToggleFavorite={() => toggle(v.id)}
+                    onPress={() => router.push(`/vehicle/${v.id}`)}
+                  />
+                ))}
+              </ScrollView>
             )}
-          </View>
-        )}
 
+            {/* Featured dealers */}
+            {(loading || dealers.length > 0) && (
+              <>
+                <View style={[styles.section, { marginTop: Spacing[6] }]}>
+                  <SectionHeader title="Top-Händler" actionLabel="Alle" onAction={() => router.push("/(tabs)/dealers")} />
+                </View>
+                {loading ? (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
+                    {[0, 1].map((k) => (
+                      <Skeleton key={k} width={DEALER_W} height={140} radius={Radius.lg} />
+                    ))}
+                  </ScrollView>
+                ) : (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
+                    {dealers.map((d) => (
+                      <DealerCard key={d.id} dealer={d} width={DEALER_W} onPress={() => router.push(`/dealer/${d.id}`)} />
+                    ))}
+                  </ScrollView>
+                )}
+              </>
+            )}
+
+            {/* New arrivals */}
+            <View style={[styles.section, { marginTop: Spacing[6] }]}>
+              <SectionHeader title="Neu eingetroffen" actionLabel="Alle ansehen" onAction={() => openSearch({ sort: "created-desc" })} />
+              <View style={{ gap: Spacing[3] }}>
+                {loading
+                  ? [0, 1, 2].map((k) => <Skeleton key={k} width="100%" height={260} radius={Radius.lg} />)
+                  : recent.map((v) => (
+                      <VehicleCard
+                        key={v.id}
+                        vehicle={v}
+                        favorite={isFavorite(v.id)}
+                        onToggleFavorite={() => toggle(v.id)}
+                        onPress={() => router.push(`/vehicle/${v.id}`)}
+                      />
+                    ))}
+              </View>
+            </View>
+          </>
+        )}
       </ScrollView>
     </View>
   );
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
-function createStyles(C: ThemeColors) {
+function createStyles(C: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
-    root: {
-      flex: 1,
-      backgroundColor: C.background,
-    },
-    scroll: {
-      flex: 1,
-    },
-    content: {
-      paddingHorizontal: Spacing[5],
-    },
-
-    // Header
+    root: { flex: 1, backgroundColor: C.background },
     header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingTop: Spacing[4],
-      paddingBottom: Spacing[4],
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: Spacing[5],
+      paddingTop: Spacing[2],
+      paddingBottom: Spacing[3],
     },
-    headerLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: Spacing[3],
-    },
-    avatar: {
-      width: 42,
-      height: 42,
-      borderRadius: 21,
-      backgroundColor: C.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    avatarPlaceholder: {
-      backgroundColor: C.secondary,
-    },
-    avatarText: {
+    wordmark: {
       fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.sm,
-      color: '#fff',
-      letterSpacing: 0.5,
+      fontSize: FontSize.xl,
+      letterSpacing: -0.6,
     },
-    greeting: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.xs,
-      color: C.mutedForeground,
-      marginBottom: 1,
-    },
-    username: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.md,
-      color: C.foreground,
-    },
-    notifBtn: {
+    iconBtn: {
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: C.secondary,
-      alignItems: 'center',
-      justifyContent: 'center',
+      alignItems: "center",
+      justifyContent: "center",
     },
-    notifDot: {
-      position: 'absolute',
-      top: 8,
-      right: 8,
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-      backgroundColor: '#e8526c',
-      borderWidth: 1.5,
-      borderColor: C.background,
-    },
-
-    // Search
-    searchRow: {
-      flexDirection: 'row',
-      gap: Spacing[2],
-      marginBottom: Spacing[4],
-    },
-    searchWrap: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: C.secondary,
-      borderRadius: Radius.xl,
-      paddingHorizontal: Spacing[4],
-      gap: Spacing[2],
-      height: 46,
-      borderWidth: 1,
-      borderColor: C.border,
-    },
-    searchInput: {
-      flex: 1,
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.base,
-      color: C.foreground,
-      height: 46,
-    },
-    filterBtn: {
-      width: 46,
-      height: 46,
-      borderRadius: Radius.xl,
-      backgroundColor: C.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-
-    // Stats
-    statsRow: {
-      flexDirection: 'row',
-      backgroundColor: C.border,
-      borderRadius: Radius.lg,
-      marginBottom: Spacing[5],
-      borderWidth: 1,
-      borderColor: C.border,
-      paddingVertical: Spacing[3],
-    },
-    statItem: {
-      flex: 1,
-      alignItems: 'center',
-    },
-    statDivider: {
-      borderRightWidth: 1,
-      borderRightColor: C.border,
-    },
-    statValue: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.md,
-      color: C.foreground,
-    },
-    statLabel: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.xs,
-      color: C.mutedForeground,
-      marginTop: 2,
-    },
-
-    // Section header
-    sectionHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: Spacing[3],
-    },
-    sectionTitle: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.lg,
-      color: C.foreground,
-    },
-    seeAll: {
-      fontFamily: FontFamily.sansMedium,
-      fontSize: FontSize.sm,
-      color: C.sidebarPrimary,
-    },
-
-    // Categories
-    categoriesList: {
+    searchPad: {
+      paddingHorizontal: Spacing[5],
       paddingBottom: Spacing[4],
-      gap: Spacing[2],
     },
-    catChip: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: Spacing[1],
-      paddingHorizontal: Spacing[3],
-      paddingVertical: Spacing[2],
-      borderRadius: Radius.full,
-      backgroundColor: C.secondary,
-      borderWidth: 1,
-      borderColor: C.border,
-    },
-    catChipActive: {
-      backgroundColor: C.primary,
-      borderColor: C.sidebarPrimary,
-    },
-    catLabel: {
-      fontFamily: FontFamily.sansMedium,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-    },
-    catLabelActive: {
-      color: '#fff',
-    },
-
-    // Featured cards
-    featList: {
-      paddingBottom: Spacing[4],
-      gap: 12,
-    },
-    featCard: {
-      width: CARD_WIDTH,
-      borderRadius: Radius.xl,
-      backgroundColor: C.card,
-      overflow: 'hidden',
-      borderWidth: 1,
-      borderColor: C.border,
-    },
-    featImage: {
-      width: '100%',
-      height: 180,
-      justifyContent: 'space-between',
-      flexDirection: 'column',
-    },
-    featImageStyle: {
-      borderTopLeftRadius: Radius.xl,
-      borderTopRightRadius: Radius.xl,
-    },
-    featImageOverlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0,0,0,0.15)',
-    },
-    featImagePlaceholder: {
-      width: '100%',
-      height: 180,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: C.muted,
-    },
-    heartBtn: {
-      position: 'absolute',
-      top: Spacing[3],
-      right: Spacing[3],
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      backgroundColor: 'rgba(0,0,0,0.4)',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    fuelBadge: {
-      position: 'absolute',
-      top: Spacing[3],
-      left: Spacing[3],
-      paddingHorizontal: Spacing[2],
-      paddingVertical: 3,
-      borderRadius: Radius.sm,
-      backgroundColor: 'rgba(0,0,0,0.55)',
-      borderWidth: 1,
-      borderColor: C.secondary,
-    },
-    fuelText: {
-      fontFamily: FontFamily.sansMedium,
-      fontSize: FontSize.xs,
-      color: '#fff',
-    },
-    featInfo: {
-      padding: Spacing[3],
-      gap: Spacing[2],
-    },
-    featInfoRow: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      justifyContent: 'space-between',
-      gap: Spacing[2],
-    },
-    featMake: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.base,
-      color: C.foreground,
-    },
-    featModel: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-      marginTop: 1,
-    },
-    featPrice: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.base,
-      color: C.sidebarPrimary,
-      flexShrink: 0,
-    },
-    featMeta: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-    },
-    featMetaText: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.xs,
-      color: C.mutedForeground,
-    },
-    dot: {
-      width: 3,
-      height: 3,
-      borderRadius: 1.5,
-      backgroundColor: C.mutedForeground,
-    },
-
-    // New Arrivals
-    arrivalsList: {
-      gap: Spacing[2],
-    },
-    arrivalCard: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: C.card,
-      borderRadius: Radius.lg,
-      padding: Spacing[3],
-      borderWidth: 1,
-      borderColor: C.border,
+    searchBar: {
+      flexDirection: "row",
+      alignItems: "center",
       gap: Spacing[3],
-    },
-    arrivalImg: {
-      width: 72,
-      height: 72,
+      height: 50,
       borderRadius: Radius.md,
+      paddingHorizontal: Spacing[4],
+      borderWidth: StyleSheet.hairlineWidth * 2,
     },
-    arrivalImgPlaceholder: {
-      backgroundColor: C.border,
-      alignItems: 'center',
-      justifyContent: 'center',
+    searchPlaceholder: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.base,
     },
-    arrivalInfo: {
-      flex: 1,
-      gap: 2,
+    categories: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      paddingHorizontal: Spacing[5],
+      paddingBottom: Spacing[2],
     },
-    arrivalTopRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+    category: {
+      alignItems: "center",
       gap: Spacing[2],
-    },
-    arrivalMake: {
       flex: 1,
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.base,
-      color: C.foreground,
     },
-    arrivalPrice: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.base,
-      color: C.sidebarPrimary,
-      marginTop: 4,
+    categoryTile: {
+      width: 60,
+      height: 60,
+      borderRadius: Radius.lg,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: StyleSheet.hairlineWidth * 2,
     },
-    arrivalYear: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-    },
-    arrivalMeta: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-      marginTop: 2,
-    },
-    arrivalMetaText: {
-      fontFamily: FontFamily.sans,
+    categoryLabel: {
+      fontFamily: FontFamily.sansMedium,
       fontSize: FontSize.xs,
-      color: C.mutedForeground,
+      textAlign: "center",
     },
-
-    // States
-    skeleton: {
-      backgroundColor: C.secondary,
-      marginRight: 12,
+    section: {
+      paddingHorizontal: Spacing[5],
+      marginTop: Spacing[6],
     },
-    errorBox: {
-      padding: Spacing[4],
-      alignItems: 'center',
-    },
-    errorText: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-    },
-    emptyBox: {
-      padding: Spacing[5],
-      alignItems: 'center',
-    },
-    emptyText: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
+    hList: {
+      paddingHorizontal: Spacing[5],
+      gap: Spacing[3],
     },
   });
 }

@@ -60,7 +60,9 @@ export const Colors = {
 } as const;
 
 export type ColorScheme = "light" | "dark";
-export type ThemeColors = typeof Colors.light;
+// Widen values to `string` so both the light and dark palettes (which have
+// different literal values, e.g. hex vs rgba borders) satisfy the type.
+export type ThemeColors = { [K in keyof typeof Colors.light]: string };
 export type ThemeColorKey = keyof ThemeColors;
 
 export const FontFamily = {

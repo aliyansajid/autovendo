@@ -1,840 +1,734 @@
-import { useMemo, useEffect, useState, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  FlatList,
   Pressable,
-  ActivityIndicator,
-  Image,
   Dimensions,
-  Linking,
-  useWindowDimensions,
-} from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SymbolView } from 'expo-symbols';
-import { router, useLocalSearchParams } from 'expo-router';
-import { FontFamily, FontSize, Spacing, Radius, type ThemeColors } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-import { fetchVehicle, type VehicleDetail } from '@/lib/api';
+  ActivityIndicator,
+} from "react-native";
+import { Image } from "expo-image";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router, useLocalSearchParams } from "expo-router";
+import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import { useFavorites } from "@/lib/favorites";
+import {
+  fetchVehicle,
+  fetchSimilarVehicles,
+  type VehicleDetail,
+  type VehicleListItem,
+} from "@/lib/api";
+import {
+  formatPrice,
+  formatKm,
+  formatPower,
+  formatRegistration,
+  formatNumber,
+  formatConsumption,
+  formatDate,
+} from "@/lib/format";
+import {
+  labelMake,
+  labelModel,
+  labelFuel,
+  labelCondition,
+  labelTransmission,
+  labelDrive,
+  labelColor,
+  labelType,
+  labelEmission,
+  labelEquipment,
+  labelExtra,
+  labelWarranty,
+} from "@/lib/labels";
+import { Icon, type IconName } from "@/components/ui/icon";
+import { ErrorState } from "@/components/ui/states";
+import { VehicleCard } from "@/components/ui/vehicle-card";
+import { SectionHeader } from "@/components/ui/section-header";
+import { callPhone, openWhatsApp, sendEmail } from "@/lib/contact";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const { width: SCREEN_W } = Dimensions.get("window");
+const SIMILAR_W = Math.min(280, SCREEN_W * 0.7);
 
-function formatPrice(n: number) {
-  return new Intl.NumberFormat('de-CH', {
-    style: 'currency',
-    currency: 'CHF',
-    maximumFractionDigits: 0,
-  }).format(n);
+function equipmentList(eq: VehicleDetail["equipment"]): string[] {
+  if (!eq) return [];
+  if (Array.isArray(eq)) return eq;
+  return Object.entries(eq)
+    .filter(([, v]) => v)
+    .map(([k]) => k);
 }
-
-function formatKm(n: number) {
-  return new Intl.NumberFormat('de-CH').format(n) + ' km';
-}
-
-function formatNum(n: number | null | undefined, suffix = ''): string | null {
-  if (n == null) return null;
-  const s = new Intl.NumberFormat('de-CH').format(n);
-  return suffix ? `${s} ${suffix}` : s;
-}
-
-function formatFloat(n: number | null | undefined, suffix = ''): string | null {
-  if (n == null) return null;
-  const s = new Intl.NumberFormat('de-CH', { maximumFractionDigits: 2 }).format(n);
-  return suffix ? `${s} ${suffix}` : s;
-}
-
-function formatRegistration(month: number | null, year: number): string {
-  if (!month) return String(year);
-  return `${String(month).padStart(2, '0')}/${year}`;
-}
-
-function formatDate(iso: string | null): string | null {
-  if (!iso) return null;
-  return new Date(iso).toLocaleDateString('de-CH');
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function DataRow({ label, value, styles }: { label: string; value: string | null | undefined; styles: ReturnType<typeof createStyles> }) {
-  if (!value) return null;
-  return (
-    <View style={styles.dataRow}>
-      <Text style={styles.dataLabel} numberOfLines={1}>{label}</Text>
-      <Text style={styles.dataValue} numberOfLines={2}>{value}</Text>
-    </View>
-  );
-}
-
-function SectionCard({
-  title,
-  children,
-  styles,
-  C,
-}: {
-  title: string;
-  children: React.ReactNode;
-  styles: ReturnType<typeof createStyles>;
-  C: ThemeColors;
-}) {
-  const [open, setOpen] = useState(true);
-  return (
-    <View style={styles.sectionCard}>
-      <Pressable style={styles.sectionHeader} onPress={() => setOpen(v => !v)}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        <SymbolView name={open ? 'chevron.up' : 'chevron.down'} size={13} tintColor={C.mutedForeground} />
-      </Pressable>
-      {open && <View style={styles.sectionBody}>{children}</View>}
-    </View>
-  );
-}
-
-function EquipmentChips({ items, styles, C }: { items: string[]; styles: ReturnType<typeof createStyles>; C: ThemeColors }) {
-  const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? items : items.slice(0, 12);
-  return (
-    <View style={{ gap: Spacing[3] }}>
-      <View style={styles.chipGrid}>
-        {visible.map(item => (
-          <View key={item} style={styles.equipChip}>
-            <SymbolView name="checkmark" size={10} tintColor={C.primary} />
-            <Text style={styles.equipChipText}>{item}</Text>
-          </View>
-        ))}
-      </View>
-      {items.length > 12 && (
-        <Pressable style={styles.showMoreBtn} onPress={() => setShowAll(v => !v)}>
-          <Text style={styles.showMoreText}>
-            {showAll ? 'Weniger anzeigen' : `Alle ${items.length} anzeigen`}
-          </Text>
-          <SymbolView name={showAll ? 'chevron.up' : 'chevron.down'} size={12} tintColor={C.primary} />
-        </Pressable>
-      )}
-    </View>
-  );
-}
-
-const ENERGY_COLORS: Record<string, string> = {
-  A: '#00a651', B: '#4db848', C: '#8dc63f',
-  D: '#f7ed00', E: '#fbb612', F: '#f37021', G: '#ed1c24',
-};
-
-// ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function VehicleDetailScreen() {
   const C = useTheme();
   const styles = useMemo(() => createStyles(C), [C]);
-  const insets = useSafeAreaInsets();
-  const { width: screenWidth } = useWindowDimensions();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { isFavorite, toggle } = useFavorites();
 
   const [vehicle, setVehicle] = useState<VehicleDetail | null>(null);
+  const [similar, setSimilar] = useState<VehicleListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [currentImage, setCurrentImage] = useState(0);
+  const [activeImage, setActiveImage] = useState(0);
+  const [descExpanded, setDescExpanded] = useState(false);
 
-  const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 });
-  const onViewableItemsChanged = useCallback(({ viewableItems }: any) => {
-    if (viewableItems.length > 0) setCurrentImage(viewableItems[0].index ?? 0);
-  }, []);
+  const load = useCallback(async () => {
+    if (!id) return;
+    setLoading(true);
+    setError(false);
+    try {
+      const v = await fetchVehicle(id);
+      setVehicle(v);
+      fetchSimilarVehicles(id).then(setSimilar).catch(() => {});
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
   useEffect(() => {
-    if (!id) return;
-    fetchVehicle(id)
-      .then(setVehicle)
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, [id]);
+    load();
+  }, [load]);
 
   if (loading) {
     return (
-      <View style={[styles.centered, { backgroundColor: C.background }]}>
-        <ActivityIndicator color={C.primary} size="large" />
+      <View style={[styles.root, styles.center]}>
+        <ActivityIndicator color={C.mutedForeground} />
       </View>
     );
   }
 
   if (error || !vehicle) {
     return (
-      <SafeAreaView style={[styles.centered, { backgroundColor: C.background }]} edges={['top']}>
-        <SymbolView name="exclamationmark.circle" size={48} tintColor={C.mutedForeground} />
-        <Text style={styles.errorTitle}>Fahrzeug nicht gefunden</Text>
-        <Pressable style={styles.backBtn2} onPress={() => router.back()}>
-          <Text style={styles.backBtn2Text}>Zurück</Text>
-        </Pressable>
-      </SafeAreaView>
+      <View style={styles.root}>
+        <FloatingBack />
+        <SafeAreaView style={styles.center}>
+          <ErrorState onRetry={load} />
+        </SafeAreaView>
+      </View>
     );
   }
 
-  const v = vehicle;
-  const title = [v.make, v.model, v.version].filter(Boolean).join(' ');
-  const powerLabel = v.kw != null || v.hp != null
-    ? [v.kw != null ? `${v.kw} kW` : null, v.hp != null ? `(${v.hp} PS)` : null].filter(Boolean).join(' ')
-    : null;
-  const registrationLabel = formatRegistration(v.registrationMonth, v.registrationYear);
+  const title = `${labelMake(vehicle.make)} ${labelModel(vehicle.model)}`.trim();
+  const dealer = vehicle.dealer;
+  const seller = vehicle.seller;
+  const phone = dealer?.phoneNumber ?? seller?.phoneNumber ?? null;
+  const images = vehicle.images ?? [];
+  const equipment = equipmentList(vehicle.equipment);
+  const extras = equipmentList(vehicle.extras);
+  const fav = isFavorite(vehicle.id);
 
-  // Equipment items (keys with value === true)
-  const equipmentItems = v.equipment
-    ? Object.entries(v.equipment).filter(([, val]) => val === true).map(([k]) => k)
-    : [];
-  const extrasItems = v.extras
-    ? Object.entries(v.extras).filter(([, val]) => val === true).map(([k]) => k)
-    : [];
-
-  const CONTACT_BAR_HEIGHT = 80;
+  const keySpecs: { icon: IconName; label: string; value: string }[] = [
+    { icon: "calendar", label: "Erstzulassung", value: formatRegistration(vehicle.registrationMonth, vehicle.registrationYear) },
+    { icon: "gauge.with.dots.needle.bottom.50percent", label: "Kilometer", value: formatKm(vehicle.kilometer) },
+    { icon: "fuelpump.fill", label: "Treibstoff", value: labelFuel(vehicle.fuelType) || "–" },
+    { icon: "gearshape.fill", label: "Getriebe", value: labelTransmission(vehicle.transmissionType) || "–" },
+    { icon: "bolt.fill", label: "Leistung", value: formatPower(vehicle.hp, vehicle.kw) },
+    { icon: "checkmark.seal.fill", label: "Zustand", value: labelCondition(vehicle.vehicleCondition) || "–" },
+  ];
 
   return (
     <View style={styles.root}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: CONTACT_BAR_HEIGHT + insets.bottom }}
-      >
-        {/* Image Gallery */}
-        <View style={[styles.gallery, { width: screenWidth, height: 280 }]}>
-          {v.images.length > 0 ? (
-            <>
-              <FlatList
-                data={v.images}
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(_, i) => String(i)}
-                viewabilityConfig={viewabilityConfig.current}
-                onViewableItemsChanged={onViewableItemsChanged}
-                renderItem={({ item }) => (
-                  <Image
-                    source={{ uri: item }}
-                    style={{ width: screenWidth, height: 280 }}
-                    resizeMode="cover"
-                  />
-                )}
-              />
-              {v.images.length > 1 && (
-                <View style={styles.pageDots}>
-                  {v.images.map((_, i) => (
-                    <View key={i} style={[styles.dot, i === currentImage && styles.dotActive]} />
-                  ))}
-                </View>
-              )}
-            </>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+        {/* Gallery */}
+        <View style={styles.gallery}>
+          {images.length > 0 ? (
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={(e) =>
+                setActiveImage(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))
+              }
+            >
+              {images.map((uri, i) => (
+                <Image key={i} source={{ uri }} style={styles.galleryImg} contentFit="cover" transition={150} />
+              ))}
+            </ScrollView>
           ) : (
-            <View style={[styles.imagePlaceholder, { width: screenWidth, height: 280 }]}>
-              <SymbolView name="car.side.fill" size={56} tintColor={C.mutedForeground} />
+            <View style={[styles.galleryImg, styles.galleryPlaceholder, { backgroundColor: C.secondary }]}>
+              <Icon name="car.side.fill" size={64} color={C.mutedForeground} />
             </View>
           )}
-          {/* Image count badge */}
-          {v.images.length > 1 && (
-            <View style={styles.imageBadge}>
-              <SymbolView name="photo" size={12} tintColor="#fff" />
-              <Text style={styles.imageBadgeText}>{currentImage + 1}/{v.images.length}</Text>
+
+          {images.length > 1 && (
+            <View style={styles.counter}>
+              <Text style={styles.counterText}>
+                {activeImage + 1} / {images.length}
+              </Text>
             </View>
           )}
+
+          <FloatingBack />
+          <SafeAreaView edges={["top"]} style={styles.favWrap}>
+            <Pressable style={styles.circleBtn} onPress={() => toggle(vehicle.id)} hitSlop={8}>
+              <Icon name={fav ? "heart.fill" : "heart"} size={20} color={fav ? "#ff4d6d" : "#fff"} />
+            </Pressable>
+          </SafeAreaView>
         </View>
 
-        {/* Main content */}
-        <View style={styles.content}>
-          {/* Title & Price */}
-          <View style={styles.titleBlock}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.make}>{v.make} {v.model}</Text>
-              {v.version && <Text style={styles.version}>{v.version}</Text>}
-            </View>
-          </View>
-          <View style={styles.priceBlock}>
-            <Text style={styles.price}>{formatPrice(v.price)}</Text>
-            {v.newPrice != null && v.newPrice > 0 && (
-              <Text style={styles.newPrice}>Neupreis: {formatPrice(v.newPrice)}</Text>
+        <View style={styles.body}>
+          {/* Title + price */}
+          <Text style={[styles.title, { color: C.foreground }]}>{title}</Text>
+          {vehicle.version ? <Text style={[styles.version, { color: C.mutedForeground }]}>{vehicle.version}</Text> : null}
+          <View style={styles.priceRow}>
+            <Text style={[styles.price, { color: C.foreground }]}>{formatPrice(vehicle.price)}</Text>
+            {vehicle.newPrice != null && vehicle.newPrice > vehicle.price && (
+              <Text style={[styles.oldPrice, { color: C.mutedForeground }]}>{formatPrice(vehicle.newPrice)}</Text>
             )}
           </View>
 
-          {/* Key stats */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.statsRow}
-          >
-            <View style={styles.statChip}>
-              <SymbolView name="calendar" size={14} tintColor={C.mutedForeground} />
-              <Text style={styles.statText}>{registrationLabel}</Text>
-            </View>
-            <View style={styles.statChip}>
-              <SymbolView name="gauge.medium" size={14} tintColor={C.mutedForeground} />
-              <Text style={styles.statText}>{formatKm(v.kilometer)}</Text>
-            </View>
-            {v.fuel && (
-              <View style={styles.statChip}>
-                <SymbolView name="fuelpump.fill" size={14} tintColor={C.mutedForeground} />
-                <Text style={styles.statText}>{v.fuel}</Text>
-              </View>
-            )}
-            {powerLabel && (
-              <View style={styles.statChip}>
-                <SymbolView name="bolt.fill" size={14} tintColor={C.mutedForeground} />
-                <Text style={styles.statText}>{powerLabel}</Text>
-              </View>
-            )}
-            {v.transmission && (
-              <View style={styles.statChip}>
-                <SymbolView name="gearshape.fill" size={14} tintColor={C.mutedForeground} />
-                <Text style={styles.statText}>{v.transmission}</Text>
-              </View>
-            )}
-          </ScrollView>
-
-          {/* Grunddaten */}
-          {(v.bodyType || v.condition || v.driveType || v.seats || v.doors) && (
-            <SectionCard title="Grunddaten" styles={styles} C={C}>
-              <DataRow label="Aufbau" value={v.bodyType} styles={styles} />
-              <DataRow label="Zustand" value={v.condition} styles={styles} />
-              <DataRow label="Antrieb" value={v.driveType} styles={styles} />
-              <DataRow label="Sitze" value={formatNum(v.seats)} styles={styles} />
-              <DataRow label="Türen" value={formatNum(v.doors)} styles={styles} />
-            </SectionCard>
-          )}
-
-          {/* Fahrzeuggeschichte */}
-          <SectionCard title="Fahrzeuggeschichte" styles={styles} C={C}>
-            <DataRow label="Kilometerstand" value={formatKm(v.kilometer)} styles={styles} />
-            <DataRow label="Erstzulassung" value={registrationLabel} styles={styles} />
-          </SectionCard>
-
-          {/* Inspektion & Garantie */}
-          {(v.lastInspectionDate || v.warranty) && (
-            <SectionCard title="Inspektion & Garantie" styles={styles} C={C}>
-              <DataRow label="Letzte Inspektion" value={formatDate(v.lastInspectionDate)} styles={styles} />
-              {v.lastInspectionDate != null && (
-                <DataRow label="MFK bestanden" value={v.inspectionPassed ? 'Ja' : 'Nein'} styles={styles} />
-              )}
-              <DataRow label="Garantietyp" value={v.warranty} styles={styles} />
-              <DataRow label="Garantie ab" value={formatDate(v.warrantyStartDate)} styles={styles} />
-              <DataRow label="Garantiedauer" value={v.warrantyDuration != null ? `${v.warrantyDuration} Monate` : null} styles={styles} />
-              <DataRow label="Max. Garantie-km" value={formatNum(v.warrantyMaxKm, 'km')} styles={styles} />
-            </SectionCard>
-          )}
-
-          {/* Technische Daten */}
-          {(powerLabel || v.transmission || v.cubicCapacity || v.cylinders || v.numberOfGears ||
-            v.emptyWeight || v.loadCapacity || v.wheelbase || v.towingCapacityBraked) && (
-            <SectionCard title="Technische Daten" styles={styles} C={C}>
-              <DataRow label="Leistung" value={powerLabel} styles={styles} />
-              <DataRow label="Getriebe" value={v.transmission} styles={styles} />
-              <DataRow label="Hubraum" value={formatNum(v.cubicCapacity, 'ccm')} styles={styles} />
-              <DataRow label="Zylinder" value={formatNum(v.cylinders)} styles={styles} />
-              <DataRow label="Gänge" value={formatNum(v.numberOfGears)} styles={styles} />
-              <DataRow label="Leergewicht" value={formatNum(v.emptyWeight, 'kg')} styles={styles} />
-              <DataRow label="Nutzlast" value={formatNum(v.loadCapacity, 'kg')} styles={styles} />
-              <DataRow label="Radstand" value={formatNum(v.wheelbase, 'mm')} styles={styles} />
-              <DataRow label="Anhängelast gebremst" value={formatNum(v.towingCapacityBraked, 'kg')} styles={styles} />
-            </SectionCard>
-          )}
-
-          {/* Energie & Emissionen */}
-          {(v.fuel || v.consumptionTotal || v.co2Emission || v.emissionStandard || v.energyLabel ||
-            v.range || v.batteryCapacity || v.powerConsumption || v.chargingPower) && (
-            <SectionCard title="Energie & Emissionen" styles={styles} C={C}>
-              <DataRow label="Treibstoff" value={v.fuel} styles={styles} />
-              <DataRow label="Verbrauch (Stadt)" value={formatFloat(v.consumptionCity, 'l/100km')} styles={styles} />
-              <DataRow label="Verbrauch (Landstrasse)" value={formatFloat(v.consumptionCountry, 'l/100km')} styles={styles} />
-              <DataRow label="Verbrauch (kombiniert)" value={formatFloat(v.consumptionTotal, 'l/100km')} styles={styles} />
-              <DataRow label="CO₂-Emissionen" value={formatNum(v.co2Emission, 'g/km')} styles={styles} />
-              <DataRow label="Euro-Norm" value={v.emissionStandard} styles={styles} />
-              {/* Energy label badge */}
-              {v.energyLabel && (
-                <View style={styles.dataRow}>
-                  <Text style={styles.dataLabel}>Energieetikette</Text>
-                  <View style={[styles.energyBadge, { backgroundColor: ENERGY_COLORS[v.energyLabel] ?? '#888' }]}>
-                    <Text style={styles.energyBadgeText}>{v.energyLabel}</Text>
-                  </View>
+          {/* Key specs grid */}
+          <View style={[styles.specGrid, { borderColor: C.border }]}>
+            {keySpecs.map((s, i) => (
+              <View
+                key={s.label}
+                style={[
+                  styles.specCell,
+                  { borderColor: C.border },
+                  i % 2 === 0 && styles.specCellRightBorder,
+                  i < keySpecs.length - 2 && styles.specCellBottomBorder,
+                ]}
+              >
+                <Icon name={s.icon} size={16} color={C.mutedForeground} />
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.specLabel, { color: C.mutedForeground }]}>{s.label}</Text>
+                  <Text numberOfLines={1} style={[styles.specValue, { color: C.foreground }]}>{s.value}</Text>
                 </View>
-              )}
-              <DataRow label="Reichweite (elektrisch)" value={formatNum(v.range, 'km')} styles={styles} />
-              <DataRow label="Batteriekapazität" value={formatFloat(v.batteryCapacity, 'kWh')} styles={styles} />
-              <DataRow label="Stromverbrauch" value={formatFloat(v.powerConsumption, 'kWh/100km')} styles={styles} />
-              <DataRow label="Ladeleistung" value={formatFloat(v.chargingPower, 'kW')} styles={styles} />
-            </SectionCard>
+              </View>
+            ))}
+          </View>
+
+          {/* Description */}
+          {vehicle.vehicleDescription ? (
+            <View style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: C.foreground }]}>Beschreibung</Text>
+              <Text
+                numberOfLines={descExpanded ? undefined : 5}
+                style={[styles.description, { color: C.secondaryForeground }]}
+              >
+                {vehicle.vehicleDescription}
+              </Text>
+              <Pressable onPress={() => setDescExpanded((e) => !e)} hitSlop={6}>
+                <Text style={[styles.more, { color: C.primary }]}>
+                  {descExpanded ? "Weniger anzeigen" : "Mehr anzeigen"}
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
+
+          {/* Technical data */}
+          <SpecSection
+            title="Technische Daten"
+            rows={[
+              ["Fahrzeugtyp", labelType(vehicle.vehicleType)],
+              ["Karosserie", labelType(vehicle.bodyType)],
+              ["Antrieb", labelDrive(vehicle.driveType)],
+              ["Türen", vehicle.doors != null ? String(vehicle.doors) : ""],
+              ["Sitze", vehicle.seats != null ? String(vehicle.seats) : ""],
+              ["Farbe", labelColor(vehicle.color)],
+              ["Innenfarbe", labelColor(vehicle.interiorColor)],
+              ["Hubraum", vehicle.cubicCapacity != null ? `${formatNumber(vehicle.cubicCapacity)} cm³` : ""],
+              ["Zylinder", vehicle.cylinders != null ? String(vehicle.cylinders) : ""],
+              ["Gänge", vehicle.numberOfGears != null ? String(vehicle.numberOfGears) : ""],
+            ]}
+          />
+
+          {/* Consumption & emissions */}
+          <SpecSection
+            title="Verbrauch & Emissionen"
+            rows={[
+              ["Verbrauch gesamt", formatConsumptionOrEmpty(vehicle.consumptionTotal)],
+              ["Verbrauch Stadt", formatConsumptionOrEmpty(vehicle.consumptionCity)],
+              ["Verbrauch Land", formatConsumptionOrEmpty(vehicle.consumptionCountry)],
+              ["CO₂-Emission", vehicle.co2Emission != null ? `${vehicle.co2Emission} g/km` : ""],
+              ["Energieeffizienz", vehicle.energyLabel ?? ""],
+              ["Abgasnorm", labelEmission(vehicle.emissionStandard)],
+            ]}
+          />
+
+          {/* Electric */}
+          {(vehicle.range != null || vehicle.batteryCapacity != null || vehicle.chargingPower != null) && (
+            <SpecSection
+              title="Elektro & Laden"
+              rows={[
+                ["Reichweite", vehicle.range != null ? `${formatNumber(vehicle.range)} km` : ""],
+                ["Batteriekapazität", vehicle.batteryCapacity != null ? `${vehicle.batteryCapacity} kWh` : ""],
+                ["Ladeleistung", vehicle.chargingPower != null ? `${vehicle.chargingPower} kW` : ""],
+                ["Stromverbrauch", vehicle.powerConsumption != null ? `${vehicle.powerConsumption} kWh/100 km` : ""],
+              ]}
+            />
           )}
 
-          {/* Erscheinungsbild */}
-          {(v.color || v.interiorColor || v.metallic != null) && (
-            <SectionCard title="Erscheinungsbild" styles={styles} C={C}>
-              <DataRow label="Aussenfarbe" value={v.color} styles={styles} />
-              <DataRow label="Innenfarbe" value={v.interiorColor} styles={styles} />
-              {v.metallic != null && (
-                <DataRow label="Lackierung" value={v.metallic ? 'Metallic' : 'Uni'} styles={styles} />
-              )}
-            </SectionCard>
+          {/* Dimensions */}
+          {(vehicle.length != null || vehicle.emptyWeight != null) && (
+            <SpecSection
+              title="Masse & Gewicht"
+              rows={[
+                ["Länge", vehicle.length != null ? `${formatNumber(vehicle.length)} mm` : ""],
+                ["Breite", vehicle.width != null ? `${formatNumber(vehicle.width)} mm` : ""],
+                ["Höhe", vehicle.height != null ? `${formatNumber(vehicle.height)} mm` : ""],
+                ["Radstand", vehicle.wheelbase != null ? `${formatNumber(vehicle.wheelbase)} mm` : ""],
+                ["Leergewicht", vehicle.emptyWeight != null ? `${formatNumber(vehicle.emptyWeight)} kg` : ""],
+                ["Anhängelast", vehicle.towingCapacityBraked != null ? `${formatNumber(vehicle.towingCapacityBraked)} kg` : ""],
+              ]}
+            />
           )}
 
-          {/* Identifikatoren */}
-          {(v.vin || v.serialNumber || v.typeApproval) && (
-            <SectionCard title="Identifikatoren" styles={styles} C={C}>
-              <DataRow label="FIN / VIN" value={v.vin} styles={styles} />
-              <DataRow label="Seriennummer" value={v.serialNumber} styles={styles} />
-              <DataRow label="Typengenehmigung" value={v.typeApproval} styles={styles} />
-            </SectionCard>
+          {/* Inspection & warranty */}
+          {(vehicle.inspectionPassed || vehicle.warranty) && (
+            <SpecSection
+              title="Prüfung & Garantie"
+              rows={[
+                ["Letzte Prüfung (MFK)", vehicle.lastInspectionDate ? formatDate(vehicle.lastInspectionDate) : ""],
+                ["MFK geprüft", vehicle.inspectionPassed ? "Ja" : ""],
+                ["Garantie", labelWarranty(vehicle.warranty)],
+                ["Garantiedauer", vehicle.duration != null ? `${vehicle.duration} Monate` : ""],
+              ]}
+            />
           )}
 
-          {/* Ausstattung */}
-          {equipmentItems.length > 0 && (
-            <SectionCard title="Ausstattung" styles={styles} C={C}>
-              <EquipmentChips items={equipmentItems} styles={styles} C={C} />
-            </SectionCard>
+          {/* Equipment */}
+          {equipment.length > 0 && (
+            <View style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: C.foreground }]}>Ausstattung</Text>
+              <View style={styles.equipGrid}>
+                {equipment.map((e) => (
+                  <View key={e} style={styles.equipItem}>
+                    <Icon name="checkmark" size={13} color={C.primary} />
+                    <Text style={[styles.equipText, { color: C.secondaryForeground }]}>{labelEquipment(e)}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
           )}
 
           {/* Extras */}
-          {extrasItems.length > 0 && (
-            <SectionCard title="Extras" styles={styles} C={C}>
-              <EquipmentChips items={extrasItems} styles={styles} C={C} />
-            </SectionCard>
+          {extras.length > 0 && (
+            <View style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: C.foreground }]}>Besonderheiten</Text>
+              <View style={styles.equipGrid}>
+                {extras.map((e) => (
+                  <View key={e} style={styles.equipItem}>
+                    <Icon name="star.fill" size={12} color={C.rating} />
+                    <Text style={[styles.equipText, { color: C.secondaryForeground }]}>{labelExtra(e)}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
           )}
 
-          {/* Beschreibung */}
-          {v.description && (
-            <SectionCard title="Beschreibung" styles={styles} C={C}>
-              <Text style={styles.description}>{v.description}</Text>
-            </SectionCard>
-          )}
+          {/* Seller / dealer */}
+          {dealer ? (
+            <Pressable
+              style={[styles.sellerCard, { backgroundColor: C.card, borderColor: C.border }]}
+              onPress={() => router.push(`/dealer/${dealer.id}`)}
+            >
+              <View style={[styles.sellerLogo, { backgroundColor: C.secondary }]}>
+                {dealer.logo ? (
+                  <Image source={{ uri: dealer.logo }} style={styles.sellerLogoImg} contentFit="contain" />
+                ) : (
+                  <Icon name="building.2.fill" size={22} color={C.mutedForeground} />
+                )}
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text numberOfLines={1} style={[styles.sellerName, { color: C.foreground }]}>{dealer.companyName}</Text>
+                <Text numberOfLines={1} style={[styles.sellerMeta, { color: C.mutedForeground }]}>
+                  {[dealer.zipCode, dealer.city].filter(Boolean).join(" ")}
+                </Text>
+                {dealer.googleRating != null && (
+                  <View style={styles.ratingRow}>
+                    <Icon name="star.fill" size={12} color={C.rating} />
+                    <Text style={[styles.ratingText, { color: C.foreground }]}>
+                      {dealer.googleRating.toFixed(1)}
+                      {dealer.googleReviewCount != null ? ` (${dealer.googleReviewCount})` : ""}
+                    </Text>
+                  </View>
+                )}
+              </View>
+              <Icon name="chevron.right" size={16} color={C.mutedForeground} />
+            </Pressable>
+          ) : seller ? (
+            <View style={[styles.sellerCard, { backgroundColor: C.card, borderColor: C.border }]}>
+              <View style={[styles.sellerLogo, { backgroundColor: C.secondary }]}>
+                <Icon name="person.fill" size={22} color={C.mutedForeground} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.sellerName, { color: C.foreground }]}>Privatverkäufer</Text>
+                <Text style={[styles.sellerMeta, { color: C.mutedForeground }]}>
+                  {[seller.zipCode, seller.city].filter(Boolean).join(" ")}
+                </Text>
+              </View>
+            </View>
+          ) : null}
 
-          {/* Händler */}
-          {v.dealer && (
-            <SectionCard title="Händler" styles={styles} C={C}>
-              <View style={styles.dealerRow}>
-                {v.dealer.logo && (
-                  <Image source={{ uri: v.dealer.logo }} style={styles.dealerLogo} resizeMode="contain" />
-                )}
-                <View style={{ flex: 1 }}>
-                  {v.dealer.name && <Text style={styles.dealerName}>{v.dealer.name}</Text>}
-                  {v.dealer.address && (
-                    <View style={styles.dealerMeta}>
-                      <SymbolView name="mappin" size={12} tintColor={C.mutedForeground} />
-                      <Text style={styles.dealerMetaText} numberOfLines={2}>{v.dealer.address}</Text>
-                    </View>
-                  )}
-                  {v.dealer.phone && (
-                    <View style={styles.dealerMeta}>
-                      <SymbolView name="phone" size={12} tintColor={C.mutedForeground} />
-                      <Text style={styles.dealerMetaText}>{v.dealer.phone}</Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-              {v.dealer.description && (
-                <Text style={styles.dealerDescription} numberOfLines={4}>{v.dealer.description}</Text>
-              )}
-              <View style={styles.dealerActions}>
-                {v.dealer.phone && (
-                  <Pressable
-                    style={styles.dealerActionBtn}
-                    onPress={() => Linking.openURL(`tel:${v.dealer!.phone}`)}>
-                    <SymbolView name="phone.fill" size={15} tintColor="#fff" />
-                    <Text style={styles.dealerActionText}>Anrufen</Text>
-                  </Pressable>
-                )}
-                {v.dealer.email && (
-                  <Pressable
-                    style={[styles.dealerActionBtn, styles.dealerActionBtnOutline]}
-                    onPress={() => Linking.openURL(`mailto:${v.dealer!.email}`)}>
-                    <SymbolView name="envelope" size={15} tintColor={C.primary} />
-                    <Text style={[styles.dealerActionText, { color: C.primary }]}>E-Mail</Text>
-                  </Pressable>
-                )}
-              </View>
-            </SectionCard>
+          {/* Similar */}
+          {similar.length > 0 && (
+            <View style={[styles.section, { marginTop: Spacing[8] }]}>
+              <SectionHeader title="Ähnliche Fahrzeuge" />
+            </View>
           )}
         </View>
+
+        {similar.length > 0 && (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.similarList}>
+            {similar.map((v) => (
+              <VehicleCard
+                key={v.id}
+                vehicle={v}
+                width={SIMILAR_W}
+                favorite={isFavorite(v.id)}
+                onToggleFavorite={() => toggle(v.id)}
+                onPress={() => router.push(`/vehicle/${v.id}`)}
+              />
+            ))}
+          </ScrollView>
+        )}
       </ScrollView>
 
-      {/* Floating back button */}
-      <View style={[styles.floatingBack, { top: insets.top + Spacing[2] }]}>
-        <Pressable style={styles.floatingBackBtn} onPress={() => router.back()}>
-          <SymbolView name="chevron.left" size={18} tintColor={C.foreground} />
-        </Pressable>
-      </View>
-
       {/* Sticky contact bar */}
-      {v.dealer?.phone && (
-        <View style={[styles.contactBar, { paddingBottom: Math.max(insets.bottom, 16) }]}>
-          <View style={styles.contactBarPrice}>
-            <Text style={styles.contactBarPriceLabel}>Preis</Text>
-            <Text style={styles.contactBarPriceValue}>{formatPrice(v.price)}</Text>
-          </View>
-          <Pressable
-            style={styles.callBtn}
-            onPress={() => Linking.openURL(`tel:${v.dealer!.phone}`)}>
-            <SymbolView name="phone.fill" size={18} tintColor="#fff" />
-            <Text style={styles.callBtnText}>Händler anrufen</Text>
-          </Pressable>
+      <SafeAreaView edges={["bottom"]} style={[styles.contactBar, { backgroundColor: C.background, borderTopColor: C.border }]}>
+        <View style={styles.contactInner}>
+          {phone && (
+            <Pressable style={[styles.contactBtn, { backgroundColor: C.primary }]} onPress={() => callPhone(phone)}>
+              <Icon name="phone.fill" size={18} color={C.primaryForeground} />
+              <Text style={[styles.contactBtnText, { color: C.primaryForeground }]}>Anrufen</Text>
+            </Pressable>
+          )}
+          {phone && (
+            <Pressable
+              style={[styles.contactBtn, { backgroundColor: "#25D366" }]}
+              onPress={() => openWhatsApp(phone, `Hallo, ich interessiere mich für ${title}.`)}
+            >
+              <Icon name="message.fill" size={18} color="#fff" />
+              <Text style={[styles.contactBtnText, { color: "#fff" }]}>WhatsApp</Text>
+            </Pressable>
+          )}
+          {dealer?.businessEmail && (
+            <Pressable
+              style={[styles.contactIconBtn, { backgroundColor: C.secondary }]}
+              onPress={() => sendEmail(dealer.businessEmail!, `Anfrage: ${title}`)}
+            >
+              <Icon name="envelope.fill" size={18} color={C.foreground} />
+            </Pressable>
+          )}
         </View>
-      )}
+      </SafeAreaView>
     </View>
   );
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
+function formatConsumptionOrEmpty(v: number | null): string {
+  return v != null ? formatConsumption(v) : "";
+}
 
-function createStyles(C: ThemeColors) {
+function FloatingBack() {
+  return (
+    <SafeAreaView edges={["top"]} style={floating.wrap}>
+      <Pressable style={floating.btn} onPress={() => router.back()} hitSlop={8}>
+        <Icon name="chevron.left" size={20} color="#fff" />
+      </Pressable>
+    </SafeAreaView>
+  );
+}
+
+function SpecSection({ title, rows }: { title: string; rows: [string, string][] }) {
+  const C = useTheme();
+  const visible = rows.filter(([, v]) => v && v !== "–" && v !== "");
+  if (visible.length === 0) return null;
+  return (
+    <View style={specStyles.section}>
+      <Text style={[specStyles.title, { color: C.foreground }]}>{title}</Text>
+      <View style={[specStyles.table, { borderColor: C.border }]}>
+        {visible.map(([label, value], i) => (
+          <View
+            key={label}
+            style={[
+              specStyles.row,
+              i < visible.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.border },
+            ]}
+          >
+            <Text style={[specStyles.label, { color: C.mutedForeground }]}>{label}</Text>
+            <Text style={[specStyles.value, { color: C.foreground }]}>{value}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+const floating = StyleSheet.create({
+  wrap: {
+    position: "absolute",
+    top: 0,
+    left: Spacing[4],
+    zIndex: 10,
+  },
+  btn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: Spacing[2],
+  },
+});
+
+const specStyles = StyleSheet.create({
+  section: {
+    marginTop: Spacing[6],
+  },
+  title: {
+    fontFamily: FontFamily.sansBold,
+    fontSize: FontSize.md,
+    letterSpacing: -0.3,
+    marginBottom: Spacing[3],
+  },
+  table: {
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    borderRadius: Radius.lg,
+    overflow: "hidden",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing[4],
+    paddingVertical: Spacing[3],
+    gap: Spacing[4],
+  },
+  label: {
+    fontFamily: FontFamily.sans,
+    fontSize: FontSize.sm,
+    flexShrink: 1,
+  },
+  value: {
+    fontFamily: FontFamily.sansMedium,
+    fontSize: FontSize.sm,
+    textAlign: "right",
+    flexShrink: 1,
+  },
+});
+
+function createStyles(C: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: C.background },
-
-    centered: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: Spacing[3],
-      padding: Spacing[8],
-    },
-    errorTitle: {
-      fontFamily: FontFamily.sansSemiBold,
-      fontSize: FontSize.lg,
-      color: C.foreground,
-      textAlign: 'center',
-    },
-    backBtn2: {
-      paddingHorizontal: Spacing[5],
-      paddingVertical: Spacing[3],
-      borderRadius: Radius.full,
-      backgroundColor: C.primary,
-    },
-    backBtn2Text: {
-      fontFamily: FontFamily.sansSemiBold,
-      fontSize: FontSize.base,
-      color: '#fff',
-    },
-
+    center: { flex: 1, alignItems: "center", justifyContent: "center" },
     gallery: {
-      backgroundColor: C.secondary,
-      position: 'relative',
+      width: SCREEN_W,
+      height: SCREEN_W * 0.75,
     },
-    imagePlaceholder: {
-      backgroundColor: C.secondary,
-      alignItems: 'center',
-      justifyContent: 'center',
+    galleryImg: {
+      width: SCREEN_W,
+      height: SCREEN_W * 0.75,
     },
-    pageDots: {
-      position: 'absolute',
+    galleryPlaceholder: {
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    counter: {
+      position: "absolute",
       bottom: Spacing[3],
-      left: 0,
-      right: 0,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      gap: 5,
-    },
-    dot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      backgroundColor: 'rgba(255,255,255,0.5)',
-    },
-    dotActive: {
-      backgroundColor: '#fff',
-      width: 18,
-    },
-    imageBadge: {
-      position: 'absolute',
-      bottom: Spacing[3],
-      right: Spacing[3],
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-      backgroundColor: 'rgba(0,0,0,0.55)',
-      paddingHorizontal: Spacing[2],
+      right: Spacing[4],
+      backgroundColor: "rgba(0,0,0,0.6)",
+      paddingHorizontal: Spacing[3],
       paddingVertical: 4,
-      borderRadius: Radius.md,
+      borderRadius: Radius.full,
     },
-    imageBadgeText: {
+    counterText: {
       fontFamily: FontFamily.sansMedium,
       fontSize: FontSize.xs,
-      color: '#fff',
+      color: "#fff",
     },
-
-    floatingBack: {
-      position: 'absolute',
-      left: Spacing[4],
+    favWrap: {
+      position: "absolute",
+      top: 0,
+      right: Spacing[4],
     },
-    floatingBackBtn: {
-      width: 38,
-      height: 38,
-      borderRadius: 19,
-      backgroundColor: C.card,
-      borderWidth: 1,
-      borderColor: C.border,
-      alignItems: 'center',
-      justifyContent: 'center',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.15,
-      shadowRadius: 4,
-      elevation: 4,
+    circleBtn: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: "rgba(0,0,0,0.45)",
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: Spacing[2],
     },
-
-    content: {
-      padding: Spacing[4],
-      gap: Spacing[3],
+    body: {
+      paddingHorizontal: Spacing[5],
+      paddingTop: Spacing[5],
     },
-
-    titleBlock: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      gap: Spacing[2],
-    },
-    make: {
+    title: {
       fontFamily: FontFamily.sansBold,
       fontSize: FontSize.xl,
-      color: C.foreground,
-      lineHeight: 26,
+      letterSpacing: -0.5,
     },
     version: {
       fontFamily: FontFamily.sans,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
+      fontSize: FontSize.base,
       marginTop: 2,
     },
-    priceBlock: {
-      gap: 2,
+    priceRow: {
+      flexDirection: "row",
+      alignItems: "baseline",
+      gap: Spacing[3],
+      marginTop: Spacing[3],
     },
     price: {
       fontFamily: FontFamily.sansBold,
-      fontSize: FontSize['2xl'],
-      color: C.primary,
+      fontSize: FontSize["2xl"],
+      letterSpacing: -0.5,
     },
-    newPrice: {
+    oldPrice: {
       fontFamily: FontFamily.sans,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-    },
-
-    statsRow: {
-      flexDirection: 'row',
-      gap: Spacing[2],
-    },
-    statChip: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 5,
-      paddingHorizontal: Spacing[3],
-      paddingVertical: Spacing[2],
-      borderRadius: Radius.full,
-      backgroundColor: C.secondary,
-      borderWidth: 1,
-      borderColor: C.border,
-    },
-    statText: {
-      fontFamily: FontFamily.sansMedium,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-    },
-
-    // Section cards
-    sectionCard: {
-      backgroundColor: C.card,
-      borderRadius: Radius.xl,
-      borderWidth: 1,
-      borderColor: C.border,
-      overflow: 'hidden',
-    },
-    sectionHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: Spacing[4],
-    },
-    sectionTitle: {
-      fontFamily: FontFamily.sansSemiBold,
       fontSize: FontSize.base,
-      color: C.foreground,
+      textDecorationLine: "line-through",
     },
-    sectionBody: {
-      paddingHorizontal: Spacing[4],
-      paddingBottom: Spacing[4],
+    specGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      borderWidth: StyleSheet.hairlineWidth * 2,
+      borderRadius: Radius.lg,
+      marginTop: Spacing[5],
+      overflow: "hidden",
+    },
+    specCell: {
+      width: "50%",
+      flexDirection: "row",
+      alignItems: "center",
       gap: Spacing[2],
+      padding: Spacing[3],
     },
-
-    // Data rows
-    dataRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      paddingVertical: Spacing[1],
-      gap: Spacing[4],
+    specCellRightBorder: {
+      borderRightWidth: StyleSheet.hairlineWidth,
     },
-    dataLabel: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-      flex: 1,
+    specCellBottomBorder: {
+      borderBottomWidth: StyleSheet.hairlineWidth,
     },
-    dataValue: {
-      fontFamily: FontFamily.sansMedium,
-      fontSize: FontSize.sm,
-      color: C.foreground,
-      flex: 1,
-      textAlign: 'right',
-    },
-
-    // Energy label badge
-    energyBadge: {
-      paddingHorizontal: Spacing[3],
-      paddingVertical: 4,
-      borderRadius: Radius.md,
-      minWidth: 36,
-      alignItems: 'center',
-    },
-    energyBadgeText: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.base,
-      color: '#fff',
-    },
-
-    // Equipment chips
-    chipGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: Spacing[2],
-    },
-    equipChip: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 5,
-      paddingHorizontal: Spacing[3],
-      paddingVertical: Spacing[1],
-      borderRadius: Radius.full,
-      backgroundColor: C.secondary,
-      borderWidth: 1,
-      borderColor: C.border,
-    },
-    equipChipText: {
+    specLabel: {
       fontFamily: FontFamily.sans,
       fontSize: FontSize.xs,
-      color: C.foreground,
     },
-    showMoreBtn: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 4,
-    },
-    showMoreText: {
-      fontFamily: FontFamily.sansMedium,
+    specValue: {
+      fontFamily: FontFamily.sansSemiBold,
       fontSize: FontSize.sm,
-      color: C.primary,
+      marginTop: 1,
     },
-
-    // Description
+    section: {
+      marginTop: Spacing[6],
+    },
+    sectionTitle: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.md,
+      letterSpacing: -0.3,
+      marginBottom: Spacing[3],
+    },
     description: {
       fontFamily: FontFamily.sans,
       fontSize: FontSize.base,
-      color: C.mutedForeground,
-      lineHeight: 22,
+      lineHeight: FontSize.base * 1.55,
     },
-
-    // Dealer
-    dealerRow: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      gap: Spacing[3],
-    },
-    dealerLogo: {
-      width: 52,
-      height: 52,
-      borderRadius: Radius.lg,
-      borderWidth: 1,
-      borderColor: C.border,
-      backgroundColor: C.secondary,
-    },
-    dealerName: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.base,
-      color: C.foreground,
-      marginBottom: 4,
-    },
-    dealerMeta: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      gap: 5,
-      marginBottom: 3,
-    },
-    dealerMetaText: {
-      fontFamily: FontFamily.sans,
+    more: {
+      fontFamily: FontFamily.sansMedium,
       fontSize: FontSize.sm,
-      color: C.mutedForeground,
-      flex: 1,
-    },
-    dealerDescription: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-      lineHeight: 20,
       marginTop: Spacing[2],
     },
-    dealerActions: {
-      flexDirection: 'row',
+    equipGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+    },
+    equipItem: {
+      width: "50%",
+      flexDirection: "row",
+      alignItems: "center",
       gap: Spacing[2],
-      marginTop: Spacing[3],
+      paddingVertical: Spacing[2],
     },
-    dealerActionBtn: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: Spacing[2],
-      height: 44,
-      borderRadius: Radius.xl,
-      backgroundColor: C.primary,
-    },
-    dealerActionBtnOutline: {
-      backgroundColor: 'transparent',
-      borderWidth: 1,
-      borderColor: C.primary,
-    },
-    dealerActionText: {
-      fontFamily: FontFamily.sansSemiBold,
+    equipText: {
+      fontFamily: FontFamily.sans,
       fontSize: FontSize.sm,
-      color: '#fff',
+      flexShrink: 1,
     },
-
-    // Contact bar
+    sellerCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: Spacing[3],
+      padding: Spacing[3],
+      borderRadius: Radius.lg,
+      borderWidth: StyleSheet.hairlineWidth * 2,
+      marginTop: Spacing[6],
+    },
+    sellerLogo: {
+      width: 52,
+      height: 52,
+      borderRadius: Radius.md,
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "hidden",
+    },
+    sellerLogoImg: {
+      width: "100%",
+      height: "100%",
+    },
+    sellerName: {
+      fontFamily: FontFamily.sansBold,
+      fontSize: FontSize.base,
+    },
+    sellerMeta: {
+      fontFamily: FontFamily.sans,
+      fontSize: FontSize.sm,
+      marginTop: 1,
+    },
+    ratingRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      marginTop: 3,
+    },
+    ratingText: {
+      fontFamily: FontFamily.sansMedium,
+      fontSize: FontSize.xs,
+    },
+    similarList: {
+      paddingHorizontal: Spacing[5],
+      gap: Spacing[3],
+      paddingTop: Spacing[1],
+    },
     contactBar: {
-      position: 'absolute',
+      position: "absolute",
       bottom: 0,
       left: 0,
       right: 0,
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: Spacing[4],
-      paddingTop: Spacing[3],
-      backgroundColor: C.card,
-      borderTopWidth: 1,
-      borderTopColor: C.border,
-      gap: Spacing[3],
+      borderTopWidth: StyleSheet.hairlineWidth * 2,
     },
-    contactBarPrice: {
-      flex: 1,
-    },
-    contactBarPriceLabel: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.xs,
-      color: C.mutedForeground,
-    },
-    contactBarPriceValue: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.lg,
-      color: C.foreground,
-    },
-    callBtn: {
-      flex: 2,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
+    contactInner: {
+      flexDirection: "row",
       gap: Spacing[2],
-      height: 48,
-      borderRadius: Radius.xl,
-      backgroundColor: C.primary,
+      paddingHorizontal: Spacing[5],
+      paddingTop: Spacing[3],
     },
-    callBtnText: {
-      fontFamily: FontFamily.sansBold,
+    contactBtn: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: Spacing[2],
+      height: 50,
+      borderRadius: Radius.md,
+    },
+    contactBtnText: {
+      fontFamily: FontFamily.sansSemiBold,
       fontSize: FontSize.base,
-      color: '#fff',
+    },
+    contactIconBtn: {
+      width: 50,
+      height: 50,
+      borderRadius: Radius.md,
+      alignItems: "center",
+      justifyContent: "center",
     },
   });
 }

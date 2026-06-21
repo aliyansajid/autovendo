@@ -1,404 +1,168 @@
-import { useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Alert,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { SymbolView } from 'expo-symbols';
-import { router } from 'expo-router';
-import { useSession, signOut } from '@/lib/auth-client';
-import { FontFamily, FontSize, Spacing, Radius, type ThemeColors } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-import { useTabBarHeight } from '@/hooks/use-tab-bar-height';
+import { useMemo } from "react";
+import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import { useTabBarHeight } from "@/hooks/use-tab-bar-height";
+import { useFavorites } from "@/lib/favorites";
+import { Icon, type IconName } from "@/components/ui/icon";
+import { openUrl } from "@/lib/contact";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+const WEB = "https://autovendo.ch";
 
-type SettingRowProps = {
-  icon: string;
-  label: string;
-  value?: string;
-  onPress?: () => void;
-  danger?: boolean;
-  chevron?: boolean;
-  styles: ReturnType<typeof createStyles>;
-  C: ThemeColors;
-};
-
-type SectionProps = {
-  title: string;
-  children: React.ReactNode;
-  styles: ReturnType<typeof createStyles>;
-};
-
-// ─── Components ───────────────────────────────────────────────────────────────
-
-function Section({ title, children, styles }: SectionProps) {
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.sectionCard}>{children}</View>
-    </View>
-  );
-}
-
-function SettingRow({ icon, label, value, onPress, danger, chevron = true, styles, C }: SettingRowProps) {
-  return (
-    <Pressable
-      style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
-      onPress={onPress}
-    >
-      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}>
-        <SymbolView
-          name={icon as any}
-          size={18}
-          tintColor={danger ? C.destructive : C.mutedForeground}
-        />
-      </View>
-      <Text style={[styles.rowLabel, danger && styles.rowLabelDanger]}>{label}</Text>
-      <View style={styles.rowRight}>
-        {value ? <Text style={styles.rowValue}>{value}</Text> : null}
-        {chevron && (
-          <SymbolView
-            name="chevron.right"
-            size={14}
-            tintColor={danger ? C.destructive : C.muted}
-          />
-        )}
-      </View>
-    </Pressable>
-  );
-}
-
-function Divider({ styles }: { styles: ReturnType<typeof createStyles> }) {
-  return <View style={styles.divider} />;
-}
-
-// ─── Screen ───────────────────────────────────────────────────────────────────
+type Row = { icon: IconName; label: string; value?: string; onPress: () => void };
 
 export default function ProfileScreen() {
   const C = useTheme();
   const styles = useMemo(() => createStyles(C), [C]);
   const tabBarHeight = useTabBarHeight();
-  const { data: session } = useSession();
-  const user = session?.user;
+  const { ids } = useFavorites();
 
-  const initials = user?.name
-    ? user.name
-        .split(' ')
-        .map((w) => w[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
-    : '?';
+  const accountRows: Row[] = [
+    {
+      icon: "heart.fill",
+      label: "Meine Favoriten",
+      value: ids.length > 0 ? String(ids.length) : undefined,
+      onPress: () => router.push("/favorites"),
+    },
+    {
+      icon: "person.crop.circle",
+      label: "Anmelden / Registrieren",
+      onPress: () => router.push("/(auth)/login"),
+    },
+  ];
 
-  const go = (path: string) => router.push(path as any);
+  const infoRows: Row[] = [
+    { icon: "info.circle", label: "Über AutoVendo", onPress: () => openUrl(`${WEB}/de/about`) },
+    { icon: "questionmark.circle", label: "Häufige Fragen", onPress: () => openUrl(`${WEB}/de/faq`) },
+    { icon: "envelope", label: "Kontakt", onPress: () => openUrl(`${WEB}/de/contact`) },
+  ];
 
-  const handleSignOut = () => {
-    Alert.alert('Sign out', 'Are you sure you want to sign out?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Sign out',
-        style: 'destructive',
-        onPress: async () => {
-          await signOut();
-          router.replace('/(auth)/login' as any);
-        },
-      },
-    ]);
-  };
+  const legalRows: Row[] = [
+    { icon: "doc.text", label: "Impressum", onPress: () => openUrl(`${WEB}/de/impressum`) },
+    { icon: "lock.shield", label: "Datenschutz", onPress: () => openUrl(`${WEB}/de/datenschutz`) },
+    { icon: "doc.plaintext", label: "AGB", onPress: () => openUrl(`${WEB}/de/agb`) },
+  ];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView
-        contentContainerStyle={[styles.content, { paddingBottom: tabBarHeight }]}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.screenTitle}>Settings</Text>
-        </View>
+    <View style={styles.root}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: tabBarHeight + Spacing[6] }}>
+        <SafeAreaView edges={["top"]}>
+          <Text style={[styles.heading, { color: C.foreground }]}>Profil</Text>
+        </SafeAreaView>
 
-        {/* Profile Card */}
-        <Pressable style={styles.profileCard} onPress={() => go('/settings/edit-profile')}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{initials}</Text>
+        {/* Sell CTA */}
+        <Pressable
+          style={[styles.sellCard, { backgroundColor: C.primary }]}
+          onPress={() => router.push("/(auth)/login")}
+        >
+          <View style={styles.sellText}>
+            <Text style={[styles.sellTitle, { color: C.primaryForeground }]}>Fahrzeug verkaufen</Text>
+            <Text style={[styles.sellSub, { color: C.primaryForeground }]}>
+              Als Privatperson oder Händler inserieren
+            </Text>
           </View>
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{user?.name ?? '—'}</Text>
-            <Text style={styles.profileEmail}>{user?.email ?? '—'}</Text>
+          <View style={styles.sellIcon}>
+            <Icon name="arrow.right" size={20} color={C.primaryForeground} />
           </View>
-          <SymbolView
-            name="chevron.right"
-            size={16}
-            tintColor={C.muted}
-          />
         </Pressable>
 
-        {/* Account */}
-        <Section title="Account" styles={styles}>
-          <SettingRow
-            icon="person.fill"
-            label="Edit Profile"
-            onPress={() => go('/settings/edit-profile')}
-            styles={styles}
-            C={C}
-          />
-          <Divider styles={styles} />
-          <SettingRow
-            icon="envelope.fill"
-            label="Change Email"
-            onPress={() => go('/settings/change-email')}
-            styles={styles}
-            C={C}
-          />
-          <Divider styles={styles} />
-          <SettingRow
-            icon="lock.fill"
-            label="Change Password"
-            onPress={() => go('/settings/change-password')}
-            styles={styles}
-            C={C}
-          />
-        </Section>
+        <Group title="Konto" rows={accountRows} />
+        <Group title="Information" rows={infoRows} />
+        <Group title="Rechtliches" rows={legalRows} />
 
-        {/* Listings */}
-        <Section title="My Listings" styles={styles}>
-          <SettingRow
-            icon="car.fill"
-            label="My Vehicles"
-            onPress={() => go('/settings/my-vehicles')}
-            styles={styles}
-            C={C}
-          />
-          <Divider styles={styles} />
-          <SettingRow
-            icon="heart.fill"
-            label="Saved Vehicles"
-            onPress={() => go('/settings/saved-vehicles')}
-            styles={styles}
-            C={C}
-          />
-        </Section>
-
-        {/* Notifications */}
-        <Section title="Notifications" styles={styles}>
-          <SettingRow
-            icon="bell.fill"
-            label="Push Notifications"
-            onPress={() => go('/settings/notifications')}
-            styles={styles}
-            C={C}
-          />
-          <Divider styles={styles} />
-          <SettingRow
-            icon="envelope.badge.fill"
-            label="Email Notifications"
-            onPress={() => go('/settings/notifications')}
-            styles={styles}
-            C={C}
-          />
-        </Section>
-
-        {/* Support */}
-        <Section title="Support" styles={styles}>
-          <SettingRow
-            icon="questionmark.circle.fill"
-            label="Help & FAQ"
-            onPress={() => go('/settings/help')}
-            styles={styles}
-            C={C}
-          />
-          <Divider styles={styles} />
-          <SettingRow
-            icon="shield.fill"
-            label="Privacy Policy"
-            onPress={() => go('/settings/privacy-policy')}
-            styles={styles}
-            C={C}
-          />
-          <Divider styles={styles} />
-          <SettingRow
-            icon="doc.text.fill"
-            label="Terms of Service"
-            onPress={() => go('/settings/terms')}
-            styles={styles}
-            C={C}
-          />
-          <Divider styles={styles} />
-          <SettingRow
-            icon="info.circle.fill"
-            label="App Version"
-            value="1.0.0"
-            chevron={false}
-            onPress={undefined}
-            styles={styles}
-            C={C}
-          />
-        </Section>
-
-        {/* Danger Zone */}
-        <Section title="Account Actions" styles={styles}>
-          <SettingRow
-            icon="rectangle.portrait.and.arrow.right.fill"
-            label="Sign Out"
-            danger
-            chevron={false}
-            onPress={handleSignOut}
-            styles={styles}
-            C={C}
-          />
-          <Divider styles={styles} />
-          <SettingRow
-            icon="trash.fill"
-            label="Delete Account"
-            danger
-            chevron={false}
-            onPress={() => go('/settings/delete-account')}
-            styles={styles}
-            C={C}
-          />
-        </Section>
+        <Text style={[styles.version, { color: C.mutedForeground }]}>AutoVendo · Version 1.0.0</Text>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
+function Group({ title, rows }: { title: string; rows: Row[] }) {
+  const C = useTheme();
+  return (
+    <View style={group.wrap}>
+      <Text style={[group.title, { color: C.mutedForeground }]}>{title.toUpperCase()}</Text>
+      <View style={[group.card, { backgroundColor: C.card, borderColor: C.border }]}>
+        {rows.map((r, i) => (
+          <Pressable
+            key={r.label}
+            style={[
+              group.row,
+              i < rows.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.border },
+            ]}
+            onPress={r.onPress}
+          >
+            <Icon name={r.icon} size={19} color={C.foreground} />
+            <Text style={[group.label, { color: C.foreground }]}>{r.label}</Text>
+            {r.value && <Text style={[group.value, { color: C.mutedForeground }]}>{r.value}</Text>}
+            <Icon name="chevron.right" size={15} color={C.mutedForeground} />
+          </Pressable>
+        ))}
+      </View>
+    </View>
+  );
+}
 
-function createStyles(C: ThemeColors) {
+const group = StyleSheet.create({
+  wrap: { paddingHorizontal: Spacing[5], marginTop: Spacing[6] },
+  title: {
+    fontFamily: FontFamily.sansSemiBold,
+    fontSize: FontSize.xs,
+    letterSpacing: 0.6,
+    marginBottom: Spacing[2],
+    marginLeft: Spacing[1],
+  },
+  card: {
+    borderRadius: Radius.lg,
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    overflow: "hidden",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing[3],
+    paddingHorizontal: Spacing[4],
+    paddingVertical: Spacing[4],
+  },
+  label: { flex: 1, fontFamily: FontFamily.sansMedium, fontSize: FontSize.base },
+  value: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm },
+});
+
+function createStyles(C: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: C.secondary,
-    },
-    content: {
-      paddingHorizontal: Spacing[4],
-      gap: Spacing[4],
-    },
-
-    // Header
-    header: {
-      paddingTop: Spacing[3],
-      paddingBottom: Spacing[2],
-    },
-    screenTitle: {
+    root: { flex: 1, backgroundColor: C.background },
+    heading: {
       fontFamily: FontFamily.sansBold,
-      fontSize: FontSize['2xl'],
-      color: C.foreground,
+      fontSize: FontSize.xl,
+      letterSpacing: -0.5,
+      paddingHorizontal: Spacing[5],
+      paddingTop: Spacing[2],
+      paddingBottom: Spacing[4],
     },
-
-    // Profile Card
-    profileCard: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: C.card,
-      borderRadius: Radius.xl,
-      padding: Spacing[4],
-      gap: Spacing[3],
-      borderWidth: 1,
-      borderColor: C.border,
+    sellCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginHorizontal: Spacing[5],
+      padding: Spacing[5],
+      borderRadius: Radius.lg,
     },
-    avatar: {
-      width: 52,
-      height: 52,
-      borderRadius: 26,
-      backgroundColor: C.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
+    sellText: { flex: 1 },
+    sellTitle: { fontFamily: FontFamily.sansBold, fontSize: FontSize.md, letterSpacing: -0.3 },
+    sellSub: { fontFamily: FontFamily.sans, fontSize: FontSize.sm, marginTop: 2, opacity: 0.9 },
+    sellIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: "rgba(255,255,255,0.18)",
+      alignItems: "center",
+      justifyContent: "center",
     },
-    avatarText: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.md,
-      color: '#fff',
-    },
-    profileInfo: {
-      flex: 1,
-      gap: 2,
-    },
-    profileName: {
-      fontFamily: FontFamily.sansSemiBold,
-      fontSize: FontSize.base,
-      color: C.foreground,
-    },
-    profileEmail: {
+    version: {
       fontFamily: FontFamily.sans,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-    },
-
-    // Section
-    section: {
-      gap: Spacing[2],
-    },
-    sectionTitle: {
-      fontFamily: FontFamily.sansSemiBold,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-      textTransform: 'uppercase',
-      letterSpacing: 0.8,
-      paddingHorizontal: Spacing[1],
-    },
-    sectionCard: {
-      backgroundColor: C.card,
-      borderRadius: Radius.xl,
-      overflow: 'hidden',
-      borderWidth: 1,
-      borderColor: C.border,
-    },
-
-    // Row
-    row: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: Spacing[4],
-      paddingVertical: Spacing[3] + 2,
-      gap: Spacing[3],
-    },
-    rowPressed: {
-      backgroundColor: C.muted,
-    },
-    rowIcon: {
-      width: 32,
-      height: 32,
-      borderRadius: Radius.md,
-      backgroundColor: C.secondary,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    rowIconDanger: {
-      backgroundColor: `${C.destructive}18`,
-    },
-    rowLabel: {
-      flex: 1,
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.base,
-      color: C.foreground,
-    },
-    rowLabelDanger: {
-      color: C.destructive,
-    },
-    rowRight: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: Spacing[2],
-    },
-    rowValue: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-      maxWidth: 140,
-      numberOfLines: 1,
-    },
-
-    // Divider
-    divider: {
-      height: 1,
-      backgroundColor: C.border,
-      marginLeft: Spacing[4] + 32 + Spacing[3],
+      fontSize: FontSize.xs,
+      textAlign: "center",
+      marginTop: Spacing[8],
     },
   });
 }

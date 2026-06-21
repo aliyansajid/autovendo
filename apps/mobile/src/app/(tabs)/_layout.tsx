@@ -3,13 +3,24 @@ import { View, Pressable, StyleSheet, Platform } from 'react-native';
 import { SymbolView } from 'expo-symbols';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GlassView, GlassContainer, isGlassEffectAPIAvailable } from 'expo-glass-effect';
-import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@/hooks/use-theme';
 
+// Minimal shape of the tab bar props expo-router passes; the standalone
+// @react-navigation/bottom-tabs types aren't resolvable in this setup.
+type BottomTabBarProps = {
+  state: { index: number; routes: { key: string; name: string }[] };
+  descriptors: Record<string, { options: Record<string, unknown> }>;
+  navigation: {
+    emit: (e: { type: string; target: string; canPreventDefault: boolean }) => { defaultPrevented: boolean };
+    navigate: (name: string) => void;
+  };
+};
+
 const TABS = [
-  { name: 'index', title: 'Home', symbol: 'house.fill' },
-  { name: 'search', title: 'Search', symbol: 'magnifyingglass' },
-  { name: 'profile', title: 'Profile', symbol: 'person.fill' },
+  { name: 'index', title: 'Start', symbol: 'house.fill' },
+  { name: 'search', title: 'Suchen', symbol: 'magnifyingglass' },
+  { name: 'dealers', title: 'Händler', symbol: 'building.2.fill' },
+  { name: 'profile', title: 'Profil', symbol: 'person.fill' },
 ] as const;
 
 function GlassTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -69,14 +80,15 @@ export default function TabsLayout() {
 
   return (
     <Tabs
-      tabBar={(props) => <GlassTabBar {...props} />}
+      tabBar={(props) => <GlassTabBar {...(props as unknown as BottomTabBarProps)} />}
       screenOptions={{
         headerShown: false,
         sceneStyle: { backgroundColor: C.background },
       }}>
-      <Tabs.Screen name="index" options={{ title: 'Home' }} />
-      <Tabs.Screen name="search" options={{ title: 'Search' }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+      <Tabs.Screen name="index" options={{ title: 'Start' }} />
+      <Tabs.Screen name="search" options={{ title: 'Suchen' }} />
+      <Tabs.Screen name="dealers" options={{ title: 'Händler' }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profil' }} />
     </Tabs>
   );
 }
