@@ -6,6 +6,7 @@ import type { OwnedVehicle } from "@/lib/account";
 import { formatPrice, formatKm, formatRegistration, vehicleMetaLine } from "@/lib/format";
 import { labelMake, labelModel, labelFuel } from "@/lib/labels";
 import { imageUrl } from "@/lib/image";
+import { cardShadow } from "./skeleton";
 import { Icon } from "./icon";
 import { StatusBadge } from "./status-badge";
 
@@ -32,7 +33,8 @@ export function OwnedVehicleCard({
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        { backgroundColor: C.card, borderColor: C.border, opacity: pressed ? 0.96 : 1 },
+        { backgroundColor: C.card, opacity: pressed ? 0.96 : 1 },
+        cardShadow,
       ]}
     >
       {image ? (
@@ -64,11 +66,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: Spacing[3],
     padding: Spacing[3],
-    borderRadius: Radius.lg,
-    borderWidth: StyleSheet.hairlineWidth * 2,
+    borderRadius: 18,
     alignItems: "center",
   },
-  thumb: { width: 84, height: 64, borderRadius: Radius.md },
+  thumb: { width: 84, height: 64, borderRadius: 12 },
   thumbPlaceholder: { alignItems: "center", justifyContent: "center" },
   body: { flex: 1, gap: 3 },
   title: { fontFamily: FontFamily.sansBold, fontSize: FontSize.base, letterSpacing: -0.2 },

@@ -4,6 +4,7 @@ import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import type { DealerListItem } from "@/lib/api";
 import { imageUrl } from "@/lib/image";
+import { cardShadow } from "./skeleton";
 import { Icon } from "./icon";
 
 export function DealerCard({
@@ -21,7 +22,8 @@ export function DealerCard({
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        { backgroundColor: C.card, borderColor: C.border, width: width ?? "100%", opacity: pressed ? 0.96 : 1 },
+        { backgroundColor: C.card, width: width ?? "100%", opacity: pressed ? 0.96 : 1 },
+        cardShadow,
       ]}
     >
       <View style={[styles.cover, { backgroundColor: C.secondary }]}>
@@ -63,8 +65,7 @@ export function DealerCard({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: Radius.lg,
-    borderWidth: StyleSheet.hairlineWidth * 2,
+    borderRadius: 20,
     overflow: "hidden",
   },
   cover: {

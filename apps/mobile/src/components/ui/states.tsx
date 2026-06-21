@@ -1,30 +1,12 @@
-import { StyleSheet, Text, View, type DimensionValue } from "react-native";
-import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
+import { StyleSheet, Text, View } from "react-native";
+import { FontFamily, FontSize, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { Icon, type IconName } from "./icon";
 import { Button } from "./button";
 
-export function Skeleton({
-  width = "100%",
-  height,
-  radius = Radius.md,
-  style,
-}: {
-  width?: DimensionValue;
-  height: number;
-  radius?: number;
-  style?: object;
-}) {
-  const C = useTheme();
-  return (
-    <View
-      style={[
-        { width, height, borderRadius: radius, backgroundColor: C.secondary },
-        style,
-      ]}
-    />
-  );
-}
+// Re-exported so existing `import { Skeleton } from "@/components/ui/states"`
+// keeps working with the new animated implementation.
+export { Skeleton, VehicleCardSkeleton, DealerCardSkeleton } from "./skeleton";
 
 export function EmptyState({
   icon = "tray",

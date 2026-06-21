@@ -18,23 +18,21 @@ import { useTabBarHeight } from "@/hooks/use-tab-bar-height";
 import { useFavorites } from "@/lib/favorites";
 import {
   fetchVehicles,
-  type SearchParams,
   type SortOption,
   type VehicleListItem,
   type VehicleFacets,
 } from "@/lib/api";
 import {
-  labelMake,
-  labelFuel,
-  labelTransmission,
-  labelCondition,
-  labelType,
-} from "@/lib/labels";
+  AdvancedFilter,
+  EMPTY_FILTERS,
+  filtersToParams,
+  activeFilterCount,
+  type Filters,
+} from "@/components/search/advanced-filter";
 import { Icon } from "@/components/ui/icon";
 import { Chip } from "@/components/ui/chip";
-import { Button } from "@/components/ui/button";
 import { VehicleCard } from "@/components/ui/vehicle-card";
-import { EmptyState, ErrorState, Skeleton } from "@/components/ui/states";
+import { EmptyState, ErrorState, VehicleCardSkeleton } from "@/components/ui/states";
 
 const VEHICLE_TYPES: { value: string | null; label: string }[] = [
   { value: null, label: "Alle" },
@@ -53,71 +51,18 @@ const SORTS: { value: SortOption; label: string }[] = [
   { value: "registration-desc", label: "Jahr (neueste)" },
 ];
 
-type Filters = {
-  q: string;
-  vehicleType: string | null;
-  make: string[];
-  fuel: string[];
-  transmission: string[];
-  condition: string[];
-  priceFrom?: number;
-  priceTo?: number;
-  kilometerTo?: number;
-  registrationFrom?: number;
-  sort: SortOption;
-};
-
-const EMPTY: Filters = {
-  q: "",
-  vehicleType: null,
-  make: [],
-  fuel: [],
-  transmission: [],
-  condition: [],
-  sort: "relevance",
-};
-
-function toParams(f: Filters, page: number): SearchParams {
-  return {
-    q: f.q || undefined,
-    vehicleType: f.vehicleType ? [f.vehicleType] : undefined,
-    make: f.make.length ? f.make : undefined,
-    fuel: f.fuel.length ? f.fuel : undefined,
-    transmission: f.transmission.length ? f.transmission : undefined,
-    condition: f.condition.length ? f.condition : undefined,
-    priceFrom: f.priceFrom,
-    priceTo: f.priceTo,
-    kilometerTo: f.kilometerTo,
-    registrationFrom: f.registrationFrom,
-    sort: f.sort,
-    page,
-    pageSize: 20,
-  };
-}
-
-function activeFilterCount(f: Filters): number {
-  return (
-    f.make.length +
-    f.fuel.length +
-    f.transmission.length +
-    f.condition.length +
-    (f.priceFrom != null ? 1 : 0) +
-    (f.priceTo != null ? 1 : 0) +
-    (f.kilometerTo != null ? 1 : 0) +
-    (f.registrationFrom != null ? 1 : 0)
-  );
-}
-
 export default function SearchScreen() {
   const C = useTheme();
   const styles = useMemo(() => createStyles(C), [C]);
   const tabBarHeight = useTabBarHeight();
   const { isFavorite, toggle } = useFavorites();
-  const initial = useLocalSearchParams<{ vehicleType?: string; sort?: string; q?: string }>();
+  const initial = useLocalSearchParams<{ vehicleType?: string; sort?: string; q?: string; make?: string; dealerId?: string }>();
 
   const [filters, setFilters] = useState<Filters>(() => ({
-    ...EMPTY,
+    ...EMPTY_FILTERS,
     vehicleType: initial.vehicleType ?? null,
+    dealerId: initial.dealerId,
+    make: initial.make ? [initial.make] : [],
     sort: (initial.sort as SortOption) ?? "relevance",
     q: initial.q ?? "",
   }));
@@ -142,7 +87,7 @@ export default function SearchScreen() {
     setLoading(true);
     setError(false);
     try {
-      const res = await fetchVehicles(toParams(f, 1));
+      const res = await fetchVehicles(filtersToParams(f, 1));
       if (id !== reqId.current) return;
       setItems(res.data);
       setFacets(res.facets);
@@ -157,23 +102,10 @@ export default function SearchScreen() {
     }
   }, []);
 
-  // Re-run whenever any committed filter changes.
+  // Re-run whenever the committed filters change.
   useEffect(() => {
     runSearch(filters);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    filters.vehicleType,
-    filters.make,
-    filters.fuel,
-    filters.transmission,
-    filters.condition,
-    filters.priceFrom,
-    filters.priceTo,
-    filters.kilometerTo,
-    filters.registrationFrom,
-    filters.sort,
-    filters.q,
-  ]);
+  }, [filters, runSearch]);
 
   // Debounce the text query into committed filters.
   useEffect(() => {
@@ -185,7 +117,7 @@ export default function SearchScreen() {
     if (loadingMore || loading || page >= totalPages) return;
     setLoadingMore(true);
     try {
-      const res = await fetchVehicles(toParams(filters, page + 1));
+      const res = await fetchVehicles(filtersToParams(filters, page + 1));
       setItems((prev) => [...prev, ...res.data]);
       setPage(res.page);
     } catch {
@@ -258,9 +190,9 @@ export default function SearchScreen() {
       {error ? (
         <ErrorState onRetry={() => runSearch(filters)} />
       ) : loading ? (
-        <View style={styles.listPad}>
+        <View style={[styles.listPad, { gap: Spacing[3] }]}>
           {[0, 1, 2].map((k) => (
-            <Skeleton key={k} width="100%" height={260} radius={Radius.lg} style={{ marginBottom: Spacing[3] }} />
+            <VehicleCardSkeleton key={k} />
           ))}
         </View>
       ) : (
@@ -293,7 +225,7 @@ export default function SearchScreen() {
         />
       )}
 
-      <FilterSheet
+      <AdvancedFilter
         visible={showFilters}
         filters={filters}
         facets={facets}
@@ -346,174 +278,6 @@ function SortSheet({
         </SafeAreaView>
       </View>
     </Modal>
-  );
-}
-
-// ─── Filter sheet ─────────────────────────────────────────────────────────────
-
-function facetKeys(record: Record<string, number> | undefined, max = 24): string[] {
-  if (!record) return [];
-  return Object.entries(record)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, max)
-    .map(([k]) => k);
-}
-
-function FilterSheet({
-  visible,
-  filters,
-  facets,
-  onClose,
-  onApply,
-}: {
-  visible: boolean;
-  filters: Filters;
-  facets: VehicleFacets | null;
-  onClose: () => void;
-  onApply: (f: Filters) => void;
-}) {
-  const C = useTheme();
-  const [draft, setDraft] = useState<Filters>(filters);
-
-  useEffect(() => {
-    if (visible) setDraft(filters);
-  }, [visible, filters]);
-
-  const toggleIn = (key: "make" | "fuel" | "transmission" | "condition", value: string) =>
-    setDraft((d) => {
-      const arr = d[key];
-      return { ...d, [key]: arr.includes(value) ? arr.filter((x) => x !== value) : [...arr, value] };
-    });
-
-  const numField = (key: "priceFrom" | "priceTo" | "kilometerTo" | "registrationFrom", raw: string) =>
-    setDraft((d) => {
-      const n = parseInt(raw.replace(/\D/g, ""), 10);
-      return { ...d, [key]: Number.isNaN(n) ? undefined : n };
-    });
-
-  return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={sheetStyles.backdrop} onPress={onClose} />
-      <View style={[sheetStyles.sheet, sheetStyles.fullSheet, { backgroundColor: C.background }]}>
-        <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
-          <View style={[sheetStyles.handle, { backgroundColor: C.border }]} />
-          <View style={sheetStyles.filterHeader}>
-            <Text style={[sheetStyles.sheetTitle, { color: C.foreground, marginBottom: 0 }]}>Filter</Text>
-            <Pressable
-              onPress={() => setDraft({ ...EMPTY, vehicleType: draft.vehicleType, q: draft.q, sort: draft.sort })}
-              hitSlop={8}
-            >
-              <Text style={[sheetStyles.reset, { color: C.primary }]}>Zurücksetzen</Text>
-            </Pressable>
-          </View>
-
-          <ScrollView contentContainerStyle={sheetStyles.filterBody} showsVerticalScrollIndicator={false}>
-            <FilterGroup title="Marke">
-              <ChipWrap>
-                {facetKeys(facets?.make).map((m) => (
-                  <Chip key={m} label={labelMake(m)} selected={draft.make.includes(m)} onPress={() => toggleIn("make", m)} />
-                ))}
-              </ChipWrap>
-            </FilterGroup>
-
-            <FilterGroup title="Treibstoff">
-              <ChipWrap>
-                {facetKeys(facets?.fuelType).map((m) => (
-                  <Chip key={m} label={labelFuel(m)} selected={draft.fuel.includes(m)} onPress={() => toggleIn("fuel", m)} />
-                ))}
-              </ChipWrap>
-            </FilterGroup>
-
-            <FilterGroup title="Getriebe">
-              <ChipWrap>
-                {facetKeys(facets?.transmissionType).map((m) => (
-                  <Chip
-                    key={m}
-                    label={labelTransmission(m)}
-                    selected={draft.transmission.includes(m)}
-                    onPress={() => toggleIn("transmission", m)}
-                  />
-                ))}
-              </ChipWrap>
-            </FilterGroup>
-
-            <FilterGroup title="Zustand">
-              <ChipWrap>
-                {facetKeys(facets?.vehicleCondition).map((m) => (
-                  <Chip
-                    key={m}
-                    label={labelCondition(m)}
-                    selected={draft.condition.includes(m)}
-                    onPress={() => toggleIn("condition", m)}
-                  />
-                ))}
-              </ChipWrap>
-            </FilterGroup>
-
-            <FilterGroup title="Preis (CHF)">
-              <View style={sheetStyles.rangeRow}>
-                <NumInput placeholder="von" value={draft.priceFrom} onChange={(t) => numField("priceFrom", t)} />
-                <NumInput placeholder="bis" value={draft.priceTo} onChange={(t) => numField("priceTo", t)} />
-              </View>
-            </FilterGroup>
-
-            <FilterGroup title="Kilometer bis">
-              <NumInput placeholder="z. B. 100000" value={draft.kilometerTo} onChange={(t) => numField("kilometerTo", t)} />
-            </FilterGroup>
-
-            <FilterGroup title="Jahr ab">
-              <NumInput placeholder="z. B. 2018" value={draft.registrationFrom} onChange={(t) => numField("registrationFrom", t)} />
-            </FilterGroup>
-
-            {draft.vehicleType && (
-              <Text style={[sheetStyles.typeHint, { color: C.mutedForeground }]}>
-                Fahrzeugtyp: {labelType(draft.vehicleType)}
-              </Text>
-            )}
-          </ScrollView>
-
-          <View style={[sheetStyles.applyBar, { borderTopColor: C.border }]}>
-            <Button label="Ergebnisse anzeigen" onPress={() => onApply(draft)} size="lg" fullWidth />
-          </View>
-        </SafeAreaView>
-      </View>
-    </Modal>
-  );
-}
-
-function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
-  const C = useTheme();
-  return (
-    <View style={sheetStyles.group}>
-      <Text style={[sheetStyles.groupTitle, { color: C.foreground }]}>{title}</Text>
-      {children}
-    </View>
-  );
-}
-
-function ChipWrap({ children }: { children: React.ReactNode }) {
-  return <View style={sheetStyles.chipWrap}>{children}</View>;
-}
-
-function NumInput({
-  placeholder,
-  value,
-  onChange,
-}: {
-  placeholder: string;
-  value?: number;
-  onChange: (t: string) => void;
-}) {
-  const C = useTheme();
-  return (
-    <TextInput
-      style={[sheetStyles.numInput, { backgroundColor: C.secondary, borderColor: C.border, color: C.foreground }]}
-      placeholder={placeholder}
-      placeholderTextColor={C.mutedForeground}
-      keyboardType="number-pad"
-      value={value != null ? String(value) : ""}
-      onChangeText={onChange}
-    />
   );
 }
 
@@ -616,9 +380,6 @@ const sheetStyles = StyleSheet.create({
     borderTopRightRadius: Radius.xl,
     paddingTop: Spacing[2],
   },
-  fullSheet: {
-    top: Spacing[12],
-  },
   handle: {
     width: 40,
     height: 4,
@@ -632,52 +393,6 @@ const sheetStyles = StyleSheet.create({
     paddingHorizontal: Spacing[5],
     marginBottom: Spacing[2],
   },
-  filterHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: Spacing[5],
-    marginBottom: Spacing[2],
-  },
-  reset: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.sm,
-  },
-  filterBody: {
-    paddingHorizontal: Spacing[5],
-    paddingBottom: Spacing[6],
-  },
-  group: {
-    marginTop: Spacing[5],
-  },
-  groupTitle: {
-    fontFamily: FontFamily.sansSemiBold,
-    fontSize: FontSize.base,
-    marginBottom: Spacing[3],
-  },
-  chipWrap: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing[2],
-  },
-  rangeRow: {
-    flexDirection: "row",
-    gap: Spacing[3],
-  },
-  numInput: {
-    flex: 1,
-    height: 46,
-    borderRadius: Radius.md,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    paddingHorizontal: Spacing[4],
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.base,
-  },
-  typeHint: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.sm,
-    marginTop: Spacing[5],
-  },
   optionRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -688,10 +403,5 @@ const sheetStyles = StyleSheet.create({
   optionText: {
     fontFamily: FontFamily.sansMedium,
     fontSize: FontSize.base,
-  },
-  applyBar: {
-    paddingHorizontal: Spacing[5],
-    paddingTop: Spacing[3],
-    borderTopWidth: StyleSheet.hairlineWidth * 2,
   },
 });

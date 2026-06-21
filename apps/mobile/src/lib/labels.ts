@@ -250,6 +250,23 @@ const SELLER_TYPES: Record<string, string> = {
   SELLER: "Privat",
 };
 
+const BATTERY_OWNERSHIP: Record<string, string> = {
+  BATTERY_INCLUDED: "Batterie inbegriffen",
+  BATTERY_RENT_REQUIRED: "Batteriemiete",
+};
+
+const CHARGING_AC: Record<string, string> = {
+  TYPE_1: "Typ 1",
+  TYPE_2: "Typ 2",
+};
+
+const CHARGING_DC: Record<string, string> = {
+  CCS: "CCS",
+  CSS_2: "CCS 2",
+  CHADEMO: "CHAdeMO",
+  SUPERCHARGER: "Supercharger",
+};
+
 function lookup(map: Record<string, string>, value: string | null | undefined): string {
   if (!value) return "";
   return map[value] ?? value;
@@ -267,6 +284,11 @@ export const labelEquipment = (v?: string | null) => lookup(EQUIPMENT, v);
 export const labelExtra = (v?: string | null) => lookup(EXTRAS, v);
 export const labelMake = (v?: string | null) => lookup(MAKE_LABELS, v);
 export const labelSellerType = (v?: string | null) => lookup(SELLER_TYPES, v);
+export const labelBatteryOwnership = (v?: string | null) => lookup(BATTERY_OWNERSHIP, v);
+export const labelChargingAC = (v?: string | null) => lookup(CHARGING_AC, v);
+export const labelChargingDC = (v?: string | null) => lookup(CHARGING_DC, v);
+// Energy efficiency labels are single letters A–G; show them as-is.
+export const labelEnergy = (v?: string | null) => v ?? "";
 
 // Model values are slugs like "1_SERIES" / "E_TRON"; the web shows them
 // title-cased when no explicit label exists. Good enough for display.

@@ -9,8 +9,10 @@ import {
   RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
+import { carMakes } from "@repo/vehicle-constants";
+import { FontFamily, FontSize, Radius, Shadow, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { useTabBarHeight } from "@/hooks/use-tab-bar-height";
 import { useFavorites } from "@/lib/favorites";
@@ -25,18 +27,23 @@ import { Icon, type IconName } from "@/components/ui/icon";
 import { SectionHeader } from "@/components/ui/section-header";
 import { VehicleCard } from "@/components/ui/vehicle-card";
 import { DealerCard } from "@/components/ui/dealer-card";
-import { Skeleton, ErrorState } from "@/components/ui/states";
+import { VehicleCardSkeleton, DealerCardSkeleton, ErrorState } from "@/components/ui/states";
 
 const { width: SCREEN_W } = Dimensions.get("window");
-const FEATURED_W = Math.min(300, SCREEN_W * 0.74);
+const FEATURED_W = Math.min(300, SCREEN_W * 0.78);
 const DEALER_W = Math.min(260, SCREEN_W * 0.66);
 
-const CATEGORIES: { type: string; label: string; icon: IconName }[] = [
-  { type: "CAR", label: "Autos", icon: "car.fill" },
-  { type: "CAMPER", label: "Wohnmobile", icon: "bus.fill" },
-  { type: "UTILITY", label: "Nutzfahrzeuge", icon: "truck.box.fill" },
-  { type: "TRUCK", label: "Lastwagen", icon: "truck.box" },
+const HEADER_FG = "#ffffff";
+const HEADER_MUTED = "rgba(255,255,255,0.6)";
+
+const ACTIONS: { key: string; label: string; icon: IconName; go: () => void }[] = [
+  { key: "buy", label: "Kaufen", icon: "car.fill", go: () => openSearch() },
+  { key: "sell", label: "Verkaufen", icon: "tag.fill", go: () => router.push("/sell") },
+  { key: "dealers", label: "Händler", icon: "building.2.fill", go: () => router.push("/(tabs)/dealers") },
 ];
+
+// Top brands from the shared source of truth (UPPERCASE enum values).
+const TOP_BRANDS = (carMakes[0]?.items ?? []).slice(0, 8);
 
 function openSearch(params?: Record<string, string>) {
   router.push({ pathname: "/(tabs)/search", params });
@@ -82,54 +89,70 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.root}>
+      {/* Dark header ⇒ light status bar icons; root resets to `auto` off-screen. */}
+      <StatusBar style="light" />
       <ScrollView
         contentContainerStyle={{ paddingBottom: tabBarHeight + Spacing[4] }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={C.mutedForeground} />
+          <RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={HEADER_MUTED} />
         }
       >
-        {/* Header */}
-        <SafeAreaView edges={["top"]}>
-          <View style={styles.header}>
-            <Text style={[styles.wordmark, { color: C.foreground }]}>
-              Auto<Text style={{ color: C.primary }}>Vendo</Text>
-            </Text>
-            <Pressable
-              style={[styles.iconBtn, { backgroundColor: C.secondary }]}
-              hitSlop={6}
-              onPress={() => router.push("/(tabs)/profile")}
-            >
-              <Icon name="heart" size={19} color={C.foreground} />
-            </Pressable>
-          </View>
-        </SafeAreaView>
+        {/* ── Dark header ─────────────────────────────────────────────── */}
+        <View style={[styles.header, { backgroundColor: C.foreground }]}>
+          <SafeAreaView edges={["top"]}>
+            <View style={styles.headerTop}>
+              <View>
+                <Text style={styles.locationLabel}>Standort</Text>
+                <View style={styles.locationRow}>
+                  <Text style={styles.locationCity}>Schweiz</Text>
+                  <Icon name="chevron.down" size={13} color={HEADER_FG} />
+                </View>
+              </View>
+              <Pressable
+                style={styles.avatar}
+                onPress={() => router.push("/favorites")}
+                hitSlop={6}
+              >
+                <Icon name="heart.fill" size={18} color={HEADER_FG} />
+              </Pressable>
+            </View>
 
-        {/* Search entry */}
-        <View style={styles.searchPad}>
-          <Pressable style={[styles.searchBar, { backgroundColor: C.secondary, borderColor: C.border }]} onPress={() => openSearch()}>
-            <Icon name="magnifyingglass" size={17} color={C.mutedForeground} />
-            <Text style={[styles.searchPlaceholder, { color: C.mutedForeground }]}>
-              Marke, Modell oder Stichwort
-            </Text>
-          </Pressable>
+            {/* Search */}
+            <View style={styles.searchRow}>
+              <Pressable style={styles.searchBar} onPress={() => openSearch()}>
+                <Icon name="magnifyingglass" size={17} color={C.mutedForeground} />
+                <Text style={[styles.searchPlaceholder, { color: C.mutedForeground }]}>Fahrzeug finden …</Text>
+              </Pressable>
+              <Pressable style={[styles.filterBtn, { backgroundColor: C.primary }]} onPress={() => openSearch()}>
+                <Icon name="slider.horizontal.3" size={18} color={C.primaryForeground} />
+              </Pressable>
+            </View>
+
+            {/* Quick actions */}
+            <View style={[styles.actionBar, { backgroundColor: C.primary }]}>
+              {ACTIONS.map((a, i) => (
+                <Pressable key={a.key} style={[styles.action, i < ACTIONS.length - 1 && styles.actionDivider]} onPress={a.go}>
+                  <Icon name={a.icon} size={20} color={C.primaryForeground} />
+                  <Text style={[styles.actionLabel, { color: C.primaryForeground }]}>{a.label}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </SafeAreaView>
         </View>
 
-        {/* Categories */}
-        <View style={styles.categories}>
-          {CATEGORIES.map((cat) => (
-            <Pressable
-              key={cat.type}
-              style={styles.category}
-              onPress={() => openSearch({ vehicleType: cat.type })}
-            >
-              <View style={[styles.categoryTile, { backgroundColor: C.secondary, borderColor: C.border }]}>
-                <Icon name={cat.icon} size={24} color={C.primary} />
-              </View>
-              <Text style={[styles.categoryLabel, { color: C.foreground }]}>{cat.label}</Text>
+        {/* ── Body ─────────────────────────────────────────────────────── */}
+        {/* Brands */}
+        <View style={styles.brandsSection}>
+          <SectionHeader title="Marken" actionLabel="Alle" onAction={() => openSearch()} />
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.brandsRow}>
+          {TOP_BRANDS.map((b) => (
+            <Pressable key={b.value} style={[styles.brandTile, { backgroundColor: C.card, borderColor: C.border }]} onPress={() => openSearch({ make: b.value })}>
+              <Text style={[styles.brandText, { color: C.foreground }]} numberOfLines={1}>{b.label}</Text>
             </Pressable>
           ))}
-        </View>
+        </ScrollView>
 
         {error ? (
           <ErrorState onRetry={() => load()} />
@@ -137,13 +160,11 @@ export default function HomeScreen() {
           <>
             {/* Featured */}
             <View style={styles.section}>
-              <SectionHeader title="Empfohlen" actionLabel="Alle ansehen" onAction={() => openSearch()} />
+              <SectionHeader title="Beliebte Fahrzeuge" actionLabel="Alle ansehen" onAction={() => openSearch()} />
             </View>
             {loading ? (
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
-                {[0, 1].map((k) => (
-                  <Skeleton key={k} width={FEATURED_W} height={240} radius={Radius.lg} />
-                ))}
+                {[0, 1].map((k) => <VehicleCardSkeleton key={k} width={FEATURED_W} />)}
               </ScrollView>
             ) : (
               <ScrollView
@@ -166,7 +187,7 @@ export default function HomeScreen() {
               </ScrollView>
             )}
 
-            {/* Featured dealers */}
+            {/* Dealers */}
             {(loading || dealers.length > 0) && (
               <>
                 <View style={[styles.section, { marginTop: Spacing[6] }]}>
@@ -174,9 +195,7 @@ export default function HomeScreen() {
                 </View>
                 {loading ? (
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
-                    {[0, 1].map((k) => (
-                      <Skeleton key={k} width={DEALER_W} height={140} radius={Radius.lg} />
-                    ))}
+                    {[0, 1].map((k) => <DealerCardSkeleton key={k} width={DEALER_W} />)}
                   </ScrollView>
                 ) : (
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
@@ -191,9 +210,9 @@ export default function HomeScreen() {
             {/* New arrivals */}
             <View style={[styles.section, { marginTop: Spacing[6] }]}>
               <SectionHeader title="Neu eingetroffen" actionLabel="Alle ansehen" onAction={() => openSearch({ sort: "created-desc" })} />
-              <View style={{ gap: Spacing[3] }}>
+              <View style={{ gap: Spacing[4] }}>
                 {loading
-                  ? [0, 1, 2].map((k) => <Skeleton key={k} width="100%" height={260} radius={Radius.lg} />)
+                  ? [0, 1].map((k) => <VehicleCardSkeleton key={k} />)
                   : recent.map((v) => (
                       <VehicleCard
                         key={v.id}
@@ -215,74 +234,70 @@ export default function HomeScreen() {
 function createStyles(C: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: C.background },
+
     header: {
+      borderBottomLeftRadius: 28,
+      borderBottomRightRadius: 28,
+      paddingHorizontal: Spacing[5],
+      paddingBottom: Spacing[5],
+    },
+    headerTop: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingHorizontal: Spacing[5],
       paddingTop: Spacing[2],
-      paddingBottom: Spacing[3],
-    },
-    wordmark: {
-      fontFamily: FontFamily.sansBold,
-      fontSize: FontSize.xl,
-      letterSpacing: -0.6,
-    },
-    iconBtn: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    searchPad: {
-      paddingHorizontal: Spacing[5],
       paddingBottom: Spacing[4],
     },
-    searchBar: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: Spacing[3],
-      height: 50,
-      borderRadius: Radius.md,
-      paddingHorizontal: Spacing[4],
-      borderWidth: StyleSheet.hairlineWidth * 2,
-    },
-    searchPlaceholder: {
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.base,
-    },
-    categories: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      paddingHorizontal: Spacing[5],
-      paddingBottom: Spacing[2],
-    },
-    category: {
-      alignItems: "center",
-      gap: Spacing[2],
-      flex: 1,
-    },
-    categoryTile: {
-      width: 60,
-      height: 60,
-      borderRadius: Radius.lg,
+    locationLabel: { fontFamily: FontFamily.sans, fontSize: FontSize.xs, color: HEADER_MUTED },
+    locationRow: { flexDirection: "row", alignItems: "center", gap: Spacing[1], marginTop: 2 },
+    locationCity: { fontFamily: FontFamily.sansBold, fontSize: FontSize.md, color: HEADER_FG, letterSpacing: -0.3 },
+    avatar: {
+      width: 44,
+      height: 44,
+      borderRadius: 14,
+      backgroundColor: "rgba(255,255,255,0.12)",
       alignItems: "center",
       justifyContent: "center",
-      borderWidth: StyleSheet.hairlineWidth * 2,
     },
-    categoryLabel: {
-      fontFamily: FontFamily.sansMedium,
-      fontSize: FontSize.xs,
-      textAlign: "center",
+
+    searchRow: { flexDirection: "row", gap: Spacing[2] },
+    searchBar: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: Spacing[2],
+      height: 52,
+      borderRadius: Radius.lg,
+      backgroundColor: C.card,
+      paddingHorizontal: Spacing[4],
     },
-    section: {
-      paddingHorizontal: Spacing[5],
-      marginTop: Spacing[6],
+    searchPlaceholder: { fontFamily: FontFamily.sans, fontSize: FontSize.base },
+    filterBtn: { width: 52, height: 52, borderRadius: Radius.lg, alignItems: "center", justifyContent: "center" },
+
+    actionBar: {
+      flexDirection: "row",
+      borderRadius: Radius.lg,
+      marginTop: Spacing[4],
+      paddingVertical: Spacing[3],
     },
-    hList: {
-      paddingHorizontal: Spacing[5],
-      gap: Spacing[3],
+    action: { flex: 1, alignItems: "center", gap: 6 },
+    actionDivider: { borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: "rgba(255,255,255,0.25)" },
+    actionLabel: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.sm },
+
+    brandsSection: { paddingHorizontal: Spacing[5], marginTop: Spacing[6] },
+    brandsRow: { paddingHorizontal: Spacing[5], gap: Spacing[2], paddingTop: Spacing[1] },
+    brandTile: {
+      height: 48,
+      paddingHorizontal: Spacing[4],
+      borderRadius: Radius.md,
+      borderWidth: StyleSheet.hairlineWidth,
+      alignItems: "center",
+      justifyContent: "center",
+      ...Shadow.sm,
     },
+    brandText: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.sm },
+
+    section: { paddingHorizontal: Spacing[5], marginTop: Spacing[6] },
+    hList: { paddingHorizontal: Spacing[5], gap: Spacing[3], paddingTop: Spacing[1], paddingBottom: Spacing[1] },
   });
 }

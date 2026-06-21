@@ -6,10 +6,10 @@ import {
   ScrollView,
   Pressable,
   Dimensions,
-  ActivityIndicator,
 } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { router, useLocalSearchParams } from "expo-router";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
@@ -45,7 +45,9 @@ import {
 } from "@/lib/labels";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { ErrorState } from "@/components/ui/states";
+import { Skeleton } from "@/components/ui/skeleton";
 import { VehicleCard } from "@/components/ui/vehicle-card";
+import { SpecTile } from "@/components/ui/spec-tile";
 import { SectionHeader } from "@/components/ui/section-header";
 import { callPhone, openWhatsApp, sendEmail } from "@/lib/contact";
 import { imageUrl, imageUrls } from "@/lib/image";
@@ -95,8 +97,31 @@ export default function VehicleDetailScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.root, styles.center]}>
-        <ActivityIndicator color={C.mutedForeground} />
+      <View style={styles.root}>
+        <FloatingBack />
+        {/* Gallery band */}
+        <Skeleton width={SCREEN_W} height={SCREEN_W * 0.75} radius={0} />
+        <View style={styles.body}>
+          {/* Title + price */}
+          <Skeleton width="60%" height={24} radius={8} />
+          <Skeleton width="40%" height={16} radius={6} style={{ marginTop: Spacing[3] }} />
+          <Skeleton width="45%" height={28} radius={8} style={{ marginTop: Spacing[4] }} />
+          {/* Info chips */}
+          <View style={{ flexDirection: "row", gap: Spacing[2], marginTop: Spacing[5] }}>
+            <Skeleton width={110} height={30} radius={999} />
+            <Skeleton width={90} height={30} radius={999} />
+          </View>
+          {/* Spec tiles 2×3 */}
+          <View style={{ gap: Spacing[2], marginTop: Spacing[5] }}>
+            {[0, 1].map((r) => (
+              <View key={r} style={{ flexDirection: "row", gap: Spacing[2] }}>
+                {[0, 1, 2].map((c) => (
+                  <Skeleton key={c} width={undefined} height={92} radius={Radius.lg} style={{ flex: 1 }} />
+                ))}
+              </View>
+            ))}
+          </View>
+        </View>
       </View>
     );
   }
@@ -122,16 +147,22 @@ export default function VehicleDetailScreen() {
   const fav = isFavorite(vehicle.id);
 
   const keySpecs: { icon: IconName; label: string; value: string }[] = [
-    { icon: "calendar", label: "Erstzulassung", value: formatRegistration(vehicle.registrationMonth, vehicle.registrationYear) },
-    { icon: "gauge.with.dots.needle.bottom.50percent", label: "Kilometer", value: formatKm(vehicle.kilometer) },
     { icon: "fuelpump.fill", label: "Treibstoff", value: labelFuel(vehicle.fuelType) || "–" },
-    { icon: "gearshape.fill", label: "Getriebe", value: labelTransmission(vehicle.transmissionType) || "–" },
     { icon: "bolt.fill", label: "Leistung", value: formatPower(vehicle.hp, vehicle.kw) },
+    { icon: "gearshape.fill", label: "Getriebe", value: labelTransmission(vehicle.transmissionType) || "–" },
+    { icon: "gauge.medium", label: "Kilometer", value: formatKm(vehicle.kilometer) },
+    { icon: "calendar", label: "Jahrgang", value: formatRegistration(vehicle.registrationMonth, vehicle.registrationYear) },
     { icon: "checkmark.seal.fill", label: "Zustand", value: labelCondition(vehicle.vehicleCondition) || "–" },
   ];
 
+  const infoChips: { icon: IconName; label: string }[] = [];
+  if (vehicle.inspectionPassed) infoChips.push({ icon: "checkmark.seal.fill", label: "MFK geprüft" });
+  if (vehicle.warranty) infoChips.push({ icon: "shield.fill", label: "Garantie" });
+  if (dealer?.user?.emailVerified) infoChips.push({ icon: "checkmark.circle.fill", label: "Verifizierter Händler" });
+
   return (
     <View style={styles.root}>
+      <StatusBar style="light" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
         {/* Gallery */}
         <View style={styles.gallery}>
@@ -181,23 +212,25 @@ export default function VehicleDetailScreen() {
             )}
           </View>
 
-          {/* Key specs grid */}
-          <View style={[styles.specGrid, { borderColor: C.border }]}>
-            {keySpecs.map((s, i) => (
-              <View
-                key={s.label}
-                style={[
-                  styles.specCell,
-                  { borderColor: C.border },
-                  i % 2 === 0 && styles.specCellRightBorder,
-                  i < keySpecs.length - 2 && styles.specCellBottomBorder,
-                ]}
-              >
-                <Icon name={s.icon} size={16} color={C.mutedForeground} />
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.specLabel, { color: C.mutedForeground }]}>{s.label}</Text>
-                  <Text numberOfLines={1} style={[styles.specValue, { color: C.foreground }]}>{s.value}</Text>
+          {/* Info chips */}
+          {infoChips.length > 0 && (
+            <View style={styles.infoChips}>
+              {infoChips.map((c) => (
+                <View key={c.label} style={[styles.infoChip, { backgroundColor: C.secondary }]}>
+                  <Icon name={c.icon} size={13} color={C.primary} />
+                  <Text style={[styles.infoChipText, { color: C.secondaryForeground }]}>{c.label}</Text>
                 </View>
+              ))}
+            </View>
+          )}
+
+          {/* Key specs */}
+          <View style={styles.specGrid}>
+            {[keySpecs.slice(0, 3), keySpecs.slice(3, 6)].map((row, ri) => (
+              <View key={ri} style={styles.specRow}>
+                {row.map((s) => (
+                  <SpecTile key={s.label} icon={s.icon} label={s.label} value={s.value} />
+                ))}
               </View>
             ))}
           </View>
@@ -393,28 +426,27 @@ export default function VehicleDetailScreen() {
       <SafeAreaView edges={["bottom"]} style={[styles.contactBar, { backgroundColor: C.background, borderTopColor: C.border }]}>
         <View style={styles.contactInner}>
           {phone && (
-            <Pressable style={[styles.contactBtn, { backgroundColor: C.primary }]} onPress={() => callPhone(phone)}>
-              <Icon name="phone.fill" size={18} color={C.primaryForeground} />
-              <Text style={[styles.contactBtnText, { color: C.primaryForeground }]}>Anrufen</Text>
-            </Pressable>
-          )}
-          {phone && (
             <Pressable
-              style={[styles.contactBtn, { backgroundColor: "#25D366" }]}
+              style={[styles.darkSquare, { backgroundColor: C.foreground }]}
               onPress={() => openWhatsApp(phone, `Hallo, ich interessiere mich für ${title}.`)}
             >
-              <Icon name="message.fill" size={18} color="#fff" />
-              <Text style={[styles.contactBtnText, { color: "#fff" }]}>WhatsApp</Text>
+              <Icon name="message.fill" size={20} color={C.background} />
             </Pressable>
           )}
-          {dealer?.businessEmail && (
+          {phone ? (
+            <Pressable style={[styles.ctaBtn, { backgroundColor: C.primary }]} onPress={() => callPhone(phone)}>
+              <Icon name="phone.fill" size={18} color={C.primaryForeground} />
+              <Text style={[styles.ctaText, { color: C.primaryForeground }]}>Anrufen</Text>
+            </Pressable>
+          ) : dealer?.businessEmail ? (
             <Pressable
-              style={[styles.contactIconBtn, { backgroundColor: C.secondary }]}
+              style={[styles.ctaBtn, { backgroundColor: C.primary }]}
               onPress={() => sendEmail(dealer.businessEmail!, `Anfrage: ${title}`)}
             >
-              <Icon name="envelope.fill" size={18} color={C.foreground} />
+              <Icon name="envelope.fill" size={18} color={C.primaryForeground} />
+              <Text style={[styles.ctaText, { color: C.primaryForeground }]}>Nachricht senden</Text>
             </Pressable>
-          )}
+          ) : null}
         </View>
       </SafeAreaView>
     </View>
@@ -588,35 +620,31 @@ function createStyles(C: ReturnType<typeof useTheme>) {
       fontSize: FontSize.base,
       textDecorationLine: "line-through",
     },
-    specGrid: {
+    infoChips: {
       flexDirection: "row",
       flexWrap: "wrap",
-      borderWidth: StyleSheet.hairlineWidth * 2,
-      borderRadius: Radius.lg,
-      marginTop: Spacing[5],
-      overflow: "hidden",
+      gap: Spacing[2],
+      marginTop: Spacing[4],
     },
-    specCell: {
-      width: "50%",
+    infoChip: {
       flexDirection: "row",
       alignItems: "center",
-      gap: Spacing[2],
-      padding: Spacing[3],
+      gap: 5,
+      paddingHorizontal: Spacing[3],
+      paddingVertical: 7,
+      borderRadius: Radius.full,
     },
-    specCellRightBorder: {
-      borderRightWidth: StyleSheet.hairlineWidth,
-    },
-    specCellBottomBorder: {
-      borderBottomWidth: StyleSheet.hairlineWidth,
-    },
-    specLabel: {
-      fontFamily: FontFamily.sans,
+    infoChipText: {
+      fontFamily: FontFamily.sansMedium,
       fontSize: FontSize.xs,
     },
-    specValue: {
-      fontFamily: FontFamily.sansSemiBold,
-      fontSize: FontSize.sm,
-      marginTop: 1,
+    specGrid: {
+      marginTop: Spacing[5],
+      gap: Spacing[2],
+    },
+    specRow: {
+      flexDirection: "row",
+      gap: Spacing[2],
     },
     section: {
       marginTop: Spacing[6],
@@ -707,29 +735,29 @@ function createStyles(C: ReturnType<typeof useTheme>) {
     },
     contactInner: {
       flexDirection: "row",
-      gap: Spacing[2],
+      gap: Spacing[3],
       paddingHorizontal: Spacing[5],
       paddingTop: Spacing[3],
     },
-    contactBtn: {
+    darkSquare: {
+      width: 54,
+      height: 54,
+      borderRadius: Radius.lg,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    ctaBtn: {
       flex: 1,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
       gap: Spacing[2],
-      height: 50,
-      borderRadius: Radius.md,
+      height: 54,
+      borderRadius: Radius.lg,
     },
-    contactBtnText: {
+    ctaText: {
       fontFamily: FontFamily.sansSemiBold,
-      fontSize: FontSize.base,
-    },
-    contactIconBtn: {
-      width: 50,
-      height: 50,
-      borderRadius: Radius.md,
-      alignItems: "center",
-      justifyContent: "center",
+      fontSize: FontSize.md,
     },
   });
 }

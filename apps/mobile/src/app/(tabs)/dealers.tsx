@@ -8,7 +8,7 @@ import { useTabBarHeight } from "@/hooks/use-tab-bar-height";
 import { fetchDealers, type DealerListItem } from "@/lib/api";
 import { Icon } from "@/components/ui/icon";
 import { DealerCard } from "@/components/ui/dealer-card";
-import { EmptyState, ErrorState, Skeleton } from "@/components/ui/states";
+import { EmptyState, ErrorState, DealerCardSkeleton } from "@/components/ui/states";
 
 export default function DealersScreen() {
   const C = useTheme();
@@ -97,9 +97,9 @@ export default function DealersScreen() {
       {error ? (
         <ErrorState onRetry={() => load(search)} />
       ) : loading ? (
-        <View style={styles.listPad}>
+        <View style={[styles.listPad, { gap: Spacing[3] }]}>
           {[0, 1, 2, 3].map((k) => (
-            <Skeleton key={k} width="100%" height={160} radius={Radius.lg} style={{ marginBottom: Spacing[3] }} />
+            <DealerCardSkeleton key={k} />
           ))}
         </View>
       ) : (

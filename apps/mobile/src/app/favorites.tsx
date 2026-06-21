@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { View, Text, StyleSheet, Pressable, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Pressable, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { FontFamily, FontSize, Spacing } from "@/constants/theme";
@@ -8,7 +8,7 @@ import { useFavorites } from "@/lib/favorites";
 import { fetchVehicle, type VehicleListItem, type VehicleDetail } from "@/lib/api";
 import { Icon } from "@/components/ui/icon";
 import { VehicleCard } from "@/components/ui/vehicle-card";
-import { EmptyState } from "@/components/ui/states";
+import { EmptyState, VehicleCardSkeleton } from "@/components/ui/states";
 
 // Favorites store only IDs; the detail payload is a superset of the list shape.
 function toListItem(v: VehicleDetail): VehicleListItem {
@@ -88,8 +88,10 @@ export default function FavoritesScreen() {
       </SafeAreaView>
 
       {loading ? (
-        <View style={styles.center}>
-          <ActivityIndicator color={C.mutedForeground} />
+        <View style={[styles.listPad, { gap: Spacing[3] }]}>
+          {[0, 1, 2].map((k) => (
+            <VehicleCardSkeleton key={k} />
+          ))}
         </View>
       ) : (
         <FlatList

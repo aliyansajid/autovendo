@@ -1,11 +1,12 @@
 import { Pressable, StyleSheet, Text, View, type DimensionValue } from "react-native";
 import { Image } from "expo-image";
-import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
+import { FontFamily, FontSize, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import type { VehicleListItem } from "@/lib/api";
-import { formatPrice, formatRegistration, formatKm, vehicleMetaLine } from "@/lib/format";
+import { formatPrice, formatKm, formatPower, formatRegistration, vehicleMetaLine } from "@/lib/format";
 import { labelMake, labelModel, labelFuel, labelCondition } from "@/lib/labels";
 import { imageUrl } from "@/lib/image";
+import { cardShadow } from "./skeleton";
 import { Icon } from "./icon";
 
 const BLUR_HASH = "L6Pj0^jE.AyE_3t7t7R**0o#DgR4";
@@ -32,6 +33,7 @@ export function VehicleCard({
   const meta = vehicleMetaLine([
     formatRegistration(vehicle.registrationMonth, vehicle.registrationYear),
     formatKm(vehicle.kilometer),
+    vehicle.hp || vehicle.kw ? formatPower(vehicle.hp, vehicle.kw) : null,
     labelFuel(vehicle.fuelType),
   ]);
 
@@ -40,69 +42,60 @@ export function VehicleCard({
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        { backgroundColor: C.card, borderColor: C.border, width: width ?? "100%", opacity: pressed ? 0.96 : 1 },
+        { backgroundColor: C.card, width: width ?? "100%", opacity: pressed ? 0.97 : 1 },
+        cardShadow,
       ]}
     >
-      <View style={styles.imageWrap}>
+      {/* Photo */}
+      <View style={[styles.imageWrap, { backgroundColor: C.secondary }]}>
         {image ? (
           <Image
             source={{ uri: image }}
             style={styles.image}
             contentFit="cover"
             placeholder={{ blurhash: BLUR_HASH }}
-            transition={200}
+            transition={220}
           />
         ) : (
-          <View style={[styles.image, styles.imagePlaceholder, { backgroundColor: C.secondary }]}>
-            <Icon name="car.side.fill" size={40} color={C.mutedForeground} />
+          <View style={styles.imagePlaceholder}>
+            <Icon name="car.side.fill" size={44} color={C.mutedForeground} />
           </View>
         )}
 
-        {vehicle.vehicleCondition && (
-          <View style={[styles.badge, styles.badgeTopLeft, { backgroundColor: "rgba(0,0,0,0.62)" }]}>
+        {vehicle.vehicleCondition ? (
+          <View style={styles.badge}>
             <Text style={styles.badgeText}>{labelCondition(vehicle.vehicleCondition)}</Text>
           </View>
-        )}
+        ) : null}
 
         {onToggleFavorite && (
-          <Pressable
-            onPress={onToggleFavorite}
-            hitSlop={10}
-            style={[styles.heart, { backgroundColor: "rgba(0,0,0,0.45)" }]}
-          >
-            <Icon
-              name={favorite ? "heart.fill" : "heart"}
-              size={16}
-              color={favorite ? "#ff4d6d" : "#fff"}
-            />
+          <Pressable onPress={onToggleFavorite} hitSlop={10} style={styles.heart}>
+            <Icon name={favorite ? "heart.fill" : "heart"} size={17} color={favorite ? "#ff4d6d" : "#fff"} />
           </Pressable>
         )}
       </View>
 
-      <View style={styles.body}>
-        <Text numberOfLines={1} style={[styles.title, { color: C.foreground }]}>
-          {title}
-        </Text>
-        {vehicle.version ? (
-          <Text numberOfLines={1} style={[styles.subtitle, { color: C.mutedForeground }]}>
-            {vehicle.version}
-          </Text>
-        ) : null}
+      {/* Body */}
+      <View style={[styles.body, { backgroundColor: C.secondary }]}>
+        <View style={styles.titleRow}>
+          <Text numberOfLines={1} style={[styles.title, { color: C.foreground }]}>{title}</Text>
+          <Text style={[styles.price, { color: C.primary }]}>{formatPrice(vehicle.price)}</Text>
+        </View>
 
-        <Text numberOfLines={1} style={[styles.meta, { color: C.mutedForeground }]}>
-          {meta}
-        </Text>
+        <Text numberOfLines={1} style={[styles.meta, { color: C.mutedForeground }]}>{meta}</Text>
+
+        <View style={[styles.divider, { backgroundColor: C.border }]} />
 
         <View style={styles.footer}>
-          <Text style={[styles.price, { color: C.foreground }]}>{formatPrice(vehicle.price)}</Text>
-          {city && (
-            <View style={styles.location}>
-              <Icon name={isDealer ? "building.2.fill" : "mappin"} size={11} color={C.mutedForeground} />
-              <Text numberOfLines={1} style={[styles.locationText, { color: C.mutedForeground }]}>
-                {city}
-              </Text>
-            </View>
-          )}
+          <View style={styles.location}>
+            <Icon name={isDealer ? "building.2.fill" : "person.fill"} size={12} color={C.mutedForeground} />
+            <Text numberOfLines={1} style={[styles.locationText, { color: C.mutedForeground }]}>
+              {city ?? (isDealer ? "Händler" : "Privat")}
+            </Text>
+          </View>
+          <View style={[styles.typePill, { backgroundColor: C.card }]}>
+            <Text style={[styles.typeText, { color: C.secondaryForeground }]}>{isDealer ? "Händler" : "Privat"}</Text>
+          </View>
         </View>
       </View>
     </Pressable>
@@ -110,86 +103,40 @@ export function VehicleCard({
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: Radius.lg,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    overflow: "hidden",
-  },
-  imageWrap: {
-    width: "100%",
-    aspectRatio: 4 / 3,
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  imagePlaceholder: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  card: { borderRadius: 24, overflow: "hidden" },
+  imageWrap: { width: "100%", aspectRatio: 16 / 11 },
+  image: { width: "100%", height: "100%" },
+  imagePlaceholder: { flex: 1, alignItems: "center", justifyContent: "center" },
   badge: {
     position: "absolute",
-    paddingHorizontal: Spacing[2],
-    paddingVertical: 3,
-    borderRadius: Radius.sm,
+    top: Spacing[3],
+    left: Spacing[3],
+    backgroundColor: "rgba(15,18,32,0.66)",
+    paddingHorizontal: Spacing[3],
+    paddingVertical: 5,
+    borderRadius: 999,
   },
-  badgeTopLeft: {
-    top: Spacing[2],
-    left: Spacing[2],
-  },
-  badgeText: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.xs,
-    color: "#fff",
-  },
+  badgeText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.xs, color: "#fff" },
   heart: {
     position: "absolute",
-    top: Spacing[2],
-    right: Spacing[2],
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    top: Spacing[3],
+    right: Spacing[3],
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: "rgba(15,18,32,0.4)",
     alignItems: "center",
     justifyContent: "center",
   },
-  body: {
-    padding: Spacing[3],
-    gap: 2,
-  },
-  title: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.base,
-    letterSpacing: -0.2,
-  },
-  subtitle: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.sm,
-  },
-  meta: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.xs,
-    marginTop: 2,
-  },
-  footer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: Spacing[2],
-    gap: Spacing[2],
-  },
-  price: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.md,
-    letterSpacing: -0.3,
-  },
-  location: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-    flexShrink: 1,
-  },
-  locationText: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.xs,
-  },
+  body: { padding: Spacing[4] },
+  titleRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: Spacing[2] },
+  title: { flex: 1, fontFamily: FontFamily.sansBold, fontSize: FontSize.base, letterSpacing: -0.3 },
+  price: { fontFamily: FontFamily.sansBold, fontSize: FontSize.md, letterSpacing: -0.3, flexShrink: 0 },
+  meta: { fontFamily: FontFamily.sans, fontSize: FontSize.sm, marginTop: 4 },
+  divider: { height: StyleSheet.hairlineWidth, marginVertical: Spacing[3] },
+  footer: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: Spacing[2] },
+  location: { flexDirection: "row", alignItems: "center", gap: 5, flex: 1 },
+  locationText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.xs },
+  typePill: { paddingHorizontal: Spacing[3], paddingVertical: 4, borderRadius: 999 },
+  typeText: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.xs },
 });

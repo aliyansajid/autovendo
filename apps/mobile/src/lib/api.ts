@@ -267,6 +267,7 @@ export type SearchParams = {
   dealerId?: string;
   vehicleType?: string[];
   make?: string[];
+  excludeMake?: string[];
   bodyType?: string[];
   fuel?: string[];
   transmission?: string[];
@@ -277,8 +278,12 @@ export type SearchParams = {
   sellerType?: string[];
   energyLabels?: string[];
   emissionStandards?: string[];
+  batteryOwnership?: string[];
+  chargingPlugTypeStandard?: string[];
+  chargingPlugTypeFast?: string[];
   equipment?: string[];
   extras?: string[];
+  // Ranges (API query-param names match these keys 1:1).
   priceFrom?: number;
   priceTo?: number;
   kilometerFrom?: number;
@@ -287,6 +292,22 @@ export type SearchParams = {
   registrationTo?: number;
   powerFrom?: number;
   powerTo?: number;
+  kwFrom?: number;
+  kwTo?: number;
+  cubicCapacityFrom?: number;
+  cubicCapacityTo?: number;
+  cylindersFrom?: number;
+  cylindersTo?: number;
+  consumptionFrom?: number;
+  consumptionTo?: number;
+  co2From?: number;
+  co2To?: number;
+  rangeFrom?: number;
+  rangeTo?: number;
+  doorsFrom?: number;
+  doorsTo?: number;
+  seatsFrom?: number;
+  seatsTo?: number;
   metallic?: boolean;
   inspectionPassed?: boolean;
   hasWarranty?: boolean;
@@ -295,23 +316,6 @@ export type SearchParams = {
   page?: number;
   pageSize?: number;
 };
-
-const ARRAY_KEYS: (keyof SearchParams)[] = [
-  "vehicleType",
-  "make",
-  "bodyType",
-  "fuel",
-  "transmission",
-  "condition",
-  "color",
-  "interiorColor",
-  "driveType",
-  "sellerType",
-  "energyLabels",
-  "emissionStandards",
-  "equipment",
-  "extras",
-];
 
 function buildQuery(params: SearchParams): string {
   const qs = new URLSearchParams();
@@ -328,9 +332,6 @@ function buildQuery(params: SearchParams): string {
   }
   return qs.toString();
 }
-
-// Keeps the linter honest about ARRAY_KEYS staying in sync; also documents intent.
-void ARRAY_KEYS;
 
 // ─── Vehicles ─────────────────────────────────────────────────────────────────
 
