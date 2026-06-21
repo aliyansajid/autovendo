@@ -1,18 +1,18 @@
-import { createAuthClient } from 'better-auth/react';
-import { expoClient } from '@better-auth/expo/client';
-import * as SecureStore from 'expo-secure-store';
+import { createAuthClient } from "better-auth/react";
+import { expoClient } from "@better-auth/expo/client";
+import * as SecureStore from "expo-secure-store";
 
-// Set EXPO_PUBLIC_AUTH_URL in .env.local
-// Development: http://YOUR_LOCAL_IP:3000
-// Production:  https://autovendo.ch
-const baseURL = process.env.EXPO_PUBLIC_AUTH_URL ?? 'http://localhost:3000';
+// Better Auth runs inside the NestJS API (apps/api) at `${API}/api/auth`, so the
+// client base URL is the API origin — the same host the data layer uses.
+// Dev: http://<LAN-IP>:4000   Prod: https://api.autovendo.ch
+const baseURL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:4000";
 
 export const authClient = createAuthClient({
   baseURL,
   plugins: [
     expoClient({
-      scheme: 'autovendo',
-      storagePrefix: 'autovendo',
+      scheme: "autovendo",
+      storagePrefix: "autovendo",
       storage: SecureStore,
     }),
   ],

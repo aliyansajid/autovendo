@@ -1,35 +1,60 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { SymbolView } from 'expo-symbols';
-import { router } from 'expo-router';
-import { Colors, FontFamily, FontSize, Spacing, Radius } from '@/constants/theme';
-
-const C = Colors.dark;
+import { useState } from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router, useLocalSearchParams } from "expo-router";
+import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import { authClient } from "@/lib/auth-client";
+import { Icon } from "@/components/ui/icon";
+import { Button } from "@/components/ui/button";
 
 export default function VerifyEmailScreen() {
+  const C = useTheme();
+  const { email } = useLocalSearchParams<{ email?: string }>();
+  const [resending, setResending] = useState(false);
+  const [resent, setResent] = useState(false);
+
+  const resend = async () => {
+    if (!email || resending) return;
+    setResending(true);
+    try {
+      await authClient.sendVerificationEmail({ email });
+      setResent(true);
+    } catch {
+      // ignore
+    } finally {
+      setResending(false);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.safe}>
-        <View style={styles.content}>
-          <View style={styles.iconWrap}>
-            <SymbolView name="envelope.badge.fill" size={48} tintColor="#4a7ae8" />
+    <View style={[styles.root, { backgroundColor: C.background }]}>
+      <SafeAreaView style={styles.container}>
+        <View style={[styles.iconTile, { backgroundColor: C.secondary }]}>
+          <Icon name="envelope.badge.fill" size={44} color={C.primary} />
+        </View>
+        <Text style={[styles.title, { color: C.foreground }]}>Bestätigen Sie Ihre E-Mail</Text>
+        <Text style={[styles.text, { color: C.mutedForeground }]}>
+          Wir haben einen Bestätigungslink an{email ? ` ${email}` : " Ihre E-Mail-Adresse"} gesendet. Öffnen Sie
+          die E-Mail und bestätigen Sie Ihr Konto, um sich anzumelden.
+        </Text>
+
+        {resent && (
+          <View style={[styles.resentChip, { backgroundColor: C.secondary }]}>
+            <Icon name="checkmark.circle.fill" size={15} color={C.primary} />
+            <Text style={[styles.resentText, { color: C.foreground }]}>E-Mail erneut gesendet</Text>
           </View>
+        )}
 
-          <Text style={styles.title}>Check your email</Text>
-          <Text style={styles.subtitle}>
-            We sent a verification link to your email address. Click the link to activate your account.
-          </Text>
-
-          <View style={styles.note}>
-            <SymbolView name="info.circle" size={14} tintColor={C.mutedForeground} />
-            <Text style={styles.noteText}>
-              Didn't get it? Check your spam folder or try signing in to resend.
-            </Text>
-          </View>
-
-          <Pressable style={styles.btn} onPress={() => router.replace('/(auth)/login' as any)}>
-            <Text style={styles.btnText}>Back to sign in</Text>
-          </Pressable>
+        <View style={styles.actions}>
+          <Button label="Zur Anmeldung" onPress={() => router.replace("/(auth)/login")} size="lg" fullWidth />
+          {email && (
+            <Pressable onPress={resend} hitSlop={8} style={styles.resendLink} disabled={resending}>
+              <Text style={[styles.resendLinkText, { color: C.primary }]}>
+                {resending ? "Wird gesendet…" : "E-Mail erneut senden"}
+              </Text>
+            </Pressable>
+          )}
         </View>
       </SafeAreaView>
     </View>
@@ -37,66 +62,22 @@ export default function VerifyEmailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0c0c15' },
-  safe: { flex: 1 },
-  content: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: Spacing[6],
-    gap: Spacing[4],
-  },
-  iconWrap: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    backgroundColor: 'rgba(74,122,232,0.12)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing[2],
-  },
-  title: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize['2xl'],
-    color: C.foreground,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.base,
-    color: C.mutedForeground,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  note: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+  root: { flex: 1 },
+  container: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing[6] },
+  iconTile: { width: 104, height: 104, borderRadius: Radius.xl, alignItems: "center", justifyContent: "center", marginBottom: Spacing[6] },
+  title: { fontFamily: FontFamily.sansBold, fontSize: FontSize.xl, letterSpacing: -0.5, textAlign: "center" },
+  text: { fontFamily: FontFamily.sans, fontSize: FontSize.base, textAlign: "center", lineHeight: FontSize.base * 1.55, marginTop: Spacing[3] },
+  resentChip: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing[2],
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    borderRadius: Radius.lg,
-    padding: Spacing[3],
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.07)',
+    paddingHorizontal: Spacing[4],
+    paddingVertical: Spacing[2],
+    borderRadius: Radius.full,
+    marginTop: Spacing[5],
   },
-  noteText: {
-    flex: 1,
-    fontFamily: FontFamily.sans,
-    fontSize: FontSize.sm,
-    color: C.mutedForeground,
-    lineHeight: 18,
-  },
-  btn: {
-    width: '100%',
-    height: 50,
-    borderRadius: Radius.xl,
-    backgroundColor: '#1e4da6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: Spacing[2],
-  },
-  btnText: {
-    fontFamily: FontFamily.sansSemiBold,
-    fontSize: FontSize.base,
-    color: '#fff',
-  },
+  resentText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm },
+  actions: { alignSelf: "stretch", marginTop: Spacing[8], gap: Spacing[4], alignItems: "center" },
+  resendLink: { paddingVertical: Spacing[1] },
+  resendLinkText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm },
 });

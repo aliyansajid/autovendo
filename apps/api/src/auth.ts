@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth/minimal";
+import type { BetterAuthPlugin } from "better-auth";
 import React from "react";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "./generated/prisma/client";
@@ -16,6 +17,7 @@ import {
   ConfirmEmailChangeEmail,
 } from "./transactional";
 import { i18n } from "@better-auth/i18n";
+import { expo } from "@better-auth/expo";
 import { importPKCS8, SignJWT } from "jose";
 
 async function generateAppleClientSecret() {
@@ -165,9 +167,20 @@ export const auth = betterAuth({
     "https://admin.autovendo.ch",
     "https://seller.autovendo.ch",
     "https://appleid.apple.com",
+    // Mobile app (Expo) deep-link scheme — see apps/mobile/app.json "scheme".
+    "autovendo://",
+    "autovendo://*",
+    // Expo Go / dev client uses the exp:// scheme with a LAN IP during local dev.
+    ...(process.env.NODE_ENV === "development"
+      ? ["exp://", "exp://**"]
+      : []),
   ],
 
   plugins: [
+    // Cast: @better-auth/expo resolves a duplicate better-auth copy, so its
+    // plugin type is nominally distinct from the one this server resolves. The
+    // runtime shape is correct.
+    expo() as unknown as BetterAuthPlugin,
     i18n({
       defaultLocale: "de",
       detection: ["cookie", "header"],
