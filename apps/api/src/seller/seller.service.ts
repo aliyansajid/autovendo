@@ -6,11 +6,12 @@ import {
 } from "@nestjs/common";
 import { PrismaService } from "../prisma.service";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
-import type { SellerProfileInput } from "../validation/profile.validation";
+import { sellerProfileSchema } from "../validation/profile.validation";
 import type {
   VehicleCreateInput,
   VehicleUpdateInput,
 } from "../validation/vehicle.validation";
+import { auth } from "../auth";
 
 export class SellerVehiclesQueryDto {
   page?: string;
@@ -206,13 +207,23 @@ export class SellerService {
     };
   }
 
-  async updateProfile(session: UserSession, body: SellerProfileInput) {
-    // Body is already validated by ZodValidationPipe at the controller boundary.
-    const sellerUpdateData: Record<string, unknown> = {};
-    if (body.phoneNumber !== undefined) sellerUpdateData.phoneNumber = body.phoneNumber;
-    if (body.streetAddress !== undefined) sellerUpdateData.streetAddress = body.streetAddress;
-    if (body.zipCode !== undefined) sellerUpdateData.zipCode = body.zipCode;
-    if (body.city !== undefined) sellerUpdateData.city = body.city;
+  /**
+   * Updates the seller profile. The API does the whole job in one call: the
+   * contact fields go to the Seller table (Prisma upsert), `name`/avatar to the
+   * User table, and an `email` change is proxied to Better Auth (confirmation
+   * flow). Seller has no images, so this stays JSON.
+   */
+  async updateProfile(session: UserSession, body: Record<string, unknown>) {
+    // Validate the contact fields (schema is .partial()).
+    const candidate: Record<string, unknown> = {};
+    for (const k of ["phoneNumber", "streetAddress", "zipCode", "city"]) {
+      if (typeof body[k] === "string") candidate[k] = body[k];
+    }
+    const result = sellerProfileSchema.safeParse(candidate);
+    if (!result.success) {
+      throw new BadRequestException(result.error.issues[0]?.message ?? "Invalid profile data");
+    }
+    const sellerUpdateData = result.data as Record<string, unknown>;
 
     if (Object.keys(sellerUpdateData).length > 0) {
       await this.prisma.seller.upsert({
@@ -225,6 +236,18 @@ export class SellerService {
           city: (sellerUpdateData.city as string) ?? "",
         },
         update: sellerUpdateData,
+      });
+    }
+
+    // Account name (User table). Email goes through Better Auth's confirm flow.
+    if (typeof body.name === "string" && body.name.trim()) {
+      await this.prisma.user.update({ where: { id: session.user.id }, data: { name: body.name.trim() } });
+    }
+    if (typeof body.email === "string" && body.email && body.email !== session.user.email) {
+      const token = (session as { session?: { token?: string } }).session?.token ?? "";
+      await auth.api.changeEmail({
+        body: { newEmail: body.email, callbackURL: process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch" },
+        headers: new Headers({ cookie: `better-auth.session_token=${token}` }),
       });
     }
 

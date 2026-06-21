@@ -6,12 +6,13 @@ import {
 } from "@nestjs/common";
 import { PrismaService } from "../prisma.service";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
-import type { DealerProfileInput } from "../validation/profile.validation";
+import { dealerProfileSchema } from "../validation/profile.validation";
 import type {
   VehicleCreateInput,
   VehicleUpdateInput,
 } from "../validation/vehicle.validation";
 import { uploadImage } from "../storage/r2";
+import { auth } from "../auth";
 
 export class DealerVehiclesQueryDto {
   page?: string;
@@ -253,21 +254,64 @@ export class DealerService {
     return { data: dealer };
   }
 
-  async updateProfile(session: UserSession, body: DealerProfileInput) {
+  /**
+   * Updates the dealer profile. Accepts JSON (web — image URLs already in body)
+   * or multipart/form-data (mobile — `files` carries logo/cover/avatar and the
+   * body may carry `name`/`email`). In the multipart case the API does the whole
+   * job: uploads the images to R2, writes the Dealer + User rows via Prisma, and
+   * proxies the email change to Better Auth — so the client makes one call.
+   */
+  async updateProfile(
+    session: UserSession,
+    body: Record<string, unknown>,
+    files?: {
+      logo?: Express.Multer.File[];
+      coverImage?: Express.Multer.File[];
+      avatar?: Express.Multer.File[];
+    },
+  ) {
     const dealer = await this.getDealerByUserId(session.user.id);
 
-    const { openingHours, ...profileFields } = body;
-    // Body is already validated by ZodValidationPipe at the controller boundary
-    // (which also strips `image`, saved separately via Better Auth).
+    // openingHours arrives as an array (JSON) or a JSON string (multipart).
+    let openingHours: unknown;
+    const rawHours = body.openingHours;
+    if (Array.isArray(rawHours)) openingHours = rawHours;
+    else if (typeof rawHours === "string" && rawHours) {
+      try { openingHours = JSON.parse(rawHours); } catch { openingHours = undefined; }
+    }
+
+    // Resolve image URLs: a sent file is uploaded to R2; otherwise a string URL
+    // in the body (web) is used as-is.
+    let logoUrl = typeof body.logo === "string" ? (body.logo as string) : undefined;
+    let coverUrl = typeof body.coverImage === "string" ? (body.coverImage as string) : undefined;
+    let avatarUrl: string | undefined;
+    if (files?.logo?.[0]) logoUrl = (await uploadImage(files.logo[0], `dealers/${dealer.id}/branding`)).publicUrl;
+    if (files?.coverImage?.[0]) coverUrl = (await uploadImage(files.coverImage[0], `dealers/${dealer.id}/branding`)).publicUrl;
+    if (files?.avatar?.[0]) avatarUrl = (await uploadImage(files.avatar[0], `dealers/${dealer.id}/profiles`)).publicUrl;
+
+    // Validate the dealer business fields (schema is .partial()).
+    const candidate: Record<string, unknown> = {};
+    for (const k of ["companyName", "description", "website", "streetAddress", "zipCode", "city", "uidNumber", "contactPerson", "phoneNumber", "businessEmail", "country"]) {
+      if (typeof body[k] === "string") candidate[k] = body[k];
+    }
+    if (logoUrl !== undefined) candidate.logo = logoUrl;
+    if (coverUrl !== undefined) candidate.coverImage = coverUrl;
+    if (openingHours !== undefined) candidate.openingHours = openingHours;
+
+    const result = dealerProfileSchema.safeParse(candidate);
+    if (!result.success) {
+      throw new BadRequestException(result.error.issues[0]?.message ?? "Invalid profile data");
+    }
+    const { openingHours: validatedHours, ...profileFields } = result.data;
 
     const updated = await this.prisma.dealer.update({
       where: { id: dealer.id },
       data: {
         ...profileFields,
-        ...(openingHours
+        ...(validatedHours
           ? {
               openingHours: {
-                upsert: openingHours.map((oh) => ({
+                upsert: validatedHours.map((oh) => ({
                   where: {
                     dealerId_day: { dealerId: dealer.id, day: oh.day as never },
                   },
@@ -297,6 +341,23 @@ export class DealerService {
       },
       select: DEALER_PROFILE_SELECT,
     });
+
+    // Account identity (User table). Name & avatar are plain Prisma writes;
+    // email goes through Better Auth so its confirmation flow runs.
+    const userData: { name?: string; image?: string } = {};
+    if (typeof body.name === "string" && body.name.trim()) userData.name = body.name.trim();
+    if (avatarUrl) userData.image = avatarUrl;
+    if (Object.keys(userData).length > 0) {
+      await this.prisma.user.update({ where: { id: session.user.id }, data: userData });
+    }
+
+    if (typeof body.email === "string" && body.email && body.email !== session.user.email) {
+      const token = (session as { session?: { token?: string } }).session?.token ?? "";
+      await auth.api.changeEmail({
+        body: { newEmail: body.email, callbackURL: process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch" },
+        headers: new Headers({ cookie: `better-auth.session_token=${token}` }),
+      });
+    }
 
     return { data: updated };
   }

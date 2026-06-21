@@ -117,6 +117,8 @@ export async function fetchSellerProfile(): Promise<SellerProfile> {
 }
 
 export async function updateSellerProfile(body: {
+  name?: string;
+  email?: string;
   phoneNumber?: string;
   streetAddress?: string;
   zipCode?: string;
@@ -234,6 +236,7 @@ export type DealerProfile = {
   zipCode: string;
   city: string;
   country: string;
+  uidNumber: string;
   contactPerson: string;
   phoneNumber: string;
   businessEmail: string;
@@ -248,10 +251,19 @@ export async function fetchDealerProfile(): Promise<DealerProfile> {
   return json.data;
 }
 
+export type LocalImage = { uri: string; name: string; mime: string };
+
 export type DealerProfileUpdate = {
+  // Account identity (the API writes these to the User table / Better Auth).
+  name?: string;
+  email?: string;
+  avatar?: LocalImage; // new avatar file
+  // Dealer business fields.
   companyName?: string;
   description?: string | null;
   website?: string | null;
+  logo?: LocalImage | string | null; // new file, existing URL, or null to clear
+  coverImage?: LocalImage | string | null;
   streetAddress?: string;
   zipCode?: string;
   city?: string;
@@ -262,11 +274,35 @@ export type DealerProfileUpdate = {
   openingHours?: { day: string; isOpen: boolean; openTime: string | null; closeTime: string | null }[];
 };
 
+function isLocalImage(v: unknown): v is LocalImage {
+  return !!v && typeof v === "object" && "uri" in (v as Record<string, unknown>);
+}
+
+// Single multipart call: the client sends data + any new image files and the
+// API does everything (uploads to R2, writes Dealer + User, proxies email
+// change to Better Auth). No client-side upload-then-save round-trip.
 export async function updateDealerProfile(body: DealerProfileUpdate): Promise<DealerProfile> {
-  const json = await authedRequest<{ data: DealerProfile }>("/dealer/profile", {
+  const form = new FormData();
+  const appendFile = (field: string, img: LocalImage) =>
+    form.append(field, { uri: img.uri, name: img.name, type: img.mime } as unknown as Blob);
+
+  for (const [key, value] of Object.entries(body)) {
+    if (value == null) continue;
+    if (key === "avatar" && isLocalImage(value)) appendFile("avatar", value);
+    else if ((key === "logo" || key === "coverImage") && isLocalImage(value)) appendFile(key, value);
+    else if (key === "openingHours") form.append("openingHours", JSON.stringify(value));
+    else form.append(key, String(value));
+  }
+
+  const cookie = authClient.getCookie();
+  const res = await fetch(`${API_URL}/dealer/profile`, {
     method: "PUT",
-    ...jsonBody(body),
+    credentials: "omit",
+    headers: { Cookie: cookie },
+    body: form,
   });
+  if (!res.ok) throw new ApiError(res.status, `request_failed_${res.status}`);
+  const json = (await res.json()) as { data: DealerProfile };
   return json.data;
 }
 

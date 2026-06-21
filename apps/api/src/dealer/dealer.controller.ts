@@ -9,8 +9,9 @@ import {
   Body,
   UseInterceptors,
   UploadedFile,
+  UploadedFiles,
 } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
+import { FileInterceptor, FileFieldsInterceptor } from "@nestjs/platform-express";
 import multer from "multer";
 import { Session } from "@thallesp/nestjs-better-auth";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
@@ -27,10 +28,6 @@ import {
   type VehicleCreateInput,
   type VehicleUpdateInput,
 } from "../validation/vehicle.validation";
-import {
-  dealerProfileSchema,
-  type DealerProfileInput,
-} from "../validation/profile.validation";
 
 @Controller("dealer")
 export class DealerController {
@@ -41,12 +38,31 @@ export class DealerController {
     return this.dealerService.getProfile(session);
   }
 
+  // Accepts JSON (web — image URLs already uploaded) OR multipart/form-data
+  // (mobile — sends logo/cover/avatar files + name/email so the API does the
+  // R2 upload, the Prisma writes, and the Better Auth email change in one call).
   @Put("profile")
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        { name: "logo", maxCount: 1 },
+        { name: "coverImage", maxCount: 1 },
+        { name: "avatar", maxCount: 1 },
+      ],
+      {
+        storage: multer.memoryStorage(),
+        limits: { fileSize: MAX_IMAGE_BYTES, files: 3 },
+        fileFilter: (_req, file, cb) => cb(null, file.mimetype in ALLOWED_IMAGE_TYPES),
+      },
+    ),
+  )
   updateProfile(
     @Session() session: UserSession,
-    @Body(new ZodValidationPipe(dealerProfileSchema)) body: DealerProfileInput,
+    @Body() body: Record<string, unknown>,
+    @UploadedFiles()
+    files?: { logo?: Express.Multer.File[]; coverImage?: Express.Multer.File[]; avatar?: Express.Multer.File[] },
   ) {
-    return this.dealerService.updateProfile(session, body);
+    return this.dealerService.updateProfile(session, body, files);
   }
 
   @Post("profile/image")

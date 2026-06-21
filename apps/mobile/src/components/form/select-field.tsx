@@ -18,6 +18,7 @@ export function SelectField({
   required,
   searchable,
   optional,
+  error,
 }: {
   label: string;
   value: string | null | undefined;
@@ -27,6 +28,7 @@ export function SelectField({
   required?: boolean;
   searchable?: boolean;
   optional?: boolean;
+  error?: string | null;
 }) {
   const C = useTheme();
   const [open, setOpen] = useState(false);
@@ -50,7 +52,7 @@ export function SelectField({
         {required ? " *" : ""}
       </Text>
       <Pressable
-        style={[styles.control, { backgroundColor: C.secondary, borderColor: C.border }]}
+        style={[styles.control, { backgroundColor: C.secondary, borderColor: error ? C.destructive : C.border }]}
         onPress={() => {
           setQuery("");
           setOpen(true);
@@ -64,6 +66,7 @@ export function SelectField({
         </Text>
         <Icon name="chevron.down" size={15} color={C.mutedForeground} />
       </Pressable>
+      {error ? <Text style={[styles.errorText, { color: C.destructive }]}>{error}</Text> : null}
 
       <Modal visible={open} animationType="slide" onRequestClose={() => setOpen(false)} presentationStyle="pageSheet">
         <View style={[styles.sheet, { backgroundColor: C.background }]}>
@@ -141,6 +144,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[4],
   },
   value: { flex: 1, fontFamily: FontFamily.sans, fontSize: FontSize.base },
+  errorText: { fontFamily: FontFamily.sans, fontSize: FontSize.xs, marginTop: -Spacing[1] },
   sheet: { flex: 1 },
   sheetHeader: {
     flexDirection: "row",

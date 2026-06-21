@@ -24,7 +24,9 @@ async function generateAppleClientSecret() {
   // Env vars (e.g. in Coolify/Docker) often store the multi-line .p8 key with
   // escaped "\n" instead of real newlines, which jose's importPKCS8 rejects.
   // Normalize them back to actual newlines before parsing.
-  const pem = (process.env.APPLE_PRIVATE_KEY ?? "").replace(/\\n/g, "\n").trim();
+  const pem = (process.env.APPLE_PRIVATE_KEY ?? "")
+    .replace(/\\n/g, "\n")
+    .trim();
   const key = await importPKCS8(pem, "ES256");
   const now = Math.floor(Date.now() / 1000);
   return new SignJWT({})
@@ -171,9 +173,7 @@ export const auth = betterAuth({
     "autovendo://",
     "autovendo://*",
     // Expo Go / dev client uses the exp:// scheme with a LAN IP during local dev.
-    ...(process.env.NODE_ENV === "development"
-      ? ["exp://", "exp://**"]
-      : []),
+    ...(process.env.NODE_ENV === "development" ? ["exp://", "exp://**"] : []),
   ],
 
   plugins: [

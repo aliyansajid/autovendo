@@ -18,10 +18,6 @@ import {
   type VehicleCreateInput,
   type VehicleUpdateInput,
 } from "../validation/vehicle.validation";
-import {
-  sellerProfileSchema,
-  type SellerProfileInput,
-} from "../validation/profile.validation";
 
 @Controller("seller")
 export class SellerController {
@@ -32,10 +28,12 @@ export class SellerController {
     return this.sellerService.getProfile(session);
   }
 
+  // Accepts the contact fields plus optional name/email; validated in the
+  // service (which also proxies the email change to Better Auth).
   @Put("profile")
   updateProfile(
     @Session() session: UserSession,
-    @Body(new ZodValidationPipe(sellerProfileSchema)) body: SellerProfileInput,
+    @Body() body: Record<string, unknown>,
   ) {
     return this.sellerService.updateProfile(session, body);
   }
