@@ -50,7 +50,17 @@ export const validate = {
     if (!t) return null;
     return RE.url.test(t) ? null : "Ungültige URL (https://…).";
   },
+  // Optional description — valid when empty, max 500 chars (mirrors the server).
+  descriptionOptional: (s: string) =>
+    s.trim().length > 500 ? "Beschreibung darf max. 500 Zeichen lang sein." : null,
 };
+
+// Accepted image MIME types — mirrors the web schema (PNG, JPEG, JPG, WEBP).
+const ACCEPTED_IMAGE_MIME = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+
+export function isAcceptedImage(mime: string): boolean {
+  return ACCEPTED_IMAGE_MIME.includes(mime.toLowerCase());
+}
 
 // Show an error only once the user has typed something OR after a submit attempt
 // (so empty required fields don't flash red before interaction).

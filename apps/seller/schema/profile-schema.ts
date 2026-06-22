@@ -3,11 +3,8 @@ import { swissCities } from "@repo/vehicle-constants";
 
 type TFn = (key: string) => string;
 
-// Canonical city identifiers (e.g. "AARAU"). Used to validate the city select
-// against real Swiss municipalities instead of a free-text length check.
 const SWISS_CITY_VALUES = new Set(swissCities.map((c) => c.value));
 
-// Swiss postal codes (PLZ) are always exactly 4 digits (1000–9999).
 const SWISS_ZIP_REGEX = /^\d{4}$/;
 
 const ACCEPTED_IMAGE_TYPES = [
@@ -31,8 +28,13 @@ const createOptionalImage = (t: TFn) =>
     .optional()
     .nullable();
 
-const createOptionalString = () =>
-  z.string().optional().or(z.literal("")).nullable();
+const createOptionalDescription = (t: TFn) =>
+  z
+    .string()
+    .max(500, t("descriptionMaxLength"))
+    .optional()
+    .or(z.literal(""))
+    .nullable();
 
 const createOptionalUrl = (t: TFn) =>
   z.url(t("invalidUrl")).optional().or(z.literal("")).nullable();
@@ -52,9 +54,7 @@ export const createSellerProfileSchema = (t: TFn) =>
       .string()
       .min(5, t("addressMinLength"))
       .max(100, t("addressMaxLength")),
-    zipCode: z
-      .string()
-      .regex(SWISS_ZIP_REGEX, t("invalidZipCode")),
+    zipCode: z.string().regex(SWISS_ZIP_REGEX, t("invalidZipCode")),
     city: z
       .string()
       .refine((val) => SWISS_CITY_VALUES.has(val), t("invalidCity")),
@@ -62,17 +62,14 @@ export const createSellerProfileSchema = (t: TFn) =>
 
 export const createDealerProfileSchema = (t: TFn) =>
   z.object({
-    // User fields
     name: z.string().min(3, t("nameMinLength")).max(50, t("nameMaxLength")),
     email: z.email(t("invalidEmail")),
     image: createOptionalImage(t),
-
-    // Dealer fields
     companyName: z
       .string()
       .min(3, t("companyNameMinLength"))
       .max(50, t("companyNameMaxLength")),
-    description: createOptionalString(),
+    description: createOptionalDescription(t),
     website: createOptionalUrl(t),
     logo: createOptionalImage(t),
     coverImage: createOptionalImage(t),
@@ -80,9 +77,7 @@ export const createDealerProfileSchema = (t: TFn) =>
       .string()
       .min(5, t("addressMinLength"))
       .max(100, t("addressMaxLength")),
-    zipCode: z
-      .string()
-      .regex(SWISS_ZIP_REGEX, t("invalidZipCode")),
+    zipCode: z.string().regex(SWISS_ZIP_REGEX, t("invalidZipCode")),
     city: z
       .string()
       .refine((val) => SWISS_CITY_VALUES.has(val), t("invalidCity")),
@@ -103,8 +98,6 @@ export const createDealerProfileSchema = (t: TFn) =>
         t("invalidPhoneFormat"),
       ),
     businessEmail: z.email(t("invalidEmail")),
-
-    // Opening Hours
     openingHours: z.array(
       z.object({
         day: z.string(),

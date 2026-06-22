@@ -21,6 +21,7 @@ import { useTranslations } from "next-intl";
 import { updateSellerProfile } from "@/lib/api/seller-vehicles";
 import type { SellerProfile } from "@/lib/api/vehicles";
 import { useMemo, useTransition } from "react";
+import { useRouter } from "@/i18n/routing";
 import { toast } from "sonner";
 import { Spinner } from "@repo/ui/components/spinner";
 import { SelectItem } from "@repo/ui/components/select";
@@ -31,6 +32,7 @@ interface SellerProfileFormProps {
 }
 
 export const SellerProfileForm = ({ initialData }: SellerProfileFormProps) => {
+  const router = useRouter();
   const t = useTranslations("SellerProfileForm");
   const tSchema = useTranslations("ProfileSchema");
   const [isPending, startTransition] = useTransition();
@@ -54,8 +56,6 @@ export const SellerProfileForm = ({ initialData }: SellerProfileFormProps) => {
       try {
         const emailChanged = values.email !== initialData?.user?.email;
 
-        // One call — the API writes name/email to the User table via Better Auth
-        // and the contact fields to the Seller table.
         const result = await updateSellerProfile({
           name: values.name,
           email: values.email,
@@ -70,12 +70,12 @@ export const SellerProfileForm = ({ initialData }: SellerProfileFormProps) => {
           return;
         }
 
-        // Email only changes after the user confirms via the link Better Auth sends.
         if (emailChanged) {
           toast.info(t("emailConfirmation"));
         }
 
         toast.success(t("profileUpdateSuccess"));
+        router.refresh();
         form.reset(values);
       } catch (error: unknown) {
         toast.error((error as Error)?.message || t("unexpectedError"));

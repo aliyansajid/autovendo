@@ -1,4 +1,4 @@
-import { getDealerProfileFromApi } from "@/lib/api/dealers";
+import { getDealerProfile } from "@/lib/api/dealers";
 import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
 import { getDealerVehicleById } from "@/lib/api/dealer-vehicles";
 import { VehicleForm } from "../_components/vehicle-form";
@@ -17,7 +17,7 @@ export default async function EditVehiclePage({
   const t = await getTranslations("EditVehiclePage");
   const { id, locale } = await params;
   const [dealerProfile, vehicle, subscriptionStatus] = await Promise.all([
-    getDealerProfileFromApi(),
+    getDealerProfile(),
     getDealerVehicleById(id),
     getSubscriptionStatusFromApi(),
   ]);

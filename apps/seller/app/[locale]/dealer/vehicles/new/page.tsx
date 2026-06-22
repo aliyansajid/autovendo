@@ -1,4 +1,4 @@
-import { getDealerProfileFromApi } from "@/lib/api/dealers";
+import { getDealerProfile } from "@/lib/api/dealers";
 import { getSubscriptionStatusFromApi } from "@/lib/api/vehicles";
 import { VehicleForm } from "../_components/vehicle-form";
 import { Link, redirect } from "@/i18n/routing";
@@ -12,7 +12,7 @@ export default async function AddNewVehiclePage(props: {
   const { locale } = await props.params;
   const t = await getTranslations("NewVehiclePage");
   const [dealerProfile, subscriptionStatus] = await Promise.all([
-    getDealerProfileFromApi(),
+    getDealerProfile(),
     getSubscriptionStatusFromApi(),
   ]);
 

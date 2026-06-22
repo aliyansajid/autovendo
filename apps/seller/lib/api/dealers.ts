@@ -39,7 +39,7 @@ function buildQueryString(params: Record<string, unknown>): string {
 
 // ─── Server-side (authenticated) ─────────────────────────────────────────────
 
-export async function getDealerProfileFromApi(): Promise<DealerProfile | null> {
+export async function getDealerProfile(): Promise<DealerProfile | null> {
   try {
     const res = await serverFetch("/dealer/profile");
     if (!res.ok) return null;
@@ -108,14 +108,11 @@ export async function updateDealerProfile(
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      return {
-        success: false,
-        error: (data as { error?: string }).error || "errorDefault",
-      };
+      return { success: false, error: (data as { error?: string }).error };
     }
     return { success: true };
   } catch {
-    return { success: false, error: "errorDefault" };
+    return { success: false };
   }
 }
 

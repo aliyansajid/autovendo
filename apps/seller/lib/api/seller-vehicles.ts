@@ -96,14 +96,11 @@ export async function updateSellerProfile(values: {
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      return {
-        success: false,
-        error: (data as { error?: string }).error || "errorDefault",
-      };
+      return { success: false, error: (data as { error?: string }).error };
     }
     return { success: true };
   } catch {
-    return { success: false, error: "errorDefault" };
+    return { success: false };
   }
 }
 

@@ -274,6 +274,7 @@ export type DealerProfileUpdate = {
   streetAddress?: string;
   zipCode?: string;
   city?: string;
+  country?: string;
   uidNumber?: string;
   contactPerson?: string;
   phoneNumber?: string;
@@ -308,7 +309,14 @@ export async function updateDealerProfile(body: DealerProfileUpdate): Promise<De
     headers: { Cookie: cookie },
     body: form,
   });
-  if (!res.ok) throw new ApiError(res.status, `request_failed_${res.status}`);
+  if (!res.ok) {
+    // Surface the API's message (NestJS sends `message`/`error`) so the caller can
+    // show it — same as `authedRequest`. `message` may be a string or array.
+    const body = await res.json().catch(() => null);
+    const raw = body?.message ?? body?.error;
+    const message = Array.isArray(raw) ? raw[0] : raw;
+    throw new ApiError(res.status, message || `request_failed_${res.status}`);
+  }
   const json = (await res.json()) as { data: DealerProfile };
   return json.data;
 }

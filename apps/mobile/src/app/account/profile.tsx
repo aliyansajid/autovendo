@@ -9,7 +9,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { useSession } from "@/lib/auth-client";
 import { imageUrl } from "@/lib/image";
 import { pickSingleImage } from "@/lib/image-picker";
-import { validate, fieldError } from "@/lib/validation";
+import { validate, fieldError, isAcceptedImage } from "@/lib/validation";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
@@ -157,7 +157,12 @@ export default function EditProfileScreen() {
 
   const pickInto = async (setter: (s: ImageSlot) => void) => {
     const img = await pickSingleImage();
-    if (img) setter({ current: null, picked: img });
+    if (!img) return;
+    if (!isAcceptedImage(img.mime)) {
+      Alert.alert("Ungültiges Bild", "Nur PNG-, JPG-, JPEG- oder WEBP-Bilder sind erlaubt.");
+      return;
+    }
+    setter({ current: null, picked: img });
   };
 
   // Field validation — mirrors the server Zod rules (see lib/validation.ts).
@@ -173,6 +178,7 @@ export default function EditProfileScreen() {
     bizEmail: dealer ? validate.businessEmail(businessEmail) : null,
     uid: dealer ? validate.uid(uidNumber) : null,
     website: dealer ? validate.websiteOptional(website) : null,
+    description: dealer ? validate.descriptionOptional(description) : null,
   };
   const valid = Object.values(errs).every((e) => !e);
 
@@ -212,6 +218,7 @@ export default function EditProfileScreen() {
           streetAddress: streetAddress.trim(),
           zipCode: zipCode.trim(),
           city,
+          country: "Switzerland",
           openingHours: DAYS.map((d) => ({
             day: d.key,
             isOpen: hours[d.key]?.isOpen ?? false,
@@ -237,8 +244,12 @@ export default function EditProfileScreen() {
           : "Ihr Profil wurde aktualisiert.",
         [{ text: "OK", onPress: () => router.back() }],
       );
-    } catch {
-      Alert.alert("Fehler", "Profil konnte nicht gespeichert werden. Bitte prüfen Sie Ihre Angaben.");
+    } catch (e) {
+      // Surface the API's message (same as web's toast) when there is one.
+      const message = e instanceof Error && e.message && !e.message.startsWith("request_failed")
+        ? e.message
+        : "Profil konnte nicht gespeichert werden. Bitte prüfen Sie Ihre Angaben.";
+      Alert.alert("Fehler", message);
     } finally {
       setSaving(false);
     }
@@ -277,14 +288,14 @@ export default function EditProfileScreen() {
               <View style={[styles.avatar, { backgroundColor: C.secondary }]}>
                 {avatarUri ? <Image source={{ uri: avatarUri }} style={styles.avatarImg} contentFit="cover" /> : <Icon name="person.fill" size={28} color={C.mutedForeground} />}
               </View>
-              <Pressable onPress={() => pickInto(setAvatar)} hitSlop={6}>
-                <Text style={[styles.link, { color: C.primary }]}>Foto ändern</Text>
+              <Pressable onPress={() => pickInto(setAvatar)} hitSlop={6} disabled={saving}>
+                <Text style={[styles.link, { color: C.primary, opacity: saving ? 0.5 : 1 }]}>Foto ändern</Text>
               </Pressable>
             </View>
           )}
           <View style={{ gap: Spacing[4] }}>
-            <TextField label="Name" value={name} onChangeText={setName} autoCapitalize="words" error={fieldError(name, errs.name, submitted)} />
-            <TextField label="E-Mail" value={email} onChangeText={setEmail} keyboardType="email-address" error={fieldError(email, errs.email, submitted)} />
+            <TextField label="Name" value={name} onChangeText={setName} autoCapitalize="words" error={fieldError(name, errs.name, submitted)} editable={!saving} />
+            <TextField label="E-Mail" value={email} onChangeText={setEmail} keyboardType="email-address" error={fieldError(email, errs.email, submitted)} editable={!saving} />
             {email.trim() !== initial.email && !errs.email && (
               <Text style={[styles.hint, { color: C.mutedForeground }]}>
                 Eine Bestätigung wird an Ihre aktuelle E-Mail-Adresse gesendet.
@@ -296,25 +307,25 @@ export default function EditProfileScreen() {
             <>
               <Text style={[styles.section, { color: C.foreground, marginTop: Spacing[6] }]}>Firma</Text>
               <View style={{ gap: Spacing[4] }}>
-                <TextField label="Firmenname" value={companyName} onChangeText={setCompany} autoCapitalize="words" error={fieldError(companyName, errs.company, submitted)} />
-                <TextField label="Kontaktperson" value={contactPerson} onChangeText={setContact} autoCapitalize="words" error={fieldError(contactPerson, errs.contact, submitted)} />
-                <TextField label="Geschäfts-E-Mail" value={businessEmail} onChangeText={setBizEmail} keyboardType="email-address" error={fieldError(businessEmail, errs.bizEmail, submitted)} />
-                <TextField label="Website" value={website} onChangeText={setWebsite} keyboardType="url" placeholder="https://" error={fieldError(website, errs.website, submitted)} />
-                <TextField label="UID-Nummer" value={uidNumber} onChangeText={setUid} placeholder="CHE-123.456.789" autoCapitalize="characters" error={fieldError(uidNumber, errs.uid, submitted)} />
-                <TextField label="Beschreibung" value={description} onChangeText={setDescription} multiline placeholder="Über Ihr Unternehmen…" />
+                <TextField label="Firmenname" value={companyName} onChangeText={setCompany} autoCapitalize="words" error={fieldError(companyName, errs.company, submitted)} editable={!saving} />
+                <TextField label="Kontaktperson" value={contactPerson} onChangeText={setContact} autoCapitalize="words" error={fieldError(contactPerson, errs.contact, submitted)} editable={!saving} />
+                <TextField label="Geschäfts-E-Mail" value={businessEmail} onChangeText={setBizEmail} keyboardType="email-address" error={fieldError(businessEmail, errs.bizEmail, submitted)} editable={!saving} />
+                <TextField label="Website" value={website} onChangeText={setWebsite} keyboardType="url" placeholder="https://" error={fieldError(website, errs.website, submitted)} editable={!saving} />
+                <TextField label="UID-Nummer" value={uidNumber} onChangeText={setUid} placeholder="CHE-123.456.789" autoCapitalize="characters" error={fieldError(uidNumber, errs.uid, submitted)} editable={!saving} />
+                <TextField label="Beschreibung" value={description} onChangeText={setDescription} multiline placeholder="Über Ihr Unternehmen…" error={fieldError(description, errs.description, submitted)} editable={!saving} />
               </View>
 
               <Text style={[styles.section, { color: C.foreground, marginTop: Spacing[6] }]}>Branding</Text>
               <View style={styles.brandingRow}>
                 <View style={styles.brandCol}>
                   <Text style={[styles.smallLabel, { color: C.mutedForeground }]}>Logo</Text>
-                  <Pressable style={[styles.logoTile, { backgroundColor: C.secondary, borderColor: C.border }]} onPress={() => pickInto(setLogo)}>
+                  <Pressable style={[styles.logoTile, { backgroundColor: C.secondary, borderColor: C.border, opacity: saving ? 0.5 : 1 }]} onPress={() => pickInto(setLogo)} disabled={saving}>
                     {logoUri ? <Image source={{ uri: logoUri }} style={styles.logoImg} contentFit="contain" /> : <Icon name="plus" size={22} color={C.mutedForeground} />}
                   </Pressable>
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.smallLabel, { color: C.mutedForeground }]}>Titelbild</Text>
-                  <Pressable style={[styles.coverTile, { backgroundColor: C.secondary, borderColor: C.border }]} onPress={() => pickInto(setCover)}>
+                  <Pressable style={[styles.coverTile, { backgroundColor: C.secondary, borderColor: C.border, opacity: saving ? 0.5 : 1 }]} onPress={() => pickInto(setCover)} disabled={saving}>
                     {coverUri ? <Image source={{ uri: coverUri }} style={styles.coverImg} contentFit="cover" /> : <Icon name="photo" size={22} color={C.mutedForeground} />}
                   </Pressable>
                 </View>
@@ -325,14 +336,14 @@ export default function EditProfileScreen() {
           {/* Contact & location */}
           <Text style={[styles.section, { color: C.foreground, marginTop: Spacing[6] }]}>Kontakt & Standort</Text>
           <View style={{ gap: Spacing[4] }}>
-            <TextField label="Telefon" value={phoneNumber} onChangeText={setPhone} keyboardType="phone-pad" placeholder="z. B. 079 123 45 67" error={fieldError(phoneNumber, errs.phone, submitted)} />
-            <TextField label="Adresse" value={streetAddress} onChangeText={setAddress} autoCapitalize="words" placeholder="Strasse und Nummer" error={fieldError(streetAddress, errs.address, submitted)} />
+            <TextField label="Telefon" value={phoneNumber} onChangeText={setPhone} keyboardType="phone-pad" placeholder="z. B. 079 123 45 67" error={fieldError(phoneNumber, errs.phone, submitted)} editable={!saving} />
+            <TextField label="Adresse" value={streetAddress} onChangeText={setAddress} autoCapitalize="words" placeholder="Strasse und Nummer" error={fieldError(streetAddress, errs.address, submitted)} editable={!saving} />
             <View style={styles.rowTwo}>
               <View style={{ flex: 1 }}>
-                <TextField label="PLZ" value={zipCode} onChangeText={setZip} keyboardType="number-pad" placeholder="8000" error={fieldError(zipCode, errs.zip, submitted)} />
+                <TextField label="PLZ" value={zipCode} onChangeText={setZip} keyboardType="number-pad" placeholder="8000" error={fieldError(zipCode, errs.zip, submitted)} editable={!saving} />
               </View>
               <View style={{ flex: 1.6 }}>
-                <SelectField label="Ort" searchable value={city} options={CITY_OPTS} onChange={setCity} error={fieldError(city, errs.city, submitted)} />
+                <SelectField label="Ort" searchable value={city} options={CITY_OPTS} onChange={setCity} error={fieldError(city, errs.city, submitted)} disabled={saving} />
               </View>
             </View>
           </View>
@@ -347,13 +358,13 @@ export default function EditProfileScreen() {
                     <View key={d.key} style={[styles.dayRow, i < DAYS.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.border }]}>
                       <View style={styles.dayTop}>
                         <Text style={[styles.dayLabel, { color: C.foreground }]}>{d.label}</Text>
-                        <Switch value={h.isOpen} onValueChange={(v) => setHour(d.key, { isOpen: v })} trackColor={{ true: C.primary, false: C.border }} />
+                        <Switch value={h.isOpen} onValueChange={(v) => setHour(d.key, { isOpen: v })} trackColor={{ true: C.primary, false: C.border }} disabled={saving} />
                       </View>
                       {h.isOpen && (
                         <View style={styles.timeRow}>
-                          <TextInput style={[styles.timeInput, { backgroundColor: C.secondary, color: C.foreground }]} placeholder="08:00" placeholderTextColor={C.mutedForeground} value={h.open} onChangeText={(t) => setHour(d.key, { open: t })} />
+                          <TextInput style={[styles.timeInput, { backgroundColor: C.secondary, color: C.foreground, opacity: saving ? 0.5 : 1 }]} placeholder="08:00" placeholderTextColor={C.mutedForeground} value={h.open} onChangeText={(t) => setHour(d.key, { open: t })} editable={!saving} />
                           <Text style={[styles.dash, { color: C.mutedForeground }]}>–</Text>
-                          <TextInput style={[styles.timeInput, { backgroundColor: C.secondary, color: C.foreground }]} placeholder="18:00" placeholderTextColor={C.mutedForeground} value={h.close} onChangeText={(t) => setHour(d.key, { close: t })} />
+                          <TextInput style={[styles.timeInput, { backgroundColor: C.secondary, color: C.foreground, opacity: saving ? 0.5 : 1 }]} placeholder="18:00" placeholderTextColor={C.mutedForeground} value={h.close} onChangeText={(t) => setHour(d.key, { close: t })} editable={!saving} />
                         </View>
                       )}
                     </View>

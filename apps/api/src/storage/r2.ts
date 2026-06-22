@@ -5,7 +5,11 @@
  * image bytes are validated (magic bytes) and stored with a server-chosen key.
  */
 import { BadRequestException } from "@nestjs/common";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 
 const s3 = new S3Client({
@@ -81,4 +85,24 @@ export async function uploadImage(
   );
 
   return { key, publicUrl: `${PUBLIC_DOMAIN}/${key}` };
+}
+
+/**
+ * Best-effort delete of an image we previously stored. Only objects served from
+ * our own public domain are touched (external/OAuth avatar URLs are left alone),
+ * and failures are swallowed — a lingering old image must never fail the request.
+ */
+export async function deleteImage(
+  publicUrl: string | null | undefined,
+): Promise<void> {
+  if (!publicUrl) return;
+  const prefix = `${PUBLIC_DOMAIN}/`;
+  if (!publicUrl.startsWith(prefix)) return;
+  const key = publicUrl.slice(prefix.length);
+  if (!key) return;
+  try {
+    await s3.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }));
+  } catch (err) {
+    console.error(`Failed to delete R2 object ${key}:`, err);
+  }
 }

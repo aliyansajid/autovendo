@@ -91,6 +91,9 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     revokeSessionsOnPasswordReset: true,
+    // Mirror the client schema (auth-schema.ts: newPassword min 8) server-side so
+    // a direct API call is held to the same rule, not just the framework default.
+    minPasswordLength: 8,
     customSyntheticUser: ({ coreFields, additionalFields, id }) => ({
       ...coreFields,
       role: "user",

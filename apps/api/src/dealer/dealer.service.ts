@@ -11,7 +11,7 @@ import type {
   VehicleCreateInput,
   VehicleUpdateInput,
 } from "../validation/vehicle.validation";
-import { uploadImage } from "../storage/r2";
+import { uploadImage, deleteImage } from "../storage/r2";
 import { auth } from "../auth";
 
 export class DealerVehiclesQueryDto {
@@ -56,6 +56,7 @@ const DEALER_PROFILE_SELECT = {
       id: true,
       name: true,
       email: true,
+      image: true,
       role: true,
       emailVerified: true,
     },
@@ -112,37 +113,106 @@ function buildDealerVehicleOrderBy(
 // enforces the dealer's subscription and listing quota (see resolveDealerStatus
 // / getEntitlement). Everything else is plain listing data.
 const VEHICLE_FIELDS = new Set([
-  "vehicleType", "make", "model", "version", "bodyType", "fuelType",
-  "registrationMonth", "registrationYear", "kilometer", "price", "newPrice",
-  "color", "gearTransmission", "transmissionType", "driveType", "interiorColor",
-  "metallic", "vehicleCondition", "lastInspectionDate", "inspectionPassed",
-  "warranty", "warrantyStartDate", "duration", "maxKm", "doors", "seats",
-  "hp", "kw", "energyLabel", "typeApproval", "wheelbase", "vin", "emptyWeight",
-  "loadCapacity", "serialNumber", "height", "width", "length",
-  "towingCapacityBraked", "cubicCapacity", "co2Emission", "cylinders",
-  "numberOfGears", "emissionStandard", "consumptionCity", "consumptionCountry",
-  "consumptionTotal", "range", "batteryCapacity", "batteryRentalMonth",
-  "powerConsumption", "batteryOwnership", "chargingPlugTypeStandard",
-  "chargingPlugTypeFast", "chargingPower", "combustionEnginePowerHp",
-  "electricMotorPowerHp", "vehicleDescription", "equipment", "extras", "images",
+  "vehicleType",
+  "make",
+  "model",
+  "version",
+  "bodyType",
+  "fuelType",
+  "registrationMonth",
+  "registrationYear",
+  "kilometer",
+  "price",
+  "newPrice",
+  "color",
+  "gearTransmission",
+  "transmissionType",
+  "driveType",
+  "interiorColor",
+  "metallic",
+  "vehicleCondition",
+  "lastInspectionDate",
+  "inspectionPassed",
+  "warranty",
+  "warrantyStartDate",
+  "duration",
+  "maxKm",
+  "doors",
+  "seats",
+  "hp",
+  "kw",
+  "energyLabel",
+  "typeApproval",
+  "wheelbase",
+  "vin",
+  "emptyWeight",
+  "loadCapacity",
+  "serialNumber",
+  "height",
+  "width",
+  "length",
+  "towingCapacityBraked",
+  "cubicCapacity",
+  "co2Emission",
+  "cylinders",
+  "numberOfGears",
+  "emissionStandard",
+  "consumptionCity",
+  "consumptionCountry",
+  "consumptionTotal",
+  "range",
+  "batteryCapacity",
+  "batteryRentalMonth",
+  "powerConsumption",
+  "batteryOwnership",
+  "chargingPlugTypeStandard",
+  "chargingPlugTypeFast",
+  "chargingPower",
+  "combustionEnginePowerHp",
+  "electricMotorPowerHp",
+  "vehicleDescription",
+  "equipment",
+  "extras",
+  "images",
 ]);
 
 const ENUM_FIELDS = new Set([
-  "fuelType", "gearTransmission", "transmissionType", "driveType",
-  "interiorColor", "vehicleCondition", "bodyType", "color",
-  "vehicleType", "status", "warranty", "energyLabel", "emissionStandard",
-  "batteryOwnership", "chargingPlugTypeStandard", "chargingPlugTypeFast",
+  "fuelType",
+  "gearTransmission",
+  "transmissionType",
+  "driveType",
+  "interiorColor",
+  "vehicleCondition",
+  "bodyType",
+  "color",
+  "vehicleType",
+  "status",
+  "warranty",
+  "energyLabel",
+  "emissionStandard",
+  "batteryOwnership",
+  "chargingPlugTypeStandard",
+  "chargingPlugTypeFast",
 ]);
 
 const OPTIONAL_STRING_FIELDS = new Set([
-  "vin", "vehicleDescription", "version", "typeApproval", "serialNumber",
+  "vin",
+  "vehicleDescription",
+  "version",
+  "typeApproval",
+  "serialNumber",
 ]);
 
-function sanitizeVehicleData(data: Record<string, unknown>): Record<string, unknown> {
+function sanitizeVehicleData(
+  data: Record<string, unknown>,
+): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(data)) {
     if (!VEHICLE_FIELDS.has(key)) continue;
-    if ((ENUM_FIELDS.has(key) || OPTIONAL_STRING_FIELDS.has(key)) && (value === "" || value === null)) {
+    if (
+      (ENUM_FIELDS.has(key) || OPTIONAL_STRING_FIELDS.has(key)) &&
+      (value === "" || value === null)
+    ) {
       result[key] = undefined;
     } else {
       result[key] = value;
@@ -152,7 +222,12 @@ function sanitizeVehicleData(data: Record<string, unknown>): Record<string, unkn
 }
 
 // Statuses a dealer may set. ARCHIVED/BANNED are reserved for admins/moderation.
-const DEALER_SETTABLE_STATUS = new Set(["DRAFT", "PUBLISHED", "SOLD", "PAUSED"]);
+const DEALER_SETTABLE_STATUS = new Set([
+  "DRAFT",
+  "PUBLISHED",
+  "SOLD",
+  "PAUSED",
+]);
 
 function resolveDealerStatus(next: string): string {
   if (!DEALER_SETTABLE_STATUS.has(next)) {
@@ -202,7 +277,9 @@ export class DealerService {
     const plan = plans.find(
       (p) => p.name.toLowerCase() === sub.plan.toLowerCase(),
     );
-    const limit = Number((plan?.limits as { vehicles?: number })?.vehicles ?? 0);
+    const limit = Number(
+      (plan?.limits as { vehicles?: number })?.vehicles ?? 0,
+    );
 
     return { active: true, limit };
   }
@@ -266,39 +343,93 @@ export class DealerService {
       avatar?: Express.Multer.File[];
     },
   ) {
-    const dealer = await this.getDealerByUserId(session.user.id);
+    // Also pull the current image URLs so replaced files can be cleaned from R2.
+    const dealer = await this.prisma.dealer.findUnique({
+      where: { userId: session.user.id },
+      select: {
+        id: true,
+        logo: true,
+        coverImage: true,
+        user: { select: { image: true } },
+      },
+    });
+    if (!dealer) {
+      throw new NotFoundException("Dealer profile not found for this user");
+    }
 
     // openingHours arrives as an array (JSON) or a JSON string (multipart).
     let openingHours: unknown;
     const rawHours = body.openingHours;
     if (Array.isArray(rawHours)) openingHours = rawHours;
     else if (typeof rawHours === "string" && rawHours) {
-      try { openingHours = JSON.parse(rawHours); } catch { openingHours = undefined; }
+      try {
+        openingHours = JSON.parse(rawHours);
+      } catch {
+        openingHours = undefined;
+      }
     }
 
-    // Resolve image URLs: a sent file is uploaded to R2; otherwise a string URL
-    // in the body (web) is used as-is.
-    let logoUrl = typeof body.logo === "string" ? (body.logo as string) : undefined;
-    let coverUrl = typeof body.coverImage === "string" ? (body.coverImage as string) : undefined;
-    let avatarUrl: string | undefined;
-    if (files?.logo?.[0]) logoUrl = (await uploadImage(files.logo[0], `dealers/${dealer.id}/branding`)).publicUrl;
-    if (files?.coverImage?.[0]) coverUrl = (await uploadImage(files.coverImage[0], `dealers/${dealer.id}/branding`)).publicUrl;
-    if (files?.avatar?.[0]) avatarUrl = (await uploadImage(files.avatar[0], `dealers/${dealer.id}/profiles`)).publicUrl;
-
-    // Validate the dealer business fields (schema is .partial()).
+    // Validate every client-sent field FIRST — before any R2 upload or DB write.
+    // `name`/`email` belong to the User table; the rest are Dealer business
+    // fields. Image URLs sent as strings (web/JSON path) are kept as-is; uploaded
+    // files (multipart path) are handled only after validation passes.
     const candidate: Record<string, unknown> = {};
-    for (const k of ["companyName", "description", "website", "streetAddress", "zipCode", "city", "uidNumber", "contactPerson", "phoneNumber", "businessEmail", "country"]) {
+    for (const k of [
+      "name",
+      "email",
+      "companyName",
+      "description",
+      "website",
+      "streetAddress",
+      "zipCode",
+      "city",
+      "uidNumber",
+      "contactPerson",
+      "phoneNumber",
+      "businessEmail",
+      "country",
+    ]) {
       if (typeof body[k] === "string") candidate[k] = body[k];
     }
-    if (logoUrl !== undefined) candidate.logo = logoUrl;
-    if (coverUrl !== undefined) candidate.coverImage = coverUrl;
+    if (typeof body.logo === "string") candidate.logo = body.logo;
+    if (typeof body.coverImage === "string")
+      candidate.coverImage = body.coverImage;
     if (openingHours !== undefined) candidate.openingHours = openingHours;
 
     const result = dealerProfileSchema.safeParse(candidate);
     if (!result.success) {
-      throw new BadRequestException(result.error.issues[0]?.message ?? "Invalid profile data");
+      throw new BadRequestException(
+        result.error.issues[0]?.message ?? "Invalid profile data",
+      );
     }
-    const { openingHours: validatedHours, ...profileFields } = result.data;
+    const {
+      name,
+      email,
+      openingHours: validatedHours,
+      ...profileFields
+    } = result.data;
+
+    // Validation passed — now upload any new image files and delete the ones they
+    // replace. Bytes were already type/size-checked by multer and are re-checked
+    // (magic bytes) inside uploadImage.
+    if (files?.logo?.[0]) {
+      profileFields.logo = (
+        await uploadImage(files.logo[0], `dealers/${dealer.id}/branding`)
+      ).publicUrl;
+      await deleteImage(dealer.logo);
+    }
+    if (files?.coverImage?.[0]) {
+      profileFields.coverImage = (
+        await uploadImage(files.coverImage[0], `dealers/${dealer.id}/branding`)
+      ).publicUrl;
+      await deleteImage(dealer.coverImage);
+    }
+    let avatarUrl: string | undefined;
+    if (files?.avatar?.[0]) {
+      avatarUrl = (
+        await uploadImage(files.avatar[0], `dealers/${dealer.id}/profiles`)
+      ).publicUrl;
+    }
 
     const updated = await this.prisma.dealer.update({
       where: { id: dealer.id },
@@ -341,19 +472,28 @@ export class DealerService {
     // The User table is Better Auth's — name/avatar go through auth.api.updateUser
     // and email through auth.api.changeEmail, never a direct Prisma write. (The
     // avatar file was uploaded to R2 above; Better Auth only stores the URL.)
-    const token = (session as { session?: { token?: string } }).session?.token ?? "";
-    const authHeaders = new Headers({ cookie: `better-auth.session_token=${token}` });
+    const token =
+      (session as { session?: { token?: string } }).session?.token ?? "";
+    const authHeaders = new Headers({
+      cookie: `better-auth.session_token=${token}`,
+    });
 
     const userData: { name?: string; image?: string } = {};
-    if (typeof body.name === "string" && body.name.trim()) userData.name = body.name.trim();
+    if (name && name !== session.user.name) userData.name = name;
     if (avatarUrl) userData.image = avatarUrl;
     if (Object.keys(userData).length > 0) {
       await auth.api.updateUser({ body: userData, headers: authHeaders });
+      // The new avatar is now stored — drop the one it replaced.
+      if (avatarUrl) await deleteImage(dealer.user?.image);
     }
 
-    if (typeof body.email === "string" && body.email && body.email !== session.user.email) {
+    if (email && email !== session.user.email) {
       await auth.api.changeEmail({
-        body: { newEmail: body.email, callbackURL: process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch" },
+        body: {
+          newEmail: email,
+          callbackURL:
+            process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch",
+        },
         headers: authHeaders,
       });
     }
@@ -624,5 +764,4 @@ export class DealerService {
       },
     };
   }
-
 }

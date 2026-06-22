@@ -627,6 +627,7 @@
     "invalidEmail": "Invalid email address",
     "invalidImageType": "Only PNG, JPG, JPEG or WEBP images are allowed",
     "invalidUrl": "Please enter a valid URL",
+    "descriptionMaxLength": "Description must be maximum 500 characters long",
     "nameMinLength": "Name must be at least 3 characters long",
     "nameMaxLength": "Name must be maximum 50 characters long",
     "companyNameMinLength": "Company name must be at least 3 characters long",

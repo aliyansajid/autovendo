@@ -107,10 +107,6 @@ function OpeningHourRow({
   );
 }
 
-// ---------------------------------------------------------------------------
-// ImagePreview — isolated to avoid re-rendering the whole form
-// ---------------------------------------------------------------------------
-
 function ImagePreview({
   src,
   alt,
@@ -126,7 +122,6 @@ function ImagePreview({
     <div
       className={`relative ${aspectClass} rounded-lg overflow-hidden border`}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={alt} className="object-cover w-full h-full" />
       <Button
         type="button"
@@ -141,20 +136,15 @@ function ImagePreview({
   );
 }
 
-// ---------------------------------------------------------------------------
-// DealerProfileForm
-// ---------------------------------------------------------------------------
-
 interface DealerProfileFormProps {
   initialData: DealerProfile | null;
 }
 
 export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
-  const t = useTranslations("DealerProfileForm");
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-
+  const t = useTranslations("DealerProfileForm");
   const tSchema = useTranslations("ProfileSchema");
+  const [isPending, startTransition] = useTransition();
 
   const schema = useMemo(() => createDealerProfileSchema(tSchema), [tSchema]);
 
@@ -236,23 +226,18 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
     name: "openingHours",
   });
 
-  // If dealer has no saved opening hours, mark form dirty so they can save defaults
   useEffect(() => {
     if (!initialData?.openingHours?.length) {
       form.setValue("openingHours", form.getValues("openingHours"), {
         shouldDirty: true,
       });
     }
-    // form and initialData are stable refs — adding them would cause an infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useWatch for image fields — each only triggers its own re-render
   const imageValue = useWatch({ control: form.control, name: "image" });
   const logoValue = useWatch({ control: form.control, name: "logo" });
   const coverValue = useWatch({ control: form.control, name: "coverImage" });
 
-  // Object URL lifecycle management — no memory leaks
   const imagePreviewUrl = useObjectUrl(imageValue as File | string | undefined);
   const logoPreviewUrl = useObjectUrl(logoValue as File | string | undefined);
   const coverPreviewUrl = useObjectUrl(coverValue as File | string | undefined);
@@ -262,8 +247,6 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       try {
         const emailChanged = values.email !== initialData?.user?.email;
 
-        // One multipart call — the API uploads any new images to R2, writes the
-        // Dealer + User rows, and proxies the email change to Better Auth.
         const result = await updateDealerProfile({
           name: values.name,
           email: values.email,
@@ -289,7 +272,6 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           return;
         }
 
-        // Email only changes after the user confirms via the link Better Auth sends.
         if (emailChanged) {
           toast.info(t("emailConfirmation"));
         }
@@ -306,7 +288,6 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Personal information */}
         <Card>
           <CardHeader>
             <CardTitle>{t("personalTitle")}</CardTitle>
@@ -356,7 +337,6 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           </CardContent>
         </Card>
 
-        {/* Company information */}
         <Card>
           <CardHeader>
             <CardTitle>{t("companyTitle")}</CardTitle>
@@ -476,7 +456,6 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Address */}
         <Card>
           <CardHeader>
             <CardTitle>{t("addressTitle")}</CardTitle>
@@ -522,7 +501,6 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
           </CardContent>
         </Card>
 
-        {/* Description */}
         <Card>
           <CardHeader>
             <CardTitle>{t("descriptionTitle")}</CardTitle>
@@ -544,7 +522,6 @@ export const DealerProfileForm = ({ initialData }: DealerProfileFormProps) => {
         </Card>
       </div>
 
-      {/* Opening hours */}
       <Card>
         <CardHeader>
           <CardTitle>{t("openingHoursTitle")}</CardTitle>

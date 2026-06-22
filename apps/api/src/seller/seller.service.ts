@@ -26,19 +26,67 @@ export class SellerVehiclesQueryDto {
 // transitions, payment fields exclusively by the Stripe webhook). This is the
 // core defense against publishing a listing without paying.
 const VEHICLE_FIELDS = new Set([
-  "vehicleType","make","model","version","bodyType","fuelType",
-  "registrationMonth","registrationYear","kilometer","price","newPrice",
-  "color","gearTransmission","transmissionType","driveType","interiorColor",
-  "metallic","vehicleCondition","lastInspectionDate","inspectionPassed",
-  "warranty","warrantyStartDate","duration","maxKm","doors","seats","hp","kw",
-  "energyLabel","typeApproval","wheelbase","vin","emptyWeight","loadCapacity",
-  "serialNumber","height","width","length","towingCapacityBraked","cubicCapacity",
-  "co2Emission","cylinders","numberOfGears","emissionStandard","consumptionCity",
-  "consumptionCountry","consumptionTotal","range","batteryCapacity",
-  "batteryRentalMonth","powerConsumption","batteryOwnership",
-  "chargingPlugTypeStandard","chargingPlugTypeFast","chargingPower",
-  "combustionEnginePowerHp","electricMotorPowerHp","vehicleDescription",
-  "equipment","extras","images",
+  "vehicleType",
+  "make",
+  "model",
+  "version",
+  "bodyType",
+  "fuelType",
+  "registrationMonth",
+  "registrationYear",
+  "kilometer",
+  "price",
+  "newPrice",
+  "color",
+  "gearTransmission",
+  "transmissionType",
+  "driveType",
+  "interiorColor",
+  "metallic",
+  "vehicleCondition",
+  "lastInspectionDate",
+  "inspectionPassed",
+  "warranty",
+  "warrantyStartDate",
+  "duration",
+  "maxKm",
+  "doors",
+  "seats",
+  "hp",
+  "kw",
+  "energyLabel",
+  "typeApproval",
+  "wheelbase",
+  "vin",
+  "emptyWeight",
+  "loadCapacity",
+  "serialNumber",
+  "height",
+  "width",
+  "length",
+  "towingCapacityBraked",
+  "cubicCapacity",
+  "co2Emission",
+  "cylinders",
+  "numberOfGears",
+  "emissionStandard",
+  "consumptionCity",
+  "consumptionCountry",
+  "consumptionTotal",
+  "range",
+  "batteryCapacity",
+  "batteryRentalMonth",
+  "powerConsumption",
+  "batteryOwnership",
+  "chargingPlugTypeStandard",
+  "chargingPlugTypeFast",
+  "chargingPower",
+  "combustionEnginePowerHp",
+  "electricMotorPowerHp",
+  "vehicleDescription",
+  "equipment",
+  "extras",
+  "images",
 ]);
 
 function sanitizeVehicleData(body: Record<string, unknown>) {
@@ -214,42 +262,60 @@ export class SellerService {
    * flow). Seller has no images, so this stays JSON.
    */
   async updateProfile(session: UserSession, body: Record<string, unknown>) {
-    // Validate the contact fields (schema is .partial()).
+    // Validate everything the client may send (schema is .partial()). `name` and
+    // `email` belong to the User table; the rest are Seller contact fields.
     const candidate: Record<string, unknown> = {};
-    for (const k of ["phoneNumber", "streetAddress", "zipCode", "city"]) {
+    for (const k of [
+      "name",
+      "email",
+      "phoneNumber",
+      "streetAddress",
+      "zipCode",
+      "city",
+    ]) {
       if (typeof body[k] === "string") candidate[k] = body[k];
     }
     const result = sellerProfileSchema.safeParse(candidate);
     if (!result.success) {
-      throw new BadRequestException(result.error.issues[0]?.message ?? "Invalid profile data");
+      throw new BadRequestException(
+        result.error.issues[0]?.message ?? "Invalid profile data",
+      );
     }
-    const sellerUpdateData = result.data as Record<string, unknown>;
+    const { name, email, ...sellerUpdateData } = result.data;
 
     if (Object.keys(sellerUpdateData).length > 0) {
       await this.prisma.seller.upsert({
         where: { userId: session.user.id },
         create: {
           userId: session.user.id,
-          phoneNumber: (sellerUpdateData.phoneNumber as string) ?? "",
-          streetAddress: (sellerUpdateData.streetAddress as string) ?? "",
-          zipCode: (sellerUpdateData.zipCode as string) ?? "",
-          city: (sellerUpdateData.city as string) ?? "",
+          phoneNumber: sellerUpdateData.phoneNumber ?? "",
+          streetAddress: sellerUpdateData.streetAddress ?? "",
+          zipCode: sellerUpdateData.zipCode ?? "",
+          city: sellerUpdateData.city ?? "",
         },
         update: sellerUpdateData,
       });
     }
 
     // The User table is Better Auth's — name goes through auth.api.updateUser and
-    // email through auth.api.changeEmail, never a direct Prisma write.
-    const token = (session as { session?: { token?: string } }).session?.token ?? "";
-    const authHeaders = new Headers({ cookie: `better-auth.session_token=${token}` });
+    // email through auth.api.changeEmail, never a direct Prisma write. Each is
+    // called only when the value actually changed.
+    const token =
+      (session as { session?: { token?: string } }).session?.token ?? "";
+    const authHeaders = new Headers({
+      cookie: `better-auth.session_token=${token}`,
+    });
 
-    if (typeof body.name === "string" && body.name.trim()) {
-      await auth.api.updateUser({ body: { name: body.name.trim() }, headers: authHeaders });
+    if (name && name !== session.user.name) {
+      await auth.api.updateUser({ body: { name }, headers: authHeaders });
     }
-    if (typeof body.email === "string" && body.email && body.email !== session.user.email) {
+    if (email && email !== session.user.email) {
       await auth.api.changeEmail({
-        body: { newEmail: body.email, callbackURL: process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch" },
+        body: {
+          newEmail: email,
+          callbackURL:
+            process.env.NEXT_PUBLIC_APP_URL ?? "https://autovendo.ch",
+        },
         headers: authHeaders,
       });
     }
@@ -316,7 +382,12 @@ export class SellerService {
         } as any,
       }),
       ...(Object.keys(sellerUpdate).length
-        ? [this.prisma.seller.update({ where: { id: seller.id }, data: sellerUpdate })]
+        ? [
+            this.prisma.seller.update({
+              where: { id: seller.id },
+              data: sellerUpdate,
+            }),
+          ]
         : []),
     ]);
 
@@ -350,7 +421,14 @@ export class SellerService {
 
     const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
-      select: { id: true, sellerId: true, listingPaidAt: true, listingPlan: true, stripeSubscriptionId: true, status: true },
+      select: {
+        id: true,
+        sellerId: true,
+        listingPaidAt: true,
+        listingPlan: true,
+        stripeSubscriptionId: true,
+        status: true,
+      },
     });
 
     if (!vehicle) {
@@ -365,7 +443,9 @@ export class SellerService {
 
     // VIN is locked once the listing has been paid — prevents swapping vehicles under one plan
     if (vehicle.listingPaidAt && "vin" in raw && raw.vin !== undefined) {
-      throw new ForbiddenException("VIN cannot be changed after the listing has been published");
+      throw new ForbiddenException(
+        "VIN cannot be changed after the listing has been published",
+      );
     }
 
     // Body validated by ZodValidationPipe; allowlist strips non-vehicle fields.
@@ -387,8 +467,11 @@ export class SellerService {
     if (sanitized.status === "SOLD" && vehicle.stripeSubscriptionId) {
       try {
         const stripe = await getStripe();
-        if (stripe) await stripe.subscriptions.cancel(vehicle.stripeSubscriptionId);
-      } catch { /* subscription may already be cancelled */ }
+        if (stripe)
+          await stripe.subscriptions.cancel(vehicle.stripeSubscriptionId);
+      } catch {
+        /* subscription may already be cancelled */
+      }
     }
 
     return { data: updated };
@@ -414,8 +497,11 @@ export class SellerService {
     if (vehicle.stripeSubscriptionId) {
       try {
         const stripe = await getStripe();
-        if (stripe) await stripe.subscriptions.cancel(vehicle.stripeSubscriptionId);
-      } catch { /* subscription may already be cancelled */ }
+        if (stripe)
+          await stripe.subscriptions.cancel(vehicle.stripeSubscriptionId);
+      } catch {
+        /* subscription may already be cancelled */
+      }
     }
 
     await this.prisma.vehicle.delete({ where: { id } });
@@ -514,12 +600,15 @@ export class SellerService {
       cancel_url: `${baseUrl}/${body.locale}/dashboard/vehicles/${body.vehicleId}`,
     };
 
-    let checkoutSession: Awaited<ReturnType<typeof stripe.checkout.sessions.create>>;
+    let checkoutSession: Awaited<
+      ReturnType<typeof stripe.checkout.sessions.create>
+    >;
 
     if (body.planId === "standard") {
       // Recurring monthly subscription — CHF 19/month
       const standardPriceId = process.env.STRIPE_LISTING_STANDARD_PRICE_ID;
-      if (!standardPriceId) throw new BadRequestException("Standard price not configured");
+      if (!standardPriceId)
+        throw new BadRequestException("Standard price not configured");
 
       checkoutSession = await stripe.checkout.sessions.create({
         ...commonParams,
@@ -581,7 +670,10 @@ export class SellerService {
       });
 
       // Idempotency: skip if already processed
-      if (vehicle?.stripeSessionId === stripeSession.id && vehicle?.stripeSessionId) {
+      if (
+        vehicle?.stripeSessionId === stripeSession.id &&
+        vehicle?.stripeSessionId
+      ) {
         return { received: true };
       }
 
@@ -597,7 +689,8 @@ export class SellerService {
             listingPaidAt: now,
             listingExpiresAt: null,
             stripeSessionId: stripeSession.id,
-            stripeSubscriptionId: stripeSession.subscription as string ?? null,
+            stripeSubscriptionId:
+              (stripeSession.subscription as string) ?? null,
           },
         });
       } else {
@@ -624,7 +717,9 @@ export class SellerService {
       });
 
       if (vehicle) {
-        const alreadyTerminal = ["SOLD", "ARCHIVED", "BANNED"].includes(vehicle.status);
+        const alreadyTerminal = ["SOLD", "ARCHIVED", "BANNED"].includes(
+          vehicle.status,
+        );
         await this.prisma.vehicle.update({
           where: { id: vehicle.id },
           data: {

@@ -28,6 +28,7 @@ export function TextField({
   rightLabel,
   onRightLabelPress,
   multiline,
+  editable = true,
 }: {
   label?: string;
   value: string;
@@ -44,6 +45,7 @@ export function TextField({
   rightLabel?: string;
   onRightLabelPress?: () => void;
   multiline?: boolean;
+  editable?: boolean;
 }) {
   const C = useTheme();
   const [focused, setFocused] = useState(false);
@@ -70,6 +72,7 @@ export function TextField({
             height: multiline ? undefined : 52,
             minHeight: multiline ? 96 : undefined,
             alignItems: multiline ? "flex-start" : "center",
+            opacity: editable ? 1 : 0.5,
           },
         ]}
       >
@@ -91,6 +94,7 @@ export function TextField({
           returnKeyType={returnKeyType}
           onSubmitEditing={onSubmitEditing}
           multiline={multiline}
+          editable={editable}
         />
         {secure && (
           <Pressable onPress={() => setReveal((r) => !r)} hitSlop={8}>

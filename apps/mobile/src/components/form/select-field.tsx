@@ -19,6 +19,7 @@ export function SelectField({
   searchable,
   optional,
   error,
+  disabled,
 }: {
   label: string;
   value: string | null | undefined;
@@ -29,6 +30,7 @@ export function SelectField({
   searchable?: boolean;
   optional?: boolean;
   error?: string | null;
+  disabled?: boolean;
 }) {
   const C = useTheme();
   const [open, setOpen] = useState(false);
@@ -52,7 +54,8 @@ export function SelectField({
         {required ? " *" : ""}
       </Text>
       <Pressable
-        style={[styles.control, { backgroundColor: C.secondary, borderColor: error ? C.destructive : C.border }]}
+        disabled={disabled}
+        style={[styles.control, { backgroundColor: C.secondary, borderColor: error ? C.destructive : C.border, opacity: disabled ? 0.5 : 1 }]}
         onPress={() => {
           setQuery("");
           setOpen(true);

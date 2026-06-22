@@ -61,9 +61,9 @@ export default function ChangePasswordScreen() {
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
           {error && <Text style={[styles.error, { color: C.destructive }]}>{error}</Text>}
-          <TextField label="Aktuelles Passwort" value={current} onChangeText={setCurrent} secure icon="lock" placeholder="••••••••" />
-          <TextField label="Neues Passwort" value={next} onChangeText={setNext} secure icon="lock.rotation" placeholder="••••••••" error={newPwError} />
-          <TextField label="Neues Passwort bestätigen" value={confirm} onChangeText={setConfirm} secure icon="lock.rotation" placeholder="••••••••" error={confirmError} onSubmitEditing={() => canSubmit && submit()} returnKeyType="done" />
+          <TextField label="Aktuelles Passwort" value={current} onChangeText={setCurrent} secure icon="lock" placeholder="••••••••" editable={!saving} />
+          <TextField label="Neues Passwort" value={next} onChangeText={setNext} secure icon="lock.rotation" placeholder="••••••••" error={newPwError} editable={!saving} />
+          <TextField label="Neues Passwort bestätigen" value={confirm} onChangeText={setConfirm} secure icon="lock.rotation" placeholder="••••••••" error={confirmError} onSubmitEditing={() => canSubmit && submit()} returnKeyType="done" editable={!saving} />
           <Button label="Passwort speichern" onPress={submit} loading={saving} disabled={!canSubmit} size="lg" fullWidth style={{ marginTop: Spacing[3] }} />
         </ScrollView>
       </KeyboardAvoidingView>
