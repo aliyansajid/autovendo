@@ -215,9 +215,10 @@ export async function fetchSellerBilling(): Promise<BillingInfo> {
 }
 
 export async function createSellerBillingPortal(): Promise<string | null> {
+  const returnUrl = `${process.env.EXPO_PUBLIC_APP_URL ?? "https://autovendo.ch"}/dashboard/billing`;
   const json = await authedRequest<{ data: { url: string | null } }>(
     "/seller/billing/portal",
-    { method: "POST" },
+    { method: "POST", ...jsonBody({ returnUrl }) },
   );
   return json.data.url;
 }
@@ -376,6 +377,9 @@ export type DealerSubscriptionRecord = {
   status: string;
   periodEnd: string | null;
   cancelAtPeriodEnd: boolean | null;
+  cancelAt: string | null;
+  trialEnd: string | null;
+  billingInterval: string | null;
   stripeSubscriptionId: string | null;
 };
 
