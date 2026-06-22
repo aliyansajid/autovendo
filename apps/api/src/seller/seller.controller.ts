@@ -7,17 +7,23 @@ import {
   Param,
   Query,
   Body,
+  UseInterceptors,
+  UploadedFiles,
 } from "@nestjs/common";
+import { FilesInterceptor } from "@nestjs/platform-express";
+import multer from "multer";
 import { Session } from "@thallesp/nestjs-better-auth";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
 import { SellerService, SellerVehiclesQueryDto } from "./seller.service";
-import { ZodValidationPipe } from "../validation/zod-validation.pipe";
-import {
-  createVehicleSchema,
-  updateVehicleSchema,
-  type VehicleCreateInput,
-  type VehicleUpdateInput,
-} from "../validation/vehicle.validation";
+import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES } from "../storage/r2";
+
+// One multipart call carries the vehicle data (JSON `data` field) plus up to 25
+// new image files. The service uploads them, deletes any removed ones, and writes.
+const VehicleImagesInterceptor = FilesInterceptor("images", 25, {
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_IMAGE_BYTES, files: 25 },
+  fileFilter: (_req, file, cb) => cb(null, file.mimetype in ALLOWED_IMAGE_TYPES),
+});
 
 @Controller("seller")
 export class SellerController {
@@ -47,11 +53,13 @@ export class SellerController {
   }
 
   @Post("vehicles")
+  @UseInterceptors(VehicleImagesInterceptor)
   createVehicle(
     @Session() session: UserSession,
-    @Body(new ZodValidationPipe(createVehicleSchema)) body: VehicleCreateInput,
+    @Body() body: Record<string, unknown>,
+    @UploadedFiles() files?: Express.Multer.File[],
   ) {
-    return this.sellerService.createVehicle(session, body);
+    return this.sellerService.createVehicle(session, body, files ?? []);
   }
 
   @Get("vehicles/:id")
@@ -60,12 +68,14 @@ export class SellerController {
   }
 
   @Put("vehicles/:id")
+  @UseInterceptors(VehicleImagesInterceptor)
   updateVehicle(
     @Session() session: UserSession,
     @Param("id") id: string,
-    @Body(new ZodValidationPipe(updateVehicleSchema)) body: VehicleUpdateInput,
+    @Body() body: Record<string, unknown>,
+    @UploadedFiles() files?: Express.Multer.File[],
   ) {
-    return this.sellerService.updateVehicle(session, id, body);
+    return this.sellerService.updateVehicle(session, id, body, files ?? []);
   }
 
   @Delete("vehicles/:id")

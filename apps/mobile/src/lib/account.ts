@@ -55,6 +55,54 @@ function jsonBody(body: unknown): RequestInit {
   };
 }
 
+// A vehicle image is either a newly picked local file or an already-stored key.
+export type VehicleImageInput =
+  | { uri: string; name: string; mime: string }
+  | string;
+
+// One multipart call for create/update: the API uploads new files, deletes the
+// removed ones, and writes the row. New files go in `images`; kept keys go in the
+// JSON `data.existingImages`.
+async function submitVehicle<T>(
+  path: string,
+  method: "POST" | "PUT",
+  data: Record<string, unknown>,
+  images: VehicleImageInput[],
+): Promise<T> {
+  const existingImages = images.filter(
+    (i): i is string => typeof i === "string",
+  );
+  const files = images.filter(
+    (i): i is { uri: string; name: string; mime: string } =>
+      typeof i !== "string",
+  );
+
+  const form = new FormData();
+  form.append("data", JSON.stringify({ ...data, existingImages }));
+  files.forEach((img) =>
+    form.append("images", {
+      uri: img.uri,
+      name: img.name,
+      type: img.mime,
+    } as unknown as Blob),
+  );
+
+  const cookie = authClient.getCookie();
+  const res = await fetch(`${API_URL}${path}`, {
+    method,
+    credentials: "omit",
+    headers: { Cookie: cookie },
+    body: form,
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    const raw = body?.message ?? body?.error;
+    const message = Array.isArray(raw) ? raw[0] : raw;
+    throw new ApiError(res.status, message || `request_failed_${res.status}`);
+  }
+  return (await res.json()) as T;
+}
+
 // ─── Me ───────────────────────────────────────────────────────────────────────
 
 export type Me = {
@@ -158,21 +206,39 @@ export async function getSellerVehicle(id: string): Promise<VehicleRecord> {
   return json.data;
 }
 
-export async function createSellerVehicle(body: Record<string, unknown>): Promise<{ id: string }> {
-  const json = await authedRequest<{ data: { id: string } }>("/seller/vehicles", {
-    method: "POST",
-    ...jsonBody(body),
-  });
+export async function createSellerVehicle(
+  body: Record<string, unknown>,
+  images: VehicleImageInput[],
+): Promise<{ id: string }> {
+  const json = await submitVehicle<{ data: { id: string } }>(
+    "/seller/vehicles",
+    "POST",
+    body,
+    images,
+  );
   return json.data;
 }
 
+// `images` omitted → a plain-JSON update (e.g. a status change) that leaves the
+// stored images untouched. Provided → one multipart call that uploads new files
+// and deletes removed ones.
 export async function updateSellerVehicle(
   id: string,
   body: Record<string, unknown>,
+  images?: VehicleImageInput[],
 ): Promise<OwnedVehicle> {
-  const json = await authedRequest<{ data: OwnedVehicle }>(
+  if (images === undefined) {
+    const json = await authedRequest<{ data: OwnedVehicle }>(
+      `/seller/vehicles/${id}`,
+      { method: "PUT", ...jsonBody(body) },
+    );
+    return json.data;
+  }
+  const json = await submitVehicle<{ data: OwnedVehicle }>(
     `/seller/vehicles/${id}`,
-    { method: "PUT", ...jsonBody(body) },
+    "PUT",
+    body,
+    images,
   );
   return json.data;
 }
@@ -338,21 +404,39 @@ export async function getDealerVehicle(id: string): Promise<VehicleRecord> {
   return json.data;
 }
 
-export async function createDealerVehicle(body: Record<string, unknown>): Promise<{ id: string }> {
-  const json = await authedRequest<{ data: { id: string } }>("/dealer/vehicles", {
-    method: "POST",
-    ...jsonBody(body),
-  });
+export async function createDealerVehicle(
+  body: Record<string, unknown>,
+  images: VehicleImageInput[],
+): Promise<{ id: string }> {
+  const json = await submitVehicle<{ data: { id: string } }>(
+    "/dealer/vehicles",
+    "POST",
+    body,
+    images,
+  );
   return json.data;
 }
 
+// `images` omitted → a plain-JSON update (e.g. a status change from the
+// dashboard) that leaves the stored images untouched. Provided → one multipart
+// call that uploads new files and deletes removed ones.
 export async function updateDealerVehicle(
   id: string,
   body: Record<string, unknown>,
+  images?: VehicleImageInput[],
 ): Promise<OwnedVehicle> {
-  const json = await authedRequest<{ data: OwnedVehicle }>(
+  if (images === undefined) {
+    const json = await authedRequest<{ data: OwnedVehicle }>(
+      `/dealer/vehicles/${id}`,
+      { method: "PUT", ...jsonBody(body) },
+    );
+    return json.data;
+  }
+  const json = await submitVehicle<{ data: OwnedVehicle }>(
     `/dealer/vehicles/${id}`,
-    { method: "PUT", ...jsonBody(body) },
+    "PUT",
+    body,
+    images,
   );
   return json.data;
 }
@@ -455,37 +539,6 @@ export async function restoreDealerSubscription(
     method: "POST",
     ...jsonBody({ subscriptionId }),
   });
-}
-
-// ─── Upload ─────────────────────────────────────────────────────────────────--
-
-type UploadResult = { key: string; publicUrl: string };
-
-// Uploads local image URIs (from the image picker) to R2 via the API and
-// returns the public CDN URLs to store on a listing.
-export async function uploadVehicleImages(
-  uris: { uri: string; name?: string; mime?: string }[],
-): Promise<string[]> {
-  const form = new FormData();
-  uris.forEach((img, i) => {
-    form.append("files", {
-      // React Native FormData file shape
-      uri: img.uri,
-      name: img.name ?? `image_${i}.jpg`,
-      type: img.mime ?? "image/jpeg",
-    } as unknown as Blob);
-  });
-
-  const cookie = authClient.getCookie();
-  const res = await fetch(`${API_URL}/upload`, {
-    method: "POST",
-    credentials: "omit",
-    headers: { Cookie: cookie },
-    body: form,
-  });
-  if (!res.ok) throw new ApiError(res.status, `upload_failed_${res.status}`);
-  const results = (await res.json()) as UploadResult[];
-  return results.map((r) => r.publicUrl);
 }
 
 export { ApiError };

@@ -62,28 +62,90 @@ function clientFetch(path: string, init?: RequestInit) {
   });
 }
 
-export async function apiCreateVehicle(data: Record<string, unknown>, imageKeys: string[]) {
-  const res = await clientFetch("/dealer/vehicles", {
-    method: "POST",
-    body: JSON.stringify({ ...data, images: imageKeys }),
+type VehicleImage = File | string;
+
+// One multipart call carries the vehicle data (JSON `data`) plus any newly picked
+// image files; existing images stay as keys in `existingImages`. The API uploads
+// new files, deletes removed ones, and writes the row. XHR keeps the progress bar.
+function submitVehicle(
+  path: string,
+  method: "POST" | "PUT",
+  data: Record<string, unknown>,
+  images: VehicleImage[],
+  onProgress?: (pct: number) => void,
+  signal?: AbortSignal,
+): Promise<{ data?: { id?: string } } & Record<string, unknown>> {
+  const existingImages = images.filter(
+    (i): i is string => typeof i === "string",
+  );
+  const files = images.filter((i): i is File => i instanceof File);
+
+  const form = new FormData();
+  form.append("data", JSON.stringify({ ...data, existingImages }));
+  files.forEach((f) => form.append("images", f));
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, `${API_BASE}${path}`);
+    xhr.withCredentials = true;
+
+    if (signal) {
+      signal.addEventListener("abort", () => {
+        xhr.abort();
+        reject(new DOMException("Aborted", "AbortError"));
+      });
+    }
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && onProgress) {
+        onProgress((e.loaded / e.total) * 100);
+      }
+    };
+
+    xhr.onload = () => {
+      const body = (() => {
+        try {
+          return JSON.parse(xhr.responseText || "{}");
+        } catch {
+          return {};
+        }
+      })();
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(body);
+      } else {
+        reject(new Error(body.error || body.message || "Failed to save vehicle"));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error("Network error"));
+    xhr.send(form);
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error((err as { error?: string }).error || "Failed to create vehicle");
-  }
-  return res.json();
 }
 
-export async function apiUpdateVehicle(id: string, data: Record<string, unknown>, imageKeys: string[]) {
-  const res = await clientFetch(`/dealer/vehicles/${id}`, {
-    method: "PUT",
-    body: JSON.stringify({ ...data, images: imageKeys }),
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error((err as { error?: string }).error || "Failed to update vehicle");
-  }
-  return res.json();
+export async function apiCreateVehicle(
+  data: Record<string, unknown>,
+  images: VehicleImage[],
+  onProgress?: (pct: number) => void,
+  signal?: AbortSignal,
+) {
+  return submitVehicle("/dealer/vehicles", "POST", data, images, onProgress, signal);
+}
+
+export async function apiUpdateVehicle(
+  id: string,
+  data: Record<string, unknown>,
+  images: VehicleImage[],
+  onProgress?: (pct: number) => void,
+  signal?: AbortSignal,
+) {
+  return submitVehicle(
+    `/dealer/vehicles/${id}`,
+    "PUT",
+    data,
+    images,
+    onProgress,
+    signal,
+  );
 }
 
 export async function apiDeleteVehicle(id: string) {
@@ -104,59 +166,4 @@ export async function apiUpdateVehicleStatus(id: string, status: string) {
     throw new Error((err as { error?: string }).error || "Failed to update status");
   }
   return res.json();
-}
-
-export async function apiUploadImages(files: File[]): Promise<string[]> {
-  const formData = new FormData();
-  files.forEach((f) => formData.append("files", f));
-  const res = await fetch(`${API_BASE}/upload`, {
-    method: "POST",
-    credentials: "include",
-    body: formData,
-  });
-  if (!res.ok) throw new Error("Failed to upload images");
-  const data: { key: string }[] = await res.json();
-  return data.map((d) => d.key);
-}
-
-export function apiUploadImagesWithProgress(
-  files: File[],
-  onProgress: (pct: number) => void,
-  signal?: AbortSignal,
-): Promise<string[]> {
-  return new Promise((resolve, reject) => {
-    const formData = new FormData();
-    files.forEach((f) => formData.append("files", f));
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", `${API_BASE}/upload`);
-    xhr.withCredentials = true;
-
-    if (signal) {
-      signal.addEventListener("abort", () => {
-        xhr.abort();
-        reject(new Error("Upload aborted"));
-      });
-    }
-
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) onProgress((e.loaded / e.total) * 100);
-    };
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        try {
-          const data: { key: string }[] = JSON.parse(xhr.responseText);
-          resolve(data.map((d) => d.key));
-        } catch {
-          reject(new Error("Failed to parse upload response"));
-        }
-      } else {
-        reject(new Error("Failed to upload images"));
-      }
-    };
-
-    xhr.onerror = () => reject(new Error("Failed to upload images"));
-    xhr.send(formData);
-  });
 }

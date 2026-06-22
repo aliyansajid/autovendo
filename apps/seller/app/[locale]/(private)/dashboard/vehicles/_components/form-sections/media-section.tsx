@@ -29,7 +29,7 @@ export function MediaSection({
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
       const currentImages = watch("images") || [];
-      if (currentImages.length + files.length > 10) {
+      if (currentImages.length + files.length > 25) {
         toast.error(t("mediaLimitError"));
         return;
       }

@@ -7,12 +7,27 @@ import {
 import { PrismaService } from "../prisma.service";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
 import { dealerProfileSchema } from "../validation/profile.validation";
-import type {
-  VehicleCreateInput,
-  VehicleUpdateInput,
+import {
+  createVehicleSchema,
+  updateVehicleSchema,
 } from "../validation/vehicle.validation";
-import { uploadImage, deleteImage } from "../storage/r2";
+import { uploadImage, uploadImages, deleteImage, deleteImages } from "../storage/r2";
 import { auth } from "../auth";
+
+// The vehicle data is a JSON `data` field (multipart, alongside image files) or a
+// plain JSON body (e.g. a status-only update). Returns the parsed object.
+function parseVehicleBody(
+  body: Record<string, unknown>,
+): Record<string, unknown> {
+  if (typeof body?.data === "string") {
+    try {
+      return JSON.parse(body.data) as Record<string, unknown>;
+    } catch {
+      return {};
+    }
+  }
+  return body ?? {};
+}
 
 export class DealerVehiclesQueryDto {
   page?: string;
@@ -558,12 +573,43 @@ export class DealerService {
     };
   }
 
-  async createVehicle(session: UserSession, body: VehicleCreateInput) {
+  async createVehicle(
+    session: UserSession,
+    body: Record<string, unknown>,
+    files: Express.Multer.File[],
+  ) {
     const dealer = await this.getDealerByUserId(session.user.id);
-    const raw = body as Record<string, unknown>;
 
-    // Body validated by ZodValidationPipe; allowlist strips non-vehicle fields.
+    // Validate the vehicle data (ranges/enums mirror the DB CHECK constraints).
+    const result = createVehicleSchema.safeParse(parseVehicleBody(body));
+    if (!result.success) {
+      throw new BadRequestException(
+        result.error.issues[0]?.message ?? "Invalid vehicle data",
+      );
+    }
+    const raw = result.data as Record<string, unknown>;
+
+    // A listing can only be created by a dealer with an active/trialing
+    // subscription — mirrors the UI guard (the "new" page redirects otherwise)
+    // so a direct API call can't seed inventory without a plan.
+    const { active } = await this.getEntitlement(session.user.id);
+    if (!active) {
+      throw new ForbiddenException(
+        "An active subscription is required to create listings",
+      );
+    }
+
+    // 5–25 images total (kept keys + newly uploaded files).
+    const existing = (raw.existingImages as string[] | undefined) ?? [];
+    const total = existing.length + files.length;
+    if (total < 5 || total > 25) {
+      throw new BadRequestException("A listing needs between 5 and 25 images");
+    }
+    const uploaded = await uploadImages(files, "vehicles");
+
+    // Allowlist strips non-vehicle fields; we set the final image keys ourselves.
     const validated = sanitizeVehicleData(raw);
+    validated.images = [...existing, ...uploaded.map((u) => u.key)];
 
     // Status comes through a validated transition, never the data allowlist.
     // Default to DRAFT so an omitted/forged status can never auto-publish.
@@ -610,13 +656,14 @@ export class DealerService {
   async updateVehicle(
     session: UserSession,
     id: string,
-    body: VehicleUpdateInput,
+    body: Record<string, unknown>,
+    files: Express.Multer.File[],
   ) {
     const dealer = await this.getDealerByUserId(session.user.id);
 
     const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
-      select: { id: true, dealerId: true, status: true },
+      select: { id: true, dealerId: true, status: true, images: true },
     });
 
     if (!vehicle) {
@@ -627,9 +674,30 @@ export class DealerService {
       throw new ForbiddenException("This vehicle does not belong to you");
     }
 
-    const raw = body as Record<string, unknown>;
-    // Body validated by ZodValidationPipe; allowlist strips non-vehicle fields.
+    const result = updateVehicleSchema.safeParse(parseVehicleBody(body));
+    if (!result.success) {
+      throw new BadRequestException(
+        result.error.issues[0]?.message ?? "Invalid vehicle data",
+      );
+    }
+    const raw = result.data as Record<string, unknown>;
+
+    // Allowlist strips non-vehicle fields.
     const data = sanitizeVehicleData(raw);
+
+    // Images are only recomputed when the client sent the intended set
+    // (`existingImages`) or new files — a status-only update leaves them untouched.
+    let removedImages: string[] = [];
+    if (Array.isArray(raw.existingImages) || files.length > 0) {
+      const existing = (raw.existingImages as string[] | undefined) ?? [];
+      const total = existing.length + files.length;
+      if (total < 5 || total > 25) {
+        throw new BadRequestException("A listing needs between 5 and 25 images");
+      }
+      const uploaded = await uploadImages(files, "vehicles");
+      data.images = [...existing, ...uploaded.map((u) => u.key)];
+      removedImages = (vehicle.images ?? []).filter((k) => !existing.includes(k));
+    }
 
     // Validate any status change; enforce subscription + quota when (re)publishing.
     if (raw.status !== undefined && raw.status !== vehicle.status) {
@@ -645,6 +713,9 @@ export class DealerService {
       data: data as never,
     });
 
+    // The DB row is updated — now drop the images it no longer references.
+    if (removedImages.length) await deleteImages(removedImages);
+
     return { data: updated };
   }
 
@@ -653,7 +724,7 @@ export class DealerService {
 
     const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
-      select: { id: true, dealerId: true },
+      select: { id: true, dealerId: true, images: true },
     });
 
     if (!vehicle) {
@@ -665,6 +736,9 @@ export class DealerService {
     }
 
     await this.prisma.vehicle.delete({ where: { id } });
+
+    // Clean up the listing's images from R2.
+    await deleteImages(vehicle.images ?? []);
 
     return { data: { success: true } };
   }
@@ -732,8 +806,10 @@ export class DealerService {
     ]);
 
     const dealer = await this.getDealerByUserId(session.user.id);
+    // Quota is consumed by PUBLISHED (visible) listings — matches assertCanPublish
+    // and the no-Stripe path, so the dealer's remaining-quota count is correct.
     const vehicleCount = await this.prisma.vehicle.count({
-      where: { dealerId: dealer.id },
+      where: { dealerId: dealer.id, status: "PUBLISHED" },
     });
 
     const defaultPaymentMethod = paymentMethods.data[0] ?? null;

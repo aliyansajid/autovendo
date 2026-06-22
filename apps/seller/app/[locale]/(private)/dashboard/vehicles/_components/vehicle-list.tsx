@@ -337,7 +337,7 @@ function VehicleActions({
               <DropdownMenuItem
                 onSelect={(e) => e.preventDefault()}
                 className="text-destructive focus:text-destructive"
-                disabled={isStateRestricted || isPending}
+                disabled={isPending}
               >
                 <Trash2 />
                 {t("delete")}

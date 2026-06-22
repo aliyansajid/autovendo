@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@repo/ui/lib/utils";
 import { createVehicleFormSchema } from "@/schema/vehicle-form-schema";
 import {
-  apiUploadImagesWithProgress,
   apiCreateVehicle,
   apiUpdateVehicle,
   apiCreateListingCheckout,
@@ -37,18 +36,13 @@ import { Spinner } from "@repo/ui/components/spinner";
 
 const STEP_FIELDS: Record<number, any[]> = {
   1: [
-    "vehicleType",
     "make",
-    "model",
-    "version",
     "price",
     "kilometer",
     "registrationMonth",
     "registrationYear",
     "bodyType",
-    "fuelType",
     "color",
-    "vehicleCondition",
   ],
   2: ["images"],
   3: ["companyName", "phoneNumber", "address", "zipCode", "city"],
@@ -250,41 +244,28 @@ export function VehicleForm({
       abortControllerRef.current = new AbortController();
       const signal = abortControllerRef.current.signal;
       try {
-        setUploadStatus(t("uploadStatusPreparing"));
+        setUploadStatus(t("uploadStatusUploading"));
         setUploadProgress(0);
-        const images = data.images || [];
-        const newFiles = images.filter((img: any) => img instanceof File);
-        const existingKeys = images.filter(
-          (img: any) => typeof img === "string",
-        );
-        let finalImageKeys = [...existingKeys];
-
-        if (newFiles.length > 0) {
-          setUploadStatus(t("uploadStatusUploading"));
-          setUploadProgress(10);
-          const uploadedKeys = await apiUploadImagesWithProgress(
-            newFiles,
-            (pct) => setUploadProgress(10 + pct * 0.75), // maps 0–100% upload → 10–85% bar
-            signal,
-          );
-          finalImageKeys = [...existingKeys, ...uploadedKeys];
-        }
-
-        setUploadStatus(t("uploadStatusSaving"));
-        setUploadProgress(85);
+        // One multipart call — the API uploads new files, deletes removed ones,
+        // and writes the row. `images` mixes File (new) and string (kept key).
+        const images = (data.images || []) as (File | string)[];
         const { images: _images, ...submitData } = data;
+        const onProgress = (pct: number) => setUploadProgress(pct * 0.9); // 0–90%
 
         if (vehicleId) {
           if (isPaid) {
             // Already paid — update and stay published
-            await apiUpdateVehicle(vehicleId, submitData, finalImageKeys);
+            await apiUpdateVehicle(vehicleId, submitData, images, onProgress, signal);
+            setUploadProgress(100);
             toast.success(t("successUpdate"));
           } else {
             // Not paid — save as draft, then redirect to Stripe
             await apiUpdateVehicle(
               vehicleId,
               { ...submitData, status: "DRAFT" },
-              finalImageKeys,
+              images,
+              onProgress,
+              signal,
             );
             const planId = data.planId || listingPlan;
             if (!planId) throw new Error(t("errorNoPlan"));
@@ -300,16 +281,18 @@ export function VehicleForm({
             return;
           }
         } else {
+          if (!data.planId) throw new Error(t("errorNoPlan"));
           const result = (await apiCreateVehicle(
             submitData,
-            finalImageKeys,
+            images,
+            onProgress,
+            signal,
           )) as any;
           if (result && typeof result === "object" && "error" in result)
             throw new Error(result.error as string);
 
           const createdVehicleId = result?.data?.id ?? result?.id;
           if (!createdVehicleId) throw new Error(t("errorGeneric"));
-          if (!data.planId) throw new Error(t("errorNoPlan"));
           setUploadStatus(t("uploadStatusRedirecting"));
           setUploadProgress(95);
           const checkoutUrl = await apiCreateListingCheckout(

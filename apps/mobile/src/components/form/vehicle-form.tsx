@@ -34,7 +34,6 @@ import {
   labelColor, labelCondition, labelTransmission, labelDrive, labelEquipment,
 } from "@/lib/labels";
 import {
-  uploadVehicleImages,
   createSellerVehicle, getSellerVehicle, updateSellerVehicle, updateSellerProfile,
   createDealerVehicle, getDealerVehicle, updateDealerVehicle,
   fetchSellerProfile, fetchDealerProfile,
@@ -304,13 +303,15 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
     }
     setSubmitting(true);
     try {
-      // 1) Upload new images, preserve order, keep existing keys.
-      const localImgs = images.filter((i): i is Extract<FormImage, { kind: "local" }> => i.kind === "local");
-      const uploadedKeys = localImgs.length ? await uploadVehicleImages(localImgs.map((i) => ({ uri: i.uri, name: i.name, mime: i.mime }))) : [];
-      let u = 0;
-      const imageKeys = images.map((img) => (img.kind === "remote" ? img.key : uploadedKeys[u++]));
+      // Images go to the API as a mix of new local files (uploaded by the API) and
+      // existing keys to keep — one multipart call does upload + delete + write.
+      const imageInputs = images.map((img) =>
+        img.kind === "remote"
+          ? img.key
+          : { uri: img.uri, name: img.name, mime: img.mime },
+      );
 
-      // 2) Build payload (omit empty optional fields — the API rejects "" for enums/numbers).
+      // Build payload (omit empty optional fields — the API rejects "" for enums/numbers).
       const payload: Record<string, unknown> = {
         vehicleType: f.vehicleType,
         make: f.make,
@@ -321,7 +322,6 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
         registrationYear: Number(f.registrationYear),
         kilometer: numOrUndef(f.kilometer),
         price: numOrUndef(f.price),
-        images: imageKeys,
         phoneNumber: f.phoneNumber.trim(),
         address: f.address.trim(),
         zipCode: f.zipCode.trim(),
@@ -350,10 +350,10 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
       if (equipment.length) payload.equipment = Object.fromEntries(equipment.map((k) => [k, true]));
       if (extras.length) payload.extras = Object.fromEntries(extras.map((k) => [k, true]));
 
-      // 3) Create or update.
+      // Create or update — one multipart call carrying data + images.
       if (mode === "dealer") {
-        if (vehicleId) await updateDealerVehicle(vehicleId, payload);
-        else await createDealerVehicle(payload);
+        if (vehicleId) await updateDealerVehicle(vehicleId, payload, imageInputs);
+        else await createDealerVehicle(payload, imageInputs);
       } else {
         // Ensure the private seller's profile row exists (a fresh in-app signup
         // has none, and createVehicle requires it). Upsert is idempotent.
@@ -363,8 +363,8 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
           zipCode: f.zipCode.trim(),
           city: f.city,
         });
-        if (vehicleId) await updateSellerVehicle(vehicleId, payload);
-        else await createSellerVehicle(payload);
+        if (vehicleId) await updateSellerVehicle(vehicleId, payload, imageInputs);
+        else await createSellerVehicle(payload, imageInputs);
       }
 
       Alert.alert(isEdit ? "Gespeichert" : "Inserat erstellt", isEdit ? "Ihre Änderungen wurden gespeichert." : "Ihr Entwurf wurde erstellt. Veröffentlichen Sie ihn im Dashboard.", [

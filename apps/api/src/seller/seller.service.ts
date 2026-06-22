@@ -7,11 +7,27 @@ import {
 import { PrismaService } from "../prisma.service";
 import type { UserSession } from "@thallesp/nestjs-better-auth";
 import { sellerProfileSchema } from "../validation/profile.validation";
-import type {
-  VehicleCreateInput,
-  VehicleUpdateInput,
+import {
+  createVehicleSchema,
+  updateVehicleSchema,
 } from "../validation/vehicle.validation";
+import { uploadImages, deleteImages } from "../storage/r2";
 import { auth } from "../auth";
+
+// The vehicle data is a JSON `data` field (multipart, alongside image files) or a
+// plain JSON body (e.g. a status-only update). Returns the parsed object.
+function parseVehicleBody(
+  body: Record<string, unknown>,
+): Record<string, unknown> {
+  if (typeof body?.data === "string") {
+    try {
+      return JSON.parse(body.data) as Record<string, unknown>;
+    } catch {
+      return {};
+    }
+  }
+  return body ?? {};
+}
 
 export class SellerVehiclesQueryDto {
   page?: string;
@@ -356,12 +372,33 @@ export class SellerService {
     };
   }
 
-  async createVehicle(session: UserSession, body: VehicleCreateInput) {
+  async createVehicle(
+    session: UserSession,
+    body: Record<string, unknown>,
+    files: Express.Multer.File[],
+  ) {
     const seller = await this.getSellerByUserId(session.user.id);
-    const raw = body as Record<string, unknown>;
 
-    // Body validated by ZodValidationPipe; allowlist strips non-vehicle fields.
+    // Validate the vehicle data (ranges/enums mirror the DB CHECK constraints).
+    const result = createVehicleSchema.safeParse(parseVehicleBody(body));
+    if (!result.success) {
+      throw new BadRequestException(
+        result.error.issues[0]?.message ?? "Invalid vehicle data",
+      );
+    }
+    const raw = result.data as Record<string, unknown>;
+
+    // 5–25 images total (kept keys + newly uploaded files).
+    const existing = (raw.existingImages as string[] | undefined) ?? [];
+    const total = existing.length + files.length;
+    if (total < 5 || total > 25) {
+      throw new BadRequestException("A listing needs between 5 and 25 images");
+    }
+    const uploaded = await uploadImages(files, "vehicles");
+
+    // Allowlist strips non-vehicle fields; we set the final image keys ourselves.
     const data = sanitizeVehicleData(raw);
+    data.images = [...existing, ...uploaded.map((u) => u.key)];
 
     const sellerUpdate: Record<string, unknown> = {};
     if (raw.phoneNumber) sellerUpdate.phoneNumber = raw.phoneNumber;
@@ -415,7 +452,8 @@ export class SellerService {
   async updateVehicle(
     session: UserSession,
     id: string,
-    body: VehicleUpdateInput,
+    body: Record<string, unknown>,
+    files: Express.Multer.File[],
   ) {
     const seller = await this.getSellerByUserId(session.user.id);
 
@@ -428,6 +466,7 @@ export class SellerService {
         listingPlan: true,
         stripeSubscriptionId: true,
         status: true,
+        images: true,
       },
     });
 
@@ -439,7 +478,13 @@ export class SellerService {
       throw new ForbiddenException("This vehicle does not belong to you");
     }
 
-    const raw = body as Record<string, unknown>;
+    const result = updateVehicleSchema.safeParse(parseVehicleBody(body));
+    if (!result.success) {
+      throw new BadRequestException(
+        result.error.issues[0]?.message ?? "Invalid vehicle data",
+      );
+    }
+    const raw = result.data as Record<string, unknown>;
 
     // VIN is locked once the listing has been paid — prevents swapping vehicles under one plan
     if (vehicle.listingPaidAt && "vin" in raw && raw.vin !== undefined) {
@@ -448,8 +493,22 @@ export class SellerService {
       );
     }
 
-    // Body validated by ZodValidationPipe; allowlist strips non-vehicle fields.
+    // Allowlist strips non-vehicle fields.
     const sanitized = sanitizeVehicleData(raw);
+
+    // Images are only recomputed when the client sent the intended set
+    // (`existingImages`) or new files — a status-only update leaves them untouched.
+    let removedImages: string[] = [];
+    if (Array.isArray(raw.existingImages) || files.length > 0) {
+      const existing = (raw.existingImages as string[] | undefined) ?? [];
+      const total = existing.length + files.length;
+      if (total < 5 || total > 25) {
+        throw new BadRequestException("A listing needs between 5 and 25 images");
+      }
+      const uploaded = await uploadImages(files, "vehicles");
+      sanitized.images = [...existing, ...uploaded.map((u) => u.key)];
+      removedImages = (vehicle.images ?? []).filter((k) => !existing.includes(k));
+    }
 
     // Status is never taken from the data allowlist — it goes through an explicit,
     // validated transition so a listing can't be published without payment.
@@ -462,6 +521,9 @@ export class SellerService {
       where: { id },
       data: sanitized as never,
     });
+
+    // The DB row is updated — now drop the images it no longer references.
+    if (removedImages.length) await deleteImages(removedImages);
 
     // Cancel Stripe subscription immediately when seller marks vehicle as sold
     if (sanitized.status === "SOLD" && vehicle.stripeSubscriptionId) {
@@ -482,7 +544,7 @@ export class SellerService {
 
     const vehicle = await this.prisma.vehicle.findUnique({
       where: { id },
-      select: { id: true, sellerId: true, stripeSubscriptionId: true },
+      select: { id: true, sellerId: true, stripeSubscriptionId: true, images: true },
     });
 
     if (!vehicle) {
@@ -505,6 +567,9 @@ export class SellerService {
     }
 
     await this.prisma.vehicle.delete({ where: { id } });
+
+    // Clean up the listing's images from R2.
+    await deleteImages(vehicle.images ?? []);
 
     return { data: { success: true } };
   }

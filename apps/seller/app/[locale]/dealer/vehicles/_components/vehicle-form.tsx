@@ -59,7 +59,6 @@ import {
 } from "@repo/ui/components/card";
 import { EquipmentSection } from "./form-sections/equipment-section";
 import { type SubscriptionStatus } from "@/lib/api/vehicles";
-import { apiUploadImagesWithProgress } from "@/lib/api/dealer-vehicles";
 import { apiCreateVehicle, apiUpdateVehicle } from "@/lib/api/dealer-vehicles";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
@@ -103,18 +102,13 @@ const VEHICLE_DATA_MAP: Record<string, any> = {
 
 const STEP_FIELDS: Record<number, any[]> = {
   1: [
-    "vehicleType",
     "make",
-    "model",
-    "version",
     "price",
     "kilometer",
     "registrationMonth",
     "registrationYear",
     "bodyType",
-    "fuelType",
     "color",
-    "vehicleCondition",
   ],
   2: ["images"],
   3: ["equipment", "extras"],
@@ -343,11 +337,20 @@ export function VehicleForm({
     prevFuelTypeRef.current = fuelType;
   }, [fuelType, form]);
 
-  // Determine whether submission should be blocked based on subscription state.
-  // For new listings: block unless subscription is active.
-  const isSubmitBlocked = subscriptionStatus
-    ? !["active", "trialing"].includes(subscriptionStatus.type)
-    : false;
+  // Publishing needs an active/trialing subscription. Saving a draft does not, so
+  // the Draft button is never blocked here.
+  const hasActiveSub = subscriptionStatus
+    ? ["active", "trialing"].includes(subscriptionStatus.type)
+    : true;
+
+  // Publishing this car consumes a quota slot only when it isn't already published
+  // (the server excludes an already-counted car via excludeVehicleId).
+  const wouldConsumeSlot = !vehicleId || initialData?.status !== "PUBLISHED";
+  const quotaFull = (subscriptionStatus?.remainingQuota ?? 1) <= 0;
+
+  // Publish is blocked without an active sub, or when it would need a slot and the
+  // quota is full. Mirrors the server's assertCanPublish so the button is honest.
+  const isPublishBlocked = !hasActiveSub || (wouldConsumeSlot && quotaFull);
 
   const handleNext = async () => {
     const fields = STEP_FIELDS[currentStep] || [];
@@ -383,7 +386,7 @@ export function VehicleForm({
     !!watchColor;
 
   const isStep2Complete =
-    watchImages && watchImages.length >= 5 && watchImages.length <= 10;
+    watchImages && watchImages.length >= 5 && watchImages.length <= 25;
 
   const isNextDisabled =
     currentStep === 1
@@ -420,44 +423,33 @@ export function VehicleForm({
       const signal = abortControllerRef.current.signal;
 
       try {
-        setUploadStatus(t("uploadStatusPreparing"));
+        setUploadStatus(t("uploadStatusUploading"));
         setUploadProgress(0);
 
-        // Separate new files and existing keys
-        const images = data.images || [];
-        const newFiles = images.filter((img) => img instanceof File) as File[];
-        const existingKeys = images.filter(
-          (img) => typeof img === "string",
-        ) as string[];
-
-        let finalImageKeys = [...existingKeys];
-
-        if (newFiles.length > 0) {
-          setUploadStatus(t("uploadStatusUploading"));
-          setUploadProgress(10);
-          const uploadedKeys = await apiUploadImagesWithProgress(
-            newFiles,
-            (pct) => setUploadProgress(10 + pct * 0.75), // maps 0–100% upload → 10–85% bar
-            signal,
-          );
-          finalImageKeys = [...existingKeys, ...uploadedKeys];
-        }
-
-        setUploadStatus(t("uploadStatusSaving"));
-        setUploadProgress(85);
-
+        // One multipart call — the API uploads new files, deletes removed ones,
+        // and writes the row. `images` mixes File (new) and string (kept key).
+        const images = (data.images || []) as (File | string)[];
         const { images: _images, ...submitData } = data;
+        const onProgress = (pct: number) => setUploadProgress(pct);
+
         if (vehicleId) {
-          await apiUpdateVehicle(vehicleId, submitData, finalImageKeys);
+          await apiUpdateVehicle(vehicleId, submitData, images, onProgress, signal);
           toast.success(t("successUpdate"));
         } else {
-          await apiCreateVehicle(submitData, finalImageKeys);
+          await apiCreateVehicle(submitData, images, onProgress, signal);
           toast.success(t("successPublish"));
         }
 
         setUploadProgress(100);
         router.push("/dealer/vehicles");
       } catch (error) {
+        // User cancelled the upload — no error toast.
+        if (
+          signal.aborted ||
+          (error instanceof Error && error.name === "AbortError")
+        ) {
+          return;
+        }
         // Show specific message for validation errors, generic for system errors
         const isValidationError =
           error instanceof Error &&
@@ -519,15 +511,15 @@ export function VehicleForm({
         </Alert>
       )}
 
-      {subscriptionStatus?.type === "quota_exhausted" && (
+      {hasActiveSub && wouldConsumeSlot && quotaFull && (
         <Alert variant="destructive">
           <AlertCircleIcon />
           <AlertTitle>{t("quotaExhaustedTitle")}</AlertTitle>
           <AlertDescription>
             {t("quotaExhaustedDesc", {
-              plan: subscriptionStatus.plan,
-              current: subscriptionStatus.currentCount,
-              max: subscriptionStatus.maxVehicles,
+              plan: subscriptionStatus?.plan ?? "",
+              current: subscriptionStatus?.currentCount ?? 0,
+              max: subscriptionStatus?.maxVehicles ?? 0,
             })}
           </AlertDescription>
           <AlertAction>
@@ -825,7 +817,7 @@ export function VehicleForm({
                   type="submit"
                   disabled={
                     isSubmitting ||
-                    isSubmitBlocked ||
+                    isPublishBlocked ||
                     (!!vehicleId &&
                       !isDirty &&
                       initialData?.status === "PUBLISHED")

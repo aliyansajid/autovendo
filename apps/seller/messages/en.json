@@ -1923,7 +1923,7 @@
     "powerConsumption": "Power Consumption",
     "furtherInfo": "Further Information",
     "typeApprovalPlaceholder": "e.g. 1MA123",
-    "mediaLimitError": "Maximum of 10 images allowed",
+    "mediaLimitError": "Maximum of 25 images allowed",
     "mediaMinNeeded": "{count} more images needed (Minimum 5)",
     "mediaClickUpload": "Click here to upload photos",
     "mediaPreview": "Preview",

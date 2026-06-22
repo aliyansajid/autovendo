@@ -114,11 +114,31 @@ export default function DealerDashboard() {
     [load],
   );
 
+  // Publishing consumes a quota slot. Stop up front when full (mirrors the server)
+  // and point the dealer at their plan, instead of attempting and getting a 403.
+  const publish = useCallback(
+    (v: OwnedVehicle) => {
+      if (activeSub && limit > 0 && used >= limit) {
+        Alert.alert(
+          "Kontingent voll",
+          "Sie haben Ihr Inserate-Limit erreicht. Upgraden Sie Ihren Tarif, um mehr zu veröffentlichen.",
+          [
+            { text: "Abbrechen", style: "cancel" as const },
+            { text: "Tarif verwalten", onPress: subscribe },
+          ],
+        );
+        return;
+      }
+      setStatus(v, "PUBLISHED");
+    },
+    [activeSub, limit, used, setStatus, subscribe],
+  );
+
   const openMenu = useCallback(
     (v: OwnedVehicle) => {
       const buttons: { text: string; style?: "cancel" | "destructive"; onPress?: () => void }[] = [];
       buttons.push({ text: "Bearbeiten", onPress: () => router.push(`/dealer-dashboard/${v.id}`) });
-      if (v.status !== "PUBLISHED") buttons.push({ text: "Veröffentlichen", onPress: () => setStatus(v, "PUBLISHED") });
+      if (v.status !== "PUBLISHED") buttons.push({ text: "Veröffentlichen", onPress: () => publish(v) });
       if (v.status === "PUBLISHED") {
         buttons.push({ text: "Pausieren", onPress: () => setStatus(v, "PAUSED") });
         buttons.push({ text: "Als verkauft markieren", onPress: () => setStatus(v, "SOLD") });
@@ -146,7 +166,7 @@ export default function DealerDashboard() {
       buttons.push({ text: "Abbrechen", style: "cancel" });
       Alert.alert(`${v.make} ${v.model ?? ""}`.trim(), undefined, buttons);
     },
-    [setStatus],
+    [publish, setStatus],
   );
 
   const header = (

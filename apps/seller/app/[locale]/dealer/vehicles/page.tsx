@@ -38,13 +38,20 @@ export default async function VehiclesPage(props: {
 
   /**
    * Subscription Logic
-   * Determine if the user is prevented from creating new listings
+   * A dealer with an active/trialing sub can always open the form to save a DRAFT,
+   * even at full quota — quota only gates publishing. So creating is blocked only
+   * when there is no usable subscription at all.
    */
   const isBlocked =
     subscriptionStatus.type === "no_subscription" ||
-    subscriptionStatus.type === "quota_exhausted" ||
     subscriptionStatus.type === "expired" ||
     subscriptionStatus.type === "past_due";
+
+  // Active sub but no free slots — they can still draft, just not publish.
+  const quotaFull =
+    !isBlocked &&
+    subscriptionStatus.maxVehicles > 0 &&
+    subscriptionStatus.remainingQuota <= 0;
 
   return (
     <div className="space-y-6">
@@ -85,8 +92,8 @@ export default async function VehiclesPage(props: {
         </Alert>
       )}
 
-      {/* Quota exhausted */}
-      {subscriptionStatus.type === "quota_exhausted" && (
+      {/* Quota exhausted — active sub, no free slots (can still draft) */}
+      {quotaFull && (
         <Alert variant="destructive">
           <AlertCircleIcon />
           <AlertTitle>{t("quotaTitle")}</AlertTitle>

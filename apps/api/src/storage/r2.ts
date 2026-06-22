@@ -88,21 +88,59 @@ export async function uploadImage(
 }
 
 /**
- * Best-effort delete of an image we previously stored. Only objects served from
- * our own public domain are touched (external/OAuth avatar URLs are left alone),
- * and failures are swallowed — a lingering old image must never fail the request.
+ * Uploads a batch of images. If any file fails (e.g. a bad-bytes rejection), the
+ * ones that already succeeded are deleted so a partial batch never leaks orphans.
+ */
+export async function uploadImages(
+  files: { buffer: Buffer }[],
+  prefix: string,
+): Promise<{ key: string; publicUrl: string }[]> {
+  const results = await Promise.allSettled(
+    files.map((f) => uploadImage(f, prefix)),
+  );
+  const ok = results.filter(
+    (r): r is PromiseFulfilledResult<{ key: string; publicUrl: string }> =>
+      r.status === "fulfilled",
+  );
+  const failed = results.find((r) => r.status === "rejected");
+  if (failed) {
+    await deleteImages(ok.map((r) => r.value.key));
+    throw (failed as PromiseRejectedResult).reason;
+  }
+  return ok.map((r) => r.value);
+}
+
+// Resolves a stored image value — a bare R2 key (vehicle images) OR a full public
+// URL (profile images) — to the object key we own. Returns null for empty values
+// or external URLs (e.g. an OAuth avatar) so we never delete something not ours.
+function toOwnedKey(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const prefix = `${PUBLIC_DOMAIN}/`;
+  if (value.startsWith(prefix)) return value.slice(prefix.length) || null;
+  if (/^https?:\/\//i.test(value)) return null;
+  return value.replace(/^\/+/, "") || null;
+}
+
+/**
+ * Best-effort delete of an image we previously stored (key or own-domain URL).
+ * External URLs are left alone, and failures are swallowed — a lingering old
+ * image must never fail the request.
  */
 export async function deleteImage(
-  publicUrl: string | null | undefined,
+  value: string | null | undefined,
 ): Promise<void> {
-  if (!publicUrl) return;
-  const prefix = `${PUBLIC_DOMAIN}/`;
-  if (!publicUrl.startsWith(prefix)) return;
-  const key = publicUrl.slice(prefix.length);
+  const key = toOwnedKey(value);
   if (!key) return;
   try {
     await s3.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }));
   } catch (err) {
     console.error(`Failed to delete R2 object ${key}:`, err);
   }
+}
+
+/** Best-effort bulk delete (e.g. all images of a vehicle being removed). */
+export async function deleteImages(
+  values: (string | null | undefined)[],
+): Promise<void> {
+  await Promise.all(values.map((v) => deleteImage(v)));
 }

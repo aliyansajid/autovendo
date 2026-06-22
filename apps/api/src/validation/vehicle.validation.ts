@@ -131,7 +131,10 @@ const vehicleBase = z.object({
   equipment: z.record(z.string(), z.boolean().optional()).optional(),
   extras: z.record(z.string(), z.boolean().optional()).optional(),
 
-  images: z.array(z.string()).min(5).max(25),
+  // Image FILES arrive as multipart, not in this body. `existingImages` lists the
+  // already-stored keys to keep on edit. The service enforces the 5–25 total
+  // (kept + newly uploaded) since that count spans both the body and the files.
+  existingImages: z.array(z.string()).max(25).optional(),
 
   // Contact / location (required so every listing carries usable details).
   // companyName is optional — private sellers have none.

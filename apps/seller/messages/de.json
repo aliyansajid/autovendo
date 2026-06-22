@@ -1933,7 +1933,7 @@
     "powerConsumption": "Energieverbrauch",
     "furtherInfo": "Weitere Informationen",
     "typeApprovalPlaceholder": "z.B. 1MA123",
-    "mediaLimitError": "Maximal 10 Bilder sind erlaubt",
+    "mediaLimitError": "Maximal 25 Bilder erlaubt",
     "mediaMinNeeded": "Noch {count} weitere Bilder benötigt (Mindestens 5)",
     "mediaClickUpload": "Klicken Sie hier, um Fotos hochzuladen",
     "mediaPreview": "Vorschau",
