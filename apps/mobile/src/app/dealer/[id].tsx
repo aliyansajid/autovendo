@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, FlatList, Pressable, Dimensions, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
@@ -22,6 +22,8 @@ import { callPhone, openWhatsApp, sendEmail, openUrl, openMaps } from "@/lib/con
 import { imageUrl } from "@/lib/image";
 
 const { width: SCREEN_W } = Dimensions.get("window");
+
+const PAGE_SIZE = 10;
 
 const DAY_LABELS: Record<string, string> = {
   MONDAY: "Montag",
@@ -53,6 +55,9 @@ export default function DealerDetailScreen() {
   const [dealer, setDealer] = useState<DealerDetail | null>(null);
   const [vehicles, setVehicles] = useState<VehicleListItem[]>([]);
   const [vehicleTotal, setVehicleTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -63,10 +68,12 @@ export default function DealerDetailScreen() {
     try {
       const d = await fetchDealer(id);
       setDealer(d);
-      fetchDealerVehicles(id, { pageSize: 10, sort: "created-desc" })
+      fetchDealerVehicles(id, { page: 1, pageSize: PAGE_SIZE, sort: "created-desc" })
         .then((res) => {
           setVehicles(res.data);
           setVehicleTotal(res.total);
+          setPage(res.page);
+          setTotalPages(res.totalPages);
         })
         .catch(() => {});
     } catch {
@@ -79,6 +86,21 @@ export default function DealerDetailScreen() {
   useEffect(() => {
     load();
   }, [load]);
+
+  // Append the next page of vehicles when the list nears its end.
+  const loadMore = useCallback(async () => {
+    if (!id || loadingMore || loading || page >= totalPages) return;
+    setLoadingMore(true);
+    try {
+      const res = await fetchDealerVehicles(id, { page: page + 1, pageSize: PAGE_SIZE, sort: "created-desc" });
+      setVehicles((prev) => [...prev, ...res.data]);
+      setPage(res.page);
+    } catch {
+      // keep current list
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [id, loadingMore, loading, page, totalPages]);
 
   if (loading) {
     return (
@@ -110,22 +132,21 @@ export default function DealerDetailScreen() {
   if (dealer.businessEmail) actions.push({ icon: "envelope.fill", label: "E-Mail", onPress: () => sendEmail(dealer.businessEmail) });
   if (dealer.website) actions.push({ icon: "safari.fill", label: "Website", onPress: () => openUrl(dealer.website!) });
 
-  return (
-    <View style={styles.root}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: Spacing[10] }}>
-        {/* Cover */}
-        <View style={styles.cover}>
-          {imageUrl(dealer.coverImage) ? (
-            <Image source={{ uri: imageUrl(dealer.coverImage)! }} style={styles.coverImg} contentFit="cover" transition={150} />
-          ) : (
-            <View style={[styles.coverImg, { backgroundColor: C.secondary }]} />
-          )}
-          <View style={styles.coverScrim} />
-          <FloatingBack />
-        </View>
+  const ListHeader = (
+    <>
+      {/* Cover */}
+      <View style={styles.cover}>
+        {imageUrl(dealer.coverImage) ? (
+          <Image source={{ uri: imageUrl(dealer.coverImage)! }} style={styles.coverImg} contentFit="cover" transition={150} />
+        ) : (
+          <View style={[styles.coverImg, { backgroundColor: C.secondary }]} />
+        )}
+        <View style={styles.coverScrim} />
+        <FloatingBack />
+      </View>
 
-        <View style={styles.body}>
-          {/* Identity */}
+      <View style={styles.body}>
+        {/* Identity */}
           <View style={styles.identity}>
             <View style={[styles.logo, { backgroundColor: C.card, borderColor: C.border }]}>
               {imageUrl(dealer.logo) ? (
@@ -212,33 +233,40 @@ export default function DealerDetailScreen() {
             </View>
           )}
 
-          {/* Vehicles */}
-          {vehicles.length > 0 && (
-            <View style={[styles.section, { marginTop: Spacing[8] }]}>
-              <SectionHeader
-                title={`Fahrzeuge${vehicleTotal ? ` (${vehicleTotal})` : ""}`}
-                actionLabel={vehicleTotal > vehicles.length ? "Alle" : undefined}
-                onAction={
-                  vehicleTotal > vehicles.length
-                    ? () => router.push({ pathname: "/(tabs)/search", params: { dealerId: dealer.id } })
-                    : undefined
-                }
-              />
-              <View style={{ gap: Spacing[3] }}>
-                {vehicles.map((v) => (
-                  <VehicleCard
-                    key={v.id}
-                    vehicle={v}
-                    favorite={isFavorite(v.id)}
-                    onToggleFavorite={() => toggle(v.id)}
-                    onPress={() => router.push(`/vehicle/${v.id}`)}
-                  />
-                ))}
-              </View>
-            </View>
-          )}
-        </View>
-      </ScrollView>
+        {/* Vehicles section header — the list itself renders below as FlatList items */}
+        {vehicles.length > 0 && (
+          <View style={[styles.section, { marginTop: Spacing[8] }]}>
+            <SectionHeader title={`Fahrzeuge${vehicleTotal ? ` (${vehicleTotal})` : ""}`} />
+          </View>
+        )}
+      </View>
+    </>
+  );
+
+  return (
+    <View style={styles.root}>
+      <FlatList
+        data={vehicles}
+        keyExtractor={(v) => v.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: Spacing[10] }}
+        ListHeaderComponent={ListHeader}
+        onEndReachedThreshold={0.4}
+        onEndReached={loadMore}
+        renderItem={({ item, index }) => (
+          <View style={{ paddingHorizontal: Spacing[5], marginBottom: Spacing[3], marginTop: index === 0 ? Spacing[3] : 0 }}>
+            <VehicleCard
+              vehicle={item}
+              favorite={isFavorite(item.id)}
+              onToggleFavorite={() => toggle(item.id)}
+              onPress={() => router.push(`/vehicle/${item.id}`)}
+            />
+          </View>
+        )}
+        ListFooterComponent={
+          loadingMore ? <ActivityIndicator style={{ paddingVertical: Spacing[5] }} color={C.mutedForeground} /> : null
+        }
+      />
     </View>
   );
 }
