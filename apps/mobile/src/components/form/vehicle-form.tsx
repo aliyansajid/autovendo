@@ -15,11 +15,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import {
   carMakes, utilityMakes, truckMakes, camperMakes,
+  carModels, utilityModels, truckModels,
   carBodyTypeEnum, utilityBodyTypeEnum, truckBodyTypeEnum, camperBodyTypeEnum,
   carFuelTypeEnum, utilityFuelTypeEnum, truckFuelTypeEnum, camperFuelTypeEnum,
   carExtrasEnum, utilityExtrasEnum, truckExtrasEnum, camperExtrasEnum,
   ColorEnum, VehicleConditionEnum, TransmissionTypeEnum, DriveTypeEnum, EquipmentEnum,
-  EmissionStandardEnum,
+  EmissionStandardEnum, getRegistrationYears,
   swissCities,
 } from "@repo/vehicle-constants";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
@@ -47,7 +48,26 @@ type Group = { label: string; items: readonly { value: string; label: string }[]
 
 function makeOptions(vt: string): SelectOption[] {
   const groups = (vt === "UTILITY" ? utilityMakes : vt === "TRUCK" ? truckMakes : vt === "CAMPER" ? camperMakes : carMakes) as unknown as Group[];
-  return groups.flatMap((g) => g.items.map((i) => ({ value: i.value, label: i.label })));
+  // Keep the web grouping ("Top-Marken" / "Alle Marken") and de-dup makes that
+  // appear in more than one group, keeping the first (top) occurrence.
+  const seen = new Set<string>();
+  const out: SelectOption[] = [];
+  for (const g of groups) {
+    for (const i of g.items) {
+      if (seen.has(i.value)) continue;
+      seen.add(i.value);
+      out.push({ value: i.value, label: i.label, group: g.label });
+    }
+  }
+  return out;
+}
+function modelOptions(vt: string, make: string): SelectOption[] {
+  if (!make) return [];
+  const map = (vt === "UTILITY" ? utilityModels : vt === "TRUCK" ? truckModels : vt === "CAMPER" ? {} : carModels) as Record<
+    string,
+    { value: string; label: string }[]
+  >;
+  return (map[make] ?? []).map((m) => ({ value: m.value, label: m.label }));
 }
 function bodyOptions(vt: string): SelectOption[] {
   const arr = vt === "UTILITY" ? utilityBodyTypeEnum : vt === "TRUCK" ? truckBodyTypeEnum : vt === "CAMPER" ? camperBodyTypeEnum : carBodyTypeEnum;
@@ -82,6 +102,17 @@ const GEAR_OPTS: SelectOption[] = [
   { value: "AUTOMATIC", label: "Automat" },
   { value: "MANUAL", label: "Schaltgetriebe" },
 ];
+const YEAR_OPTS: SelectOption[] = getRegistrationYears();
+// transmissionType options depend on the coarse gearTransmission, mirroring web:
+// AUTOMATIC → automatic variants, MANUAL → manual only.
+function transmissionOptions(gear: string): SelectOption[] {
+  return TRANSMISSION_OPTS.filter((t) => {
+    if (!gear) return true;
+    if (gear === "AUTOMATIC") return ["AUTOMATIC", "AUTOMATIC_STEPLESS", "SEMI_AUTOMATIC"].includes(t.value);
+    if (gear === "MANUAL") return t.value === "MANUAL";
+    return true;
+  });
+}
 const ENERGY_OPTS: SelectOption[] = ["A", "B", "C", "D", "E", "F", "G"].map((v) => ({ value: v, label: v }));
 const EMISSION_OPTS: SelectOption[] = EmissionStandardEnum.map((e) => ({
   value: e.value,
@@ -119,7 +150,7 @@ type FormState = {
   color: string; interiorColor: string; metallic: boolean;
   doors: string; seats: string; hp: string; kw: string; cubicCapacity: string;
   gearTransmission: string; numberOfGears: string; cylinders: string;
-  energyLabel: string; emissionStandard: string;
+  energyLabel: string; emissionStandard: string; co2Emission: string;
   consumptionCity: string; consumptionCountry: string; consumptionTotal: string;
   wheelbase: string; emptyWeight: string; loadCapacity: string;
   height: string; width: string; length: string; towingCapacityBraked: string;
@@ -144,7 +175,7 @@ const EMPTY_STATE: FormState = {
   color: "", interiorColor: "", metallic: false,
   doors: "", seats: "", hp: "", kw: "", cubicCapacity: "",
   gearTransmission: "", numberOfGears: "", cylinders: "",
-  energyLabel: "", emissionStandard: "",
+  energyLabel: "", emissionStandard: "", co2Emission: "",
   consumptionCity: "", consumptionCountry: "", consumptionTotal: "",
   wheelbase: "", emptyWeight: "", loadCapacity: "",
   height: "", width: "", length: "", towingCapacityBraked: "",
@@ -196,8 +227,65 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
 
   // When the vehicle type changes, clear type-specific fields to avoid mismatches.
   const setVehicleType = useCallback((vt: string) => {
-    setF((prev) => ({ ...prev, vehicleType: vt, make: "", bodyType: "", fuelType: "" }));
+    setF((prev) => ({ ...prev, vehicleType: vt, make: "", model: "", bodyType: "", fuelType: "" }));
     setExtras([]);
+  }, []);
+
+  // Model options depend on the make, so clear the model when the make changes.
+  const setMake = useCallback((make: string) => {
+    setF((prev) => ({ ...prev, make, model: "" }));
+  }, []);
+
+  // transmissionType options depend on gearTransmission, so clear it when the
+  // gear changes to avoid keeping a now-invalid value.
+  const setGear = useCallback((gear: string) => {
+    setF((prev) => ({ ...prev, gearTransmission: gear, transmissionType: "" }));
+  }, []);
+
+  // Changing the fuel type hides whole groups of fields; clear the ones that
+  // become hidden so we never submit stale, mismatched values (mirrors web).
+  const setFuel = useCallback((next: string) => {
+    const combustionOrMild = ["PETROL", "DIESEL", "LPG_PETROL", "MHEV_DIESEL", "MHEV_PETROL", "CNG_PETROL", "ETHANOL_PETROL"].includes(next);
+    const electric = next === "ELECTRIC";
+    const fullHybrid = ["HEV_DIESEL", "HEV_PETROL"].includes(next);
+    const hydrogen = next === "HYDROGEN";
+    const pluginHybrid = ["PHEV_DIESEL", "PHEV_PETROL"].includes(next);
+
+    setF((prev) => {
+      const out = { ...prev, fuelType: next };
+      if (!(combustionOrMild || hydrogen)) {
+        out.cubicCapacity = "";
+        out.cylinders = "";
+      }
+      if (!(combustionOrMild || fullHybrid || pluginHybrid)) {
+        out.consumptionCity = "";
+        out.consumptionCountry = "";
+        out.consumptionTotal = "";
+      }
+      if (!(combustionOrMild || fullHybrid || pluginHybrid || hydrogen)) {
+        out.emissionStandard = "";
+      }
+      if (!(combustionOrMild || fullHybrid || hydrogen || pluginHybrid)) {
+        out.co2Emission = "";
+      }
+      if (!(electric || fullHybrid || pluginHybrid)) {
+        out.range = "";
+        out.batteryCapacity = "";
+        out.powerConsumption = "";
+      }
+      if (!(electric || pluginHybrid)) {
+        out.batteryOwnership = "";
+        out.batteryRentalMonth = "";
+        out.chargingPlugTypeStandard = "";
+        out.chargingPlugTypeFast = "";
+        out.chargingPower = "";
+      }
+      if (!(fullHybrid || pluginHybrid)) {
+        out.combustionEnginePowerHp = "";
+        out.electricMotorPowerHp = "";
+      }
+      return out;
+    });
   }, []);
 
   useEffect(() => {
@@ -240,7 +328,7 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
             color: str(v.color), interiorColor: str(v.interiorColor), metallic: v.metallic === true,
             doors: str(v.doors), seats: str(v.seats), hp: str(v.hp), kw: str(v.kw), cubicCapacity: str(v.cubicCapacity),
             gearTransmission: str(v.gearTransmission), numberOfGears: str(v.numberOfGears), cylinders: str(v.cylinders),
-            energyLabel: str(v.energyLabel), emissionStandard: str(v.emissionStandard),
+            energyLabel: str(v.energyLabel), emissionStandard: str(v.emissionStandard), co2Emission: str(v.co2Emission),
             consumptionCity: str(v.consumptionCity), consumptionCountry: str(v.consumptionCountry), consumptionTotal: str(v.consumptionTotal),
             wheelbase: str(v.wheelbase), emptyWeight: str(v.emptyWeight), loadCapacity: str(v.loadCapacity),
             height: str(v.height), width: str(v.width), length: str(v.length), towingCapacityBraked: str(v.towingCapacityBraked),
@@ -337,7 +425,7 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
       for (const k of optStr) if (f[k] && String(f[k]).trim()) payload[k] = f[k];
       const optNum: (keyof FormState)[] = [
         "newPrice", "doors", "seats", "hp", "kw", "cubicCapacity",
-        "numberOfGears", "cylinders", "consumptionCity", "consumptionCountry", "consumptionTotal",
+        "numberOfGears", "cylinders", "co2Emission", "consumptionCity", "consumptionCountry", "consumptionTotal",
         "wheelbase", "emptyWeight", "loadCapacity", "height", "width", "length", "towingCapacityBraked",
         "duration", "maxKm", "batteryCapacity", "batteryRentalMonth", "chargingPower",
         "powerConsumption", "range", "combustionEnginePowerHp", "electricMotorPowerHp",
@@ -392,7 +480,29 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
     );
   }
 
-  const isElectric = f.fuelType === "ELECTRIC" || f.fuelType.includes("HEV") || f.fuelType.includes("PHEV");
+  // Fuel-driven show/hide, mirroring the web TechnicalDataSection exactly.
+  // Note MHEV is treated as combustion (not electric), unlike the old `includes`.
+  const fuel = f.fuelType;
+  const showCombustionOrMild = [
+    "PETROL", "DIESEL", "LPG_PETROL", "MHEV_DIESEL", "MHEV_PETROL", "CNG_PETROL", "ETHANOL_PETROL",
+  ].includes(fuel);
+  const showElectric = fuel === "ELECTRIC";
+  const showFullHybrid = ["HEV_DIESEL", "HEV_PETROL"].includes(fuel);
+  const showHydrogen = fuel === "HYDROGEN";
+  const showPluginHybrid = ["PHEV_DIESEL", "PHEV_PETROL"].includes(fuel);
+
+  const showConsumption = showCombustionOrMild || showFullHybrid || showPluginHybrid;
+  const showDisplacement = showCombustionOrMild || showHydrogen; // cubicCapacity + cylinders
+  const showEmission = showCombustionOrMild || showFullHybrid || showPluginHybrid || showHydrogen;
+  const showCo2 = showCombustionOrMild || showFullHybrid || showHydrogen || showPluginHybrid;
+  const showEvCore = showElectric || showFullHybrid || showPluginHybrid; // range/battery/consumption
+  const showCharging = showElectric || showPluginHybrid; // battery ownership, plugs, charging power
+  const showHybridPower = showFullHybrid || showPluginHybrid; // combustion + e-motor power
+
+  // Warranty gating (basic-data-section): any warranty reveals duration/maxKm;
+  // only FROM_DATE reveals the start date.
+  const showWarrantyDetails = ["FROM_DELIVERY", "FROM_FIRST_REGISTRATION", "FROM_DATE"].includes(f.warranty);
+  const showWarrantyStartDate = f.warranty === "FROM_DATE";
 
   return (
     <View style={styles.root}>
@@ -412,8 +522,8 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
         <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <FormSection title="Fahrzeug">
             <SelectField label="Fahrzeugtyp" required value={f.vehicleType} options={VEHICLE_TYPE_OPTS} onChange={setVehicleType} />
-            <SelectField label="Marke" required searchable value={f.make} options={makeOptions(f.vehicleType)} onChange={(v) => set("make", v)} />
-            <TextField label="Modell" value={f.model} onChangeText={(v) => set("model", v)} placeholder="z. B. A4" autoCapitalize="words" />
+            <SelectField label="Marke" required searchable value={f.make} options={makeOptions(f.vehicleType)} onChange={setMake} />
+            <SelectField label="Modell" optional searchable value={f.model} options={modelOptions(f.vehicleType, f.make)} onChange={(v) => set("model", v)} disabled={!f.make} placeholder={f.make ? "Auswählen" : "Zuerst Marke wählen"} />
             <TextField label="Version" value={f.version} onChangeText={(v) => set("version", v)} placeholder="z. B. 2.0 TDI quattro" />
             <SelectField label="Aufbau" required searchable value={f.bodyType} options={bodyOptions(f.vehicleType)} onChange={(v) => set("bodyType", v)} />
             <SelectField label="Zustand" optional value={f.vehicleCondition} options={CONDITION_OPTS} onChange={(v) => set("vehicleCondition", v)} />
@@ -421,11 +531,11 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
 
           <FormSection title="Eckdaten">
             <SelectField label="Monat (Erstzulassung)" required value={f.registrationMonth} options={MONTH_OPTS} onChange={(v) => set("registrationMonth", v)} />
-            <TextField label="Jahr (Erstzulassung) *" value={f.registrationYear} onChangeText={(v) => set("registrationYear", v)} keyboardType="number-pad" placeholder="z. B. 2020" />
+            <SelectField label="Jahr (Erstzulassung)" required searchable value={f.registrationYear} options={YEAR_OPTS} onChange={(v) => set("registrationYear", v)} />
             <TextField label="Kilometerstand *" value={f.kilometer} onChangeText={(v) => set("kilometer", v)} keyboardType="number-pad" placeholder="z. B. 84500" />
-            <SelectField label="Treibstoff" optional searchable value={f.fuelType} options={fuelOptions(f.vehicleType)} onChange={(v) => set("fuelType", v)} />
-            <SelectField label="Getriebe" optional value={f.transmissionType} options={TRANSMISSION_OPTS} onChange={(v) => set("transmissionType", v)} />
-            <SelectField label="Schaltung" optional value={f.gearTransmission} options={GEAR_OPTS} onChange={(v) => set("gearTransmission", v)} />
+            <SelectField label="Treibstoff" optional searchable value={f.fuelType} options={fuelOptions(f.vehicleType)} onChange={setFuel} />
+            <SelectField label="Schaltung" optional value={f.gearTransmission} options={GEAR_OPTS} onChange={setGear} />
+            <SelectField label="Getriebe" optional value={f.transmissionType} options={transmissionOptions(f.gearTransmission)} onChange={(v) => set("transmissionType", v)} disabled={!f.gearTransmission} placeholder={f.gearTransmission ? "Auswählen" : "Zuerst Schaltung wählen"} />
             <SelectField label="Antrieb" optional value={f.driveType} options={DRIVE_OPTS} onChange={(v) => set("driveType", v)} />
           </FormSection>
 
@@ -460,33 +570,44 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
                 <TextField label="kW" value={f.kw} onChangeText={(v) => set("kw", v)} keyboardType="number-pad" placeholder="z. B. 110" />
               </View>
             </View>
-            <TextField label="Hubraum (cm³)" value={f.cubicCapacity} onChangeText={(v) => set("cubicCapacity", v)} keyboardType="number-pad" placeholder="z. B. 1968" />
-            <View style={styles.rowTwo}>
-              <View style={{ flex: 1 }}>
-                <TextField label="Zylinder" value={f.cylinders} onChangeText={(v) => set("cylinders", v)} keyboardType="number-pad" placeholder="z. B. 4" />
+            {showDisplacement && (
+              <View style={styles.rowTwo}>
+                <View style={{ flex: 1 }}>
+                  <TextField label="Hubraum (cm³)" value={f.cubicCapacity} onChangeText={(v) => set("cubicCapacity", v)} keyboardType="number-pad" placeholder="z. B. 1968" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <TextField label="Zylinder" value={f.cylinders} onChangeText={(v) => set("cylinders", v)} keyboardType="number-pad" placeholder="z. B. 4" />
+                </View>
               </View>
-              <View style={{ flex: 1 }}>
-                <TextField label="Anzahl Gänge" value={f.numberOfGears} onChangeText={(v) => set("numberOfGears", v)} keyboardType="number-pad" placeholder="z. B. 6" />
-              </View>
-            </View>
-            <TextField label="Fahrgestellnummer (VIN)" value={f.vin} onChangeText={(v) => set("vin", v.toUpperCase())} placeholder="17 Zeichen" autoCapitalize="characters" />
+            )}
+            <TextField label="Anzahl Gänge" value={f.numberOfGears} onChangeText={(v) => set("numberOfGears", v)} keyboardType="number-pad" placeholder="z. B. 6" />
+            <TextField label="Fahrgestellnummer (VIN)" value={f.vin} onChangeText={(v) => set("vin", v.toUpperCase())} placeholder="17 Zeichen" autoCapitalize="characters" editable={!isEdit} />
           </FormSection>
 
           <FormSection title="Verbrauch & Effizienz">
             <SelectField label="Energieeffizienz" optional value={f.energyLabel} options={ENERGY_OPTS} onChange={(v) => set("energyLabel", v)} />
-            <SelectField label="Abgasnorm" optional searchable value={f.emissionStandard} options={EMISSION_OPTS} onChange={(v) => set("emissionStandard", v)} />
-            <View style={styles.rowTwo}>
-              <View style={{ flex: 1 }}>
-                <TextField label="Verbrauch Stadt" value={f.consumptionCity} onChangeText={(v) => set("consumptionCity", v)} keyboardType="decimal-pad" placeholder="l/100 km" />
-              </View>
-              <View style={{ flex: 1 }}>
-                <TextField label="Verbrauch Land" value={f.consumptionCountry} onChangeText={(v) => set("consumptionCountry", v)} keyboardType="decimal-pad" placeholder="l/100 km" />
-              </View>
-            </View>
-            <TextField label="Verbrauch kombiniert" value={f.consumptionTotal} onChangeText={(v) => set("consumptionTotal", v)} keyboardType="decimal-pad" placeholder="l/100 km" />
+            {showEmission && (
+              <SelectField label="Abgasnorm" optional searchable value={f.emissionStandard} options={EMISSION_OPTS} onChange={(v) => set("emissionStandard", v)} />
+            )}
+            {showCo2 && (
+              <TextField label="CO₂-Emission (g/km)" value={f.co2Emission} onChangeText={(v) => set("co2Emission", v)} keyboardType="number-pad" placeholder="z. B. 120" />
+            )}
+            {showConsumption && (
+              <>
+                <View style={styles.rowTwo}>
+                  <View style={{ flex: 1 }}>
+                    <TextField label="Verbrauch Stadt" value={f.consumptionCity} onChangeText={(v) => set("consumptionCity", v)} keyboardType="decimal-pad" placeholder="l/100 km" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <TextField label="Verbrauch Land" value={f.consumptionCountry} onChangeText={(v) => set("consumptionCountry", v)} keyboardType="decimal-pad" placeholder="l/100 km" />
+                  </View>
+                </View>
+                <TextField label="Verbrauch kombiniert" value={f.consumptionTotal} onChangeText={(v) => set("consumptionTotal", v)} keyboardType="decimal-pad" placeholder="l/100 km" />
+              </>
+            )}
           </FormSection>
 
-          {isElectric && (
+          {showEvCore && (
             <FormSection title="Elektro & Laden">
               <View style={styles.rowTwo}>
                 <View style={{ flex: 1 }}>
@@ -496,26 +617,30 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
                   <TextField label="Reichweite (km)" value={f.range} onChangeText={(v) => set("range", v)} keyboardType="number-pad" placeholder="z. B. 450" />
                 </View>
               </View>
-              <SelectField label="Batterie" optional value={f.batteryOwnership} options={BATTERY_OWNERSHIP_OPTS} onChange={(v) => set("batteryOwnership", v)} />
-              <TextField label="Batteriemiete (CHF/Monat)" value={f.batteryRentalMonth} onChangeText={(v) => set("batteryRentalMonth", v)} keyboardType="number-pad" placeholder="optional" />
-              <SelectField label="Ladeanschluss (Standard)" optional value={f.chargingPlugTypeStandard} options={PLUG_STD_OPTS} onChange={(v) => set("chargingPlugTypeStandard", v)} />
-              <SelectField label="Ladeanschluss (Schnell)" optional value={f.chargingPlugTypeFast} options={PLUG_FAST_OPTS} onChange={(v) => set("chargingPlugTypeFast", v)} />
-              <View style={styles.rowTwo}>
-                <View style={{ flex: 1 }}>
+              <TextField label="Stromverbrauch (kWh/100km)" value={f.powerConsumption} onChangeText={(v) => set("powerConsumption", v)} keyboardType="decimal-pad" placeholder="z. B. 17" />
+
+              {showCharging && (
+                <>
+                  <SelectField label="Batterie" optional value={f.batteryOwnership} options={BATTERY_OWNERSHIP_OPTS} onChange={(v) => set("batteryOwnership", v)} />
+                  {f.batteryOwnership === "BATTERY_RENT_REQUIRED" && (
+                    <TextField label="Batteriemiete (CHF/Monat)" value={f.batteryRentalMonth} onChangeText={(v) => set("batteryRentalMonth", v)} keyboardType="number-pad" placeholder="optional" />
+                  )}
+                  <SelectField label="Ladeanschluss (Standard)" optional value={f.chargingPlugTypeStandard} options={PLUG_STD_OPTS} onChange={(v) => set("chargingPlugTypeStandard", v)} />
+                  <SelectField label="Ladeanschluss (Schnell)" optional value={f.chargingPlugTypeFast} options={PLUG_FAST_OPTS} onChange={(v) => set("chargingPlugTypeFast", v)} />
                   <TextField label="Ladeleistung (kW)" value={f.chargingPower} onChangeText={(v) => set("chargingPower", v)} keyboardType="decimal-pad" placeholder="z. B. 11" />
+                </>
+              )}
+
+              {showHybridPower && (
+                <View style={styles.rowTwo}>
+                  <View style={{ flex: 1 }}>
+                    <TextField label="Verbrennerleistung (PS)" value={f.combustionEnginePowerHp} onChangeText={(v) => set("combustionEnginePowerHp", v)} keyboardType="number-pad" placeholder="Hybrid" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <TextField label="E-Motorleistung (PS)" value={f.electricMotorPowerHp} onChangeText={(v) => set("electricMotorPowerHp", v)} keyboardType="number-pad" placeholder="Hybrid" />
+                  </View>
                 </View>
-                <View style={{ flex: 1 }}>
-                  <TextField label="Stromverbrauch (kWh/100km)" value={f.powerConsumption} onChangeText={(v) => set("powerConsumption", v)} keyboardType="decimal-pad" placeholder="z. B. 17" />
-                </View>
-              </View>
-              <View style={styles.rowTwo}>
-                <View style={{ flex: 1 }}>
-                  <TextField label="Verbrennerleistung (PS)" value={f.combustionEnginePowerHp} onChangeText={(v) => set("combustionEnginePowerHp", v)} keyboardType="number-pad" placeholder="Hybrid" />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <TextField label="E-Motorleistung (PS)" value={f.electricMotorPowerHp} onChangeText={(v) => set("electricMotorPowerHp", v)} keyboardType="number-pad" placeholder="Hybrid" />
-                </View>
-              </View>
+              )}
             </FormSection>
           )}
 
@@ -549,15 +674,19 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
 
           <FormSection title="Garantie & Prüfung">
             <SelectField label="Garantie" optional value={f.warranty} options={WARRANTY_OPTS} onChange={(v) => set("warranty", v)} />
-            <TextField label="Garantiebeginn (JJJJ-MM-TT)" value={f.warrantyStartDate} onChangeText={(v) => set("warrantyStartDate", v)} placeholder="z. B. 2024-01-15" autoCapitalize="none" />
-            <View style={styles.rowTwo}>
-              <View style={{ flex: 1 }}>
-                <TextField label="Dauer (Monate)" value={f.duration} onChangeText={(v) => set("duration", v)} keyboardType="number-pad" placeholder="z. B. 24" />
+            {showWarrantyStartDate && (
+              <TextField label="Garantiebeginn (JJJJ-MM-TT)" value={f.warrantyStartDate} onChangeText={(v) => set("warrantyStartDate", v)} placeholder="z. B. 2024-01-15" autoCapitalize="none" />
+            )}
+            {showWarrantyDetails && (
+              <View style={styles.rowTwo}>
+                <View style={{ flex: 1 }}>
+                  <TextField label="Dauer (Monate)" value={f.duration} onChangeText={(v) => set("duration", v)} keyboardType="number-pad" placeholder="z. B. 24" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <TextField label="Max. km" value={f.maxKm} onChangeText={(v) => set("maxKm", v)} keyboardType="number-pad" placeholder="optional" />
+                </View>
               </View>
-              <View style={{ flex: 1 }}>
-                <TextField label="Max. km" value={f.maxKm} onChangeText={(v) => set("maxKm", v)} keyboardType="number-pad" placeholder="optional" />
-              </View>
-            </View>
+            )}
             <TextField label="Letzte Prüfung (JJJJ-MM-TT)" value={f.lastInspectionDate} onChangeText={(v) => set("lastInspectionDate", v)} placeholder="z. B. 2024-03-01" autoCapitalize="none" />
             <View style={styles.toggleRow}>
               <Text style={[styles.toggleLabel, { color: C.foreground }]}>Ab MFK / geprüft</Text>

@@ -5,7 +5,7 @@ import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { Icon } from "@/components/ui/icon";
 
-export type SelectOption = { value: string; label: string };
+export type SelectOption = { value: string; label: string; group?: string };
 
 // Labeled row that opens a searchable single-select sheet. Optional values can be
 // cleared. Used for make, city, body type, and every enum select in the form.
@@ -46,6 +46,24 @@ export function SelectField({
     const q = query.toLowerCase();
     return options.filter((o) => o.label.toLowerCase().includes(q));
   }, [options, query]);
+
+  // Flatten into header + item rows so grouped options (e.g. makes:
+  // "Top-Marken" / "Alle Marken") render section headers on group transitions.
+  const rows = useMemo(() => {
+    const out: (
+      | { kind: "header"; key: string; label: string }
+      | { kind: "item"; key: string; option: SelectOption }
+    )[] = [];
+    let last: string | undefined;
+    for (const o of filtered) {
+      if (o.group && o.group !== last) {
+        out.push({ kind: "header", key: `__h:${o.group}`, label: o.group });
+        last = o.group;
+      }
+      out.push({ kind: "item", key: o.value, option: o });
+    }
+    return out;
+  }, [filtered]);
 
   return (
     <View style={styles.group}>
@@ -98,8 +116,8 @@ export function SelectField({
           </SafeAreaView>
 
           <FlatList
-            data={filtered}
-            keyExtractor={(o) => o.value}
+            data={rows}
+            keyExtractor={(r) => r.key}
             keyboardShouldPersistTaps="handled"
             ListHeaderComponent={
               optional && !query ? (
@@ -115,18 +133,28 @@ export function SelectField({
                 </Pressable>
               ) : null
             }
-            renderItem={({ item }) => (
-              <Pressable
-                style={[styles.row, { borderBottomColor: C.border }]}
-                onPress={() => {
-                  onChange(item.value);
-                  setOpen(false);
-                }}
-              >
-                <Text style={[styles.rowText, { color: C.foreground }]}>{item.label}</Text>
-                {item.value === value && <Icon name="checkmark" size={18} color={C.primary} />}
-              </Pressable>
-            )}
+            renderItem={({ item }) => {
+              if (item.kind === "header") {
+                return (
+                  <View style={[styles.groupHeader, { backgroundColor: C.secondary }]}>
+                    <Text style={[styles.groupHeaderText, { color: C.mutedForeground }]}>{item.label}</Text>
+                  </View>
+                );
+              }
+              const o = item.option;
+              return (
+                <Pressable
+                  style={[styles.row, { borderBottomColor: C.border }]}
+                  onPress={() => {
+                    onChange(o.value);
+                    setOpen(false);
+                  }}
+                >
+                  <Text style={[styles.rowText, { color: C.foreground }]}>{o.label}</Text>
+                  {o.value === value && <Icon name="checkmark" size={18} color={C.primary} />}
+                </Pressable>
+              );
+            }}
           />
         </View>
       </Modal>
@@ -180,4 +208,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   rowText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.base, flex: 1 },
+  groupHeader: {
+    paddingHorizontal: Spacing[5],
+    paddingVertical: Spacing[2],
+  },
+  groupHeaderText: {
+    fontFamily: FontFamily.sansBold,
+    fontSize: FontSize.xs,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
 });
