@@ -169,7 +169,15 @@ export default function SearchScreen() {
               key={t.label}
               label={t.label}
               selected={filters.vehicleType === t.value}
-              onPress={() => setFilters((f) => ({ ...f, vehicleType: t.value }))}
+              onPress={() =>
+                setFilters((f) => ({
+                  ...EMPTY_FILTERS,
+                  q: f.q,
+                  sort: f.sort,
+                  dealerId: f.dealerId,
+                  vehicleType: t.value,
+                }))
+              }
             />
           ))}
         </ScrollView>

@@ -8,17 +8,33 @@ import {
   Pressable,
   TextInput,
   Switch,
+  FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  EquipmentEnum,
-  BatteryOwnershipEnum,
-  ChargingPlugTypeStandardEnum,
-  ChargingPlugTypeFastEnum,
+  carMakes,
+  carBodyTypeEnum,
+  utilityBodyTypeEnum,
+  truckBodyTypeEnum,
+  camperBodyTypeEnum,
+  carFuelTypeEnum,
+  utilityFuelTypeEnum,
+  truckFuelTypeEnum,
+  camperFuelTypeEnum,
   carExtrasEnum,
   utilityExtrasEnum,
   truckExtrasEnum,
   camperExtrasEnum,
+  VehicleConditionEnum,
+  TransmissionTypeEnum,
+  DriveTypeEnum,
+  ColorEnum,
+  EnergyLabelEnum,
+  EmissionStandardEnum,
+  EquipmentEnum,
+  BatteryOwnershipEnum,
+  ChargingPlugTypeStandardEnum,
+  ChargingPlugTypeFastEnum,
 } from "@repo/vehicle-constants";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
@@ -52,6 +68,7 @@ export type Filters = {
 
   // Multi-selects (UPPERCASE Prisma enum values)
   make: string[];
+  excludeMake: string[];
   bodyType: string[];
   fuel: string[];
   transmission: string[];
@@ -75,6 +92,7 @@ export type Filters = {
   registrationTo?: number;
   kilometerFrom?: number;
   kilometerTo?: number;
+  powerUnit: "ps" | "kw";
   powerFrom?: number;
   powerTo?: number;
   cubicCapacityFrom?: number;
@@ -104,6 +122,7 @@ export const EMPTY_FILTERS: Filters = {
   sort: "relevance",
   vehicleType: null,
   make: [],
+  excludeMake: [],
   bodyType: [],
   fuel: [],
   transmission: [],
@@ -119,20 +138,22 @@ export const EMPTY_FILTERS: Filters = {
   chargingPlugTypeFast: [],
   equipment: [],
   extras: [],
+  powerUnit: "ps",
   metallic: false,
   inspectionPassed: false,
   hasWarranty: false,
 };
 
 const ARR_KEYS: (keyof Filters)[] = [
-  "make", "bodyType", "fuel", "transmission", "condition", "driveType", "sellerType",
+  "make", "excludeMake", "bodyType", "fuel", "transmission", "condition", "driveType", "sellerType",
   "color", "interiorColor", "energyLabels", "emissionStandards", "batteryOwnership",
   "chargingPlugTypeStandard", "chargingPlugTypeFast", "equipment", "extras",
 ];
 
+// Power is emitted manually (kw vs ps), so it is excluded from this list.
 const RANGE_KEYS: (keyof Filters)[] = [
   "priceFrom", "priceTo", "registrationFrom", "registrationTo", "kilometerFrom", "kilometerTo",
-  "powerFrom", "powerTo", "cubicCapacityFrom", "cubicCapacityTo", "cylindersFrom", "cylindersTo",
+  "cubicCapacityFrom", "cubicCapacityTo", "cylindersFrom", "cylindersTo",
   "consumptionFrom", "consumptionTo", "co2From", "co2To", "rangeFrom", "rangeTo",
   "doorsFrom", "doorsTo", "seatsFrom", "seatsTo",
 ];
@@ -151,6 +172,14 @@ export function filtersToParams(f: Filters, page = 1, pageSize = 20): SearchPara
   for (const key of RANGE_KEYS) {
     const v = f[key] as number | undefined;
     if (v != null) (p as Record<string, unknown>)[key] = v;
+  }
+  // Power: emit kwFrom/kwTo when the kW unit is selected, else powerFrom/powerTo.
+  if (f.powerUnit === "kw") {
+    if (f.powerFrom != null) p.kwFrom = f.powerFrom;
+    if (f.powerTo != null) p.kwTo = f.powerTo;
+  } else {
+    if (f.powerFrom != null) p.powerFrom = f.powerFrom;
+    if (f.powerTo != null) p.powerTo = f.powerTo;
   }
   if (f.metallic) p.metallic = true;
   if (f.inspectionPassed) p.inspectionPassed = true;
@@ -180,47 +209,101 @@ export function activeFilterCount(f: Filters): number {
 
 // ─── Option helpers ────────────────────────────────────────────────────────────
 
-type Opt = { value: string; label: string };
+type Opt = { value: string; label: string; swatch?: string; swatchBorder?: boolean };
+type OptRow = Opt & { count?: number };
 
-function facetOpts(
-  record: Record<string, number> | undefined,
-  labelFn: (v: string) => string,
-  max = 40,
-): Opt[] {
-  if (!record) return [];
-  return Object.entries(record)
-    .filter(([, c]) => c > 0)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, max)
-    .map(([value]) => ({ value, label: labelFn(value) }));
-}
-
-function enumOpts(arr: readonly { value: string }[], labelFn: (v: string) => string): Opt[] {
-  return arr.map((e) => ({ value: e.value, label: labelFn(e.value) }));
-}
-
-const EXTRAS_OPTS: Opt[] = (() => {
+function dedupe(opts: Opt[]): Opt[] {
   const seen = new Set<string>();
   const out: Opt[] = [];
-  for (const e of [...carExtrasEnum, ...utilityExtrasEnum, ...truckExtrasEnum, ...camperExtrasEnum]) {
-    if (!seen.has(e.value)) {
-      seen.add(e.value);
-      out.push({ value: e.value, label: labelExtra(e.value) });
+  for (const o of opts) {
+    if (seen.has(o.value)) continue;
+    seen.add(o.value);
+    out.push(o);
+  }
+  return out;
+}
+
+// Type-specific enum lists (union of all types when vehicleType is "Alle"/null),
+// matching the web advanced search which scopes body/fuel/extras by type.
+function bodyOpts(vt: string | null): Opt[] {
+  const arr =
+    vt === "UTILITY" ? utilityBodyTypeEnum
+    : vt === "TRUCK" ? truckBodyTypeEnum
+    : vt === "CAMPER" ? camperBodyTypeEnum
+    : vt === "CAR" ? carBodyTypeEnum
+    : [...carBodyTypeEnum, ...utilityBodyTypeEnum, ...truckBodyTypeEnum, ...camperBodyTypeEnum];
+  return dedupe(arr.map((b) => ({ value: b.value, label: labelType(b.value) })));
+}
+function fuelOpts(vt: string | null): Opt[] {
+  const arr =
+    vt === "UTILITY" ? utilityFuelTypeEnum
+    : vt === "TRUCK" ? truckFuelTypeEnum
+    : vt === "CAMPER" ? camperFuelTypeEnum
+    : vt === "CAR" ? carFuelTypeEnum
+    : [...carFuelTypeEnum, ...utilityFuelTypeEnum, ...truckFuelTypeEnum, ...camperFuelTypeEnum];
+  return dedupe(arr.map((b) => ({ value: b.value, label: labelFuel(b.value) })));
+}
+function extrasOpts(vt: string | null): Opt[] {
+  const arr =
+    vt === "UTILITY" ? utilityExtrasEnum
+    : vt === "TRUCK" ? truckExtrasEnum
+    : vt === "CAMPER" ? camperExtrasEnum
+    : vt === "CAR" ? carExtrasEnum
+    : [...carExtrasEnum, ...utilityExtrasEnum, ...truckExtrasEnum, ...camperExtrasEnum];
+  return dedupe(arr.map((e) => ({ value: e.value, label: labelExtra(e.value) })));
+}
+
+// Attach a result count (0 when absent) to each option, mirroring web's per-option counts.
+function withCounts(opts: Opt[], record?: Record<string, number>): OptRow[] {
+  return opts.map((o) => ({ ...o, count: record?.[o.value] ?? 0 }));
+}
+
+const CONDITION_OPTS: Opt[] = VehicleConditionEnum.map((c) => ({ value: c.value, label: labelCondition(c.value) }));
+const TRANSMISSION_OPTS: Opt[] = TransmissionTypeEnum.map((t) => ({ value: t.value, label: labelTransmission(t.value) }));
+const DRIVE_OPTS: Opt[] = DriveTypeEnum.map((d) => ({ value: d.value, label: labelDrive(d.value) }));
+const COLOR_OPTS: Opt[] = ColorEnum.map((c) => ({
+  value: c.value,
+  label: labelColor(c.value),
+  swatch: ("gradient" in c ? c.gradient : c.hex) as string,
+  swatchBorder: "border" in c ? Boolean(c.border) : false,
+}));
+const ENERGY_OPTS: Opt[] = EnergyLabelEnum.map((e) => ({ value: e.value, label: labelEnergy(e.value) }));
+const EMISSION_OPTS: Opt[] = EmissionStandardEnum.map((e) => ({ value: e.value, label: labelEmission(e.value) }));
+const EQUIPMENT_OPTS: Opt[] = EquipmentEnum.map((e) => ({ value: e.value, label: labelEquipment(e.value) }));
+const BATTERY_OPTS: Opt[] = BatteryOwnershipEnum.map((e) => ({ value: e.value, label: labelBatteryOwnership(e.value) }));
+const CHARGE_AC_OPTS: Opt[] = ChargingPlugTypeStandardEnum.map((e) => ({ value: e.value, label: labelChargingAC(e.value) }));
+const CHARGE_DC_OPTS: Opt[] = ChargingPlugTypeFastEnum.map((e) => ({ value: e.value, label: labelChargingDC(e.value) }));
+const SELLER_OPTS: Opt[] = [
+  { value: "DEALER", label: "Händler" },
+  { value: "SELLER", label: "Privat" },
+];
+
+// Full make catalog (grouped Top-Marken / Alle Marken, deduped) — same source the
+// web make dialog uses (carMakes) regardless of vehicle type.
+type MakeRow = { value: string; label: string; group: string };
+const MAKE_CATALOG: MakeRow[] = (() => {
+  const seen = new Set<string>();
+  const out: MakeRow[] = [];
+  for (const g of carMakes as unknown as { label: string; items: readonly { value: string; label: string }[] }[]) {
+    for (const i of g.items) {
+      if (seen.has(i.value)) continue;
+      seen.add(i.value);
+      out.push({ value: i.value, label: i.label, group: g.label });
     }
   }
   return out;
 })();
-
-const EQUIPMENT_OPTS: Opt[] = enumOpts(EquipmentEnum, labelEquipment);
-const BATTERY_OPTS: Opt[] = enumOpts(BatteryOwnershipEnum, labelBatteryOwnership);
-const CHARGE_AC_OPTS: Opt[] = enumOpts(ChargingPlugTypeStandardEnum, labelChargingAC);
-const CHARGE_DC_OPTS: Opt[] = enumOpts(ChargingPlugTypeFastEnum, labelChargingDC);
 
 const VEHICLE_TYPES: Opt[] = [
   { value: "CAR", label: "Autos" },
   { value: "CAMPER", label: "Wohnmobile" },
   { value: "UTILITY", label: "Nutzfahrzeuge" },
   { value: "TRUCK", label: "Lastwagen" },
+];
+
+const POWER_UNITS: { value: "ps" | "kw"; label: string }[] = [
+  { value: "ps", label: "PS" },
+  { value: "kw", label: "kW" },
 ];
 
 const DAYS_OPTS: { value: number; label: string }[] = [
@@ -249,6 +332,7 @@ export function AdvancedFilter({
   const C = useTheme();
   const [draft, setDraft] = useState<Filters>(filters);
   const [count, setCount] = useState<number | null>(null);
+  const [makeSheet, setMakeSheet] = useState(false);
   const reqId = useRef(0);
 
   useEffect(() => {
@@ -289,10 +373,25 @@ export function AdvancedFilter({
     setDraft((d) => ({ ...d, [key]: value }));
   }, []);
 
+  // Switching the vehicle type resets all filters to avoid contradictory
+  // cross-type selections (mirrors the web advanced search form.reset).
+  const setVehicleType = useCallback((vt: string | null) => {
+    setDraft((d) => ({ ...EMPTY_FILTERS, q: d.q, sort: d.sort, dealerId: d.dealerId, vehicleType: vt }));
+  }, []);
+
+  // Switching PS/kW resets the power inputs (the numeric scale differs).
+  const setPowerUnit = useCallback((unit: "ps" | "kw") => {
+    setDraft((d) => ({ ...d, powerUnit: unit, powerFrom: undefined, powerTo: undefined }));
+  }, []);
+
+  const setMakes = useCallback((includes: string[], excludes: string[]) => {
+    setDraft((d) => ({ ...d, make: includes, excludeMake: excludes }));
+  }, []);
+
   const reset = () =>
     setDraft((d) => ({ ...EMPTY_FILTERS, q: d.q, sort: d.sort, dealerId: d.dealerId }));
 
-  const isEv = draft.vehicleType === null || draft.fuel.length === 0 || draft.fuel.includes("ELECTRIC");
+  const vt = draft.vehicleType;
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose} presentationStyle="pageSheet">
@@ -314,125 +413,154 @@ export function AdvancedFilter({
         <ScrollView style={styles.scroll} contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
           <Section title="Fahrzeugtyp" defaultOpen>
             <ChipRow>
-              <Chip label="Alle" selected={draft.vehicleType === null} onPress={() => setDraft((d) => ({ ...d, vehicleType: null }))} />
+              <Chip label="Alle" selected={vt === null} onPress={() => setVehicleType(null)} />
               {VEHICLE_TYPES.map((t) => (
-                <Chip key={t.value} label={t.label} selected={draft.vehicleType === t.value} onPress={() => setDraft((d) => ({ ...d, vehicleType: t.value }))} />
+                <Chip key={t.value} label={t.label} selected={vt === t.value} onPress={() => setVehicleType(t.value)} />
               ))}
             </ChipRow>
           </Section>
 
-          <Section title="Marke" defaultOpen count={draft.make.length}>
-            <ChipGroup options={facetOpts(facets?.make, labelMake)} selected={draft.make} onToggle={(v) => toggleArr("make", v)} />
+          <Section title="Marke" defaultOpen count={draft.make.length + draft.excludeMake.length}>
+            <Pressable
+              style={[styles.makeBtn, { borderColor: C.border, backgroundColor: C.secondary }]}
+              onPress={() => setMakeSheet(true)}
+            >
+              <Icon name="plus.circle" size={18} color={C.foreground} />
+              <Text style={[styles.makeBtnText, { color: C.foreground }]}>Marken wählen</Text>
+            </Pressable>
+            {draft.make.length > 0 && (
+              <>
+                <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[3] }]}>Einschliessen</Text>
+                <View style={styles.chipWrap}>
+                  {draft.make.map((m) => (
+                    <Chip key={m} label={labelMake(m)} selected onPress={() => toggleArr("make", m)} />
+                  ))}
+                </View>
+              </>
+            )}
+            {draft.excludeMake.length > 0 && (
+              <>
+                <Text style={[styles.subLabel, { color: C.destructive, marginTop: Spacing[3] }]}>Ausschliessen</Text>
+                <View style={styles.chipWrap}>
+                  {draft.excludeMake.map((m) => (
+                    <Pressable
+                      key={m}
+                      style={[styles.excludeChip, { backgroundColor: C.destructive }]}
+                      onPress={() => toggleArr("excludeMake", m)}
+                    >
+                      <Text style={[styles.excludeChipText, { color: C.primaryForeground }]}>{labelMake(m)}</Text>
+                      <Icon name="xmark" size={11} color={C.primaryForeground} />
+                    </Pressable>
+                  ))}
+                </View>
+              </>
+            )}
           </Section>
 
-          <Section title="Preis (CHF)" defaultOpen count={draft.priceFrom != null || draft.priceTo != null ? 1 : 0}>
-            <RangeRow from={draft.priceFrom} to={draft.priceTo} onFrom={(t) => setNum("priceFrom", t)} onTo={(t) => setNum("priceTo", t)} />
-          </Section>
-
-          <Section title="Erstzulassung (Jahr)" defaultOpen count={draft.registrationFrom != null || draft.registrationTo != null ? 1 : 0}>
+          {/* Basic / Eckdaten — year, km, price, condition, inspection & warranty, seller, body type */}
+          <Section title="Eckdaten" defaultOpen count={
+            (draft.registrationFrom != null || draft.registrationTo != null ? 1 : 0) +
+            (draft.kilometerFrom != null || draft.kilometerTo != null ? 1 : 0) +
+            (draft.priceFrom != null || draft.priceTo != null ? 1 : 0) +
+            draft.condition.length + (draft.inspectionPassed ? 1 : 0) + (draft.hasWarranty ? 1 : 0) +
+            draft.sellerType.length + draft.bodyType.length
+          }>
+            <SubLabel>Erstzulassung (Jahr)</SubLabel>
             <RangeRow from={draft.registrationFrom} to={draft.registrationTo} onFrom={(t) => setNum("registrationFrom", t)} onTo={(t) => setNum("registrationTo", t)} fromPlaceholder="ab Jahr" toPlaceholder="bis Jahr" />
-          </Section>
-
-          <Section title="Kilometer" defaultOpen count={draft.kilometerFrom != null || draft.kilometerTo != null ? 1 : 0}>
+            <SubLabel top>Kilometer</SubLabel>
             <RangeRow from={draft.kilometerFrom} to={draft.kilometerTo} onFrom={(t) => setNum("kilometerFrom", t)} onTo={(t) => setNum("kilometerTo", t)} />
+            <SubLabel top>Preis (CHF)</SubLabel>
+            <RangeRow from={draft.priceFrom} to={draft.priceTo} onFrom={(t) => setNum("priceFrom", t)} onTo={(t) => setNum("priceTo", t)} />
+            <SubLabel top>Zustand</SubLabel>
+            <OptionRows options={withCounts(CONDITION_OPTS, facets?.vehicleCondition)} selected={draft.condition} onToggle={(v) => toggleArr("condition", v)} />
+            <SubLabel top>Prüfung &amp; Garantie</SubLabel>
+            <ToggleRow label="MFK geprüft" value={draft.inspectionPassed} onChange={(v) => setBool("inspectionPassed", v)} />
+            <ToggleRow label="Mit Garantie" value={draft.hasWarranty} onChange={(v) => setBool("hasWarranty", v)} />
+            <SubLabel top>Anbieter</SubLabel>
+            <OptionRows options={withCounts(SELLER_OPTS, facets?.sellerType)} selected={draft.sellerType} onToggle={(v) => toggleArr("sellerType", v)} />
+            <SubLabel top>Aufbau</SubLabel>
+            <OptionRows options={withCounts(bodyOpts(vt), facets?.bodyType)} selected={draft.bodyType} onToggle={(v) => toggleArr("bodyType", v)} />
           </Section>
 
-          <Section title="Aufbau" count={draft.bodyType.length}>
-            <ChipGroup options={facetOpts(facets?.bodyType, labelType)} selected={draft.bodyType} onToggle={(v) => toggleArr("bodyType", v)} />
-          </Section>
-
-          <Section title="Treibstoff" count={draft.fuel.length}>
-            <ChipGroup options={facetOpts(facets?.fuelType, labelFuel)} selected={draft.fuel} onToggle={(v) => toggleArr("fuel", v)} />
-          </Section>
-
-          <Section title="Getriebe" count={draft.transmission.length}>
-            <ChipGroup options={facetOpts(facets?.transmissionType, labelTransmission)} selected={draft.transmission} onToggle={(v) => toggleArr("transmission", v)} />
-          </Section>
-
-          <Section title="Antrieb" count={draft.driveType.length}>
-            <ChipGroup options={facetOpts(facets?.driveType, labelDrive)} selected={draft.driveType} onToggle={(v) => toggleArr("driveType", v)} />
-          </Section>
-
-          <Section title="Zustand" count={draft.condition.length}>
-            <ChipGroup options={facetOpts(facets?.vehicleCondition, labelCondition)} selected={draft.condition} onToggle={(v) => toggleArr("condition", v)} />
-          </Section>
-
-          <Section title="Anbieter" count={draft.sellerType.length}>
-            <ChipRow>
-              <Chip label="Händler" selected={draft.sellerType.includes("DEALER")} onPress={() => toggleArr("sellerType", "DEALER")} />
-              <Chip label="Privat" selected={draft.sellerType.includes("SELLER")} onPress={() => toggleArr("sellerType", "SELLER")} />
-            </ChipRow>
-          </Section>
-
-          <Section title="Leistung (PS)" count={draft.powerFrom != null || draft.powerTo != null ? 1 : 0}>
-            <RangeRow from={draft.powerFrom} to={draft.powerTo} onFrom={(t) => setNum("powerFrom", t)} onTo={(t) => setNum("powerTo", t)} />
-          </Section>
-
-          <Section title="Türen & Sitze" count={(draft.doorsFrom != null || draft.doorsTo != null ? 1 : 0) + (draft.seatsFrom != null || draft.seatsTo != null ? 1 : 0)}>
-            <Text style={[styles.subLabel, { color: C.mutedForeground }]}>Türen</Text>
+          {/* Technical — fuel, transmission, drive, doors, seats, power (PS/kW), displacement, cylinders */}
+          <Section title="Technische Daten" count={
+            draft.fuel.length + draft.transmission.length + draft.driveType.length +
+            (draft.doorsFrom != null || draft.doorsTo != null ? 1 : 0) +
+            (draft.seatsFrom != null || draft.seatsTo != null ? 1 : 0) +
+            (draft.powerFrom != null || draft.powerTo != null ? 1 : 0) +
+            (draft.cubicCapacityFrom != null || draft.cubicCapacityTo != null ? 1 : 0) +
+            (draft.cylindersFrom != null || draft.cylindersTo != null ? 1 : 0)
+          }>
+            <SubLabel>Treibstoff</SubLabel>
+            <OptionRows options={withCounts(fuelOpts(vt), facets?.fuelType)} selected={draft.fuel} onToggle={(v) => toggleArr("fuel", v)} />
+            <SubLabel top>Getriebe</SubLabel>
+            <OptionRows options={withCounts(TRANSMISSION_OPTS, facets?.transmissionType)} selected={draft.transmission} onToggle={(v) => toggleArr("transmission", v)} />
+            <SubLabel top>Antrieb</SubLabel>
+            <OptionRows options={withCounts(DRIVE_OPTS, facets?.driveType)} selected={draft.driveType} onToggle={(v) => toggleArr("driveType", v)} />
+            <SubLabel top>Türen</SubLabel>
             <RangeRow from={draft.doorsFrom} to={draft.doorsTo} onFrom={(t) => setNum("doorsFrom", t)} onTo={(t) => setNum("doorsTo", t)} />
-            <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[3] }]}>Sitze</Text>
+            <SubLabel top>Sitze</SubLabel>
             <RangeRow from={draft.seatsFrom} to={draft.seatsTo} onFrom={(t) => setNum("seatsFrom", t)} onTo={(t) => setNum("seatsTo", t)} />
-          </Section>
-
-          <Section title="Motor" count={(draft.cubicCapacityFrom != null || draft.cubicCapacityTo != null ? 1 : 0) + (draft.cylindersFrom != null || draft.cylindersTo != null ? 1 : 0)}>
-            <Text style={[styles.subLabel, { color: C.mutedForeground }]}>Hubraum (cm³)</Text>
+            <SubLabel top>Leistung</SubLabel>
+            <Segmented value={draft.powerUnit} options={POWER_UNITS} onChange={(u) => setPowerUnit(u as "ps" | "kw")} />
+            <View style={{ marginTop: Spacing[3] }}>
+              <RangeRow from={draft.powerFrom} to={draft.powerTo} onFrom={(t) => setNum("powerFrom", t)} onTo={(t) => setNum("powerTo", t)} />
+            </View>
+            <SubLabel top>Hubraum (cm³)</SubLabel>
             <RangeRow from={draft.cubicCapacityFrom} to={draft.cubicCapacityTo} onFrom={(t) => setNum("cubicCapacityFrom", t)} onTo={(t) => setNum("cubicCapacityTo", t)} />
-            <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[3] }]}>Zylinder</Text>
+            <SubLabel top>Zylinder</SubLabel>
             <RangeRow from={draft.cylindersFrom} to={draft.cylindersTo} onFrom={(t) => setNum("cylindersFrom", t)} onTo={(t) => setNum("cylindersTo", t)} />
           </Section>
 
-          <Section title="Farbe" count={draft.color.length + draft.interiorColor.length}>
-            <Text style={[styles.subLabel, { color: C.mutedForeground }]}>Aussenfarbe</Text>
-            <ChipGroup options={facetOpts(facets?.color, labelColor)} selected={draft.color} onToggle={(v) => toggleArr("color", v)} />
-            <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[3] }]}>Innenfarbe</Text>
-            <ChipGroup options={facetOpts(facets?.interiorColor, labelColor)} selected={draft.interiorColor} onToggle={(v) => toggleArr("interiorColor", v)} />
-            <ToggleRow label="Metallic-Lackierung" value={draft.metallic} onChange={(v) => setBool("metallic", v)} />
+          {/* Equipment */}
+          <Section title="Ausstattung" count={draft.equipment.length}>
+            <OptionRows options={EQUIPMENT_OPTS} selected={draft.equipment} onToggle={(v) => toggleArr("equipment", v)} />
           </Section>
 
-          <Section title="Verbrauch & Umwelt" count={
+          {/* Extras */}
+          <Section title="Besonderheiten" count={draft.extras.length}>
+            <OptionRows options={extrasOpts(vt)} selected={draft.extras} onToggle={(v) => toggleArr("extras", v)} />
+          </Section>
+
+          {/* Appearance — exterior color, metallic, interior color */}
+          <Section title="Aussehen" count={draft.color.length + (draft.metallic ? 1 : 0) + draft.interiorColor.length}>
+            <SubLabel>Aussenfarbe</SubLabel>
+            <OptionRows options={withCounts(COLOR_OPTS, facets?.color)} selected={draft.color} onToggle={(v) => toggleArr("color", v)} />
+            <ToggleRow label="Metallic-Lackierung" value={draft.metallic} onChange={(v) => setBool("metallic", v)} />
+            <SubLabel top>Innenfarbe</SubLabel>
+            <OptionRows options={withCounts(COLOR_OPTS, facets?.interiorColor)} selected={draft.interiorColor} onToggle={(v) => toggleArr("interiorColor", v)} />
+          </Section>
+
+          {/* Energy — consumption, CO2, EV range, energy label, battery, charging AC/DC, euro norm */}
+          <Section title="Energie & Umwelt" count={
             (draft.consumptionFrom != null || draft.consumptionTo != null ? 1 : 0) +
             (draft.co2From != null || draft.co2To != null ? 1 : 0) +
-            draft.energyLabels.length + draft.emissionStandards.length
+            (draft.rangeFrom != null || draft.rangeTo != null ? 1 : 0) +
+            draft.energyLabels.length + draft.batteryOwnership.length +
+            draft.chargingPlugTypeStandard.length + draft.chargingPlugTypeFast.length +
+            draft.emissionStandards.length
           }>
-            <Text style={[styles.subLabel, { color: C.mutedForeground }]}>Verbrauch (l/100 km)</Text>
+            <SubLabel>Verbrauch (l/100 km)</SubLabel>
             <RangeRow from={draft.consumptionFrom} to={draft.consumptionTo} onFrom={(t) => setNum("consumptionFrom", t)} onTo={(t) => setNum("consumptionTo", t)} />
-            <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[3] }]}>CO₂ (g/km)</Text>
+            <SubLabel top>CO₂ (g/km)</SubLabel>
             <RangeRow from={draft.co2From} to={draft.co2To} onFrom={(t) => setNum("co2From", t)} onTo={(t) => setNum("co2To", t)} />
-            <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[3] }]}>Energieeffizienz</Text>
-            <ChipGroup options={facetOpts(facets?.energyLabel, labelEnergy)} selected={draft.energyLabels} onToggle={(v) => toggleArr("energyLabels", v)} />
-            <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[3] }]}>Abgasnorm</Text>
-            <ChipGroup options={facetOpts(facets?.emissionStandard, labelEmission)} selected={draft.emissionStandards} onToggle={(v) => toggleArr("emissionStandards", v)} />
+            <SubLabel top>Reichweite (km)</SubLabel>
+            <RangeRow from={draft.rangeFrom} to={draft.rangeTo} onFrom={(t) => setNum("rangeFrom", t)} onTo={(t) => setNum("rangeTo", t)} />
+            <SubLabel top>Energieeffizienz</SubLabel>
+            <OptionRows options={withCounts(ENERGY_OPTS, facets?.energyLabel)} selected={draft.energyLabels} onToggle={(v) => toggleArr("energyLabels", v)} />
+            <SubLabel top>Batterie</SubLabel>
+            <OptionRows options={BATTERY_OPTS} selected={draft.batteryOwnership} onToggle={(v) => toggleArr("batteryOwnership", v)} />
+            <SubLabel top>Ladeanschluss AC</SubLabel>
+            <OptionRows options={CHARGE_AC_OPTS} selected={draft.chargingPlugTypeStandard} onToggle={(v) => toggleArr("chargingPlugTypeStandard", v)} />
+            <SubLabel top>Ladeanschluss DC</SubLabel>
+            <OptionRows options={CHARGE_DC_OPTS} selected={draft.chargingPlugTypeFast} onToggle={(v) => toggleArr("chargingPlugTypeFast", v)} />
+            <SubLabel top>Abgasnorm</SubLabel>
+            <OptionRows options={withCounts(EMISSION_OPTS, facets?.emissionStandard)} selected={draft.emissionStandards} onToggle={(v) => toggleArr("emissionStandards", v)} />
           </Section>
 
-          {isEv && (
-            <Section title="Elektro & Laden" count={
-              (draft.rangeFrom != null || draft.rangeTo != null ? 1 : 0) +
-              draft.batteryOwnership.length + draft.chargingPlugTypeStandard.length + draft.chargingPlugTypeFast.length
-            }>
-              <Text style={[styles.subLabel, { color: C.mutedForeground }]}>Reichweite (km)</Text>
-              <RangeRow from={draft.rangeFrom} to={draft.rangeTo} onFrom={(t) => setNum("rangeFrom", t)} onTo={(t) => setNum("rangeTo", t)} />
-              <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[3] }]}>Batterie</Text>
-              <ChipGroup options={BATTERY_OPTS} selected={draft.batteryOwnership} onToggle={(v) => toggleArr("batteryOwnership", v)} />
-              <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[3] }]}>Ladeanschluss AC</Text>
-              <ChipGroup options={CHARGE_AC_OPTS} selected={draft.chargingPlugTypeStandard} onToggle={(v) => toggleArr("chargingPlugTypeStandard", v)} />
-              <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[3] }]}>Ladeanschluss DC</Text>
-              <ChipGroup options={CHARGE_DC_OPTS} selected={draft.chargingPlugTypeFast} onToggle={(v) => toggleArr("chargingPlugTypeFast", v)} />
-            </Section>
-          )}
-
-          <Section title="Ausstattung" count={draft.equipment.length}>
-            <ChipGroup options={EQUIPMENT_OPTS} selected={draft.equipment} onToggle={(v) => toggleArr("equipment", v)} />
-          </Section>
-
-          <Section title="Besonderheiten" count={draft.extras.length}>
-            <ChipGroup options={EXTRAS_OPTS} selected={draft.extras} onToggle={(v) => toggleArr("extras", v)} />
-          </Section>
-
-          <Section title="Weitere Filter" count={(draft.inspectionPassed ? 1 : 0) + (draft.hasWarranty ? 1 : 0) + (draft.daysListed != null ? 1 : 0)}>
-            <ToggleRow label="MFK geprüft" value={draft.inspectionPassed} onChange={(v) => setBool("inspectionPassed", v)} />
-            <ToggleRow label="Mit Garantie" value={draft.hasWarranty} onChange={(v) => setBool("hasWarranty", v)} />
-            <Text style={[styles.subLabel, { color: C.mutedForeground, marginTop: Spacing[2] }]}>Inseratsalter</Text>
+          {/* More */}
+          <Section title="Weitere Filter" count={draft.daysListed != null ? 1 : 0}>
+            <SubLabel>Inseratsalter</SubLabel>
             <ChipRow>
               <Chip label="Beliebig" selected={draft.daysListed == null} onPress={() => setDraft((d) => ({ ...d, daysListed: undefined }))} />
               {DAYS_OPTS.map((o) => (
@@ -447,6 +575,144 @@ export function AdvancedFilter({
             <Text style={[styles.applyText, { color: C.primaryForeground }]}>
               {count != null ? `${count.toLocaleString("de-CH")} Fahrzeuge anzeigen` : "Ergebnisse anzeigen"}
             </Text>
+          </Pressable>
+        </SafeAreaView>
+      </View>
+
+      <MakeSheet
+        key={makeSheet ? "make-open" : "make-closed"}
+        visible={makeSheet}
+        includes={draft.make}
+        excludes={draft.excludeMake}
+        onClose={() => setMakeSheet(false)}
+        onChange={setMakes}
+      />
+    </Modal>
+  );
+}
+
+// ─── Make sheet (searchable, grouped, include + exclude) ─────────────────────────
+
+function MakeSheet({
+  visible,
+  includes,
+  excludes,
+  onClose,
+  onChange,
+}: {
+  visible: boolean;
+  includes: string[];
+  excludes: string[];
+  onClose: () => void;
+  onChange: (includes: string[], excludes: string[]) => void;
+}) {
+  const C = useTheme();
+  // Remounted via `key` whenever opened (see parent), so these defaults reset.
+  const [mode, setMode] = useState<"include" | "exclude">("include");
+  const [query, setQuery] = useState("");
+
+  const rows = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const filtered = q ? MAKE_CATALOG.filter((m) => m.label.toLowerCase().includes(q)) : MAKE_CATALOG;
+    const out: ({ kind: "header"; key: string; label: string } | { kind: "item"; key: string; row: MakeRow })[] = [];
+    let last: string | undefined;
+    for (const m of filtered) {
+      if (m.group !== last) {
+        out.push({ kind: "header", key: `__h:${m.group}`, label: m.group });
+        last = m.group;
+      }
+      out.push({ kind: "item", key: m.value, row: m });
+    }
+    return out;
+  }, [query]);
+
+  const toggle = (value: string) => {
+    if (mode === "include") {
+      const next = includes.includes(value) ? includes.filter((x) => x !== value) : [...includes, value];
+      // A make cannot be both included and excluded.
+      onChange(next, excludes.filter((x) => x !== value));
+    } else {
+      const next = excludes.includes(value) ? excludes.filter((x) => x !== value) : [...excludes, value];
+      onChange(includes.filter((x) => x !== value), next);
+    }
+  };
+
+  return (
+    <Modal visible={visible} animationType="slide" onRequestClose={onClose} presentationStyle="pageSheet">
+      <View style={[styles.root, { backgroundColor: C.background }]}>
+        <SafeAreaView edges={["top"]} style={[styles.header, { borderBottomColor: C.border }]}>
+          <View style={styles.headerRow}>
+            <Pressable onPress={onClose} hitSlop={10}>
+              <Icon name="xmark" size={20} color={C.foreground} />
+            </Pressable>
+            <Text style={[styles.headerTitle, { color: C.foreground }]} pointerEvents="none">
+              Marke
+            </Text>
+            <Pressable onPress={() => onChange([], [])} hitSlop={10}>
+              <Text style={[styles.reset, { color: C.primary }]}>Zurücksetzen</Text>
+            </Pressable>
+          </View>
+        </SafeAreaView>
+
+        <View style={styles.makeSheetTop}>
+          <Segmented
+            value={mode}
+            options={[
+              { value: "include", label: "Einschliessen" },
+              { value: "exclude", label: "Ausschliessen" },
+            ]}
+            onChange={(m) => setMode(m as "include" | "exclude")}
+          />
+          <View style={[styles.searchBar, { backgroundColor: C.secondary }]}>
+            <Icon name="magnifyingglass" size={16} color={C.mutedForeground} />
+            <TextInput
+              style={[styles.searchInput, { color: C.foreground }]}
+              placeholder="Marke suchen"
+              placeholderTextColor={C.mutedForeground}
+              value={query}
+              onChangeText={setQuery}
+              autoCorrect={false}
+            />
+          </View>
+        </View>
+
+        <FlatList
+          data={rows}
+          keyExtractor={(r) => r.key}
+          keyboardShouldPersistTaps="handled"
+          renderItem={({ item }) => {
+            if (item.kind === "header") {
+              return (
+                <View style={[styles.makeGroupHeader, { backgroundColor: C.secondary }]}>
+                  <Text style={[styles.makeGroupText, { color: C.mutedForeground }]}>{item.label}</Text>
+                </View>
+              );
+            }
+            const inc = includes.includes(item.row.value);
+            const exc = excludes.includes(item.row.value);
+            const on = mode === "include" ? inc : exc;
+            const tint = exc ? C.destructive : C.primary;
+            return (
+              <Pressable style={[styles.makeRow, { borderBottomColor: C.border }]} onPress={() => toggle(item.row.value)}>
+                <View
+                  style={[
+                    styles.checkbox,
+                    { borderColor: on ? tint : C.border, backgroundColor: on ? tint : "transparent" },
+                  ]}
+                >
+                  {on && <Icon name={exc ? "xmark" : "checkmark"} size={12} color={C.primaryForeground} />}
+                </View>
+                <Text style={[styles.makeRowText, { color: C.foreground }]}>{item.row.label}</Text>
+                {inc && mode === "exclude" && <Text style={[styles.makeHint, { color: C.mutedForeground }]}>eingeschlossen</Text>}
+                {exc && mode === "include" && <Text style={[styles.makeHint, { color: C.destructive }]}>ausgeschlossen</Text>}
+              </Pressable>
+            );
+          }}
+        />
+
+        <SafeAreaView edges={["bottom"]} style={[styles.footer, { borderTopColor: C.border }]}>
+          <Pressable style={[styles.applyBtn, { backgroundColor: C.primary }]} onPress={onClose}>
+            <Text style={[styles.applyText, { color: C.primaryForeground }]}>Fertig</Text>
           </Pressable>
         </SafeAreaView>
       </View>
@@ -487,12 +753,14 @@ function Section({
   );
 }
 
-function ChipGroup({
+// Vertical option list with selection checkbox and optional result count — the
+// mobile equivalent of the web advanced search's checkbox + count rows.
+function OptionRows({
   options,
   selected,
   onToggle,
 }: {
-  options: Opt[];
+  options: OptRow[];
   selected: string[];
   onToggle: (v: string) => void;
 }) {
@@ -501,16 +769,83 @@ function ChipGroup({
     return <Text style={[styles.emptyOpt, { color: C.mutedForeground }]}>Keine Optionen verfügbar</Text>;
   }
   return (
-    <View style={styles.chipWrap}>
-      {options.map((o) => (
-        <Chip key={o.value} label={o.label} selected={selected.includes(o.value)} onPress={() => onToggle(o.value)} />
-      ))}
+    <View>
+      {options.map((o) => {
+        const on = selected.includes(o.value);
+        return (
+          <Pressable key={o.value} style={styles.optRow} onPress={() => onToggle(o.value)}>
+            <View style={styles.optLeft}>
+              <View
+                style={[
+                  styles.checkbox,
+                  { borderColor: on ? C.primary : C.border, backgroundColor: on ? C.primary : "transparent" },
+                ]}
+              >
+                {on && <Icon name="checkmark" size={12} color={C.primaryForeground} />}
+              </View>
+              {o.swatch != null && (
+                <View
+                  style={[
+                    styles.swatch,
+                    { backgroundColor: o.swatch, borderColor: o.swatchBorder ? C.border : "transparent" },
+                  ]}
+                />
+              )}
+              <Text style={[styles.optLabel, { color: C.foreground }]} numberOfLines={1}>
+                {o.label}
+              </Text>
+            </View>
+            {o.count != null && (
+              <Text style={[styles.optCount, { color: C.mutedForeground }]}>{o.count.toLocaleString("de-CH")}</Text>
+            )}
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+function Segmented({
+  value,
+  options,
+  onChange,
+}: {
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (v: string) => void;
+}) {
+  const C = useTheme();
+  return (
+    <View style={[styles.segment, { backgroundColor: C.secondary, borderColor: C.border }]}>
+      {options.map((o) => {
+        const on = value === o.value;
+        return (
+          <Pressable
+            key={o.value}
+            style={[styles.segmentBtn, on && { backgroundColor: C.primary }]}
+            onPress={() => onChange(o.value)}
+          >
+            <Text style={[styles.segmentText, { color: on ? C.primaryForeground : C.foreground }]}>{o.label}</Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }
 
 function ChipRow({ children }: { children: React.ReactNode }) {
   return <View style={styles.chipWrap}>{children}</View>;
+}
+
+// Sub-field label within a section. `top` adds spacing above when it follows
+// another sub-field (the first label in a section omits it).
+function SubLabel({ children, top = false }: { children: React.ReactNode; top?: boolean }) {
+  const C = useTheme();
+  return (
+    <Text style={[styles.subLabel, { color: C.mutedForeground }, top && { marginTop: Spacing[4] }]}>
+      {children}
+    </Text>
+  );
 }
 
 function RangeRow({
@@ -597,6 +932,70 @@ const styles = StyleSheet.create({
   chipWrap: { flexDirection: "row", flexWrap: "wrap", gap: Spacing[2] },
   subLabel: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm, marginBottom: Spacing[2] },
   emptyOpt: { fontFamily: FontFamily.sans, fontSize: FontSize.sm },
+
+  // Option rows (checkbox + label + count)
+  optRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: Spacing[2] },
+  optLeft: { flexDirection: "row", alignItems: "center", gap: Spacing[3], flex: 1 },
+  optLabel: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.base, flexShrink: 1 },
+  optCount: { fontFamily: FontFamily.sans, fontSize: FontSize.sm, marginLeft: Spacing[2] },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: Radius.sm,
+    borderWidth: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  swatch: { width: 16, height: 16, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth },
+
+  // Segmented control
+  segment: { flexDirection: "row", borderRadius: Radius.md, borderWidth: StyleSheet.hairlineWidth, padding: 3, gap: 3 },
+  segmentBtn: { flex: 1, height: 38, borderRadius: Radius.sm, alignItems: "center", justifyContent: "center" },
+  segmentText: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.sm },
+
+  // Make trigger + sheet
+  makeBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing[2],
+    height: 48,
+    borderRadius: Radius.md,
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    paddingHorizontal: Spacing[4],
+  },
+  makeBtnText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.base },
+  excludeChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing[1],
+    paddingHorizontal: Spacing[3],
+    height: 34,
+    borderRadius: Radius.full,
+  },
+  excludeChipText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm },
+  makeSheetTop: { paddingHorizontal: Spacing[5], paddingTop: Spacing[3], gap: Spacing[3] },
+  searchBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing[2],
+    height: 46,
+    borderRadius: Radius.md,
+    paddingHorizontal: Spacing[3],
+  },
+  searchInput: { flex: 1, fontFamily: FontFamily.sans, fontSize: FontSize.base, height: 46 },
+  makeGroupHeader: { paddingHorizontal: Spacing[5], paddingVertical: Spacing[2], marginTop: Spacing[2] },
+  makeGroupText: { fontFamily: FontFamily.sansBold, fontSize: FontSize.xs, textTransform: "uppercase", letterSpacing: 0.5 },
+  makeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing[3],
+    paddingHorizontal: Spacing[5],
+    paddingVertical: Spacing[4],
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  makeRowText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.base, flex: 1 },
+  makeHint: { fontFamily: FontFamily.sans, fontSize: FontSize.xs },
+
   rangeRow: { flexDirection: "row", gap: Spacing[3] },
   numInput: {
     flex: 1,
