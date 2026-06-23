@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router, useLocalSearchParams } from "expo-router";
+import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { useFavorites } from "@/lib/favorites";
@@ -68,6 +68,9 @@ export default function VehicleDetailScreen() {
   const styles = useMemo(() => createStyles(C), [C]);
   const { id } = useLocalSearchParams<{ id: string }>();
   const { isFavorite, toggle } = useFavorites();
+
+  // Dark image gallery header ⇒ light icons while focused.
+  useStatusBarStyle("light");
 
   const [vehicle, setVehicle] = useState<VehicleDetail | null>(null);
   const [similar, setSimilar] = useState<VehicleListItem[]>([]);
@@ -162,7 +165,6 @@ export default function VehicleDetailScreen() {
 
   return (
     <View style={styles.root}>
-      <StatusBar style="light" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
         {/* Gallery */}
         <View style={styles.gallery}>

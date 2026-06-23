@@ -9,8 +9,8 @@ import {
   RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
+import { useStatusBarStyle } from "@/hooks/use-status-bar-style";
 import { carMakes } from "@repo/vehicle-constants";
 import { FontFamily, FontSize, Radius, Shadow, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
@@ -55,6 +55,9 @@ export default function HomeScreen() {
   const tabBarHeight = useTabBarHeight();
   const { isFavorite, toggle } = useFavorites();
 
+  // Dark header ⇒ light icons while focused; restores dark for white screens.
+  useStatusBarStyle("light");
+
   const [featured, setFeatured] = useState<VehicleListItem[]>([]);
   const [recent, setRecent] = useState<VehicleListItem[]>([]);
   const [dealers, setDealers] = useState<DealerListItem[]>([]);
@@ -89,8 +92,6 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.root}>
-      {/* Dark header ⇒ light status bar icons; root resets to `auto` off-screen. */}
-      <StatusBar style="light" />
       <ScrollView
         contentContainerStyle={{ paddingBottom: tabBarHeight + Spacing[4] }}
         showsVerticalScrollIndicator={false}
