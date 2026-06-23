@@ -8,7 +8,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, Stack } from "expo-router";
@@ -26,6 +25,7 @@ import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
+import { Skeleton } from "@/components/ui/states";
 import { TextField } from "@/components/ui/text-field";
 import { SelectField, type SelectOption } from "./select-field";
 import { ImageGrid, type FormImage } from "./image-grid";
@@ -472,8 +472,16 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
 
   if (loading) {
     return (
-      <View style={[styles.root, styles.center]}>
-        <ActivityIndicator color={C.mutedForeground} />
+      <View style={styles.root}>
+        <Stack.Screen options={{ headerShown: true, title: isEdit ? "Inserat bearbeiten" : "Neues Inserat" }} />
+        <View style={{ paddingHorizontal: Spacing[5], paddingTop: Spacing[5], gap: Spacing[4] }}>
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <View key={i} style={{ gap: Spacing[2] }}>
+              <Skeleton width="35%" height={12} radius={6} />
+              <Skeleton width="100%" height={52} radius={Radius.md} />
+            </View>
+          ))}
+        </View>
       </View>
     );
   }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable, Alert, Switch, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable, Alert, Switch, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import { Image } from "expo-image";
 import { router, Stack } from "expo-router";
 import { swissCities } from "@repo/vehicle-constants";
@@ -12,6 +12,7 @@ import { validate, fieldError, isAcceptedImage } from "@/lib/validation";
 import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
+import { Skeleton } from "@/components/ui/states";
 import { SelectField, type SelectOption } from "@/components/form/select-field";
 import {
   fetchMe, isDealer,
@@ -256,8 +257,16 @@ export default function EditProfileScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.root, styles.center]}>
-        <ActivityIndicator color={C.mutedForeground} />
+      <View style={styles.root}>
+        <Stack.Screen options={{ headerShown: true, title: "Profil bearbeiten" }} />
+        <View style={{ paddingHorizontal: Spacing[5], paddingTop: Spacing[5], gap: Spacing[4] }}>
+          {[0, 1, 2, 3, 4].map((i) => (
+            <View key={i} style={{ gap: Spacing[2] }}>
+              <Skeleton width="35%" height={12} radius={6} />
+              <Skeleton width="100%" height={52} radius={Radius.md} />
+            </View>
+          ))}
+        </View>
       </View>
     );
   }

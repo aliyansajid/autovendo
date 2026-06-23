@@ -15,7 +15,7 @@ import {
   type DealerOpeningHour,
 } from "@/lib/api";
 import { Icon, type IconName } from "@/components/ui/icon";
-import { ErrorState } from "@/components/ui/states";
+import { ErrorState, Skeleton, VehicleCardSkeleton } from "@/components/ui/states";
 import { VehicleCard } from "@/components/ui/vehicle-card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { callPhone, openWhatsApp, sendEmail, openUrl, openMaps } from "@/lib/contact";
@@ -104,8 +104,24 @@ export default function DealerDetailScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.root, styles.center]}>
-        <ActivityIndicator color={C.mutedForeground} />
+      <View style={styles.root}>
+        <View style={styles.cover}>
+          <Skeleton width="100%" height={SCREEN_W * 0.42} radius={0} />
+          <FloatingBack />
+        </View>
+        <View style={styles.body}>
+          <View style={styles.identity}>
+            <Skeleton width={72} height={72} radius={Radius.lg} />
+            <View style={[styles.identityText, { gap: Spacing[2] }]}>
+              <Skeleton width="65%" height={18} radius={6} />
+              <Skeleton width="35%" height={12} radius={6} />
+            </View>
+          </View>
+          <View style={{ gap: Spacing[3], marginTop: Spacing[8] }}>
+            <VehicleCardSkeleton />
+            <VehicleCardSkeleton />
+          </View>
+        </View>
       </View>
     );
   }
