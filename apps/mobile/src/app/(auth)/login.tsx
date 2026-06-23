@@ -155,6 +155,5 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: Spacing[2],
   },
 });

@@ -180,7 +180,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
       fontSize: FontSize.xl,
       letterSpacing: -0.5,
       paddingHorizontal: Spacing[5],
-      paddingTop: Spacing[2],
       paddingBottom: Spacing[4],
     },
     userCard: {

@@ -89,5 +89,5 @@ const styles = StyleSheet.create({
   sentTitle: { fontFamily: FontFamily.sansBold, fontSize: FontSize.xl, letterSpacing: -0.4 },
   sentText: { fontFamily: FontFamily.sans, fontSize: FontSize.base, textAlign: "center", lineHeight: FontSize.base * 1.5, marginTop: Spacing[2], paddingHorizontal: Spacing[2] },
   backWrap: { position: "absolute", top: 0, left: Spacing[5] },
-  backBtn: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center", marginTop: Spacing[2] },
+  backBtn: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center" },
 });

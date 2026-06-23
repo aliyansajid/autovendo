@@ -508,7 +508,6 @@ const floating = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.45)",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: Spacing[2],
   },
 });
 
@@ -590,7 +589,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
       backgroundColor: "rgba(0,0,0,0.45)",
       alignItems: "center",
       justifyContent: "center",
-      marginTop: Spacing[2],
     },
     body: {
       paddingHorizontal: Spacing[5],

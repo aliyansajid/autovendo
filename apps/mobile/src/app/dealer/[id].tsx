@@ -262,7 +262,6 @@ const floating = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.45)",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: Spacing[2],
   },
 });
 

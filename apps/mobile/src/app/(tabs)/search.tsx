@@ -296,7 +296,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
       flexDirection: "row",
       gap: Spacing[2],
       paddingHorizontal: Spacing[5],
-      paddingTop: Spacing[2],
       paddingBottom: Spacing[3],
     },
     searchBar: {

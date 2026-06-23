@@ -246,7 +246,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingTop: Spacing[2],
       paddingBottom: Spacing[4],
     },
     locationLabel: { fontFamily: FontFamily.sans, fontSize: FontSize.xs, color: HEADER_MUTED },

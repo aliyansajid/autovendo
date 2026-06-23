@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: Spacing[5],
-    paddingTop: Spacing[2],
   },
   wordmark: {
     fontFamily: FontFamily.sansBold,

@@ -125,5 +125,5 @@ const styles = StyleSheet.create({
   footerText: { fontFamily: FontFamily.sans, fontSize: FontSize.sm },
   footerLink: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.sm },
   backWrap: { position: "absolute", top: 0, right: Spacing[5] },
-  backBtn: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center", marginTop: Spacing[2] },
+  backBtn: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center" },
 });
