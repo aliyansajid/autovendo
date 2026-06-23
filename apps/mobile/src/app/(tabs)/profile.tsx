@@ -61,7 +61,7 @@ export default function ProfileScreen() {
 
   const accountRows: Row[] = [
     {
-      icon: "heart.fill",
+      icon: "heart",
       label: "Meine Favoriten",
       value: ids.length > 0 ? String(ids.length) : undefined,
       onPress: () => router.push("/favorites"),
@@ -73,7 +73,7 @@ export default function ProfileScreen() {
 
   // Seller/dealer management — shown inline in the regular menu when signed in.
   const sellerRows: Row[] = [
-    { icon: "car.fill", label: "Meine Inserate", onPress: () => router.push(vehiclesRoute) },
+    { icon: "car", label: "Meine Inserate", onPress: () => router.push(vehiclesRoute) },
     { icon: "creditcard", label: dealer ? "Abo & Abrechnung" : "Abrechnung", onPress: () => router.push("/account/billing") },
     { icon: "person.text.rectangle", label: "Profil bearbeiten", onPress: () => router.push("/account/profile") },
     { icon: "lock", label: "Passwort ändern", onPress: () => router.push("/account/password") },

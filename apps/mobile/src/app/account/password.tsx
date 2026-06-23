@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable, Alert, KeyboardAvoidingView, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { View, Text, StyleSheet, ScrollView, Alert, KeyboardAvoidingView, Platform } from "react-native";
+import { router, Stack } from "expo-router";
 import { FontFamily, FontSize, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { authClient } from "@/lib/auth-client";
-import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
 
@@ -50,14 +48,7 @@ export default function ChangePasswordScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: C.background }]}>
-      <SafeAreaView edges={["top"]} style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={10} style={styles.back}>
-          <Icon name="chevron.left" size={22} color={C.foreground} />
-        </Pressable>
-        <Text style={[styles.title, { color: C.foreground }]}>Passwort ändern</Text>
-        <View style={styles.back} />
-      </SafeAreaView>
-
+      <Stack.Screen options={{ headerShown: true, title: "Passwort ändern" }} />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
           {error && <Text style={[styles.error, { color: C.destructive }]}>{error}</Text>}
@@ -73,16 +64,6 @@ export default function ChangePasswordScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: Spacing[4],
-    paddingTop: Spacing[2],
-    paddingBottom: Spacing[3],
-  },
-  back: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
-  title: { fontFamily: FontFamily.sansBold, fontSize: FontSize.lg, letterSpacing: -0.4 },
-  body: { paddingHorizontal: Spacing[5], paddingTop: Spacing[3], gap: Spacing[4] },
+  body: { paddingHorizontal: Spacing[5], paddingTop: Spacing[5], gap: Spacing[4] },
   error: { fontFamily: FontFamily.sans, fontSize: FontSize.sm },
 });

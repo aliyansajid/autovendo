@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Pressable,
   Switch,
   Alert,
   KeyboardAvoidingView,
@@ -12,7 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import {
   carMakes, utilityMakes, truckMakes, camperMakes,
   carModels, utilityModels, truckModels,
@@ -25,7 +24,6 @@ import {
 } from "@repo/vehicle-constants";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
-import { Icon } from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { TextField } from "@/components/ui/text-field";
@@ -506,17 +504,7 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={["top"]} style={[styles.header, { borderBottomColor: C.border }]}>
-        <View style={styles.headerRow}>
-          <Pressable onPress={() => router.back()} hitSlop={10} style={styles.headerBtn}>
-            <Icon name="chevron.left" size={22} color={C.foreground} />
-          </Pressable>
-          <Text style={[styles.headerTitle, { color: C.foreground }]} numberOfLines={1}>
-            {isEdit ? "Inserat bearbeiten" : "Neues Inserat"}
-          </Text>
-          <View style={styles.headerBtn} />
-        </View>
-      </SafeAreaView>
+      <Stack.Screen options={{ headerShown: true, title: isEdit ? "Inserat bearbeiten" : "Neues Inserat" }} />
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90}>
         <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
@@ -789,18 +777,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: C.background },
     center: { alignItems: "center", justifyContent: "center" },
-    header: {
-      paddingBottom: Spacing[3],
-      borderBottomWidth: StyleSheet.hairlineWidth,
-    },
-    headerRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: Spacing[4],
-    },
-    headerBtn: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
-    headerTitle: { flex: 1, textAlign: "center", fontFamily: FontFamily.sansBold, fontSize: FontSize.md },
     body: { paddingHorizontal: Spacing[5], paddingBottom: Spacing[10] },
     rowTwo: { flexDirection: "row", gap: Spacing[3] },
     toggleRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: Spacing[1] },

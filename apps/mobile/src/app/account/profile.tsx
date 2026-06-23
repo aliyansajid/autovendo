@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable, Alert, Switch, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import { swissCities } from "@repo/vehicle-constants";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
@@ -269,15 +268,7 @@ export default function EditProfileScreen() {
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={["top"]} style={styles.header}>
-        <View style={styles.headerRow}>
-          <Pressable onPress={() => router.back()} hitSlop={10} style={styles.back}>
-            <Icon name="chevron.left" size={22} color={C.foreground} />
-          </Pressable>
-          <Text style={[styles.title, { color: C.foreground }]} numberOfLines={1}>Profil bearbeiten</Text>
-          <View style={styles.back} />
-        </View>
-      </SafeAreaView>
+      <Stack.Screen options={{ headerShown: true, title: "Profil bearbeiten" }} />
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90}>
         <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
@@ -385,10 +376,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: C.background },
     center: { alignItems: "center", justifyContent: "center" },
-    header: { paddingBottom: Spacing[3], borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.border },
-    headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: Spacing[4] },
-    back: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
-    title: { flex: 1, textAlign: "center", fontFamily: FontFamily.sansBold, fontSize: FontSize.md },
     body: { paddingHorizontal: Spacing[5], paddingTop: Spacing[3], paddingBottom: Spacing[10] },
     section: { fontFamily: FontFamily.sansBold, fontSize: FontSize.md, letterSpacing: -0.3, marginBottom: Spacing[4] },
     hint: { fontFamily: FontFamily.sans, fontSize: FontSize.xs, marginTop: -Spacing[1] },

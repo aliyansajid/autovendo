@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Pressable, Alert, RefreshControl } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, Stack } from "expo-router";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import {
@@ -221,13 +220,7 @@ export default function DealerDashboard() {
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={["top"]} style={styles.topBar}>
-        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.back}>
-          <Icon name="chevron.left" size={22} color={C.foreground} />
-        </Pressable>
-        <Text style={[styles.title, { color: C.foreground }]}>Händler-Dashboard</Text>
-        <View style={styles.back} />
-      </SafeAreaView>
+      <Stack.Screen options={{ headerShown: true, title: "Händler-Dashboard" }} />
 
       {error ? (
         <ErrorState onRetry={() => load()} />
@@ -268,16 +261,6 @@ export default function DealerDashboard() {
 function createStyles(C: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: C.background },
-    topBar: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: Spacing[4],
-      paddingTop: Spacing[2],
-      paddingBottom: Spacing[3],
-    },
-    back: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
-    title: { fontFamily: FontFamily.sansBold, fontSize: FontSize.lg, letterSpacing: -0.4 },
     listPad: { paddingHorizontal: Spacing[5], paddingTop: Spacing[2], flexGrow: 1, paddingBottom: Spacing[10] },
     subCard: { borderRadius: Radius.lg, borderWidth: StyleSheet.hairlineWidth * 2, padding: Spacing[4], marginBottom: Spacing[5] },
     subTop: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" },

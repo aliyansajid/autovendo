@@ -1,8 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
-import { View, Text, StyleSheet, FlatList, Pressable, Alert, RefreshControl } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useFocusEffect } from "expo-router";
-import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
+import { View, StyleSheet, FlatList, Pressable, Alert, RefreshControl } from "react-native";
+import { router, useFocusEffect, Stack } from "expo-router";
+import { Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import {
   fetchSellerVehicles,
@@ -119,15 +118,17 @@ export default function SellerDashboard() {
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={["top"]} style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={8} style={styles.back}>
-          <Icon name="chevron.left" size={22} color={C.foreground} />
-        </Pressable>
-        <Text style={[styles.title, { color: C.foreground }]}>Meine Inserate</Text>
-        <Pressable onPress={() => router.push("/seller/new")} hitSlop={8} style={styles.back}>
-          <Icon name="plus" size={20} color={C.primary} weight="semibold" />
-        </Pressable>
-      </SafeAreaView>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: "Meine Inserate",
+          headerRight: () => (
+            <Pressable onPress={() => router.push("/seller/new")} hitSlop={8}>
+              <Icon name="plus" size={20} color={C.primary} weight="semibold" />
+            </Pressable>
+          ),
+        }}
+      />
 
       {error ? (
         <ErrorState onRetry={() => load()} />
@@ -171,16 +172,6 @@ export default function SellerDashboard() {
 function createStyles(C: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: C.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: Spacing[4],
-      paddingTop: Spacing[2],
-      paddingBottom: Spacing[3],
-    },
-    back: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
-    title: { fontFamily: FontFamily.sansBold, fontSize: FontSize.lg, letterSpacing: -0.4 },
     listPad: { paddingHorizontal: Spacing[5], paddingTop: Spacing[2], flexGrow: 1, paddingBottom: Spacing[10] },
   });
 }

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { Stack } from "expo-router";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { formatPrice, formatDate } from "@/lib/format";
@@ -190,13 +189,7 @@ export default function BillingScreen() {
 
   return (
     <View style={styles.root}>
-      <SafeAreaView edges={["top"]} style={styles.header}>
-        <Pressable onPress={() => router.back()} hitSlop={10} style={styles.back}>
-          <Icon name="chevron.left" size={22} color={C.foreground} />
-        </Pressable>
-        <Text style={[styles.title, { color: C.foreground }]}>{dealer ? "Abo & Abrechnung" : "Abrechnung"}</Text>
-        <View style={styles.back} />
-      </SafeAreaView>
+      <Stack.Screen options={{ headerShown: true, title: dealer ? "Abo & Abrechnung" : "Abrechnung" }} />
 
       {error ? (
         <ErrorState onRetry={load} />
@@ -341,16 +334,6 @@ export default function BillingScreen() {
 function createStyles(C: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: C.background },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: Spacing[4],
-      paddingTop: Spacing[2],
-      paddingBottom: Spacing[3],
-    },
-    back: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
-    title: { fontFamily: FontFamily.sansBold, fontSize: FontSize.lg, letterSpacing: -0.4 },
     body: { paddingHorizontal: Spacing[5], paddingTop: Spacing[3], paddingBottom: Spacing[10] },
     section: { fontFamily: FontFamily.sansBold, fontSize: FontSize.base, marginTop: Spacing[6], marginBottom: Spacing[3] },
     card: { borderRadius: 18, padding: Spacing[4], overflow: "hidden" },

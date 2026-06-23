@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, StyleSheet } from 'react-native';
 import { SymbolView } from 'expo-symbols';
-import { router } from 'expo-router';
-import { FontFamily, FontSize, Spacing, Radius, type ThemeColors } from '@/constants/theme';
+import { Stack } from 'expo-router';
+import { FontFamily, FontSize, Spacing, type ThemeColors } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function MyVehiclesScreen() {
@@ -11,43 +10,22 @@ export default function MyVehiclesScreen() {
   const styles = useMemo(() => createStyles(C), [C]);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <View style={styles.header}>
-        <Pressable style={styles.backBtn} onPress={() => router.back()}>
-          <SymbolView name="chevron.left" size={20} tintColor={C.foreground} />
-        </Pressable>
-        <Text style={styles.title}>My Vehicles</Text>
-        <View style={styles.backBtn} />
-      </View>
+    <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: true, title: 'Meine Fahrzeuge' }} />
       <View style={styles.empty}>
         <View style={styles.emptyIcon}>
           <SymbolView name="car.fill" size={36} tintColor={C.mutedForeground} />
         </View>
-        <Text style={styles.emptyTitle}>No listings yet</Text>
-        <Text style={styles.emptyBody}>Your posted vehicles will appear here.</Text>
+        <Text style={styles.emptyTitle}>Noch keine Inserate</Text>
+        <Text style={styles.emptyBody}>Ihre veröffentlichten Fahrzeuge erscheinen hier.</Text>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 function createStyles(C: ThemeColors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: C.background },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: Spacing[4],
-      paddingVertical: Spacing[3],
-      borderBottomWidth: 1,
-      borderBottomColor: C.border,
-    },
-    backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-    title: {
-      fontFamily: FontFamily.sansSemiBold,
-      fontSize: FontSize.md,
-      color: C.foreground,
-    },
     empty: {
       flex: 1,
       alignItems: 'center',

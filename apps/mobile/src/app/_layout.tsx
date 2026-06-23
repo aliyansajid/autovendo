@@ -1,5 +1,5 @@
 import "@/global.css";
-import { Stack } from "expo-router";
+import { Stack, ThemeProvider, DefaultTheme } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -30,14 +30,16 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <FavoritesProvider>
-          <StatusBar style="dark" />
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="onboarding" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="vehicle/[id]" options={{ presentation: "card" }} />
-            <Stack.Screen name="dealer/[id]" options={{ presentation: "card" }} />
-          </Stack>
+          <ThemeProvider value={DefaultTheme}>
+            <StatusBar style="dark" />
+            <Stack screenOptions={{ headerShown: false, headerShadowVisible: false, headerBackButtonDisplayMode: "minimal" }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="onboarding" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="vehicle/[id]" options={{ presentation: "card" }} />
+              <Stack.Screen name="dealer/[id]" options={{ presentation: "card" }} />
+            </Stack>
+          </ThemeProvider>
         </FavoritesProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
