@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FavoritesProvider } from "@/lib/favorites";
+import { LocationProvider } from "@/lib/location";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,7 +31,8 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <FavoritesProvider>
-          <ThemeProvider value={DefaultTheme}>
+          <LocationProvider>
+            <ThemeProvider value={DefaultTheme}>
             <StatusBar style="dark" />
             <Stack screenOptions={{ headerShown: false, headerShadowVisible: false, headerBackButtonDisplayMode: "minimal" }}>
               <Stack.Screen name="index" />
@@ -39,7 +41,8 @@ export default function RootLayout() {
               <Stack.Screen name="vehicle/[id]" options={{ presentation: "card" }} />
               <Stack.Screen name="dealer/[id]" options={{ presentation: "card" }} />
             </Stack>
-          </ThemeProvider>
+            </ThemeProvider>
+          </LocationProvider>
         </FavoritesProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

@@ -16,6 +16,7 @@ import { FontFamily, FontSize, Radius, Shadow, Spacing } from "@/constants/theme
 import { useTheme } from "@/hooks/use-theme";
 import { useTabBarHeight } from "@/hooks/use-tab-bar-height";
 import { useFavorites } from "@/lib/favorites";
+import { useLocation } from "@/lib/location";
 import {
   fetchFeaturedVehicles,
   fetchVehicles,
@@ -54,6 +55,7 @@ export default function HomeScreen() {
   const styles = useMemo(() => createStyles(C), [C]);
   const tabBarHeight = useTabBarHeight();
   const { isFavorite, toggle } = useFavorites();
+  const { location } = useLocation();
 
   // Dark header ⇒ light icons while focused; restores dark for white screens.
   useStatusBarStyle("light");
@@ -103,13 +105,15 @@ export default function HomeScreen() {
         <View style={[styles.header, { backgroundColor: C.foreground }]}>
           <SafeAreaView edges={["top"]}>
             <View style={styles.headerTop}>
-              <View>
+              <Pressable onPress={() => router.push("/location")} hitSlop={6}>
                 <Text style={styles.locationLabel}>Standort</Text>
                 <View style={styles.locationRow}>
-                  <Text style={styles.locationCity}>Schweiz</Text>
+                  <Text style={styles.locationCity} numberOfLines={1}>
+                    {location?.label ?? "Schweiz"}
+                  </Text>
                   <Icon name="chevron.down" size={13} color={HEADER_FG} />
                 </View>
-              </View>
+              </Pressable>
               <Pressable
                 style={styles.avatar}
                 onPress={() => router.push("/favorites")}

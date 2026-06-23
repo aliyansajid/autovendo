@@ -30,4 +30,5 @@ export const storage = {
 export const STORAGE_KEYS = {
   onboardingSeen: "av_onboarding_seen",
   favorites: "av_favorites",
+  location: "av_location",
 } as const;
