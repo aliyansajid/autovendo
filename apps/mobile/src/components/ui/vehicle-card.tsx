@@ -63,8 +63,8 @@ export function VehicleCard({
         )}
 
         {vehicle.vehicleCondition ? (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{labelCondition(vehicle.vehicleCondition)}</Text>
+          <View style={[styles.badge, { backgroundColor: C.primary }]}>
+            <Text style={[styles.badgeText, { color: C.primaryForeground }]}>{labelCondition(vehicle.vehicleCondition)}</Text>
           </View>
         ) : null}
 
@@ -111,12 +111,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing[3],
     left: Spacing[3],
-    backgroundColor: "rgba(15,18,32,0.66)",
     paddingHorizontal: Spacing[3],
     paddingVertical: 5,
     borderRadius: 999,
   },
-  badgeText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.xs, color: "#fff" },
+  badgeText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.xs },
   heart: {
     position: "absolute",
     top: Spacing[3],
