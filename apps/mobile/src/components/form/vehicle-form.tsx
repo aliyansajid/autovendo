@@ -19,6 +19,8 @@ import {
   carExtrasEnum, utilityExtrasEnum, truckExtrasEnum, camperExtrasEnum,
   ColorEnum, VehicleConditionEnum, TransmissionTypeEnum, DriveTypeEnum, EquipmentEnum,
   EmissionStandardEnum, getRegistrationYears,
+  VehicleTypeEnum, GearTransmissionEnum, WarrantyEnum, EnergyLabelEnum,
+  BatteryOwnershipEnum, ChargingPlugTypeStandardEnum, ChargingPlugTypeFastEnum,
   swissCities,
 } from "@repo/vehicle-constants";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
@@ -31,6 +33,8 @@ import { SelectField, type SelectOption } from "./select-field";
 import { ImageGrid, type FormImage } from "./image-grid";
 import {
   labelColor, labelCondition, labelTransmission, labelDrive, labelEquipment,
+  labelType, labelFuel, labelExtra, labelWarranty, labelEmission,
+  labelBatteryOwnership, labelChargingAC, labelChargingDC, labelEnergy,
 } from "@/lib/labels";
 import {
   createSellerVehicle, getSellerVehicle, updateSellerVehicle, updateSellerProfile,
@@ -67,25 +71,24 @@ function modelOptions(vt: string, make: string): SelectOption[] {
   >;
   return (map[make] ?? []).map((m) => ({ value: m.value, label: m.label }));
 }
+// Values come from @repo/vehicle-constants (same as web); labels come from
+// @/lib/labels which mirrors the web messages/de.json Vehicle namespace — so
+// every option matches autovendo.ch exactly. Web uses the translation for these
+// enums (not the enum's own `.label`), so we do the same here.
 function bodyOptions(vt: string): SelectOption[] {
   const arr = vt === "UTILITY" ? utilityBodyTypeEnum : vt === "TRUCK" ? truckBodyTypeEnum : vt === "CAMPER" ? camperBodyTypeEnum : carBodyTypeEnum;
-  return arr.map((b) => ({ value: b.value, label: b.label }));
+  return arr.map((b) => ({ value: b.value, label: labelType(b.value) }));
 }
 function fuelOptions(vt: string): SelectOption[] {
   const arr = vt === "UTILITY" ? utilityFuelTypeEnum : vt === "TRUCK" ? truckFuelTypeEnum : vt === "CAMPER" ? camperFuelTypeEnum : carFuelTypeEnum;
-  return arr.map((f) => ({ value: f.value, label: f.label }));
+  return arr.map((f) => ({ value: f.value, label: labelFuel(f.value) }));
 }
 function extrasOptions(vt: string): SelectOption[] {
   const arr = vt === "UTILITY" ? utilityExtrasEnum : vt === "TRUCK" ? truckExtrasEnum : vt === "CAMPER" ? camperExtrasEnum : carExtrasEnum;
-  return arr.map((e) => ({ value: e.value, label: e.label }));
+  return arr.map((e) => ({ value: e.value, label: labelExtra(e.value) }));
 }
 
-const VEHICLE_TYPE_OPTS: SelectOption[] = [
-  { value: "CAR", label: "Personenwagen" },
-  { value: "CAMPER", label: "Wohnmobil" },
-  { value: "UTILITY", label: "Nutzfahrzeug" },
-  { value: "TRUCK", label: "Lastwagen" },
-];
+const VEHICLE_TYPE_OPTS: SelectOption[] = VehicleTypeEnum.map((t) => ({ value: t.value, label: labelType(t.value) }));
 const COLOR_OPTS: SelectOption[] = ColorEnum.map((c) => ({ value: c.value, label: labelColor(c.value) }));
 const CONDITION_OPTS: SelectOption[] = VehicleConditionEnum.map((c) => ({ value: c.value, label: labelCondition(c.value) }));
 const TRANSMISSION_OPTS: SelectOption[] = TransmissionTypeEnum.map((t) => ({ value: t.value, label: labelTransmission(t.value) }));
@@ -96,10 +99,7 @@ const MONTH_OPTS: SelectOption[] = Array.from({ length: 12 }, (_, i) => ({
   value: String(i + 1),
   label: new Date(2000, i, 1).toLocaleDateString("de-CH", { month: "long" }),
 }));
-const GEAR_OPTS: SelectOption[] = [
-  { value: "AUTOMATIC", label: "Automat" },
-  { value: "MANUAL", label: "Schaltgetriebe" },
-];
+const GEAR_OPTS: SelectOption[] = GearTransmissionEnum.map((g) => ({ value: g.value, label: labelTransmission(g.value) }));
 const YEAR_OPTS: SelectOption[] = getRegistrationYears();
 // transmissionType options depend on the coarse gearTransmission, mirroring web:
 // AUTOMATIC → automatic variants, MANUAL → manual only.
@@ -111,30 +111,12 @@ function transmissionOptions(gear: string): SelectOption[] {
     return true;
   });
 }
-const ENERGY_OPTS: SelectOption[] = ["A", "B", "C", "D", "E", "F", "G"].map((v) => ({ value: v, label: v }));
-const EMISSION_OPTS: SelectOption[] = EmissionStandardEnum.map((e) => ({
-  value: e.value,
-  label: "Euro " + e.value.replace(/^EURO_/, "").replaceAll("_", "-").toLowerCase(),
-}));
-const WARRANTY_OPTS: SelectOption[] = [
-  { value: "FROM_DELIVERY", label: "Ab Übergabe" },
-  { value: "FROM_FIRST_REGISTRATION", label: "Ab Erstzulassung" },
-  { value: "FROM_DATE", label: "Ab Datum" },
-];
-const BATTERY_OWNERSHIP_OPTS: SelectOption[] = [
-  { value: "BATTERY_INCLUDED", label: "Batterie inklusive" },
-  { value: "BATTERY_RENT_REQUIRED", label: "Batteriemiete erforderlich" },
-];
-const PLUG_STD_OPTS: SelectOption[] = [
-  { value: "TYPE_1", label: "Typ 1" },
-  { value: "TYPE_2", label: "Typ 2" },
-];
-const PLUG_FAST_OPTS: SelectOption[] = [
-  { value: "CCS", label: "CCS" },
-  { value: "CSS_2", label: "CCS 2" },
-  { value: "CHADEMO", label: "CHAdeMO" },
-  { value: "SUPERCHARGER", label: "Supercharger" },
-];
+const ENERGY_OPTS: SelectOption[] = EnergyLabelEnum.map((e) => ({ value: e.value, label: labelEnergy(e.value) }));
+const EMISSION_OPTS: SelectOption[] = EmissionStandardEnum.map((e) => ({ value: e.value, label: labelEmission(e.value) }));
+const WARRANTY_OPTS: SelectOption[] = WarrantyEnum.map((w) => ({ value: w.value, label: labelWarranty(w.value) }));
+const BATTERY_OWNERSHIP_OPTS: SelectOption[] = BatteryOwnershipEnum.map((b) => ({ value: b.value, label: labelBatteryOwnership(b.value) }));
+const PLUG_STD_OPTS: SelectOption[] = ChargingPlugTypeStandardEnum.map((p) => ({ value: p.value, label: labelChargingAC(p.value) }));
+const PLUG_FAST_OPTS: SelectOption[] = ChargingPlugTypeFastEnum.map((p) => ({ value: p.value, label: labelChargingDC(p.value) }));
 
 // ─── Form state ────────────────────────────────────────────────────────────────
 
@@ -187,6 +169,12 @@ const EMPTY_STATE: FormState = {
   vin: "", vehicleDescription: "",
   companyName: "", businessEmail: "", phoneNumber: "", address: "", zipCode: "", city: "",
 };
+
+// Validation regexes — copied verbatim from the web zod schema
+// (apps/seller/schema/vehicle-form-schema.ts) so client validation matches.
+const SWISS_PHONE_REGEX = /^(\+41|0041|0)\s?([1-9]{2})\s?(\d{3})\s?(\d{2})\s?(\d{2})$/;
+const VIN_REGEX = /^[A-HJ-NPR-Z0-9]{17}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function str(v: unknown): string {
   return v == null ? "" : String(v);
@@ -372,10 +360,14 @@ export function VehicleForm({ mode: modeProp, vehicleId }: { mode?: "seller" | "
     if (!f.registrationMonth || !f.registrationYear) return "Bitte geben Sie die Erstzulassung an.";
     if (!f.kilometer.trim()) return "Bitte geben Sie den Kilometerstand an.";
     if (!f.price.trim()) return "Bitte geben Sie den Preis an.";
+    // VIN is optional, but when given must be ISO 3779 (17 chars, no I/O/Q) — same as web zod.
+    if (f.vin.trim() && !VIN_REGEX.test(f.vin.trim())) return "Die Fahrgestellnummer (VIN) muss 17 Zeichen lang sein (ohne I, O, Q).";
+    if (mode === "dealer" && f.businessEmail.trim() && !EMAIL_REGEX.test(f.businessEmail.trim())) return "Bitte geben Sie eine gültige Geschäfts-E-Mail an.";
     if (images.length < 5) return "Bitte laden Sie mindestens 5 Fotos hoch.";
     if (images.length > 25) return "Bitte laden Sie höchstens 25 Fotos hoch.";
     if (!f.phoneNumber.trim()) return "Bitte geben Sie eine Telefonnummer an.";
-    if (f.address.trim().length < 5) return "Bitte geben Sie eine gültige Adresse an.";
+    if (!SWISS_PHONE_REGEX.test(f.phoneNumber.trim())) return "Bitte geben Sie eine gültige Schweizer Telefonnummer an.";
+    if (f.address.trim().length < 5 || f.address.trim().length > 100) return "Bitte geben Sie eine gültige Adresse an (5–100 Zeichen).";
     if (!/^\d{4}$/.test(f.zipCode.trim())) return "Bitte geben Sie eine gültige PLZ an.";
     if (!f.city) return "Bitte wählen Sie einen Ort.";
     return null;

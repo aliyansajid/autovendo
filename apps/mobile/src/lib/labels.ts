@@ -43,12 +43,15 @@ const FUEL_TYPES: Record<string, string> = {
   CNG_PETROL: "Erdgas/Benzin",
   LPG_PETROL: "Flüssiggas/Benzin",
   MHEV_DIESEL: "MHEV Diesel",
-  MHEV_PETROL: "MHEV Benzin",
+  MHEV_PETROL: "MHEV Petrol",
   PHEV_DIESEL: "PHEV Diesel",
-  PHEV_PETROL: "PHEV Benzin",
+  PHEV_PETROL: "PHEV Petrol",
   HEV_DIESEL: "HEV Diesel",
-  HEV_PETROL: "HEV Benzin",
+  HEV_PETROL: "HEV Petrol",
   HYDROGEN: "Wasserstoff",
+  HYBRID: "Hybrid",
+  GAS: "Gas",
+  OTHER: "Andere",
 };
 
 const CONDITIONS: Record<string, string> = {
@@ -98,6 +101,7 @@ const TYPES: Record<string, string> = {
   SEMI_TRAILER: "Sattel-Auflieger",
   CAB_OVER: "Doppelkabine",
   COACH: "Reisebus",
+  TOURIST_BUS: "Reisebus",
   ALCOVE: "Alkoven",
   TRAILER: "Anhänger",
   INTEGRATED: "Integriertes Wohnmobil",
@@ -251,8 +255,8 @@ const SELLER_TYPES: Record<string, string> = {
 };
 
 const BATTERY_OWNERSHIP: Record<string, string> = {
-  BATTERY_INCLUDED: "Batterie inbegriffen",
-  BATTERY_RENT_REQUIRED: "Batteriemiete",
+  BATTERY_INCLUDED: "Batterie im Kaufpreis enthalten",
+  BATTERY_RENT_REQUIRED: "Batteriemiete zusätzlich erforderlich",
 };
 
 const CHARGING_AC: Record<string, string> = {
@@ -262,7 +266,7 @@ const CHARGING_AC: Record<string, string> = {
 
 const CHARGING_DC: Record<string, string> = {
   CCS: "CCS",
-  CSS_2: "CCS 2",
+  CSS_2: "CSS-2",
   CHADEMO: "CHAdeMO",
   SUPERCHARGER: "Supercharger",
 };

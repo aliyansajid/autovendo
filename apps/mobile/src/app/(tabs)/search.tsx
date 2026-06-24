@@ -21,6 +21,7 @@ import {
   type VehicleListItem,
   type VehicleFacets,
 } from "@/lib/api";
+import { SORT_OPTIONS, SORT_LABELS } from "@repo/vehicle-constants";
 import {
   EMPTY_FILTERS,
   filtersToParams,
@@ -43,14 +44,12 @@ const VEHICLE_TYPES: { value: string | null; label: string }[] = [
   { value: "TRUCK", label: "Lastwagen" },
 ];
 
-const SORTS: { value: SortOption; label: string }[] = [
-  { value: "relevance", label: "Standard" },
-  { value: "created-desc", label: "Neueste zuerst" },
-  { value: "price-asc", label: "Preis aufsteigend" },
-  { value: "price-desc", label: "Preis absteigend" },
-  { value: "kilometer-asc", label: "Kilometer aufsteigend" },
-  { value: "registration-desc", label: "Jahr (neueste)" },
-];
+// Values + order + labels from @repo/vehicle-constants (same source as the web
+// /cars ListingControls), so the sort dropdown matches autovendo.ch exactly.
+const SORTS: { value: SortOption; label: string }[] = SORT_OPTIONS.map((value) => ({
+  value,
+  label: SORT_LABELS[value],
+}));
 
 export default function SearchScreen() {
   const C = useTheme();

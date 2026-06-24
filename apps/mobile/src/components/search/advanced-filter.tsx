@@ -36,6 +36,8 @@ import {
   BatteryOwnershipEnum,
   ChargingPlugTypeStandardEnum,
   ChargingPlugTypeFastEnum,
+  VehicleTypeEnum,
+  daysListedOptions,
 } from "@repo/vehicle-constants";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
@@ -297,25 +299,26 @@ const MAKE_CATALOG: MakeRow[] = (() => {
   return out;
 })();
 
-const VEHICLE_TYPES: Opt[] = [
-  { value: "CAR", label: "Autos" },
-  { value: "CAMPER", label: "Wohnmobile" },
-  { value: "UTILITY", label: "Nutzfahrzeuge" },
-  { value: "TRUCK", label: "Lastwagen" },
-];
+// Tab order + values mirror the web advanced search (CAR, CAMPER, UTILITY,
+// TRUCK, filtered to valid enum values); labels come from labelType (de.json).
+const VEHICLE_TYPES: Opt[] = ["CAR", "CAMPER", "UTILITY", "TRUCK"]
+  .filter((id) => VehicleTypeEnum.some((e) => e.value === id))
+  .map((id) => ({ value: id, label: labelType(id) }));
 
 const POWER_UNITS: { value: "ps" | "kw"; label: string }[] = [
   { value: "ps", label: "PS" },
   { value: "kw", label: "kW" },
 ];
 
-const DAYS_OPTS: { value: number; label: string }[] = [
-  { value: 1, label: "1 Tag" },
-  { value: 3, label: "3 Tage" },
-  { value: 7, label: "7 Tage" },
-  { value: 14, label: "14 Tage" },
-  { value: 30, label: "30 Tage" },
-];
+// daysListed options come from @repo/vehicle-constants (same source as web's
+// MoreFiltersSection); "any" is the implicit "Beliebig" chip. The numeric value
+// is parsed from the option key (e.g. "28 tage" → 28), matching buildSearchParams.
+const DAYS_OPTS: { value: number; label: string }[] = daysListedOptions
+  .filter((o) => o.value !== "any")
+  .map((o) => {
+    const n = parseInt(o.value.split(" ")[0] ?? "", 10);
+    return { value: n, label: `${n} ${n === 1 ? "Tag" : "Tage"}` };
+  });
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
