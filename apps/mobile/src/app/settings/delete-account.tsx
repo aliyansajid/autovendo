@@ -2,10 +2,8 @@ import { useMemo } from 'react';
 import {
   View,
   Text,
-  TextInput,
   Pressable,
   StyleSheet,
-  ActivityIndicator,
   ScrollView,
   Alert,
 } from 'react-native';
@@ -14,8 +12,10 @@ import { SymbolView } from 'expo-symbols';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { authClient } from '@/lib/auth-client';
-import { FontFamily, FontSize, Spacing, Radius, Shadow, type ThemeColors } from '@/constants/theme';
+import { FontFamily, FontSize, Spacing, Radius, type ThemeColors } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { Button } from '@/components/ui/button';
+import { TextField } from '@/components/ui/text-field';
 
 const CONSEQUENCES = [
   'Your profile and personal information',
@@ -30,8 +30,6 @@ export default function DeleteAccountScreen() {
   const styles = useMemo(() => createStyles(C), [C]);
 
   const [password, setPassword] = useState('');
-  const [focused, setFocused] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleDelete = () => {
@@ -91,49 +89,24 @@ export default function DeleteAccountScreen() {
         </View>
 
         <View style={styles.form}>
-          <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Confirm your password</Text>
-            <View style={[styles.inputWrapper, focused && styles.inputWrapperFocused]}>
-              <SymbolView
-                name="lock"
-                size={16}
-                tintColor={focused ? C.primary : 'rgba(255,255,255,0.3)'}
-                weight="medium"
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="••••••••"
-                placeholderTextColor="rgba(255,255,255,0.25)"
-                secureTextEntry={!visible}
-                autoCapitalize="none"
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-              />
-              <Pressable onPress={() => setVisible((v) => !v)} hitSlop={8} style={styles.eyeBtn}>
-                <SymbolView
-                  name={visible ? 'eye.slash' : 'eye'}
-                  size={16}
-                  tintColor="rgba(255,255,255,0.35)"
-                  weight="medium"
-                />
-              </Pressable>
-            </View>
-          </View>
+          <TextField
+            label="Confirm your password"
+            icon="lock"
+            secure
+            placeholder="••••••••"
+            value={password}
+            onChangeText={setPassword}
+          />
 
-          <Pressable
-            style={[styles.deleteBtn, (!password.trim() || loading) && styles.deleteBtnDisabled]}
+          <Button
+            variant="destructive"
+            size="lg"
+            fullWidth
+            label="Delete My Account"
+            loading={loading}
+            disabled={!password.trim()}
             onPress={handleDelete}
-            disabled={!password.trim() || loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#ffffff" size="small" />
-            ) : (
-              <Text style={styles.deleteBtnText}>Delete My Account</Text>
-            )}
-          </Pressable>
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -206,48 +179,5 @@ function createStyles(C: ThemeColors) {
       color: C.mutedForeground,
     },
     form: { gap: Spacing[5] },
-    fieldGroup: { gap: Spacing[2] },
-    label: {
-      fontFamily: FontFamily.sansMedium,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-    },
-    inputWrapper: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: C.secondary,
-      borderRadius: Radius.md,
-      borderWidth: 1,
-      borderColor: C.border,
-      paddingHorizontal: Spacing[4],
-      height: 52,
-    },
-    inputWrapperFocused: {
-      borderColor: `${C.primary}80`,
-      backgroundColor: `${C.primary}0D`,
-    },
-    inputIcon: { marginRight: Spacing[3] },
-    input: {
-      flex: 1,
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.base,
-      color: C.foreground,
-      height: '100%',
-    },
-    eyeBtn: { padding: Spacing[1], marginLeft: Spacing[2] },
-    deleteBtn: {
-      height: 54,
-      borderRadius: Radius.lg,
-      backgroundColor: C.destructive,
-      alignItems: 'center',
-      justifyContent: 'center',
-      ...Shadow.md,
-    },
-    deleteBtnDisabled: { opacity: 0.5 },
-    deleteBtnText: {
-      fontFamily: FontFamily.sansSemiBold,
-      fontSize: FontSize.md,
-      color: '#ffffff',
-    },
   });
 }

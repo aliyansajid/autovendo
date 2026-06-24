@@ -7,7 +7,6 @@ import {
   Pressable,
   FlatList,
   ActivityIndicator,
-  Modal,
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,12 +22,14 @@ import {
   type VehicleFacets,
 } from "@/lib/api";
 import {
-  AdvancedFilter,
   EMPTY_FILTERS,
   filtersToParams,
   activeFilterCount,
   type Filters,
 } from "@/components/search/advanced-filter";
+import { useFilterModal } from "@/components/search/filter-modal";
+import { useSelectModal } from "@/components/form/select-modal";
+import { SearchField } from "@/components/ui/search-field";
 import { Icon } from "@/components/ui/icon";
 import { Chip } from "@/components/ui/chip";
 import { VehicleCard } from "@/components/ui/vehicle-card";
@@ -77,8 +78,8 @@ export default function SearchScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
 
-  const [showFilters, setShowFilters] = useState(false);
-  const [showSort, setShowSort] = useState(false);
+  const { openFilter } = useFilterModal();
+  const { open: openSelect } = useSelectModal();
 
   const reqId = useRef(0);
 
@@ -133,26 +134,17 @@ export default function SearchScreen() {
     <View style={styles.root}>
       <SafeAreaView edges={["top"]}>
         <View style={styles.searchRow}>
-          <View style={[styles.searchBar, { backgroundColor: C.secondary, borderColor: C.border }]}>
-            <Icon name="magnifyingglass" size={17} color={C.mutedForeground} />
-            <TextInput
-              style={[styles.input, { color: C.foreground }]}
-              placeholder="Marke, Modell, Stichwort"
-              placeholderTextColor={C.mutedForeground}
-              value={query}
-              onChangeText={setQuery}
-              returnKeyType="search"
-              autoCorrect={false}
-            />
-            {query.length > 0 && (
-              <Pressable onPress={() => setQuery("")} hitSlop={8}>
-                <Icon name="xmark.circle.fill" size={16} color={C.mutedForeground} />
-              </Pressable>
-            )}
-          </View>
+          <SearchField
+            style={{ flex: 1 }}
+            placeholder="Marke, Modell, Stichwort"
+            value={query}
+            onChangeText={setQuery}
+            returnKeyType="search"
+            onClear={() => setQuery("")}
+          />
           <Pressable
             style={[styles.filterBtn, { backgroundColor: count > 0 ? C.primary : C.secondary, borderColor: C.border }]}
-            onPress={() => setShowFilters(true)}
+            onPress={() => openFilter({ filters, facets, onApply: (f) => setFilters(f) })}
           >
             <Icon name="slider.horizontal.3" size={18} color={count > 0 ? C.primaryForeground : C.foreground} />
             {count > 0 && (
@@ -186,7 +178,18 @@ export default function SearchScreen() {
           <Text style={[styles.resultCount, { color: C.mutedForeground }]}>
             {loading ? "Suche läuft…" : `${total.toLocaleString("de-CH")} Fahrzeuge`}
           </Text>
-          <Pressable style={styles.sortBtn} onPress={() => setShowSort(true)} hitSlop={6}>
+          <Pressable
+            style={styles.sortBtn}
+            hitSlop={6}
+            onPress={() =>
+              openSelect({
+                title: "Sortieren nach",
+                options: SORTS.map((s) => ({ value: s.value, label: s.label })),
+                value: filters.sort,
+                onSelect: (v) => setFilters((f) => ({ ...f, sort: v as SortOption })),
+              })
+            }
+          >
             <Icon name="arrow.up.arrow.down" size={14} color={C.foreground} />
             <Text style={[styles.sortLabel, { color: C.foreground }]}>
               {SORTS.find((s) => s.value === filters.sort)?.label ?? "Sortieren"}
@@ -232,60 +235,7 @@ export default function SearchScreen() {
           }
         />
       )}
-
-      <AdvancedFilter
-        visible={showFilters}
-        filters={filters}
-        facets={facets}
-        onClose={() => setShowFilters(false)}
-        onApply={(f) => {
-          setFilters(f);
-          setShowFilters(false);
-        }}
-      />
-      <SortSheet
-        visible={showSort}
-        value={filters.sort}
-        onClose={() => setShowSort(false)}
-        onSelect={(sort) => {
-          setFilters((f) => ({ ...f, sort }));
-          setShowSort(false);
-        }}
-      />
     </View>
-  );
-}
-
-// ─── Sort sheet ───────────────────────────────────────────────────────────────
-
-function SortSheet({
-  visible,
-  value,
-  onClose,
-  onSelect,
-}: {
-  visible: boolean;
-  value: SortOption;
-  onClose: () => void;
-  onSelect: (s: SortOption) => void;
-}) {
-  const C = useTheme();
-  return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={sheetStyles.backdrop} onPress={onClose} />
-      <View style={[sheetStyles.sheet, { backgroundColor: C.background }]}>
-        <SafeAreaView edges={["bottom"]}>
-          <View style={[sheetStyles.handle, { backgroundColor: C.border }]} />
-          <Text style={[sheetStyles.sheetTitle, { color: C.foreground }]}>Sortieren nach</Text>
-          {SORTS.map((s) => (
-            <Pressable key={s.value} style={sheetStyles.optionRow} onPress={() => onSelect(s.value)}>
-              <Text style={[sheetStyles.optionText, { color: C.foreground }]}>{s.label}</Text>
-              {value === s.value && <Icon name="checkmark" size={18} color={C.primary} />}
-            </Pressable>
-          ))}
-        </SafeAreaView>
-      </View>
-    </Modal>
   );
 }
 
@@ -297,22 +247,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
       gap: Spacing[2],
       paddingHorizontal: Spacing[5],
       paddingBottom: Spacing[3],
-    },
-    searchBar: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      gap: Spacing[2],
-      height: 46,
-      borderRadius: Radius.md,
-      paddingHorizontal: Spacing[3],
-      borderWidth: StyleSheet.hairlineWidth * 2,
-    },
-    input: {
-      flex: 1,
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.base,
-      height: 46,
     },
     filterBtn: {
       width: 46,
@@ -368,47 +302,3 @@ function createStyles(C: ReturnType<typeof useTheme>) {
     },
   });
 }
-
-const sheetStyles = StyleSheet.create({
-  backdrop: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.45)",
-  },
-  sheet: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderTopLeftRadius: Radius.xl,
-    borderTopRightRadius: Radius.xl,
-    paddingTop: Spacing[2],
-  },
-  handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    alignSelf: "center",
-    marginBottom: Spacing[3],
-  },
-  sheetTitle: {
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.lg,
-    paddingHorizontal: Spacing[5],
-    marginBottom: Spacing[2],
-  },
-  optionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: Spacing[5],
-    paddingVertical: Spacing[4],
-  },
-  optionText: {
-    fontFamily: FontFamily.sansMedium,
-    fontSize: FontSize.base,
-  },
-});

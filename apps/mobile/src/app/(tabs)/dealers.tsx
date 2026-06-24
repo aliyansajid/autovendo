@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, StyleSheet, TextInput, Pressable, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { useTabBarHeight } from "@/hooks/use-tab-bar-height";
 import { fetchDealers, type DealerListItem } from "@/lib/api";
-import { Icon } from "@/components/ui/icon";
+import { SearchField } from "@/components/ui/search-field";
 import { DealerCard } from "@/components/ui/dealer-card";
 import { EmptyState, ErrorState, DealerCardSkeleton } from "@/components/ui/states";
 
@@ -75,22 +75,12 @@ export default function DealersScreen() {
           {!loading && <Text style={[styles.count, { color: C.mutedForeground }]}>{total.toLocaleString("de-CH")}</Text>}
         </View>
         <View style={styles.searchPad}>
-          <View style={[styles.searchBar, { backgroundColor: C.secondary, borderColor: C.border }]}>
-            <Icon name="magnifyingglass" size={17} color={C.mutedForeground} />
-            <TextInput
-              style={[styles.input, { color: C.foreground }]}
-              placeholder="Händler suchen"
-              placeholderTextColor={C.mutedForeground}
-              value={query}
-              onChangeText={setQuery}
-              autoCorrect={false}
-            />
-            {query.length > 0 && (
-              <Pressable onPress={() => setQuery("")} hitSlop={8}>
-                <Icon name="xmark.circle.fill" size={16} color={C.mutedForeground} />
-              </Pressable>
-            )}
-          </View>
+          <SearchField
+            placeholder="Händler suchen"
+            value={query}
+            onChangeText={setQuery}
+            onClear={() => setQuery("")}
+          />
         </View>
       </SafeAreaView>
 
@@ -144,21 +134,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
     searchPad: {
       paddingHorizontal: Spacing[5],
       paddingBottom: Spacing[3],
-    },
-    searchBar: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: Spacing[2],
-      height: 46,
-      borderRadius: Radius.md,
-      paddingHorizontal: Spacing[3],
-      borderWidth: StyleSheet.hairlineWidth * 2,
-    },
-    input: {
-      flex: 1,
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.base,
-      height: 46,
     },
     listPad: {
       paddingHorizontal: Spacing[5],

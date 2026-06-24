@@ -2,10 +2,8 @@ import { useMemo } from 'react';
 import {
   View,
   Text,
-  TextInput,
   Pressable,
   StyleSheet,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -16,8 +14,10 @@ import { SymbolView } from 'expo-symbols';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { authClient } from '@/lib/auth-client';
-import { FontFamily, FontSize, Spacing, Radius, Shadow, type ThemeColors } from '@/constants/theme';
+import { FontFamily, FontSize, Spacing, Radius, type ThemeColors } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { Button } from '@/components/ui/button';
+import { TextField } from '@/components/ui/text-field';
 
 const appUrl = process.env.EXPO_PUBLIC_APP_URL ?? 'https://autovendo.ch';
 
@@ -26,7 +26,6 @@ export default function ChangeEmailScreen() {
   const styles = useMemo(() => createStyles(C), [C]);
 
   const [newEmail, setNewEmail] = useState('');
-  const [focused, setFocused] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -72,9 +71,7 @@ export default function ChangeEmailScreen() {
               <Text style={styles.successBody}>
                 We sent a confirmation link to {newEmail}. Click it to confirm your new email address.
               </Text>
-              <Pressable style={styles.submitBtn} onPress={() => router.back()}>
-                <Text style={styles.submitBtnText}>Done</Text>
-              </Pressable>
+              <Button size="lg" fullWidth label="Done" onPress={() => router.back()} />
             </View>
           ) : (
             <>
@@ -83,42 +80,23 @@ export default function ChangeEmailScreen() {
               </Text>
 
               <View style={styles.form}>
-                <View style={styles.fieldGroup}>
-                  <Text style={styles.label}>New Email Address</Text>
-                  <View style={[styles.inputWrapper, focused && styles.inputWrapperFocused]}>
-                    <SymbolView
-                      name="envelope"
-                      size={16}
-                      tintColor={focused ? C.primary : 'rgba(255,255,255,0.3)'}
-                      weight="medium"
-                      style={styles.inputIcon}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      value={newEmail}
-                      onChangeText={setNewEmail}
-                      placeholder="you@example.com"
-                      placeholderTextColor="rgba(255,255,255,0.25)"
-                      autoCapitalize="none"
-                      keyboardType="email-address"
-                      autoComplete="email"
-                      onFocus={() => setFocused(true)}
-                      onBlur={() => setFocused(false)}
-                    />
-                  </View>
-                </View>
+                <TextField
+                  label="New Email Address"
+                  icon="envelope"
+                  placeholder="you@example.com"
+                  keyboardType="email-address"
+                  value={newEmail}
+                  onChangeText={setNewEmail}
+                />
 
-                <Pressable
-                  style={[styles.submitBtn, (loading || !newEmail.trim()) && styles.submitBtnDisabled]}
+                <Button
+                  size="lg"
+                  fullWidth
+                  label="Send Confirmation"
+                  loading={loading}
+                  disabled={!newEmail.trim()}
                   onPress={handleSubmit}
-                  disabled={loading || !newEmail.trim()}
-                >
-                  {loading ? (
-                    <ActivityIndicator color="#ffffff" size="small" />
-                  ) : (
-                    <Text style={styles.submitBtnText}>Send Confirmation</Text>
-                  )}
-                </Pressable>
+                />
               </View>
             </>
           )}
@@ -158,48 +136,6 @@ function createStyles(C: ThemeColors) {
       lineHeight: FontSize.base * 1.6,
     },
     form: { gap: Spacing[5] },
-    fieldGroup: { gap: Spacing[2] },
-    label: {
-      fontFamily: FontFamily.sansMedium,
-      fontSize: FontSize.sm,
-      color: C.mutedForeground,
-    },
-    inputWrapper: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: C.secondary,
-      borderRadius: Radius.md,
-      borderWidth: 1,
-      borderColor: C.border,
-      paddingHorizontal: Spacing[4],
-      height: 52,
-    },
-    inputWrapperFocused: {
-      borderColor: `${C.primary}80`,
-      backgroundColor: `${C.primary}0D`,
-    },
-    inputIcon: { marginRight: Spacing[3] },
-    input: {
-      flex: 1,
-      fontFamily: FontFamily.sans,
-      fontSize: FontSize.base,
-      color: C.foreground,
-      height: '100%',
-    },
-    submitBtn: {
-      height: 54,
-      borderRadius: Radius.lg,
-      backgroundColor: C.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
-      ...Shadow.md,
-    },
-    submitBtnDisabled: { opacity: 0.5 },
-    submitBtnText: {
-      fontFamily: FontFamily.sansSemiBold,
-      fontSize: FontSize.md,
-      color: '#ffffff',
-    },
     // Success state
     successWrap: {
       alignItems: 'center',

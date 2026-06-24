@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
-import { View, Text, StyleSheet, TextInput, Pressable, FlatList } from "react-native";
+import { View, Text, StyleSheet, Pressable, FlatList } from "react-native";
 import { router, Stack } from "expo-router";
 import { swissCities } from "@repo/vehicle-constants";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { useLocation, type SelectedLocation } from "@/lib/location";
 import { Icon } from "@/components/ui/icon";
+import { SearchField } from "@/components/ui/search-field";
 
 const CITIES = swissCities as { value: string; label: string }[];
 
@@ -30,23 +31,13 @@ export default function LocationScreen() {
       <Stack.Screen options={{ headerShown: true, title: "Standort" }} />
 
       <View style={styles.searchPad}>
-        <View style={[styles.searchBar, { backgroundColor: C.secondary }]}>
-          <Icon name="magnifyingglass" size={16} color={C.mutedForeground} />
-          <TextInput
-            style={[styles.input, { color: C.foreground }]}
-            placeholder="Ort suchen"
-            placeholderTextColor={C.mutedForeground}
-            value={query}
-            onChangeText={setQuery}
-            autoCorrect={false}
-            autoFocus
-          />
-          {query.length > 0 && (
-            <Pressable onPress={() => setQuery("")} hitSlop={8}>
-              <Icon name="xmark.circle.fill" size={16} color={C.mutedForeground} />
-            </Pressable>
-          )}
-        </View>
+        <SearchField
+          placeholder="Ort suchen"
+          value={query}
+          onChangeText={setQuery}
+          onClear={() => setQuery("")}
+          autoFocus
+        />
       </View>
 
       <FlatList
@@ -77,15 +68,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: C.background },
     searchPad: { paddingHorizontal: Spacing[5], paddingTop: Spacing[3], paddingBottom: Spacing[2] },
-    searchBar: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: Spacing[2],
-      height: 46,
-      borderRadius: Radius.md,
-      paddingHorizontal: Spacing[3],
-    },
-    input: { flex: 1, fontFamily: FontFamily.sans, fontSize: FontSize.base, height: 46 },
     row: {
       flexDirection: "row",
       alignItems: "center",

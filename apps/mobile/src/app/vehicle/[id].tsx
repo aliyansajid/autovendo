@@ -44,6 +44,7 @@ import {
   labelWarranty,
 } from "@/lib/labels";
 import { Icon, type IconName } from "@/components/ui/icon";
+import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/states";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VehicleCard } from "@/components/ui/vehicle-card";
@@ -436,18 +437,21 @@ export default function VehicleDetailScreen() {
             </Pressable>
           )}
           {phone ? (
-            <Pressable style={[styles.ctaBtn, { backgroundColor: C.primary }]} onPress={() => callPhone(phone)}>
-              <Icon name="phone.fill" size={18} color={C.primaryForeground} />
-              <Text style={[styles.ctaText, { color: C.primaryForeground }]}>Anrufen</Text>
-            </Pressable>
+            <Button
+              size="lg"
+              icon="phone.fill"
+              label="Anrufen"
+              onPress={() => callPhone(phone)}
+              style={{ flex: 1 }}
+            />
           ) : dealer?.businessEmail ? (
-            <Pressable
-              style={[styles.ctaBtn, { backgroundColor: C.primary }]}
+            <Button
+              size="lg"
+              icon="envelope.fill"
+              label="Nachricht senden"
               onPress={() => sendEmail(dealer.businessEmail!, `Anfrage: ${title}`)}
-            >
-              <Icon name="envelope.fill" size={18} color={C.primaryForeground} />
-              <Text style={[styles.ctaText, { color: C.primaryForeground }]}>Nachricht senden</Text>
-            </Pressable>
+              style={{ flex: 1 }}
+            />
           ) : null}
         </View>
       </SafeAreaView>
@@ -745,19 +749,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
       borderRadius: Radius.lg,
       alignItems: "center",
       justifyContent: "center",
-    },
-    ctaBtn: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: Spacing[2],
-      height: 54,
-      borderRadius: Radius.lg,
-    },
-    ctaText: {
-      fontFamily: FontFamily.sansSemiBold,
-      fontSize: FontSize.md,
     },
   });
 }

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Modal,
   ScrollView,
   Pressable,
   TextInput,
@@ -11,6 +10,8 @@ import {
   FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Stack, router } from "expo-router";
+import { useFilterModal } from "./filter-modal";
 import {
   carMakes,
   carBodyTypeEnum,
@@ -38,7 +39,7 @@ import {
 } from "@repo/vehicle-constants";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
-import { fetchVehicles, type SearchParams, type SortOption, type VehicleFacets } from "@/lib/api";
+import { fetchVehicles, type SearchParams, type SortOption } from "@/lib/api";
 import {
   labelMake,
   labelFuel,
@@ -57,6 +58,8 @@ import {
 } from "@/lib/labels";
 import { Icon } from "@/components/ui/icon";
 import { Chip } from "@/components/ui/chip";
+import { Button } from "@/components/ui/button";
+import { SearchField } from "@/components/ui/search-field";
 
 // ─── Filters model ─────────────────────────────────────────────────────────────
 
@@ -316,32 +319,16 @@ const DAYS_OPTS: { value: number; label: string }[] = [
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-export function AdvancedFilter({
-  visible,
-  filters,
-  facets,
-  onClose,
-  onApply,
-}: {
-  visible: boolean;
-  filters: Filters;
-  facets: VehicleFacets | null;
-  onClose: () => void;
-  onApply: (f: Filters) => void;
-}) {
+export function AdvancedFilter() {
   const C = useTheme();
-  const [draft, setDraft] = useState<Filters>(filters);
+  const { filter: payload, openMake } = useFilterModal();
+  const facets = payload?.facets ?? null;
+  const [draft, setDraft] = useState<Filters>(payload?.filters ?? EMPTY_FILTERS);
   const [count, setCount] = useState<number | null>(null);
-  const [makeSheet, setMakeSheet] = useState(false);
   const reqId = useRef(0);
-
-  useEffect(() => {
-    if (visible) setDraft(filters);
-  }, [visible, filters]);
 
   // Live result count (debounced).
   useEffect(() => {
-    if (!visible) return;
     const id = ++reqId.current;
     const t = setTimeout(() => {
       fetchVehicles(filtersToParams(draft, 1, 1))
@@ -353,7 +340,7 @@ export function AdvancedFilter({
         });
     }, 300);
     return () => clearTimeout(t);
-  }, [draft, visible]);
+  }, [draft]);
 
   const toggleArr = useCallback((key: keyof Filters, value: string) => {
     setDraft((d) => {
@@ -391,26 +378,29 @@ export function AdvancedFilter({
   const reset = () =>
     setDraft((d) => ({ ...EMPTY_FILTERS, q: d.q, sort: d.sort, dealerId: d.dealerId }));
 
+  if (!payload) return null;
+
   const vt = draft.vehicleType;
 
   return (
-    <Modal visible={visible} animationType="slide" onRequestClose={onClose} presentationStyle="pageSheet">
-      <View style={[styles.root, { backgroundColor: C.background }]}>
-        <SafeAreaView edges={["top"]} style={[styles.header, { borderBottomColor: C.border }]}>
-          <View style={styles.headerRow}>
-            <Pressable onPress={onClose} hitSlop={10}>
+    <View style={[styles.root, { backgroundColor: C.background }]}>
+      <Stack.Screen
+        options={{
+          title: "Erweiterte Suche",
+          headerLeft: () => (
+            <Pressable onPress={() => router.back()} hitSlop={10}>
               <Icon name="xmark" size={20} color={C.foreground} />
             </Pressable>
-            <Text style={[styles.headerTitle, { color: C.foreground }]} pointerEvents="none">
-              Erweiterte Suche
-            </Text>
+          ),
+          headerRight: () => (
             <Pressable onPress={reset} hitSlop={10}>
               <Text style={[styles.reset, { color: C.primary }]}>Zurücksetzen</Text>
             </Pressable>
-          </View>
-        </SafeAreaView>
+          ),
+        }}
+      />
 
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
           <Section title="Fahrzeugtyp" defaultOpen>
             <ChipRow>
               <Chip label="Alle" selected={vt === null} onPress={() => setVehicleType(null)} />
@@ -423,7 +413,7 @@ export function AdvancedFilter({
           <Section title="Marke" defaultOpen count={draft.make.length + draft.excludeMake.length}>
             <Pressable
               style={[styles.makeBtn, { borderColor: C.border, backgroundColor: C.secondary }]}
-              onPress={() => setMakeSheet(true)}
+              onPress={() => openMake({ includes: draft.make, excludes: draft.excludeMake, onChange: setMakes })}
             >
               <Icon name="plus.circle" size={18} color={C.foreground} />
               <Text style={[styles.makeBtnText, { color: C.foreground }]}>Marken wählen</Text>
@@ -571,45 +561,31 @@ export function AdvancedFilter({
         </ScrollView>
 
         <SafeAreaView edges={["bottom"]} style={[styles.footer, { borderTopColor: C.border }]}>
-          <Pressable style={[styles.applyBtn, { backgroundColor: C.primary }]} onPress={() => onApply(draft)}>
-            <Text style={[styles.applyText, { color: C.primaryForeground }]}>
-              {count != null ? `${count.toLocaleString("de-CH")} Fahrzeuge anzeigen` : "Ergebnisse anzeigen"}
-            </Text>
-          </Pressable>
+          <Button
+            size="lg"
+            fullWidth
+            label={count != null ? `${count.toLocaleString("de-CH")} Fahrzeuge anzeigen` : "Ergebnisse anzeigen"}
+            onPress={() => {
+              payload.onApply(draft);
+              router.back();
+            }}
+          />
         </SafeAreaView>
-      </View>
-
-      <MakeSheet
-        key={makeSheet ? "make-open" : "make-closed"}
-        visible={makeSheet}
-        includes={draft.make}
-        excludes={draft.excludeMake}
-        onClose={() => setMakeSheet(false)}
-        onChange={setMakes}
-      />
-    </Modal>
+    </View>
   );
 }
 
 // ─── Make sheet (searchable, grouped, include + exclude) ─────────────────────────
 
-function MakeSheet({
-  visible,
-  includes,
-  excludes,
-  onClose,
-  onChange,
-}: {
-  visible: boolean;
-  includes: string[];
-  excludes: string[];
-  onClose: () => void;
-  onChange: (includes: string[], excludes: string[]) => void;
-}) {
+export function MakeSheet() {
   const C = useTheme();
-  // Remounted via `key` whenever opened (see parent), so these defaults reset.
+  const { make: payload } = useFilterModal();
   const [mode, setMode] = useState<"include" | "exclude">("include");
   const [query, setQuery] = useState("");
+  // Local selection, seeded from the payload; synced back to the filter draft
+  // via payload.onChange on every toggle.
+  const [includes, setIncludes] = useState<string[]>(payload?.includes ?? []);
+  const [excludes, setExcludes] = useState<string[]>(payload?.excludes ?? []);
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -626,33 +602,42 @@ function MakeSheet({
     return out;
   }, [query]);
 
+  if (!payload) return null;
+
+  const sync = (inc: string[], exc: string[]) => {
+    setIncludes(inc);
+    setExcludes(exc);
+    payload.onChange(inc, exc);
+  };
+
   const toggle = (value: string) => {
     if (mode === "include") {
       const next = includes.includes(value) ? includes.filter((x) => x !== value) : [...includes, value];
       // A make cannot be both included and excluded.
-      onChange(next, excludes.filter((x) => x !== value));
+      sync(next, excludes.filter((x) => x !== value));
     } else {
       const next = excludes.includes(value) ? excludes.filter((x) => x !== value) : [...excludes, value];
-      onChange(includes.filter((x) => x !== value), next);
+      sync(includes.filter((x) => x !== value), next);
     }
   };
 
   return (
-    <Modal visible={visible} animationType="slide" onRequestClose={onClose} presentationStyle="pageSheet">
-      <View style={[styles.root, { backgroundColor: C.background }]}>
-        <SafeAreaView edges={["top"]} style={[styles.header, { borderBottomColor: C.border }]}>
-          <View style={styles.headerRow}>
-            <Pressable onPress={onClose} hitSlop={10}>
+    <View style={[styles.root, { backgroundColor: C.background }]}>
+      <Stack.Screen
+        options={{
+          title: "Marke",
+          headerLeft: () => (
+            <Pressable onPress={() => router.back()} hitSlop={10}>
               <Icon name="xmark" size={20} color={C.foreground} />
             </Pressable>
-            <Text style={[styles.headerTitle, { color: C.foreground }]} pointerEvents="none">
-              Marke
-            </Text>
-            <Pressable onPress={() => onChange([], [])} hitSlop={10}>
+          ),
+          headerRight: () => (
+            <Pressable onPress={() => sync([], [])} hitSlop={10}>
               <Text style={[styles.reset, { color: C.primary }]}>Zurücksetzen</Text>
             </Pressable>
-          </View>
-        </SafeAreaView>
+          ),
+        }}
+      />
 
         <View style={styles.makeSheetTop}>
           <Segmented
@@ -663,17 +648,7 @@ function MakeSheet({
             ]}
             onChange={(m) => setMode(m as "include" | "exclude")}
           />
-          <View style={[styles.searchBar, { backgroundColor: C.secondary }]}>
-            <Icon name="magnifyingglass" size={16} color={C.mutedForeground} />
-            <TextInput
-              style={[styles.searchInput, { color: C.foreground }]}
-              placeholder="Marke suchen"
-              placeholderTextColor={C.mutedForeground}
-              value={query}
-              onChangeText={setQuery}
-              autoCorrect={false}
-            />
-          </View>
+          <SearchField placeholder="Marke suchen" value={query} onChangeText={setQuery} />
         </View>
 
         <FlatList
@@ -711,12 +686,9 @@ function MakeSheet({
         />
 
         <SafeAreaView edges={["bottom"]} style={[styles.footer, { borderTopColor: C.border }]}>
-          <Pressable style={[styles.applyBtn, { backgroundColor: C.primary }]} onPress={onClose}>
-            <Text style={[styles.applyText, { color: C.primaryForeground }]}>Fertig</Text>
-          </Pressable>
+          <Button size="lg" fullWidth label="Fertig" onPress={() => router.back()} />
         </SafeAreaView>
-      </View>
-    </Modal>
+    </View>
   );
 }
 
@@ -898,27 +870,6 @@ function ToggleRow({ label, value, onChange }: { label: string; value: boolean; 
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  header: {
-    paddingBottom: Spacing[3],
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: Spacing[5],
-    height: 44,
-  },
-  // Absolutely centered so the German "Zurücksetzen" never collides with it.
-  headerTitle: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    fontFamily: FontFamily.sansBold,
-    fontSize: FontSize.md,
-    letterSpacing: -0.3,
-  },
   reset: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm },
   scroll: { flex: 1 },
   body: { paddingHorizontal: Spacing[5], paddingBottom: Spacing[10] },
@@ -974,15 +925,6 @@ const styles = StyleSheet.create({
   },
   excludeChipText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm },
   makeSheetTop: { paddingHorizontal: Spacing[5], paddingTop: Spacing[3], gap: Spacing[3] },
-  searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing[2],
-    height: 46,
-    borderRadius: Radius.md,
-    paddingHorizontal: Spacing[3],
-  },
-  searchInput: { flex: 1, fontFamily: FontFamily.sans, fontSize: FontSize.base, height: 46 },
   makeGroupHeader: { paddingHorizontal: Spacing[5], paddingVertical: Spacing[2], marginTop: Spacing[2] },
   makeGroupText: { fontFamily: FontFamily.sansBold, fontSize: FontSize.xs, textTransform: "uppercase", letterSpacing: 0.5 },
   makeRow: {
@@ -1008,6 +950,4 @@ const styles = StyleSheet.create({
   toggleRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: Spacing[3] },
   toggleLabel: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.base },
   footer: { paddingHorizontal: Spacing[5], paddingTop: Spacing[3], borderTopWidth: StyleSheet.hairlineWidth },
-  applyBtn: { height: 54, borderRadius: Radius.lg, alignItems: "center", justifyContent: "center" },
-  applyText: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.md },
 });

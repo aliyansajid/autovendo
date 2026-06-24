@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
+import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { Icon } from "@/components/ui/icon";
 import { GoogleIcon, AppleIcon } from "@/components/ui/brand-icons";
@@ -55,34 +56,24 @@ export function SocialButtons({ onDone }: { onDone: () => void }) {
         <View style={[styles.line, { backgroundColor: C.border }]} />
       </View>
       <View style={styles.socialRow}>
-        <Pressable
-          style={[styles.socialBtn, { backgroundColor: C.secondary, borderColor: C.border }]}
+        <Button
+          variant="secondary"
+          label="Google"
+          leftIcon={<GoogleIcon size={18} />}
+          loading={pending === "google"}
+          disabled={!!pending}
           onPress={() => social("google")}
+          style={{ flex: 1 }}
+        />
+        <Button
+          variant="secondary"
+          label="Apple"
+          leftIcon={<AppleIcon size={18} color={C.foreground} />}
+          loading={pending === "apple"}
           disabled={!!pending}
-        >
-          {pending === "google" ? (
-            <ActivityIndicator size="small" color={C.foreground} />
-          ) : (
-            <>
-              <GoogleIcon size={18} />
-              <Text style={[styles.socialText, { color: C.foreground }]}>Google</Text>
-            </>
-          )}
-        </Pressable>
-        <Pressable
-          style={[styles.socialBtn, { backgroundColor: C.secondary, borderColor: C.border }]}
           onPress={() => social("apple")}
-          disabled={!!pending}
-        >
-          {pending === "apple" ? (
-            <ActivityIndicator size="small" color={C.foreground} />
-          ) : (
-            <>
-              <AppleIcon size={18} color={C.foreground} />
-              <Text style={[styles.socialText, { color: C.foreground }]}>Apple</Text>
-            </>
-          )}
-        </Pressable>
+          style={{ flex: 1 }}
+        />
       </View>
     </View>
   );
@@ -108,15 +99,4 @@ const styles = StyleSheet.create({
   line: { flex: 1, height: StyleSheet.hairlineWidth },
   dividerText: { fontFamily: FontFamily.sans, fontSize: FontSize.xs },
   socialRow: { flexDirection: "row", gap: Spacing[3] },
-  socialBtn: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing[2],
-    height: 50,
-    borderRadius: Radius.md,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-  },
-  socialText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.base },
 });

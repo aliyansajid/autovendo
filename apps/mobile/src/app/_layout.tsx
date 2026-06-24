@@ -8,6 +8,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FavoritesProvider } from "@/lib/favorites";
 import { LocationProvider } from "@/lib/location";
+import { SelectModalProvider } from "@/components/form/select-modal";
+import { FilterModalProvider } from "@/components/search/filter-modal";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,6 +34,8 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <FavoritesProvider>
           <LocationProvider>
+            <SelectModalProvider>
+            <FilterModalProvider>
             <ThemeProvider value={DefaultTheme}>
             <StatusBar style="dark" />
             <Stack screenOptions={{ headerShown: false, headerShadowVisible: false, headerBackButtonDisplayMode: "minimal" }}>
@@ -40,8 +44,13 @@ export default function RootLayout() {
               <Stack.Screen name="(tabs)" />
               <Stack.Screen name="vehicle/[id]" options={{ presentation: "card" }} />
               <Stack.Screen name="dealer/[id]" options={{ presentation: "card" }} />
+              <Stack.Screen name="select" options={{ presentation: "modal", headerShown: true }} />
+              <Stack.Screen name="filter" options={{ presentation: "modal", headerShown: true }} />
+              <Stack.Screen name="filter-make" options={{ presentation: "modal", headerShown: true }} />
             </Stack>
             </ThemeProvider>
+            </FilterModalProvider>
+            </SelectModalProvider>
           </LocationProvider>
         </FavoritesProvider>
       </SafeAreaProvider>

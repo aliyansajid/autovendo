@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -12,7 +12,7 @@ import { FontFamily, FontSize, Radius, Spacing, type ThemeColors } from "@/const
 import { useTheme } from "@/hooks/use-theme";
 import { Icon, type IconName } from "./icon";
 
-type Variant = "primary" | "secondary" | "outline" | "ghost";
+type Variant = "primary" | "secondary" | "outline" | "ghost" | "destructive";
 type Size = "sm" | "md" | "lg";
 
 export function Button({
@@ -21,6 +21,7 @@ export function Button({
   variant = "primary",
   size = "md",
   icon,
+  leftIcon,
   disabled,
   loading,
   fullWidth,
@@ -31,6 +32,8 @@ export function Button({
   variant?: Variant;
   size?: Size;
   icon?: IconName;
+  /** Custom leading element (e.g. a brand SVG) rendered instead of `icon`. */
+  leftIcon?: ReactNode;
   disabled?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
@@ -48,6 +51,7 @@ export function Button({
     secondary: { bg: C.secondary, fg: C.foreground },
     outline: { bg: "transparent", fg: C.foreground, border: C.border },
     ghost: { bg: "transparent", fg: C.primary },
+    destructive: { bg: C.destructive, fg: C.primaryForeground },
   };
   const p = palette[variant];
 
@@ -72,7 +76,7 @@ export function Button({
         <ActivityIndicator color={p.fg} />
       ) : (
         <View style={styles.content}>
-          {icon && <Icon name={icon} size={size === "lg" ? 20 : 17} color={p.fg} weight="semibold" />}
+          {leftIcon ?? (icon && <Icon name={icon} size={size === "lg" ? 20 : 17} color={p.fg} weight="semibold" />)}
           <Text style={[styles.label, { color: p.fg, fontSize: fontSizes[size] }]}>{label}</Text>
         </View>
       )}
@@ -83,7 +87,7 @@ export function Button({
 function createStyles(_C: ThemeColors) {
   return StyleSheet.create({
     base: {
-      borderRadius: Radius.md,
+      borderRadius: Radius.lg,
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: Spacing[5],
