@@ -56,13 +56,17 @@ export default function SearchScreen() {
   const styles = useMemo(() => createStyles(C), [C]);
   const tabBarHeight = useTabBarHeight();
   const { isFavorite, toggle } = useFavorites();
-  const initial = useLocalSearchParams<{ vehicleType?: string; sort?: string; q?: string; make?: string; dealerId?: string }>();
+  const initial = useLocalSearchParams<{ vehicleType?: string; sort?: string; q?: string; make?: string; dealerId?: string; bodyType?: string; fuel?: string; priceFrom?: string; priceTo?: string }>();
 
   const [filters, setFilters] = useState<Filters>(() => ({
     ...EMPTY_FILTERS,
     vehicleType: initial.vehicleType ?? null,
     dealerId: initial.dealerId,
     make: initial.make ? [initial.make] : [],
+    bodyType: initial.bodyType ? [initial.bodyType] : [],
+    fuel: initial.fuel ? [initial.fuel] : [],
+    priceFrom: initial.priceFrom ? Number(initial.priceFrom) : undefined,
+    priceTo: initial.priceTo ? Number(initial.priceTo) : undefined,
     sort: (initial.sort as SortOption) ?? "relevance",
     q: initial.q ?? "",
   }));

@@ -37,14 +37,27 @@ const DEALER_W = Math.min(260, SCREEN_W * 0.66);
 const HEADER_FG = "#ffffff";
 const HEADER_MUTED = "rgba(255,255,255,0.6)";
 
-const ACTIONS: { key: string; label: string; icon: IconName; go: () => void }[] = [
-  { key: "buy", label: "Kaufen", icon: "car.fill", go: () => openSearch() },
-  { key: "sell", label: "Verkaufen", icon: "tag.fill", go: () => router.push("/listing/new") },
-  { key: "dealers", label: "Händler", icon: "building.2.fill", go: () => router.push("/(tabs)/dealers") },
-];
-
 // Top brands from the shared source of truth (UPPERCASE enum values).
 const TOP_BRANDS = (carMakes[0]?.items ?? []).slice(0, 8);
+
+// Browse-by-category — popular car body types (values from the shared enum;
+// labels from labelType = de.json). Tapping opens Search pre-filtered.
+const CATEGORIES: { value: string; label: string; icon: IconName }[] = [
+  { value: "SUV", label: "SUV", icon: "car.fill" },
+  { value: "SALOON", label: "Limousine", icon: "car.side.fill" },
+  { value: "ESTATE", label: "Kombi", icon: "car.side.fill" },
+  { value: "CABRIOLET", label: "Cabrio", icon: "car.side.fill" },
+  { value: "MINIVAN", label: "Van", icon: "bus.fill" },
+  { value: "SMALL_CAR", label: "Kleinwagen", icon: "car.side.fill" },
+];
+
+// Budget quick-filters → Search with priceFrom/priceTo.
+const BUDGETS: { label: string; params: Record<string, string> }[] = [
+  { label: "bis 10’000", params: { priceTo: "10000" } },
+  { label: "10–20’000", params: { priceFrom: "10000", priceTo: "20000" } },
+  { label: "20–40’000", params: { priceFrom: "20000", priceTo: "40000" } },
+  { label: "ab 40’000", params: { priceFrom: "40000" } },
+];
 
 function openSearch(params?: Record<string, string>) {
   router.push({ pathname: "/(tabs)/search", params });
@@ -61,6 +74,7 @@ export default function HomeScreen() {
   useStatusBarStyle("light");
 
   const [featured, setFeatured] = useState<VehicleListItem[]>([]);
+  const [electric, setElectric] = useState<VehicleListItem[]>([]);
   const [recent, setRecent] = useState<VehicleListItem[]>([]);
   const [dealers, setDealers] = useState<DealerListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,12 +86,14 @@ export default function HomeScreen() {
     else setLoading(true);
     setError(false);
     try {
-      const [feat, rec, deal] = await Promise.all([
+      const [feat, elec, rec, deal] = await Promise.all([
         fetchFeaturedVehicles(),
+        fetchVehicles({ fuel: ["ELECTRIC"], sort: "created-desc", pageSize: 6 }),
         fetchVehicles({ sort: "created-desc", pageSize: 6 }),
         fetchFeaturedDealers(),
       ]);
       setFeatured(feat);
+      setElectric(elec.data);
       setRecent(rec.data);
       setDealers(deal);
     } catch {
@@ -123,26 +139,11 @@ export default function HomeScreen() {
               </Pressable>
             </View>
 
-            {/* Search */}
-            <View style={styles.searchRow}>
-              <Pressable style={styles.searchBar} onPress={() => openSearch()}>
-                <Icon name="magnifyingglass" size={17} color={C.mutedForeground} />
-                <Text style={[styles.searchPlaceholder, { color: C.mutedForeground }]}>Fahrzeug finden …</Text>
-              </Pressable>
-              <Pressable style={[styles.filterBtn, { backgroundColor: C.primary }]} onPress={() => openSearch()}>
-                <Icon name="slider.horizontal.3" size={18} color={C.primaryForeground} />
-              </Pressable>
-            </View>
-
-            {/* Quick actions */}
-            <View style={[styles.actionBar, { backgroundColor: C.primary }]}>
-              {ACTIONS.map((a, i) => (
-                <Pressable key={a.key} style={[styles.action, i < ACTIONS.length - 1 && styles.actionDivider]} onPress={a.go}>
-                  <Icon name={a.icon} size={20} color={C.primaryForeground} />
-                  <Text style={[styles.actionLabel, { color: C.primaryForeground }]}>{a.label}</Text>
-                </Pressable>
-              ))}
-            </View>
+            {/* Search — the single entry point; the Search tab owns filtering */}
+            <Pressable style={styles.searchBar} onPress={() => openSearch()}>
+              <Icon name="magnifyingglass" size={17} color={C.mutedForeground} />
+              <Text style={[styles.searchPlaceholder, { color: C.mutedForeground }]}>Fahrzeug finden …</Text>
+            </Pressable>
           </SafeAreaView>
         </View>
 
@@ -158,6 +159,25 @@ export default function HomeScreen() {
             </Pressable>
           ))}
         </ScrollView>
+
+        {/* Categories */}
+        <View style={styles.section}>
+          <SectionHeader title="Nach Kategorie" actionLabel="Alle" onAction={() => openSearch()} />
+          <View style={styles.catGrid}>
+            {CATEGORIES.map((c) => (
+              <Pressable
+                key={c.value}
+                style={[styles.catCard, { backgroundColor: C.card, borderColor: C.border }]}
+                onPress={() => openSearch({ bodyType: c.value })}
+              >
+                <View style={[styles.catIcon, { backgroundColor: C.secondary }]}>
+                  <Icon name={c.icon} size={18} color={C.primary} />
+                </View>
+                <Text style={[styles.catLabel, { color: C.foreground }]} numberOfLines={1}>{c.label}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
 
         {error ? (
           <ErrorState onRetry={() => load()} />
@@ -190,6 +210,55 @@ export default function HomeScreen() {
                   />
                 ))}
               </ScrollView>
+            )}
+
+            {/* Budget */}
+            <View style={[styles.section, { marginTop: Spacing[6] }]}>
+              <SectionHeader title="Nach Budget" />
+              <View style={styles.budgetRow}>
+                {BUDGETS.map((b) => (
+                  <Pressable
+                    key={b.label}
+                    style={[styles.budgetChip, { backgroundColor: C.secondary, borderColor: C.border }]}
+                    onPress={() => openSearch(b.params)}
+                  >
+                    <Text style={[styles.budgetText, { color: C.foreground }]}>{b.label}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
+            {/* Electric spotlight */}
+            {(loading || electric.length > 0) && (
+              <>
+                <View style={[styles.section, { marginTop: Spacing[6] }]}>
+                  <SectionHeader title="⚡ Elektro entdecken" actionLabel="Alle" onAction={() => openSearch({ fuel: "ELECTRIC" })} />
+                </View>
+                {loading ? (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hList}>
+                    {[0, 1].map((k) => <VehicleCardSkeleton key={k} width={FEATURED_W} />)}
+                  </ScrollView>
+                ) : (
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    snapToInterval={FEATURED_W + Spacing[3]}
+                    decelerationRate="fast"
+                    contentContainerStyle={styles.hList}
+                  >
+                    {electric.map((v) => (
+                      <VehicleCard
+                        key={v.id}
+                        vehicle={v}
+                        width={FEATURED_W}
+                        favorite={isFavorite(v.id)}
+                        onToggleFavorite={() => toggle(v.id)}
+                        onPress={() => router.push(`/vehicle/${v.id}`)}
+                      />
+                    ))}
+                  </ScrollView>
+                )}
+              </>
             )}
 
             {/* Dealers */}
@@ -264,9 +333,7 @@ function createStyles(C: ReturnType<typeof useTheme>) {
       justifyContent: "center",
     },
 
-    searchRow: { flexDirection: "row", gap: Spacing[2] },
     searchBar: {
-      flex: 1,
       flexDirection: "row",
       alignItems: "center",
       gap: Spacing[2],
@@ -276,17 +343,6 @@ function createStyles(C: ReturnType<typeof useTheme>) {
       paddingHorizontal: Spacing[4],
     },
     searchPlaceholder: { fontFamily: FontFamily.sans, fontSize: FontSize.base },
-    filterBtn: { width: 52, height: 52, borderRadius: Radius.lg, alignItems: "center", justifyContent: "center" },
-
-    actionBar: {
-      flexDirection: "row",
-      borderRadius: Radius.lg,
-      marginTop: Spacing[4],
-      paddingVertical: Spacing[3],
-    },
-    action: { flex: 1, alignItems: "center", gap: 6 },
-    actionDivider: { borderRightWidth: StyleSheet.hairlineWidth, borderRightColor: "rgba(255,255,255,0.25)" },
-    actionLabel: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.sm },
 
     brandsSection: { paddingHorizontal: Spacing[5], marginTop: Spacing[6] },
     brandsRow: { paddingHorizontal: Spacing[5], gap: Spacing[2], paddingTop: Spacing[1] },
@@ -303,5 +359,33 @@ function createStyles(C: ReturnType<typeof useTheme>) {
 
     section: { paddingHorizontal: Spacing[5], marginTop: Spacing[6] },
     hList: { paddingHorizontal: Spacing[5], gap: Spacing[3], paddingTop: Spacing[1], paddingBottom: Spacing[1] },
+
+    // Categories grid
+    catGrid: { flexDirection: "row", flexWrap: "wrap", gap: Spacing[3] },
+    catCard: {
+      width: `${(100 - 4) / 2}%`,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: Spacing[3],
+      height: 64,
+      paddingHorizontal: Spacing[4],
+      borderRadius: Radius.lg,
+      borderWidth: StyleSheet.hairlineWidth,
+      ...Shadow.sm,
+    },
+    catIcon: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center" },
+    catLabel: { fontFamily: FontFamily.sansSemiBold, fontSize: FontSize.base, flex: 1 },
+
+    // Budget chips
+    budgetRow: { flexDirection: "row", flexWrap: "wrap", gap: Spacing[2] },
+    budgetChip: {
+      paddingHorizontal: Spacing[4],
+      height: 40,
+      borderRadius: 999,
+      borderWidth: StyleSheet.hairlineWidth,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    budgetText: { fontFamily: FontFamily.sansMedium, fontSize: FontSize.sm },
   });
 }
