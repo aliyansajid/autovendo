@@ -22,7 +22,7 @@ export function ListingDataGrid({ data }: DataGridProps) {
                 className={`flex items-center justify-between py-3 ${!isLastRow ? "border-b" : ""}`}
               >
                 <span className="text-sm text-muted-foreground">{label}</span>
-                <span className="text-sm font-semibold text-right">{value}</span>
+                <span className="text-sm font-medium text-right">{value}</span>
               </div>
             ))}
           </div>

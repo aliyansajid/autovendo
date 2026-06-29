@@ -12,7 +12,7 @@ export function KeyDetailCard({ label, value, icon }: KeyDetailCardProps) {
         <p className="text-xs text-muted-foreground font-medium truncate">
           {label}
         </p>
-        <p className="font-semibold text-sm truncate">{value}</p>
+        <p className="font-medium text-sm truncate">{value}</p>
       </div>
     </div>
   );
