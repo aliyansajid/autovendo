@@ -50,7 +50,7 @@
   "About": {
     "title": "Chi siamo - Autovendo.ch",
     "subtitle": "Giusto. Trasparente. Semplice. Umano.",
-    "description": "Autovendo.ch è la piattaforma di vendita per tutti i concessionari auto in Svizzera. Abbiamo sviluppato Autovendo con un obiettivo chiaro: rendere la vendita di veicoli semplice, efficiente e corretta — senza inutili oneri amministrativi.",
+    "description": "Autovendo.ch è il marketplace per tutti coloro che vendono un'auto in Svizzera — dai privati che cedono un singolo veicolo ai concessionari professionisti che gestiscono un intero stock. Abbiamo sviluppato Autovendo con un obiettivo chiaro: rendere l'acquisto e la vendita di veicoli semplici, efficienti e corretti — senza inutili oneri amministrativi.",
     "features": {
       "efficiency": {
         "title": "Efficienza & Struttura",
@@ -325,9 +325,32 @@
     "showLess": "Mostra meno"
   },
   "FeaturedGarage": {
-    "title": "Garage in primo piano",
-    "emptyState": "Al momento non ci sono garage registrati.",
+    "title": "Concessionari di fiducia",
+    "subtitle": "Esplora le vetrine dei concessionari affermati — oppure acquista direttamente da privati in tutta la Svizzera.",
+    "emptyState": "Al momento non ci sono concessionari registrati.",
     "button": "Al garage"
+  },
+  "HomeSell": {
+    "title": "Vendi la tua auto su Autovendo",
+    "subtitle": "Che tu stia vendendo una singola auto o gestendo un intero stock, su Autovendo c'è spazio per te.",
+    "private": {
+      "badge": "Privati",
+      "title": "Vendi la tua auto?",
+      "description": "Pubblica il tuo veicolo in pochi minuti e raggiungi migliaia di acquirenti in tutta la Svizzera — senza bisogno di una concessionaria.",
+      "feature1": "Annuncio rapido e semplice",
+      "feature2": "Contatto diretto con gli acquirenti",
+      "feature3": "Controllo totale sulla tua vendita",
+      "cta": "Pubblica la tua auto"
+    },
+    "dealer": {
+      "badge": "Concessionari",
+      "title": "Gestisci una concessionaria?",
+      "description": "Presenta il tuo intero stock, gestisci i contatti e amplia la tua portata con strumenti pensati per i professionisti.",
+      "feature1": "Sincronizzazione & gestione dello stock",
+      "feature2": "La tua vetrina da concessionario",
+      "feature3": "Monitoraggio contatti & analisi",
+      "cta": "Scopri le soluzioni per concessionari"
+    }
   },
   "ListingCard": {},
   "AdvancedSearch": {
@@ -628,19 +651,19 @@
         "items": [
           {
             "question": "Cos'è Autovendo.ch?",
-            "answer": "Autovendo.ch è una piattaforma di vendita online specializzata per tutti i rivenditori di auto in Svizzera. I rivenditori possono facilmente inserire i loro veicoli e raggiungere direttamente i potenziali acquirenti."
+            "answer": "Autovendo.ch è un marketplace online per la compravendita di auto in Svizzera. Sia i privati sia i rivenditori commerciali possono facilmente inserire i loro veicoli e raggiungere direttamente i potenziali acquirenti."
           },
           {
             "question": "Chi può usare Autovendo.ch?",
-            "answer": "Autovendo.ch si rivolge esclusivamente ai rivenditori di auto commerciali e ai garage. I venditori privati non sono ammessi su questa piattaforma."
+            "answer": "Autovendo.ch è aperto sia ai privati che cedono un singolo veicolo sia ai rivenditori di auto commerciali e ai garage che gestiscono un intero stock."
           },
           {
             "question": "In quali regioni è disponibile Autovendo.ch?",
             "answer": "Autovendo.ch si concentra sul mercato svizzero. I veicoli inseriti devono trovarsi in Svizzera o nel Principato del Liechtenstein."
           },
           {
-            "question": "Autovendo.ch è adatto anche ai piccoli rivenditori?",
-            "answer": "Sì. Autovendo.ch è deliberatamente progettato in modo che tutti i rivenditori – indipendentemente dalle dimensioni o dalla posizione – ricevano le stesse eque opportunità."
+            "question": "Autovendo.ch è adatto anche ai privati e ai piccoli rivenditori?",
+            "answer": "Sì. Autovendo.ch è deliberatamente progettato in modo che tutti – dai privati ai rivenditori di qualsiasi dimensione o posizione – ricevano le stesse eque opportunità."
           },
           {
             "question": "In cosa si differenzia Autovendo.ch dalle altre piattaforme?",
@@ -657,7 +680,7 @@
           },
           {
             "question": "Si possono inserire più veicoli contemporaneamente?",
-            "answer": "Sì. I rivenditori possono pubblicare più veicoli allo stesso tempo – a seconda del pacchetto scelto."
+            "answer": "Sì. Puoi pubblicare più veicoli allo stesso tempo – a seconda del pacchetto scelto."
           },
           {
             "question": "Quanto tempo rimane online un annuncio?",
@@ -690,7 +713,7 @@
           },
           {
             "question": "Sono possibili variazioni di prezzo?",
-            "answer": "Sì. I rivenditori possono cambiare il loro pacchetto in qualsiasi momento se le loro esigenze cambiano."
+            "answer": "Sì. Puoi cambiare il tuo pacchetto in qualsiasi momento se le tue esigenze cambiano."
           },
           {
             "question": "Riceverò una fattura?",
@@ -718,8 +741,8 @@
             "answer": "Sì. La protezione dei tuoi dati è la nostra massima priorità. Tutti i dati vengono elaborati in conformità con le normative sulla protezione dei dati vigenti."
           },
           {
-            "question": "Esistono funzioni di sicurezza aggiuntive per i rivenditori?",
-            "answer": "Sì. Per i rivenditori raccomandiamo, tra l'altro, di fornire un numero di cellulare per una maggiore sicurezza dell'account."
+            "question": "Esistono funzioni di sicurezza aggiuntive per il mio account?",
+            "answer": "Sì. Raccomandiamo, tra l'altro, di fornire un numero di cellulare per una maggiore sicurezza dell'account."
           }
         ]
       }
@@ -766,11 +789,11 @@
       "ultimate": "Il nostro piano più potente per i leader del settore."
     },
     "title": "Più visibilità. Più servizio. Meno costi.",
-    "subtitle": "Perché pagare il 30–40% in più – quando con autovendo.ch ottiene un supporto più personale e la massima trasparenza?",
+    "subtitle": "Prezzi equi e trasparenti sia per i privati che per i concessionari – più supporto personale e massima trasparenza, senza le tariffe gonfiate delle grandi piattaforme.",
     "noOverpriced": "Basta con le piattaforme troppo costose.",
-    "introText1": "autovendo.ch offre ai concessionari controllo, equità e un vero supporto personale – a condizioni nettamente migliori. Il commercio automobilistico è già abbastanza impegnativo. La sua piattaforma di inserzioni dovrebbe supportarla – non erodere il suo margine.",
+    "introText1": "autovendo.ch offre sia ai privati che ai concessionari controllo, equità e un vero supporto personale – a condizioni nettamente migliori. Vendere un'auto dovrebbe essere semplice. La sua piattaforma di inserzioni dovrebbe supportarla – non erodere il suo ricavo.",
     "introText2": "autovendo.ch offre prezzi equi, interlocutori diretti e piena trasparenza. Nessun costo nascosto. Nessuna logica aziendale. Solo una vera partnership.",
-    "comparisonTitle": "Prezzi equi – Confronto diretto",
+    "comparisonTitle": "Pacchetti per concessionari – prezzi equi a confronto diretto",
     "tableHeaders": {
       "package": "Pacchetto",
       "vehicles": "Veicoli simultanei",
@@ -811,19 +834,19 @@
       "reach": "Stessa portata.",
       "contact": "Interlocutore personale.",
       "response": "Tempi di risposta più rapidi.",
-      "flexible": "Soluzioni flessibili per concessionari.",
+      "flexible": "Soluzioni flessibili per ogni venditore.",
       "noCorp": "Nessuna struttura aziendale.",
       "fair": "Prezzi equi."
     },
     "weAre": {
       "title": "Siamo:",
       "efficient": "Più efficienti",
-      "dealerOriented": "Orientati ai concessionari",
+      "dealerOriented": "Orientati al cliente",
       "personal": "Personali",
       "transparent": "Trasparenti",
       "swiss": "Direttamente svizzeri"
     },
-    "partnershipText": "Con autovendo.ch non investe in pubblicità. Investe in una partnership.\nIl suo margine appartiene a Lei – non alla piattaforma.",
+    "partnershipText": "Con autovendo.ch non investe in pubblicità. Investe in una partnership.\nIl suo ricavo appartiene a Lei – non alla piattaforma.",
     "month": "mese",
     "vehiclesIncluded": "veicoli inclusi",
     "trialDaysLabel": "{days} giorni di prova gratuita",
@@ -865,7 +888,7 @@
       "text": "Un concessionario con 25 veicoli risparmia con autovendo.ch",
       "highlight": "oltre CHF 3'000.– all'anno.",
       "suffix": "È margine diretto. Senza rischi.",
-      "switchText": "Passi ora ad autovendo.ch e risparmi diverse migliaia di franchi all'anno – con servizio personale e condizioni eque.",
+      "switchText": "Che venda una singola auto o un intero stock, passi ora ad autovendo.ch – con servizio personale e condizioni eque.",
       "contactButton": "Contattare senza impegno"
     }
   },

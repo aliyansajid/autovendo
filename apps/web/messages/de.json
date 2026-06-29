@@ -50,7 +50,7 @@
   "About": {
     "title": "Über Autovendo.ch",
     "subtitle": "Fair. Transparent. Unkompliziert. Menschlich.",
-    "description": "Autovendo.ch ist die Verkaufsplattform für alle Autohändler in der Schweiz. Wir haben Autovendo mit einem klaren Ziel entwickelt: Den Verkauf von Fahrzeugen einfach, effizient und fair zu gestalten — ohne unnötigen Verwaltungsaufwand.",
+    "description": "Autovendo.ch ist der Marktplatz für alle, die in der Schweiz ein Auto verkaufen — von Privatverkäufern mit einem einzelnen Fahrzeug bis zu professionellen Händlern mit ganzem Bestand. Wir haben Autovendo mit einem klaren Ziel entwickelt: Den Kauf und Verkauf von Fahrzeugen einfach, effizient und fair zu gestalten — ohne unnötigen Verwaltungsaufwand.",
     "features": {
       "efficiency": {
         "title": "Effizienz & Struktur",
@@ -325,9 +325,32 @@
     "showLess": "Weniger anzeigen"
   },
   "FeaturedGarage": {
-    "title": "Ausgewählte Garagen",
-    "emptyState": "Derzeit keine Garagen eingetragen.",
+    "title": "Vertrauenswürdige Händler",
+    "subtitle": "Entdecken Sie etablierte Händler-Schaufenster — oder kaufen Sie direkt bei Privatverkäufern in der ganzen Schweiz.",
+    "emptyState": "Derzeit keine Händler eingetragen.",
     "button": "Zur Garage"
+  },
+  "HomeSell": {
+    "title": "Verkaufen Sie Ihr Auto auf Autovendo",
+    "subtitle": "Ob Sie ein einzelnes Auto verkaufen oder einen ganzen Bestand verwalten — auf Autovendo ist für Sie Platz.",
+    "private": {
+      "badge": "Privatverkäufer",
+      "title": "Verkaufen Sie Ihr eigenes Auto?",
+      "description": "Inserieren Sie Ihr Fahrzeug in wenigen Minuten und erreichen Sie Tausende Käufer in der ganzen Schweiz — ganz ohne Autohaus.",
+      "feature1": "Schnelles und einfaches Inserat",
+      "feature2": "Direkter Kontakt mit Käufern",
+      "feature3": "Volle Kontrolle über Ihren Verkauf",
+      "cta": "Auto inserieren"
+    },
+    "dealer": {
+      "badge": "Händler",
+      "title": "Betreiben Sie ein Autohaus?",
+      "description": "Präsentieren Sie Ihren gesamten Bestand, verwalten Sie Anfragen und vergrössern Sie Ihre Reichweite mit Werkzeugen für Profis.",
+      "feature1": "Bestandssynchronisation & -verwaltung",
+      "feature2": "Ihr eigenes Händler-Schaufenster",
+      "feature3": "Lead-Tracking & Analysen",
+      "cta": "Händlerlösungen entdecken"
+    }
   },
   "ListingCard": {},
   "AdvancedSearch": {
@@ -628,19 +651,19 @@
         "items": [
           {
             "question": "Was ist Autovendo.ch?",
-            "answer": "Autovendo.ch ist eine spezialisierte Online-Verkaufsplattform für alle Autohändler in der Schweiz. Händler können ihre Fahrzeuge einfach inserieren und potenzielle Käufer direkt erreichen."
+            "answer": "Autovendo.ch ist ein Online-Marktplatz für den Kauf und Verkauf von Autos in der Schweiz. Sowohl Privatverkäufer als auch gewerbliche Händler können ihre Fahrzeuge einfach inserieren und potenzielle Käufer direkt erreichen."
           },
           {
             "question": "Wer kann Autovendo.ch nutzen?",
-            "answer": "Autovendo.ch richtet sich ausschliesslich an gewerbliche Autohändler und Garagen. Private Verkäufer sind auf dieser Plattform nicht zugelassen."
+            "answer": "Autovendo.ch steht sowohl Privatverkäufern mit einem einzelnen Fahrzeug als auch gewerblichen Autohändlern und Garagen mit ganzem Bestand offen."
           },
           {
             "question": "In welchen Regionen ist Autovendo.ch verfügbar?",
             "answer": "Autovendo.ch ist auf den Schweizer Markt ausgerichtet. Inserierte Fahrzeuge müssen sich in der Schweiz oder im Fürstentum Liechtenstein befinden."
           },
           {
-            "question": "Ist Autovendo.ch auch für kleine Händler geeignet?",
-            "answer": "Ja. Autovendo.ch ist bewusst so aufgebaut, dass alle Händler – unabhängig von Grösse oder Standort – die gleichen fairen Möglichkeiten erhalten."
+            "question": "Ist Autovendo.ch auch für Privatverkäufer und kleine Händler geeignet?",
+            "answer": "Ja. Autovendo.ch ist bewusst so aufgebaut, dass alle – von Privatverkäufern bis zu Händlern jeder Grösse und jeden Standorts – die gleichen fairen Möglichkeiten erhalten."
           },
           {
             "question": "Wie unterscheidet sich Autovendo.ch von anderen Plattformen?",
@@ -657,7 +680,7 @@
           },
           {
             "question": "Können mehrere Fahrzeuge gleichzeitig inseriert werden?",
-            "answer": "Ja. Händler können mehrere Fahrzeuge gleichzeitig veröffentlichen – abhängig vom gewählten Paket."
+            "answer": "Ja. Sie können mehrere Fahrzeuge gleichzeitig veröffentlichen – abhängig vom gewählten Paket."
           },
           {
             "question": "Wie lange bleibt ein Inserat online?",
@@ -690,7 +713,7 @@
           },
           {
             "question": "Sind Preisänderungen möglich?",
-            "answer": "Ja. Händler können ihr Paket jederzeit wechseln, wenn sich der Bedarf ändert."
+            "answer": "Ja. Sie können Ihr Paket jederzeit wechseln, wenn sich Ihr Bedarf ändert."
           },
           {
             "question": "Erhalte ich eine Rechnung?",
@@ -718,8 +741,8 @@
             "answer": "Ja. Der Schutz deiner Daten hat für uns höchste Priorität. Alle Daten werden gemäss den geltenden Datenschutzbestimmungen verarbeitet."
           },
           {
-            "question": "Gibt es zusätzliche Sicherheitsfunktionen für Händler?",
-            "answer": "Ja. Für Händler empfehlen wir u. a. die Hinterlegung einer Mobilnummer zur zusätzlichen Kontosicherheit."
+            "question": "Gibt es zusätzliche Sicherheitsfunktionen für mein Konto?",
+            "answer": "Ja. Wir empfehlen u. a. die Hinterlegung einer Mobilnummer zur zusätzlichen Kontosicherheit."
           }
         ]
       }
@@ -772,11 +795,11 @@
       "diamond": "Diamant"
     },
     "title": "Mehr Sichtbarkeit. Mehr Service. Weniger Kosten.",
-    "subtitle": "Warum 30–40% mehr bezahlen – wenn Sie bei autovendo.ch mehr persönliche Betreuung und volle Transparenz erhalten?",
+    "subtitle": "Faire, transparente Preise für Privatverkäufer und Händler gleichermassen – mehr persönliche Betreuung und volle Transparenz, ohne die überhöhten Gebühren der grossen Plattformen.",
     "noOverpriced": "Schluss mit überteuerten Plattformen.",
-    "introText1": "autovendo.ch gibt Händlern Kontrolle, Fairness und echten persönlichen Support – zu deutlich besseren Konditionen. Der Fahrzeughandel ist anspruchsvoll genug. Ihre Inserate-Plattform sollte Sie unterstützen – nicht Ihre Marge belasten.",
+    "introText1": "autovendo.ch gibt Privatverkäufern und Händlern gleichermassen Kontrolle, Fairness und echten persönlichen Support – zu deutlich besseren Konditionen. Ein Auto zu verkaufen sollte einfach sein. Ihre Inserate-Plattform sollte Sie unterstützen – nicht Ihren Erlös schmälern.",
     "introText2": "autovendo.ch bietet faire Preise, direkte Ansprechpartner und volle Transparenz. Keine versteckten Kosten. Kein Konzern-Denken. Sondern echte Partnerschaft.",
-    "comparisonTitle": "Faire Preise – Direkt verglichen",
+    "comparisonTitle": "Händlerpakete – faire Preise im direkten Vergleich",
     "tableHeaders": {
       "package": "Paket",
       "vehicles": "Inserate gleichzeitig",
@@ -817,19 +840,19 @@
       "reach": "Gleiche Reichweite.",
       "contact": "Persönlicher Ansprechpartner.",
       "response": "Schnellere Reaktionszeiten.",
-      "flexible": "Flexible Lösungen für Händler.",
+      "flexible": "Flexible Lösungen für jeden Verkäufer.",
       "noCorp": "Keine Konzern-Strukturen.",
       "fair": "Faire Preisgestaltung."
     },
     "weAre": {
       "title": "Wir sind:",
       "efficient": "Effizienter",
-      "dealerOriented": "Händlerorientiert",
+      "dealerOriented": "Kundenorientiert",
       "personal": "Persönlich",
       "transparent": "Transparent",
       "swiss": "Schweizerisch direkt"
     },
-    "partnershipText": "Mit autovendo.ch investieren Sie nicht in Werbung. Sie investieren in eine Partnerschaft.\nIhre Marge gehört Ihnen – nicht der Plattform.",
+    "partnershipText": "Mit autovendo.ch investieren Sie nicht in Werbung. Sie investieren in eine Partnerschaft.\nIhr Erlös gehört Ihnen – nicht der Plattform.",
     "tabs": {
       "dealers": "Für Händler",
       "private": "Privatverkäufer"
@@ -871,7 +894,7 @@
       "text": "Ein Händler mit 25 Fahrzeugen spart bei autovendo.ch",
       "highlight": "über CHF 3'000.– pro Jahr.",
       "suffix": "Das ist direkte Marge. Ohne Risiko.",
-      "switchText": "Wechseln Sie jetzt zu autovendo.ch und sparen Sie mehrere tausend Franken pro Jahr – bei persönlichem Service und fairen Konditionen.",
+      "switchText": "Ob Sie ein einzelnes Auto oder einen ganzen Bestand verkaufen – wechseln Sie jetzt zu autovendo.ch, bei persönlichem Service und fairen Konditionen.",
       "contactButton": "Jetzt unverbindlich Kontakt aufnehmen"
     }
   },

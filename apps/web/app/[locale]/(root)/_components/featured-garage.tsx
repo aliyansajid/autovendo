@@ -28,9 +28,10 @@ export const FeaturedGarage = ({
 
   if (garages.length === 0) {
     return (
-      <section className="bg-secondary">
+      <section>
         <div className="w-full max-w-285 mx-auto px-4 py-12">
-          <h2 className="text-2xl font-bold mb-6">{t("title")}</h2>
+          <h2 className="text-2xl font-bold mb-1">{t("title")}</h2>
+          <p className="text-muted-foreground mb-6">{t("subtitle")}</p>
           <p className="text-muted-foreground">{t("emptyState")}</p>
         </div>
       </section>
@@ -38,9 +39,10 @@ export const FeaturedGarage = ({
   }
 
   return (
-    <section className="bg-secondary">
+    <section>
       <div className="w-full max-w-285 mx-auto px-4 py-12">
-        <h2 className="text-2xl font-bold mb-6">{t("title")}</h2>
+        <h2 className="text-2xl font-bold mb-1">{t("title")}</h2>
+        <p className="text-muted-foreground mb-6">{t("subtitle")}</p>
         <Carousel
           opts={{
             align: "start",

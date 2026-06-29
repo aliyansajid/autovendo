@@ -4,6 +4,7 @@ import { JsonLd } from "@/components/json-ld";
 import { SearchForm } from "./_components/search-form";
 import { FeaturedListings } from "./_components/featured-listings";
 import { FeaturedGarage } from "./_components/featured-garage";
+import { HomeSell } from "./_components/home-sell";
 import { About } from "./_components/about";
 import { getVehiclesFromApi } from "@/lib/api/vehicles";
 import { getDealersFromApi } from "@/lib/api/dealers";
@@ -124,6 +125,7 @@ export default async function HomePage(props: {
         </div>
       </div>
       <FeaturedListings listings={listings} />
+      <HomeSell />
       <FeaturedGarage garages={garages} />
       <About />
     </>

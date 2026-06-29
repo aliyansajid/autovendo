@@ -50,7 +50,7 @@
   "About": {
     "title": "About Autovendo.ch",
     "subtitle": "Fair. Transparent. Uncomplicated. Human.",
-    "description": "Autovendo.ch is the sales platform for all car dealers in Switzerland. We developed Autovendo with one clear goal: to make the sale of vehicles simple, efficient, and fair — without unnecessary administrative burden.",
+    "description": "Autovendo.ch is the marketplace for everyone selling a car in Switzerland — from private sellers parting with a single vehicle to professional dealers managing a full inventory. We developed Autovendo with one clear goal: to make buying and selling vehicles simple, efficient, and fair — without unnecessary administrative burden.",
     "features": {
       "efficiency": {
         "title": "Efficiency & Structure",
@@ -325,9 +325,32 @@
     "showLess": "Show less"
   },
   "FeaturedGarage": {
-    "title": "Featured Garages",
-    "emptyState": "No garages currently listed.",
+    "title": "Trusted Dealers",
+    "subtitle": "Browse established dealer storefronts — or buy directly from private sellers across Switzerland.",
+    "emptyState": "No dealers currently listed.",
     "button": "To the Garage"
+  },
+  "HomeSell": {
+    "title": "Sell your car on Autovendo",
+    "subtitle": "Whether you're selling a single car or managing a full inventory, there's a place for you on Autovendo.",
+    "private": {
+      "badge": "Private sellers",
+      "title": "Selling your own car?",
+      "description": "List your vehicle in minutes and reach thousands of buyers across Switzerland — no dealership required.",
+      "feature1": "Quick and simple listing",
+      "feature2": "Direct contact with buyers",
+      "feature3": "Full control over your sale",
+      "cta": "List your car"
+    },
+    "dealer": {
+      "badge": "Dealers",
+      "title": "Running a dealership?",
+      "description": "Showcase your full inventory, manage leads, and grow your reach with tools built for professionals.",
+      "feature1": "Inventory sync & management",
+      "feature2": "Your own dealer storefront",
+      "feature3": "Lead tracking & analytics",
+      "cta": "Explore dealer solutions"
+    }
   },
   "ListingCard": {},
   "AdvancedSearch": {
@@ -628,19 +651,19 @@
         "items": [
           {
             "question": "What is Autovendo.ch?",
-            "answer": "Autovendo.ch is a specialized online sales platform for all car dealers in Switzerland. Dealers can easily list their vehicles and reach potential buyers directly."
+            "answer": "Autovendo.ch is an online marketplace for buying and selling cars in Switzerland. Private sellers and commercial dealers alike can easily list their vehicles and reach potential buyers directly."
           },
           {
             "question": "Who can use Autovendo.ch?",
-            "answer": "Autovendo.ch is aimed exclusively at commercial car dealers and garages. Private sellers are not permitted on this platform."
+            "answer": "Autovendo.ch is open to both private sellers parting with a single vehicle and commercial car dealers and garages managing a full inventory."
           },
           {
             "question": "In which regions is Autovendo.ch available?",
             "answer": "Autovendo.ch is focused on the Swiss market. Listed vehicles must be located in Switzerland or the Principality of Liechtenstein."
           },
           {
-            "question": "Is Autovendo.ch also suitable for small dealers?",
-            "answer": "Yes. Autovendo.ch is deliberately designed so that all dealers – regardless of size or location – receive the same fair opportunities."
+            "question": "Is Autovendo.ch also suitable for private sellers and small dealers?",
+            "answer": "Yes. Autovendo.ch is deliberately designed so that everyone – from private sellers to dealers of any size or location – receives the same fair opportunities."
           },
           {
             "question": "How does Autovendo.ch differ from other platforms?",
@@ -657,7 +680,7 @@
           },
           {
             "question": "Can several vehicles be listed at the same time?",
-            "answer": "Yes. Dealers can publish several vehicles at the same time – depending on the chosen package."
+            "answer": "Yes. You can publish several vehicles at the same time – depending on the chosen package."
           },
           {
             "question": "How long does a listing stay online?",
@@ -690,7 +713,7 @@
           },
           {
             "question": "Are price changes possible?",
-            "answer": "Yes. Dealers can change their package at any time if their needs change."
+            "answer": "Yes. You can change your package at any time if your needs change."
           },
           {
             "question": "Will I receive an invoice?",
@@ -718,8 +741,8 @@
             "answer": "Yes. Protecting your data is our top priority. All data is processed in accordance with applicable data protection regulations."
           },
           {
-            "question": "Are there additional security features for dealers?",
-            "answer": "Yes. For dealers, we recommend, among other things, providing a mobile number for additional account security."
+            "question": "Are there additional security features for my account?",
+            "answer": "Yes. We recommend, among other things, providing a mobile number for additional account security."
           }
         ]
       }
@@ -766,11 +789,11 @@
       "ultimate": "Our most powerful plan for industry leaders."
     },
     "title": "More visibility. More service. Lower costs.",
-    "subtitle": "Why pay 30–40% more – when you get more personal support and full transparency with autovendo.ch?",
+    "subtitle": "Fair, transparent pricing for private sellers and dealers alike – more personal support and full transparency, without the inflated fees of the big platforms.",
     "noOverpriced": "No more overpriced platforms.",
-    "introText1": "autovendo.ch gives dealers control, fairness and genuine personal support – at significantly better rates. The car trade is demanding enough. Your listing platform should support you – not eat into your margin.",
+    "introText1": "autovendo.ch gives private sellers and dealers alike control, fairness and genuine personal support – at significantly better rates. Selling a car should be simple. Your listing platform should support you – not eat into your proceeds.",
     "introText2": "autovendo.ch offers fair prices, direct contacts and full transparency. No hidden costs. No corporate thinking. Just a real partnership.",
-    "comparisonTitle": "Fair prices – Direct comparison",
+    "comparisonTitle": "Dealer packages – fair prices in direct comparison",
     "tableHeaders": {
       "package": "Package",
       "vehicles": "Vehicles simultaneously",
@@ -811,19 +834,19 @@
       "reach": "Same reach.",
       "contact": "Personal contact person.",
       "response": "Faster response times.",
-      "flexible": "Flexible solutions for dealers.",
+      "flexible": "Flexible solutions for every seller.",
       "noCorp": "No corporate structures.",
       "fair": "Fair pricing."
     },
     "weAre": {
       "title": "We are:",
       "efficient": "More efficient",
-      "dealerOriented": "Dealer-oriented",
+      "dealerOriented": "Customer-oriented",
       "personal": "Personal",
       "transparent": "Transparent",
       "swiss": "Directly Swiss"
     },
-    "partnershipText": "With autovendo.ch, you are not investing in advertising. You are investing in a partnership.\nYour margin belongs to you – not the platform.",
+    "partnershipText": "With autovendo.ch, you are not investing in advertising. You are investing in a partnership.\nYour proceeds belong to you – not the platform.",
     "tabs": {
       "dealers": "For Dealers",
       "private": "Private Sellers"
@@ -865,7 +888,7 @@
       "text": "A dealer with 25 vehicles saves with autovendo.ch",
       "highlight": "over CHF 3,000 per year.",
       "suffix": "That is direct margin. Without risk.",
-      "switchText": "Switch to autovendo.ch now and save several thousand francs per year – with personal service and fair conditions.",
+      "switchText": "Whether you're selling a single car or a full inventory, switch to autovendo.ch now – with personal service and fair conditions.",
       "contactButton": "Get in touch"
     }
   },

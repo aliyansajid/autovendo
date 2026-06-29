@@ -33,7 +33,7 @@ export default function ImpressumPage() {
               <p className="font-semibold text-foreground">Autovendo.ch</p>
               <p>Die Verkaufsplattform für Autohändler in der Schweiz</p>
               <div>
-                <p>Mackee Johnson</p>
+                <p>Johnson</p>
                 <p>Bielstrasse 78</p>
                 <p>2555 Brügg / BE</p>
                 <p>Switzerland</p>
