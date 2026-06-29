@@ -169,7 +169,7 @@ const FooterLink = ({ href, children }: FooterLinkProps) => (
   <li>
     <Link
       href={href}
-      className="flex items-center gap-2 group text-muted-foreground hover:text-primary transition-colors"
+      className="flex items-center gap-2 group font-medium text-muted-foreground hover:text-primary transition-colors"
     >
       <span className="w-1 h-1 rounded-full bg-muted-foreground group-hover:bg-primary transition-colors" />
       {children}
