@@ -4,6 +4,7 @@ import { FontFamily, FontSize, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { signInWithGoogle, GoogleSignInCancelled } from "@/lib/social-auth";
 import { Icon } from "@/components/ui/icon";
 import { GoogleIcon, AppleIcon } from "@/components/ui/brand-icons";
 
@@ -38,11 +39,18 @@ export function SocialButtons({ onDone }: { onDone: () => void }) {
     if (pending) return;
     setPending(provider);
     try {
-      const { error } = await authClient.signIn.social({ provider, callbackURL: "/(tabs)" });
-      // On native, signIn.social does not navigate automatically.
-      if (!error) onDone();
-    } catch {
-      // swallow — user cancelled or provider unavailable
+      if (provider === "google") {
+        // Native account picker → forwards the ID token to the API.
+        await signInWithGoogle();
+        onDone();
+      } else {
+        const { error } = await authClient.signIn.social({ provider, callbackURL: "/(tabs)" });
+        // On native, signIn.social does not navigate automatically.
+        if (!error) onDone();
+      }
+    } catch (err) {
+      // swallow cancellations; other errors fall through silently as before
+      if (err instanceof GoogleSignInCancelled) return;
     } finally {
       setPending(null);
     }

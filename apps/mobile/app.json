@@ -8,9 +8,11 @@
     "scheme": "autovendo",
     "userInterfaceStyle": "light",
     "ios": {
+      "bundleIdentifier": "ch.autovendo.mobile",
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "package": "ch.autovendo.mobile",
       "adaptiveIcon": {
         "backgroundColor": "#1e4da6",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -33,6 +35,12 @@
             "image": "./assets/images/splash-icon.png",
             "imageWidth": 76
           }
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.111668032768-lue01e0e581mmdcks384ucv274qgkq53"
         }
       ]
     ],
