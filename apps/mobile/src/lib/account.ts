@@ -80,27 +80,34 @@ async function submitVehicle<T>(
   const form = new FormData();
   form.append("data", JSON.stringify({ ...data, existingImages }));
   files.forEach((img) =>
-    form.append("images", {
-      uri: img.uri,
-      name: img.name,
-      type: img.mime,
-    } as unknown as Blob),
+    form.append("images", { uri: img.uri, name: img.name, type: img.mime } as unknown as Blob),
   );
 
   const cookie = authClient.getCookie();
-  const res = await fetch(`${API_URL}${path}`, {
-    method,
-    credentials: "omit",
-    headers: { Cookie: cookie },
-    body: form,
+  // XHR is used instead of fetch: RN's native XHR module handles the { uri }
+  // file objects in FormData; fetch's newer native path does not.
+  return new Promise<T>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, `${API_URL}${path}`);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Cookie", cookie);
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.responseText) as T);
+      } else {
+        try {
+          const b = JSON.parse(xhr.responseText) as { message?: unknown; error?: unknown };
+          const raw = b?.message ?? b?.error;
+          const message = Array.isArray(raw) ? (raw as string[])[0] : raw;
+          reject(new ApiError(xhr.status, (message as string) || `request_failed_${xhr.status}`));
+        } catch {
+          reject(new ApiError(xhr.status, `request_failed_${xhr.status}`));
+        }
+      }
+    };
+    xhr.onerror = () => reject(new ApiError(0, "network_error"));
+    xhr.send(form);
   });
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    const raw = body?.message ?? body?.error;
-    const message = Array.isArray(raw) ? raw[0] : raw;
-    throw new ApiError(res.status, message || `request_failed_${res.status}`);
-  }
-  return (await res.json()) as T;
 }
 
 // ─── Me ───────────────────────────────────────────────────────────────────────
@@ -370,22 +377,29 @@ export async function updateDealerProfile(body: DealerProfileUpdate): Promise<De
   }
 
   const cookie = authClient.getCookie();
-  const res = await fetch(`${API_URL}/dealer/profile`, {
-    method: "PUT",
-    credentials: "omit",
-    headers: { Cookie: cookie },
-    body: form,
+  return new Promise<DealerProfile>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", `${API_URL}/dealer/profile`);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("Cookie", cookie);
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const json = JSON.parse(xhr.responseText) as { data: DealerProfile };
+        resolve(json.data);
+      } else {
+        try {
+          const b = JSON.parse(xhr.responseText) as { message?: unknown; error?: unknown };
+          const raw = b?.message ?? b?.error;
+          const message = Array.isArray(raw) ? (raw as string[])[0] : raw;
+          reject(new ApiError(xhr.status, (message as string) || `request_failed_${xhr.status}`));
+        } catch {
+          reject(new ApiError(xhr.status, `request_failed_${xhr.status}`));
+        }
+      }
+    };
+    xhr.onerror = () => reject(new ApiError(0, "network_error"));
+    xhr.send(form);
   });
-  if (!res.ok) {
-    // Surface the API's message (NestJS sends `message`/`error`) so the caller can
-    // show it — same as `authedRequest`. `message` may be a string or array.
-    const body = await res.json().catch(() => null);
-    const raw = body?.message ?? body?.error;
-    const message = Array.isArray(raw) ? raw[0] : raw;
-    throw new ApiError(res.status, message || `request_failed_${res.status}`);
-  }
-  const json = (await res.json()) as { data: DealerProfile };
-  return json.data;
 }
 
 export function fetchDealerVehicles(
