@@ -12,7 +12,6 @@ import {
   FieldGroup,
   Field,
   FieldDescription,
-  FieldSeparator,
 } from "@repo/ui/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -23,9 +22,9 @@ import {
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
 import { Spinner } from "@repo/ui/components/spinner";
-import { signIn, signInSocial } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { useTransition, useMemo, useState } from "react";
+import { useTransition, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { createLoginSchema } from "@/schema/auth-schema";
 import { useTranslations, useLocale } from "next-intl";
@@ -39,7 +38,9 @@ export const LoginForm = () => {
     searchParams.get("callbackUrl") ||
     `${process.env.NEXT_PUBLIC_APP_URL}/${locale}/dashboard`;
   const [isPending, startTransition] = useTransition();
-  const [socialPending, setSocialPending] = useState<"google" | "apple" | null>(null);
+  // const [socialPending, setSocialPending] = useState<"google" | "apple" | null>(
+  //   null,
+  // );
 
   const loginSchema = useMemo(() => createLoginSchema(tSchema), [tSchema]);
 
@@ -52,16 +53,19 @@ export const LoginForm = () => {
     },
   });
 
-  async function handleSocialSignIn(provider: "google" | "apple") {
-    setSocialPending(provider);
-    const { url, error } = await signInSocial({ provider, callbackURL: callbackUrl });
-    if (error || !url) {
-      toast.error(t("errorDefault"));
-      setSocialPending(null);
-      return;
-    }
-    window.location.href = url;
-  }
+  // async function handleSocialSignIn(provider: "google" | "apple") {
+  //   setSocialPending(provider);
+  //   const { url, error } = await signInSocial({
+  //     provider,
+  //     callbackURL: callbackUrl,
+  //   });
+  //   if (error || !url) {
+  //     toast.error(t("errorDefault"));
+  //     setSocialPending(null);
+  //     return;
+  //   }
+  //   window.location.href = url;
+  // }
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
     startTransition(async () => {
@@ -90,7 +94,7 @@ export const LoginForm = () => {
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
-            <Field>
+            {/* <Field>
               <Button
                 variant="outline"
                 type="button"
@@ -148,7 +152,7 @@ export const LoginForm = () => {
             </Field>
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
               Or continue with
-            </FieldSeparator>
+            </FieldSeparator> */}
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}

@@ -12,7 +12,6 @@ import {
   FieldGroup,
   Field,
   FieldDescription,
-  FieldSeparator,
 } from "@repo/ui/components/field";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -23,7 +22,7 @@ import {
   FormFieldType,
 } from "@repo/ui/components/custom-form-field";
 import { Spinner } from "@repo/ui/components/spinner";
-import { signUp, resendVerificationEmail, signInSocial } from "@/lib/auth-client";
+import { signUp, resendVerificationEmail } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useTransition, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -41,7 +40,9 @@ export const SignupForm = () => {
   const [isPending, startTransition] = useTransition();
   const [isResending, startResendTransition] = useTransition();
   const [verifyEmail, setVerifyEmail] = useState<string | null>(null);
-  const [socialPending, setSocialPending] = useState<"google" | "apple" | null>(null);
+  // const [socialPending, setSocialPending] = useState<"google" | "apple" | null>(
+  //   null,
+  // );
 
   const signupSchema = useMemo(() => createSignupSchema(tSchema), [tSchema]);
 
@@ -55,16 +56,19 @@ export const SignupForm = () => {
     },
   });
 
-  async function handleSocialSignIn(provider: "google" | "apple") {
-    setSocialPending(provider);
-    const { url, error } = await signInSocial({ provider, callbackURL: callbackUrl });
-    if (error || !url) {
-      toast.error(t("errorDefault"));
-      setSocialPending(null);
-      return;
-    }
-    window.location.href = url;
-  }
+  // async function handleSocialSignIn(provider: "google" | "apple") {
+  //   setSocialPending(provider);
+  //   const { url, error } = await signInSocial({
+  //     provider,
+  //     callbackURL: callbackUrl,
+  //   });
+  //   if (error || !url) {
+  //     toast.error(t("errorDefault"));
+  //     setSocialPending(null);
+  //     return;
+  //   }
+  //   window.location.href = url;
+  // }
 
   function onSubmit(values: z.infer<typeof signupSchema>) {
     startTransition(async () => {
@@ -144,7 +148,7 @@ export const SignupForm = () => {
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
-            <Field>
+            {/* <Field>
               <Button
                 variant="outline"
                 type="button"
@@ -202,7 +206,7 @@ export const SignupForm = () => {
             </Field>
             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
               Or continue with
-            </FieldSeparator>
+            </FieldSeparator> */}
             <CustomFormField
               control={form.control}
               fieldType={FormFieldType.INPUT}
