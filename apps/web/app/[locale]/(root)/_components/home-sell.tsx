@@ -25,7 +25,7 @@ export const HomeSell = () => {
       <div className="w-full max-w-285 mx-auto px-4 py-12">
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl font-bold mb-3">{t("title")}</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto font-semibold">
             {t("subtitle")}
           </p>
         </div>
@@ -80,7 +80,7 @@ const SellAudienceCard = ({
           <div className="bg-primary/10 p-3 rounded-full shrink-0">
             <Icon className="size-7 text-primary" />
           </div>
-          <Badge className="px-3 py-1 text-sm font-medium">{badge}</Badge>
+          <Badge className="px-3 py-1 text-sm font-bold">{badge}</Badge>
         </div>
 
         <div className="space-y-2">
