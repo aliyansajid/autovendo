@@ -80,9 +80,7 @@ const SellAudienceCard = ({
           <div className="bg-primary/10 p-3 rounded-full shrink-0">
             <Icon className="size-7 text-primary" />
           </div>
-          <Badge variant="secondary" className="px-3 py-1 text-sm font-medium">
-            {badge}
-          </Badge>
+          <Badge className="px-3 py-1 text-sm font-medium">{badge}</Badge>
         </div>
 
         <div className="space-y-2">

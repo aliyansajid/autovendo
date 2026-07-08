@@ -52,8 +52,18 @@ export function PricingTabs({ plans, locale, authUrl }: Props) {
 
       <Tabs defaultValue="dealer" className="space-y-10">
         <TabsList className="mx-auto">
-          <TabsTrigger value="dealer">{t("tabs.dealers")}</TabsTrigger>
-          <TabsTrigger value="private">{t("tabs.private")}</TabsTrigger>
+          <TabsTrigger
+            value="dealer"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
+            {t("tabs.dealers")}
+          </TabsTrigger>
+          <TabsTrigger
+            value="private"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
+            {t("tabs.private")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="dealer">
